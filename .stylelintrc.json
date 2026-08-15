@@ -1,8 +1,9 @@
 {
 	"extends": ["stylelint-config-recommended", "stylelint-config-standard"],
-	"plugins": ["./tools/stylelint/no-apply-in-host.js"],
+	"plugins": ["./tools/stylelint/no-apply-in-host.js", "./tools/stylelint/z-index-scale.js"],
 	"rules": {
 		"cuentoneta/no-apply-in-host": true,
+		"cuentoneta/z-index-scale": [true, { "allowGlobalLayersIn": ["src/app/directives/tooltip.directive.css"] }],
 		"at-rule-no-unknown": [
 			true,
 			{

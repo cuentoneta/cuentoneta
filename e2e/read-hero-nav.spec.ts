@@ -4,25 +4,16 @@
  * Es una aserción de apilamiento: no mira clases ni z-index declarados —eso mediría implementación y
  * pasaría igual con el defecto presente— sino quién responde sobre la franja del nav una vez que la
  * página scrolleó. Si el hero se dibuja encima, es él quien responde.
+ *
+ * El mecanismo vive en `_utils/stacking`, compartido con el caso general de todas las rutas. Acá queda el
+ * caso que nombra al hero: es el que documenta el defecto concreto del que salió la escala.
  */
 import { test, expect } from '@playwright/test';
 
-import { VIEWPORT_WIDTHS_NUMERIC } from '@utils/screen.utils';
-
+import { NAV_OWNS_EVERY_SAMPLE, STACKING_VIEWPORTS, VIEWPORT_HEIGHT, navStackingReport } from './_utils/stacking';
 import { STABLE_SLUGS } from './_utils/seo-fixtures';
 
 const readPath = `/read/${STABLE_SLUGS.literaryWork}`;
-
-const VIEWPORT_HEIGHT = 900;
-
-// El apilamiento no depende del ancho —ni el hero ni la barra declaran prefijos responsive—, pero la
-// geometría sí: al angostarse, el hero pisa la franja de la barra con otro de sus hijos. Se toma el punto
-// más ancho de cada banda del Design System, el mismo criterio con que `WindowLayoutService` las clasifica.
-const VIEWPORTS = Object.freeze([
-	{ name: 'xs', width: VIEWPORT_WIDTHS_NUMERIC.sm - 1 },
-	{ name: 'sm', width: VIEWPORT_WIDTHS_NUMERIC.md - 1 },
-	{ name: 'lg', width: VIEWPORT_WIDTHS_NUMERIC.xl - 1 },
-] as const);
 
 let status: number;
 
@@ -36,12 +27,10 @@ test.beforeAll(async ({ request }) => {
 // saltearían en silencio y el gate quedaría verde sin haber mirado nada — que es exactamente lo que
 // venía pasando con el slug anterior.
 test('read — el slug estable de la obra existe en el dataset', () => {
-	expect(status, `"/read/${STABLE_SLUGS.literaryWork}" no responde 200: los casos de /read no verifican nada`).toBe(
-		200,
-	);
+	expect(status, `"${readPath}" no responde 200: los casos de /read no verifican nada`).toBe(200);
 });
 
-for (const viewport of VIEWPORTS) {
+for (const viewport of STACKING_VIEWPORTS) {
 	test(`read — el hero no se dibuja sobre la barra de navegación en el viewport ${viewport.name}`, async ({ page }) => {
 		// eslint-disable-next-line playwright/no-skipped-test -- la ausencia de la obra ya la reporta el caso de arriba; repetirla acá sería el mismo fallo cuatro veces
 		test.skip(status !== 200, `No existe literaryWork con slug "${STABLE_SLUGS.literaryWork}" en el dataset`);
@@ -50,50 +39,12 @@ for (const viewport of VIEWPORTS) {
 		await page.goto(readPath);
 		await expect(page.locator('cuentoneta-literary-work-hero-header')).toBeVisible();
 
-		// 100 px alcanza para que el hero se desplace bajo la barra y se queda corto del umbral con el que
-		// LayoutService la oculta: con la barra retraída no habría franja que disputar y el caso pasaría
-		// sin haber ejercido nada.
-		await page.evaluate(() => window.scrollTo(0, 100));
-
-		// Medido: Firefox responde el elemento raíz si el hit-test corre antes de componer el scroll, y el
-		// caso fallaría por esa carrera y no por el apilamiento. Se espera a que el punto resuelva a algún
-		// elemento del contenido — sea el nav o el hero, que es justamente lo que el caso discrimina.
-		await page.waitForFunction(() => {
-			const nav = document.querySelector('cuentoneta-header');
-			if (!nav) {
-				return false;
-			}
-			const { top, bottom, width } = nav.getBoundingClientRect();
-			const element = document.elementFromPoint(width / 2, (top + bottom) / 2);
-			return element !== null && element !== document.documentElement && element !== document.body;
-		});
-
-		// Se muestrea a lo ancho de la barra —logo, centro y zona de enlaces— porque cada viewport la
-		// solapa con una parte distinta del hero.
-		const hits = await page.evaluate(() => {
-			const nav = document.querySelector('cuentoneta-header');
-			if (!nav) {
-				throw new Error('No se encontró la barra de navegación');
-			}
-			const { top, bottom, width } = nav.getBoundingClientRect();
-			const y = (top + bottom) / 2;
-			return {
-				scrollY: window.scrollY,
-				navHeight: bottom - top,
-				owners: [0.1, 0.3, 0.5, 0.7, 0.9].map((ratio) => {
-					const element = document.elementFromPoint(width * ratio, y);
-					if (element?.closest('cuentoneta-literary-work-hero-header')) {
-						return 'hero';
-					}
-					return element?.closest('cuentoneta-header') ? 'nav' : 'otro';
-				}),
-			};
-		});
+		const report = await navStackingReport(page);
 
 		// Control positivo: sin esto, "nadie del hero intercepta" se cumpliría igual con la página sin
 		// scrollear o con la barra retraída a alto cero, y el caso pasaría en vacío.
-		expect(hits.scrollY).toBeGreaterThan(0);
-		expect(hits.navHeight).toBeGreaterThan(0);
-		expect(hits.owners).toEqual(['nav', 'nav', 'nav', 'nav', 'nav']);
+		expect(report.scrollY).toBeGreaterThan(0);
+		expect(report.navHeight).toBeGreaterThan(0);
+		expect(report.owners).toEqual(NAV_OWNS_EVERY_SAMPLE);
 	});
 }

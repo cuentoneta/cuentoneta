@@ -14,7 +14,7 @@ import { CoverImageSkeletonComponent } from '../cover-image/cover-image-skeleton
 	// Aísla su apilamiento por el mismo motivo que el hero real, que este esqueleto replica.
 	host: { class: 'relative isolate block overflow-hidden bg-neutral-900' },
 	template: `
-		<div class="relative z-10 px-6 pt-28 pb-10">
+		<div class="relative z-content px-6 pt-28 pb-10">
 			<div class="mx-auto flex w-full max-w-180 items-center gap-8">
 				<cuentoneta-cover-image-skeleton />
 				<div class="flex min-w-0 flex-1 flex-col items-start gap-2.5">

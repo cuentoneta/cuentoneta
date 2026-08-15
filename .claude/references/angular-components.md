@@ -330,6 +330,47 @@ Notas:
 
 ---
 
+## Escala de apilamiento (z-index)
+
+Todo apilamiento sale de la escala del Design System, declarada como tokens `--z-index-*` en el `@theme` de `src/tailwind.css`. Nunca un número crudo (`z-10`, `z-[999]`, `z-index: 2`).
+
+| Token        | Valor | Alcance     | Quién la usa                                                                     |
+| ------------ | ----- | ----------- | -------------------------------------------------------------------------------- |
+| `z-content`  | 10    | **Interna** | Ordena hermanos dentro de un componente (p. ej. superponer texto a una imagen).  |
+| `z-raised`   | 20    | **Interna** | Un elemento que se eleva por encima de `z-content` dentro del mismo componente.  |
+| `z-nav`      | 50    | **Global**  | La barra de navegación fija (`header.component.ts`).                             |
+| `z-floating` | 60    | **Global**  | La capa flotante anclada al `body` (p. ej. el tooltip, `tooltip.directive.css`). |
+
+### Norma de confinamiento
+
+Un componente que eleva algo **dentro de sí** aísla su apilamiento con `isolate` en el elemento que contiene la elevación (`z-content`/`z-raised`). Confinado el contexto, el valor numérico deja de significar nada afuera de ese subárbol: dos componentes no relacionados pueden usar `z-raised` cada uno sin competir entre sí.
+
+Las capas globales son lo contrario: se usan **sin** aislar. Aislar la barra o la capa flotante las haría perder contra el contenido de página en vez de quedar por encima de todo. Por eso su franja (50-60) está **reservada** — ningún otro archivo puede declarar `z-nav`/`z-floating` salvo los que ya las declaran a nivel de aplicación.
+
+### Cobertura por gate
+
+| Gate        | Qué valida                                                                                                                                                                       |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `lint`      | `custom-z-index/z-index-scale` (ESLint) sobre `src/**/*.ts` y `src/**/*.html` — cubre `host: { class }`, mapas de clases, `styles` inline, plantillas inline y `.html` externos. |
+| `stylelint` | `cuentoneta/z-index-scale` sobre los `.css` — declaraciones `z-index` y utilidades en `@apply`.                                                                                  |
+| `test`      | El spec del helper `tools/z-index-scale.js` valida la escala contra el `@theme` real de `src/tailwind.css`.                                                                      |
+| `e2e`       | La aserción de apilamiento contra la barra de navegación (`e2e/_utils/stacking.ts`), en todas las rutas con fixture estable.                                                     |
+
+Las dos reglas de lint reservan la franja global con la opción `allowGlobalLayersIn`, acotada por archivo: solo el componente o directiva dueños de una capa global pueden nombrarla.
+
+### Puntos ciegos declarados
+
+- Un nombre de clase computado en runtime (`'z-' + n`) es invisible a un escaneo estático.
+- Una asignación directa a `style.zIndex` también lo es.
+- Que el `isolate` esté en el ancestro correcto no lo decide ninguna regla de lint: lo mide el e2e de apilamiento, que discrimina el defecto por hit-test en un navegador real.
+- El **drawer** no participa de la escala: se apoya en `<dialog>.showModal()`, que promueve el elemento al top layer nativo del navegador — un mecanismo inmune al `z-index` de la página.
+
+### Por qué el enforcement vive en lint
+
+La utilidad `z` de Tailwind resuelve cualquier número sin consultar el tema, así que `z-10` compila con o sin escala declarada. Una capa mal escrita (`z-nvv`) tampoco falla el build: no emite CSS alguno y el defecto viaja invisible hasta que alguien lo ve en pantalla. Por eso la namespace `--z-index-*` del `@theme` **no** se limpia con `initial`, a diferencia de `--color-*`/`--breakpoint-*`/`--radius-*`: no hay defaults de Tailwind que limpiar, y limpiarla tampoco desactivaría los números crudos. Lo que cierra ese hueco es una regla de lint, no el archivo del tema.
+
+---
+
 ## Prohibiciones adicionales
 
 - **Propiedades estáticas** en componentes/servicios → usar un servicio singleton (`providedIn: 'root'`).
@@ -348,6 +389,7 @@ Notas:
 - [ ] DI con `inject()`.
 - [ ] Plantilla con `@if`/`@for` (con `track`)/`@switch`, self-closing tags y `ngSrc`.
 - [ ] Host (clases/bindings/eventos) en la propiedad `host` del decorador; sin `@HostBinding`/`@HostListener` ni `:host { @apply ... }`.
+- [ ] Todo apilamiento con un token de la escala (`z-content`/`z-raised`/`z-nav`/`z-floating`), nunca un número crudo; `isolate` si el componente eleva algo dentro de sí (ver [Escala de apilamiento](#escala-de-apilamiento-z-index)).
 - [ ] Sin `enum`, sin propiedades estáticas, sin `!`.
 - [ ] Acompañar con tests de Angular Testing Library y con su `*.stories.ts` (Storybook), salvo que delegue toda su vista en otro componente ya catalogado (ver [`testing.md`](./testing.md)).
 - [ ] El estado vive en servicios + signals (ver [`angular-state.md`](./angular-state.md)).

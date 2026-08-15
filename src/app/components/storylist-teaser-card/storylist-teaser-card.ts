@@ -21,7 +21,7 @@ import { CoverImageComponent } from '../cover-image/cover-image.component';
 			@if (collection(); as storylist) {
 				<a [routerLink]="['/' + appRoutes.StoryList, storylist.slug]" class="flex items-start gap-5">
 					<section
-						class="relative flex h-48 items-end justify-center overflow-hidden rounded-xl bg-neutral-100 px-3 sm:flex-1"
+						class="relative isolate flex h-48 items-end justify-center overflow-hidden rounded-xl bg-neutral-100 px-3 sm:flex-1"
 					>
 						@if (storylist.imagery.kind === 'representative') {
 							<cuentoneta-cover-image [src]="storylist.imagery.image" class="-mb-2" />
@@ -63,8 +63,8 @@ export class StorylistTeaserCard {
 	// [0] central al frente con bottom-bleed, [1] lateral izquierda y [2] derecha desplazadas, con borde neutral-100.
 	// Se expresan las clases CSS en sampleImageClasses para hacer más sencilla la notación al iterar con @for
 	protected readonly sampleImageClasses = [
-		'absolute bottom-[-8px] left-1/2 z-20 -translate-x-1/2 border-[3px] border-neutral-100',
-		'absolute top-[calc(50%_+_39.35px)] left-[calc(50%_-_82.75px)] z-10 -translate-x-1/2 -translate-y-1/2 border-[3px] border-neutral-100',
-		'absolute top-[calc(50%_+_39.35px)] left-[calc(50%_+_83.03px)] z-10 -translate-x-1/2 -translate-y-1/2 border-[3px] border-neutral-100',
+		'absolute bottom-[-8px] left-1/2 z-raised -translate-x-1/2 border-[3px] border-neutral-100',
+		'absolute top-[calc(50%_+_39.35px)] left-[calc(50%_-_82.75px)] z-content -translate-x-1/2 -translate-y-1/2 border-[3px] border-neutral-100',
+		'absolute top-[calc(50%_+_39.35px)] left-[calc(50%_+_83.03px)] z-content -translate-x-1/2 -translate-y-1/2 border-[3px] border-neutral-100',
 	] as const;
 }
