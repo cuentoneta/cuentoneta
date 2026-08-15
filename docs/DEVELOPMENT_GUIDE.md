@@ -25,7 +25,7 @@ abiertas a propuestas para mejoras, cambios y reemplazos. En caso de que desees 
 ## Consideraciones Generales
 
 La Cuentoneta es un proyecto abierto tanto en el código como en su gestión, siendo pública y de libre acceso toda la
-información relacionada a su desarrollo y encontrándose la misma en línea con el [Código de Conducta](doc-code_of_conduct) y la declaración de [Misión, Visión y Valores](doc-mmv).
+información relacionada a su desarrollo y encontrándose la misma en línea con el [Código de Conducta][doc-code_of_conduct] y la declaración de [Misión, Visión y Valores][doc-mvv].
 
 Dada la naturaleza del proyecto, es importante que tengas en consideración que:
 
@@ -159,7 +159,7 @@ git clone https://github.com/<tu_nombre_de_usuario_en_github>/cuentoneta.git
 cd cuentoneta
 ```
 
-Posteriormente ejecuta el siguiente comando para instalar todas las dependencias listadas en el archivo [`package.json`](package.json). La ejecución de este comando también procederá a crear un archivo `.env`, el cual contiene las variables de entorno necesarias para el correcto funcionamiento del proyecto en el ambiente de desarrollo.
+Posteriormente ejecuta el siguiente comando para instalar todas las dependencias listadas en el archivo [`package.json`](../package.json). La ejecución de este comando también procederá a crear un archivo `.env`, el cual contiene las variables de entorno necesarias para el correcto funcionamiento del proyecto en el ambiente de desarrollo.
 
 ```bash
 pnpm install
@@ -431,20 +431,18 @@ a la hora de realizar el _triaging_ y análisis de la incidencia.
 
 Para características que requieran pruebas de integración, sean estas manuales o implementadas mediante Playwright, se
 encuentra disponible una guía y plantilla de cómo confeccionar un plan de pruebas para una funcionalidad determinada del
-proyecto. Puede accederse al template de planes de testing [en este enlace](#doc-test-plan).
+proyecto. La guía vive en [`docs/qa/TESTPLAN_GUIDE.md`](./qa/TESTPLAN_GUIDE.md) y la plantilla, en [`docs/qa/TEST_PLAN_TEMPLATE.md`](./qa/TEST_PLAN_TEMPLATE.md).
 
 ---
 
 [dc-channel]: https://discord.com/channels/594363964499165194/1109220285841944586
 [github-issues-tutorial]: https://docs.github.com/es/issues/tracking-your-work-with-issues/creating-an-issue
-[crear-issue-cuentoneta]: https://github.com/rolivencia/cuentoneta/issues/new/choose
-[feature-request-template]: https://github.com/rolivencia/cuentoneta/issues/new?assignees=&labels=%F0%9F%8F%8E%EF%B8%8F+mejora&projects=&template=feature.yml
-[bug-report-template]: https://github.com/rolivencia/cuentoneta/issues/new?assignees=&labels=%F0%9F%A6%9F+bug&projects=&template=bug_report.yml
+[crear-issue-cuentoneta]: https://github.com/cuentoneta/cuentoneta/issues/new/choose
+[feature-request-template]: https://github.com/cuentoneta/cuentoneta/issues/new?assignees=&labels=%F0%9F%8F%8E%EF%B8%8F+mejora&projects=&template=feature.yml
+[bug-report-template]: https://github.com/cuentoneta/cuentoneta/issues/new?assignees=&labels=%F0%9F%A6%9F+bug&projects=&template=bug_report.yml
 
 <!-- Enlaces a otros documentos -->
 
 [doc-mvv]: https://github.com/cuentoneta/cuentoneta/blob/develop/MVV.md
 [doc-code_of_conduct]: https://github.com/cuentoneta/cuentoneta/blob/develop/CODE_OF_CONDUCT.md
 [dc-fec]: https://discord.com/invite/frontendcafe
-[doc-test-plan]: https://github.com/cuentoneta/cuentoneta/blob/develop/docs/TEST_PLAN.md
-[doc-test-template]: https://github.com/cuentoneta/cuentoneta/blob/develop/docs/TEST_TEMPLATE.md
