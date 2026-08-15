@@ -20,11 +20,11 @@ export const resource = defineType({
 		defineField({
 			name: 'url',
 			title: 'URL',
-			// Era un `string` con `required()`, que admitía cualquier texto: el recurso solo sirve si su
-			// valor es alcanzable. La regla rige sobre la edición y no sobre lo almacenado, así que
-			// sanear los documentos que ya la incumplían es un trabajo aparte y no algo que esto repare.
 			type: 'url',
-			validation: (Rule) => Rule.required().uri({ scheme: ['http', 'https'] }),
+			// La regla rige sobre la edición y no sobre lo almacenado, así que sanear los documentos que
+			// ya la incumplían es un trabajo aparte y no algo que esto repare. `mailto` está admitido
+			// porque un recurso puede ser la dirección de contacto del autor, no solo una página.
+			validation: (Rule) => Rule.required().uri({ scheme: ['http', 'https', 'mailto'] }),
 		}),
 		defineField({
 			name: 'resourceType',

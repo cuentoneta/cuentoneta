@@ -39,8 +39,25 @@ Un autor que no figure en la tabla y tenga un recurso sin URL **aborta la corrid
 
 **`story` / `literaryWork` — borrar.** Los 200 son un caso homogéneo: el recurso se titula siempre
 "Enlace a recurso original" y no nombra ningún destino averiguable, así que no hay nada que
-completar. Acá no hay tabla ni guard: la regla borra por predicado, con lo cual un documento nuevo
-con el mismo hueco queda cubierto por definición.
+completar. Acá no hay tabla —la regla borra por predicado, con lo cual un documento nuevo con el
+mismo hueco queda cubierto por definición—, pero sí un guard: si el título no es el del lote, la
+corrida **aborta**. Es la única operación destructiva de la migración, y su justificación se apoya en
+un hecho del dato, así que el código lo verifica en vez de darlo por cierto.
+
+**Dos URLs cargadas sin protocolo.** Un autor tiene dos perfiles guardados como `instagram.com/…` y
+`youtube.com/…`, sin esquema. No entran en el hueco que motiva la migración —tienen valor— pero la
+validación de forma que este cambio agrega al schema los rechazaría, y sanear a medias dejaría
+documentos en rojo por otro motivo. La migración les antepone `https://`.
+
+**Los `mailto:` se conservan.** Cinco autores tienen su dirección de contacto cargada como recurso.
+Son contenido válido, así que la validación del schema admite ese esquema además de `http`/`https`.
+
+## Borradores
+
+La corrida recorre también los borradores, donde una fila de recurso a medio completar es el estado
+normal apenas se agrega un ítem en el Studio. Un **autor en borrador** fuera de la tabla se saltea en
+vez de abortar: detener la corrida por una edición en curso impediría sanear el contenido publicado,
+que es lo que la migración viene a arreglar. El guard sigue vigente para todo lo publicado.
 
 ## Por qué la disposición se indexa por slug y no por `_key`
 

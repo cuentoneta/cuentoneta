@@ -56,7 +56,7 @@ describe('sanitize-resources-without-url', () => {
 			_id: 'story-1',
 			_type: 'story',
 			slug: { current: 'wakefield' },
-			resources: [{ _key: 'roto', url: null }],
+			resources: [{ _key: 'roto', url: null, title: 'Enlace a recurso original' }],
 		});
 
 		expect(patches).toMatchObject([{ path: ['resources', { _key: 'roto' }], op: { type: 'unset' } }]);
@@ -67,7 +67,7 @@ describe('sanitize-resources-without-url', () => {
 			_id: 'lw-from-story-1',
 			_type: 'literaryWork',
 			slug: { current: 'una-obra-cualquiera' },
-			resources: [{ _key: 'roto', url: null }],
+			resources: [{ _key: 'roto', url: null, title: 'Enlace a recurso original' }],
 		});
 
 		expect(patches).toMatchObject([{ path: ['resources', { _key: 'roto' }], op: { type: 'unset' } }]);
@@ -118,5 +118,80 @@ describe('sanitize-resources-without-url', () => {
 		expect(() => migrateDocument({ _id: 'author-10', _type: 'author', resources: [{ _key: 'roto' }] })).toThrow(
 			/no figura en la tabla de disposición/,
 		);
+	});
+
+	it('trata una url vacía igual que una ausente', () => {
+		const patches = migrateDocument({
+			_id: 'author-1',
+			_type: 'author',
+			slug: { current: 'neil-gaiman' },
+			resources: [{ _key: 'roto', url: '' }],
+		});
+
+		expect(patches).toMatchObject([{ path: ['resources', { _key: 'roto' }, 'url'] }]);
+	});
+
+	// Una fila a medio completar es el estado normal apenas se agrega un ítem en el Studio: abortar por
+	// eso detendría la corrida sobre el contenido publicado, que es lo que la migración viene a sanear.
+	it('saltea un autor en borrador fuera de la tabla, sin abortar', () => {
+		const doc = {
+			_id: 'drafts.author-11',
+			_type: 'author',
+			slug: { current: 'autor-a-medio-cargar' },
+			resources: [{ _key: 'roto' }],
+		};
+
+		expect(migrateDocument(doc)).toEqual([]);
+	});
+
+	it('aborta ante un autor con más recursos incompletos que los que la tabla puede completar', () => {
+		expect(() =>
+			migrateDocument({
+				_id: 'author-1',
+				_type: 'author',
+				slug: { current: 'neil-gaiman' },
+				resources: [{ _key: 'roto-1' }, { _key: 'roto-2' }],
+			}),
+		).toThrow(/la tabla asigna una sola/);
+	});
+
+	// La disposición de borrar se apoya en que el recurso no nombra ningún destino averiguable. Un
+	// título distinto es otro caso, y borrarlo sería destruir un dato que nadie evaluó.
+	it('aborta ante una obra con un recurso sin URL de título ajeno al lote', () => {
+		expect(() =>
+			migrateDocument({
+				_id: 'story-9',
+				_type: 'story',
+				slug: { current: 'una-obra' },
+				resources: [{ _key: 'roto', title: 'Entrevista al autor en un pódcast' }],
+			}),
+		).toThrow(/ajeno al lote/);
+	});
+
+	it('completa el protocolo de una URL cargada sin esquema', () => {
+		const patches = migrateDocument({
+			_id: 'author-12',
+			_type: 'author',
+			slug: { current: 'la-conspiracion-de-los-fuleros' },
+			resources: [{ _key: 'sin-esquema', url: 'instagram.com/conspiraciondelosfuleros', title: 'Perfil de Instagram' }],
+		});
+
+		expect(patches).toMatchObject([
+			{
+				path: ['resources', { _key: 'sin-esquema' }, 'url'],
+				op: { value: 'https://instagram.com/conspiraciondelosfuleros' },
+			},
+		]);
+	});
+
+	it('no toca una URL con esquema que no figura entre las conocidas', () => {
+		expect(
+			migrateDocument({
+				_id: 'author-13',
+				_type: 'author',
+				slug: { current: 'un-autor' },
+				resources: [{ _key: 'contacto', url: 'mailto:autor@example.com' }],
+			}),
+		).toEqual([]);
 	});
 });
