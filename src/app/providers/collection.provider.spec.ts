@@ -10,7 +10,8 @@ import {
 } from '@mocks/onoff-collections.mock';
 import { environment } from '../environments/environment';
 import { Endpoints } from './endpoints';
-import { HttpCollectionApi } from './collection.provider';
+import { CollectionApi, HttpCollectionApi } from './collection.provider';
+import { provideCollectionApiMock, StubCollectionApi } from './collection.mock';
 
 // El DTO de wire es la serialización JSON del agregado: los brands se pierden y queda el shape plano
 // que el endpoint emite. Se deriva del canon en vez de escribir un objeto paralelo a mano.
@@ -126,5 +127,31 @@ describe('HttpCollectionApi', () => {
 		const collection = await request(api.getBySlug(dto.slug), `${url}/${dto.slug}`, dto);
 
 		expect(collection.description).toBe(canon?.description);
+	});
+});
+
+describe('CollectionApi', () => {
+	// La factory del token es lo único que ata el contrato a su implementación HTTP: sin ella
+	// la app arranca sin proveedor y falla recién al inyectarlo, ya en la ruta que lo necesita.
+	// Es la única cobertura de inyección que tiene este contrato, que todavía no se consume desde
+	// ninguna página.
+	it('resuelve la implementación HTTP sin ningún proveedor explícito', () => {
+		TestBed.configureTestingModule({
+			providers: [provideHttpClient(), provideHttpClientTesting()],
+		});
+
+		expect(TestBed.inject(CollectionApi)).toBeInstanceOf(HttpCollectionApi);
+	});
+
+	it('deja que el doble sustituya la implementación por defecto', () => {
+		TestBed.configureTestingModule({
+			providers: [
+				provideHttpClient(),
+				provideHttpClientTesting(),
+				provideCollectionApiMock(new StubCollectionApi(onoffCollectionsMock)),
+			],
+		});
+
+		expect(TestBed.inject(CollectionApi)).toBeInstanceOf(StubCollectionApi);
 	});
 });

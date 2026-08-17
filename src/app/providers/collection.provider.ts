@@ -1,5 +1,5 @@
 // Core
-import { EnvironmentProviders, inject, makeEnvironmentProviders, Service } from '@angular/core';
+import { inject, InjectionToken, Service } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, type Observable } from 'rxjs';
 
@@ -23,7 +23,12 @@ import { createSlug } from '@models/slug.model';
 import { collectionDtoSchema, collectionTeaserListDtoSchema, type CollectionDto } from '@models/collection.dto';
 import type { LiteraryWorkTeaserDto } from '@models/literary-work.dto';
 import { ApiUrl, Endpoints } from './endpoints';
-import { CollectionApi } from './collection-api.interface';
+
+// El listado devuelve teasers: la vista de catálogo muestra cada colección sin sus obras.
+export interface CollectionApi {
+	getBySlug(slug: string): Observable<Collection>;
+	getAll(): Observable<CollectionTeaser[]>;
+}
 
 @Service()
 export class HttpCollectionApi implements CollectionApi {
@@ -86,6 +91,7 @@ export class HttpCollectionApi implements CollectionApi {
 	}
 }
 
-export function provideCollectionApi(): EnvironmentProviders {
-	return makeEnvironmentProviders([{ provide: CollectionApi, useExisting: HttpCollectionApi }]);
-}
+export const CollectionApi = new InjectionToken<CollectionApi>('CollectionApi', {
+	providedIn: 'root',
+	factory: () => inject(HttpCollectionApi),
+});

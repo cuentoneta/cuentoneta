@@ -7,9 +7,6 @@ import { provideClientHydration } from '@angular/platform-browser';
 import localeEs from '@angular/common/locales/es-419';
 import { DatePipe, registerLocaleData } from '@angular/common';
 
-// API providers
-import { provideCollectionApi } from './providers/collection.provider';
-
 // Layout
 import { provideLayout } from './providers/layout.provider';
 
@@ -32,8 +29,7 @@ export const appConfig: ApplicationConfig = {
 		),
 		provideHttpClient(),
 
-		// API providers
-		provideCollectionApi(),
+		// Layout
 		provideLayout(),
 
 		// SEO providers
