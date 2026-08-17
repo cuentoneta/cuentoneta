@@ -103,10 +103,10 @@ Ningún gate de CI detecta un dataset que quedó sin migrar: el job `e2e` corre 
 
 ## Cómo correrlas
 
-Desde `cms/`, **con el destino siempre escrito en el comando**:
+Desde `cms/`. Todo comando que **corra** una migración lleva su destino escrito:
 
 ```bash
-# Listar migraciones disponibles
+# Listar migraciones disponibles (no toma destino)
 pnpm exec sanity migration list
 
 # Dry-run (por defecto): muestra las mutaciones sin aplicarlas
@@ -130,6 +130,6 @@ Error: If either --dataset or --project is provided, both must be provided
 
 **Omitir los dos tampoco es una alternativa aceptable**, aunque corra: la CLI cae a `projectId`/`dataset` de `sanity.cli.ts`, que los lee de las env `SANITY_STUDIO_*` del `.env` de `cms/`. El comando queda apuntando a un destino que no dice y que cambia con el ambiente de cada máquina — lo contrario de lo que una operación que muta contenido necesita. Un README de migración publica comandos para copiar y ejecutar: si el destino no está en el comando, quien lo copia no sabe adónde va.
 
-**Ojo con el comando de censo:** `sanity documents query` —el que suele acompañar a una migración para contar antes y verificar después— **no** acopla los dos flags, y ahí el flag de proyecto se llama **`--project-id`**. Copiar `--project` de un comando al otro lo silencia como alias deprecado en vez de fallar.
+**Ojo con el comando de censo:** `sanity documents query` —el que suele acompañar a una migración para contar antes y verificar después— **no** acopla los dos flags, y ahí el flag de proyecto se llama **`--project-id`**. Copiar `--project` de un comando al otro no falla: lo acepta como alias deprecado y sigue, avisando por la salida en vez de abortar. Es una advertencia fácil de pasar por alto entre el resto del output.
 
 Es la forma que usa el skill [`release-workflow`](../skills/release-workflow/SKILL.md) al migrar contra producción, y la que debe heredar todo README de migración nuevo.
