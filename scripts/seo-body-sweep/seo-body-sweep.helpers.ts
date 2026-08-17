@@ -1,0 +1,172 @@
+/**
+ * Núcleo del barrido de cuerpos: todo lo que decide algo, sin red ni relojes.
+ *
+ * El runner le entrega respuestas ya leídas (`{ status, html }`) y recibe de vuelta el veredicto por
+ * página y el de la corrida. Esa frontera es lo que permite fijar en un spec qué se reintenta, qué
+ * cuenta como cuerpo vacío y qué código de salida transporta cada desenlace, sin levantar un servidor.
+ */
+import { collectEmptyBodyViolations } from '../../e2e/_utils/seo-invariants';
+import type { SeoInvariantViolation } from '@testing/seo-invariant-violation';
+
+/**
+ * El veredicto de una página. `unmeasured` no es un tercer grado de "malo": es la ausencia de dato, y
+ * se mantiene separado de `empty` porque un transitorio no puede reportarse como defecto de contenido.
+ */
+export type PageOutcome =
+	| { readonly kind: 'ok' }
+	| { readonly kind: 'empty'; readonly violations: readonly SeoInvariantViolation[] }
+	| { readonly kind: 'unmeasured'; readonly reason: string };
+
+export interface PageResult {
+	readonly path: string;
+	readonly outcome: PageOutcome;
+}
+
+export interface FetchedPage {
+	readonly status: number;
+	readonly html: string;
+}
+
+/**
+ * Un status fuera de 2xx deja la página sin medir, no vacía: el barrido afirma sobre el cuerpo que se
+ * sirve, y una respuesta que no llegó a servir uno no tiene cuerpo sobre el cual afirmar. Que un 404
+ * en el sitemap sea su propio defecto es cierto, pero es el defecto de otra herramienta.
+ */
+export function classifyResponse(page: FetchedPage, minLength?: number): PageOutcome {
+	if (!isSuccess(page.status)) {
+		return { kind: 'unmeasured', reason: `HTTP ${page.status}` };
+	}
+	const violations = collectEmptyBodyViolations(page.html, minLength);
+	return violations.length === 0 ? { kind: 'ok' } : { kind: 'empty', violations };
+}
+
+function isSuccess(status: number): boolean {
+	const SUCCESS_RANGE = { from: 200, to: 299 } as const;
+	return status >= SUCCESS_RANGE.from && status <= SUCCESS_RANGE.to;
+}
+
+/**
+ * Se repite lo que pudo salir distinto: 5xx, la espera explícita del 429 y el timeout del 408. Un 4xx
+ * determinista se acepta como está — repetirlo llega al mismo lugar más tarde.
+ *
+ * La clasificación va sobre el número y nunca sobre el texto del error, que cambia con la versión y
+ * con el idioma.
+ */
+export function isTransientStatus(status: number): boolean {
+	const TOO_MANY_REQUESTS = 429;
+	const REQUEST_TIMEOUT = 408;
+	const SERVER_ERROR_RANGE = { from: 500, to: 599 } as const;
+	return (
+		status === TOO_MANY_REQUESTS ||
+		status === REQUEST_TIMEOUT ||
+		(status >= SERVER_ERROR_RANGE.from && status <= SERVER_ERROR_RANGE.to)
+	);
+}
+
+/**
+ * Fallas donde la respuesta no llegó, así que el intento no fue determinista. El set es cerrado a
+ * propósito: `ENOTFOUND` queda afuera porque un DNS que no resuelve es configuración, y repetirlo solo
+ * demora el diagnóstico.
+ */
+export function isTransientNetworkError(error: unknown): boolean {
+	const RETRYABLE_CODES: readonly string[] = [
+		'ECONNRESET',
+		'ETIMEDOUT',
+		'ECONNABORTED',
+		'EAI_AGAIN',
+		'UND_ERR_CONNECT_TIMEOUT',
+	];
+	const code = readErrorCode(error);
+	return code !== undefined && RETRYABLE_CODES.includes(code);
+}
+
+function readErrorCode(error: unknown): string | undefined {
+	if (typeof error !== 'object' || error === null) {
+		return undefined;
+	}
+	const candidates = [(error as { code?: unknown }).code, (error as { cause?: { code?: unknown } }).cause?.code];
+	return candidates.find((candidate): candidate is string => typeof candidate === 'string');
+}
+
+/** Intentos totales por URL, no reintentos: 3 es el original más dos repeticiones. */
+export const MAX_ATTEMPTS = 3;
+
+/** Espera antes del reintento número `retry` (base 1): 1 s antes del primero, 4 s antes del segundo. */
+export function backoffFor(retry: number): number {
+	const MS_PER_SECOND = 1000;
+	const FACTOR = 4;
+	return FACTOR ** (retry - 1) * MS_PER_SECOND;
+}
+
+export interface RetryDeps {
+	sleep: (ms: number) => Promise<void>;
+	isTransient: (error: unknown) => boolean;
+}
+
+export type RetryResult<T> = { ok: true; value: T; attempts: number } | { ok: false; error: unknown; attempts: number };
+
+/**
+ * Devuelve el desenlace en vez de lanzarlo: la cantidad de intentos es dato del reporte, y colgarla de
+ * una excepción obligaría a inspeccionarla desde afuera para leerla.
+ *
+ * `sleep` se inyecta para que el spec ejercite el backoff sin relojes reales.
+ */
+export async function runWithRetries<T>(operation: () => Promise<T>, deps: RetryDeps): Promise<RetryResult<T>> {
+	let attempts = 0;
+	for (;;) {
+		attempts++;
+		try {
+			return { ok: true, value: await operation(), attempts };
+		} catch (error) {
+			if (attempts >= MAX_ATTEMPTS || !deps.isTransient(error)) {
+				return { ok: false, error, attempts };
+			}
+			await deps.sleep(backoffFor(attempts));
+		}
+	}
+}
+
+/**
+ * Un status transitorio se convierte en excepción para que `runWithRetries` lo vea: el fetch resuelve
+ * con un 503 en vez de rechazar, así que sin esto un 503 se aceptaría al primer intento.
+ */
+export class TransientResponseError extends Error {
+	constructor(public readonly status: number) {
+		super(`HTTP ${status}`);
+		this.name = 'TransientResponseError';
+	}
+}
+
+export function isTransientFailure(error: unknown): boolean {
+	return error instanceof TransientResponseError || isTransientNetworkError(error);
+}
+
+export const EXIT_CODES = Object.freeze({
+	clean: 0,
+	toolFailure: 1,
+	findings: 2,
+} as const);
+
+export type ExitCode = (typeof EXIT_CODES)[keyof typeof EXIT_CODES];
+
+/**
+ * Barrer cero páginas no es barrer limpio: si el sitemap traía URLs y ninguna dejó resultado, la
+ * herramienta no midió nada y decirlo verde sería el mismo punto ciego que el barrido viene a cerrar.
+ */
+export function classifyRunOutcome(results: readonly PageResult[]): ExitCode {
+	if (results.length === 0) {
+		return EXIT_CODES.toolFailure;
+	}
+	const hasFindings = results.some(({ outcome }) => outcome.kind !== 'ok');
+	return hasFindings ? EXIT_CODES.findings : EXIT_CODES.clean;
+}
+
+export function emptyPathsOf(results: readonly PageResult[]): string[] {
+	return results.filter(({ outcome }) => outcome.kind === 'empty').map(({ path }) => path);
+}
+
+export function unmeasuredOf(results: readonly PageResult[]): { path: string; reason: string }[] {
+	return results.flatMap(({ path, outcome }) =>
+		outcome.kind === 'unmeasured' ? [{ path, reason: outcome.reason }] : [],
+	);
+}
