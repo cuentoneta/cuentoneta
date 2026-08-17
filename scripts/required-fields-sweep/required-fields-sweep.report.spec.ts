@@ -107,11 +107,15 @@ describe('decideAction', () => {
 		expect(decideAction({ report: reportOf([]), existing: { body: '<!-- resuelto -->' } }).kind).toBe('noop');
 	});
 
-	// Nunca cierra: que el conteo baje a cero puede deberse a que se borró el documento que lo exponía.
-	it('never closes the follow-up on its own', () => {
+	// Nunca cierra: que el conteo baje a cero puede deberse a que se borró el documento que lo exponía,
+	// no a que alguien lo haya atendido. Lo que se afirma es que avisa y deja el issue abierto.
+	it('announces the resolution without asking to close the follow-up', () => {
 		const body = formatReportBody(reportOf([breach('a', 1)]));
 
-		expect(decideAction({ report: reportOf([]), existing: { body } }).kind).not.toBe('close');
+		const action = decideAction({ report: reportOf([]), existing: { body } });
+
+		expect(action.kind).toBe('resolved');
+		expect(action.kind === 'resolved' && action.comment).toMatch(/se puede cerrar/i);
 	});
 });
 

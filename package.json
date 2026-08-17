@@ -24,7 +24,7 @@
 		"lint": "nx eslint:lint --skip-nx-cache",
 		"check:agents": "node --import tsx ./scripts/check-claude-docs.ts",
 		"issue-refs:sweep": "node --import tsx ./scripts/issue-refs-sweep.ts",
-		"required-fields:sweep": "node --import tsx --env-file=.env ./scripts/required-fields-sweep/required-fields-sweep.ts",
+		"required-fields:sweep": "node --import tsx --env-file-if-exists=.env ./scripts/required-fields-sweep/required-fields-sweep.ts",
 		"worktrees:sweep": "node --import tsx ./scripts/worktree-sweep.ts",
 		"check:findings": "node --import tsx ./scripts/check-finding-refs.ts",
 		"comments:inventory": "node --import tsx ./scripts/extract-comments/extract-comments.ts",

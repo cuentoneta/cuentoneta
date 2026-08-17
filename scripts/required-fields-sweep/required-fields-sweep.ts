@@ -39,10 +39,6 @@ function gh(...args: string[]): string {
 }
 
 /**
- * Las dos perspectivas se cuentan por separado: mezclarlas infla el reporte con borradores a medio
- * cargar, que son un estado legítimo del Studio y no un incumplimiento que alguien deba atender.
- */
-/**
  * Un dataset que no se puede leer **no falla**: sin permiso, una consulta de conteo devuelve `0` en
  * vez de un error. Sin este guard, una credencial vencida produciría un reporte impecable de "ningún
  * campo incumplido" y, con `--apply`, anunciaría que ya no queda nada que atender. Es exactamente el
@@ -95,23 +91,29 @@ function applyAction(report: SweepReport): void {
 	const existing = findTrackingIssue();
 	const action = decideAction({ report, existing });
 
-	switch (action.kind) {
-		case 'create':
-			gh('issue', 'create', '--title', TRACKING_TITLE, '--body', action.body, '--label', '🛠️ tooling');
-			process.stdout.write('seguimiento creado.\n');
-			break;
-		case 'update':
-			gh('issue', 'edit', String(existing?.number), '--body', action.body);
-			process.stdout.write(`seguimiento #${existing?.number} actualizado.\n`);
-			break;
-		case 'resolved':
-			gh('issue', 'edit', String(existing?.number), '--body', action.body);
-			gh('issue', 'comment', String(existing?.number), '--body', action.comment);
-			process.stdout.write(`comentado en #${existing?.number}; se cierra a mano.\n`);
-			break;
-		default:
-			process.stdout.write('sin cambios respecto de la corrida anterior.\n');
+	if (action.kind === 'create') {
+		gh('issue', 'create', '--title', TRACKING_TITLE, '--body', action.body, '--label', '🛠️ tooling');
+		process.stdout.write('seguimiento creado.\n');
+		return;
 	}
+	if (action.kind === 'noop') {
+		process.stdout.write('sin cambios respecto de la corrida anterior.\n');
+		return;
+	}
+
+	// Las dos ramas restantes editan el seguimiento, así que sin él no hay nada que editar: `gh` recibe
+	// el literal "undefined" como número y falla con un mensaje que no dice qué pasó.
+	if (!existing) {
+		throw new Error(`se decidió "${action.kind}" sin un issue de seguimiento que editar`);
+	}
+
+	gh('issue', 'edit', String(existing.number), '--body', action.body);
+	if (action.kind === 'resolved') {
+		gh('issue', 'comment', String(existing.number), '--body', action.comment);
+		process.stdout.write(`comentado en #${existing.number}; se cierra a mano.\n`);
+		return;
+	}
+	process.stdout.write(`seguimiento #${existing.number} actualizado.\n`);
 }
 
 process.stdout.write(
