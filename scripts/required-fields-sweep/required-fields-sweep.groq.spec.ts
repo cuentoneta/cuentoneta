@@ -63,7 +63,9 @@ describe('buildFieldCountQuery', () => {
 			insideArray: true,
 		};
 
-		expect(buildFieldCountQuery(field).publishedQuery).toContain('count(tabs[!defined(slug.current)]) > 0');
+		expect(buildFieldCountQuery(field).publishedQuery).toContain(
+			'count(tabs[defined(slug) && !defined(slug.current)]) > 0',
+		);
 	});
 
 	it('rejects a document type that is not an identifier', () => {
@@ -107,6 +109,31 @@ describe('the generated queries, evaluated', () => {
 		];
 
 		expect(await count(buildFieldCountQuery(field).publishedQuery, withResources)).toBe(1);
+	});
+
+	// Un ítem que no trae el objeto contenedor entero incumple **un** dato, no uno por cada campo de
+	// ese objeto: sin el guard, el mismo documento se cuenta en la fila de `tabs.slug` y en la de
+	// `tabs.slug.current`, y el reporte exagera el problema.
+	it('does not count an item that lacks the whole nested object as breaching its every field', async () => {
+		const field: RequiredFieldPath = {
+			documentType: 'storylist',
+			segments: ['tabs', 'slug', 'current'],
+			insideArray: true,
+		};
+		const withoutSlugObject = [{ _id: 'a', _type: 'storylist', tabs: [{ title: 'sin slug' }] }];
+
+		expect(await count(buildFieldCountQuery(field).publishedQuery, withoutSlugObject)).toBe(0);
+	});
+
+	it('does count an item whose nested object exists but misses the attribute', async () => {
+		const field: RequiredFieldPath = {
+			documentType: 'storylist',
+			segments: ['tabs', 'slug', 'current'],
+			insideArray: true,
+		};
+		const withEmptySlug = [{ _id: 'a', _type: 'storylist', tabs: [{ slug: {} }] }];
+
+		expect(await count(buildFieldCountQuery(field).publishedQuery, withEmptySlug)).toBe(1);
 	});
 
 	// El caso que la perspectiva no distingue: el mismo documento vive publicado y como borrador, y

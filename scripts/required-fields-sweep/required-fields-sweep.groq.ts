@@ -35,7 +35,13 @@ function missingPredicate(segments: readonly string[]): string {
 // vez de emitir una consulta que contaría mal en silencio.
 function missingInArrayPredicate(segments: readonly string[]): string {
 	const [arrayPath, ...rest] = segments;
-	return `count(${arrayPath}[!defined(${rest.join('.')})]) > 0`;
+	// El mismo guard que la rama de arriba, aplicado dentro del ítem: sin él, un elemento que no trae
+	// el objeto contenedor entero se cuenta una vez por cada campo de ese objeto, y el reporte dice
+	// que faltan varios datos donde falta uno.
+	const parents = rest.slice(0, -1);
+	const missing =
+		parents.length === 0 ? `!defined(${rest[0]})` : `defined(${parents.join('.')}) && !defined(${rest.join('.')})`;
+	return `count(${arrayPath}[${missing}]) > 0`;
 }
 
 // El nombre de tipo y los segmentos se interpolan en el texto de la query, no viajan como parámetro:

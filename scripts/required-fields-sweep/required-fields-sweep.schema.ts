@@ -116,6 +116,12 @@ function descendInline(
 	acc: Accumulator,
 ): void {
 	const name = node.name;
+	// Los internos de un tipo del sistema los escribe el Studio, no quien carga contenido: el recorte
+	// y el foco de una imagen no son un dato editorial que alguien pueda incumplir, y descender ahí
+	// llenaría el reporte de filas que nadie puede accionar.
+	if (name?.startsWith('sanity.')) {
+		return;
+	}
 	const resolved = name ? acc.types.get(name) : undefined;
 
 	if (!name || !resolved) {
@@ -140,17 +146,18 @@ function descendArray(
 	acc: Accumulator,
 ): void {
 	const member = node.of;
-	// El predicado de conteo sabe filtrar un array por su contenido, pero no anidar un segundo filtro
-	// adentro: emitiría una consulta válida que cuenta otra cosa, sin fallar.
-	if (insideArray) {
-		acc.uncovered.push({ documentType, segments, reason: 'array dentro de otro array' });
+	// Un array de uniones tiene tantas formas como miembros, y el predicado no puede distinguirlas sin
+	// ramificar por `_type`. Se chequea antes que el anidamiento porque una unión lo es igual estando
+	// anidada, y nombrar la razón precisa es lo que hace accionable el punto ciego.
+	if (member?.type === 'union') {
+		acc.uncovered.push({ documentType, segments, reason: 'no se desciende: array de tipos unión' });
 		return;
 	}
-	// Un array de uniones tiene tantas formas como miembros, y el predicado de conteo no puede
-	// distinguirlas sin ramificar por `_type`. Se declara el punto ciego en vez de omitirlo: uno
-	// visible es accionable, uno silencioso reproduce el problema que este barrido existe para cerrar.
-	if (member?.type === 'union') {
-		acc.uncovered.push({ documentType, segments, reason: 'array de tipos unión' });
+	// El predicado de conteo sabe filtrar un array por su contenido, pero no anidar un segundo filtro
+	// adentro: emitiría una consulta válida que cuenta otra cosa, sin fallar. Que el atributo exista sí
+	// se mide; lo que no se mira es lo que hay dentro.
+	if (insideArray) {
+		acc.uncovered.push({ documentType, segments, reason: 'no se desciende: array dentro de otro array' });
 		return;
 	}
 	descend(member, documentType, segments, true, acc);

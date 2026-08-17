@@ -970,7 +970,7 @@
 				"value": {
 					"type": "boolean"
 				},
-				"optional": true
+				"optional": false
 			},
 			"tags": {
 				"type": "objectAttribute",
