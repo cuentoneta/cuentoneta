@@ -54,6 +54,18 @@ describe('buildFieldCountQuery', () => {
 		expect(() => buildFieldCountQuery(rootField(['name"] && 1 == 1 && ["']))).toThrow(/nombre de campo inesperado/);
 	});
 
+	// Dentro del filtro el resto del path se resuelve contra cada ítem, así que un objeto anidado se
+	// expresa igual de bien que un campo directo.
+	it('reaches an attribute nested in an object inside the array', () => {
+		const field: RequiredFieldPath = {
+			documentType: 'storylist',
+			segments: ['tabs', 'slug', 'current'],
+			insideArray: true,
+		};
+
+		expect(buildFieldCountQuery(field).publishedQuery).toContain('count(tabs[!defined(slug.current)]) > 0');
+	});
+
 	it('rejects a document type that is not an identifier', () => {
 		const field: RequiredFieldPath = { documentType: 'author"]|| *[', segments: ['name'], insideArray: false };
 

@@ -124,6 +124,41 @@ describe('scanRequiredFields', () => {
 		expect(scanRequiredFields([node] as never).required.map((field) => field.segments)).toEqual([['author']]);
 	});
 
+	// El predicado de conteo no sabe anidar un segundo filtro: emitiría una consulta válida que cuenta
+	// otra cosa, sin fallar.
+	it('reports an array inside another array as uncovered', () => {
+		const node = {
+			type: 'document',
+			name: 'story',
+			value: {
+				type: 'object',
+				attributes: {
+					content: {
+						type: 'objectAttribute',
+						value: {
+							type: 'array',
+							of: {
+								type: 'object',
+								attributes: {
+									epigraphs: {
+										type: 'objectAttribute',
+										value: { type: 'array', of: { type: 'object', attributes: {} } },
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		};
+
+		const { uncovered } = scanRequiredFields([node] as never);
+
+		expect(uncovered).toEqual([
+			{ documentType: 'story', segments: ['content', 'epigraphs'], reason: 'array dentro de otro array' },
+		]);
+	});
+
 	it('reports an array of unions as uncovered instead of skipping it silently', () => {
 		const node = {
 			type: 'document',

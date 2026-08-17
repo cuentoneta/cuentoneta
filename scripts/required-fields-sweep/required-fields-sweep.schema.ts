@@ -101,7 +101,7 @@ function descend(
 		return;
 	}
 	if (node.type === 'array') {
-		descendArray(node, documentType, segments, acc);
+		descendArray(node, documentType, segments, insideArray, acc);
 	}
 }
 
@@ -132,8 +132,20 @@ function descendInline(
 	acc.resolving.delete(name);
 }
 
-function descendArray(node: SchemaNode, documentType: string, segments: readonly string[], acc: Accumulator): void {
+function descendArray(
+	node: SchemaNode,
+	documentType: string,
+	segments: readonly string[],
+	insideArray: boolean,
+	acc: Accumulator,
+): void {
 	const member = node.of;
+	// El predicado de conteo sabe filtrar un array por su contenido, pero no anidar un segundo filtro
+	// adentro: emitiría una consulta válida que cuenta otra cosa, sin fallar.
+	if (insideArray) {
+		acc.uncovered.push({ documentType, segments, reason: 'array dentro de otro array' });
+		return;
+	}
 	// Un array de uniones tiene tantas formas como miembros, y el predicado de conteo no puede
 	// distinguirlas sin ramificar por `_type`. Se declara el punto ciego en vez de omitirlo: uno
 	// visible es accionable, uno silencioso reproduce el problema que este barrido existe para cerrar.

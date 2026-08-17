@@ -28,6 +28,11 @@ function missingPredicate(segments: readonly string[]): string {
 
 // Dentro de un array, el incumplimiento es de al menos un elemento, no del documento: se cuenta el
 // documento que tiene alguno.
+//
+// Dentro del filtro, el resto del path se resuelve contra cada ítem, así que un objeto anidado
+// (`tabs[!defined(slug.current)]`) se expresa igual de bien. Lo que este predicado no sabe expresar es
+// un **segundo** array, y de eso se ocupa el recorrido del schema, que lo declara como no cubierto en
+// vez de emitir una consulta que contaría mal en silencio.
 function missingInArrayPredicate(segments: readonly string[]): string {
 	const [arrayPath, ...rest] = segments;
 	return `count(${arrayPath}[!defined(${rest.join('.')})]) > 0`;
