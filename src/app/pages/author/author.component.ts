@@ -16,7 +16,7 @@ import { AuthorStructuredDataDirective } from './author-structured-data.directiv
 import { AUTHOR_HOST, type AuthorHost } from './author-host';
 
 // Services
-import { AuthorApi } from '../../providers/author-api.interface';
+import { AuthorApi } from '../../providers/author.provider';
 import { StoryApi } from '../../providers/story.provider';
 
 // Componentes

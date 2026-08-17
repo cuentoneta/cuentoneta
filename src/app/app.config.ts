@@ -8,7 +8,6 @@ import localeEs from '@angular/common/locales/es-419';
 import { DatePipe, registerLocaleData } from '@angular/common';
 
 // API providers
-import { provideAuthorApi } from './providers/author.provider';
 import { provideCollectionApi } from './providers/collection.provider';
 import { provideLiteraryWorkApi } from './providers/literary-work.provider';
 
@@ -35,7 +34,6 @@ export const appConfig: ApplicationConfig = {
 		provideHttpClient(),
 
 		// API providers
-		provideAuthorApi(),
 		provideCollectionApi(),
 		provideLiteraryWorkApi(),
 		provideLayout(),
