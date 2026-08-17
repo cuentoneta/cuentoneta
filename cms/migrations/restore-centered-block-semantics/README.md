@@ -53,7 +53,7 @@ El sync de datasets es `production → staging + development` (borrado e importa
 ### 1. Censo previo
 
 ```bash
-pnpm exec sanity documents query --api-version v2021-06-07 --dataset production \
+pnpm exec sanity documents query --api-version v2021-06-07 --project-id s4dbqkc5 --dataset production \
   '*[_id in ["lw-from-story-bd3bbc87-71bd-4374-9cf8-417e915669c7","lw-from-story-e1138575-5c25-41c4-9bd2-4793642ceb62","lw-from-story-666dac9b-9086-4db9-a17c-d38f6f09532c"]]{_id, "secciones": count(content)}'
 ```
 
@@ -64,7 +64,7 @@ pnpm exec sanity documents query --api-version v2021-06-07 --dataset production 
 ### 2. Ensayo
 
 ```bash
-pnpm exec sanity migration run restore-centered-block-semantics --dataset production > dry-run.txt
+pnpm exec sanity migration run restore-centered-block-semantics --project s4dbqkc5 --dataset production > dry-run.txt
 ```
 
 Contrastar los patches impresos **carácter a carácter** contra el resultado buscado: las dos citas con `>` en su línea intermedia, las reglas del marco ausentes, la firma en cursiva al cierre y la separación del encabezado de parte. El ensayo imprime las mutaciones que la migración emite y **no llega al servidor**, así que no valida nada del content lake: este contraste es un paso, no una sugerencia.
@@ -72,7 +72,7 @@ Contrastar los patches impresos **carácter a carácter** contra el resultado bu
 ### 3. Aplicación
 
 ```bash
-pnpm exec sanity migration run restore-centered-block-semantics --dataset production --no-dry-run --no-confirm
+pnpm exec sanity migration run restore-centered-block-semantics --project s4dbqkc5 --dataset production --no-dry-run --no-confirm
 ```
 
 ### 4. Verificación
