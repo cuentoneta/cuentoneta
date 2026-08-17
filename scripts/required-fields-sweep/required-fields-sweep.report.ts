@@ -35,10 +35,14 @@ export function breachesOf(counts: readonly FieldBreach[]): FieldBreach[] {
  * Cadena determinista del conjunto de hallazgos. Es lo que vuelve idempotente al job: mismo conjunto
  * ⇒ misma huella ⇒ no se escribe nada.
  */
-export function fingerprint(breaches: readonly FieldBreach[]): string {
+export function fingerprint(breaches: readonly FieldBreach[], uncovered: readonly UncoveredPath[] = []): string {
 	// Sin los conteos a propósito: que una obra nueva sume un incumplimiento al mismo campo no es un
 	// hallazgo distinto, y reescribiría el seguimiento cada semana sin que nada haya cambiado.
-	return [...new Set(breaches.map((breach) => breach.label))].sort().join('|');
+	const labels = breaches.map((breach) => breach.label);
+	// Los puntos ciegos entran a la huella porque el reporte los publica: si cambian y la huella no,
+	// el seguimiento se queda mostrando una lista que dejó de ser cierta.
+	const blind = uncovered.map((path) => `~${path.documentType}.${path.segments.join('.')}`);
+	return [...new Set([...labels, ...blind])].sort().join('|');
 }
 
 function breachRows(breaches: readonly FieldBreach[]): string[] {
@@ -70,7 +74,7 @@ export function formatReportBody(report: SweepReport): string {
 		...breachRows(report.breaches),
 		...uncoveredSection,
 		'',
-		`${FINGERPRINT_PREFIX} ${fingerprint(report.breaches)} -->`,
+		`${FINGERPRINT_PREFIX} ${fingerprint(report.breaches, report.uncovered)} -->`,
 	].join('\n');
 }
 
@@ -87,9 +91,11 @@ export function decideAction(input: { report: SweepReport; existing: { body: str
 		if (existing === null || !existing.body.includes(FINGERPRINT_PREFIX)) {
 			return { kind: 'noop' };
 		}
+		// El cuerpo se reemplaza entero: conservar la tabla dejaría el issue afirmando que esos campos
+		// se incumplen, justo debajo del aviso de que ya no.
 		return {
 			kind: 'resolved',
-			body: existing.body.replace(new RegExp(`${FINGERPRINT_PREFIX}[^>]*-->`), '<!-- resuelto -->'),
+			body: 'Ya no quedan campos requeridos que el dato persistido incumpla.\n\n<!-- resuelto -->',
 			comment: 'Ya no quedan campos requeridos incumplidos. Se puede cerrar este seguimiento.',
 		};
 	}

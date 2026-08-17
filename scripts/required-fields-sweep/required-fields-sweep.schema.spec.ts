@@ -155,7 +155,11 @@ describe('scanRequiredFields', () => {
 		const { uncovered } = scanRequiredFields([node] as never);
 
 		expect(uncovered).toEqual([
-			{ documentType: 'story', segments: ['content', 'epigraphs'], reason: 'array dentro de otro array' },
+			{
+				documentType: 'story',
+				segments: ['content', 'epigraphs'],
+				reason: 'no se desciende: array dentro de otro array',
+			},
 		]);
 	});
 
@@ -174,7 +178,7 @@ describe('scanRequiredFields', () => {
 		const { uncovered } = scanRequiredFields([node] as never);
 
 		expect(uncovered).toEqual([
-			{ documentType: 'storylist', segments: ['mediaSources'], reason: 'array de tipos unión' },
+			{ documentType: 'storylist', segments: ['mediaSources'], reason: 'no se desciende: array de tipos unión' },
 		]);
 	});
 
