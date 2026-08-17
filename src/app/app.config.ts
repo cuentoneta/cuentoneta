@@ -9,7 +9,6 @@ import { DatePipe, registerLocaleData } from '@angular/common';
 
 // API providers
 import { provideCollectionApi } from './providers/collection.provider';
-import { provideLiteraryWorkApi } from './providers/literary-work.provider';
 
 // Layout
 import { provideLayout } from './providers/layout.provider';
@@ -35,7 +34,6 @@ export const appConfig: ApplicationConfig = {
 
 		// API providers
 		provideCollectionApi(),
-		provideLiteraryWorkApi(),
 		provideLayout(),
 
 		// SEO providers

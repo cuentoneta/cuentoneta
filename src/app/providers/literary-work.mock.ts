@@ -4,7 +4,7 @@ import { Observable, of } from 'rxjs';
 
 // Models
 import type { LiteraryWork } from '@models/literary-work.model';
-import { LiteraryWorkApi } from './literary-work-api.interface';
+import { LiteraryWorkApi } from './literary-work.provider';
 
 export class StubLiteraryWorkApi implements LiteraryWorkApi {
 	constructor(private readonly literaryWork: LiteraryWork) {}

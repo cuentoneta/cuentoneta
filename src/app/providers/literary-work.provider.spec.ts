@@ -11,8 +11,9 @@ import {
 } from '@mocks/onoff-literary-works.mock';
 import { environment } from '../environments/environment';
 import { Endpoints } from './endpoints';
-import { HttpLiteraryWorkApi } from './literary-work.provider';
+import { HttpLiteraryWorkApi, LiteraryWorkApi } from './literary-work.provider';
 import type { LiteraryWorkDto } from '@models/literary-work.dto';
+import { provideLiteraryWorkApiMock, StubLiteraryWorkApi } from './literary-work.mock';
 
 // El DTO de wire es la serialización JSON del agregado: los métodos (toAnchor) y los brands se
 // pierden, quedando el shape plano que el endpoint efectivamente emite. Se deriva del canon de Onoff
@@ -169,5 +170,29 @@ describe('HttpLiteraryWorkApi', () => {
 		http.expectOne(`${environment.apiUrl}${Endpoints.LiteraryWork}/${dto.slug}`).flush(malformed);
 
 		await expect(result).rejects.toThrow();
+	});
+});
+
+describe('LiteraryWorkApi', () => {
+	// La factory del token es lo único que ata el contrato a su implementación HTTP: sin ella
+	// la app arranca sin proveedor y falla recién al inyectarlo, ya en la ruta que lo necesita.
+	it('resuelve la implementación HTTP sin ningún proveedor explícito', () => {
+		TestBed.configureTestingModule({
+			providers: [provideHttpClient(), provideHttpClientTesting()],
+		});
+
+		expect(TestBed.inject(LiteraryWorkApi)).toBeInstanceOf(HttpLiteraryWorkApi);
+	});
+
+	it('deja que el doble sustituya la implementación por defecto', () => {
+		TestBed.configureTestingModule({
+			providers: [
+				provideHttpClient(),
+				provideHttpClientTesting(),
+				provideLiteraryWorkApiMock(new StubLiteraryWorkApi(onoffLiteraryWorksMock[0])),
+			],
+		});
+
+		expect(TestBed.inject(LiteraryWorkApi)).toBeInstanceOf(StubLiteraryWorkApi);
 	});
 });
