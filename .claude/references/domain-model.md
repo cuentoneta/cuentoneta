@@ -268,7 +268,7 @@ export const literaryWorkTeaserDtoSchema = z.object({
 import { z } from 'zod/mini';
 ```
 
-Los DTO cruzan al bundle del navegador, donde el peso de la librería se paga en cada carga. El paquete completo (`zod` clásico) no tree-shakea; `zod/mini` sí, pero **solo importado como namespace** — traer su `z` por nombre (`import { z } from 'zod/mini'`) también materializa el objeto reexportado y devuelve la librería entera al bundle, con el agravante de que reduce el tamaño lo suficiente como para parecer una mejora real. La regla de ESLint `no-full-zod-in-browser-dtos` (`src/models/**/*.dto.ts`) rechaza las dos formas incorrectas. Con `zod/mini`, el API encadenado (`.optional()`, `.extend()`, `.array()` sobre un schema existente) no está disponible: se usa su forma standalone (`z.optional(schema)`, `z.extend(base, {...})`, `z.array(schema)`).
+La forma del import no es cosmética —decide si la librería entera viaja al navegador— y con `zod/mini` el API encadenado no está disponible: el porqué, las mediciones y el enforcement están en [`typescript.md`](typescript.md#zodmini-como-namespace-en-los-dto-del-frontend).
 
 La validación cruza la frontera una sola vez; pasada esa frontera, el dominio confía en sus tipos.
 
