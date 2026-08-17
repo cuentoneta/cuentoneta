@@ -30,6 +30,15 @@ const readonlyFactories = ['effect', 'inject', 'output'];
 const readonlyFactoryMessage =
 	'Las dependencias inyectadas, los effects y los outputs se declaran `readonly` (la referencia no se reasigna) — ver angular-components.md.';
 
+// Vive suelto porque más de un bloque lo necesita: en flat config, un bloque posterior que redeclare
+// `no-restricted-imports` reemplaza su array en vez de mergearlo, así que quien acote por scope tiene
+// que volver a esparcirlo o perdería la restricción del corpus sin que nada avise.
+const singleWorkCorpusImportPattern = {
+	group: ['@mocks/onoff/**', '**/mocks/onoff/**'],
+	message:
+		'No importes una obra puntual del corpus: usá las colecciones de @mocks/onoff-literary-works.mock (onoffLiteraryWorksMock, onoffLiteraryWorkEpigraphsMock) o sus selectores por capacidad (onoffLiteraryWorksWithEpigraphs, onoffLiteraryWorksWithEditorialNote, …), que declaran el shape que el caso necesita y crecen con el canon.',
+};
+
 const commonRestrictedSyntax = [
 	{
 		selector: 'MemberExpression[object.name="module"][property.name="exports"]',
@@ -289,16 +298,41 @@ export default [
 		ignores: ['src/mocks/**/*.ts'],
 		rules: {
 			'no-restricted-imports': 'off',
+			'@typescript-eslint/no-restricted-imports': ['error', { patterns: [singleWorkCorpusImportPattern] }],
+		},
+	},
+	{
+		// Los DTO de wire del frontend cruzan al bundle del navegador, donde zod se paga por carga. El
+		// paquete completo no tree-shakea, y `zod/mini` solo lo hace importado como namespace: traer su
+		// `z` por nombre materializa el objeto reexportado y devuelve la librería entera al bundle —
+		// medido, 306 kB contra 15 kB— sin que falle el typecheck, ningún test ni el budget.
+		// Recompone los dos arrays que su scope pisaría: el patrón del corpus y commonRestrictedSyntax.
+		name: 'no-full-zod-in-browser-dtos',
+		files: ['src/models/**/*.dto.ts'],
+		rules: {
+			'no-restricted-imports': 'off',
 			'@typescript-eslint/no-restricted-imports': [
 				'error',
 				{
-					patterns: [
+					patterns: [singleWorkCorpusImportPattern],
+					paths: [
 						{
-							group: ['@mocks/onoff/**', '**/mocks/onoff/**'],
+							name: 'zod',
 							message:
-								'No importes una obra puntual del corpus: usá las colecciones de @mocks/onoff-literary-works.mock (onoffLiteraryWorksMock, onoffLiteraryWorkEpigraphsMock) o sus selectores por capacidad (onoffLiteraryWorksWithEpigraphs, onoffLiteraryWorksWithEditorialNote, …), que declaran el shape que el caso necesita y crecen con el canon.',
+								'Los DTO del frontend usan `import * as z from "zod/mini"`: el paquete completo no tree-shakea y viaja entero al navegador. Los schemas del backend (src/api/**) sí usan zod clásico.',
 						},
 					],
+				},
+			],
+			'no-restricted-syntax': [
+				'error',
+				...commonRestrictedSyntax,
+				{
+					// Acota al ImportSpecifier a propósito: `importNames` de no-restricted-imports también
+					// rechaza `import * as z`, que es justamente la forma que hay que usar.
+					selector: `ImportDeclaration[source.value='zod/mini'] > ImportSpecifier[imported.name='z']`,
+					message:
+						'Importá `zod/mini` como namespace (`import * as z from "zod/mini"`): traer `z` por nombre anula el tree-shaking y devuelve la librería entera al bundle del navegador.',
 				},
 			],
 		},

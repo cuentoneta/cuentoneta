@@ -21,6 +21,16 @@ function toWireDto(literaryWork: LiteraryWork): LiteraryWorkDto {
 	return JSON.parse(JSON.stringify(literaryWork)) as LiteraryWorkDto;
 }
 
+// Quita claves sin dejarlas en `undefined`: el punto del caso que lo usa es que la clave **no viaje**,
+// que es distinto de viajar con valor indefinido.
+function omit<T extends object, K extends keyof T>(source: T, keys: readonly K[]): Omit<T, K> {
+	const result = { ...source };
+	for (const key of keys) {
+		delete result[key];
+	}
+	return result;
+}
+
 describe('HttpLiteraryWorkApi', () => {
 	let api: HttpLiteraryWorkApi;
 	let http: HttpTestingController;
@@ -88,12 +98,10 @@ describe('HttpLiteraryWorkApi', () => {
 	it('rehydrates a payload with every optional key absent', async () => {
 		const dto = toWireDto(onoffLiteraryWorksMock[0]);
 		const [firstSection, ...restOfSections] = dto.content;
-		const { badLanguage, editorialNote, ...withoutOptionals } = dto;
-		const { title, epigraphs, ...sectionWithoutOptionals } = firstSection;
 
 		const rehydrated = await requestBySlug({
-			...withoutOptionals,
-			content: [sectionWithoutOptionals, ...restOfSections],
+			...omit(dto, ['badLanguage', 'editorialNote']),
+			content: [omit(firstSection, ['title', 'epigraphs']), ...restOfSections],
 		});
 
 		expect(rehydrated.badLanguage).toBeUndefined();
