@@ -28,11 +28,25 @@ export interface FetchedPage {
 }
 
 /**
+ * Umbral propio del barrido, más bajo que el de la suite de invariantes (120).
+ *
+ * Son dos trabajos distintos: la suite afirma sobre fixtures conocidos, donde 120 caracteres separan
+ * bien una página sana de un skeleton; el barrido afirma sobre **todas** las páginas del sitio,
+ * incluidas las legítimamente brevísimas. El corpus tiene microcuentos cuyo `<main>` completo —título,
+ * tiempo de lectura y cuerpo— ronda los 99 caracteres, y acusarlos de servir un cuerpo vacío sería
+ * cambiar un punto ciego por ruido.
+ *
+ * 40 deja margen de sobra a los dos lados: la falla que motivó el barrido servía un `<main>` de 0
+ * caracteres, y el microcuento más corto medido más que duplica el umbral.
+ */
+export const SWEEP_MIN_CONTENT_LENGTH = 40;
+
+/**
  * Un status fuera de 2xx deja la página sin medir, no vacía: el barrido afirma sobre el cuerpo que se
  * sirve, y una respuesta que no llegó a servir uno no tiene cuerpo sobre el cual afirmar. Que un 404
  * en el sitemap sea su propio defecto es cierto, pero es el defecto de otra herramienta.
  */
-export function classifyResponse(page: FetchedPage, minLength?: number): PageOutcome {
+export function classifyResponse(page: FetchedPage, minLength: number = SWEEP_MIN_CONTENT_LENGTH): PageOutcome {
 	if (!isSuccess(page.status)) {
 		return { kind: 'unmeasured', reason: `HTTP ${page.status}` };
 	}

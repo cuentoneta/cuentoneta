@@ -114,15 +114,25 @@ export function decideAction(input: { report: SweepReport; existing: { body: str
 		: { kind: 'update', body };
 }
 
-/** La salida compacta de la corrida: es lo que se lee en la consola del job. */
+/**
+ * La salida de la corrida: es lo que se lee en la consola del job y en local.
+ *
+ * Hasta `MAX_LISTED` hallazgos lista las rutas, porque de un puñado lo que se quiere es ir a mirarlas;
+ * de ahí en más agrupa por tipo, que es lo que se quiere de una regresión extendida.
+ */
 export function formatConsoleReport(report: SweepReport): string {
+	const MAX_LISTED = 10;
 	const unmeasured = report.unmeasured.length === 0 ? '' : ` · ${report.unmeasured.length} sin medir`;
 	if (report.emptyPaths.length === 0) {
 		return `barrido de cuerpos: ${report.scanned} URLs · ninguna vacía${unmeasured}.`;
 	}
+	const detail =
+		report.emptyPaths.length <= MAX_LISTED
+			? report.emptyPaths.map((path) => `  ${path}`)
+			: groupByPrefix(report.emptyPaths).map(({ prefix, paths }) => `  ${prefix} — ${paths.length}`);
 	return [
 		`barrido de cuerpos: ${report.scanned} URLs · ${report.emptyPaths.length} vacías${unmeasured}.`,
-		...groupByPrefix(report.emptyPaths).map(({ prefix, paths }) => `  ${prefix} — ${paths.length}`),
+		...detail,
 	].join('\n');
 }
 

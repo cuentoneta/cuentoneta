@@ -42,6 +42,20 @@ describe('classifyResponse', () => {
 	it('respeta un umbral explícito', () => {
 		expect(classifyResponse({ status: 200, html: '<main><p>breve</p></main>' }, 3)).toEqual({ kind: 'ok' });
 	});
+
+	// El barrido afirma sobre todas las páginas del sitio, así que su umbral tiene que tolerar a las
+	// legítimamente brevísimas. Este es el `<main>` real de un microcuento del corpus, que con el
+	// umbral de la suite (120) se reportaba como cuerpo vacío.
+	it('acepta un microcuento, que es breve pero no está vacío', () => {
+		const microcuento =
+			'<main><h1>¿Tertulia afortunada?</h1><p>Afortunado</p><p>1 minutos de lectura</p><p>Tertulia gris, alguno me sonríe, pero me voy.</p></main>';
+		expect(classifyResponse({ status: 200, html: microcuento })).toEqual({ kind: 'ok' });
+		expect(classifyResponse({ status: 200, html: microcuento }, 120).kind).toBe('empty');
+	});
+
+	it('sigue delatando el cuerpo sin renderizar, que es lo que el barrido busca', () => {
+		expect(classifyResponse({ status: 200, html: '<main></main>' }).kind).toBe('empty');
+	});
 });
 
 describe('isTransientStatus', () => {

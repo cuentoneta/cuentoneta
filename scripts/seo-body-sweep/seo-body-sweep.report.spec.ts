@@ -115,10 +115,19 @@ describe('formatConsoleReport', () => {
 		expect(formatConsoleReport(reportOf([]))).toContain('ninguna vacía');
 	});
 
-	it('desglosa por tipo cuando hay hallazgos', () => {
-		const line = formatConsoleReport(reportOf(['/author/a', '/author/b', '/story/x']));
-		expect(line).toContain('3 vacías');
-		expect(line).toContain('/author — 2');
+	it('lista las rutas cuando son pocas: de un puñado se quiere ir a mirarlas', () => {
+		const line = formatConsoleReport(reportOf(['/author/a', '/story/x']));
+		expect(line).toContain('2 vacías');
+		expect(line).toContain('/author/a');
+		expect(line).toContain('/story/x');
+	});
+
+	it('desglosa por tipo cuando son demasiadas para listar', () => {
+		const many = Array.from({ length: 12 }, (_, index) => `/author/a${index}`);
+		const line = formatConsoleReport(reportOf([...many, '/story/x']));
+		expect(line).toContain('13 vacías');
+		expect(line).toContain('/author — 12');
+		expect(line).not.toContain('/author/a0\n');
 	});
 
 	it('menciona las no medidas', () => {
