@@ -135,7 +135,7 @@ Reglas no negociables. Una violación requiere justificación explícita.
 
 - Archivos `kebab-case`; clases `PascalCase`; funciones/métodos `camelCase`; constantes globales `SCREAMING_SNAKE_CASE`, locales `camelCase`.
 - Interfaces **sin** prefijo `I`, sin excepciones. Convención **Qualified Implementation**: la interfaz tiene el nombre limpio; las implementaciones llevan prefijo de tecnología (`Sanity*`, `Http*`) y los dobles de test se nombran por su comportamiento — `Stub*` (devuelve canned), `Fake*` (implementación real con un atajo; `InMemory*` para lo que sustituye **almacenamiento**, `Controllable*` para lo que sustituye un **entorno**), `Spy*` (registra) — **nunca** `Mock*` → [`clean-architecture.md`](.claude/references/clean-architecture.md).
-- **API providers del frontend:** el archivo de la interfaz lleva el sufijo `-api` — `<dominio>-api.interface.ts` (export `<X>Api`) — para distinguirlo de una interfaz del modelo de dominio. La impl y el doble viven en `<dominio>.provider.ts` (`Http<X>Api` + `provide<X>Api()`) y `<dominio>.mock.ts` (`Stub<X>Api` — devuelve canned — + `provide<X>ApiMock()`). Ver [`clean-architecture.md`](.claude/references/clean-architecture.md).
+- **API providers del frontend:** dos archivos por dominio. `<dominio>.provider.ts` declara la interfaz `<X>Api`, la impl `Http<X>Api` y el `InjectionToken` homónimo, **tree-shakable** (`providedIn: 'root'` + `factory: () => inject(Http<X>Api)`): la implementación viaja así al chunk de quien la inyecta, y **no existe** `provide<X>Api()`. `<dominio>.mock.ts` tiene el doble (`Stub<X>Api` — devuelve canned — + `provide<X>ApiMock()`), que sí se cablea explícito y gana sobre la factory. Ver [`clean-architecture.md`](.claude/references/clean-architecture.md).
 
 ### Comentarios
 
