@@ -94,8 +94,8 @@ _Monty Python_. La URL apunta al artículo real; corregir el título es trabajo 
 Dry-run por defecto, y **una corrida por dataset**: aplicarla en uno no la aplica a los otros.
 
 ```bash
-pnpm exec sanity migration run sanitize-resources-without-url --dataset development
-pnpm exec sanity migration run sanitize-resources-without-url --dataset development --no-dry-run
+pnpm exec sanity migration run sanitize-resources-without-url --project s4dbqkc5 --dataset development
+pnpm exec sanity migration run sanitize-resources-without-url --project s4dbqkc5 --dataset development --no-dry-run
 ```
 
 Repetir para `staging` y `production`. El dry-run se contrasta contra los `_key` de la tabla.
