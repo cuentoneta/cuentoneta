@@ -115,6 +115,50 @@ describe('HeaderComponent', () => {
 			expect(banner).not.toHaveClass('h-0');
 		});
 
+		// Los cuatro casos siguientes cubren el contrato que las clases de colapso no expresan: una barra
+		// que la interfaz declara ausente no puede seguir recibiendo foco. `happy-dom` consulta los
+		// ancestros `inert` al enfocar, así que acá se afirma comportamiento y no solo el atributo emitido.
+		it('should keep the brand link out of reach while hidden', async () => {
+			await renderHeader(false);
+
+			const brandLink = screen.getByRole('link', { name: 'La Cuentoneta — Inicio' });
+			brandLink.focus();
+
+			expect(brandLink).not.toHaveFocus();
+		});
+
+		// Sin este control, el caso de arriba pasaría igual con un componente que no deja enfocar nunca.
+		it('should let the brand link take focus while visible', async () => {
+			await renderHeader(true);
+
+			const brandLink = screen.getByRole('link', { name: 'La Cuentoneta — Inicio' });
+			brandLink.focus();
+
+			expect(brandLink).toHaveFocus();
+		});
+
+		// El otro control alcanzable en `xs`, que es el único ancho donde la barra llega a ocultarse: ahí
+		// los enlaces de escritorio están en `display: none` y el menú se abre por este botón.
+		it('should keep the menu toggler out of reach while hidden', async () => {
+			await renderHeader(false);
+
+			const toggler = screen.getByRole('button');
+			toggler.focus();
+
+			expect(toggler).not.toHaveFocus();
+		});
+
+		// El clic y la exclusión del árbol de accesibilidad los decide el navegador, no happy-dom: acá se
+		// afirma que el estado queda declarado, y el e2e comprueba lo que ese atributo produce de verdad.
+		it('should mark the header inert only while hidden', async () => {
+			const { rerender } = await renderHeader(true);
+			expect(screen.getByRole('banner')).not.toHaveAttribute('inert');
+
+			await rerender({ inputs: { isVisible: false } });
+
+			expect(screen.getByRole('banner')).toHaveAttribute('inert');
+		});
+
 		it('should close the mobile menu when the header hides', async () => {
 			const user = userEvent.setup();
 			const { rerender } = await renderHeader(true);

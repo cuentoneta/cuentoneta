@@ -21,6 +21,7 @@ type VisibilityState = (typeof VisibilityState)[keyof typeof VisibilityState];
 	template: `
 		<header
 			[class]="visibilityClasses()"
+			[attr.inert]="isHidden() ? '' : null"
 			class="grid w-full grid-cols-[1fr_theme(spacing.6)] grid-rows-[theme(spacing.16)_1fr] bg-neutral-50 px-5 transition-[height,opacity,translate] duration-200 motion-reduce:transition-none md:grid-cols-2 md:grid-rows-1"
 		>
 			<section class="flex items-center">
@@ -100,8 +101,12 @@ export class HeaderComponent {
 
 	protected readonly visibilityClasses = computed(() => this.visibilityClassMap[this.isVisible()]);
 
+	// El estado oculto colapsa el alto y pinta transparente, y ninguna de las dos cosas saca al contenido
+	// del orden de tabulación ni del hit-test: sin esto, la barra ausente sigue siendo navegable.
+	protected readonly isHidden = computed(() => this.isVisible() === VisibilityState.Hidden);
+
 	private readonly collapseMenuOnHideEffect = effect(() => {
-		if (this.isVisible() === VisibilityState.Hidden) {
+		if (this.isHidden()) {
 			this.displayMenu.set(false);
 		}
 	});
