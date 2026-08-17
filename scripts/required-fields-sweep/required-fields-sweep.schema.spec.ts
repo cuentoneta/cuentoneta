@@ -143,6 +143,17 @@ describe('scanRequiredFields', () => {
 		]);
 	});
 
+	// Los gestiona el content lake: reportarlos sería pedirle a alguien que corrija algo que no carga.
+	it('ignores the system document types', () => {
+		const node = {
+			type: 'document',
+			name: 'sanity.fileAsset',
+			value: { type: 'object', attributes: { url: { type: 'objectAttribute', value: { type: 'string' } } } },
+		};
+
+		expect(scanRequiredFields([node] as never).required).toEqual([]);
+	});
+
 	it('ignores entries that are not document types', () => {
 		const node = { type: 'type', name: 'slug', value: { type: 'object', attributes: {} } };
 

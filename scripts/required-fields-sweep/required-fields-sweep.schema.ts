@@ -113,7 +113,9 @@ export function scanRequiredFields(schema: readonly SchemaNode[]): RequiredField
 	const acc: Accumulator = { required: [], uncovered: [] };
 
 	for (const entry of schema) {
-		if (!entry.name || !isDocumentType(entry)) {
+		// Los tipos del sistema (`sanity.imageAsset`, `sanity.fileAsset`) los gestiona el content lake:
+		// sus campos requeridos no son contenido que nadie de este proyecto cargue ni pueda corregir.
+		if (!entry.name || entry.name.startsWith('sanity.') || !isDocumentType(entry)) {
 			continue;
 		}
 		descend(attributeHolder(entry), entry.name, [], false, acc);

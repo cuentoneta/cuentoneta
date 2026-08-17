@@ -39,6 +39,18 @@ describe('buildFieldCountQuery', () => {
 	it('builds one query per field', () => {
 		expect(buildFieldCountQueries([rootField(['name']), rootField(['biography'])])).toHaveLength(2);
 	});
+
+	// Un identificador que no lo sea produciría una query sintácticamente válida que cuenta otra cosa:
+	// el error tiene que nombrar el valor, no aparecer como un conteo raro semanas después.
+	it('rejects a field name that is not an identifier', () => {
+		expect(() => buildFieldCountQuery(rootField(['name"] && 1 == 1 && ["']))).toThrow(/nombre de campo inesperado/);
+	});
+
+	it('rejects a document type that is not an identifier', () => {
+		const field: RequiredFieldPath = { documentType: 'author"]|| *[', segments: ['name'], insideArray: false };
+
+		expect(() => buildFieldCountQuery(field)).toThrow(/tipo de documento inesperado/);
+	});
 });
 
 // Las consultas se evalúan de verdad: una que cuente de más o de menos es indistinguible de una

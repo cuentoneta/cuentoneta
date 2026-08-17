@@ -28,7 +28,23 @@ function missingInArrayPredicate(segments: readonly string[]): string {
 	return `count(${arrayPath}[!defined(${rest.join('.')})]) > 0`;
 }
 
+// El nombre de tipo y los segmentos se interpolan en el texto de la query, no viajan como parámetro:
+// GROQ no admite parametrizar un identificador. El insumo es un archivo versionado, así que no hay
+// input de usuario en juego, pero un schema corrupto tiene que fallar acá y con su nombre a la vista,
+// en vez de producir una query mal formada que cuente cualquier otra cosa.
+const IDENTIFIER = /^[A-Za-z_][A-Za-z0-9_]*$/;
+
+function assertIdentifier(value: string, kind: string): string {
+	if (!IDENTIFIER.test(value)) {
+		throw new Error(`${kind} inesperado en el schema: "${value}"`);
+	}
+	return value;
+}
+
 export function buildFieldCountQuery(field: RequiredFieldPath): FieldCountQuery {
+	assertIdentifier(field.documentType, 'tipo de documento');
+	field.segments.forEach((segment) => assertIdentifier(segment, 'nombre de campo'));
+
 	const predicate = field.insideArray ? missingInArrayPredicate(field.segments) : missingPredicate(field.segments);
 
 	return {

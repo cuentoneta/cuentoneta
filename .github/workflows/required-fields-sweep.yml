@@ -52,5 +52,9 @@ jobs:
           # con su copia, así que un hallazgo suyo sería el mismo con un día de atraso.
           SANITY_STUDIO_DATASET: production
           SANITY_STUDIO_PROJECT_ID: ${{ secrets.SANITY_STUDIO_PROJECT_ID || 's4dbqkc5' }}
-          SANITY_STUDIO_TOKEN: ${{ secrets.SANITY_STUDIO_TOKEN }}
+          # Prefiere un token de solo lectura: el script nunca muta contenido, y esa garantía conviene
+          # que la sostenga el permiso del secret y no solo la disciplina de quien edite el script.
+          # El token hace falta igual porque los borradores no se leen sin autenticación. Mientras no
+          # exista el secret dedicado cae al de escritura, que es lo único disponible hoy.
+          SANITY_STUDIO_TOKEN: ${{ secrets.SANITY_STUDIO_READONLY_TOKEN || secrets.SANITY_STUDIO_TOKEN }}
         run: pnpm required-fields:sweep --apply
