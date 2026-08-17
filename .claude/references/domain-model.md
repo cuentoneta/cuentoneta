@@ -240,7 +240,9 @@ export function dateString(value: string): DateString {
 
 ## Validación en runtime (Zod)
 
-Usá **Zod** para validar **datos externos** en la frontera (respuestas de API, contenido crudo de Sanity, params/query del backend con `@hono/zod-validator`). La validación protege el dominio de shapes inesperados antes de mapear:
+Zod valida **datos externos** en la frontera, antes de que el dominio confíe en su shape. Cuentoneta tiene **dos fronteras** distintas, con dos formas de import distintas — no son intercambiables:
+
+**Backend (`src/api/**`, `@schemas/*`):** zod clásico, para params/query de los controllers Hono vía `@hono/zod-validator`. Corre en Node, donde el tamaño del paquete no importa:
 
 ```typescript
 import { z } from 'zod';
@@ -249,6 +251,24 @@ import { slugSchema } from '../../schemas/common.schemas'; // reutilizado por to
 // en el controller Hono:
 // zValidator('param', slugSchema)
 ```
+
+**Frontend (`src/models/*.dto.ts`):** los DTO de wire — el contrato que valida la respuesta HTTP antes de mapearla a dominio — usan **`zod/mini`**, importado **como namespace**:
+
+```typescript
+// ✅ correcto — tree-shakea, solo entra al bundle lo que el schema usa
+import * as z from 'zod/mini';
+
+export const literaryWorkTeaserDtoSchema = z.object({
+	slug: z.string(),
+	title: z.optional(z.string()),
+	// …
+});
+
+// ❌ incorrecto — `z` por nombre materializa el objeto reexportado; entra la librería entera al bundle
+import { z } from 'zod/mini';
+```
+
+La forma del import no es cosmética —decide si la librería entera viaja al navegador— y con `zod/mini` el API encadenado no está disponible: el porqué, las mediciones y el enforcement están en [`typescript.md`](typescript.md#zodmini-como-namespace-en-los-dto-del-frontend).
 
 La validación cruza la frontera una sola vez; pasada esa frontera, el dominio confía en sus tipos.
 
