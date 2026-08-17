@@ -1,5 +1,5 @@
 // Core
-import { EnvironmentProviders, inject, makeEnvironmentProviders, Service } from '@angular/core';
+import { inject, InjectionToken, Service } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -8,7 +8,10 @@ import { environment } from '../environments/environment';
 
 // Models
 import { LandingPageContent } from '@models/landing-page-content.model';
-import { ContentApi } from './content-api.interface';
+
+export interface ContentApi {
+	getLandingPageContent(): Observable<LandingPageContent>;
+}
 
 @Service()
 export class HttpContentApi implements ContentApi {
@@ -20,6 +23,7 @@ export class HttpContentApi implements ContentApi {
 	}
 }
 
-export function provideContentApi(): EnvironmentProviders {
-	return makeEnvironmentProviders([{ provide: ContentApi, useExisting: HttpContentApi }]);
-}
+export const ContentApi = new InjectionToken<ContentApi>('ContentApi', {
+	providedIn: 'root',
+	factory: () => inject(HttpContentApi),
+});

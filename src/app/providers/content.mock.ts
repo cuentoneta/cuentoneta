@@ -4,7 +4,7 @@ import { Observable, of } from 'rxjs';
 
 // Models
 import { LandingPageContent } from '@models/landing-page-content.model';
-import { ContentApi } from './content-api.interface';
+import { ContentApi } from './content.provider';
 
 export class StubContentApi implements ContentApi {
 	public getLandingPageContent(): Observable<LandingPageContent> {

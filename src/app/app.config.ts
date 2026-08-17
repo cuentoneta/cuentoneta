@@ -9,7 +9,6 @@ import { DatePipe, registerLocaleData } from '@angular/common';
 
 // API providers
 import { provideAuthorApi } from './providers/author.provider';
-import { provideContentApi } from './providers/content.provider';
 import { provideContributorApi } from './providers/contributor.provider';
 import { provideStoryApi } from './providers/story.provider';
 import { provideStorylistApi } from './providers/storylist.provider';
@@ -41,7 +40,6 @@ export const appConfig: ApplicationConfig = {
 		// API providers
 		provideAuthorApi(),
 		provideCollectionApi(),
-		provideContentApi(),
 		provideContributorApi(),
 		provideStoryApi(),
 		provideStorylistApi(),
