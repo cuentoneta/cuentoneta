@@ -77,6 +77,15 @@ describe('adaptStoryTeaserToReadingSuggestion', () => {
 
 		expect(() => adaptStoryTeaserToReadingSuggestion({ ...story, slug: 'Slug Inválido' })).toThrow(/Slug inválido/);
 	});
+
+	// El campo es requerido en el schema, pero esa regla solo rige la edición: hay obras publicadas sin
+	// el valor, y así es como llegan desde Sanity.
+	it('should reject a story whose reading time is missing, naming the story', () => {
+		const [story] = onoffStoryNavigationTeasersMock;
+		const withoutReadingTime = { ...story, approximateReadingTime: undefined as unknown as number };
+
+		expect(() => adaptStoryTeaserToReadingSuggestion(withoutReadingTime)).toThrow(/no tiene tiempo de lectura/);
+	});
 });
 
 describe('adaptStoryTeasersToReadingSuggestions', () => {
@@ -98,6 +107,16 @@ describe('adaptStoryTeasersToReadingSuggestions', () => {
 
 		expect(adapted).toHaveLength(rest.length);
 		expect(adapted.map((suggestion) => suggestion.literaryWork.slug)).toEqual(rest.map((story) => story.slug));
+	});
+
+	it('should drop a story whose reading time is missing, keeping the rest', () => {
+		spyOn(console, 'warn').mockImplementation(() => undefined);
+		const [first, ...rest] = onoffStoryNavigationTeasersMock;
+		const withoutReadingTime = { ...first, approximateReadingTime: undefined as unknown as number };
+
+		const adapted = adaptStoryTeasersToReadingSuggestions([withoutReadingTime, ...rest]);
+
+		expect(adapted).toHaveLength(rest.length);
 	});
 
 	it('should report the discarded story preserving its cause', () => {

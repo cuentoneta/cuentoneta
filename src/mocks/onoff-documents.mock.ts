@@ -7,7 +7,13 @@ import {
 	onoffResourceTypeDocumentsMock,
 	onoffTagDocumentsMock,
 } from './onoff/document/support-documents.projection';
-import { asDraft, slugField, withoutKey } from './onoff/document/sanity-document.factory';
+import {
+	asDraft,
+	documentReference,
+	documentSystemFields,
+	slugField,
+	withoutKey,
+} from './onoff/document/sanity-document.factory';
 import { coleccionCompletaContentCampaignDocument } from './onoff/landing-page/coleccion-completa-onoff.content-campaign.document';
 import { palacioNueveFronterasContentCampaignDocument } from './onoff/landing-page/el-palacio-de-las-nueve-fronteras.content-campaign.document';
 import { onoffLandingPageDocument } from './onoff/landing-page/onoff.landing-page.document';
@@ -166,10 +172,53 @@ export const undatedLegacyStoryDocument = {
 	slug: slugField('story-sin-fecha'),
 };
 
+// `Rule.required()` valida la edición en el Studio, no el almacenamiento: el dataset real tiene cuentos
+// publicados sin `badLanguage`, sin `originalPublication` y (en menor medida) sin `approximateReadingTime`.
+// Este documento reproduce los tres huecos a la vez: los dos primeros por `withoutKey` sobre el canon, y
+// el tercero por construcción — el canon es un `literaryWork`, que nunca declaró ese campo (usa
+// `totalReadingTime`), así que nunca hizo falta quitarlo. También suma `author` (referencia única, propia
+// del schema `story`) porque el canon trae `authors` (plural, de `literaryWork`), y así queda fiel a lo
+// que cualquier proyección `author->` de las queries reales espera resolver.
+export const incompleteLegacyStoryDocument = {
+	...withoutKey(withoutKey(legacyStoryDocument, 'badLanguage'), 'originalPublication'),
+	_id: 'onoff-story-campos-requeridos-incumplidos',
+	slug: slugField('story-campos-requeridos-incumplidos'),
+	author: documentReference(onoffAuthorDocument._id),
+};
+
 export const legacyStorylistDocument = {
 	...canonCollection,
 	_id: 'onoff-storylist',
 	_type: 'storylist' as const,
 	_updatedAt: LEGACY_UPDATED_AT,
 	slug: slugField('storylist'),
+};
+
+// Las tres proyecciones de abajo dereferencian el cuento en vez de proyectarlo directo (`stories[]->`,
+// `mostRead[]->`, `latestReads[]->`), así que necesitan un documento contenedor propio apuntando por
+// `_ref` a `incompleteLegacyStoryDocument`. Cada uno es un escenario de un solo caso, sin otro
+// consumidor, y por eso no se suma a `onoffDatasetMock`.
+
+export const storylistWithIncompleteStoryDocument = {
+	...documentSystemFields('onoff-storylist-campos-incumplidos'),
+	_type: 'storylist' as const,
+	slug: slugField('storylist-campos-incumplidos'),
+	title: 'Storylist de prueba',
+	stories: [documentReference(incompleteLegacyStoryDocument._id, 'story-incompleto')],
+};
+
+// El id es literal porque `rotatingContentQuery` filtra por `_id == 'rotatingContent'`: es un singleton.
+export const rotatingContentWithIncompleteStoryDocument = {
+	...documentSystemFields('rotatingContent'),
+	_type: 'rotatingContent' as const,
+	name: 'Contenido rotativo de prueba',
+	mostRead: [documentReference(incompleteLegacyStoryDocument._id, 'story-incompleto')],
+};
+
+export const landingPageWithIncompleteStoryDocument = {
+	...documentSystemFields('onoff-landing-page-campos-incumplidos'),
+	_type: 'landingPage' as const,
+	slug: slugField('landing-page-campos-incumplidos'),
+	config: '1974-24',
+	latestReads: [documentReference(incompleteLegacyStoryDocument._id, 'story-incompleto')],
 };
