@@ -1,5 +1,5 @@
 // Core
-import { EnvironmentProviders, inject, makeEnvironmentProviders, Service } from '@angular/core';
+import { inject, InjectionToken, Service } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 
@@ -9,7 +9,11 @@ import { environment } from '../environments/environment';
 // Models
 import { Contributor, ContributorArea, SORTED_AREAS } from '@models/contributor.model';
 import { ApiUrl, Endpoints } from './endpoints';
-import { ContributorApi } from './contributor-api.interface';
+
+export interface ContributorApi {
+	getAll(): Observable<Contributor[]>;
+	getAllByArea(): Observable<{ area: ContributorArea; contributors: Contributor[] }[]>;
+}
 
 @Service()
 export class HttpContributorApi implements ContributorApi {
@@ -36,6 +40,7 @@ export class HttpContributorApi implements ContributorApi {
 	}
 }
 
-export function provideContributorApi(): EnvironmentProviders {
-	return makeEnvironmentProviders([{ provide: ContributorApi, useExisting: HttpContributorApi }]);
-}
+export const ContributorApi = new InjectionToken<ContributorApi>('ContributorApi', {
+	providedIn: 'root',
+	factory: () => inject(HttpContributorApi),
+});

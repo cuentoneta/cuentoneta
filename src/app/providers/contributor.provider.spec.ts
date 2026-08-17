@@ -1,11 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 
-import { HttpContributorApi } from './contributor.provider';
+import { ContributorApi, HttpContributorApi } from './contributor.provider';
 import { Contributor } from '@models/contributor.model';
 import { environment } from '../environments/environment';
 import { Endpoints } from './endpoints';
 import { provideHttpClient } from '@angular/common/http';
+import { provideContributorApiMock, StubContributorApi } from './contributor.mock';
 
 describe('HttpContributorApi', () => {
 	let service: HttpContributorApi;
@@ -93,5 +94,25 @@ describe('HttpContributorApi', () => {
 			const req = httpMock.expectOne(apiUrl);
 			req.flush('Server error', { status: 500, statusText: 'Internal Server Error' });
 		});
+	});
+});
+
+describe('ContributorApi', () => {
+	// La factory del token es lo único que ata el contrato a su implementación HTTP: sin ella
+	// la app arranca sin proveedor y falla recién al inyectarlo, ya en la ruta que lo necesita.
+	it('resuelve la implementación HTTP sin ningún proveedor explícito', () => {
+		TestBed.configureTestingModule({
+			providers: [provideHttpClient(), provideHttpClientTesting()],
+		});
+
+		expect(TestBed.inject(ContributorApi)).toBeInstanceOf(HttpContributorApi);
+	});
+
+	it('deja que el doble sustituya la implementación por defecto', () => {
+		TestBed.configureTestingModule({
+			providers: [provideHttpClient(), provideHttpClientTesting(), provideContributorApiMock()],
+		});
+
+		expect(TestBed.inject(ContributorApi)).toBeInstanceOf(StubContributorApi);
 	});
 });
