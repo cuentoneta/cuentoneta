@@ -2,7 +2,7 @@ import { Component, computed, inject, input } from '@angular/core';
 import { map } from 'rxjs';
 
 import { AppRoutes } from '../../app.routes';
-import { StorylistApi } from '../../providers/storylist-api.interface';
+import { StorylistApi } from '../../providers/storylist.provider';
 import { progressiveRxResource } from '@app-utils/ssr-resource';
 import { ReadingSuggestionsListComponent } from './reading-suggestions-list.component';
 import { pickReadingSuggestions } from './pick-reading-suggestions';

@@ -1,5 +1,5 @@
 // Core
-import { EnvironmentProviders, inject, makeEnvironmentProviders, Service } from '@angular/core';
+import { inject, InjectionToken, Service } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -9,7 +9,10 @@ import { environment } from '../environments/environment';
 // Models
 import { Storylist } from '@models/storylist.model';
 import { ApiUrl, Endpoints } from './endpoints';
-import { StorylistApi } from './storylist-api.interface';
+
+export interface StorylistApi {
+	get(slug: string, amount?: number, ordering?: 'asc' | 'desc'): Observable<Storylist>;
+}
 
 @Service()
 export class HttpStorylistApi implements StorylistApi {
@@ -22,6 +25,7 @@ export class HttpStorylistApi implements StorylistApi {
 	}
 }
 
-export function provideStorylistApi(): EnvironmentProviders {
-	return makeEnvironmentProviders([{ provide: StorylistApi, useExisting: HttpStorylistApi }]);
-}
+export const StorylistApi = new InjectionToken<StorylistApi>('StorylistApi', {
+	providedIn: 'root',
+	factory: () => inject(HttpStorylistApi),
+});
