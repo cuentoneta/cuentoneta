@@ -170,15 +170,15 @@ describe('HeaderComponent', () => {
 		// Se afirma sobre el ancestro y no sobre la franja que colapsa: lo inerte es el componente entero,
 		// que es el alcance que incluye también al menú desplegable y a su backdrop.
 		it('should mark the whole component inert while hidden', async () => {
-			await renderHeader(false);
+			const { fixture } = await renderHeader(false);
 
-			expect(screen.getByRole('banner').closest('[inert]')).not.toBeNull();
+			expect(fixture.nativeElement).toHaveAttribute('inert');
 		});
 
-		it('should leave nothing inert while visible', async () => {
-			await renderHeader(true);
+		it('should leave the component interactive while visible', async () => {
+			const { fixture } = await renderHeader(true);
 
-			expect(screen.getByRole('banner').closest('[inert]')).toBeNull();
+			expect(fixture.nativeElement).not.toHaveAttribute('inert');
 		});
 
 		// El foco que ya estaba adentro cuando la barra se oculta lo suelta el navegador, y solo él:
