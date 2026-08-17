@@ -7,15 +7,6 @@ import { provideClientHydration } from '@angular/platform-browser';
 import localeEs from '@angular/common/locales/es-419';
 import { DatePipe, registerLocaleData } from '@angular/common';
 
-// API providers
-import { provideAuthorApi } from './providers/author.provider';
-import { provideContentApi } from './providers/content.provider';
-import { provideContributorApi } from './providers/contributor.provider';
-import { provideStoryApi } from './providers/story.provider';
-import { provideStorylistApi } from './providers/storylist.provider';
-import { provideCollectionApi } from './providers/collection.provider';
-import { provideLiteraryWorkApi } from './providers/literary-work.provider';
-
 // Layout
 import { provideLayout } from './providers/layout.provider';
 
@@ -38,14 +29,7 @@ export const appConfig: ApplicationConfig = {
 		),
 		provideHttpClient(),
 
-		// API providers
-		provideAuthorApi(),
-		provideCollectionApi(),
-		provideContentApi(),
-		provideContributorApi(),
-		provideStoryApi(),
-		provideStorylistApi(),
-		provideLiteraryWorkApi(),
+		// Layout
 		provideLayout(),
 
 		// SEO providers

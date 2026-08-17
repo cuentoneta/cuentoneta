@@ -5,7 +5,7 @@ import { Observable, of } from 'rxjs';
 // Models
 import { Storylist } from '@models/storylist.model';
 import { storylistMock } from '@mocks/storylist.mock';
-import { StorylistApi } from './storylist-api.interface';
+import { StorylistApi } from './storylist.provider';
 
 export class StubStorylistApi implements StorylistApi {
 	public get(): Observable<Storylist> {

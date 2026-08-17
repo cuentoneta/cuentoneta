@@ -4,7 +4,7 @@ import { Observable, of } from 'rxjs';
 
 // Models
 import type { Collection, CollectionTeaser } from '@models/collection.model';
-import { CollectionApi } from './collection-api.interface';
+import { CollectionApi } from './collection.provider';
 
 // Devuelve canned: la búsqueda por slug resuelve contra las colecciones cargadas y los teasers salen
 // del mismo conjunto, para que las dos respuestas no puedan contradecirse entre sí.

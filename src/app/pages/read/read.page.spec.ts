@@ -22,7 +22,7 @@ import {
 	onoffLiteraryWorksWithSectionTitles,
 } from '@mocks/onoff-literary-works.mock';
 import { provideLiteraryWorkApiMock, StubLiteraryWorkApi } from '../../providers/literary-work.mock';
-import type { LiteraryWorkApi } from '../../providers/literary-work-api.interface';
+import type { LiteraryWorkApi } from '../../providers/literary-work.provider';
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 import { AppRoutes } from '../../app.routes';

@@ -5,7 +5,7 @@ import { Observable, of } from 'rxjs';
 // Models
 import { AuthorProfile, AuthorTeaser } from '@models/author.model';
 import { authorMock, authorTeaserMock } from '@mocks/author.mock';
-import { AuthorApi } from './author-api.interface';
+import { AuthorApi } from './author.provider';
 
 export class StubAuthorApi implements AuthorApi {
 	constructor(private readonly author: AuthorProfile = authorMock) {}

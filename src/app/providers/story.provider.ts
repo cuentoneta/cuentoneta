@@ -1,15 +1,20 @@
 // Core
-import { EnvironmentProviders, inject, makeEnvironmentProviders, Service } from '@angular/core';
+import { inject, InjectionToken, Service } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import type { Observable } from 'rxjs';
 
 // Environment
 import { environment } from '../environments/environment';
 
 // Models
-import { Story, StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
-import { ApiUrl, Endpoints } from './endpoints';
-import { StoryApi } from './story-api.interface';
+import type { Story, StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
+import { Endpoints, type ApiUrl } from './endpoints';
+
+export interface StoryApi {
+	getBySlug(slug: string): Observable<Story>;
+	getByAuthorSlug(slug: string, offset?: number, limit?: number): Observable<StoryTeaser[]>;
+	get(offset?: number, limit?: number): Observable<StoryTeaserWithAuthor[]>;
+}
 
 @Service()
 export class HttpStoryApi implements StoryApi {
@@ -31,6 +36,7 @@ export class HttpStoryApi implements StoryApi {
 	}
 }
 
-export function provideStoryApi(): EnvironmentProviders {
-	return makeEnvironmentProviders([{ provide: StoryApi, useExisting: HttpStoryApi }]);
-}
+export const StoryApi = new InjectionToken<StoryApi>('StoryApi', {
+	providedIn: 'root',
+	factory: () => inject(HttpStoryApi),
+});

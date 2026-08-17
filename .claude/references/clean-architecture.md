@@ -127,13 +127,13 @@ El **archivo** sigue siendo `<dominio>.mock.ts` y la **factory** `provide<X>ApiM
 
 ### Frontend
 
-| Rol                     | Interfaz + token (`InjectionToken`) | Implementación          | Doble de test               |
-| ----------------------- | ----------------------------------- | ----------------------- | --------------------------- |
-| API de stories          | `StoryApi`                          | `HttpStoryApi`          | `StubStoryApi`              |
-| API de autores          | `AuthorApi`                         | `HttpAuthorApi`         | `StubAuthorApi`             |
-| API de storylists       | `StorylistApi`                      | `HttpStorylistApi`      | `StubStorylistApi`          |
-| API de obras literarias | `LiteraryWorkApi`\*                 | `HttpLiteraryWorkApi`\* | `StubLiteraryWorkApi`\*     |
-| Service (impl. única)   | `LayoutService` (token homónimo)    | `WindowLayoutService`   | `ControllableLayoutService` |
+| Rol                     | Interfaz + token (tree-shakable) | Implementación          | Doble de test               |
+| ----------------------- | -------------------------------- | ----------------------- | --------------------------- |
+| API de stories          | `StoryApi`                       | `HttpStoryApi`          | `StubStoryApi`              |
+| API de autores          | `AuthorApi`                      | `HttpAuthorApi`         | `StubAuthorApi`             |
+| API de storylists       | `StorylistApi`                   | `HttpStorylistApi`      | `StubStorylistApi`          |
+| API de obras literarias | `LiteraryWorkApi`\*              | `HttpLiteraryWorkApi`\* | `StubLiteraryWorkApi`\*     |
+| Service (impl. única)   | `LayoutService` (token homónimo) | `WindowLayoutService`   | `ControllableLayoutService` |
 
 > Los dobles de API son **`Stub*`** (devuelven canned, ignoran la entrada); el de `LayoutService` es un **`Fake*` de entorno**, calificado `Controllable*` porque el viewport lo fija el test (`simulateViewport()`), no `window` como en el real (`WindowLayoutService`). No es `InMemory*`: no sustituye almacenamiento, sustituye el navegador. La diferencia no es de capa sino de qué sustituye el doble — ver la taxonomía de arriba.
 >
@@ -141,11 +141,11 @@ El **archivo** sigue siendo `<dominio>.mock.ts` y la **factory** `provide<X>ApiM
 
 - Prefijo **`Http*`** para implementaciones de servicios de API basadas en HTTP.
 - Un service **con doble de test** usa el par interfaz + `InjectionToken` homónimo, igual que los API providers: real y doble son dos implementaciones intercambiables del mismo contrato. `LayoutService` es el caso — interfaz + token `LayoutService`, real `WindowLayoutService` (prefijo de mecanismo), doble `ControllableLayoutService` (`layout.mock.ts`). Un service de **implementación única sin doble** (`SchemaOrgService`) no necesita ni interfaz ni token: se inyecta la clase directamente.
-- Los tokens son `InjectionToken` planos (sin `providedIn`/`factory`), cableados vía `provide<X>Api()` (real) y `provide<X>ApiMock()` (doble) con `makeEnvironmentProviders`.
-- **Archivos (3 por API provider):**
-  - **`<dominio>-api.interface.ts`** — la interfaz `<X>Api` + el `InjectionToken`. El sufijo **`-api`** distingue el archivo de una interfaz del **modelo de dominio**: `author-api.interface.ts` exporta `AuthorApi`, no una interfaz del agregado `Author`.
-  - `<dominio>.provider.ts` — `Http<X>Api implements <X>Api` + `provide<X>Api()`.
+- El token de un API provider es **tree-shakable**: `new InjectionToken<<X>Api>('<X>Api', { providedIn: 'root', factory: () => inject(Http<X>Api) })`. La factory por defecto es lo que permite que la implementación viaje al chunk de quien la inyecta; un `provide<X>Api()` eager en la configuración de la aplicación la fijaría en el chunk inicial aunque su consumidor viva detrás de una ruta perezosa. Por eso **no existe** `provide<X>Api()`: el contrato se resuelve solo. El doble sí se cablea explícito, con `provide<X>ApiMock()` y `makeEnvironmentProviders`, y su provider tiene precedencia sobre la factory en cualquier nivel del árbol de inyectores.
+- **Archivos (2 por API provider):**
+  - `<dominio>.provider.ts` — la interfaz `<X>Api`, `Http<X>Api implements <X>Api` y el `InjectionToken` homónimo. Los tres viven juntos porque la declaración mergeada tipo+valor de `<X>Api` solo funciona si interfaz y token se declaran en el **mismo** módulo, y la factory necesita referenciar la implementación: separarlos obligaría a un alias permanente en cada consumidor.
   - `<dominio>.mock.ts` — `Stub<X>Api` (los API providers devuelven canned) + `provide<X>ApiMock()`.
+- Un service con doble pero **sin** este layout —`LayoutService`— conserva su archivo de interfaz aparte (`layout.interface.ts`) y su `provide*()` explícito: lo inyecta el shell de la aplicación, así que no hay nada que diferir.
 
 **Resumen de reglas:**
 

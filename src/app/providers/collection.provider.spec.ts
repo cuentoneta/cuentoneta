@@ -10,7 +10,8 @@ import {
 } from '@mocks/onoff-collections.mock';
 import { environment } from '../environments/environment';
 import { Endpoints } from './endpoints';
-import { HttpCollectionApi } from './collection.provider';
+import { CollectionApi, HttpCollectionApi } from './collection.provider';
+import { provideCollectionApiMock, StubCollectionApi } from './collection.mock';
 
 // El DTO de wire es la serialización JSON del agregado: los brands se pierden y queda el shape plano
 // que el endpoint emite. Se deriva del canon en vez de escribir un objeto paralelo a mano.
@@ -126,5 +127,29 @@ describe('HttpCollectionApi', () => {
 		const collection = await request(api.getBySlug(dto.slug), `${url}/${dto.slug}`, dto);
 
 		expect(collection.description).toBe(canon?.description);
+	});
+});
+
+describe('CollectionApi', () => {
+	// Única cobertura de inyección de este contrato: todavía no lo consume ninguna página, así que
+	// ninguna spec de componente ni e2e lo ejercita.
+	it('resolves the http implementation with no explicit provider', () => {
+		TestBed.configureTestingModule({
+			providers: [provideHttpClient(), provideHttpClientTesting()],
+		});
+
+		expect(TestBed.inject(CollectionApi)).toBeInstanceOf(HttpCollectionApi);
+	});
+
+	it('lets the test double override the default implementation', () => {
+		TestBed.configureTestingModule({
+			providers: [
+				provideHttpClient(),
+				provideHttpClientTesting(),
+				provideCollectionApiMock(new StubCollectionApi(onoffCollectionsMock)),
+			],
+		});
+
+		expect(TestBed.inject(CollectionApi)).toBeInstanceOf(StubCollectionApi);
 	});
 });

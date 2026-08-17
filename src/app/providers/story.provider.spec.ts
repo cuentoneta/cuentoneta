@@ -1,21 +1,21 @@
 import { TestBed } from '@angular/core/testing';
 
 // Servicios
-import { HttpStorylistApi, StorylistApi } from './storylist.provider';
+import { HttpStoryApi, StoryApi } from './story.provider';
 
 // Proveedores
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { provideStorylistApiMock, StubStorylistApi } from './storylist.mock';
+import { provideStoryApiMock, StubStoryApi } from './story.mock';
 
-describe('HttpStorylistApi', () => {
-	let service: HttpStorylistApi;
+describe('HttpStoryApi', () => {
+	let service: HttpStoryApi;
 
 	beforeEach(() => {
 		TestBed.configureTestingModule({
 			providers: [provideHttpClient(), provideHttpClientTesting()],
 		});
-		service = TestBed.inject(HttpStorylistApi);
+		service = TestBed.inject(HttpStoryApi);
 	});
 
 	it('should be created', () => {
@@ -23,20 +23,20 @@ describe('HttpStorylistApi', () => {
 	});
 });
 
-describe('StorylistApi', () => {
+describe('StoryApi', () => {
 	it('resolves the http implementation with no explicit provider', () => {
 		TestBed.configureTestingModule({
 			providers: [provideHttpClient(), provideHttpClientTesting()],
 		});
 
-		expect(TestBed.inject(StorylistApi)).toBeInstanceOf(HttpStorylistApi);
+		expect(TestBed.inject(StoryApi)).toBeInstanceOf(HttpStoryApi);
 	});
 
 	it('lets the test double override the default implementation', () => {
 		TestBed.configureTestingModule({
-			providers: [provideHttpClient(), provideHttpClientTesting(), provideStorylistApiMock()],
+			providers: [provideHttpClient(), provideHttpClientTesting(), provideStoryApiMock()],
 		});
 
-		expect(TestBed.inject(StorylistApi)).toBeInstanceOf(StubStorylistApi);
+		expect(TestBed.inject(StoryApi)).toBeInstanceOf(StubStoryApi);
 	});
 });

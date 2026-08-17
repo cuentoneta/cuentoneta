@@ -1,11 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 
-import { HttpContributorApi } from './contributor.provider';
+import { ContributorApi, HttpContributorApi } from './contributor.provider';
 import { Contributor } from '@models/contributor.model';
 import { environment } from '../environments/environment';
 import { Endpoints } from './endpoints';
 import { provideHttpClient } from '@angular/common/http';
+import { provideContributorApiMock, StubContributorApi } from './contributor.mock';
 
 describe('HttpContributorApi', () => {
 	let service: HttpContributorApi;
@@ -93,5 +94,23 @@ describe('HttpContributorApi', () => {
 			const req = httpMock.expectOne(apiUrl);
 			req.flush('Server error', { status: 500, statusText: 'Internal Server Error' });
 		});
+	});
+});
+
+describe('ContributorApi', () => {
+	it('resolves the http implementation with no explicit provider', () => {
+		TestBed.configureTestingModule({
+			providers: [provideHttpClient(), provideHttpClientTesting()],
+		});
+
+		expect(TestBed.inject(ContributorApi)).toBeInstanceOf(HttpContributorApi);
+	});
+
+	it('lets the test double override the default implementation', () => {
+		TestBed.configureTestingModule({
+			providers: [provideHttpClient(), provideHttpClientTesting(), provideContributorApiMock()],
+		});
+
+		expect(TestBed.inject(ContributorApi)).toBeInstanceOf(StubContributorApi);
 	});
 });

@@ -1,15 +1,19 @@
 // Core
-import { EnvironmentProviders, inject, makeEnvironmentProviders, Service } from '@angular/core';
+import { inject, InjectionToken, Service } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import type { Observable } from 'rxjs';
 
 // Environment
 import { environment } from '../environments/environment';
 
 // Models
-import { AuthorProfile, AuthorTeaser } from '@models/author.model';
-import { ApiUrl, Endpoints } from './endpoints';
-import { AuthorApi } from './author-api.interface';
+import type { AuthorProfile, AuthorTeaser } from '@models/author.model';
+import { Endpoints, type ApiUrl } from './endpoints';
+
+export interface AuthorApi {
+	getAll(): Observable<AuthorTeaser[]>;
+	getBySlug(slug: string): Observable<AuthorProfile>;
+}
 
 @Service()
 export class HttpAuthorApi implements AuthorApi {
@@ -25,6 +29,7 @@ export class HttpAuthorApi implements AuthorApi {
 	}
 }
 
-export function provideAuthorApi(): EnvironmentProviders {
-	return makeEnvironmentProviders([{ provide: AuthorApi, useExisting: HttpAuthorApi }]);
-}
+export const AuthorApi = new InjectionToken<AuthorApi>('AuthorApi', {
+	providedIn: 'root',
+	factory: () => inject(HttpAuthorApi),
+});

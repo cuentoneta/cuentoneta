@@ -4,7 +4,7 @@ import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 // Services
-import { StoryApi } from '../../providers/story-api.interface';
+import { StoryApi } from '../../providers/story.provider';
 
 // Utils
 import { ssrBlockingRxResource } from '@app-utils/ssr-resource';

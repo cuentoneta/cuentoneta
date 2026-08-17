@@ -4,7 +4,7 @@ import { Observable, of, Subject, throwError } from 'rxjs';
 
 import { CollectionReadingSuggestionsComponent } from './collection-reading-suggestions.component';
 import { READING_SUGGESTIONS_COUNT } from './pick-reading-suggestions';
-import { StorylistApi } from '../../providers/storylist-api.interface';
+import { StorylistApi } from '../../providers/storylist.provider';
 import type { Storylist } from '@models/storylist.model';
 import { storylistMock } from '@mocks/storylist.mock';
 import { onoffStoryTeasersMock } from '@mocks/onoff-story-teasers.mock';
