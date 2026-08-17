@@ -81,6 +81,16 @@ describe('HttpCollectionApi', () => {
 		});
 	});
 
+	// El listado tiene su propio schema y este es el único caso que lo ejercita de verdad: un `count`
+	// que no es número atraviesa la factory —que solo lo compara contra 1, y esa comparación es falsa
+	// para un string— así que si el schema dejara de validar sus elementos, nadie más lo atajaría.
+	it('rejects a listing whose count is not a number', async () => {
+		const [teaser] = toWire<CollectionTeaserDto[]>(onoffCollectionTeasersMock);
+		const dto = [{ ...teaser, count: 'muchas' }];
+
+		await expect(request(api.getAll(), url, dto)).rejects.toThrow();
+	});
+
 	// La unión discriminada cruza el wire como datos: sin validarla, el componente que la discrimina
 	// recibiría una tupla incompleta y lo descubriría al renderizar.
 	it('rejects a sample of imagery without three covers', async () => {
@@ -89,9 +99,10 @@ describe('HttpCollectionApi', () => {
 		await expect(request(api.getBySlug(dto.slug), `${url}/${dto.slug}`, dto)).rejects.toThrow();
 	});
 
-	// El largo del abanico es una garantía de dos lados y solo se cubría el corto. Quien rechaza acá es
-	// la invariante de dominio, no el schema: degradar la tupla del wire a un array sin cota no hace
-	// fallar este caso ni el de arriba.
+	// El largo del abanico es una garantía de dos lados y solo se cubría el corto. Con el schema vigente
+	// rechaza el schema, que corre antes que la factory; pero el largo está validado dos veces, así que
+	// degradar la tupla del wire a un array sin cota tampoco haría fallar este caso: lo atajaría la
+	// invariante de dominio.
 	it('rejects a sample of imagery with a fourth cover', async () => {
 		const dto = {
 			...toWire<CollectionDto>(sampleCanon),

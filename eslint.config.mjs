@@ -10,6 +10,7 @@ import storybookSourceState from './tools/eslint/storybook-source-state.js';
 import noApplyInHostStyles from './tools/eslint/no-apply-in-host-styles.js';
 import componentConfigInClass from './tools/eslint/component-config-in-class.js';
 import zIndexScale from './tools/eslint/z-index-scale.js';
+import noFullZodInBrowser from './tools/eslint/no-full-zod-in-browser.js';
 
 // Restricciones de sintaxis comunes: CommonJS, enums, lifecycle hooks y propiedades estáticas.
 const lifecycleHooks = [
@@ -302,39 +303,18 @@ export default [
 		},
 	},
 	{
-		// Los DTO de wire del frontend cruzan al bundle del navegador, donde zod se paga por carga. El
-		// paquete completo no tree-shakea, y `zod/mini` solo lo hace importado como namespace: traer su
-		// `z` por nombre materializa el objeto reexportado y devuelve la librería entera al bundle —
-		// medido, 306 kB contra 15 kB— sin que falle el typecheck, ningún test ni el budget.
-		// Recompone los dos arrays que su scope pisaría: el patrón del corpus y commonRestrictedSyntax.
-		name: 'no-full-zod-in-browser-dtos',
-		files: ['src/models/**/*.dto.ts'],
+		// El scope es todo lo que el navegador descarga, no los archivos que hoy importan zod: la regla
+		// existe para el que todavía no se escribió. `src/api/**` queda afuera, donde zod clásico es lo
+		// correcto. Va como regla propia y no como `no-restricted-imports`/`no-restricted-syntax` porque
+		// este scope se solapa con varios bloques que ya declaran esas dos, y reemplazar sus arrays
+		// desactivaría restricciones vigentes sin que nada avise.
+		name: 'no-full-zod-in-browser',
+		files: ['src/models/**/*.ts', 'src/app/**/*.ts'],
+		plugins: {
+			cuentoneta: { rules: { 'no-full-zod-in-browser': noFullZodInBrowser } },
+		},
 		rules: {
-			'no-restricted-imports': 'off',
-			'@typescript-eslint/no-restricted-imports': [
-				'error',
-				{
-					patterns: [singleWorkCorpusImportPattern],
-					paths: [
-						{
-							name: 'zod',
-							message:
-								'Los DTO del frontend usan `import * as z from "zod/mini"`: el paquete completo no tree-shakea y viaja entero al navegador. Los schemas del backend (src/api/**) sí usan zod clásico.',
-						},
-					],
-				},
-			],
-			'no-restricted-syntax': [
-				'error',
-				...commonRestrictedSyntax,
-				{
-					// Acota al ImportSpecifier a propósito: `importNames` de no-restricted-imports también
-					// rechaza `import * as z`, que es justamente la forma que hay que usar.
-					selector: `ImportDeclaration[source.value='zod/mini'] > ImportSpecifier[imported.name='z']`,
-					message:
-						'Importá `zod/mini` como namespace (`import * as z from "zod/mini"`): traer `z` por nombre anula el tree-shaking y devuelve la librería entera al bundle del navegador.',
-				},
-			],
+			'cuentoneta/no-full-zod-in-browser': 'error',
 		},
 	},
 	{

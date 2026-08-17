@@ -92,9 +92,10 @@ describe('HttpLiteraryWorkApi', () => {
 		);
 	});
 
-	// Ningún round-trip del corpus ejercita la ausencia de las claves opcionales: las 43 obras declaran
-	// badLanguage, y las secciones que se usan traen título y epígrafes. Sin este caso, una opcionalidad
-	// perdida en el schema volvería la clave obligatoria y el wire real —donde sí faltan— rompería.
+	// Ningún round-trip del corpus ejercita la ausencia de las claves opcionales: todas las obras del
+	// canon declaran badLanguage, y las secciones que se usan traen título y epígrafes. Sin este caso,
+	// una opcionalidad perdida en el schema volvería la clave obligatoria y el wire real —donde sí
+	// faltan— rompería.
 	it('rehydrates a payload with every optional key absent', async () => {
 		const dto = toWireDto(onoffLiteraryWorksMock[0]);
 		const [firstSection, ...restOfSections] = dto.content;
