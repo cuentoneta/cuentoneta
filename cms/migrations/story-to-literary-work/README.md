@@ -38,7 +38,7 @@ Si aparece una construcción no cubierta, se agrega **en el conversor** con su c
 ### 2. Dry-run
 
 ```bash
-pnpm exec sanity migration run story-to-literary-work --project <id> --dataset <ds> > dry-run.log
+pnpm exec sanity migration run story-to-literary-work --project s4dbqkc5 --dataset <ds> > dry-run.log
 ```
 
 Redirigir a archivo: son 613 documentos con el cuerpo completo, más de 26.000 líneas.
@@ -52,7 +52,7 @@ Contrastar también los conteos contra el censo: obras con nota editorial, con e
 ### 4. Aplicar
 
 ```bash
-pnpm exec sanity migration run story-to-literary-work --project <id> --dataset <ds> --no-dry-run
+pnpm exec sanity migration run story-to-literary-work --project s4dbqkc5 --dataset <ds> --no-dry-run
 ```
 
 Repetir la corrida después, para probar la idempotencia. El contador de la CLI **no** sirve como criterio: cuenta las mutaciones que la migración **emite**, no las que el servidor aplica, así que una segunda corrida vuelve a reportar 613. `createIfNotExists` descarta la mutación del lado del servidor cuando el `_id` ya existe, y eso se comprueba en el contenido:
@@ -74,8 +74,8 @@ Sobre una muestra representativa —una obra con epígrafes, una sin reseña, un
 ## Revertir
 
 ```bash
-pnpm exec sanity migration run revert-story-to-literary-work --project <id> --dataset <ds>
-pnpm exec sanity migration run revert-story-to-literary-work --project <id> --dataset <ds> --no-dry-run
+pnpm exec sanity migration run revert-story-to-literary-work --project s4dbqkc5 --dataset <ds>
+pnpm exec sanity migration run revert-story-to-literary-work --project s4dbqkc5 --dataset <ds> --no-dry-run
 ```
 
 Borra **solo** las obras cuyo `_id` lleva el prefijo derivado. Las nacidas en el Studio no se tocan: el predicado se comparte con la migración de ida y se comprueba documento por documento, no solo en el filtro.

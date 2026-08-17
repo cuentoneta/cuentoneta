@@ -155,8 +155,8 @@ Ramificación tras la respuesta:
       con workflow_dispatch + force si corresponde.
    3. Correr las migraciones de Sanity pendientes contra producción, en el momento que
       corresponda a su clase (ver Fase 1):
-        pnpm -C cms exec sanity migration run <nombre> --project <id> --dataset production
-        pnpm -C cms exec sanity migration run <nombre> --project <id> --dataset production --no-dry-run --no-confirm
+        pnpm -C cms exec sanity migration run <nombre> --project s4dbqkc5 --dataset production
+        pnpm -C cms exec sanity migration run <nombre> --project s4dbqkc5 --dataset production --no-dry-run --no-confirm
       - Independiente del código: en cualquier momento de esta secuencia.
       - Acoplada al código: NO hay orden simple seguro. Con un lector tolerante ya
         desplegado, corre acá. Sin él, la ventana rota existe igual y hay que elegir

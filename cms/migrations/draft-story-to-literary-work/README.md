@@ -75,7 +75,7 @@ Read-only. Reporta, para publicados y borradores, las construcciones de Portable
 ### 2. Dry-run
 
 ```bash
-pnpm exec sanity migration run draft-story-to-literary-work --project <id> --dataset <ds> > dry-run.log
+pnpm exec sanity migration run draft-story-to-literary-work --project s4dbqkc5 --dataset <ds> > dry-run.log
 ```
 
 Redirigir a archivo: son decenas de documentos con el cuerpo completo.
@@ -87,7 +87,7 @@ Verificar en el log que cada identificador de destino **arranca con `drafts.`**,
 ### 4. Aplicar
 
 ```bash
-pnpm exec sanity migration run draft-story-to-literary-work --project <id> --dataset <ds> --no-dry-run
+pnpm exec sanity migration run draft-story-to-literary-work --project s4dbqkc5 --dataset <ds> --no-dry-run
 ```
 
 ### 5. Verificar
@@ -99,8 +99,8 @@ En el Studio, que las obras nuevas figuren como borrador, y que las 14 que tiene
 Para deshacer **solo este lote**, sin tocar el corpus publicado:
 
 ```bash
-pnpm exec sanity migration run revert-draft-story-to-literary-work --project <id> --dataset <ds>
-pnpm exec sanity migration run revert-draft-story-to-literary-work --project <id> --dataset <ds> --no-dry-run
+pnpm exec sanity migration run revert-draft-story-to-literary-work --project s4dbqkc5 --dataset <ds>
+pnpm exec sanity migration run revert-draft-story-to-literary-work --project s4dbqkc5 --dataset <ds> --no-dry-run
 ```
 
 Es la que corresponde al reintentar esta corrida. [`revert-story-to-literary-work`](../revert-story-to-literary-work/index.ts) también alcanza estas obras, pero **junto con las publicadas**: sirve para descartar el corpus migrado entero, no para volver atrás una sola tanda.
