@@ -15,9 +15,7 @@ describe('HttpContentApi', () => {
 		TestBed.configureTestingModule({
 			providers: [provideHttpClient(), provideHttpClientTesting()],
 		});
-		TestBed.runInInjectionContext(() => {
-			service = TestBed.inject(HttpContentApi);
-		});
+		service = TestBed.inject(HttpContentApi);
 	});
 
 	it('should be created', () => {
@@ -26,9 +24,7 @@ describe('HttpContentApi', () => {
 });
 
 describe('ContentApi', () => {
-	// La factory del token es lo único que ata el contrato a su implementación HTTP: sin ella
-	// la app arranca sin proveedor y falla recién al inyectarlo, ya en la ruta que lo necesita.
-	it('resuelve la implementación HTTP sin ningún proveedor explícito', () => {
+	it('resolves the http implementation with no explicit provider', () => {
 		TestBed.configureTestingModule({
 			providers: [provideHttpClient(), provideHttpClientTesting()],
 		});
@@ -36,7 +32,7 @@ describe('ContentApi', () => {
 		expect(TestBed.inject(ContentApi)).toBeInstanceOf(HttpContentApi);
 	});
 
-	it('deja que el doble sustituya la implementación por defecto', () => {
+	it('lets the test double override the default implementation', () => {
 		TestBed.configureTestingModule({
 			providers: [provideHttpClient(), provideHttpClientTesting(), provideContentApiMock()],
 		});
