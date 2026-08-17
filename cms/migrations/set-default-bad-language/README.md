@@ -17,7 +17,7 @@ Medido contra `production` el 2026-08-17:
 | `story`        |                          155 |             166 de 708 |
 | `literaryWork` |                          155 |             157 de 681 |
 
-Dieciocho obras sí lo declaran en `true`: `setIfMissing` no las toca.
+Treinta y seis documentos sí lo declaran en `true` —dieciocho por tipo—: `setIfMissing` no los toca.
 
 ## La asimetría entre los dos agregados
 
