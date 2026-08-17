@@ -240,7 +240,9 @@ export function dateString(value: string): DateString {
 
 ## Validación en runtime (Zod)
 
-Usá **Zod** para validar **datos externos** en la frontera (respuestas de API, contenido crudo de Sanity, params/query del backend con `@hono/zod-validator`). La validación protege el dominio de shapes inesperados antes de mapear:
+Zod valida **datos externos** en la frontera, antes de que el dominio confíe en su shape. Cuentoneta tiene **dos fronteras** distintas, con dos formas de import distintas — no son intercambiables:
+
+**Backend (`src/api/**`, `@schemas/*`):** zod clásico, para params/query de los controllers Hono vía `@hono/zod-validator`. Corre en Node, donde el tamaño del paquete no importa:
 
 ```typescript
 import { z } from 'zod';
@@ -249,6 +251,24 @@ import { slugSchema } from '../../schemas/common.schemas'; // reutilizado por to
 // en el controller Hono:
 // zValidator('param', slugSchema)
 ```
+
+**Frontend (`src/models/*.dto.ts`):** los DTO de wire — el contrato que valida la respuesta HTTP antes de mapearla a dominio — usan **`zod/mini`**, importado **como namespace**:
+
+```typescript
+// ✅ correcto — tree-shakea, solo entra al bundle lo que el schema usa
+import * as z from 'zod/mini';
+
+export const literaryWorkTeaserDtoSchema = z.object({
+	slug: z.string(),
+	title: z.optional(z.string()),
+	// …
+});
+
+// ❌ incorrecto — `z` por nombre materializa el objeto reexportado; entra la librería entera al bundle
+import { z } from 'zod/mini';
+```
+
+Los DTO cruzan al bundle del navegador, donde el peso de la librería se paga en cada carga. El paquete completo (`zod` clásico) no tree-shakea; `zod/mini` sí, pero **solo importado como namespace** — traer su `z` por nombre (`import { z } from 'zod/mini'`) también materializa el objeto reexportado y devuelve la librería entera al bundle, con el agravante de que reduce el tamaño lo suficiente como para parecer una mejora real. La regla de ESLint `no-full-zod-in-browser-dtos` (`src/models/**/*.dto.ts`) rechaza las dos formas incorrectas. Con `zod/mini`, el API encadenado (`.optional()`, `.extend()`, `.array()` sobre un schema existente) no está disponible: se usa su forma standalone (`z.optional(schema)`, `z.extend(base, {...})`, `z.array(schema)`).
 
 La validación cruza la frontera una sola vez; pasada esa frontera, el dominio confía en sus tipos.
 

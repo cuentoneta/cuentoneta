@@ -65,6 +65,40 @@ import { LiteraryWork } from '@models/literary-work.model';
 
 ---
 
+## `zod/mini` como namespace en los DTO del frontend
+
+Los DTO de wire del frontend (`src/models/**/*.dto.ts`) validan la respuesta HTTP antes de mapearla a dominio, y cruzan al bundle del navegador — a diferencia de los schemas del backend (`src/api/**`, `@schemas/*`), que corren en Node y usan zod clásico sin restricción, porque ahí el tamaño del paquete no se paga en el cliente. En los DTO del frontend, importar **como namespace** es la única forma que tree-shakea:
+
+```typescript
+// ✅ Correcto — namespace: el bundler solo incluye lo que el schema usa
+import * as z from 'zod/mini';
+
+export const literaryWorkTeaserDtoSchema = z.object({
+	slug: z.string(),
+	title: z.optional(z.string()),
+});
+
+// ❌ Incorrecto — el paquete completo no tree-shakea
+import { z } from 'zod';
+
+// ❌ Incorrecto — parece la corrección obvia (es `zod/mini`) pero no lo es
+import { z } from 'zod/mini';
+```
+
+**Por qué:** `zod/mini` reexporta un objeto namespace pensado para tree-shakear función por función. Traer su `z` por nombre (`import { z } from 'zod/mini'`) **materializa ese objeto** y devuelve la librería entera al bundle — con el agravante de que reduce el tamaño lo suficiente frente a zod clásico como para parecer una mejora real, cuando en rigor sigue arrastrando el paquete completo. Medido en aislamiento con `esbuild --bundle --minify` sobre el mismo schema:
+
+| Forma del import                | raw       | gzip     |
+| ------------------------------- | --------- | -------- |
+| `import { z } from 'zod'`       | 327 480 B | 65 096 B |
+| `import { z } from 'zod/mini'`  | 306 241 B | 58 861 B |
+| `import * as z from 'zod/mini'` | 15 221 B  | 5 438 B  |
+
+**API standalone, no encadenado:** `zod/mini` no expone el API fluido de zod clásico (`.optional()`, `.extend()`, `.array()` sobre un schema existente). Se usa su forma standalone: `z.optional(schema)`, `z.extend(base, {...})`, `z.array(schema)`.
+
+**Enforcement activo:** la regla `no-full-zod-in-browser-dtos` (`eslint.config.mjs`, scope `src/models/**/*.dto.ts`) rechaza tanto `import { z } from 'zod'` como `import { z } from 'zod/mini'` — la segunda por selector de `no-restricted-syntax` sobre el `ImportSpecifier`, porque `importNames` de `no-restricted-imports` también rechazaría la forma namespace, que es la correcta.
+
+---
+
 ## Literales de tiempo / duration strings
 
 No usar números "mágicos" de milisegundos en el código (`60000`, `24 * 60 * 60 * 1000`). Para constantes de tiempo, usar **duration strings** (`'15m'`, `'1h'`, `'7d'`) como fuente de verdad y resolverlas a número **en el punto de uso**.
@@ -108,4 +142,4 @@ En ESLint flat config, cuando **dos config objects aplican al mismo archivo** y 
 'no-restricted-syntax': ['error', ...commonRestrictedSyntax, ...pageFetchRestrictedSyntax],
 ```
 
-Precedentes en el propio archivo: `test-utils-vi-exception` (recompone `commonRestrictedSyntax` al soltar `viRestrictedSyntax` para `src/test-utils.ts`), `ssr-fetch-must-decide-blocking` (recompone `commonRestrictedSyntax` al sumar las restricciones de fetch de página) y el bloque `cms` (recompone `commonRestrictedSyntax` soltando `viRestrictedSyntax` para todo `cms/**/*.ts`/`.tsx`, con un motivo propio: no es que `vi.*` no aplique ahí como en `test-utils-vi-exception`, sino que en `cms/` no existe `@test-utils` al que redirigir — sus dobles se escriben a mano). La única parte que **sí** se puede soltar sin recomponer es la que no aplica al scope (`viRestrictedSyntax` en un bloque que ya `ignores: ['**/*.spec.ts']`, porque `vi.*` solo aparece en specs).
+Precedentes en el propio archivo: `test-utils-vi-exception` (recompone `commonRestrictedSyntax` al soltar `viRestrictedSyntax` para `src/test-utils.ts`), `ssr-fetch-must-decide-blocking` (recompone `commonRestrictedSyntax` al sumar las restricciones de fetch de página), `no-full-zod-in-browser-dtos` (recompone `commonRestrictedSyntax` al sumar la restricción de `import { z } from 'zod/mini'` para `src/models/**/*.dto.ts`) y el bloque `cms` (recompone `commonRestrictedSyntax` soltando `viRestrictedSyntax` para todo `cms/**/*.ts`/`.tsx`, con un motivo propio: no es que `vi.*` no aplique ahí como en `test-utils-vi-exception`, sino que en `cms/` no existe `@test-utils` al que redirigir — sus dobles se escriben a mano). La única parte que **sí** se puede soltar sin recomponer es la que no aplica al scope (`viRestrictedSyntax` en un bloque que ya `ignores: ['**/*.spec.ts']`, porque `vi.*` solo aparece en specs).
