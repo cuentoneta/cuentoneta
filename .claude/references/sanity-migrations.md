@@ -103,19 +103,33 @@ Ningún gate de CI detecta un dataset que quedó sin migrar: el job `e2e` corre 
 
 ## Cómo correrlas
 
-Desde `cms/` (la CLI toma `projectId`/`dataset` de las env `SANITY_STUDIO_*` vía `sanity.cli.ts`):
+Desde `cms/`, **con el destino siempre escrito en el comando**:
 
 ```bash
 # Listar migraciones disponibles
 pnpm exec sanity migration list
 
 # Dry-run (por defecto): muestra las mutaciones sin aplicarlas
-pnpm exec sanity migration run <slug>
+pnpm exec sanity migration run <slug> --project s4dbqkc5 --dataset <destino>
 
 # Aplicar de verdad
-pnpm exec sanity migration run <slug> --no-dry-run
+pnpm exec sanity migration run <slug> --project s4dbqkc5 --dataset <destino> --no-dry-run
 ```
 
 > `cms/package.json` no define un script `sanity`: la forma **`pnpm exec`** invoca el binario de `node_modules/.bin` de manera explícita. (`pnpm sanity …` también funciona hoy, porque pnpm cae al binario cuando no encuentra un script homónimo, pero esa resolución dejaría de aplicar si algún día se agregara un script con ese nombre.)
 
-Correr siempre el dry-run antes de aplicar. Para un dataset u objetivo distinto usar los flags `--dataset` / `--project` de la CLI, como hace el skill [`release-workflow`](../skills/release-workflow/SKILL.md) al migrar contra producción.
+Correr siempre el dry-run antes de aplicar.
+
+### El destino va explícito, y sus dos flags van juntos
+
+**`--project` y `--dataset` son inseparables en `sanity migration run`.** Pasar uno solo aborta antes de hacer nada:
+
+```
+Error: If either --dataset or --project is provided, both must be provided
+```
+
+**Omitir los dos tampoco es una alternativa aceptable**, aunque corra: la CLI cae a `projectId`/`dataset` de `sanity.cli.ts`, que los lee de las env `SANITY_STUDIO_*` del `.env` de `cms/`. El comando queda apuntando a un destino que no dice y que cambia con el ambiente de cada máquina — lo contrario de lo que una operación que muta contenido necesita. Un README de migración publica comandos para copiar y ejecutar: si el destino no está en el comando, quien lo copia no sabe adónde va.
+
+**Ojo con el comando de censo:** `sanity documents query` —el que suele acompañar a una migración para contar antes y verificar después— **no** acopla los dos flags, y ahí el flag de proyecto se llama **`--project-id`**. Copiar `--project` de un comando al otro lo silencia como alias deprecado en vez de fallar.
+
+Es la forma que usa el skill [`release-workflow`](../skills/release-workflow/SKILL.md) al migrar contra producción, y la que debe heredar todo README de migración nuevo.
