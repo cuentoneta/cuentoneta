@@ -18,14 +18,14 @@ el proyecto La Cuentoneta y cómo puedes contribuir al desarrollo del mismo.
 
 Las prácticas de nuestro proceso de desarrollo, más las herramientas utilizadas para el desarrollo y la gestión del
 mismo, están
-abiertas a propuestas para mejoras, cambios y reemplazos. En caso de que desees aportar sugerencias o propuestas de mejorar el proceso de desarrollo, puedes hacerla el canal **[**#🚐 | la-cuentoneta**][dc-channel]** en Discord o en sumar un issue de tipo **[💼 Proponer mejoras en la Gestión o el Proceso de Desarrollo del Proyecto](https://github.com/cuentoneta/cuentoneta/issues/new/choose)**.
+abiertas a propuestas para mejoras, cambios y reemplazos. En caso de que desees aportar sugerencias o propuestas de mejorar el proceso de desarrollo, puedes hacerla el canal **[**#🚐 | la-cuentoneta**][dc-channel]** en Discord o en sumar un issue de tipo **[💼 Proponer mejoras en la Gestión o el Proceso de Desarrollo del Proyecto][crear-issue-cuentoneta]**.
 
 ---
 
 ## Consideraciones Generales
 
 La Cuentoneta es un proyecto abierto tanto en el código como en su gestión, siendo pública y de libre acceso toda la
-información relacionada a su desarrollo y encontrándose la misma en línea con el [Código de Conducta](doc-code_of_conduct) y la declaración de [Misión, Visión y Valores](doc-mmv).
+información relacionada a su desarrollo y encontrándose la misma en línea con el [Código de Conducta][doc-code_of_conduct] y la declaración de [Misión, Visión y Valores][doc-mvv].
 
 Dada la naturaleza del proyecto, es importante que tengas en consideración que:
 
@@ -61,26 +61,31 @@ El tech stack actualmente utilizado para el desarrollo de La Cuentoneta es:
 ### Para la gestión de la base de código del proyecto
 
 - **<a href="https://git-scm.com/">Git</a>** como herramienta de control de versiones
-- **<a href="https://https://github.com">GitHub</a>** como host de la base de código
+- **<a href="https://github.com">GitHub</a>** como host de la base de código
 - **<a href="https://pnpm.io/es/">pnpm</a>** como gestor de paquetes
 - **<a href="https://nx.dev/angular">Nx</a>** como gestor de monorepo y task runner
 
-Junto con Nx, el proyecto cuenta con ESLint y Prettier ya configuradas como dependencias.
+Junto con Nx, el proyecto cuenta con ESLint, Prettier y Stylelint ya configuradas como dependencias.
 
 ### Para el desarrollo de la plataforma web
 
 - **<a href="https://angular.dev">Angular 22</a>** con **<a href="https://angular.dev/guide/ssr">Server-Side rendering</a>** como framework de frontend
 - **<a href="https://www.typescriptlang.org/">TypeScript</a>**
-- **<a href="https://tailwindcss.com/docs/installation">Tailwind CSS</a>**
-- **<a href="https://storybook.js.org/docs/react/get-started/introduction">Storybook</a>** como herramienta de desarrollo de componentes.
+- **<a href="https://tailwindcss.com/docs/installation">Tailwind CSS v4</a>**
+- **<a href="https://storybook.js.org/docs/get-started/frameworks/angular">Storybook</a>** como herramienta de desarrollo de componentes.
+
+### Para el desarrollo de la API
+
+- **<a href="https://hono.dev/">Hono</a>** como framework del backend, cuyos endpoints viven en `src/api/`.
+- **<a href="https://zod.dev/">Zod</a>**, a través de <a href="https://hono.dev/docs/guides/validation">`@hono/zod-validator`</a>, para la validación de los parámetros de entrada.
 
 ### Para la gestión del contenido
 
-- **<a href="https://www.sanity.io/docs">Sanity</a>** para persistencia de información de cuentos, autores y storylists.
+- **<a href="https://www.sanity.io/docs">Sanity</a>** para persistencia de la información de obras literarias, colecciones, autores, etiquetas y el contenido de la página de inicio.
 
 ### Para pruebas unitarias y de integración
 
-- **<a href="https://jestjs.io/docs/getting-started">Jest</a>** como framework de testing unitario, utilizando <a href="https://testing-library.com/docs/angular-testing-library/intro">Angular Testing Library</a> para la escritura de tests de componentes.
+- **<a href="https://vitest.dev/">Vitest</a>** como framework de testing unitario, utilizando <a href="https://testing-library.com/docs/angular-testing-library/intro">Angular Testing Library</a> para la escritura de tests de componentes.
 - **<a href="https://playwright.dev/">Playwright</a>** como framework de testing de integración y end-to-end
 
 ### Para generación y visualización de diagramas
@@ -154,7 +159,7 @@ git clone https://github.com/<tu_nombre_de_usuario_en_github>/cuentoneta.git
 cd cuentoneta
 ```
 
-Posteriormente ejecuta el siguiente comando para instalar todas las dependencias listadas en el archivo [`package.json`](package.json). La ejecución de este comando también procederá a crear un archivo `.env`, el cual contiene las variables de entorno necesarias para el correcto funcionamiento del proyecto en el ambiente de desarrollo.
+Posteriormente ejecuta el siguiente comando para instalar todas las dependencias listadas en el archivo [`package.json`](../package.json). La ejecución de este comando también procederá a crear un archivo `.env`, el cual contiene las variables de entorno necesarias para el correcto funcionamiento del proyecto en el ambiente de desarrollo.
 
 ```bash
 pnpm install
@@ -196,7 +201,16 @@ Para ejecutar una corrida de tests unitarios, ejecutá el siguiente comando.
 pnpm run test
 ```
 
-Esto iniciará una corrida de tests unitarios utilizando Jest, el cual se encargará de correr los tests unitarios de los componentes de Angular, mostrando los resultados en la consola.
+Esto iniciará una corrida de tests unitarios utilizando Vitest, el cual se encargará de correr los tests unitarios de toda la aplicación —componentes de Angular, endpoints y servicios del backend, modelos de dominio y utilidades—, mostrando los resultados en la consola. El script envuelve el target Nx `vitest:test`, inferido por el plugin `@nx/vitest`.
+
+Para trabajar con los tests en modo _watch_ están disponibles estas dos variantes, que invocan Vitest directamente:
+
+```bash
+pnpm run test:watch
+pnpm run test:ui
+```
+
+La segunda levanta además la interfaz web de Vitest.
 
 ##### Tests de integración y e2e
 
@@ -206,7 +220,7 @@ Los tests de e2e corren contra el build SSR de producción (el `webServer` de Pl
 pnpm build && pnpm run test:e2e
 ```
 
-Esto iniciará una corrida de tests de integración y end-to-end utilizando Playwright, mostrando los resultados en consola y generando un reporte, el cual se encontrará en la carpeta `dist/.playwright/playwright-reports` al final de la corrida.
+Esto iniciará una corrida de tests de integración y end-to-end utilizando Playwright, mostrando los resultados en consola y generando un reporte, el cual se encontrará en la carpeta `dist/.playwright/playwright-report` al final de la corrida.
 
 ---
 
@@ -350,17 +364,16 @@ El proyecto utiliza [git](https://git-scm.com) como herramienta de control de ve
 
 ### Consideraciones al contribuir al repositorio
 
-- En caso de que seas un colaborador externo debes escribir un mensaje en la issue en el que desees trabajar, a fin de que te pueda ser asignado.
-- Aplica también para colaboradores externos la necesidad de realizar un _fork_ del repositorio para así posteriormente envar tus cambios mediante un _pull request_ desde tu _fork_ al repositorio principal. Para generar un _fork_, sigue los pasos detallados en la sección [Clonar el repositorio](#clonar-el-repositorio).
-- En caso de que seas un colaborador externo, debes de dejar un mensaje en el issue que quieras tomar para que te lo puedan asignar, después es necesario que realices un _fork_ del repositorio y envíes tus
-  cambios mediante un _pull request_ desde tu _fork_ al repositorio principal, generando el fork tal como se detalla
-  en la sección previa [Clonar el repositorio](#clonar-el-repositorio).
-- Las ramas de trabajo se nomenclan de la siguiente manera: `<numero-de-incidencia>-<nombre-de-la-funcionalidad>`.
-  Por ejemplo: `469-implementar-nuevo-componente-story-card-component`. Para facilidad de la generación de las ramas
-  de trabajo, se recomienda hacer uso de la generación de ramas a partir de las incidencias de Github.
+- En caso de que seas un colaborador externo, debes dejar un mensaje en el issue que quieras tomar para que te lo
+  puedan asignar. Después es necesario que realices un _fork_ del repositorio y envíes tus cambios mediante un
+  _pull request_ desde tu _fork_ al repositorio principal, generando el fork tal como se detalla en la sección
+  [Clonar el repositorio](#clonar-el-repositorio).
+- Las ramas de trabajo se nomenclan de la siguiente manera: `feat/<numero-de-incidencia>-<nombre-de-la-funcionalidad>`,
+  con el nombre en _kebab-case_. Por ejemplo: `feat/469-implementar-nuevo-componente-story-card-component`. Si generás
+  la rama desde la incidencia en la interfaz de Github, tené en cuenta que el nombre que propone viene sin el prefijo
+  `feat/`: hay que agregárselo antes de empezar a trabajar.
 - Todos los commits deben ser nomenclados de la siguiente manera, referenciando el commit de manera navegable desde
-  la interfaz de Github: `[#numero-de-incidencia] - 
-<mensaje-del-commit>`. Por ejemplo: `[#469] - Crear componente PublicationCardComponent`.
+  la interfaz de Github: `[#numero-de-incidencia] - <mensaje-del-commit>`. Por ejemplo: `[#469] - Crear componente PublicationCardComponent`.
 - Las ramas de trabajo se crean a partir de la rama `develop` y se eliminan una vez integrados los cambios en la rama `develop`.
 - Las ramas de trabajo deben ser actualizadas con la rama `develop` antes de solicitar la integración de los cambios en la rama `develop`.
 - El código escrito en en el proyecto sigue las convenciones de [Angular](https://runebook.dev/es/docs/angular/guide/styleguide), [TypeScript](https://ts.dev/style/) y [RxJS](https://v10.angular.io/guide/rx-library#naming-conventions-for-observables) correspondientes para la escritura de código.
@@ -417,20 +430,15 @@ a la hora de realizar el _triaging_ y análisis de la incidencia.
 
 Para características que requieran pruebas de integración, sean estas manuales o implementadas mediante Playwright, se
 encuentra disponible una guía y plantilla de cómo confeccionar un plan de pruebas para una funcionalidad determinada del
-proyecto. Puede accederse al template de planes de testing [en este enlace](#doc-test-plan).
+proyecto. La guía vive en [`docs/qa/TESTPLAN_GUIDE.md`](./qa/TESTPLAN_GUIDE.md) y la plantilla, en [`docs/qa/TEST_PLAN_TEMPLATE.md`](./qa/TEST_PLAN_TEMPLATE.md).
 
 ---
 
 [dc-channel]: https://discord.com/channels/594363964499165194/1109220285841944586
-[github-issues-tutorial]: https://docs.github.com/es/issues/tracking-your-work-with-issues/creating-an-issue
-[crear-issue-cuentoneta]: https://github.com/rolivencia/cuentoneta/issues/new/choose
-[feature-request-template]: https://github.com/rolivencia/cuentoneta/issues/new?assignees=&labels=%F0%9F%8F%8E%EF%B8%8F+mejora&projects=&template=feature.yml
-[bug-report-template]: https://github.com/rolivencia/cuentoneta/issues/new?assignees=&labels=%F0%9F%A6%9F+bug&projects=&template=bug_report.yml
+[crear-issue-cuentoneta]: https://github.com/cuentoneta/cuentoneta/issues/new/choose
 
 <!-- Enlaces a otros documentos -->
 
 [doc-mvv]: https://github.com/cuentoneta/cuentoneta/blob/develop/MVV.md
 [doc-code_of_conduct]: https://github.com/cuentoneta/cuentoneta/blob/develop/CODE_OF_CONDUCT.md
 [dc-fec]: https://discord.com/invite/frontendcafe
-[doc-test-plan]: https://github.com/cuentoneta/cuentoneta/blob/develop/docs/TEST_PLAN.md
-[doc-test-template]: https://github.com/cuentoneta/cuentoneta/blob/develop/docs/TEST_TEMPLATE.md
