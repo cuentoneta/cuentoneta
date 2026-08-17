@@ -1,14 +1,14 @@
 // Core
 import { inject, InjectionToken, Service } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import type { Observable } from 'rxjs';
 
 // Environment
 import { environment } from '../environments/environment';
 
 // Models
-import { Story, StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
-import { ApiUrl, Endpoints } from './endpoints';
+import type { Story, StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
+import { Endpoints, type ApiUrl } from './endpoints';
 
 export interface StoryApi {
 	getBySlug(slug: string): Observable<Story>;

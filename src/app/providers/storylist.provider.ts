@@ -1,14 +1,14 @@
 // Core
 import { inject, InjectionToken, Service } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import type { Observable } from 'rxjs';
 
 // Environment
 import { environment } from '../environments/environment';
 
 // Models
-import { Storylist } from '@models/storylist.model';
-import { ApiUrl, Endpoints } from './endpoints';
+import type { Storylist } from '@models/storylist.model';
+import { Endpoints, type ApiUrl } from './endpoints';
 
 export interface StorylistApi {
 	get(slug: string, amount?: number, ordering?: 'asc' | 'desc'): Observable<Storylist>;

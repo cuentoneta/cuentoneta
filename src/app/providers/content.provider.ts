@@ -1,13 +1,13 @@
 // Core
 import { inject, InjectionToken, Service } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import type { Observable } from 'rxjs';
 
 // Environment
 import { environment } from '../environments/environment';
 
 // Models
-import { LandingPageContent } from '@models/landing-page-content.model';
+import type { LandingPageContent } from '@models/landing-page-content.model';
 
 export interface ContentApi {
 	getLandingPageContent(): Observable<LandingPageContent>;

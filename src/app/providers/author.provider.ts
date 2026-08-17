@@ -1,14 +1,14 @@
 // Core
 import { inject, InjectionToken, Service } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import type { Observable } from 'rxjs';
 
 // Environment
 import { environment } from '../environments/environment';
 
 // Models
-import { AuthorProfile, AuthorTeaser } from '@models/author.model';
-import { ApiUrl, Endpoints } from './endpoints';
+import type { AuthorProfile, AuthorTeaser } from '@models/author.model';
+import { Endpoints, type ApiUrl } from './endpoints';
 
 export interface AuthorApi {
 	getAll(): Observable<AuthorTeaser[]>;

@@ -1,14 +1,14 @@
 // Core
 import { inject, InjectionToken, Service } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, Observable } from 'rxjs';
+import { map, type Observable } from 'rxjs';
 
 // Environment
 import { environment } from '../environments/environment';
 
 // Models
-import { Contributor, ContributorArea, SORTED_AREAS } from '@models/contributor.model';
-import { ApiUrl, Endpoints } from './endpoints';
+import { SORTED_AREAS, type Contributor, type ContributorArea } from '@models/contributor.model';
+import { Endpoints, type ApiUrl } from './endpoints';
 
 export interface ContributorApi {
 	getAll(): Observable<Contributor[]>;
