@@ -17,11 +17,14 @@ type VisibilityState = (typeof VisibilityState)[keyof typeof VisibilityState];
 		// haría perder contra el contenido de página. Ningún componente necesita conocerla para no taparla —
 		// los que elevan algo dentro de sí lo confinan con `isolate`.
 		class: 'fixed top-0 z-nav w-full items-center justify-center border-b-1 border-neutral-200 md:m-auto',
+		// Va en el host y no en el `<header>` que colapsa, para que alcance también al menú desplegable y a
+		// su backdrop, que son hermanos suyos. Hoy los desmonta el effect de abajo; así la garantía no
+		// depende de que siga haciéndolo.
+		'[attr.inert]': "isHidden() ? '' : null",
 	},
 	template: `
 		<header
 			[class]="visibilityClasses()"
-			[attr.inert]="isHidden() ? '' : null"
 			class="grid w-full grid-cols-[1fr_theme(spacing.6)] grid-rows-[theme(spacing.16)_1fr] bg-neutral-50 px-5 transition-[height,opacity,translate] duration-200 motion-reduce:transition-none md:grid-cols-2 md:grid-rows-1"
 		>
 			<section class="flex items-center">
@@ -101,8 +104,6 @@ export class HeaderComponent {
 
 	protected readonly visibilityClasses = computed(() => this.visibilityClassMap[this.isVisible()]);
 
-	// El estado oculto colapsa el alto y pinta transparente, y ninguna de las dos cosas saca al contenido
-	// del orden de tabulación ni del hit-test: sin esto, la barra ausente sigue siendo navegable.
 	protected readonly isHidden = computed(() => this.isVisible() === VisibilityState.Hidden);
 
 	private readonly collapseMenuOnHideEffect = effect(() => {

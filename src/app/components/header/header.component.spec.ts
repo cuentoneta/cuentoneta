@@ -115,9 +115,26 @@ describe('HeaderComponent', () => {
 			expect(banner).not.toHaveClass('h-0');
 		});
 
-		// Los cuatro casos siguientes cubren el contrato que las clases de colapso no expresan: una barra
-		// que la interfaz declara ausente no puede seguir recibiendo foco. `happy-dom` consulta los
-		// ancestros `inert` al enfocar, así que acá se afirma comportamiento y no solo el atributo emitido.
+		it('should close the mobile menu when the header hides', async () => {
+			const user = userEvent.setup();
+			const { rerender } = await renderHeader(true);
+			await user.click(screen.getByRole('button'));
+			expect(screen.getAllByRole('link', { name: 'Obras' })).toHaveLength(2);
+
+			await rerender({ inputs: { isVisible: false } });
+
+			// Vuelve a quedar solo el de escritorio: el del menú desplegable se fue con él. Se espera con
+			// `waitFor` porque el effect cierra el menú dentro del ciclo del cambio de input y el template
+			// lo refleja en la pasada siguiente.
+			await waitFor(() => expect(screen.getAllByRole('link', { name: 'Obras' })).toHaveLength(1));
+		});
+	});
+
+	// Lo que las clases de colapso no expresan: una barra que la interfaz declara ausente tampoco puede
+	// existir para el teclado. `happy-dom` consulta los ancestros `inert` al enfocar, así que acá se afirma
+	// comportamiento y no solo el atributo emitido; el clic y el árbol de accesibilidad los decide el
+	// navegador y quedan para el e2e.
+	describe('interaction while hidden', () => {
 		it('should keep the brand link out of reach while hidden', async () => {
 			await renderHeader(false);
 
@@ -150,27 +167,22 @@ describe('HeaderComponent', () => {
 
 		// El clic y la exclusión del árbol de accesibilidad los decide el navegador, no happy-dom: acá se
 		// afirma que el estado queda declarado, y el e2e comprueba lo que ese atributo produce de verdad.
-		it('should mark the header inert only while hidden', async () => {
-			const { rerender } = await renderHeader(true);
-			expect(screen.getByRole('banner')).not.toHaveAttribute('inert');
+		// Se afirma sobre el ancestro y no sobre la franja que colapsa: lo inerte es el componente entero,
+		// que es el alcance que incluye también al menú desplegable y a su backdrop.
+		it('should mark the whole component inert while hidden', async () => {
+			await renderHeader(false);
 
-			await rerender({ inputs: { isVisible: false } });
-
-			expect(screen.getByRole('banner')).toHaveAttribute('inert');
+			expect(screen.getByRole('banner').closest('[inert]')).not.toBeNull();
 		});
 
-		it('should close the mobile menu when the header hides', async () => {
-			const user = userEvent.setup();
-			const { rerender } = await renderHeader(true);
-			await user.click(screen.getByRole('button'));
-			expect(screen.getAllByRole('link', { name: 'Obras' })).toHaveLength(2);
+		it('should leave nothing inert while visible', async () => {
+			await renderHeader(true);
 
-			await rerender({ inputs: { isVisible: false } });
-
-			// Vuelve a quedar solo el de escritorio: el del menú desplegable se fue con él. Se espera con
-			// `waitFor` porque el effect cierra el menú dentro del ciclo del cambio de input y el template
-			// lo refleja en la pasada siguiente.
-			await waitFor(() => expect(screen.getAllByRole('link', { name: 'Obras' })).toHaveLength(1));
+			expect(screen.getByRole('banner').closest('[inert]')).toBeNull();
 		});
+
+		// El foco que ya estaba adentro cuando la barra se oculta lo suelta el navegador, y solo él:
+		// `happy-dom` consulta los ancestros inertes al enfocar, pero no reevalúa un foco ya puesto. Ese
+		// caso vive en el e2e.
 	});
 });
