@@ -5,9 +5,8 @@ import { at, defineMigration, setIfMissing } from 'sanity/migrate';
 // "no" sin que nadie lo haya afirmado. Las queries ya aplican el valor por defecto al proyectar, pero
 // eso resuelve la lectura y no el dato: el documento sigue sin decir qué es.
 //
-// Alcanza a los dos agregados que declaran el campo. En `story` es requerido y en `literaryWork` no
-// —una asimetría que se cierra aparte, endureciendo la regla después de esta corrida—, pero el hueco
-// es el mismo y se sanea igual.
+// Alcanza a los dos agregados que declaran el campo, y tiene que correr antes de que la regla los
+// exija a los dos: al revés, el Studio marca en rojo lo que todavía no está corregido.
 export default defineMigration({
 	title: 'Setear en false el lenguaje adulto no declarado',
 	documentTypes: ['story', 'literaryWork'],

@@ -19,16 +19,15 @@ Medido contra `production` el 2026-08-17:
 
 Treinta y seis documentos sí lo declaran en `true` —dieciocho por tipo—: `setIfMissing` no los toca.
 
-## La asimetría entre los dos agregados
+## El orden respecto de la regla
 
-`story.badLanguage` se declara con `Rule.required()`; `literaryWork.badLanguage` **no**. Es el mismo
-campo, obligatorio en un agregado y opcional en el otro, y por eso el barrido de campos requeridos
-reporta solo el primero: mide lo que el schema declara.
+Hasta este cambio, `badLanguage` era requerido en `story` y opcional en `literaryWork` — el mismo
+campo con dos reglas, y la razón por la que el barrido de campos requeridos reportaba solo el primero:
+mide lo que el schema declara.
 
-Esta migración sanea los dos por igual. **Endurecer la regla en `literaryWork` se trata aparte**, y
-tiene que ir después de esta corrida en cada dataset: al revés, el Studio marcaría en rojo 155 obras
-antes de que estén corregidas — la misma razón por la que la validación de forma de URL fue después
-de sanear los recursos.
+La regla ahora rige en los dos, y **el saneamiento va primero**: al revés, el Studio marcaría en rojo
+155 obras antes de que estén corregidas. Es la misma razón por la que la validación de forma de URL
+llegó después de sanear los recursos.
 
 ## Cómo se corre
 
