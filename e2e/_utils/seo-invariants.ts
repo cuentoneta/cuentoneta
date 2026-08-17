@@ -195,6 +195,22 @@ export function checkNoSkeletonMarkers(html: string): SeoInvariantViolation | nu
 	return noSkeletonMarkers(parseHtml(html));
 }
 
+/**
+ * Las dos violaciones que delatan una página servida sin cuerpo: `<main>` por debajo del umbral de
+ * texto, y `<main>` con markers de skeleton. Es el subconjunto que se puede afirmar sobre cualquier
+ * URL sin conocer su tipo —no necesita patrón de título ni lista de bloques JSON-LD—, y por eso lo
+ * consume el barrido que recorre el sitemap entero.
+ */
+export function collectEmptyBodyViolations(html: string, minLength?: number): SeoInvariantViolation[] {
+	return emptyBodyViolations(parseHtml(html), minLength);
+}
+
+function emptyBodyViolations(root: HTMLElement, minLength?: number): SeoInvariantViolation[] {
+	return [primaryContentLength(root, minLength), noSkeletonMarkers(root)].filter(
+		(violation): violation is SeoInvariantViolation => violation !== null,
+	);
+}
+
 export function checkInternalLink(html: string, prefix: string): SeoInvariantViolation | null {
 	return internalLink(parseHtml(html), prefix);
 }
@@ -219,8 +235,7 @@ export async function collectIndexableHtmlViolations(
 		canonical(root, expectations.canonicalContains ?? expectations.path),
 		robotsIndexable(root),
 		primaryHeading(root, expectations.h1Pattern),
-		primaryContentLength(root, expectations.minPrimaryContentLength),
-		noSkeletonMarkers(root),
+		...emptyBodyViolations(root, expectations.minPrimaryContentLength),
 		expectations.requiredInternalLinkPrefix ? internalLink(root, expectations.requiredInternalLinkPrefix) : null,
 	];
 	return [
