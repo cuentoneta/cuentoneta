@@ -11,7 +11,7 @@ import { ssrBlockingRxResource } from '@app-utils/ssr-resource';
 import type { NavigationContext, NavigationParams } from '@app-utils/navigation-params';
 
 // Services
-import { StoryApi } from '../../providers/story-api.interface';
+import { StoryApi } from '../../providers/story.provider';
 import { LayoutService } from '../../providers/layout.interface';
 
 // SEO

@@ -17,7 +17,7 @@ import { AUTHOR_HOST, type AuthorHost } from './author-host';
 
 // Services
 import { AuthorApi } from '../../providers/author-api.interface';
-import { StoryApi } from '../../providers/story-api.interface';
+import { StoryApi } from '../../providers/story.provider';
 
 // Componentes
 import { ResourceComponent } from '@components/resource/resource.component';
