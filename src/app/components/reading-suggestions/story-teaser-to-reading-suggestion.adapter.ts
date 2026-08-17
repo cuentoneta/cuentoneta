@@ -28,6 +28,13 @@ export interface ReadingSuggestion {
  * `sectionCount` es 1 porque una `Story` es un cuerpo único, sin secciones.
  */
 export function adaptStoryTeaserToReadingSuggestion(story: StoryTeaserView): ReadingSuggestion {
+	// El schema declara `approximateReadingTime` requerido, pero esa regla solo gobierna la edición en
+	// el Studio: hay obras persistidas sin el valor. Sin este guard, `Math.round` produce `NaN` y el
+	// value object falla nombrando el `NaN` en vez del dato que falta.
+	if (typeof story.approximateReadingTime !== 'number') {
+		throw new Error(`La obra "${story.slug}" no tiene tiempo de lectura`);
+	}
+
 	return {
 		literaryWork: {
 			_id: story._id,
