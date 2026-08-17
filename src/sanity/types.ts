@@ -185,7 +185,7 @@ export type LiteraryWork = {
 		_type: 'resource';
 		_key: string;
 	}>;
-	badLanguage?: boolean;
+	badLanguage: boolean;
 	tags?: Array<
 		{
 			_key: string;
@@ -1524,7 +1524,7 @@ export type LiteraryWorkBySlugQueryResult = {
 		_type: 'image';
 	} | null;
 	editorialNote: Markdown | null;
-	badLanguage: boolean | false;
+	badLanguage: boolean;
 	originalPublication: string | '';
 	publishedAt: string;
 	totalReadingTime: number | null;
@@ -1664,7 +1664,7 @@ export type LiteraryWorkSectionBySlugQueryResult = {
 		_type: 'image';
 	} | null;
 	editorialNote: Markdown | null;
-	badLanguage: boolean | false;
+	badLanguage: boolean;
 	originalPublication: string | '';
 	publishedAt: string;
 	totalReadingTime: number | null;

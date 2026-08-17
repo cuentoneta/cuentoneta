@@ -149,6 +149,10 @@ export default defineType({
 			title: '¿Contiene lenguaje adulto?',
 			type: 'boolean',
 			initialValue: false,
+			// Requerido como en la obra corta: el campo declara si el texto tiene lenguaje adulto, y una
+			// ausencia se lee como "no" sin que nadie lo haya afirmado. `initialValue` cubre lo que nace
+			// de acá en más; lo anterior lo saneó una migración, así que la regla no deja nada en rojo.
+			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
 			name: 'tags',
