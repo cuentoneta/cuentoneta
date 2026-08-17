@@ -17,6 +17,10 @@ type VisibilityState = (typeof VisibilityState)[keyof typeof VisibilityState];
 		// haría perder contra el contenido de página. Ningún componente necesita conocerla para no taparla —
 		// los que elevan algo dentro de sí lo confinan con `isolate`.
 		class: 'fixed top-0 z-nav w-full items-center justify-center border-b-1 border-neutral-200 md:m-auto',
+		// Va en el host y no en el `<header>` que colapsa, para que alcance también al menú desplegable y a
+		// su backdrop, que son hermanos suyos. Hoy los desmonta el effect de abajo; así la garantía no
+		// depende de que siga haciéndolo.
+		'[attr.inert]': "isHidden() ? '' : null",
 	},
 	template: `
 		<header
@@ -100,8 +104,10 @@ export class HeaderComponent {
 
 	protected readonly visibilityClasses = computed(() => this.visibilityClassMap[this.isVisible()]);
 
+	protected readonly isHidden = computed(() => this.isVisible() === VisibilityState.Hidden);
+
 	private readonly collapseMenuOnHideEffect = effect(() => {
-		if (this.isVisible() === VisibilityState.Hidden) {
+		if (this.isHidden()) {
 			this.displayMenu.set(false);
 		}
 	});

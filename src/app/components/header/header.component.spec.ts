@@ -129,4 +129,60 @@ describe('HeaderComponent', () => {
 			await waitFor(() => expect(screen.getAllByRole('link', { name: 'Obras' })).toHaveLength(1));
 		});
 	});
+
+	// Lo que las clases de colapso no expresan: una barra que la interfaz declara ausente tampoco puede
+	// existir para el teclado. `happy-dom` consulta los ancestros `inert` al enfocar, así que acá se afirma
+	// comportamiento y no solo el atributo emitido; el clic y el árbol de accesibilidad los decide el
+	// navegador y quedan para el e2e.
+	describe('interaction while hidden', () => {
+		it('should keep the brand link out of reach while hidden', async () => {
+			await renderHeader(false);
+
+			const brandLink = screen.getByRole('link', { name: 'La Cuentoneta — Inicio' });
+			brandLink.focus();
+
+			expect(brandLink).not.toHaveFocus();
+		});
+
+		// Sin este control, el caso de arriba pasaría igual con un componente que no deja enfocar nunca.
+		it('should let the brand link take focus while visible', async () => {
+			await renderHeader(true);
+
+			const brandLink = screen.getByRole('link', { name: 'La Cuentoneta — Inicio' });
+			brandLink.focus();
+
+			expect(brandLink).toHaveFocus();
+		});
+
+		// El otro control alcanzable en `xs`, que es el único ancho donde la barra llega a ocultarse: ahí
+		// los enlaces de escritorio están en `display: none` y el menú se abre por este botón.
+		it('should keep the menu toggler out of reach while hidden', async () => {
+			await renderHeader(false);
+
+			const toggler = screen.getByRole('button');
+			toggler.focus();
+
+			expect(toggler).not.toHaveFocus();
+		});
+
+		// El clic y la exclusión del árbol de accesibilidad los decide el navegador, no happy-dom: acá se
+		// afirma que el estado queda declarado, y el e2e comprueba lo que ese atributo produce de verdad.
+		// Se afirma sobre el ancestro y no sobre la franja que colapsa: lo inerte es el componente entero,
+		// que es el alcance que incluye también al menú desplegable y a su backdrop.
+		it('should mark the whole component inert while hidden', async () => {
+			const { fixture } = await renderHeader(false);
+
+			expect(fixture.nativeElement).toHaveAttribute('inert');
+		});
+
+		it('should leave the component interactive while visible', async () => {
+			const { fixture } = await renderHeader(true);
+
+			expect(fixture.nativeElement).not.toHaveAttribute('inert');
+		});
+
+		// El foco que ya estaba adentro cuando la barra se oculta lo suelta el navegador, y solo él:
+		// `happy-dom` consulta los ancestros inertes al enfocar, pero no reevalúa un foco ya puesto. Ese
+		// caso vive en el e2e.
+	});
 });
