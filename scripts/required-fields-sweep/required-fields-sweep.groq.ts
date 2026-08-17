@@ -6,8 +6,13 @@ export interface FieldCountQuery {
 	readonly documentType: string;
 	/** El path tal como se muestra en el reporte. */
 	readonly label: string;
-	readonly query: string;
+	readonly publishedQuery: string;
+	readonly draftsQuery: string;
 }
+
+// El borrador se distingue por su `_id`, no por la perspectiva: `drafts` cae al documento publicado
+// cuando no existe borrador, así que contar con ella reportaría como borradores a los publicados.
+const DRAFT_PATH = '_id in path("drafts.**")';
 
 // Un atributo anidado solo se puede exigir si su padre existe: sin el guard, un documento sin el
 // objeto contenedor entero se contaría como incumplimiento de cada uno de sus campos, y el reporte
@@ -46,11 +51,13 @@ export function buildFieldCountQuery(field: RequiredFieldPath): FieldCountQuery 
 	field.segments.forEach((segment) => assertIdentifier(segment, 'nombre de campo'));
 
 	const predicate = field.insideArray ? missingInArrayPredicate(field.segments) : missingPredicate(field.segments);
+	const of = (scope: string) => `count(*[_type == "${field.documentType}" && ${scope} && ${predicate}])`;
 
 	return {
 		documentType: field.documentType,
 		label: `${field.documentType}.${field.segments.join('.')}`,
-		query: `count(*[_type == "${field.documentType}" && ${predicate}])`,
+		publishedQuery: of(`!(${DRAFT_PATH})`),
+		draftsQuery: of(DRAFT_PATH),
 	};
 }
 

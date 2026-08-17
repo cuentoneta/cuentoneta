@@ -57,6 +57,10 @@ function attributeHolder(entry: SchemaNode): SchemaNode {
 interface Accumulator {
 	readonly required: RequiredFieldPath[];
 	readonly uncovered: UncoveredPath[];
+	/** Tipos nombrados del schema, para resolver las referencias `inline`. */
+	readonly types: ReadonlyMap<string, SchemaNode>;
+	/** Nombres en curso de resolución: corta un tipo que se referencia a sí mismo. */
+	readonly resolving: Set<string>;
 }
 
 function collectAttributes(
@@ -88,6 +92,10 @@ function descend(
 	if (!node || isReference(node)) {
 		return;
 	}
+	if (node.type === 'inline') {
+		descendInline(node, documentType, segments, insideArray, acc);
+		return;
+	}
 	if (node.attributes) {
 		collectAttributes(node, documentType, segments, insideArray, acc);
 		return;
@@ -95,6 +103,33 @@ function descend(
 	if (node.type === 'array') {
 		descendArray(node, documentType, segments, acc);
 	}
+}
+
+// `schema.json` referencia por nombre todo tipo declarado aparte — `slug`, `markdown`, cada
+// `*.reference` —, así que sin resolverlos el recorrido perdería sus campos requeridos sin decirlo:
+// `slug.current` lo declara el tipo `slug`, no cada documento que lo usa.
+function descendInline(
+	node: SchemaNode,
+	documentType: string,
+	segments: readonly string[],
+	insideArray: boolean,
+	acc: Accumulator,
+): void {
+	const name = node.name;
+	const resolved = name ? acc.types.get(name) : undefined;
+
+	if (!name || !resolved) {
+		acc.uncovered.push({ documentType, segments, reason: `tipo "${name ?? 'sin nombre'}" ausente del schema` });
+		return;
+	}
+	// Un tipo que se contiene a sí mismo —`blockContent` anida bloques— haría girar el recorrido.
+	if (acc.resolving.has(name)) {
+		return;
+	}
+
+	acc.resolving.add(name);
+	descend(attributeHolder(resolved), documentType, segments, insideArray, acc);
+	acc.resolving.delete(name);
 }
 
 function descendArray(node: SchemaNode, documentType: string, segments: readonly string[], acc: Accumulator): void {
@@ -110,7 +145,8 @@ function descendArray(node: SchemaNode, documentType: string, segments: readonly
 }
 
 export function scanRequiredFields(schema: readonly SchemaNode[]): RequiredFieldsScan {
-	const acc: Accumulator = { required: [], uncovered: [] };
+	const types = new Map(schema.filter((entry) => entry.name).map((entry) => [entry.name as string, entry]));
+	const acc: Accumulator = { required: [], uncovered: [], types, resolving: new Set() };
 
 	for (const entry of schema) {
 		// Los tipos del sistema (`sanity.imageAsset`, `sanity.fileAsset`) los gestiona el content lake:

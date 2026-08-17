@@ -42,22 +42,36 @@ function gh(...args: string[]): string {
  * Las dos perspectivas se cuentan por separado: mezclarlas infla el reporte con borradores a medio
  * cargar, que son un estado legítimo del Studio y no un incumplimiento que alguien deba atender.
  */
-async function countBreaches(): Promise<{ breaches: FieldBreach[]; scanned: number; report: SweepReport }> {
+/**
+ * Un dataset que no se puede leer **no falla**: sin permiso, una consulta de conteo devuelve `0` en
+ * vez de un error. Sin este guard, una credencial vencida produciría un reporte impecable de "ningún
+ * campo incumplido" y, con `--apply`, anunciaría que ya no queda nada que atender. Es exactamente el
+ * modo de falla que este barrido existe para cerrar.
+ */
+async function assertDatasetIsReadable(): Promise<void> {
+	const total: number = await sanityClient.fetch('count(*)');
+	if (total === 0) {
+		throw new Error(
+			`el dataset "${environment.sanity.dataset}" no devolvió ningún documento: la credencial no alcanza para leerlo, o apunta a un dataset vacío`,
+		);
+	}
+}
+
+async function countBreaches(): Promise<{ report: SweepReport }> {
 	const schema = JSON.parse(readFileSync(SCHEMA_PATH, 'utf8'));
 	const { required, uncovered } = scanRequiredFields(schema);
 	const queries = buildFieldCountQueries(required);
 
 	const counts: FieldBreach[] = [];
-	for (const { label, query } of queries) {
-		counts.push({
-			label,
-			published: await sanityClient.withConfig({ perspective: 'published' }).fetch(query),
-			drafts: await sanityClient.withConfig({ perspective: 'drafts' }).fetch(query),
-		});
+	for (const { label, publishedQuery, draftsQuery } of queries) {
+		const [published, drafts] = await Promise.all([
+			sanityClient.fetch(publishedQuery),
+			sanityClient.fetch(draftsQuery),
+		]);
+		counts.push({ label, published, drafts });
 	}
 
-	const breaches = breachesOf(counts);
-	return { breaches, scanned: queries.length, report: { breaches, uncovered, scannedFields: queries.length } };
+	return { report: { breaches: breachesOf(counts), uncovered, scannedFields: queries.length } };
 }
 
 function findTrackingIssue(): { number: number; body: string } | null {
@@ -100,11 +114,13 @@ function applyAction(report: SweepReport): void {
 	}
 }
 
-const { report } = await countBreaches();
-
 process.stdout.write(
 	`Barrido de campos requeridos — proyecto ${environment.sanity.projectId}, dataset ${environment.sanity.dataset}\n`,
 );
+
+await assertDatasetIsReadable();
+const { report } = await countBreaches();
+
 process.stdout.write(`${formatConsoleReport(report)}\n`);
 
 if (process.argv.includes('--apply')) {

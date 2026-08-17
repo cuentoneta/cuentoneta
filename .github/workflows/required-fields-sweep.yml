@@ -52,9 +52,14 @@ jobs:
           # con su copia, así que un hallazgo suyo sería el mismo con un día de atraso.
           SANITY_STUDIO_DATASET: production
           SANITY_STUDIO_PROJECT_ID: ${{ secrets.SANITY_STUDIO_PROJECT_ID || 's4dbqkc5' }}
-          # Prefiere un token de solo lectura: el script nunca muta contenido, y esa garantía conviene
-          # que la sostenga el permiso del secret y no solo la disciplina de quien edite el script.
-          # El token hace falta igual porque los borradores no se leen sin autenticación. Mientras no
-          # exista el secret dedicado cae al de escritura, que es lo único disponible hoy.
-          SANITY_STUDIO_TOKEN: ${{ secrets.SANITY_STUDIO_READONLY_TOKEN || secrets.SANITY_STUDIO_TOKEN }}
+          # `production` es un dataset **privado**: sin una credencial que lo alcance, cada conteo
+          # devuelve `0` sin error y el barrido reportaría que no hay nada que atender. De ahí que use
+          # el mismo token con el que `sync-datasets` lo lee, y que el script aborte si el dataset no
+          # devuelve documentos. `SANITY_STUDIO_TOKEN` no sirve acá: `ci.yml` lo usa contra `staging`,
+          # que es público.
+          #
+          # Conviene reemplazarlo por un token de solo lectura dedicado en cuanto exista: el script
+          # nunca muta contenido, y esa garantía es mejor sostenida por el permiso del secret que por
+          # la disciplina de quien edite el script.
+          SANITY_STUDIO_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
         run: pnpm required-fields:sweep --apply
