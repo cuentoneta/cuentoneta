@@ -96,9 +96,9 @@ Al evaluar nuevos módulos o endpoints, verificá que el plan incluya:
 
 ### Convención de providers del frontend (Qualified Implementation)
 
-- Interfaz de API con sufijo `-api`: `<dominio>-api.interface.ts` (export `<X>Api`)
-- Implementación + factory en `<dominio>.provider.ts` (`Http<X>Api` + `provide<X>Api()`)
-- Doble de test en `<dominio>.mock.ts` (`Stub<X>Api` + `provide<X>ApiMock()`)
+- Dos archivos por dominio, no tres: `<dominio>.provider.ts` declara la interfaz `<X>Api`, la implementación `Http<X>Api` y el `InjectionToken` homónimo — **tree-shakable**, con `providedIn: 'root'` y `factory: () => inject(Http<X>Api)`
+- **No existe `provide<X>Api()`**: la factory por defecto es lo que permite que la implementación viaje al chunk de quien la inyecta, y un cableado eager en la configuración de la aplicación la re-fijaría en el chunk inicial. Marcá como concern cualquier plan que lo reintroduzca, o que separe la interfaz en un archivo propio
+- Doble de test en `<dominio>.mock.ts` (`Stub<X>Api` + `provide<X>ApiMock()`), cableado explícito — su provider gana sobre la factory del token
 
 ## Restricciones duras a vigilar (de CLAUDE.md)
 
