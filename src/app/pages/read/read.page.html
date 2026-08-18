@@ -8,6 +8,9 @@
 			<span class="font-inter text-xs font-semibold">{{ literaryWork.totalReadingTime }} minutos de lectura</span>
 			<button cuentoneta-button type="outline">Compartir</button>
 		</div>
+
+		<cuentoneta-media-widget-selector [mediaSources]="literaryWork.mediaSources" />
+
 		@for (section of sections(); track section.position) {
 
 		<section class="flex flex-col gap-4">
