@@ -49,10 +49,66 @@ describe('ButtonComponent', () => {
 			});
 			const button = screen.getByRole('button');
 			expect(button).toHaveClass('bg-neutral-100');
+			expect(button).not.toHaveClass('border');
+		});
+	});
+
+	// Los tres ejes se afirman por separado, y no combinados: es lo que impide que alguien vuelva a
+	// meter la geometría dentro de la apariencia sin que nada falle.
+	describe('size axis', () => {
+		it.each([
+			['md', ['px-6', 'py-3', 'text-sm']],
+			['sm', ['px-3', 'py-2', 'text-sm', 'gap-1.5']],
+			['xs', ['px-3', 'py-2', 'text-xs', 'gap-1']],
+		])('should apply the %s geometry', async (size, expected) => {
+			await render(`<button cuentoneta-button size="${size}">Button</button>`, {
+				imports: [ButtonComponent],
+			});
+			const button = screen.getByRole('button');
+			for (const className of expected) {
+				expect(button).toHaveClass(className);
+			}
+		});
+
+		it('should default to the md geometry', async () => {
+			await render(`<button cuentoneta-button>Button</button>`, { imports: [ButtonComponent] });
+			const button = screen.getByRole('button');
+			expect(button).toHaveClass('px-6');
+			expect(button).toHaveClass('py-3');
+		});
+
+		it('should keep the geometry independent from the appearance', async () => {
+			await render(`<button cuentoneta-button type="share" size="md">Share</button>`, {
+				imports: [ButtonComponent],
+			});
+			const button = screen.getByRole('button');
+			expect(button).toHaveClass('bg-neutral-100');
+			expect(button).toHaveClass('px-6');
+			expect(button).not.toHaveClass('text-xs');
+		});
+	});
+
+	describe('active state', () => {
+		// Afirmar la ausencia del borde importa tanto como la presencia del fondo: un borde neutral-300
+		// sobre neutral-900 pasa desapercibido en un spec que solo mire el color de fondo.
+		it.each(['filled', 'outline', 'share'])('should invert the contrast over the %s appearance', async (type) => {
+			await render(`<button cuentoneta-button type="${type}" [active]="true">Opción</button>`, {
+				imports: [ButtonComponent],
+			});
+			const button = screen.getByRole('button');
+			expect(button).toHaveClass('bg-neutral-900');
+			expect(button).toHaveClass('text-neutral-50');
+			expect(button).not.toHaveClass('border');
+		});
+
+		it('should leave the geometry untouched', async () => {
+			await render(`<button cuentoneta-button size="sm" [active]="true">Opción</button>`, {
+				imports: [ButtonComponent],
+			});
+			const button = screen.getByRole('button');
 			expect(button).toHaveClass('px-3');
 			expect(button).toHaveClass('py-2');
-			expect(button).toHaveClass('text-xs');
-			expect(button).toHaveClass('gap-1');
+			expect(button).toHaveClass('gap-1.5');
 		});
 	});
 
