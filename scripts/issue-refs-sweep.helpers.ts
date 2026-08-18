@@ -72,11 +72,6 @@ export function classifyIssueState(input: { state: string; isPullRequest: boolea
 	return input.state === 'open' ? 'open' : 'closed';
 }
 
-/** El issue de seguimiento entre los que devuelve la búsqueda, por igualdad exacta de título. */
-export function selectTrackingIssue<T extends { title: string }>(issues: T[], title: string): T | null {
-	return issues.find((issue) => issue.title === title) ?? null;
-}
-
 /** Junta las referencias vigentes de las tres superficies en una sola lista. */
 export function collectTrackedRefs(input: {
 	allowlist: Readonly<Record<number, string>>;

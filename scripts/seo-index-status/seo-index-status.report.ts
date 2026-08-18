@@ -11,8 +11,11 @@ import {
 	CRAWL_STATE_LABELS,
 	diffCoverageStates,
 	diffStates,
+	countByLabel,
 	groupByCoverageState,
+	observedRows,
 	summarize,
+	withOverflowNote,
 	type ClassifiedRow,
 	type CoverageTransition,
 	type DiffBaseline,
@@ -39,16 +42,6 @@ function formatTransitions(transitions: readonly StateTransition[]): string[] {
 	return transitions.map(
 		(change) => `  ${CRAWL_STATE_LABELS[change.from]} → ${CRAWL_STATE_LABELS[change.to]}: ${change.url}`,
 	);
-}
-
-/** Agrupa por etiqueta y ordena por frecuencia, que es la lectura útil de un conjunto de movimientos. */
-function countByLabel<T>(items: readonly T[], labelOf: (item: T) => string): [string, number][] {
-	const grouped = new Map<string, number>();
-	for (const item of items) {
-		const label = labelOf(item);
-		grouped.set(label, (grouped.get(label) ?? 0) + 1);
-	}
-	return [...grouped].sort(([, a], [, b]) => b - a);
 }
 
 const coverageMoveLabel = (change: CoverageTransition): string => `${change.from} → ${change.to}`;
@@ -86,16 +79,8 @@ function formatUnconfirmed(states: readonly StateTransition[], coverage: readonl
 }
 
 /**
- * Las filas que sí son una observación. Todo diff se deriva de acá: una inspección fallida no tiene
- * un estado que comparar, y diffearla produciría un `Indexada → La inspección falló` que informa la
- * falla —ya contada aparte— disfrazada de movimiento del indexado. Es la misma razón por la que el
- * historial tampoco la persiste.
+ * Distingue una URL que agotó sus reintentos de otra que falló de entrada y no se reintentó.
  */
-function observed(rows: readonly ClassifiedRow[]): ClassifiedRow[] {
-	return rows.filter((row) => row.state !== CRAWL_STATE.failed);
-}
-
-/** Distingue una URL que agotó sus reintentos de otra que falló de entrada y no se reintentó. */
 function formatAttempts(attempts: number | undefined): string {
 	return attempts !== undefined && attempts > 1 ? ` (tras ${attempts} intentos)` : '';
 }
@@ -140,7 +125,7 @@ export function formatReport({ rows, previous, retries }: ReportInput): string[]
 	}
 
 	if (previous) {
-		const seen = observed(rows);
+		const seen = observedRows(rows);
 		const { transitions, pending, added } = diffStates(previous, seen);
 		lines.push('', `Cambios confirmados contra el historial (${previous.length} URL(s) conocidas):`);
 		lines.push(...formatTransitions(transitions));
@@ -207,7 +192,7 @@ function summaryUnconfirmed(states: readonly StateTransition[], coverage: readon
  * universos distintos. La transición es por URL, y por eso sí significa algo.
  */
 function summaryTransitions(previous: readonly DiffBaseline[], rows: readonly ClassifiedRow[]): string[] {
-	const seen = observed(rows);
+	const seen = observedRows(rows);
 	const { transitions, pending, added } = diffStates(previous, seen);
 	const lines = ['', `### Movimiento confirmado contra las ${previous.length} URL(s) conocidas`];
 
@@ -256,16 +241,10 @@ function failureLabel(row: ClassifiedRow): string {
 }
 
 function summaryDetails(title: string, items: readonly string[]): string[] {
-	// Cuántos detalles largos entran antes de que el resumen deje de leerse de un vistazo.
-	const SUMMARY_DETAIL_LIMIT = 10;
-
 	if (items.length === 0) {
 		return [];
 	}
-	const shown = items.slice(0, SUMMARY_DETAIL_LIMIT);
-	const rest = items.length - shown.length;
-	const lines = ['', `### ${title} (${items.length})`, '', ...shown.map((item) => `- ${item}`)];
-	return rest > 0 ? [...lines, `- …y ${rest} más`] : lines;
+	return ['', `### ${title} (${items.length})`, '', ...withOverflowNote(items).map((item) => `- ${item}`)];
 }
 
 /**

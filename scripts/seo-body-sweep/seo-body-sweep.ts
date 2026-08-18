@@ -10,7 +10,6 @@
  * Acá vive la orquestación y nada más: qué significa cada respuesta, qué se reintenta y qué se
  * escribe lo deciden `seo-body-sweep.helpers.ts` y `seo-body-sweep.report.ts`, que se ejercitan sin red.
  */
-import { execFileSync } from 'node:child_process';
 import { appendFileSync } from 'node:fs';
 
 import { parseSitemap } from '../seo-smoke.helpers';
@@ -31,6 +30,7 @@ import {
 	formatSummaryMarkdown,
 	type SweepReport,
 } from './seo-body-sweep.report';
+import { findTrackingIssue, gh } from '../tracking-issue';
 
 const TRACKING_TITLE = 'Páginas del sitemap que sirven un cuerpo vacío';
 // Identificable a propósito: un barrido de ~1000 requests contra el propio origen tiene que poder
@@ -65,10 +65,6 @@ const concurrency = Math.min(numericFlag('concurrency', DEFAULT_CONCURRENCY), MA
 const limit = numericFlag('limit', Number.POSITIVE_INFINITY);
 const summaryPath = flag('summary');
 const shouldApply = process.argv.includes('--apply');
-
-function gh(...args: string[]): string {
-	return execFileSync('gh', args, { encoding: 'utf8' });
-}
 
 async function fetchPage(path: string): Promise<{ status: number; html: string }> {
 	const response = await fetch(`${baseUrl}${path}`, {
@@ -118,25 +114,8 @@ async function sweepAll(paths: readonly string[]): Promise<PageResult[]> {
 	return results;
 }
 
-function findTrackingIssue(): { number: number; body: string } | null {
-	const raw = gh(
-		'issue',
-		'list',
-		'--state',
-		'open',
-		'--search',
-		`"${TRACKING_TITLE}" in:title`,
-		'--json',
-		'number,title,body',
-	);
-	const found = (JSON.parse(raw) as { number: number; title: string; body: string }[]).find(
-		(issue) => issue.title === TRACKING_TITLE,
-	);
-	return found ? { number: found.number, body: found.body ?? '' } : null;
-}
-
 function applyAction(report: SweepReport): void {
-	const existing = findTrackingIssue();
+	const existing = findTrackingIssue(TRACKING_TITLE);
 	const action = decideAction({ report, existing });
 
 	if (action.kind === 'noop') {

@@ -6,7 +6,6 @@ import {
 	formatConsoleReport,
 	formatReportBody,
 	selectStaleRefs,
-	selectTrackingIssue,
 	type IssueState,
 	type TrackedIssueRef,
 } from './issue-refs-sweep.helpers';
@@ -191,21 +190,6 @@ describe('classifyIssueState', () => {
 		['un fallo de red sobre #1404', 'Command failed: gh api repos/x/y/issues/1404\nerror connecting'],
 	])('no confunde con una cita rota %s', (_caso, error) => {
 		expect(() => classifyIssueState({ error })).toThrow();
-	});
-});
-
-describe('selectTrackingIssue', () => {
-	it('exige igualdad exacta de título', () => {
-		const issues = [
-			{ title: 'Detectar periódicamente las menciones a issues que ya cerraron' },
-			{ title: 'Menciones a issues que ya cerraron' },
-		];
-
-		expect(selectTrackingIssue(issues, 'Menciones a issues que ya cerraron')).toBe(issues[1]);
-	});
-
-	it('devuelve null cuando ninguno coincide', () => {
-		expect(selectTrackingIssue([{ title: 'otro' }], 'Menciones a issues que ya cerraron')).toBeNull();
 	});
 });
 
