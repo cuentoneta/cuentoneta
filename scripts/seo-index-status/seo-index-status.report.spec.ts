@@ -65,16 +65,26 @@ describe('formatReport', () => {
 
 		const report = formatReport({ rows: current, previous }).join('\n');
 
-		expect(report).toContain('Observaciones sin confirmar (1)');
-		expect(report).toContain('1  movimiento(s) de coverageState');
+		expect(report).toContain('Movimientos sin confirmar (1)');
+		expect(report).toContain('1  Discovered - currently not indexed → URL is unknown to Google');
 		expect(report).not.toContain('Movimientos confirmados de coverageState');
 		expect(report).not.toContain('URL is unknown to Google →');
+	});
+
+	// Las altas comparten la forma de las filas de esa sección, así que debajo se leerían como una más.
+	it('emite las altas antes de la sección de movimientos sin confirmar', () => {
+		const report = formatReport({
+			rows: [row({ url: 'a', coverageState: 'URL is unknown to Google' }), row({ url: 'nueva' })],
+			previous: [row({ url: 'a', coverageState: 'Discovered - currently not indexed' })],
+		}).join('\n');
+
+		expect(report.indexOf('inspeccionadas por primera vez')).toBeLessThan(report.indexOf('Movimientos sin confirmar'));
 	});
 
 	it('omite la sección de observaciones sin confirmar cuando no hay ninguna', () => {
 		const rows = [row({ url: 'a', coverageState: 'Submitted and indexed', verdict: 'PASS' })];
 
-		expect(formatReport({ rows, previous: rows }).join('\n')).not.toContain('Observaciones sin confirmar');
+		expect(formatReport({ rows, previous: rows }).join('\n')).not.toContain('Movimientos sin confirmar');
 	});
 
 	it('omite la sección de coverageState cuando nada se movió', () => {
@@ -191,7 +201,7 @@ describe('formatSummaryMarkdown', () => {
 		const summary = formatSummaryMarkdown({ rows, previous, checkedAt: CHECKED_AT }).join('\n');
 
 		expect(summary).toContain('_Sin cambios de estado._');
-		expect(summary).toContain('#### Observaciones sin confirmar (1)');
+		expect(summary).toContain('#### Movimientos sin confirmar (1)');
 		expect(summary).toContain('| Nunca rastreada → Indexada | 1 |');
 	});
 

@@ -65,23 +65,24 @@ function formatCoverageTransitions(transitions: readonly CoverageTransition[]): 
 
 /**
  * Lo observado una sola vez, que todavía no cuenta como movimiento. Se informa para que "no hubo
- * transiciones" no se confunda con "no se vio nada distinto", y agregado porque su lista cruda es
- * justamente el ruido que motivó exigir repetición. Los movimientos de `coverageState` van por
- * conteo y sin abrir por par: es el eje que oscila, y detallarlo devolvería el ruido por la ventana.
+ * transiciones" no se confunda con "no se vio nada distinto", y agrupado por par: lo que el ruido
+ * medido desaconseja es la lista por URL, no la agregación — leer QUÉ par está oscilando es
+ * justamente cómo se descubre el próximo par volátil.
+ *
+ * El total cuenta movimientos y no URLs: una misma URL que movió sus dos ejes aporta dos.
  */
 function formatUnconfirmed(states: readonly StateTransition[], coverage: readonly CoverageTransition[]): string[] {
 	const total = states.length + coverage.length;
 	if (total === 0) {
 		return [];
 	}
-	const lines = ['', `Observaciones sin confirmar (${total}):`];
-	lines.push(
-		...countByLabel(states, stateMoveLabel).map(([label, count]) => `  ${String(count).padStart(5)}  ${label}`),
-	);
-	if (coverage.length > 0) {
-		lines.push(`  ${String(coverage.length).padStart(5)}  movimiento(s) de coverageState`);
-	}
-	return lines;
+	const format = ([label, count]: [string, number]): string => `  ${String(count).padStart(5)}  ${label}`;
+	return [
+		'',
+		`Movimientos sin confirmar (${total}):`,
+		...countByLabel(states, stateMoveLabel).map(format),
+		...countByLabel(coverage, coverageMoveLabel).map(format),
+	];
 }
 
 /**
@@ -150,8 +151,8 @@ export function formatReport({ rows, previous, retries }: ReportInput): string[]
 			lines.push(...formatCoverageTransitions(coverageMoves.transitions));
 		}
 
-		lines.push(...formatUnconfirmed(pending, coverageMoves.pending));
-
+		// Las altas y lo no inspeccionado van ANTES de los pendientes: comparten su forma —línea
+		// indentada, sin encabezado propio—, y debajo se leerían como una fila más de esa sección.
 		if (added.length > 0) {
 			lines.push(`  ${added.length} URL(s) inspeccionadas por primera vez`);
 		}
@@ -161,6 +162,8 @@ export function formatReport({ rows, previous, retries }: ReportInput): string[]
 		if (skipped > 0) {
 			lines.push(`  ${skipped} URL(s) del historial NO se inspeccionaron en esta corrida`);
 		}
+
+		lines.push(...formatUnconfirmed(pending, coverageMoves.pending));
 	}
 
 	return lines;
@@ -194,11 +197,8 @@ function summaryUnconfirmed(states: readonly StateTransition[], coverage: readon
 	if (total === 0) {
 		return [];
 	}
-	const rows = countByLabel(states, stateMoveLabel);
-	if (coverage.length > 0) {
-		rows.push(['Movimientos de coverageState', coverage.length]);
-	}
-	return ['', `#### Observaciones sin confirmar (${total})`, ...markdownTable(['Observación', 'URLs'], rows)];
+	const rows = [...countByLabel(states, stateMoveLabel), ...countByLabel(coverage, coverageMoveLabel)];
+	return ['', `#### Movimientos sin confirmar (${total})`, ...markdownTable(['Movimiento', 'URLs'], rows)];
 }
 
 /**
