@@ -40,8 +40,8 @@ const DEFAULT_CONCURRENCY = 6;
 // Techo de la concurrencia: el flag existe para ajustar, no para convertir el barrido en una carga
 // contra el propio origen. Un dedo pesado en el teclado no debería poder lanzar mil requests a la vez.
 const MAX_CONCURRENCY = 24;
-// Un origen que acepta la conexión y no responde dejaría al worker esperando el timeout por defecto de
-// undici, minutos por URL. El barrido prefiere reportarla como no medida y seguir.
+// Sin esto, un origen que acepta la conexión y no responde deja al worker esperando el timeout por
+// defecto de undici, minutos por URL.
 const REQUEST_TIMEOUT_MS = 15_000;
 
 // Apuntar a producción es una decisión explícita de quien corre, no un default silencioso.
