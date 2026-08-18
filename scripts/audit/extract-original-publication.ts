@@ -22,6 +22,8 @@ interface Candidate {
 	readonly title: string;
 	readonly author: string;
 	readonly review: string | null;
+	/** Autor del cuento del que se tomó la reseña: si difiere, la evidencia es de otra obra. */
+	readonly reviewAuthor?: string | null;
 }
 
 interface Proposal {
@@ -67,8 +69,19 @@ function nameIn(sentence: string): string | null {
 const LATER =
 	/\b(posteriormente|luego|m[áa]s tarde|despu[ée]s|reeditad|p[óo]stum|volvi[óo] a publicarse|la versi[óo]n aqu[íi])/i;
 
-function caveatsFor(sentence: string, name: string): string | null {
+// La reseña se trae del cuento homónimo, y hay slugs que apuntan a obras distintas según el tipo:
+// cuando los autores no coinciden, la evidencia es de otra obra y no sirve ni para proponer ni para
+// completar a mano. Vale en las dos tablas, así que vive aparte.
+function crossedAuthorCaveat(candidate: Candidate): string | null {
+	if (!candidate.reviewAuthor || !candidate.author || candidate.reviewAuthor === candidate.author) {
+		return null;
+	}
+	return `⚠️ la reseña es de otra obra: pertenece a ${candidate.reviewAuthor}, no a ${candidate.author}`;
+}
+
+function caveatsFor(sentence: string, name: string, candidate: Candidate): string | null {
 	const caveats = [
+		crossedAuthorCaveat(candidate),
 		LATER.test(sentence) ? 'la oración habla de una edición POSTERIOR, no de la original' : null,
 		COMPILATION.test(name) ? 'es una recopilación: puede no ser donde apareció primero' : null,
 	].filter(Boolean);
@@ -87,7 +100,12 @@ function propose(candidate: Candidate): Proposal {
 		const year = YEAR.exec(sentence)?.[0];
 		const name = year ? nameIn(sentence) : null;
 		if (year && name) {
-			return { candidate, value: `${name} (${year})`, evidence: sentence, caveat: caveatsFor(sentence, name) };
+			return {
+				candidate,
+				value: `${name} (${year})`,
+				evidence: sentence,
+				caveat: caveatsFor(sentence, name, candidate),
+			};
 		}
 	}
 
@@ -102,7 +120,8 @@ const QUERY = `
 		"slug": slug.current,
 		title,
 		"author": authors[0]->name,
-		"review": pt::text(*[_type == "story" && slug.current == ^.slug.current][0].review)
+		"review": pt::text(*[_type == "story" && slug.current == ^.slug.current][0].review),
+		"reviewAuthor": *[_type == "story" && slug.current == ^.slug.current][0].author->name
 	} | order(author asc, title asc)
 `;
 
@@ -135,7 +154,7 @@ const report = [
 	'',
 	`${derived.length} de ${candidates.length} obras tienen el dato en su propia reseña. Lo de abajo es una **propuesta**: cada fila trae la oración que la respalda, para poder juzgarla sin abrir el CMS.`,
 	'',
-	`${flagged.length} llevan un reparo: la reseña habla de una edición posterior, o la publicación que nombra es una recopilación. Esas hay que mirarlas sí o sí.`,
+	`${flagged.length} llevan un reparo: la reseña pertenece a otra obra, habla de una edición posterior, o la publicación que nombra es una recopilación. Esas hay que mirarlas sí o sí.`,
 	'',
 	'## Propuestas',
 	'',
@@ -145,11 +164,13 @@ const report = [
 	'',
 	`## Sin propuesta (${pending.length}) — requieren investigación`,
 	'',
-	'| slug | Autor | Obra | Reseña |',
-	'| --- | --- | --- | --- |',
+	'La reseña va igual: aunque no alcance para derivar el valor, suele decir lo suficiente para completarlo a mano. El reparo advierte cuándo **no** hay que fiarse de ella.',
+	'',
+	'| slug | Autor | Obra | Reparo | Reseña |',
+	'| --- | --- | --- | --- | --- |',
 	...pending.map(
 		(proposal) =>
-			`| \`${proposal.candidate.slug}\` | ${proposal.candidate.author} | ${proposal.candidate.title} | ${(proposal.evidence ?? '').replace(/\|/g, '\\|')} |`,
+			`| \`${proposal.candidate.slug}\` | ${proposal.candidate.author} | ${proposal.candidate.title} | ${crossedAuthorCaveat(proposal.candidate) ?? ''} | ${(proposal.evidence ?? '').replace(/\|/g, '\\|')} |`,
 	),
 ].join('\n');
 
