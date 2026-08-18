@@ -18,6 +18,7 @@ import {
 	summarize,
 	toSnapshot,
 	type ClassifiedRow,
+	type DiffBaseline,
 	type PacerClock,
 	type InspectionSnapshot,
 } from './seo-index-status.helpers';
@@ -28,6 +29,21 @@ function snapshot(overrides: Partial<InspectionSnapshot> = {}): InspectionSnapsh
 
 function row(overrides: Partial<InspectionSnapshot> = {}): ClassifiedRow {
 	return classify(snapshot(overrides));
+}
+
+/**
+ * Fila de la corrida anterior cuyo valor actual YA está confirmado: es el caso estable, en el que
+ * los campos de primer nivel y la confirmada coinciden. Una fila sin `confirmed` describe lo mismo
+ * por el fallback, así que las dos formas se usan indistintamente salvo donde el caso sea la
+ * diferencia entre ambas.
+ */
+function settled(latest: ClassifiedRow): DiffBaseline {
+	return { ...latest, confirmed: { state: latest.state, coverageState: latest.coverageState } };
+}
+
+/** Fila de la corrida anterior que ya vio un valor nuevo, todavía sin confirmar contra `was`. */
+function shifting(latest: ClassifiedRow, was: ClassifiedRow): DiffBaseline {
+	return { ...latest, confirmed: { state: was.state, coverageState: was.coverageState } };
 }
 
 describe('classify', () => {
@@ -120,23 +136,36 @@ describe('groupByCoverageState', () => {
 });
 
 describe('diffStates', () => {
-	it('reporta la transición a indexada entre corridas', () => {
-		const previous = [row({ url: 'a', verdict: 'NEUTRAL' })];
-		const current = [row({ url: 'a', verdict: 'PASS' })];
+	const neverCrawled = row({ url: 'a', verdict: 'NEUTRAL' });
+	const indexed = row({ url: 'a', verdict: 'PASS' });
 
-		const { transitions } = diffStates(previous, current);
+	it('reporta la transición a indexada cuando el valor nuevo ya se vio dos veces', () => {
+		const { transitions, pending } = diffStates([shifting(indexed, neverCrawled)], [indexed]);
 
 		expect(transitions).toEqual([{ url: 'a', from: CRAWL_STATE.neverCrawled, to: CRAWL_STATE.indexed }]);
+		expect(pending).toEqual([]);
+	});
+
+	it('deja pendiente el valor visto por primera vez', () => {
+		const { transitions, pending } = diffStates([settled(neverCrawled)], [indexed]);
+
+		expect(transitions).toEqual([]);
+		expect(pending).toEqual([{ url: 'a', from: CRAWL_STATE.neverCrawled, to: CRAWL_STATE.indexed }]);
+	});
+
+	it('no reporta nada cuando la observación vuelve al valor confirmado', () => {
+		const { transitions, pending } = diffStates([shifting(indexed, neverCrawled)], [neverCrawled]);
+
+		expect(transitions).toEqual([]);
+		expect(pending).toEqual([]);
 	});
 
 	it('no reporta transición cuando el estado no cambió', () => {
-		const rows = [row({ url: 'a', verdict: 'PASS' })];
-
-		expect(diffStates(rows, rows).transitions).toEqual([]);
+		expect(diffStates([settled(indexed)], [indexed]).transitions).toEqual([]);
 	});
 
 	it('separa las URLs que no estaban en la corrida anterior', () => {
-		const { added, transitions } = diffStates([row({ url: 'a' })], [row({ url: 'a' }), row({ url: 'b' })]);
+		const { added, transitions } = diffStates([settled(row({ url: 'a' }))], [row({ url: 'a' }), row({ url: 'b' })]);
 
 		expect(added).toEqual(['b']);
 		expect(transitions).toEqual([]);
@@ -183,34 +212,52 @@ describe('mergeSnapshot', () => {
 });
 
 describe('diffCoverageStates', () => {
+	const discovered = row({ url: 'a', coverageState: 'Discovered - currently not indexed' });
+	const unknown = row({ url: 'a', coverageState: 'URL is unknown to Google' });
+
 	// El caso real que motivó esta función: 5 URLs pasaron de "Discovered" a "unknown" entre dos
 	// corridas y el diff de estados no lo vio, porque ambos coverageState caen en "nunca rastreada".
 	it('detecta un movimiento de coverageState que NO cambia el estado derivado', () => {
-		const previous = [row({ url: 'a', coverageState: 'Discovered - currently not indexed' })];
-		const current = [row({ url: 'a', coverageState: 'URL is unknown to Google' })];
+		const previous = [shifting(unknown, discovered)];
 
-		expect(diffStates(previous, current).transitions).toEqual([]);
-		expect(diffCoverageStates(previous, current)).toEqual([
+		expect(diffStates(previous, [unknown]).transitions).toEqual([]);
+		expect(diffCoverageStates(previous, [unknown]).transitions).toEqual([
 			{ url: 'a', from: 'Discovered - currently not indexed', to: 'URL is unknown to Google' },
 		]);
 	});
 
-	it('no reporta nada cuando el coverageState no cambió', () => {
-		const rows = [row({ url: 'a', coverageState: 'Submitted and indexed', verdict: 'PASS' })];
+	// El defecto medido: el mismo par va y viene entre corridas separadas por minutos.
+	it('deja pendiente ese mismo movimiento mientras se lo haya visto una sola vez', () => {
+		const { transitions, pending } = diffCoverageStates([settled(discovered)], [unknown]);
 
-		expect(diffCoverageStates(rows, rows)).toEqual([]);
+		expect(transitions).toEqual([]);
+		expect(pending).toEqual([{ url: 'a', from: 'Discovered - currently not indexed', to: 'URL is unknown to Google' }]);
+	});
+
+	it('no reporta nada cuando la observación vuelve al coverageState confirmado', () => {
+		const { transitions, pending } = diffCoverageStates([shifting(unknown, discovered)], [discovered]);
+
+		expect(transitions).toEqual([]);
+		expect(pending).toEqual([]);
+	});
+
+	it('no reporta nada cuando el coverageState no cambió', () => {
+		const stable = row({ url: 'a', coverageState: 'Submitted and indexed', verdict: 'PASS' });
+
+		expect(diffCoverageStates([settled(stable)], [stable]).transitions).toEqual([]);
 	});
 
 	it('ignora las URLs que no estaban en la corrida anterior', () => {
 		const moves = diffCoverageStates([], [row({ url: 'a', coverageState: 'Submitted and indexed' })]);
 
-		expect(moves).toEqual([]);
+		expect(moves.transitions).toEqual([]);
 	});
 
 	it('usa una etiqueta explícita cuando falta el coverageState de alguna punta', () => {
-		const moves = diffCoverageStates([row({ url: 'a' })], [row({ url: 'a', coverageState: 'Submitted and indexed' })]);
+		const indexed = row({ url: 'a', coverageState: 'Submitted and indexed' });
+		const moves = diffCoverageStates([shifting(indexed, row({ url: 'a' }))], [indexed]);
 
-		expect(moves).toEqual([{ url: 'a', from: '(sin coverageState)', to: 'Submitted and indexed' }]);
+		expect(moves.transitions).toEqual([{ url: 'a', from: '(sin coverageState)', to: 'Submitted and indexed' }]);
 	});
 });
 

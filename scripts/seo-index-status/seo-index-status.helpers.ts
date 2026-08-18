@@ -422,53 +422,94 @@ export interface CoverageTransition {
 }
 
 /**
+ * Lo que un diff necesita de la corrida anterior: su última observación y la confirmada. No pide
+ * `checkedAt` ni `history` porque no los mira — comparar es una pregunta sobre valores, no sobre
+ * fechas. `StoredRow` lo satisface, así que el runner le pasa el historial tal cual.
+ */
+export interface DiffBaseline extends ObservedValue {
+	url: string;
+	confirmed?: ObservedValue;
+}
+
+/** La base de comparación, sin su fecha: es lo único que un diff necesita de la confirmada. */
+function baselineValueOf(previous: DiffBaseline): ObservedValue {
+	return previous.confirmed ?? previous;
+}
+
+/**
+ * Un diff separa lo que se movió de lo que todavía puede ser un parpadeo de la API. Lo pendiente se
+ * informa aparte en vez de descartarse: silenciarlo dejaría sin forma de distinguir "no pasó nada"
+ * de "pasó algo que todavía no se confirmó".
+ */
+export interface CoverageDiff {
+	transitions: CoverageTransition[];
+	pending: CoverageTransition[];
+}
+
+export interface StateDiff {
+	transitions: StateTransition[];
+	pending: StateTransition[];
+	added: string[];
+}
+
+/**
  * Movimientos de `coverageState` que NO cambian el estado derivado. Existe porque la clasificación es
  * más gruesa que lo que informa Google: "Discovered - currently not indexed" y "URL is unknown to
  * Google" caen ambos en "nunca rastreada", así que una URL que Google deja de conocer se ve idéntica
  * a una que sigue en cola. Ese movimiento es justamente el que interesa vigilar, y sin esto es mudo.
+ *
+ * Es también donde más pesa exigir repetición: ese mismo par oscila entre corridas (ver `moveKind`),
+ * y contar cada parpadeo escondía al caso real entre veintitantos que no lo eran.
  */
-export function diffCoverageStates(
-	previous: readonly ClassifiedRow[],
-	current: readonly ClassifiedRow[],
-): CoverageTransition[] {
-	const before = new Map(previous.map((row) => [row.url, row.coverageState]));
-	const transitions: CoverageTransition[] = [];
+export function diffCoverageStates(previous: readonly DiffBaseline[], current: readonly ClassifiedRow[]): CoverageDiff {
+	const before = new Map(previous.map((row) => [row.url, row]));
+	const diff: CoverageDiff = { transitions: [], pending: [] };
 
 	for (const row of current) {
-		if (!before.has(row.url)) {
+		const prior = before.get(row.url);
+		if (!prior) {
 			continue;
 		}
-		const from = before.get(row.url) ?? UNREPORTED_COVERAGE;
+		const base = baselineValueOf(prior);
+		const from = base.coverageState ?? UNREPORTED_COVERAGE;
 		const to = row.coverageState ?? UNREPORTED_COVERAGE;
-		if (from !== to) {
-			transitions.push({ url: row.url, from, to });
+		if (from === to) {
+			continue;
 		}
+		const move = { url: row.url, from, to };
+		const bucket = moveKind(base, prior, row) === MOVE_KIND.confirmed ? diff.transitions : diff.pending;
+		bucket.push(move);
 	}
-	return transitions;
+	return diff;
 }
 
 /**
  * Diff contra la corrida anterior. El valor de la herramienta no está en una foto suelta sino en la
  * serie: "cuántas pasaron a indexada desde la última corrida" es la pregunta que la pantalla de
  * validación de Search Console no contesta.
+ *
+ * La base es la observación CONFIRMADA, no la última: por eso una transición se reporta una corrida
+ * después de aparecer, y una que no dura no se reporta nunca (ver `moveKind`).
  */
-export function diffStates(
-	previous: readonly ClassifiedRow[],
-	current: readonly ClassifiedRow[],
-): { transitions: StateTransition[]; added: string[] } {
-	const before = new Map(previous.map((row) => [row.url, row.state]));
-	const transitions: StateTransition[] = [];
-	const added: string[] = [];
+export function diffStates(previous: readonly DiffBaseline[], current: readonly ClassifiedRow[]): StateDiff {
+	const before = new Map(previous.map((row) => [row.url, row]));
+	const diff: StateDiff = { transitions: [], pending: [], added: [] };
 
 	for (const row of current) {
-		const from = before.get(row.url);
-		if (from === undefined) {
-			added.push(row.url);
-		} else if (from !== row.state) {
-			transitions.push({ url: row.url, from, to: row.state });
+		const prior = before.get(row.url);
+		if (!prior) {
+			diff.added.push(row.url);
+			continue;
 		}
+		const base = baselineValueOf(prior);
+		if (base.state === row.state) {
+			continue;
+		}
+		const move = { url: row.url, from: base.state, to: row.state };
+		const bucket = moveKind(base, prior, row) === MOVE_KIND.confirmed ? diff.transitions : diff.pending;
+		bucket.push(move);
 	}
-	return { transitions, added };
+	return diff;
 }
 
 export function messageOf(error: unknown): string {
