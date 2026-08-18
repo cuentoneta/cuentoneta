@@ -79,6 +79,14 @@ describe('isTransientNetworkError', () => {
 		);
 	});
 
+	// El corte por timeout propio llega sin `code`, como un DOMException con este `name`. Sin este
+	// caso, la URL que más se beneficia de un reintento sería justo la que no lo recibe.
+	it('reintenta el corte por timeout propio, que no trae code', () => {
+		const timeout = new Error('The operation was aborted due to timeout');
+		timeout.name = 'TimeoutError';
+		expect(isTransientNetworkError(timeout)).toBe(true);
+	});
+
 	it('no reintenta un DNS que no resuelve: es configuración, no un transitorio', () => {
 		expect(isTransientNetworkError(Object.assign(new Error('boom'), { code: 'ENOTFOUND' }))).toBe(false);
 	});

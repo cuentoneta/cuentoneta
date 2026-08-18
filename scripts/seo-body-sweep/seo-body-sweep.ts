@@ -37,6 +37,12 @@ const TRACKING_TITLE = 'Páginas del sitemap que sirven un cuerpo vacío';
 // reconocerse en los logs de acceso sin confundirse con un crawler ajeno.
 const USER_AGENT = 'cuentoneta-seo-body-sweep';
 const DEFAULT_CONCURRENCY = 6;
+// Techo de la concurrencia: el flag existe para ajustar, no para convertir el barrido en una carga
+// contra el propio origen. Un dedo pesado en el teclado no debería poder lanzar mil requests a la vez.
+const MAX_CONCURRENCY = 24;
+// Un origen que acepta la conexión y no responde dejaría al worker esperando el timeout por defecto de
+// undici, minutos por URL. El barrido prefiere reportarla como no medida y seguir.
+const REQUEST_TIMEOUT_MS = 15_000;
 
 // Apuntar a producción es una decisión explícita de quien corre, no un default silencioso.
 const baseUrl = (process.env['BASE_URL'] ?? 'http://localhost:4000').replace(/\/$/, '');
@@ -55,7 +61,7 @@ function numericFlag(name: string, fallback: number): number {
 	return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
 }
 
-const concurrency = numericFlag('concurrency', DEFAULT_CONCURRENCY);
+const concurrency = Math.min(numericFlag('concurrency', DEFAULT_CONCURRENCY), MAX_CONCURRENCY);
 const limit = numericFlag('limit', Number.POSITIVE_INFINITY);
 const summaryPath = flag('summary');
 const shouldApply = process.argv.includes('--apply');
@@ -65,7 +71,10 @@ function gh(...args: string[]): string {
 }
 
 async function fetchPage(path: string): Promise<{ status: number; html: string }> {
-	const response = await fetch(`${baseUrl}${path}`, { headers: { 'user-agent': USER_AGENT } });
+	const response = await fetch(`${baseUrl}${path}`, {
+		headers: { 'user-agent': USER_AGENT },
+		signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+	});
 	// El status transitorio se eleva a excepción porque `fetch` resuelve con un 503 en vez de rechazar:
 	// sin esto, `runWithRetries` no tendría nada que reintentar.
 	if (isTransientStatus(response.status)) {
@@ -159,7 +168,10 @@ async function readSitemapPaths(): Promise<string[]> {
 	const url = `${baseUrl}/sitemap.xml`;
 	// El error de `fetch` dice "fetch failed" y nada más: sin la URL a la vista, un BASE_URL mal puesto
 	// y un origen caído se diagnostican igual de mal.
-	const response = await fetch(url, { headers: { 'user-agent': USER_AGENT } }).catch((cause: unknown) => {
+	const response = await fetch(url, {
+		headers: { 'user-agent': USER_AGENT },
+		signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+	}).catch((cause: unknown) => {
 		throw new Error(`no se pudo pedir el sitemap en ${url}`, { cause });
 	});
 	if (!response.ok) {

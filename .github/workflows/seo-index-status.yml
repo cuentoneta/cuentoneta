@@ -201,7 +201,11 @@ jobs:
       #
       # Igual que el resto del job, un hallazgo no pinta rojo. El seguimiento lo lleva un issue, que
       # es lo que hace que alguien se entere sin depender de que mire el resumen de un job de lunes.
+      # Corre aunque la medición haya cortado el job: el barrido no depende de Search Console, solo
+      # del despliegue, y saltearlo por una credencial vencida dejaría al sitio sin su único chequeo
+      # de cobertura completa justo la semana en que algo más ya salió mal.
       - name: Barrido de cuerpos vacíos
+        if: always()
         env:
           GH_TOKEN: ${{ github.token }}
         run: |

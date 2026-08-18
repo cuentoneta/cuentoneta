@@ -89,9 +89,16 @@ export function isTransientNetworkError(error: unknown): boolean {
 		'ECONNABORTED',
 		'EAI_AGAIN',
 		'UND_ERR_CONNECT_TIMEOUT',
+		'UND_ERR_HEADERS_TIMEOUT',
+		'UND_ERR_BODY_TIMEOUT',
 	];
 	const code = readErrorCode(error);
-	return code !== undefined && RETRYABLE_CODES.includes(code);
+	if (code !== undefined && RETRYABLE_CODES.includes(code)) {
+		return true;
+	}
+	// El corte por `AbortSignal.timeout` no trae `code`: llega como un `DOMException` cuyo `name` es
+	// `TimeoutError`. Es tan transitorio como un socket cortado, y sin esto no se reintentaría nunca.
+	return error instanceof Error && error.name === 'TimeoutError';
 }
 
 function readErrorCode(error: unknown): string | undefined {
