@@ -188,6 +188,20 @@ export function observedRows(rows: readonly ClassifiedRow[]): ClassifiedRow[] {
 	return rows.filter((row) => row.state !== CRAWL_STATE.failed);
 }
 
+/** Cuántos detalles largos entran antes de que una superficie deje de leerse de un vistazo. */
+export const DETAIL_LIMIT = 10;
+
+/**
+ * Recorta una lista larga dejando dicho cuánto se recortó. Vive en el núcleo porque el resumen de la
+ * corrida y el aviso de la bitácora tienen que acotar igual: si cada uno eligiera su tope, el mismo
+ * lote de URLs se leería distinto en cada superficie.
+ */
+export function withOverflowNote(items: readonly string[], limit = DETAIL_LIMIT): string[] {
+	const shown = items.slice(0, limit);
+	const rest = items.length - shown.length;
+	return rest > 0 ? [...shown, `…y ${rest} más`] : [...shown];
+}
+
 /**
  * Agrupa por etiqueta y ordena por frecuencia, que es la lectura útil de un conjunto de movimientos:
  * cuántas veces pasó cada cosa, no la lista de URLs a las que les pasó.

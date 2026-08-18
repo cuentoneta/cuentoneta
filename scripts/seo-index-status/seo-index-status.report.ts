@@ -15,6 +15,7 @@ import {
 	groupByCoverageState,
 	observedRows,
 	summarize,
+	withOverflowNote,
 	type ClassifiedRow,
 	type CoverageTransition,
 	type DiffBaseline,
@@ -240,16 +241,10 @@ function failureLabel(row: ClassifiedRow): string {
 }
 
 function summaryDetails(title: string, items: readonly string[]): string[] {
-	// Cuántos detalles largos entran antes de que el resumen deje de leerse de un vistazo.
-	const SUMMARY_DETAIL_LIMIT = 10;
-
 	if (items.length === 0) {
 		return [];
 	}
-	const shown = items.slice(0, SUMMARY_DETAIL_LIMIT);
-	const rest = items.length - shown.length;
-	const lines = ['', `### ${title} (${items.length})`, '', ...shown.map((item) => `- ${item}`)];
-	return rest > 0 ? [...lines, `- …y ${rest} más`] : lines;
+	return ['', `### ${title} (${items.length})`, '', ...withOverflowNote(items).map((item) => `- ${item}`)];
 }
 
 /**

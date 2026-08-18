@@ -241,15 +241,28 @@ function currentRunUrl(): string | undefined {
 	return server && repository && runId ? `${server}/${repository}/actions/runs/${runId}` : undefined;
 }
 
-function lastCommentOf(issue: number): string {
-	return gh('issue', 'view', String(issue), '--json', 'comments', '--jq', '.comments[-1].body // ""').trim();
+/**
+ * Solo los comentarios que dejó el propio job. La bitácora invita a suscribirse y comentar, así que
+ * los de otras personas no llevan huella y solo diluirían la búsqueda.
+ */
+function publishedCommentsOf(issue: number): string[] {
+	const raw = gh(
+		'issue',
+		'view',
+		String(issue),
+		'--json',
+		'comments',
+		'--jq',
+		'[.comments[] | select(.author.login == "github-actions") | .body]',
+	);
+	return JSON.parse(raw) as string[];
 }
 
 function publish(digest: Digest): void {
 	const existing = findTrackingIssue(TRACKING_TITLE);
 	const action = decideDigestAction({
 		digest,
-		existing: existing ? { number: existing.number, lastComment: lastCommentOf(existing.number) } : null,
+		existing: existing ? { number: existing.number, comments: publishedCommentsOf(existing.number) } : null,
 	});
 
 	switch (action.kind) {
@@ -269,8 +282,8 @@ function publish(digest: Digest): void {
 			break;
 		}
 		case 'comment':
-			gh('issue', 'comment', String(existing?.number), '--body', action.comment);
-			console.log(`Comentado en la bitácora #${existing?.number}.`);
+			gh('issue', 'comment', String(action.issue), '--body', action.comment);
+			console.log(`Comentado en la bitácora #${action.issue}.`);
 			break;
 		default:
 			console.log(`Sin novedad que comentar (${action.reason}).`);
@@ -379,7 +392,12 @@ run().catch((error: unknown) => {
 	// semana sin movimiento y el de una herramienta rota se leen igual.
 	const runUrl = currentRunUrl();
 	applyDigest(
-		buildDigest({ rows: [], checkedAt: new Date().toISOString(), ...(runUrl !== undefined ? { runUrl } : {}) }),
+		buildDigest({
+			rows: [],
+			checkedAt: new Date().toISOString(),
+			abortedBecause: messageOf(error),
+			...(runUrl !== undefined ? { runUrl } : {}),
+		}),
 	);
 	process.exitCode = EXIT_CODE.toolFailure;
 });

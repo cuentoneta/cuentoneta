@@ -10,6 +10,8 @@
  * Igual que el reporte, solo consume primitivas del núcleo: no deriva un hecho por su cuenta.
  * Tampoco toca `process.env`, `gh` ni la red — la URL de la corrida entra como parámetro.
  */
+import { createHash } from 'node:crypto';
+
 import {
 	CRAWL_STATE,
 	CRAWL_STATE_LABELS,
@@ -19,6 +21,7 @@ import {
 	diffStates,
 	EXIT_CODE,
 	observedRows,
+	withOverflowNote,
 	type ClassifiedRow,
 	type CoverageTransition,
 	type DiffBaseline,
@@ -49,8 +52,11 @@ const HUELLA_PREFIX = '<!-- huella:';
 
 export interface Digest {
 	inspected: number;
-	/** Total de transiciones confirmadas de estado. Es lo que decide si hay algo que contar. */
-	moves: number;
+	/**
+	 * Todas las transiciones confirmadas de estado. Las cuatro particiones de abajo son su lectura
+	 * agregada, para el texto; la huella se deriva de acá, que es lo único que identifica el conjunto.
+	 */
+	transitions: StateTransition[];
 	toIndexed: StateTransition[];
 	firstCrawl: StateTransition[];
 	regressions: StateTransition[];
@@ -58,6 +64,11 @@ export interface Digest {
 	coverageMoves: [string, number][];
 	failures: number;
 	breakage: boolean;
+	/**
+	 * Por qué se rompió, cuando la corrida abortó antes de medir. Una corrida que sí midió no lo trae:
+	 * ahí la causa la cuenta el par `failures`/`inspected`, y este campo quedaría vacío o repetido.
+	 */
+	abortedBecause?: string;
 	checkedAt: string;
 	runUrl?: string;
 }
@@ -67,6 +78,8 @@ export interface DigestInput {
 	previous?: readonly DiffBaseline[];
 	checkedAt: string;
 	runUrl?: string;
+	/** El mensaje del error que cortó la corrida, cuando la hubo. */
+	abortedBecause?: string;
 }
 
 const MOVE_KIND = Object.freeze({
@@ -101,7 +114,7 @@ const stateMoveLabel = (move: StateTransition): string =>
 
 const coverageMoveLabel = (move: CoverageTransition): string => `${move.from} → ${move.to}`;
 
-export function buildDigest({ rows, previous, checkedAt, runUrl }: DigestInput): Digest {
+export function buildDigest({ rows, previous, checkedAt, runUrl, abortedBecause }: DigestInput): Digest {
 	const seen = observedRows(rows);
 	const baseline = previous ?? [];
 	const { transitions } = diffStates(baseline, seen);
@@ -110,7 +123,7 @@ export function buildDigest({ rows, previous, checkedAt, runUrl }: DigestInput):
 
 	return {
 		inspected: rows.length,
-		moves: transitions.length,
+		transitions,
 		toIndexed: byKind(MOVE_KIND.toIndexed),
 		firstCrawl: byKind(MOVE_KIND.firstCrawl),
 		regressions: byKind(MOVE_KIND.regression),
@@ -122,6 +135,7 @@ export function buildDigest({ rows, previous, checkedAt, runUrl }: DigestInput):
 		breakage: classifyRunOutcome(rows) !== EXIT_CODE.ok,
 		checkedAt,
 		...(runUrl !== undefined ? { runUrl } : {}),
+		...(abortedBecause !== undefined ? { abortedBecause } : {}),
 	};
 }
 
@@ -134,22 +148,27 @@ export function buildDigest({ rows, previous, checkedAt, runUrl }: DigestInput):
  * resumen de la corrida ya lo informa para quien lo esté mirando.
  */
 export function hasNews(digest: Digest): boolean {
-	return digest.moves > 0 || digest.breakage;
+	return digest.transitions.length > 0 || digest.breakage;
 }
 
 /**
  * Identifica el conjunto de movimientos, no su tamaño: dos semanas distintas pueden mover la misma
- * cantidad de URLs y no ser la misma novedad. Sin la URL en la huella, la segunda se leería como
- * repetición y no se comentaría.
+ * cantidad de URLs y no ser la misma novedad. Se deriva de `transitions` —todas, no de las particiones
+ * agregadas— porque la URL es lo único que distingue dos conjuntos del mismo tamaño, y agregar por par
+ * de estados justo en la clase "otros" borraría la distinción donde más importa: ahí cae la URL que
+ * Google deja de conocer.
  *
- * Deja afuera la fecha y el enlace a la corrida, que cambian siempre y volverían la huella inútil.
+ * La rotura entra con su magnitud, para que dos semanas rotas de gravedad distinta no se lean como la
+ * misma. Quedan afuera la fecha y el enlace a la corrida, que cambian siempre y volverían la huella
+ * inútil.
  */
 export function fingerprintDigest(digest: Digest): string {
-	const moves = [...digest.toIndexed, ...digest.firstCrawl, ...digest.regressions]
-		.map((move) => `${move.url}|${move.from}>${move.to}`)
-		.concat(digest.otherMoves.map(([label, count]) => `${label}|${count}`))
-		.sort();
-	return [...moves, digest.breakage ? 'rotura' : ''].filter(Boolean).join(';');
+	const moves = digest.transitions.map((move) => `${move.url}|${move.from}>${move.to}`).sort();
+	const rotura = digest.abortedBecause ?? (digest.breakage ? String(digest.failures) : undefined);
+	const canonical = [...moves, rotura !== undefined ? `rotura:${rotura}` : ''].filter(Boolean).join(';');
+	// Se hashea porque la huella viaja dentro del comentario: en crudo crece con cada movimiento, y una
+	// semana de varios cientos consumiría sola buena parte del tamaño máximo que GitHub acepta.
+	return createHash('sha256').update(canonical).digest('hex').slice(0, 16);
 }
 
 function formatHeadlines(digest: Digest): string[] {
@@ -166,18 +185,32 @@ function formatHeadlines(digest: Digest): string[] {
 	return headlines;
 }
 
+/**
+ * Acota con el mismo tope que el resumen de la corrida. Sin él, la semana que el job existe para
+ * celebrar —un lote grande de primeros rastreos— produce un comentario ilegible y, pasado el límite de
+ * tamaño de un comentario de GitHub, uno que la API rechaza: la bitácora se quedaría sin la entrada
+ * justo cuando más tenía para decir.
+ */
 function formatMoveList(title: string, moves: readonly StateTransition[]): string[] {
 	if (moves.length === 0) {
 		return [];
 	}
-	return ['', `${title}:`, ...moves.map((move) => `- ${move.url}`)];
+	const urls = withOverflowNote(moves.map((move) => move.url));
+	return ['', `${title} (${moves.length}):`, ...urls.map((url) => `- ${url}`)];
 }
 
+/**
+ * Toda etiqueta va entre backticks, aunque solo una de las dos listas que pasan por acá lo necesite:
+ * las de `coverageState` son texto libre que devuelve Google, y sin escapar, un valor con sintaxis de
+ * Markdown rompe el formato del comentario o disfraza un enlace. Distinguir cuál escapar según quién
+ * llama dejaría la decisión en el llamador, que es donde se olvida.
+ */
 function formatCounts(title: string, counts: readonly [string, number][]): string[] {
 	if (counts.length === 0) {
 		return [];
 	}
-	return ['', `${title}:`, ...counts.map(([label, count]) => `- ${label}: ${count}`)];
+	const rows = withOverflowNote(counts.map(([label, count]) => `\`${label}\`: ${count}`));
+	return ['', `${title}:`, ...rows.map((row) => `- ${row}`)];
 }
 
 export function formatDigestComment(digest: Digest): string {
@@ -193,7 +226,9 @@ export function formatDigestComment(digest: Digest): string {
 		...formatCounts('Contexto — movimientos de coverageState', digest.coverageMoves),
 	];
 
-	if (digest.breakage) {
+	if (digest.abortedBecause !== undefined) {
+		lines.push('', `⚠️ La corrida no llegó a medir: ${digest.abortedBecause}`);
+	} else if (digest.breakage) {
 		lines.push('', `⚠️ La corrida no midió limpio: ${digest.failures} de ${digest.inspected} inspecciones fallaron.`);
 	}
 	if (digest.runUrl !== undefined) {
@@ -207,11 +242,17 @@ export function formatDigestComment(digest: Digest): string {
 export type DigestAction =
 	| { kind: 'noop'; reason: 'no-news' | 'already-reported' }
 	| { kind: 'create'; body: string; comment: string }
-	| { kind: 'comment'; comment: string };
+	// El número viaja en la variante que lo necesita: el llamador no tiene que sostener por su cuenta
+	// que si la acción es `comment` entonces el issue existe.
+	| { kind: 'comment'; issue: number; comment: string };
 
 export interface DigestActionInput {
 	digest: Digest;
-	existing: { number: number; lastComment?: string } | null;
+	/**
+	 * `comments` son los que dejó el propio job, no los del issue: la bitácora invita a suscribirse, y
+	 * mirar solo el último rompería la idempotencia en cuanto una persona comente.
+	 */
+	existing: { number: number; comments?: readonly string[] } | null;
 }
 
 /**
@@ -228,8 +269,10 @@ export function decideDigestAction({ digest, existing }: DigestActionInput): Dig
 	if (!existing) {
 		return { kind: 'create', body: TRACKING_BODY, comment };
 	}
-	if (existing.lastComment?.includes(`${HUELLA_PREFIX} ${fingerprintDigest(digest)} -->`)) {
+
+	const huella = `${HUELLA_PREFIX} ${fingerprintDigest(digest)} -->`;
+	if (existing.comments?.some((published) => published.includes(huella))) {
 		return { kind: 'noop', reason: 'already-reported' };
 	}
-	return { kind: 'comment', comment };
+	return { kind: 'comment', issue: existing.number, comment };
 }

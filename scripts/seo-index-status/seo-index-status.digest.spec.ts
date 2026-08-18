@@ -49,7 +49,7 @@ describe('buildDigest', () => {
 		const digest = digestOf([indexed('/a')], [confirming(indexed('/a'), crawled('/a'))]);
 
 		expect(digest.toIndexed.map((move) => move.url)).toEqual(['/a']);
-		expect(digest.moves).toBe(1);
+		expect(digest.transitions.length).toBe(1);
 	});
 
 	// El orden de la clasificación importa: sin él, una URL que nunca se rastreó y aparece indexada
@@ -71,6 +71,17 @@ describe('buildDigest', () => {
 		expect(digest.regressions.map((move) => move.url)).toEqual(['/b']);
 	});
 
+	// "Otros" no es un cajón residual: ahí cae `crawled-not-indexed → never-crawled`, la URL que Google
+	// deja de conocer, que es el movimiento que el diff de coverageState existe para hacer visible.
+	it('cuenta como otro movimiento el que no es alta, primer rastreo ni regresión', () => {
+		const blocked = row({ url: '/a', indexingState: 'BLOCKED_BY_META_TAG' });
+		const digest = digestOf([blocked], [confirming(blocked, crawled('/a'))]);
+
+		expect(digest.otherMoves).toHaveLength(1);
+		expect(digest.transitions).toHaveLength(1);
+		expect(hasNews(digest)).toBe(true);
+	});
+
 	it('deriva la rotura del clasificador del núcleo en vez de recontarla', () => {
 		const digest = digestOf([indexed('/a'), failed('/b')]);
 
@@ -81,7 +92,7 @@ describe('buildDigest', () => {
 	it('no diffea las filas cuya inspección falló', () => {
 		const digest = digestOf([failed('/a')], [stableAt(indexed('/a'))]);
 
-		expect(digest.moves).toBe(0);
+		expect(digest.transitions.length).toBe(0);
 		expect(digest.regressions).toHaveLength(0);
 	});
 });
@@ -104,7 +115,7 @@ describe('hasNews', () => {
 	it('calla ante un movimiento observado una sola vez', () => {
 		const digest = digestOf([indexed('/a')], [stableAt(crawled('/a'))]);
 
-		expect(digest.moves).toBe(0);
+		expect(digest.transitions.length).toBe(0);
 		expect(hasNews(digest)).toBe(false);
 	});
 
@@ -143,6 +154,33 @@ describe('fingerprintDigest', () => {
 
 		expect(fingerprintDigest(otra)).not.toBe(fingerprintDigest(digest()));
 	});
+
+	// La clase "otros" se agrega por par de estados para el texto. Si la huella se derivara de ese
+	// agregado, dos URLs distintas con el mismo par colisionarían — y es la clase donde cae el
+	// movimiento peor observable.
+	it('distingue dos movimientos de la clase "otros" sobre URLs distintas', () => {
+		const blocked = (url: string) => row({ url, indexingState: 'BLOCKED_BY_META_TAG' });
+		const unaUrl = digestOf([blocked('/a')], [confirming(blocked('/a'), crawled('/a'))]);
+		const otraUrl = digestOf([blocked('/b')], [confirming(blocked('/b'), crawled('/b'))]);
+
+		expect(fingerprintDigest(unaUrl)).not.toBe(fingerprintDigest(otraUrl));
+	});
+
+	// Sin magnitud, una semana rota con dos fallas y otra con doscientas se leen igual y la segunda no
+	// comenta, aunque el diagnóstico haya empeorado un orden de magnitud.
+	it('distingue dos roturas de distinta gravedad', () => {
+		const pocas = digestOf([indexed('/a'), failed('/b')]);
+		const muchas = digestOf([indexed('/a'), failed('/b'), failed('/c')]);
+
+		expect(fingerprintDigest(pocas)).not.toBe(fingerprintDigest(muchas));
+	});
+
+	it('distingue dos corridas abortadas por causas distintas', () => {
+		const porCredenciales = buildDigest({ rows: [], checkedAt: CHECKED_AT, abortedBecause: 'faltan credenciales' });
+		const porCuota = buildDigest({ rows: [], checkedAt: CHECKED_AT, abortedBecause: 'cuota agotada' });
+
+		expect(fingerprintDigest(porCredenciales)).not.toBe(fingerprintDigest(porCuota));
+	});
 });
 
 describe('decideDigestAction', () => {
@@ -173,10 +211,28 @@ describe('decideDigestAction', () => {
 		const digest = conNovedad();
 		const action = decideDigestAction({
 			digest,
-			existing: { number: 7, lastComment: formatDigestComment(digest) },
+			existing: { number: 7, comments: [formatDigestComment(digest)] },
 		});
 
 		expect(action).toEqual({ kind: 'noop', reason: 'already-reported' });
+	});
+
+	// El cuerpo de la bitácora invita a suscribirse y comentar. Si la idempotencia mirara solo el
+	// último comentario, una respuesta humana la rompería y la corrida siguiente repetiría el aviso.
+	it('encuentra la huella aunque no sea el comentario más reciente', () => {
+		const digest = conNovedad();
+		const action = decideDigestAction({
+			digest,
+			existing: { number: 7, comments: [formatDigestComment(digest), '¿Esto incluye las fichas de autor?'] },
+		});
+
+		expect(action).toEqual({ kind: 'noop', reason: 'already-reported' });
+	});
+
+	it('transporta el número del issue en la acción de comentar', () => {
+		const action = decideDigestAction({ digest: conNovedad(), existing: { number: 7, comments: [] } });
+
+		expect(action).toEqual({ kind: 'comment', issue: 7, comment: expect.any(String) });
 	});
 });
 
@@ -192,6 +248,47 @@ describe('formatDigestComment', () => {
 		const comment = formatDigestComment(digestOf([indexed('/a'), failed('/b')]));
 
 		expect(comment).toContain('inspecciones fallaron');
+	});
+
+	// Una corrida que aborta no midió nada, así que el par fallidas/inspeccionadas vale "0 de 0" y no
+	// dice nada. Lo que hay para contar es la causa, y sin ella hay que abrir la corrida — la fricción
+	// que la bitácora viene a eliminar.
+	it('cuenta la causa cuando la corrida ni llegó a medir', () => {
+		const comment = formatDigestComment(
+			buildDigest({ rows: [], checkedAt: CHECKED_AT, abortedBecause: 'GSC_SERVICE_ACCOUNT_KEY no es un JSON válido' }),
+		);
+
+		expect(comment).toContain('no llegó a medir');
+		expect(comment).toContain('GSC_SERVICE_ACCOUNT_KEY no es un JSON válido');
+		expect(comment).not.toContain('0 de 0');
+	});
+
+	// Un comentario de GitHub tiene tope de tamaño, y el lote grande de primeros rastreos es justo el
+	// desenlace que el job existe para celebrar: sin acotar, el aviso se pierde por rechazo de la API.
+	it('acota la lista de URLs dejando dicho cuánto recortó', () => {
+		const urls = Array.from({ length: 14 }, (_, index) => `/obra-${index}`);
+		const comment = formatDigestComment(
+			digestOf(
+				urls.map((url) => indexed(url)),
+				urls.map((url) => confirming(indexed(url), crawled(url))),
+			),
+		);
+
+		expect(comment).toContain('**+14** pasaron a indexada');
+		expect(comment).toContain('…y 4 más');
+		expect(comment).not.toContain('- /obra-13');
+	});
+
+	// La huella cubre todos los movimientos, así que en crudo crecería con cada uno: hasheada, el
+	// comentario no depende del tamaño del lote para caber.
+	it('mantiene la huella acotada aunque el lote sea grande', () => {
+		const urls = Array.from({ length: 200 }, (_, index) => `/obra-${index}`);
+		const digest = digestOf(
+			urls.map((url) => indexed(url)),
+			urls.map((url) => confirming(indexed(url), crawled(url))),
+		);
+
+		expect(fingerprintDigest(digest)).toHaveLength(16);
 	});
 
 	it('enlaza la corrida solo cuando la conoce', () => {
