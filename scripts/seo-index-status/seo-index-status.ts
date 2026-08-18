@@ -67,7 +67,13 @@ import {
 } from './seo-index-status.helpers';
 import { formatReport, formatSummaryMarkdown, type SummaryInput } from './seo-index-status.report';
 import { createRetryBudget, runWithRetries } from './seo-index-status.retry';
-import { buildDigest, decideDigestAction, TRACKING_TITLE, type Digest } from './seo-index-status.digest';
+import {
+	buildDigest,
+	decideDigestAction,
+	TRACKING_TITLE,
+	type Digest,
+	type DigestInput,
+} from './seo-index-status.digest';
 import { findTrackingIssue, gh } from '../tracking-issue';
 
 const SITE_URL = process.env['GSC_SITE_URL'] ?? '';
@@ -356,6 +362,13 @@ async function listSites(): Promise<void> {
 	}
 }
 
+/**
+ * Lo medido por la corrida, accesible desde el manejador de error. Una falla posterior a la medición
+ * —persistir la serie, escribir el resumen— no invalida lo que ya se observó, y armar el aviso sin
+ * esto reemplazaría un movimiento real por una rotura vacía.
+ */
+let measured: DigestInput | undefined;
+
 async function run(): Promise<void> {
 	assertKey();
 	if (LIST_SITES) {
@@ -374,30 +387,30 @@ async function run(): Promise<void> {
 
 	const report = { rows, previous: known.length > 0 ? known : undefined, retries };
 	const checkedAt = new Date().toISOString();
+	const runUrl = currentRunUrl();
+	measured = { ...report, checkedAt, ...(runUrl !== undefined ? { runUrl } : {}) };
 
 	console.log(formatReport(report).join('\n'));
 	await writeSummary({ ...report, checkedAt });
 	// La serie va primero: es lo irrecuperable de la corrida, y el aviso se deriva de ella.
 	await writeStore(store, rows, checkedAt);
 
-	const runUrl = currentRunUrl();
-	applyDigest(buildDigest({ ...report, checkedAt, ...(runUrl !== undefined ? { runUrl } : {}) }));
+	applyDigest(buildDigest(measured));
 
 	process.exitCode = classifyRunOutcome(rows);
 }
 
 run().catch((error: unknown) => {
 	console.error(messageOf(error));
-	// Una corrida que ni llegó a medir es la que más merece avisar: sin esto, el silencio de una
-	// semana sin movimiento y el de una herramienta rota se leen igual.
+	// Una corrida que se rompió es la que más merece avisar: sin esto, el silencio de una semana sin
+	// movimiento y el de una herramienta rota se leen igual. Va sobre lo que se haya medido, que puede
+	// ser nada —si cortó antes— o el movimiento entero, si cortó al persistirlo.
 	const runUrl = currentRunUrl();
-	applyDigest(
-		buildDigest({
-			rows: [],
-			checkedAt: new Date().toISOString(),
-			abortedBecause: messageOf(error),
-			...(runUrl !== undefined ? { runUrl } : {}),
-		}),
-	);
+	const base: DigestInput = measured ?? {
+		rows: [],
+		checkedAt: new Date().toISOString(),
+		...(runUrl !== undefined ? { runUrl } : {}),
+	};
+	applyDigest(buildDigest({ ...base, abortedBecause: messageOf(error) }));
 	process.exitCode = EXIT_CODE.toolFailure;
 });

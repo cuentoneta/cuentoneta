@@ -119,6 +119,21 @@ describe('hasNews', () => {
 		expect(hasNews(digest)).toBe(false);
 	});
 
+	// La corrida puede medir las mil URLs sin una sola falla y romperse al persistir la serie. Si el
+	// corte no contara como rotura, ese desenlace quedaría mudo cada vez que además nada se movió.
+	it('avisa cuando la corrida midió limpio pero se cortó después', () => {
+		const digest = buildDigest({
+			rows: [indexed('/a')],
+			previous: [stableAt(indexed('/a'))],
+			checkedAt: CHECKED_AT,
+			abortedBecause: 'ENOSPC al escribir el historial',
+		});
+
+		expect(digest.transitions).toHaveLength(0);
+		expect(digest.breakage).toBe(true);
+		expect(hasNews(digest)).toBe(true);
+	});
+
 	it('calla ante una URL inspeccionada por primera vez', () => {
 		expect(hasNews(digestOf([indexed('/nueva')], []))).toBe(false);
 	});
@@ -261,6 +276,23 @@ describe('formatDigestComment', () => {
 		expect(comment).toContain('no llegó a medir');
 		expect(comment).toContain('GSC_SERVICE_ACCOUNT_KEY no es un JSON válido');
 		expect(comment).not.toContain('0 de 0');
+	});
+
+	// Decir "no llegó a medir" cuando sí midió desmentiría el movimiento que el propio comentario
+	// acaba de informar arriba.
+	it('distingue el corte posterior a la medición del que ocurrió antes', () => {
+		const comment = formatDigestComment(
+			buildDigest({
+				rows: [indexed('/a')],
+				previous: [confirming(indexed('/a'), crawled('/a'))],
+				checkedAt: CHECKED_AT,
+				abortedBecause: 'ENOSPC al escribir el historial',
+			}),
+		);
+
+		expect(comment).toContain('**+1** pasaron a indexada');
+		expect(comment).toContain('midió 1 URL(s) y se cortó después');
+		expect(comment).not.toContain('no llegó a medir');
 	});
 
 	// Un comentario de GitHub tiene tope de tamaño, y el lote grande de primeros rastreos es justo el

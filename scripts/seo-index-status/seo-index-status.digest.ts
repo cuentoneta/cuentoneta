@@ -65,8 +65,8 @@ export interface Digest {
 	failures: number;
 	breakage: boolean;
 	/**
-	 * Por qué se rompió, cuando la corrida abortó antes de medir. Una corrida que sí midió no lo trae:
-	 * ahí la causa la cuenta el par `failures`/`inspected`, y este campo quedaría vacío o repetido.
+	 * Por qué se cortó la corrida, cuando se cortó. Es independiente de `failures`: una corrida puede
+	 * medir las mil URLs sin una sola falla y romperse después, al persistir la serie.
 	 */
 	abortedBecause?: string;
 	checkedAt: string;
@@ -131,8 +131,10 @@ export function buildDigest({ rows, previous, checkedAt, runUrl, abortedBecause 
 		coverageMoves: countByLabel(coverage.transitions, coverageMoveLabel),
 		failures: rows.length - seen.length,
 		// Se deriva del clasificador del núcleo en vez de recontarse: es el mismo hecho que fija el
-		// código de salida, y dos cuentas separadas podrían discrepar.
-		breakage: classifyRunOutcome(rows) !== EXIT_CODE.ok,
+		// código de salida, y dos cuentas separadas podrían discrepar. Un corte posterior a la medición
+		// cuenta igual como rotura, o una corrida que midió limpio y no pudo persistir se avisaría solo
+		// si además se movió algo.
+		breakage: classifyRunOutcome(rows) !== EXIT_CODE.ok || abortedBecause !== undefined,
 		checkedAt,
 		...(runUrl !== undefined ? { runUrl } : {}),
 		...(abortedBecause !== undefined ? { abortedBecause } : {}),
@@ -227,7 +229,10 @@ export function formatDigestComment(digest: Digest): string {
 	];
 
 	if (digest.abortedBecause !== undefined) {
-		lines.push('', `⚠️ La corrida no llegó a medir: ${digest.abortedBecause}`);
+		// Cortarse antes de medir y cortarse después son desenlaces distintos: en el segundo, lo que el
+		// comentario informa arriba sigue siendo válido, y decir "no llegó a medir" lo desmentiría.
+		const alcance = digest.inspected > 0 ? `midió ${digest.inspected} URL(s) y se cortó después` : 'no llegó a medir';
+		lines.push('', `⚠️ La corrida ${alcance}: ${digest.abortedBecause}`);
 	} else if (digest.breakage) {
 		lines.push('', `⚠️ La corrida no midió limpio: ${digest.failures} de ${digest.inspected} inspecciones fallaron.`);
 	}
