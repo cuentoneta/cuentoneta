@@ -10,6 +10,8 @@ import {
 	diffStates,
 	groupByCoverageState,
 	mergeSnapshot,
+	MOVE_KIND,
+	moveKind,
 	parseSampleSize,
 	parseSitemapLocs,
 	resolveHistoryPaths,
@@ -369,6 +371,34 @@ describe('mergeSnapshot — observación confirmada', () => {
 		expect(merged['a']?.history).toEqual([]);
 	});
 
+	// Tres valores distintos seguidos: el del medio no llega a confirmarse y no deja rastro.
+	it('confirma el tercer valor al repetirse, sin archivar el que pasó de largo', () => {
+		const crawled = row({ url: 'a', verdict: 'NEUTRAL', lastCrawlTime: 'x' });
+		const indexed = row({ url: 'a', verdict: 'PASS' });
+		let store = mergeSnapshot({}, [row({ url: 'a', verdict: 'NEUTRAL' })], '2026-08-01T00:00:00Z');
+		store = mergeSnapshot(store, [crawled], '2026-08-02T00:00:00Z');
+		store = mergeSnapshot(store, [indexed], '2026-08-03T00:00:00Z');
+
+		store = mergeSnapshot(store, [indexed], '2026-08-04T00:00:00Z');
+
+		expect(store['a']?.confirmed?.state).toBe(CRAWL_STATE.indexed);
+		expect(store['a']?.history?.map((entry) => entry.state)).toEqual([CRAWL_STATE.neverCrawled]);
+	});
+
+	// Lo que "dos observaciones seguidas" significa de verdad: una inspección que falló no se
+	// persiste, así que no interrumpe la repetición que la rodea.
+	it('una inspección fallida en el medio no rompe la cadena de confirmación', () => {
+		const indexed = row({ url: 'a', verdict: 'PASS' });
+		let store = mergeSnapshot({}, [row({ url: 'a', verdict: 'NEUTRAL' })], '2026-08-01T00:00:00Z');
+		store = mergeSnapshot(store, [indexed], '2026-08-02T00:00:00Z');
+		store = mergeSnapshot(store, [row({ url: 'a', error: '500', errorStatus: 500 })], '2026-08-03T00:00:00Z');
+
+		store = mergeSnapshot(store, [indexed], '2026-08-04T00:00:00Z');
+
+		expect(store['a']?.confirmed?.state).toBe(CRAWL_STATE.indexed);
+		expect(store['a']?.confirmed?.checkedAt).toBe('2026-08-02T00:00:00Z');
+	});
+
 	it('confirma desde una fila sin confirmada en cuanto el valor nuevo se repite', () => {
 		const legacy = { ...row({ url: 'a', verdict: 'NEUTRAL' }), checkedAt: '2026-08-04T00:00:00Z' };
 		const indexed = row({ url: 'a', verdict: 'PASS' });
@@ -465,6 +495,52 @@ describe('la oscilación medida entre dos corridas no es movimiento', () => {
 		const moves = diffCoverageStates(storedRows(store), [durable]);
 
 		expect(moves.transitions).toEqual([{ url: 'd0', from: DISCOVERED, to: UNKNOWN }]);
+	});
+
+	/**
+	 * Cada eje se confirma por su cuenta, y esto es por qué: evaluar la regla sobre la observación
+	 * entera hacía que un `coverageState` oscilante —el de estas mismas URLs— dejara pendiente para
+	 * siempre la transición a indexada, que es el titular que el job existe para responder.
+	 */
+	it('el parpadeo del coverageState no retiene una transición de estado durable', () => {
+		const indexedA = row({ url: 'd0', verdict: 'PASS', coverageState: 'Submitted and indexed' });
+		const indexedB = row({ url: 'd0', verdict: 'PASS', coverageState: 'Indexed, not submitted in sitemap' });
+		let store = mergeSnapshot({}, [row({ url: 'd0', coverageState: DISCOVERED })], '2026-08-01T00:00:00Z');
+		store = mergeSnapshot(store, [indexedA], '2026-08-08T00:00:00Z');
+
+		const states = diffStates(storedRows(store), [indexedB]);
+		const coverage = diffCoverageStates(storedRows(store), [indexedB]);
+		store = mergeSnapshot(store, [indexedB], '2026-08-15T00:00:00Z');
+
+		// El estado se confirma en esta corrida; el eje que parpadea sigue pendiente, sin retenerlo.
+		expect(states.transitions).toEqual([{ url: 'd0', from: CRAWL_STATE.neverCrawled, to: CRAWL_STATE.indexed }]);
+		expect(coverage.transitions).toEqual([]);
+		expect(coverage.pending).toHaveLength(1);
+		expect(store['d0']?.confirmed?.state).toBe(CRAWL_STATE.indexed);
+	});
+});
+
+describe('moveKind', () => {
+	it('no ve movimiento en el valor ya confirmado', () => {
+		expect(moveKind('a', 'a', 'a')).toBe(MOVE_KIND.none);
+	});
+
+	it('confirma el valor nuevo que se repite', () => {
+		expect(moveKind('a', 'b', 'b')).toBe(MOVE_KIND.confirmed);
+	});
+
+	it('deja pendiente el valor visto por primera vez', () => {
+		expect(moveKind('a', 'a', 'b')).toBe(MOVE_KIND.pending);
+	});
+
+	// La oscilación: se fue a 'b' y volvió antes de confirmarse. No hay nada que reportar.
+	it('no ve movimiento cuando el valor vuelve al confirmado', () => {
+		expect(moveKind('a', 'b', 'a')).toBe(MOVE_KIND.none);
+	});
+
+	it('trata la ausencia de valor como un valor más', () => {
+		expect(moveKind(undefined, 'a', 'a')).toBe(MOVE_KIND.confirmed);
+		expect(moveKind('a', undefined, undefined)).toBe(MOVE_KIND.confirmed);
 	});
 });
 
