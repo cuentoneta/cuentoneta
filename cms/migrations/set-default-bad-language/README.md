@@ -34,8 +34,8 @@ llegó después de sanear los recursos.
 Dry-run por defecto, y una corrida por dataset:
 
 ```bash
-pnpm -C cms exec sanity migration run set-default-bad-language --project <id> --dataset <ds>
-pnpm -C cms exec sanity migration run set-default-bad-language --project <id> --dataset <ds> --no-dry-run --no-confirm
+pnpm -C cms exec sanity migration run set-default-bad-language --project "$(node --env-file=cms/.env -p 'process.env.SANITY_STUDIO_PROJECT_ID')" --dataset <ds>
+pnpm -C cms exec sanity migration run set-default-bad-language --project "$(node --env-file=cms/.env -p 'process.env.SANITY_STUDIO_PROJECT_ID')" --dataset <ds> --no-dry-run --no-confirm
 ```
 
 `--project` es obligatorio junto con `--dataset`, y `--no-confirm` hace falta en un entorno no
