@@ -15,6 +15,7 @@ import {
 	summarize,
 	type ClassifiedRow,
 	type CoverageTransition,
+	type DiffBaseline,
 	type StateCounts,
 	type StateTransition,
 } from './seo-index-status.helpers';
@@ -63,6 +64,28 @@ function formatCoverageTransitions(transitions: readonly CoverageTransition[]): 
 }
 
 /**
+ * Lo observado una sola vez, que todavía no cuenta como movimiento. Se informa para que "no hubo
+ * transiciones" no se confunda con "no se vio nada distinto", y agrupado por par: lo que el ruido
+ * medido desaconseja es la lista por URL, no la agregación — leer QUÉ par está oscilando es
+ * justamente cómo se descubre el próximo par volátil.
+ *
+ * El total cuenta movimientos y no URLs: una misma URL que movió sus dos ejes aporta dos.
+ */
+function formatUnconfirmed(states: readonly StateTransition[], coverage: readonly CoverageTransition[]): string[] {
+	const total = states.length + coverage.length;
+	if (total === 0) {
+		return [];
+	}
+	const format = ([label, count]: [string, number]): string => `  ${String(count).padStart(5)}  ${label}`;
+	return [
+		'',
+		`Movimientos sin confirmar (${total}):`,
+		...countByLabel(states, stateMoveLabel).map(format),
+		...countByLabel(coverage, coverageMoveLabel).map(format),
+	];
+}
+
+/**
  * Las filas que sí son una observación. Todo diff se deriva de acá: una inspección fallida no tiene
  * un estado que comparar, y diffearla produciría un `Indexada → La inspección falló` que informa la
  * falla —ya contada aparte— disfrazada de movimiento del indexado. Es la misma razón por la que el
@@ -79,7 +102,7 @@ function formatAttempts(attempts: number | undefined): string {
 
 export interface ReportInput {
 	rows: readonly ClassifiedRow[];
-	previous?: readonly ClassifiedRow[];
+	previous?: readonly DiffBaseline[];
 	/** Reintentos que consumió la corrida. Se informa solo si hubo alguno. */
 	retries?: number;
 }
@@ -118,16 +141,18 @@ export function formatReport({ rows, previous, retries }: ReportInput): string[]
 
 	if (previous) {
 		const seen = observed(rows);
-		const { transitions, added } = diffStates(previous, seen);
-		lines.push('', `Cambios contra el historial (${previous.length} URL(s) conocidas):`);
+		const { transitions, pending, added } = diffStates(previous, seen);
+		lines.push('', `Cambios confirmados contra el historial (${previous.length} URL(s) conocidas):`);
 		lines.push(...formatTransitions(transitions));
 
 		const coverageMoves = diffCoverageStates(previous, seen);
-		if (coverageMoves.length > 0) {
-			lines.push('', `Movimientos de coverageState (${coverageMoves.length}):`);
-			lines.push(...formatCoverageTransitions(coverageMoves));
+		if (coverageMoves.transitions.length > 0) {
+			lines.push('', `Movimientos confirmados de coverageState (${coverageMoves.transitions.length}):`);
+			lines.push(...formatCoverageTransitions(coverageMoves.transitions));
 		}
 
+		// Las altas y lo no inspeccionado van ANTES de los pendientes: comparten su forma —línea
+		// indentada, sin encabezado propio—, y debajo se leerían como una fila más de esa sección.
 		if (added.length > 0) {
 			lines.push(`  ${added.length} URL(s) inspeccionadas por primera vez`);
 		}
@@ -137,6 +162,8 @@ export function formatReport({ rows, previous, retries }: ReportInput): string[]
 		if (skipped > 0) {
 			lines.push(`  ${skipped} URL(s) del historial NO se inspeccionaron en esta corrida`);
 		}
+
+		lines.push(...formatUnconfirmed(pending, coverageMoves.pending));
 	}
 
 	return lines;
@@ -164,15 +191,25 @@ function summaryStates(rows: readonly ClassifiedRow[]): string[] {
 	return markdownTable(['Estado', 'URLs'], present);
 }
 
+/** Subordinada al bloque de movimiento: es contexto de esa lectura, no una sección propia. */
+function summaryUnconfirmed(states: readonly StateTransition[], coverage: readonly CoverageTransition[]): string[] {
+	const total = states.length + coverage.length;
+	if (total === 0) {
+		return [];
+	}
+	const rows = [...countByLabel(states, stateMoveLabel), ...countByLabel(coverage, coverageMoveLabel)];
+	return ['', `#### Movimientos sin confirmar (${total})`, ...markdownTable(['Movimiento', 'URLs'], rows)];
+}
+
 /**
  * El movimiento se expresa por TRANSICIONES y nunca restando los conteos de dos corridas: el
  * historial contiene URLs que esta corrida pudo no inspeccionar, así que esa resta compararía
  * universos distintos. La transición es por URL, y por eso sí significa algo.
  */
-function summaryTransitions(previous: readonly ClassifiedRow[], rows: readonly ClassifiedRow[]): string[] {
+function summaryTransitions(previous: readonly DiffBaseline[], rows: readonly ClassifiedRow[]): string[] {
 	const seen = observed(rows);
-	const { transitions, added } = diffStates(previous, seen);
-	const lines = ['', `### Movimiento contra las ${previous.length} URL(s) conocidas`];
+	const { transitions, pending, added } = diffStates(previous, seen);
+	const lines = ['', `### Movimiento confirmado contra las ${previous.length} URL(s) conocidas`];
 
 	lines.push(
 		...(transitions.length === 0
@@ -181,10 +218,12 @@ function summaryTransitions(previous: readonly ClassifiedRow[], rows: readonly C
 	);
 
 	const coverageMoves = diffCoverageStates(previous, seen);
-	if (coverageMoves.length > 0) {
+	if (coverageMoves.transitions.length > 0) {
 		lines.push('', '#### Movimientos de coverageState');
-		lines.push(...markdownTable(['Movimiento', 'URLs'], countByLabel(coverageMoves, coverageMoveLabel)));
+		lines.push(...markdownTable(['Movimiento', 'URLs'], countByLabel(coverageMoves.transitions, coverageMoveLabel)));
 	}
+
+	lines.push(...summaryUnconfirmed(pending, coverageMoves.pending));
 
 	const inspected = new Set(seen.map((row) => row.url));
 	const skipped = previous.filter((row) => !inspected.has(row.url)).length;
