@@ -178,6 +178,29 @@ export function classifyRunOutcome(rows: readonly ClassifiedRow[]): ExitCode {
 		: EXIT_CODE.partialFailure;
 }
 
+/**
+ * Las filas que sí son una observación. Todo diff se deriva de acá: una inspección fallida no tiene
+ * un estado que comparar, y diffearla produciría un `Indexada → La inspección falló` que informa la
+ * falla —ya contada aparte— disfrazada de movimiento del indexado. Es la misma razón por la que el
+ * historial tampoco la persiste.
+ */
+export function observedRows(rows: readonly ClassifiedRow[]): ClassifiedRow[] {
+	return rows.filter((row) => row.state !== CRAWL_STATE.failed);
+}
+
+/**
+ * Agrupa por etiqueta y ordena por frecuencia, que es la lectura útil de un conjunto de movimientos:
+ * cuántas veces pasó cada cosa, no la lista de URLs a las que les pasó.
+ */
+export function countByLabel<T>(items: readonly T[], labelOf: (item: T) => string): [string, number][] {
+	const grouped = new Map<string, number>();
+	for (const item of items) {
+		const label = labelOf(item);
+		grouped.set(label, (grouped.get(label) ?? 0) + 1);
+	}
+	return [...grouped].sort(([, a], [, b]) => b - a);
+}
+
 export type StateCounts = Readonly<Record<CrawlState, number>>;
 
 export function summarize(rows: readonly ClassifiedRow[]): StateCounts {
