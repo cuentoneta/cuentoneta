@@ -40,6 +40,7 @@
  *   ... pnpm seo:index-status --sample=50
  *   ... pnpm seo:index-status --history=ruta/a/latest.json               # dónde vive la serie
  *   ... pnpm seo:index-status --summary="$GITHUB_STEP_SUMMARY"           # resumen en Markdown
+ *   ... pnpm seo:index-status --apply                                    # deja el aviso en la bitácora
  *   GSC_SERVICE_ACCOUNT_KEY_PATH=... pnpm seo:index-status --list-sites   # ver el siteUrl exacto
  */
 import { appendFile, readFile, writeFile, mkdir } from 'node:fs/promises';
@@ -66,6 +67,8 @@ import {
 } from './seo-index-status.helpers';
 import { formatReport, formatSummaryMarkdown, type SummaryInput } from './seo-index-status.report';
 import { createRetryBudget, runWithRetries } from './seo-index-status.retry';
+import { buildDigest, decideDigestAction, TRACKING_TITLE, type Digest } from './seo-index-status.digest';
+import { findTrackingIssue, gh } from '../tracking-issue';
 
 const SITE_URL = process.env['GSC_SITE_URL'] ?? '';
 const BASE_URL = process.env['BASE_URL'] ?? 'https://www.cuentoneta.ar';
@@ -76,6 +79,9 @@ const URLS_FILE = argValue('--urls');
 const SAMPLE_SIZE = parseSampleSize(argValue('--sample'));
 const ALL = process.argv.includes('--all');
 const LIST_SITES = process.argv.includes('--list-sites');
+// Escribir en la bitácora es opt-in, igual que en los otros barridos: una corrida de diagnóstico en
+// local no debe comentarle al equipo.
+const APPLY = process.argv.includes('--apply');
 
 // Cuota oficial por propiedad: 2.000 consultas/día y 600/minuto.
 const QUOTA_PER_DAY = 2000;
@@ -227,6 +233,66 @@ async function writeSummary(input: SummaryInput): Promise<void> {
 	}
 }
 
+/** El enlace a la corrida solo existe dentro de Actions; en local el comentario va sin él. */
+function currentRunUrl(): string | undefined {
+	const server = process.env['GITHUB_SERVER_URL'];
+	const repository = process.env['GITHUB_REPOSITORY'];
+	const runId = process.env['GITHUB_RUN_ID'];
+	return server && repository && runId ? `${server}/${repository}/actions/runs/${runId}` : undefined;
+}
+
+function lastCommentOf(issue: number): string {
+	return gh('issue', 'view', String(issue), '--json', 'comments', '--jq', '.comments[-1].body // ""').trim();
+}
+
+function publish(digest: Digest): void {
+	const existing = findTrackingIssue(TRACKING_TITLE);
+	const action = decideDigestAction({
+		digest,
+		existing: existing ? { number: existing.number, lastComment: lastCommentOf(existing.number) } : null,
+	});
+
+	switch (action.kind) {
+		case 'create': {
+			const created = gh(
+				'issue',
+				'create',
+				'--title',
+				TRACKING_TITLE,
+				'--body',
+				action.body,
+				'--label',
+				'🧭 indexado',
+			).trim();
+			gh('issue', 'comment', created, '--body', action.comment);
+			console.log(`Bitácora creada: ${created}`);
+			break;
+		}
+		case 'comment':
+			gh('issue', 'comment', String(existing?.number), '--body', action.comment);
+			console.log(`Comentado en la bitácora #${existing?.number}.`);
+			break;
+		default:
+			console.log(`Sin novedad que comentar (${action.reason}).`);
+	}
+}
+
+/**
+ * El aviso es superficie de lectura, igual que el resumen: si no se puede escribir, se informa y la
+ * corrida sigue. Fallar acá tiraría abajo una medición que ya se persistió, y pintaría de rojo un job
+ * cuyo rojo está reservado para no haber podido medir.
+ */
+function applyDigest(digest: Digest): void {
+	if (!APPLY) {
+		return;
+	}
+	try {
+		publish(digest);
+	} catch (error) {
+		console.error(`No se pudo dejar el aviso en la bitácora: ${messageOf(error)}`);
+	}
+}
+
 // La key la exigen las dos rutas; el siteUrl NO lo exige `--list-sites`, que existe justamente para
 // averiguarlo. Ambos se validan ANTES de tocar la red, para no gastar una descarga del sitemap en una
 // corrida que igual va a abortar.
@@ -298,12 +364,22 @@ async function run(): Promise<void> {
 
 	console.log(formatReport(report).join('\n'));
 	await writeSummary({ ...report, checkedAt });
+	// La serie va primero: es lo irrecuperable de la corrida, y el aviso se deriva de ella.
 	await writeStore(store, rows, checkedAt);
+
+	const runUrl = currentRunUrl();
+	applyDigest(buildDigest({ ...report, checkedAt, ...(runUrl !== undefined ? { runUrl } : {}) }));
 
 	process.exitCode = classifyRunOutcome(rows);
 }
 
 run().catch((error: unknown) => {
 	console.error(messageOf(error));
+	// Una corrida que ni llegó a medir es la que más merece avisar: sin esto, el silencio de una
+	// semana sin movimiento y el de una herramienta rota se leen igual.
+	const runUrl = currentRunUrl();
+	applyDigest(
+		buildDigest({ rows: [], checkedAt: new Date().toISOString(), ...(runUrl !== undefined ? { runUrl } : {}) }),
+	);
 	process.exitCode = EXIT_CODE.toolFailure;
 });
