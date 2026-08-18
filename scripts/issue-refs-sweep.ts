@@ -22,16 +22,12 @@ import {
 	decideAction,
 	formatConsoleReport,
 	selectStaleRefs,
-	selectTrackingIssue,
 	type IssueState,
 } from './issue-refs-sweep.helpers';
+import { findTrackingIssue, gh } from './tracking-issue';
 
 const TRACKING_TITLE = 'Menciones a issues que ya cerraron';
 const REPO = 'cuentoneta/cuentoneta';
-
-function gh(...args: string[]): string {
-	return execFileSync('gh', args, { encoding: 'utf8' });
-}
 
 function tracked(): ReturnType<typeof collectTrackedRefs> {
 	const root = process.cwd();
@@ -79,24 +75,6 @@ function fetchStates(numbers: number[]): Map<number, IssueState> {
 	return states;
 }
 
-function findTrackingIssue(): { number: number; body: string } | null {
-	const raw = gh(
-		'issue',
-		'list',
-		'--state',
-		'open',
-		'--search',
-		`"${TRACKING_TITLE}" in:title`,
-		'--json',
-		'number,title,body',
-	);
-	const found = selectTrackingIssue(
-		JSON.parse(raw) as { number: number; title: string; body: string }[],
-		TRACKING_TITLE,
-	);
-	return found ? { number: found.number, body: found.body ?? '' } : null;
-}
-
 const refs = tracked();
 const states = fetchStates([...new Set(refs.map((ref) => ref.issueNumber))]);
 const stale = selectStaleRefs(refs, states);
@@ -107,7 +85,7 @@ if (!process.argv.includes('--apply')) {
 	process.exit(0);
 }
 
-const existing = findTrackingIssue();
+const existing = findTrackingIssue(TRACKING_TITLE);
 const action = decideAction({ stale, states, existing });
 
 switch (action.kind) {
