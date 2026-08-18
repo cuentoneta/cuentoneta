@@ -214,33 +214,75 @@ describe('diffCoverageStates', () => {
 	});
 });
 
-describe('mergeSnapshot — historial por URL', () => {
-	it('archiva la observación ANTERIOR cuando el estado cambia', () => {
+describe('mergeSnapshot — observación confirmada', () => {
+	it('confirma en el acto la primera observación de una URL', () => {
+		const store = mergeSnapshot({}, [row({ url: 'a', verdict: 'NEUTRAL' })], '2026-08-04T00:00:00Z');
+
+		expect(store['a']?.confirmed).toEqual({
+			checkedAt: '2026-08-04T00:00:00Z',
+			state: CRAWL_STATE.neverCrawled,
+			coverageState: undefined,
+		});
+	});
+
+	it('no confirma una diferencia vista una sola vez', () => {
 		const store = mergeSnapshot({}, [row({ url: 'a', verdict: 'NEUTRAL' })], '2026-08-04T00:00:00Z');
 
 		const merged = mergeSnapshot(store, [row({ url: 'a', verdict: 'PASS' })], '2026-08-05T00:00:00Z');
 
 		expect(merged['a']?.state).toBe(CRAWL_STATE.indexed);
-		expect(merged['a']?.history).toEqual([
+		expect(merged['a']?.confirmed?.state).toBe(CRAWL_STATE.neverCrawled);
+		expect(merged['a']?.history).toEqual([]);
+	});
+
+	it('confirma la diferencia que se repite, y la fecha es la de su primera aparición', () => {
+		let store = mergeSnapshot({}, [row({ url: 'a', verdict: 'NEUTRAL' })], '2026-08-04T00:00:00Z');
+		store = mergeSnapshot(store, [row({ url: 'a', verdict: 'PASS' })], '2026-08-05T00:00:00Z');
+
+		store = mergeSnapshot(store, [row({ url: 'a', verdict: 'PASS' })], '2026-08-06T00:00:00Z');
+
+		expect(store['a']?.confirmed).toEqual({
+			checkedAt: '2026-08-05T00:00:00Z',
+			state: CRAWL_STATE.indexed,
+			coverageState: undefined,
+		});
+	});
+
+	it('archiva la confirmada anterior recién cuando la diferencia se confirma', () => {
+		let store = mergeSnapshot({}, [row({ url: 'a', verdict: 'NEUTRAL' })], '2026-08-04T00:00:00Z');
+		store = mergeSnapshot(store, [row({ url: 'a', verdict: 'PASS' })], '2026-08-05T00:00:00Z');
+
+		store = mergeSnapshot(store, [row({ url: 'a', verdict: 'PASS' })], '2026-08-06T00:00:00Z');
+
+		expect(store['a']?.history).toEqual([
 			{ checkedAt: '2026-08-04T00:00:00Z', state: CRAWL_STATE.neverCrawled, coverageState: undefined },
 		]);
 	});
 
-	it('archiva también cuando solo se mueve el coverageState', () => {
-		const store = mergeSnapshot(
-			{},
-			[row({ url: 'a', coverageState: 'Discovered - currently not indexed' })],
-			'2026-08-04T00:00:00Z',
-		);
+	it('archiva también un movimiento de coverageState que dura', () => {
+		const discovered = row({ url: 'a', coverageState: 'Discovered - currently not indexed' });
+		const unknown = row({ url: 'a', coverageState: 'URL is unknown to Google' });
+		let store = mergeSnapshot({}, [discovered], '2026-08-04T00:00:00Z');
+		store = mergeSnapshot(store, [unknown], '2026-08-05T00:00:00Z');
 
-		const merged = mergeSnapshot(
-			store,
-			[row({ url: 'a', coverageState: 'URL is unknown to Google' })],
-			'2026-08-05T00:00:00Z',
-		);
+		store = mergeSnapshot(store, [unknown], '2026-08-06T00:00:00Z');
 
-		expect(merged['a']?.history).toHaveLength(1);
-		expect(merged['a']?.history?.[0]?.coverageState).toBe('Discovered - currently not indexed');
+		expect(store['a']?.history).toHaveLength(1);
+		expect(store['a']?.history?.[0]?.coverageState).toBe('Discovered - currently not indexed');
+		expect(store['a']?.confirmed?.coverageState).toBe('URL is unknown to Google');
+	});
+
+	// El escenario del defecto: el valor va y vuelve sin llegar a confirmarse nunca.
+	it('deja la confirmada intacta cuando la observación vuelve a su valor original', () => {
+		const discovered = row({ url: 'a', coverageState: 'Discovered - currently not indexed' });
+		const unknown = row({ url: 'a', coverageState: 'URL is unknown to Google' });
+		let store = mergeSnapshot({}, [discovered], '2026-08-04T00:00:00Z');
+		store = mergeSnapshot(store, [unknown], '2026-08-05T00:00:00Z');
+
+		store = mergeSnapshot(store, [discovered], '2026-08-06T00:00:00Z');
+
+		expect(store['a']?.confirmed?.coverageState).toBe('Discovered - currently not indexed');
+		expect(store['a']?.history).toEqual([]);
 	});
 
 	// Sin esto, medir todas las semanas haría crecer el archivo aunque nada se mueva.
@@ -254,15 +296,30 @@ describe('mergeSnapshot — historial por URL', () => {
 	});
 
 	it('acumula la serie en orden, de la más vieja a la más nueva', () => {
+		const crawled = row({ url: 'a', verdict: 'NEUTRAL', lastCrawlTime: 'x' });
+		const indexed = row({ url: 'a', verdict: 'PASS' });
 		let store = mergeSnapshot({}, [row({ url: 'a', verdict: 'NEUTRAL' })], '2026-08-01T00:00:00Z');
-		store = mergeSnapshot(store, [row({ url: 'a', verdict: 'NEUTRAL', lastCrawlTime: 'x' })], '2026-08-02T00:00:00Z');
-		store = mergeSnapshot(store, [row({ url: 'a', verdict: 'PASS' })], '2026-08-03T00:00:00Z');
+		store = mergeSnapshot(store, [crawled], '2026-08-02T00:00:00Z');
+		store = mergeSnapshot(store, [crawled], '2026-08-03T00:00:00Z');
+		store = mergeSnapshot(store, [indexed], '2026-08-04T00:00:00Z');
+		store = mergeSnapshot(store, [indexed], '2026-08-05T00:00:00Z');
 
 		expect(store['a']?.history?.map((entry) => entry.state)).toEqual([
 			CRAWL_STATE.neverCrawled,
 			CRAWL_STATE.crawledNotIndexed,
 		]);
 		expect(store['a']?.state).toBe(CRAWL_STATE.indexed);
+	});
+
+	// La forma de las filas que ya viven en la rama de métricas, escritas antes de que el campo
+	// existiera: se leen sin migrarlas, y el campo se materializa en el primer merge.
+	it('usa los campos de primer nivel como base cuando la fila persistida no tiene confirmada', () => {
+		const legacy = { ...row({ url: 'a', verdict: 'NEUTRAL' }), checkedAt: '2026-08-04T00:00:00Z' };
+
+		const merged = mergeSnapshot({ a: legacy }, [row({ url: 'a', verdict: 'PASS' })], '2026-08-05T00:00:00Z');
+
+		expect(merged['a']?.confirmed?.state).toBe(CRAWL_STATE.neverCrawled);
+		expect(merged['a']?.history).toEqual([]);
 	});
 });
 

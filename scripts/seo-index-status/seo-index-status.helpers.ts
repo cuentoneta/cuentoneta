@@ -251,22 +251,32 @@ export function groupByCoverageState(rows: readonly ClassifiedRow[]): Map<string
 	return groups;
 }
 
-/** Observación anterior de una URL, conservada para poder leer su evolución. */
-export interface HistoryEntry {
-	checkedAt: string;
+/** Lo que una observación de una URL vale: el estado derivado y el texto que informó Google. */
+export interface ObservedValue {
 	state: CrawlState;
 	coverageState?: string;
+}
+
+/** Una observación de una URL, fechada. */
+export interface Observation extends ObservedValue {
+	checkedAt: string;
 }
 
 export interface StoredRow extends ClassifiedRow {
 	/** ISO de la corrida que produjo esta fila. */
 	checkedAt: string;
 	/**
-	 * Observaciones previas, de la más vieja a la más nueva. Solo se agrega una entrada cuando el
-	 * estado o el `coverageState` cambiaron: repetir la misma medición no debe hacer crecer el
-	 * archivo, y lo que interesa de la serie son justamente los puntos donde se movió.
+	 * El último valor que se vio DOS corridas seguidas, fechado en la corrida donde se lo vio por
+	 * primera vez. Los campos de primer nivel siguen siendo el presente; esto es la base contra la
+	 * que se diffea, y por eso una diferencia recién cuenta como movimiento cuando se repite.
 	 */
-	history?: HistoryEntry[];
+	confirmed?: Observation;
+	/**
+	 * Observaciones confirmadas previas, de la más vieja a la más nueva. Solo se agrega una entrada
+	 * cuando una diferencia se confirma: repetir la misma medición no debe hacer crecer el archivo, y
+	 * lo que interesa de la serie son justamente los puntos donde se movió.
+	 */
+	history?: Observation[];
 }
 
 /**
@@ -294,30 +304,86 @@ export function resolveHistoryPaths(raw: string | undefined): HistoryPaths {
 	return { file, dir: dirname(file) };
 }
 
-function movedSinceLastRun(previous: StoredRow | undefined, row: ClassifiedRow): boolean {
-	if (!previous) {
-		return false;
-	}
-	return previous.state !== row.state || previous.coverageState !== row.coverageState;
+/** Qué significa una observación frente a la corrida anterior. */
+export const MOVE_KIND = Object.freeze({
+	/** Difiere de la confirmada y ya se vio dos veces seguidas: es movimiento. */
+	confirmed: 'confirmed',
+	/** Difiere de la confirmada pero se vio una sola vez: todavía no se sabe si va a durar. */
+	pending: 'pending',
+	/** Vale lo confirmado, sea porque no se movió o porque volvió. */
+	none: 'none',
+} as const);
+
+export type MoveKind = (typeof MOVE_KIND)[keyof typeof MOVE_KIND];
+
+/** Definición única de "no se movió". La comparten el merge y los dos diffs. */
+function sameObservation(a: ObservedValue, b: ObservedValue): boolean {
+	return a.state === b.state && a.coverageState === b.coverageState;
 }
 
 /**
- * La entrada archivada es la observación ANTERIOR, no la nueva: los campos de primer nivel siempre
- * son el presente, y `history` el camino que llevó hasta él.
+ * La base contra la que se diffea. Cae a los campos de primer nivel cuando la fila todavía no tiene
+ * confirmada: es lo que permite leer sin migrarla la serie ya persistida, escrita antes de que el
+ * campo existiera.
  */
-function historyAfter(previous: StoredRow | undefined, row: ClassifiedRow): HistoryEntry[] {
+export function confirmedBaseOf(previous: StoredRow): Observation {
+	return (
+		previous.confirmed ?? {
+			checkedAt: previous.checkedAt,
+			state: previous.state,
+			coverageState: previous.coverageState,
+		}
+	);
+}
+
+/**
+ * La regla entera, en una función: una diferencia cuenta como movimiento recién cuando se repite.
+ *
+ * Existe porque el par "Discovered - currently not indexed" ↔ "URL is unknown to Google" OSCILA
+ * entre corridas separadas por minutos, sin que el indexado cambie: dos corridas a 16 minutos sobre
+ * las mismas 969 URLs produjeron 36 transiciones en ambos sentidos, todas con el estado derivado
+ * idéntico a los dos lados. Contarlas como movimiento enterraba el caso real —una URL que Google
+ * deja de conocer— entre veintitantas que solo parpadearon, y engordaba el historial con puntos que
+ * no marcan nada.
+ *
+ * El costo aceptado es una corrida de latencia: un movimiento durable se reporta a la siguiente. La
+ * regla no nombra ningún `coverageState`, así que cubre también al próximo par que resulte volátil.
+ */
+export function moveKind(base: ObservedValue, latest: ObservedValue, current: ObservedValue): MoveKind {
+	if (sameObservation(current, base)) {
+		return MOVE_KIND.none;
+	}
+	return sameObservation(current, latest) ? MOVE_KIND.confirmed : MOVE_KIND.pending;
+}
+
+/**
+ * La confirmada que deja esta corrida. Una URL nunca vista se confirma en el acto —no hay nada
+ * oscilando todavía, y así una primera inspección sigue siendo un alta y no un movimiento—; una
+ * diferencia que se repite se confirma con la fecha de la corrida donde se la vio por PRIMERA vez,
+ * que es lo que hace legible el historial; cualquier otro caso arrastra la confirmada anterior.
+ */
+function confirmedAfter(previous: StoredRow | undefined, row: ClassifiedRow, checkedAt: string): Observation {
+	if (!previous) {
+		return { checkedAt, state: row.state, coverageState: row.coverageState };
+	}
+	const base = confirmedBaseOf(previous);
+	if (moveKind(base, previous, row) !== MOVE_KIND.confirmed) {
+		return base;
+	}
+	return { checkedAt: previous.checkedAt, state: row.state, coverageState: row.coverageState };
+}
+
+/**
+ * La entrada archivada es la observación confirmada ANTERIOR, no la nueva: los campos de primer
+ * nivel siempre son el presente, y `history` el camino de valores confirmados que llevó hasta él.
+ */
+function historyAfter(previous: StoredRow | undefined, row: ClassifiedRow): Observation[] {
 	const history = previous?.history ?? [];
-	if (!movedSinceLastRun(previous, row)) {
+	if (!previous) {
 		return history;
 	}
-	return [
-		...history,
-		{
-			checkedAt: previous?.checkedAt ?? '',
-			state: previous?.state ?? row.state,
-			coverageState: previous?.coverageState,
-		},
-	];
+	const base = confirmedBaseOf(previous);
+	return moveKind(base, previous, row) === MOVE_KIND.confirmed ? [...history, base] : history;
 }
 
 export function mergeSnapshot(store: SnapshotStore, rows: readonly ClassifiedRow[], checkedAt: string): SnapshotStore {
@@ -332,6 +398,7 @@ export function mergeSnapshot(store: SnapshotStore, rows: readonly ClassifiedRow
 		merged[row.url] = {
 			...row,
 			checkedAt,
+			confirmed: confirmedAfter(store[row.url], row, checkedAt),
 			history: historyAfter(store[row.url], row),
 		};
 	}
