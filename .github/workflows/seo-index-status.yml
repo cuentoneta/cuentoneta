@@ -5,9 +5,11 @@
 # recorre el sitemap entero y ya tiene el `BASE_URL`: el smoke de invariantes SSR sobre una muestra, y
 # el barrido de cuerpos vacíos sobre todas las URLs.
 #
-# El valor de la medición no es la foto: es el diff contra la corrida anterior. Cuántas URLs pasaron
-# de "nunca rastreada" a tener `lastCrawlTime` es la pregunta que la pantalla de validación de Search
-# Console no contesta, y solo se responde comparando dos puntos en el tiempo. El runner es efímero,
+# El valor de la medición no es la foto: es el diff contra la última observación confirmada —la que
+# se vio dos corridas seguidas, porque la respuesta de la API oscila para lo que Google nunca
+# rastreó—. Cuántas URLs pasaron de "nunca rastreada" a tener `lastCrawlTime` es la pregunta que la
+# pantalla de validación de Search Console no contesta, y solo se responde comparando puntos en el
+# tiempo; el porqué de exigir repetición vive en el núcleo. El runner es efímero,
 # así que sin persistencia explícita cada corrida arrancaría sin historial y el diff no existiría.
 # La rama dedicada sobrevive a la retención de artefactos y a la evicción del cache, y regala los
 # diffs en git, que es exactamente la forma de la pregunta.
