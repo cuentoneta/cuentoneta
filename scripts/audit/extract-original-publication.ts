@@ -7,12 +7,15 @@
  *
  * Read-only: no escribe nada en Sanity.
  */
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 
 import { client } from '../../src/api/_helpers/sanity-connector';
 
 const dataset = process.env.AUDIT_DATASET;
 const sanityClient = client.withConfig({ useCdn: false, ...(dataset ? { dataset } : {}) });
+
+// Solo `literaryWork`: es el agregado cuyo campo se **renderiza** —en el hero de la página de
+// lectura—, mientras que el de `story` viaja por las queries y ningún componente lo muestra.
 
 interface Candidate {
 	readonly slug: string;
@@ -91,11 +94,31 @@ function propose(candidate: Candidate): Proposal {
 	return { candidate, value: null, evidence: review, caveat: null };
 }
 
-const candidates: Candidate[] = await sanityClient.fetch(`
-	*[_type == "story" && !defined(originalPublication) && !(_id in path("drafts.**"))]{
-		"slug": slug.current, title, "author": author->name, "review": pt::text(review)
+// La reseña no vive en la obra literaria sino en el cuento del que se derivó, así que se la trae por
+// slug — que es lo que ambos comparten. Se excluyen los borradores: una obra a medio editar es un
+// estado normal del Studio, y la versión publicada es la que el sitio sirve.
+const QUERY = `
+	*[_type == "literaryWork" && !defined(originalPublication) && !(_id in path("drafts.**"))]{
+		"slug": slug.current,
+		title,
+		"author": authors[0]->name,
+		"review": pt::text(*[_type == "story" && slug.current == ^.slug.current][0].review)
 	} | order(author asc, title asc)
-`);
+`;
+
+// `production` es privado y una credencial que no lo alcanza devuelve cero **sin error**, así que el
+// informe saldría vacío como si no quedara nada por completar. `AUDIT_INPUT` permite pasarle el
+// resultado de esa consulta ya obtenido por otra vía, en vez de fingir que se leyó el dataset.
+const inputPath = process.env.AUDIT_INPUT;
+const candidates: Candidate[] = inputPath
+	? JSON.parse(readFileSync(inputPath, 'utf8'))
+	: await sanityClient.fetch(QUERY);
+
+if (candidates.length === 0) {
+	throw new Error(
+		'la consulta no devolvió ninguna obra: o no queda nada por completar, o la credencial no alcanza para leer el dataset',
+	);
+}
 
 const proposals = candidates.map(propose);
 const derived = proposals.filter((proposal) => proposal.value !== null);
