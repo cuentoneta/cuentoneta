@@ -5,6 +5,12 @@
 # recorre el sitemap entero y ya tiene el `BASE_URL`: el smoke de invariantes SSR sobre una muestra, y
 # el barrido de cuerpos vacíos sobre todas las URLs.
 #
+# El diagnóstico va a una bitácora —un issue de seguimiento al que cada corrida con movimiento le
+# agrega un comentario— y no solo al resumen de la corrida. Un resumen hay que acordarse de ir a
+# buscarlo, y las notificaciones nativas de Actions no cubren el caso: avisan de workflows fallidos, y
+# este está diseñado para quedar verde salvo que la herramienta se rompa. Una semana sin movimiento no
+# comenta, para que el aviso no se vuelva rutina.
+#
 # El valor de la medición no es la foto: es el diff contra la última observación confirmada —la que
 # se vio dos corridas seguidas, porque la respuesta de la API oscila para lo que Google nunca
 # rastreó—. Cuántas URLs pasaron de "nunca rastreada" a tener `lastCrawlTime` es la pregunta que la
@@ -49,8 +55,9 @@ permissions:
   # `.metrics`, el checkout de la rama de métricas— y que `develop` y `master` están protegidas
   # contra push directo.
   contents: write
-  # El barrido de cuerpos mantiene su issue de seguimiento: es el permiso mínimo de ese mecanismo, el
-  # mismo que ya declara `required-fields-sweep`.
+  # Dos mecanismos del job mantienen un issue: la bitácora donde queda el movimiento de la serie y el
+  # seguimiento del barrido de cuerpos. Es el permiso mínimo de ambos, el mismo que ya declara
+  # `required-fields-sweep`.
   issues: write
 
 jobs:
@@ -120,10 +127,11 @@ jobs:
       - name: Medir el estado de indexado
         env:
           GSC_SERVICE_ACCOUNT_KEY: ${{ secrets.GSC_SERVICE_ACCOUNT_KEY }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -uo pipefail
           status=0
-          pnpm seo:index-status --all --history="$HISTORY_FILE" --summary="$GITHUB_STEP_SUMMARY" || status=$?
+          pnpm seo:index-status --all --history="$HISTORY_FILE" --summary="$GITHUB_STEP_SUMMARY" --apply || status=$?
           case "$status" in
             0) echo "La corrida midió todas las URLs." ;;
             2) echo "::warning::Algunas inspecciones erraron por causas transitorias; la serie se persiste igual." ;;
