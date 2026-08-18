@@ -40,6 +40,16 @@ export function fingerprint(emptyPaths: readonly string[]): string {
 	return [...new Set(emptyPaths)].sort().join('|');
 }
 
+/**
+ * Las rutas que el seguimiento venía reportando, leídas de su propia huella. Es la única copia que
+ * queda cuando el hallazgo se resuelve, así que se recupera de ahí y no de la corrida actual —que por
+ * definición ya no las tiene—.
+ */
+export function previouslyReportedPaths(body: string): string[] {
+	const marker = body.match(/<!-- huella: (.*?) -->/);
+	return marker?.[1] ? marker[1].split('|').filter(Boolean) : [];
+}
+
 /** Agrupa por el primer segmento de la ruta, que es lo que distingue tipo de página. */
 export function groupByPrefix(paths: readonly string[]): { prefix: string; paths: string[] }[] {
 	const groups = new Map<string, string[]>();
@@ -98,9 +108,21 @@ export function decideAction(input: { report: SweepReport; existing: { body: str
 		if (existing === null || !existing.body.includes(FINGERPRINT_PREFIX)) {
 			return { kind: 'noop' };
 		}
+		// El cuerpo se reescribe entero —conservar la lista dejaría al issue afirmando que esas páginas
+		// están vacías, justo debajo del aviso de que ya no—, pero la lista se conserva como registro:
+		// el seguimiento sobrevive abierto hasta que alguien lo cierre, y sin ella quien lo lea después
+		// no puede saber qué se había roto.
 		return {
 			kind: 'resolved',
-			body: 'Ninguna URL del sitemap sirve un cuerpo vacío.\n\n<!-- resuelto -->',
+			body: [
+				'Ninguna URL del sitemap sirve un cuerpo vacío.',
+				'',
+				'### Lo que este seguimiento reportaba',
+				'',
+				...previouslyReportedPaths(existing.body).map((path) => `- \`${path}\``),
+				'',
+				'<!-- resuelto -->',
+			].join('\n'),
 			comment: 'El barrido ya no encuentra páginas con cuerpo vacío. Se puede cerrar este seguimiento.',
 		};
 	}

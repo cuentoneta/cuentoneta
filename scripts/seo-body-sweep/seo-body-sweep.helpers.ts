@@ -38,6 +38,11 @@ export interface FetchedPage {
  *
  * 40 deja margen de sobra a los dos lados: la falla que motivó el barrido servía un `<main>` de 0
  * caracteres, y el microcuento más corto medido más que duplica el umbral.
+ *
+ * Lo que el umbral NO puede separar, y conviene tener presente: una página que renderiza su encabezado
+ * y pierde solo el cuerpo queda entre los dos extremos y pasa como sana. El barrido detecta el cuerpo
+ * **ausente**, que es la forma que toma este defecto cuando el render falla entero; una pérdida
+ * parcial necesita un chequeo por tipo de página, que es el trabajo de la muestra del smoke.
  */
 export const SWEEP_MIN_CONTENT_LENGTH = 40;
 

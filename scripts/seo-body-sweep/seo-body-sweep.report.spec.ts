@@ -6,6 +6,7 @@ import {
 	formatReportBody,
 	formatSummaryMarkdown,
 	groupByPrefix,
+	previouslyReportedPaths,
 	type SweepReport,
 } from './seo-body-sweep.report';
 import type { PageResult } from './seo-body-sweep.helpers';
@@ -84,6 +85,9 @@ describe('decideAction', () => {
 		const existing = { body: formatReportBody(reportOf(['/author/a'])) };
 		const resolved = decideAction({ report: reportOf([]), existing });
 		expect(resolved.kind).toBe('resolved');
+		// El seguimiento queda abierto hasta que alguien lo cierre: sin la lista, quien lo lea después
+		// no puede saber qué se había roto.
+		expect(resolved.kind === 'resolved' && resolved.body).toContain('/author/a');
 
 		const alreadyResolved = decideAction({
 			report: reportOf([]),
@@ -94,6 +98,17 @@ describe('decideAction', () => {
 
 	it('no hace nada cuando no hay hallazgos ni seguimiento previo', () => {
 		expect(decideAction({ report: reportOf([]), existing: null }).kind).toBe('noop');
+	});
+});
+
+describe('previouslyReportedPaths', () => {
+	it('recupera las rutas de la huella del cuerpo', () => {
+		const body = formatReportBody(reportOf(['/author/a', '/story/x']));
+		expect(previouslyReportedPaths(body)).toEqual(['/author/a', '/story/x']);
+	});
+
+	it('devuelve vacío ante un cuerpo sin huella', () => {
+		expect(previouslyReportedPaths('un issue escrito a mano')).toEqual([]);
 	});
 });
 
