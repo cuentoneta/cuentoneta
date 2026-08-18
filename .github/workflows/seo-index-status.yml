@@ -1,6 +1,10 @@
 # Mide el estado de indexado real de las URLs del sitio contra la URL Inspection API de Search
 # Console, y persiste la serie por URL en una rama dedicada del repo.
 #
+# Sobre el final hace además dos chequeos contra el despliegue, que viven acá porque este job ya
+# recorre el sitemap entero y ya tiene el `BASE_URL`: el smoke de invariantes SSR sobre una muestra, y
+# el barrido de cuerpos vacíos sobre todas las URLs.
+#
 # El valor de la medición no es la foto: es el diff contra la corrida anterior. Cuántas URLs pasaron
 # de "nunca rastreada" a tener `lastCrawlTime` es la pregunta que la pantalla de validación de Search
 # Console no contesta, y solo se responde comparando dos puntos en el tiempo. El runner es efímero,
@@ -43,6 +47,9 @@ permissions:
   # `.metrics`, el checkout de la rama de métricas— y que `develop` y `master` están protegidas
   # contra push directo.
   contents: write
+  # El barrido de cuerpos mantiene su issue de seguimiento: es el permiso mínimo de ese mecanismo, el
+  # mismo que ya declara `required-fields-sweep`.
+  issues: write
 
 jobs:
   seo-index-status:
@@ -113,8 +120,8 @@ jobs:
           GSC_SERVICE_ACCOUNT_KEY: ${{ secrets.GSC_SERVICE_ACCOUNT_KEY }}
         run: |
           set -uo pipefail
-          pnpm seo:index-status --all --history="$HISTORY_FILE" --summary="$GITHUB_STEP_SUMMARY"
-          status=$?
+          status=0
+          pnpm seo:index-status --all --history="$HISTORY_FILE" --summary="$GITHUB_STEP_SUMMARY" || status=$?
           case "$status" in
             0) echo "La corrida midió todas las URLs." ;;
             2) echo "::warning::Algunas inspecciones erraron por causas transitorias; la serie se persiste igual." ;;
@@ -185,4 +192,28 @@ jobs:
             success) echo '## Smoke SSR: sin violaciones.' >> "$GITHUB_STEP_SUMMARY" ;;
             failure) echo '## Smoke SSR: encontró violaciones (ver el log del step).' >> "$GITHUB_STEP_SUMMARY" ;;
             *) echo '## Smoke SSR: no llegó a correr.' >> "$GITHUB_STEP_SUMMARY" ;;
+          esac
+
+      # Complementa al smoke recorriendo todas las URLs en vez de una muestra; el porqué está en
+      # `scripts/seo-body-sweep/seo-body-sweep.ts`. Igual que el resto del job, un hallazgo no pinta
+      # rojo: lo sigue un issue.
+      #
+      # Corre aunque la medición haya cortado el job — no depende de Search Console, solo del
+      # despliegue, y saltearlo por una credencial vencida dejaría al sitio sin su único chequeo de
+      # cobertura completa justo la semana en que algo más ya salió mal.
+      - name: Barrido de cuerpos vacíos
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -uo pipefail
+          # El shell por defecto de un `run` es `bash -e`, y `set -uo pipefail` no apaga ese errexit:
+          # sin capturar el código con `|| status=$?`, un hallazgo abortaría el step antes del `case`
+          # y lo pintaría rojo — justo lo que este job no hace por un hallazgo.
+          status=0
+          pnpm seo:body-sweep --apply --summary="$GITHUB_STEP_SUMMARY" || status=$?
+          case "$status" in
+            0) echo "Ninguna URL del sitemap sirve un cuerpo vacío." ;;
+            2) echo "::warning::El barrido encontró hallazgos; quedaron en el issue de seguimiento." ;;
+            *) echo "::error::El barrido no pudo correr (código $status)." >&2; exit "$status" ;;
           esac

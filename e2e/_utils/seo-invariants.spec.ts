@@ -8,6 +8,7 @@ import {
 	checkRobotsIndexable,
 	checkNgServerContext,
 	checkTitle,
+	collectEmptyBodyViolations,
 	collectIndexableHtmlViolations,
 	type IndexableHtmlExpectations,
 } from './seo-invariants';
@@ -144,6 +145,40 @@ describe('checkNoSkeletonMarkers', () => {
 
 	it('ignora skeletons fuera de main', () => {
 		expect(checkNoSkeletonMarkers('<header data-testid="skeleton"></header><main><p>ok</p></main>')).toBeNull();
+	});
+});
+
+describe('collectEmptyBodyViolations', () => {
+	it('no reporta nada cuando main trae contenido real', () => {
+		expect(collectEmptyBodyViolations(GOOD_HTML)).toEqual([]);
+	});
+
+	it('reporta contenido primario cuando main está vacío', () => {
+		expect(collectEmptyBodyViolations('<main></main>').map((violation) => violation.rule)).toEqual(['primary-content']);
+	});
+
+	it('reporta las dos violaciones cuando main solo trae un skeleton', () => {
+		expect(
+			collectEmptyBodyViolations('<main><div data-testid="skeleton"></div></main>').map((violation) => violation.rule),
+		).toEqual(['primary-content', 'no-skeleton']);
+	});
+
+	it('respeta un umbral explícito', () => {
+		expect(collectEmptyBodyViolations('<main><p>corto</p></main>', 3)).toEqual([]);
+		expect(collectEmptyBodyViolations('<main><p>corto</p></main>', 500)).toHaveLength(1);
+	});
+
+	// El shape del defecto que motivó el barrido: 200 y SSR real, pero el <main> quedó sin cuerpo
+	// porque el constructor del schema falló. Un chequeo que mire status o ng-server-context lo da
+	// por sano; solo mirar el contenido lo delata.
+	it('detecta un SSR que respondió 200 con el cuerpo sin renderizar', () => {
+		const html = `<html><body><cuentoneta-root ng-server-context="ssr"><main></main></cuentoneta-root></body></html>`;
+		expect(collectEmptyBodyViolations(html).map((violation) => violation.rule)).toEqual(['primary-content']);
+	});
+
+	it('ignora el chrome global: header y footer no cuentan como cuerpo', () => {
+		const html = `<header>${primaryText}</header><main></main><footer>${primaryText}</footer>`;
+		expect(collectEmptyBodyViolations(html).map((violation) => violation.rule)).toEqual(['primary-content']);
 	});
 });
 
