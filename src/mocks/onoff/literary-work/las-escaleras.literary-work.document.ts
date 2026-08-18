@@ -2,6 +2,7 @@ import { onoffImageAssets } from '../../onoff-image-assets.mock';
 import type { LiteraryWork } from '@sanity-types';
 import lasEscalerasEditorialNoteMd from './las-escaleras.editorial-note.md?raw';
 import lasEscalerasMdBody from './las-escaleras.md?raw';
+import { lasEscalerasAudioDescription } from '../media/las-escaleras.media';
 
 export const lasEscalerasLiteraryWorkDocument: LiteraryWork = {
 	_id: 'onoff-literary-work-las-escaleras',
@@ -19,7 +20,15 @@ export const lasEscalerasLiteraryWorkDocument: LiteraryWork = {
 	content: [{ _type: 'section', _key: 'section-1', body: lasEscalerasMdBody, readingTime: 9 }],
 	editorialNote: lasEscalerasEditorialNoteMd,
 	totalReadingTime: 9,
-	mediaSources: [],
+	mediaSources: [
+		{
+			_key: 'las-escaleras-audio',
+			_type: 'audioRecording',
+			title: 'Lectura de "Las escaleras" por su autor',
+			description: lasEscalerasAudioDescription,
+			url: 'https://cdn.example.org/onoff/las-escaleras.ogg',
+		},
+	],
 	resources: [],
 	tags: [
 		{ _key: 'novela', _type: 'reference', _ref: 'tag-novela' },

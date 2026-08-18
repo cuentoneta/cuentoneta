@@ -10,6 +10,7 @@ import lasEscalerasMdBody from './las-escaleras.md?raw';
 import lasEscalerasEditorialNoteMd from './las-escaleras.editorial-note.md?raw';
 import { toDomainTags } from '../../onoff-tags.mock';
 import { lasEscalerasStoryMock } from '../story/las-escaleras.story.mock';
+import { lasEscalerasMediaMock } from '../media/las-escaleras.media.mock';
 
 const lasEscalerasBody = createMarkdown(lasEscalerasMdBody);
 
@@ -27,7 +28,7 @@ export const lasEscalerasLiteraryWorkMock: LiteraryWork = createLiteraryWork({
 			readingTime: createReadingTime(lasEscalerasRawLiteraryWork.content[0].readingTime ?? 0),
 		}),
 	],
-	mediaSources: [],
+	mediaSources: lasEscalerasMediaMock,
 	resources: lasEscalerasStoryMock.resources,
 	badLanguage: lasEscalerasStoryMock.badLanguage,
 	tags: toDomainTags(lasEscalerasRawLiteraryWork.tags),

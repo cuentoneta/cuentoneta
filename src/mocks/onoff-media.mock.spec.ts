@@ -7,8 +7,8 @@ import {
 	onoffYouTubeVideosMock,
 } from './onoff-media.mock';
 
-// Los selectores derivan de una sola obra del corpus. Sin estos guards, quitarle un tipo de medio a esa
-// obra no rompe acá sino en la decena de specs y stories que hacen `onoffYouTubeVideosMock[0]`, con un
+// Los selectores derivan de la obra que declara los cuatro tipos. Sin estos guards, quitarle un tipo de
+// medio a esa obra no rompe acá sino en la decena de specs y stories que hacen `onoffYouTubeVideosMock[0]`, con un
 // "Cannot read properties of undefined" que no dice qué se rompió ni dónde.
 describe('onoffMediaMock (canon de multimedia del corpus)', () => {
 	it.each([
