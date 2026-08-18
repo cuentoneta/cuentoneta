@@ -368,6 +368,104 @@ describe('mergeSnapshot — observación confirmada', () => {
 		expect(merged['a']?.confirmed?.state).toBe(CRAWL_STATE.neverCrawled);
 		expect(merged['a']?.history).toEqual([]);
 	});
+
+	it('confirma desde una fila sin confirmada en cuanto el valor nuevo se repite', () => {
+		const legacy = { ...row({ url: 'a', verdict: 'NEUTRAL' }), checkedAt: '2026-08-04T00:00:00Z' };
+		const indexed = row({ url: 'a', verdict: 'PASS' });
+		let store = mergeSnapshot({ a: legacy }, [indexed], '2026-08-05T00:00:00Z');
+
+		store = mergeSnapshot(store, [indexed], '2026-08-06T00:00:00Z');
+
+		expect(store['a']?.confirmed?.state).toBe(CRAWL_STATE.indexed);
+		expect(store['a']?.history?.map((entry) => entry.state)).toEqual([CRAWL_STATE.neverCrawled]);
+	});
+
+	// El diff también tiene que poder leer esa fila: es la que va a encontrar la primera corrida que
+	// se ejecute contra la serie ya escrita.
+	it('el diff toma los campos de primer nivel de una fila sin confirmada', () => {
+		const legacy = { ...row({ url: 'a', verdict: 'NEUTRAL' }), checkedAt: '2026-08-04T00:00:00Z' };
+
+		const { transitions, pending } = diffStates([legacy], [row({ url: 'a', verdict: 'PASS' })]);
+
+		expect(transitions).toEqual([]);
+		expect(pending).toEqual([{ url: 'a', from: CRAWL_STATE.neverCrawled, to: CRAWL_STATE.indexed }]);
+	});
+});
+
+/**
+ * El defecto, reproducido con datos sintéticos: dos corridas separadas por 16 minutos sobre las
+ * mismas URLs devolvieron 36 movimientos de `coverageState` en ambos sentidos —23 en uno, 13 en el
+ * otro— con el estado derivado idéntico a los dos lados. Correrlo de verdad cuesta ~969 de las 2.000
+ * consultas diarias de la propiedad, así que la verificación vive acá.
+ */
+describe('la oscilación medida entre dos corridas no es movimiento', () => {
+	const DISCOVERED = 'Discovered - currently not indexed';
+	const UNKNOWN = 'URL is unknown to Google';
+
+	/** Las 23 que arrancan en "Discovered" y las 13 que arrancan en "unknown". */
+	function fleet(discoveredFirst: boolean): ClassifiedRow[] {
+		const count = discoveredFirst ? 23 : 13;
+		const prefix = discoveredFirst ? 'd' : 'u';
+		return Array.from({ length: count }, (_, index) =>
+			row({ url: `${prefix}${index}`, coverageState: discoveredFirst ? DISCOVERED : UNKNOWN }),
+		);
+	}
+
+	/** La misma flota con el `coverageState` intercambiado: el parpadeo. */
+	function flipped(rows: readonly ClassifiedRow[]): ClassifiedRow[] {
+		return rows.map((entry) =>
+			row({ url: entry.url, coverageState: entry.coverageState === DISCOVERED ? UNKNOWN : DISCOVERED }),
+		);
+	}
+
+	const firstRun = [...fleet(true), ...fleet(false)];
+	const secondRun = flipped(firstRun);
+
+	it('el estado derivado es el mismo a los dos lados de las 36', () => {
+		expect(new Set(firstRun.map((entry) => entry.state))).toEqual(new Set([CRAWL_STATE.neverCrawled]));
+		expect(new Set(secondRun.map((entry) => entry.state))).toEqual(new Set([CRAWL_STATE.neverCrawled]));
+	});
+
+	it('ninguna de las 36 cuenta como movimiento: quedan pendientes', () => {
+		const store = mergeSnapshot({}, firstRun, '2026-08-15T12:00:00Z');
+
+		const moves = diffCoverageStates(storedRows(store), secondRun);
+
+		expect(moves.transitions).toEqual([]);
+		expect(moves.pending).toHaveLength(36);
+		expect(diffStates(storedRows(store), secondRun).transitions).toEqual([]);
+	});
+
+	it('el historial no crece con el parpadeo', () => {
+		let store = mergeSnapshot({}, firstRun, '2026-08-15T12:00:00Z');
+
+		store = mergeSnapshot(store, secondRun, '2026-08-15T12:16:00Z');
+
+		expect(storedRows(store).flatMap((entry) => entry.history ?? [])).toEqual([]);
+	});
+
+	it('a la corrida siguiente vuelven a su valor y no queda nada pendiente', () => {
+		let store = mergeSnapshot({}, firstRun, '2026-08-15T12:00:00Z');
+		store = mergeSnapshot(store, secondRun, '2026-08-15T12:16:00Z');
+
+		const moves = diffCoverageStates(storedRows(store), firstRun);
+		store = mergeSnapshot(store, firstRun, '2026-08-22T12:00:00Z');
+
+		expect(moves.transitions).toEqual([]);
+		expect(moves.pending).toEqual([]);
+		expect(storedRows(store).flatMap((entry) => entry.history ?? [])).toEqual([]);
+	});
+
+	// Lo que no se puede perder al callar el parpadeo: una URL que Google DEJA de conocer de verdad.
+	it('una URL que se queda en el valor nuevo sí se reporta, una corrida después', () => {
+		const durable = row({ url: 'd0', coverageState: UNKNOWN });
+		let store = mergeSnapshot({}, firstRun, '2026-08-15T12:00:00Z');
+		store = mergeSnapshot(store, secondRun, '2026-08-15T12:16:00Z');
+
+		const moves = diffCoverageStates(storedRows(store), [durable]);
+
+		expect(moves.transitions).toEqual([{ url: 'd0', from: DISCOVERED, to: UNKNOWN }]);
+	});
 });
 
 describe('mergeSnapshot — una inspección fallida no es una observación', () => {
