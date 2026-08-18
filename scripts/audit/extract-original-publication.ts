@@ -1,9 +1,14 @@
 /**
- * Deriva de la reseña de cada obra una **propuesta** de `originalPublication`, para revisión humana.
+ * Deriva de la nota editorial de cada obra una **propuesta** de `originalPublication`, para revisión
+ * humana, y releva de paso si esa nota menciona su inclusión en material educativo o cultural.
  *
- * La redacción ya escribió dónde y cuándo se publicó cada obra, en prosa: extraerlo cuesta menos y
- * arriesga menos que investigarlo afuera. Lo que sale de acá es una propuesta con la frase que la
- * respalda al lado — nunca un dato para persistir sin mirar.
+ * La redacción ya escribió en prosa dónde y cuándo se publicó cada obra: extraerlo cuesta y arriesga
+ * menos que investigarlo afuera, porque el dato bibliográfico es de los que un modelo produce
+ * plausible y equivocado con la misma soltura. Lo que sale de acá es una propuesta con la frase que
+ * la respalda al lado — nunca un dato para persistir sin mirar.
+ *
+ * Opera **solo sobre `literaryWork`**: es el agregado cuyo campo se renderiza, y su nota editorial es
+ * fuente propia. El cuento del que cada obra se derivó no interviene.
  *
  * Read-only: no escribe nada en Sanity.
  */
@@ -14,26 +19,24 @@ import { client } from '../../src/api/_helpers/sanity-connector';
 const dataset = process.env.AUDIT_DATASET;
 const sanityClient = client.withConfig({ useCdn: false, ...(dataset ? { dataset } : {}) });
 
-// Solo `literaryWork`: es el agregado cuyo campo se **renderiza** —en el hero de la página de
-// lectura—, mientras que el de `story` viaja por las queries y ningún componente lo muestra.
-
 interface Candidate {
 	readonly slug: string;
 	readonly title: string;
 	readonly author: string;
-	readonly review: string | null;
-	/** Autor del cuento del que se tomó la reseña: si difiere, la evidencia es de otra obra. */
-	readonly reviewAuthor?: string | null;
+	/** Prosa editorial de la propia obra. Es Markdown, no Portable Text. */
+	readonly editorialNote: string | null;
 }
 
 interface Proposal {
 	readonly candidate: Candidate;
 	/** El valor propuesto, con el formato del campo: `<Publicación> (<año>)`. */
 	readonly value: string | null;
-	/** La oración de la reseña de la que sale, para poder juzgarla sin abrir el CMS. */
+	/** La oración de la nota de la que sale, para poder juzgarla sin abrir el CMS. */
 	readonly evidence: string | null;
 	/** Por qué conviene mirarla dos veces, cuando aplica. */
 	readonly caveat: string | null;
+	/** La oración que menciona material educativo o cultural, si la nota la trae. */
+	readonly educational: string | null;
 }
 
 const YEAR = /\b(1[5-9]\d{2}|20[0-2]\d)\b/;
@@ -43,7 +46,7 @@ const YEAR = /\b(1[5-9]\d{2}|20[0-2]\d)\b/;
 // separado dentro de cada oración en vez de exigir que estén pegados: pretender una sola forma deja
 // afuera la mayoría, y el resultado se revisa igual con la evidencia al lado.
 const NAME_AFTER_KIND =
-	/(?:revista|antolog[íi]a|colecci[óo]n|volumen|libro|peri[óo]dico|diario|obra|serie)\s+(?:de\s+(?:cuentos|relatos|poemas)\s+)?(?:titulad[oa]\s+)?["“]?([A-ZÁÉÍÓÚÑ][^"“”,.;(]{2,70}?)["”]?(?=[,.;(]|\s+(?:publicad|edita|el cual|la cual|una|que)|$)/;
+	/(?:revista|antolog[íi]a|colecci[óo]n|volumen|libro|peri[óo]dico|diario|obra|serie|novela|poemario)\s+(?:de\s+(?:cuentos|relatos|poemas)\s+)?(?:titulad[oa]\s+)?["“]?([A-ZÁÉÍÓÚÑ][^"“”,.;(]{2,70}?)["”]?(?=[,.;(]|\s+(?:publicad|edita|el cual|la cual|una|que)|$)/;
 const NAME_AFTER_VERB =
 	/(?:publicad[oa]s?|apareci[óo]|edita[dr][oa]?)\s+(?:originalmente\s+|por primera vez\s+)*(?:en|como parte de|dentro de)\s+(?:la\s+|el\s+|los\s+|las\s+)?["“]?([A-ZÁÉÍÓÚÑ][^"“”,.;(]{2,70}?)["”]?(?=[,.;(]|\s+(?:publicad|edita|el cual|la cual|una|que)|$)/;
 
@@ -52,9 +55,29 @@ const NAME_AFTER_VERB =
 const COMPILATION =
 	/(cuentos completos|obras completas|relatos reunidos|obra reunida|antología personal|cuentos reunidos)/i;
 
+// La nota a veces cuenta la trayectoria posterior de la obra —"luego fue incluida en…"—, que es justo
+// lo contrario de lo que guarda el campo. Tomarla como publicación original es el error más caro de
+// esta extracción, porque el resultado se ve igual de plausible.
+const LATER =
+	/\b(posteriormente|luego|m[áa]s tarde|despu[ée]s|reeditad|p[óo]stum|volvi[óo] a publicarse|la versi[óo]n aqu[íi])/i;
+
+// La circulación en material educativo es **otro dato**: no entra en este campo, que guarda dónde
+// apareció el texto por primera vez. Se releva aparte porque la nota ya lo menciona.
+const EDUCATIONAL =
+	/(ministerio|plan nacional de lectura|secretar[íi]a de (?:cultura|educaci[óo]n)|consejo (?:federal|provincial) de educaci[óo]n|libro de lectura|material (?:educativo|did[áa]ctico)|campa[ñn]a de lectura)/i;
+
 // La captura corta en la puntuación, pero la prosa suele continuar con la fecha o el verbo sin
 // separador: sin recortarlos, el nombre propuesto se lleva media oración.
 const TRAILING = /\s+(?:en|de|del)?\s*(?:su\s+edición.*|publicad.*|edita.*|\(?\d{4}\)?.*)$/i;
+
+// La nota es Markdown: el énfasis y los enlaces son ruido para el análisis y para leer la evidencia.
+function plain(markdown: string): string {
+	return markdown
+		.replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+		.replace(/[*_`]/g, '')
+		.replace(/\s+/g, ' ')
+		.trim();
+}
 
 function nameIn(sentence: string): string | null {
 	const match = NAME_AFTER_KIND.exec(sentence) ?? NAME_AFTER_VERB.exec(sentence);
@@ -63,25 +86,8 @@ function nameIn(sentence: string): string | null {
 	return name.length > 2 ? name : null;
 }
 
-// La reseña a veces cuenta la trayectoria posterior de la obra —"luego fue incluida en…"—, que es
-// justo lo contrario de lo que guarda el campo. Tomarla como publicación original es el error más
-// caro de esta extracción, porque el resultado se ve igual de plausible.
-const LATER =
-	/\b(posteriormente|luego|m[áa]s tarde|despu[ée]s|reeditad|p[óo]stum|volvi[óo] a publicarse|la versi[óo]n aqu[íi])/i;
-
-// La reseña se trae del cuento homónimo, y hay slugs que apuntan a obras distintas según el tipo:
-// cuando los autores no coinciden, la evidencia es de otra obra y no sirve ni para proponer ni para
-// completar a mano. Vale en las dos tablas, así que vive aparte.
-function crossedAuthorCaveat(candidate: Candidate): string | null {
-	if (!candidate.reviewAuthor || !candidate.author || candidate.reviewAuthor === candidate.author) {
-		return null;
-	}
-	return `⚠️ la reseña es de otra obra: pertenece a ${candidate.reviewAuthor}, no a ${candidate.author}`;
-}
-
-function caveatsFor(sentence: string, name: string, candidate: Candidate): string | null {
+function caveatsFor(sentence: string, name: string): string | null {
 	const caveats = [
-		crossedAuthorCaveat(candidate),
 		LATER.test(sentence) ? 'la oración habla de una edición POSTERIOR, no de la original' : null,
 		COMPILATION.test(name) ? 'es una recopilación: puede no ser donde apareció primero' : null,
 	].filter(Boolean);
@@ -89,14 +95,17 @@ function caveatsFor(sentence: string, name: string, candidate: Candidate): strin
 }
 
 function propose(candidate: Candidate): Proposal {
-	const review = candidate.review?.replace(/\s+/g, ' ').trim() ?? '';
-	if (!review) {
-		return { candidate, value: null, evidence: null, caveat: null };
+	const note = candidate.editorialNote?.trim();
+	if (!note) {
+		return { candidate, value: null, evidence: null, caveat: null, educational: null };
 	}
+
+	const sentences = plain(note).split(/(?<=[.!?])\s+/);
+	const educational = sentences.find((sentence) => EDUCATIONAL.test(sentence)) ?? null;
 
 	// Se recorre oración por oración: el año y el nombre tienen que convivir en la misma, o se estaría
 	// pegando la fecha de una frase con el título de otra.
-	for (const sentence of review.split(/(?<=[.!?])\s+/)) {
+	for (const sentence of sentences) {
 		const year = YEAR.exec(sentence)?.[0];
 		const name = year ? nameIn(sentence) : null;
 		if (year && name) {
@@ -104,24 +113,23 @@ function propose(candidate: Candidate): Proposal {
 				candidate,
 				value: `${name} (${year})`,
 				evidence: sentence,
-				caveat: caveatsFor(sentence, name, candidate),
+				caveat: caveatsFor(sentence, name),
+				educational,
 			};
 		}
 	}
 
-	return { candidate, value: null, evidence: review, caveat: null };
+	return { candidate, value: null, evidence: plain(note), caveat: null, educational };
 }
 
-// La reseña no vive en la obra literaria sino en el cuento del que se derivó, así que se la trae por
-// slug — que es lo que ambos comparten. Se excluyen los borradores: una obra a medio editar es un
-// estado normal del Studio, y la versión publicada es la que el sitio sirve.
+// Se excluyen los borradores: una obra a medio editar es un estado normal del Studio, y la versión
+// publicada es la que el sitio sirve.
 const QUERY = `
 	*[_type == "literaryWork" && !defined(originalPublication) && !(_id in path("drafts.**"))]{
 		"slug": slug.current,
 		title,
 		"author": authors[0]->name,
-		"review": pt::text(*[_type == "story" && slug.current == ^.slug.current][0].review),
-		"reviewAuthor": *[_type == "story" && slug.current == ^.slug.current][0].author->name
+		editorialNote
 	} | order(author asc, title asc)
 `;
 
@@ -143,34 +151,49 @@ const proposals = candidates.map(propose);
 const derived = proposals.filter((proposal) => proposal.value !== null);
 const pending = proposals.filter((proposal) => proposal.value === null);
 const flagged = derived.filter((proposal) => proposal.caveat !== null);
+const educational = proposals.filter((proposal) => proposal.educational !== null);
 
-function row(proposal: Proposal): string {
+const cell = (text: string | null) => (text ?? '').replace(/\|/g, '\\|');
+
+function proposalRow(proposal: Proposal): string {
 	const { candidate } = proposal;
-	return `| \`${candidate.slug}\` | ${candidate.author} | ${candidate.title} | ${proposal.value ?? ''} | ${proposal.caveat ?? ''} | ${(proposal.evidence ?? '').replace(/\|/g, '\\|')} |`;
+	return `| \`${candidate.slug}\` | ${candidate.author} | ${candidate.title} | ${cell(proposal.value)} | ${cell(proposal.caveat)} | ${cell(proposal.evidence)} |`;
 }
 
 const report = [
-	'# Publicación original derivada de las reseñas',
+	'# Publicación original derivada de la nota editorial',
 	'',
-	`${derived.length} de ${candidates.length} obras tienen el dato en su propia reseña. Lo de abajo es una **propuesta**: cada fila trae la oración que la respalda, para poder juzgarla sin abrir el CMS.`,
+	`${derived.length} de ${candidates.length} obras literarias tienen el dato en su propia nota editorial. Lo de abajo es una **propuesta**: cada fila trae la oración que la respalda, para poder juzgarla sin abrir el CMS.`,
 	'',
-	`${flagged.length} llevan un reparo: la reseña pertenece a otra obra, habla de una edición posterior, o la publicación que nombra es una recopilación. Esas hay que mirarlas sí o sí.`,
+	`${flagged.length} llevan un reparo: la oración habla de una edición posterior, o la publicación que nombra es una recopilación. Esas hay que mirarlas sí o sí.`,
+	'',
+	'El formato del campo es `<Publicación> (<año>)`, con la editorial cuando se la conoce: `Sobre héroes y tumbas (Compañia fabril editora, 1961)`.',
 	'',
 	'## Propuestas',
 	'',
 	'| slug | Autor | Obra | Propuesta | Reparo | Evidencia |',
 	'| --- | --- | --- | --- | --- | --- |',
-	...derived.map(row),
+	...derived.map(proposalRow),
 	'',
 	`## Sin propuesta (${pending.length}) — requieren investigación`,
 	'',
-	'La reseña va igual: aunque no alcance para derivar el valor, suele decir lo suficiente para completarlo a mano. El reparo advierte cuándo **no** hay que fiarse de ella.',
+	'La nota editorial va igual: aunque no alcance para derivar el valor, suele decir lo suficiente para completarlo a mano.',
 	'',
-	'| slug | Autor | Obra | Reparo | Reseña |',
-	'| --- | --- | --- | --- | --- |',
+	'| slug | Autor | Obra | Nota editorial |',
+	'| --- | --- | --- | --- |',
 	...pending.map(
 		(proposal) =>
-			`| \`${proposal.candidate.slug}\` | ${proposal.candidate.author} | ${proposal.candidate.title} | ${crossedAuthorCaveat(proposal.candidate) ?? ''} | ${(proposal.evidence ?? '').replace(/\|/g, '\\|')} |`,
+			`| \`${proposal.candidate.slug}\` | ${proposal.candidate.author} | ${proposal.candidate.title} | ${cell(proposal.evidence)} |`,
+	),
+	'',
+	`## Circulación en material educativo o cultural (${educational.length})`,
+	'',
+	'Dato **distinto** del que guarda el campo: se releva porque la nota editorial ya lo menciona, no para persistirlo en `originalPublication`.',
+	'',
+	'| slug | Obra | Mención |',
+	'| --- | --- | --- |',
+	...educational.map(
+		(proposal) => `| \`${proposal.candidate.slug}\` | ${proposal.candidate.title} | ${cell(proposal.educational)} |`,
 	),
 ].join('\n');
 
@@ -183,6 +206,7 @@ process.stdout.write(
 		`  con propuesta derivada: ${derived.length}`,
 		`  con reparo (revisar sí o sí): ${flagged.length}`,
 		`  sin propuesta: ${pending.length}`,
+		`  con mención a material educativo: ${educational.length}`,
 		'Escrito en workspace/original-publication-proposals.md',
 	].join('\n') + '\n',
 );
