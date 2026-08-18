@@ -171,14 +171,26 @@ describe('classifyRunOutcome', () => {
 		expect(classifyRunOutcome([ok, empty])).toBe(EXIT_CODES.findings);
 	});
 
-	it('reporta hallazgos ante una página que no se pudo medir', () => {
-		expect(classifyRunOutcome([ok, unmeasured])).toBe(EXIT_CODES.findings);
+	// Una no medida no entra al issue de seguimiento, así que llamarla hallazgo anunciaría un
+	// seguimiento que no se escribió. Sobre cientos de URLs, un 5xx suelto avisaría casi todas las
+	// semanas hasta volverse ruido.
+	it('no cuenta como hallazgo una página que no se pudo medir', () => {
+		expect(classifyRunOutcome([ok, unmeasured])).toBe(EXIT_CODES.clean);
+	});
+
+	it('sigue reportando el hallazgo cuando conviven una vacía y una no medida', () => {
+		expect(classifyRunOutcome([empty, unmeasured])).toBe(EXIT_CODES.findings);
 	});
 
 	// Cero resultados con el sitemap en la mano es la herramienta rota, no un sitio sano: darlo verde
 	// reproduciría el punto ciego que el barrido existe para cerrar.
 	it('falla como herramienta cuando no obtuvo ningún resultado', () => {
 		expect(classifyRunOutcome([])).toBe(EXIT_CODES.toolFailure);
+	});
+
+	// El origen caído entero: hay resultados, pero ninguno midió nada. Sin este caso saldría limpio.
+	it('falla como herramienta cuando ninguna página se pudo medir', () => {
+		expect(classifyRunOutcome([unmeasured, unmeasured])).toBe(EXIT_CODES.toolFailure);
 	});
 });
 

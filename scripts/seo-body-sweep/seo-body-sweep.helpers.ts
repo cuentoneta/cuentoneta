@@ -164,15 +164,21 @@ export const EXIT_CODES = Object.freeze({
 export type ExitCode = (typeof EXIT_CODES)[keyof typeof EXIT_CODES];
 
 /**
- * Barrer cero páginas no es barrer limpio: si el sitemap traía URLs y ninguna dejó resultado, la
- * herramienta no midió nada y decirlo verde sería el mismo punto ciego que el barrido viene a cerrar.
+ * Solo una página vacía es un hallazgo. Una no medida no lo es: no entra al issue de seguimiento, así
+ * que reportarla como hallazgo anunciaría un seguimiento que no se escribió, y un 5xx suelto sobre
+ * cientos de URLs dejaría al job avisando casi todas las semanas hasta volverse ruido.
+ *
+ * No haber medido NADA sí es fallo de la herramienta, tanto si no quedó ningún resultado como si
+ * ninguno pudo medirse —el origen entero caído—. Decir "barrido limpio" ahí sería el mismo punto
+ * ciego que el barrido viene a cerrar, con otra forma.
  */
 export function classifyRunOutcome(results: readonly PageResult[]): ExitCode {
-	if (results.length === 0) {
+	const measured = results.filter(({ outcome }) => outcome.kind !== 'unmeasured');
+	if (measured.length === 0) {
 		return EXIT_CODES.toolFailure;
 	}
-	const hasFindings = results.some(({ outcome }) => outcome.kind !== 'ok');
-	return hasFindings ? EXIT_CODES.findings : EXIT_CODES.clean;
+	const hasEmpty = measured.some(({ outcome }) => outcome.kind === 'empty');
+	return hasEmpty ? EXIT_CODES.findings : EXIT_CODES.clean;
 }
 
 export function emptyPathsOf(results: readonly PageResult[]): string[] {

@@ -120,8 +120,8 @@ jobs:
           GSC_SERVICE_ACCOUNT_KEY: ${{ secrets.GSC_SERVICE_ACCOUNT_KEY }}
         run: |
           set -uo pipefail
-          pnpm seo:index-status --all --history="$HISTORY_FILE" --summary="$GITHUB_STEP_SUMMARY"
-          status=$?
+          status=0
+          pnpm seo:index-status --all --history="$HISTORY_FILE" --summary="$GITHUB_STEP_SUMMARY" || status=$?
           case "$status" in
             0) echo "La corrida midió todas las URLs." ;;
             2) echo "::warning::Algunas inspecciones erraron por causas transitorias; la serie se persiste igual." ;;
@@ -206,8 +206,11 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -uo pipefail
-          pnpm seo:body-sweep --apply --summary="$GITHUB_STEP_SUMMARY"
-          status=$?
+          # El shell por defecto de un `run` es `bash -e`, y `set -uo pipefail` no apaga ese errexit:
+          # sin capturar el código con `|| status=$?`, un hallazgo abortaría el step antes del `case`
+          # y lo pintaría rojo — justo lo que este job no hace por un hallazgo.
+          status=0
+          pnpm seo:body-sweep --apply --summary="$GITHUB_STEP_SUMMARY" || status=$?
           case "$status" in
             0) echo "Ninguna URL del sitemap sirve un cuerpo vacío." ;;
             2) echo "::warning::El barrido encontró hallazgos; quedaron en el issue de seguimiento." ;;
