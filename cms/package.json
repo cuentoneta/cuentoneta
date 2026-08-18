@@ -23,7 +23,7 @@
 	],
 	"dependencies": {
 		"@sanity/cli": "^7.18.0",
-		"@sanity/export": "^6.2.0",
+		"@sanity/export": "^6.2.1",
 		"@sanity/icons": "^5.2.1",
 		"@sanity/import": "^6.0.3",
 		"@sanity/ui": "^3.5.2",
@@ -37,16 +37,16 @@
 		"sanity": "^5.31.1",
 		"sanity-plugin-bulk-actions-table": "^1.0.4",
 		"sanity-plugin-computed-field": "^2.0.2",
-		"sanity-plugin-markdown": "^9.0.9",
+		"sanity-plugin-markdown": "^9.0.11",
 		"sanity-plugin-singleton-management": "^1.0.7",
-		"styled-components": "^6.5.1"
+		"styled-components": "^6.5.2"
 	},
 	"devDependencies": {
 		"@types/node": "^24.13.3",
 		"@types/react": "^19.2.18",
 		"@types/react-dom": "^19.2.4",
 		"groq-js": "^2.0.0",
-		"tsx": "^4.23.11",
+		"tsx": "^4.23.12",
 		"typescript": "6.0.3",
 		"vitest": "^4.1.10"
 	},
