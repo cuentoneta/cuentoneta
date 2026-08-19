@@ -18,41 +18,144 @@ describe('ButtonComponent', () => {
 			});
 			expect(screen.getByText('Ver todo')).toBeInTheDocument();
 		});
+	});
 
-		it('should apply filled type classes by default', async () => {
+	describe('appearance axis', () => {
+		it.each([
+			['filled', 'bg-white'],
+			['outline', 'bg-white'],
+			['subtle', 'bg-neutral-100'],
+		])('should apply the background of the %s appearance', async (type, background) => {
+			await render(`<button cuentoneta-button type="${type}">Botón</button>`, {
+				imports: [ButtonComponent],
+			});
+			const button = screen.getByRole('button');
+			expect(button).toHaveClass(background);
+			expect(button).toHaveClass('text-neutral-900');
+		});
+
+		it('should draw a border only on the outline appearance', async () => {
+			await render(`<button cuentoneta-button type="outline">Outline</button>`, {
+				imports: [ButtonComponent],
+			});
+			const button = screen.getByRole('button');
+			expect(button).toHaveClass('border');
+			expect(button).toHaveClass('border-neutral-300');
+		});
+
+		it.each(['filled', 'subtle'])('should not draw a border on the %s appearance', async (type) => {
+			await render(`<button cuentoneta-button type="${type}">Botón</button>`, {
+				imports: [ButtonComponent],
+			});
+			expect(screen.getByRole('button')).not.toHaveClass('border');
+		});
+
+		// La aserción que prueba que la apariencia soltó su geometría: `subtle` heredó de `share` un
+		// padding y un tamaño de fuente propios, y ahora toma los del tamaño por defecto.
+		it('should leave the geometry to the size axis', async () => {
+			await render(`<button cuentoneta-button type="subtle">Compartir</button>`, {
+				imports: [ButtonComponent],
+			});
+			const button = screen.getByRole('button');
+			expect(button).toHaveClass('px-6');
+			expect(button).toHaveClass('py-3');
+			expect(button).toHaveClass('text-sm');
+			expect(button).not.toHaveClass('px-3');
+			expect(button).not.toHaveClass('text-xs');
+		});
+
+		it('should default to the filled appearance', async () => {
 			await render(`<button cuentoneta-button>Filled</button>`, {
 				imports: [ButtonComponent],
 			});
 			const button = screen.getByRole('button');
 			expect(button).toHaveClass('bg-white');
-			expect(button).toHaveClass('px-6');
-			expect(button).toHaveClass('py-3');
-			expect(button).toHaveClass('text-sm');
 			expect(button).not.toHaveClass('border');
 		});
+	});
 
-		it('should apply outline type classes', async () => {
-			await render(`<button cuentoneta-button type="outline">Outline</button>`, {
+	describe('size axis', () => {
+		it.each([
+			['md', ['px-6', 'py-3', 'text-sm', 'gap-2']],
+			['xs', ['px-3', 'py-2', 'text-xs', 'gap-1']],
+		])('should apply the geometry of the %s size', async (size, classes) => {
+			await render(`<button cuentoneta-button size="${size}">Botón</button>`, {
+				imports: [ButtonComponent],
+			});
+			const button = screen.getByRole('button');
+			classes.forEach((className) => expect(button).toHaveClass(className));
+		});
+
+		it('should default to the md size', async () => {
+			await render(`<button cuentoneta-button>Botón</button>`, {
+				imports: [ButtonComponent],
+			});
+			const button = screen.getByRole('button');
+			expect(button).toHaveClass('px-6');
+			expect(button).toHaveClass('py-3');
+		});
+
+		// La invariancia que falla si alguien vuelve a meter geometría dentro de una apariencia.
+		it('should keep the outline appearance intact in the xs size', async () => {
+			await render(`<button cuentoneta-button type="outline" size="xs">Botón</button>`, {
 				imports: [ButtonComponent],
 			});
 			const button = screen.getByRole('button');
 			expect(button).toHaveClass('bg-white');
-			expect(button).toHaveClass('border');
 			expect(button).toHaveClass('border-neutral-300');
-			expect(button).toHaveClass('px-6');
-			expect(button).toHaveClass('py-3');
+			expect(button).toHaveClass('px-3');
 		});
 
-		it('should apply share type classes', async () => {
-			await render(`<button cuentoneta-button type="share">Share</button>`, {
+		it('should keep the subtle appearance intact in the md size', async () => {
+			await render(`<button cuentoneta-button type="subtle" size="md">Botón</button>`, {
 				imports: [ButtonComponent],
 			});
 			const button = screen.getByRole('button');
 			expect(button).toHaveClass('bg-neutral-100');
+			expect(button).toHaveClass('px-6');
+		});
+	});
+
+	describe('active state', () => {
+		it.each(['filled', 'outline', 'subtle'])(
+			'should invert the contrast of the %s appearance when active',
+			async (type) => {
+				await render(`<button cuentoneta-button type="${type}" [active]="true">Botón</button>`, {
+					imports: [ButtonComponent],
+				});
+				const button = screen.getByRole('button');
+				expect(button).toHaveClass('bg-neutral-900');
+				expect(button).toHaveClass('text-neutral-50');
+				expect(button).not.toHaveClass('border');
+			},
+		);
+
+		it('should not alter the geometry', async () => {
+			await render(`<button cuentoneta-button size="xs" [active]="true">Botón</button>`, {
+				imports: [ButtonComponent],
+			});
+			const button = screen.getByRole('button');
 			expect(button).toHaveClass('px-3');
 			expect(button).toHaveClass('py-2');
 			expect(button).toHaveClass('text-xs');
 			expect(button).toHaveClass('gap-1');
+		});
+
+		it('should default to inactive, preserving the chosen appearance', async () => {
+			await render(`<button cuentoneta-button type="subtle">Botón</button>`, {
+				imports: [ButtonComponent],
+			});
+			const button = screen.getByRole('button');
+			expect(button).toHaveClass('bg-neutral-100');
+			expect(button).not.toHaveClass('bg-neutral-900');
+		});
+
+		// Anunciar la elección es del contenedor que coordina el grupo, no del botón que se pinta.
+		it('should not announce the choice with aria-pressed', async () => {
+			await render(`<button cuentoneta-button [active]="true">Botón</button>`, {
+				imports: [ButtonComponent],
+			});
+			expect(screen.getByRole('button')).not.toHaveAttribute('aria-pressed');
 		});
 	});
 
@@ -69,7 +172,7 @@ describe('ButtonComponent', () => {
 		});
 
 		it('should display the link text', async () => {
-			await render(`<a cuentoneta-button href="/storylist">Ver todo</a>`, {
+			await render(`<a cuentoneta-button href="/collection">Ver todo</a>`, {
 				imports: [ButtonComponent],
 				providers: defaultProviders,
 			});
