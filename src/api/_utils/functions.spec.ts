@@ -16,6 +16,7 @@ import { rawOnoffAuthor, rawOnoffAuthorTeaser } from '@mocks/onoff-raw-author.mo
 import { onoffRawContentCampaignsMock, onoffRawLandingPageMock } from '@mocks/onoff-raw-landing-page.mock';
 import type { RotatingContent } from '@models/landing-page-content.model';
 import { onoffRawTagsMock } from '@mocks/onoff-raw-tags.mock';
+import { withoutUrl } from '@testing/resource-without-url';
 import { viewportElementSizes } from '@models/content-campaign.model';
 
 describe('mapTags (ACL)', () => {
@@ -134,6 +135,27 @@ describe('mapResources (ACL)', () => {
 		type RawResources = Parameters<typeof mapResources>[0];
 		expect(mapResources(null as unknown as RawResources)).toEqual([]);
 		expect(mapResources(undefined as unknown as RawResources)).toEqual([]);
+	});
+
+	it('drops a resource whose url is missing, keeping the complete ones', () => {
+		const [rawResource] = rawOnoffAuthor.resources;
+
+		const result = mapResources([rawResource, withoutUrl(rawResource)]);
+
+		expect(result).toHaveLength(1);
+		expect(result[0].url).toBe(rawResource.url);
+	});
+
+	it('drops a resource whose url is null, the shape the dataset actually holds', () => {
+		const [rawResource] = rawOnoffAuthor.resources;
+
+		expect(mapResources([{ ...rawResource, url: null as unknown as string }])).toEqual([]);
+	});
+
+	it('drops a resource whose url is an empty string', () => {
+		const [rawResource] = rawOnoffAuthor.resources;
+
+		expect(mapResources([{ ...rawResource, url: '' }])).toEqual([]);
 	});
 });
 

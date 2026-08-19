@@ -11,14 +11,25 @@ import {
 } from '@mocks/onoff-literary-works.mock';
 import { environment } from '../environments/environment';
 import { Endpoints } from './endpoints';
-import { HttpLiteraryWorkApi } from './literary-work.provider';
+import { HttpLiteraryWorkApi, LiteraryWorkApi } from './literary-work.provider';
 import type { LiteraryWorkDto } from '@models/literary-work.dto';
+import { provideLiteraryWorkApiMock, StubLiteraryWorkApi } from './literary-work.mock';
 
 // El DTO de wire es la serialización JSON del agregado: los métodos (toAnchor) y los brands se
 // pierden, quedando el shape plano que el endpoint efectivamente emite. Se deriva del canon de Onoff
 // en vez de hand-authorear un objeto mock paralelo.
 function toWireDto(literaryWork: LiteraryWork): LiteraryWorkDto {
 	return JSON.parse(JSON.stringify(literaryWork)) as LiteraryWorkDto;
+}
+
+// Quita claves sin dejarlas en `undefined`: el punto del caso que lo usa es que la clave **no viaje**,
+// que es distinto de viajar con valor indefinido.
+function omit<T extends object, K extends keyof T>(source: T, keys: readonly K[]): Omit<T, K> {
+	const result = { ...source };
+	for (const key of keys) {
+		delete result[key];
+	}
+	return result;
 }
 
 describe('HttpLiteraryWorkApi', () => {
@@ -82,6 +93,25 @@ describe('HttpLiteraryWorkApi', () => {
 		);
 	});
 
+	// Ningún round-trip del corpus ejercita la ausencia de las claves opcionales: todas las obras del
+	// canon declaran badLanguage, y las secciones que se usan traen título y epígrafes. Sin este caso,
+	// una opcionalidad perdida en el schema volvería la clave obligatoria y el wire real —donde sí
+	// faltan— rompería.
+	it('rehydrates a payload with every optional key absent', async () => {
+		const dto = toWireDto(onoffLiteraryWorksMock[0]);
+		const [firstSection, ...restOfSections] = dto.content;
+
+		const rehydrated = await requestBySlug({
+			...omit(dto, ['badLanguage', 'editorialNote']),
+			content: [omit(firstSection, ['title', 'epigraphs']), ...restOfSections],
+		});
+
+		expect(rehydrated.badLanguage).toBeUndefined();
+		expect(rehydrated.editorialNote).toBeUndefined();
+		expect(rehydrated.content[0].title).toBeUndefined();
+		expect(rehydrated.content[0].epigraphs).toBeUndefined();
+	});
+
 	it('errors the stream when the DTO violates a domain invariant', async () => {
 		const dto = toWireDto(onoffLiteraryWorksMock[0]);
 
@@ -140,5 +170,27 @@ describe('HttpLiteraryWorkApi', () => {
 		http.expectOne(`${environment.apiUrl}${Endpoints.LiteraryWork}/${dto.slug}`).flush(malformed);
 
 		await expect(result).rejects.toThrow();
+	});
+});
+
+describe('LiteraryWorkApi', () => {
+	it('resolves the http implementation with no explicit provider', () => {
+		TestBed.configureTestingModule({
+			providers: [provideHttpClient(), provideHttpClientTesting()],
+		});
+
+		expect(TestBed.inject(LiteraryWorkApi)).toBeInstanceOf(HttpLiteraryWorkApi);
+	});
+
+	it('lets the test double override the default implementation', () => {
+		TestBed.configureTestingModule({
+			providers: [
+				provideHttpClient(),
+				provideHttpClientTesting(),
+				provideLiteraryWorkApiMock(new StubLiteraryWorkApi(onoffLiteraryWorksMock[0])),
+			],
+		});
+
+		expect(TestBed.inject(LiteraryWorkApi)).toBeInstanceOf(StubLiteraryWorkApi);
 	});
 });

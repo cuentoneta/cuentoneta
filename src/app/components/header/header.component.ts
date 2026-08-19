@@ -1,9 +1,7 @@
-import { Component, effect, input, signal } from '@angular/core';
+import { Component, computed, effect, input, signal } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { InternalLink } from '@models/link.model';
-import { animate, state, style, transition, trigger } from '@angular/animations';
-import { HEADER_HEIGHT_STRING_PX } from '@utils/spacing.utils';
 import { AppRoutes } from '../../app.routes';
 
 const VisibilityState = Object.freeze({
@@ -19,11 +17,15 @@ type VisibilityState = (typeof VisibilityState)[keyof typeof VisibilityState];
 		// haría perder contra el contenido de página. Ningún componente necesita conocerla para no taparla —
 		// los que elevan algo dentro de sí lo confinan con `isolate`.
 		class: 'fixed top-0 z-nav w-full items-center justify-center border-b-1 border-neutral-200 md:m-auto',
+		// Va en el host y no en el `<header>` que colapsa, para que alcance también al menú desplegable y a
+		// su backdrop, que son hermanos suyos. Hoy los desmonta el effect de abajo; así la garantía no
+		// depende de que siga haciéndolo.
+		'[attr.inert]': "isHidden() ? '' : null",
 	},
 	template: `
 		<header
-			[@toggle]="isVisible()"
-			class="nav-container grid w-full grid-cols-[1fr_theme(spacing.6)] grid-rows-[theme(spacing.16)_1fr] bg-neutral-50 px-5 md:grid-cols-2 md:grid-rows-1"
+			[class]="visibilityClasses()"
+			class="grid w-full grid-cols-[1fr_theme(spacing.6)] grid-rows-[theme(spacing.16)_1fr] bg-neutral-50 px-5 transition-[height,opacity,translate] duration-200 motion-reduce:transition-none md:grid-cols-2 md:grid-rows-1"
 		>
 			<section class="flex items-center">
 				<!-- El nombre accesible sale del aria-label y no del contenido: el alt del logo más el
@@ -77,28 +79,6 @@ type VisibilityState = (typeof VisibilityState)[keyof typeof VisibilityState];
 		}
 	`,
 	imports: [RouterModule, NgOptimizedImage],
-	animations: [
-		trigger('toggle', [
-			state(
-				VisibilityState.Visible,
-				style({
-					opacity: 1,
-					transform: 'translateY(0)',
-					height: HEADER_HEIGHT_STRING_PX,
-				}),
-			),
-			state(
-				VisibilityState.Hidden,
-				style({
-					opacity: 0,
-					transform: 'translateY(-100%)',
-					height: '0px',
-				}),
-			),
-			transition(`${VisibilityState.Visible} => ${VisibilityState.Hidden}`, [animate('200ms ease-out')]),
-			transition(`${VisibilityState.Hidden} => ${VisibilityState.Visible}`, [animate('200ms ease-in')]),
-		]),
-	],
 })
 export class HeaderComponent {
 	protected readonly appRoutes = AppRoutes;
@@ -110,17 +90,27 @@ export class HeaderComponent {
 	];
 	protected readonly displayMenu = signal(false);
 
+	// El easing viaja dentro del mapa, no en la clase estática, porque la barra usa una curva por
+	// dirección. La que gobierna la transición es la del estado **destino**: por eso `ease-out` —la de
+	// ocultarse— vive en el estado oculto, y no en el visible del que se sale.
+	private readonly visibilityClassMap = {
+		[VisibilityState.Visible]: 'h-header-height translate-y-0 opacity-100 ease-in',
+		[VisibilityState.Hidden]: 'h-0 -translate-y-full opacity-0 ease-out',
+	};
+
 	public readonly isVisible = input(VisibilityState.Visible, {
 		transform: (value) => (value ? VisibilityState.Visible : VisibilityState.Hidden),
 	});
 
-	constructor() {
-		effect(() => {
-			if (this.isVisible() === VisibilityState.Hidden) {
-				this.displayMenu.set(false);
-			}
-		});
-	}
+	protected readonly visibilityClasses = computed(() => this.visibilityClassMap[this.isVisible()]);
+
+	protected readonly isHidden = computed(() => this.isVisible() === VisibilityState.Hidden);
+
+	private readonly collapseMenuOnHideEffect = effect(() => {
+		if (this.isHidden()) {
+			this.displayMenu.set(false);
+		}
+	});
 
 	protected onMenuTogglerClicked() {
 		this.displayMenu.set(!this.displayMenu());

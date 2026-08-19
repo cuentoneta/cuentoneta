@@ -1,16 +1,19 @@
 // Core
-import { EnvironmentProviders, inject, Injectable, makeEnvironmentProviders } from '@angular/core';
+import { inject, InjectionToken, Service } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import type { Observable } from 'rxjs';
 
 // Environment
 import { environment } from '../environments/environment';
 
 // Models
-import { LandingPageContent } from '@models/landing-page-content.model';
-import { ContentApi } from './content-api.interface';
+import type { LandingPageContent } from '@models/landing-page-content.model';
 
-@Injectable({ providedIn: 'root' })
+export interface ContentApi {
+	getLandingPageContent(): Observable<LandingPageContent>;
+}
+
+@Service()
 export class HttpContentApi implements ContentApi {
 	private readonly prefix = `${environment.apiUrl}api/content`;
 	private readonly http = inject(HttpClient);
@@ -20,6 +23,7 @@ export class HttpContentApi implements ContentApi {
 	}
 }
 
-export function provideContentApi(): EnvironmentProviders {
-	return makeEnvironmentProviders([{ provide: ContentApi, useExisting: HttpContentApi }]);
-}
+export const ContentApi = new InjectionToken<ContentApi>('ContentApi', {
+	providedIn: 'root',
+	factory: () => inject(HttpContentApi),
+});

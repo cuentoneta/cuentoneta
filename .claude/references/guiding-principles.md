@@ -93,7 +93,7 @@ return this.literaryWorkService.getBySlug(slug).pipe(
 
 **El frontend es signals-first. Componé con operadores RxJS y no conviertas observables a promesas.**
 
-El frontend de cuentoneta modela el estado con **servicios + signals + RxJS** (ver [`angular-state.md`](angular-state.md)). No hay NgRx Signal Store ni `rxMethod`: la coordinación async vive en **servicios Angular** (`providedIn: 'root'` o providers en `src/app/providers/`) que exponen observables y signals a los componentes.
+El frontend de cuentoneta modela el estado con **servicios + signals + RxJS** (ver [`angular-state.md`](angular-state.md)). No hay NgRx Signal Store ni `rxMethod`: la coordinación async vive en **servicios Angular** (`@Service()` o providers en `src/app/providers/`) que exponen observables y signals a los componentes.
 
 **Hacer:**
 
@@ -116,7 +116,7 @@ El frontend de cuentoneta modela el estado con **servicios + signals + RxJS** (v
 ```typescript
 // ✅ Correcto — composición declarativa con switchMap, derivación con computed,
 //              efectos colaterales en tap y sin promesas
-@Injectable({ providedIn: 'root' })
+@Service()
 export class StorylistService {
 	private readonly api = inject(StorylistApi);
 	private readonly stories = signal<StoryTeaserWithAuthor[]>([]);

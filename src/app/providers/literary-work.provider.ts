@@ -1,5 +1,5 @@
 // Core
-import { EnvironmentProviders, inject, Injectable, makeEnvironmentProviders } from '@angular/core';
+import { inject, InjectionToken, Service } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, type Observable } from 'rxjs';
 
@@ -16,9 +16,12 @@ import { createSanitizedHtml } from '@models/sanitized-html.model';
 import { createIsoDateTime } from '@utils/date.utils';
 import { literaryWorkDtoSchema, type LiteraryWorkDto, type LiteraryWorkSectionDto } from '@models/literary-work.dto';
 import { ApiUrl, Endpoints } from './endpoints';
-import { LiteraryWorkApi } from './literary-work-api.interface';
 
-@Injectable({ providedIn: 'root' })
+export interface LiteraryWorkApi {
+	getBySlug(slug: string): Observable<LiteraryWork>;
+}
+
+@Service()
 export class HttpLiteraryWorkApi implements LiteraryWorkApi {
 	private readonly url: ApiUrl = `${environment.apiUrl}${Endpoints.LiteraryWork}`;
 	private readonly http = inject(HttpClient);
@@ -72,6 +75,7 @@ export class HttpLiteraryWorkApi implements LiteraryWorkApi {
 	}
 }
 
-export function provideLiteraryWorkApi(): EnvironmentProviders {
-	return makeEnvironmentProviders([{ provide: LiteraryWorkApi, useExisting: HttpLiteraryWorkApi }]);
-}
+export const LiteraryWorkApi = new InjectionToken<LiteraryWorkApi>('LiteraryWorkApi', {
+	providedIn: 'root',
+	factory: () => inject(HttpLiteraryWorkApi),
+});

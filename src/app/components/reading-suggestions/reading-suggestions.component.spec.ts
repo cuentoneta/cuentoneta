@@ -4,8 +4,8 @@ import { DeferBlockState, type ComponentFixture } from '@angular/core/testing';
 import { of } from 'rxjs';
 
 import { ReadingSuggestionsComponent } from './reading-suggestions.component';
-import { StoryApi } from '../../providers/story-api.interface';
-import { StorylistApi } from '../../providers/storylist-api.interface';
+import { StoryApi } from '../../providers/story.provider';
+import { StorylistApi } from '../../providers/storylist.provider';
 import type { NavigationParams } from '@app-utils/navigation-params';
 import type { Storylist } from '@models/storylist.model';
 import { storylistMock } from '@mocks/storylist.mock';

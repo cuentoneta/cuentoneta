@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import * as z from 'zod/mini';
 import type { Author, AuthorTeaser } from './author.model';
 import type { Media } from './media.model';
 import type { Resource } from './resource.model';
@@ -11,13 +11,13 @@ const opaqueDomainObject = <T>() => z.custom<T>((value) => value !== null && typ
 
 export const literaryWorkEpigraphDtoSchema = z.object({
 	text: z.string(),
-	reference: z.string().optional(),
+	reference: z.optional(z.string()),
 });
 
 export const literaryWorkSectionDtoSchema = z.object({
 	position: z.number(),
-	title: z.object({ value: z.string() }).optional(),
-	epigraphs: z.array(literaryWorkEpigraphDtoSchema).optional(),
+	title: z.optional(z.object({ value: z.string() })),
+	epigraphs: z.optional(z.array(literaryWorkEpigraphDtoSchema)),
 	bodyHtml: z.string(),
 	readingTime: z.number(),
 });
@@ -34,10 +34,10 @@ export const literaryWorkDtoSchema = z.object({
 	content: z.array(literaryWorkSectionDtoSchema),
 	mediaSources: z.array(opaqueDomainObject<Media>()),
 	resources: z.array(opaqueDomainObject<Resource>()),
-	badLanguage: z.boolean().optional(),
+	badLanguage: z.optional(z.boolean()),
 	originalPublication: z.string(),
 	publishedAt: z.string(),
-	editorialNote: z.string().optional(),
+	editorialNote: z.optional(z.string()),
 });
 
 // La vista de teaser: la metadata de tarjeta más una sola sección de apertura. Vive acá y no en el

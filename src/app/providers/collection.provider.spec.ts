@@ -10,7 +10,8 @@ import {
 } from '@mocks/onoff-collections.mock';
 import { environment } from '../environments/environment';
 import { Endpoints } from './endpoints';
-import { HttpCollectionApi } from './collection.provider';
+import { CollectionApi, HttpCollectionApi } from './collection.provider';
+import { provideCollectionApiMock, StubCollectionApi } from './collection.mock';
 
 // El DTO de wire es la serialización JSON del agregado: los brands se pierden y queda el shape plano
 // que el endpoint emite. Se deriva del canon en vez de escribir un objeto paralelo a mano.
@@ -81,10 +82,33 @@ describe('HttpCollectionApi', () => {
 		});
 	});
 
+	// El listado tiene su propio schema y este es el único caso que lo ejercita de verdad: un `count`
+	// que no es número atraviesa la factory —que solo lo compara contra 1, y esa comparación es falsa
+	// para un string— así que si el schema dejara de validar sus elementos, nadie más lo atajaría.
+	it('rejects a listing whose count is not a number', async () => {
+		const [teaser] = toWire<CollectionTeaserDto[]>(onoffCollectionTeasersMock);
+		const dto = [{ ...teaser, count: 'muchas' }];
+
+		await expect(request(api.getAll(), url, dto)).rejects.toThrow();
+	});
+
 	// La unión discriminada cruza el wire como datos: sin validarla, el componente que la discrimina
 	// recibiría una tupla incompleta y lo descubriría al renderizar.
 	it('rejects a sample of imagery without three covers', async () => {
 		const dto = { ...toWire<CollectionDto>(sampleCanon), imagery: { kind: 'sample', images: ['a.png', 'b.png'] } };
+
+		await expect(request(api.getBySlug(dto.slug), `${url}/${dto.slug}`, dto)).rejects.toThrow();
+	});
+
+	// El largo del abanico es una garantía de dos lados y solo se cubría el corto. Con el schema vigente
+	// rechaza el schema, que corre antes que la factory; pero el largo está validado dos veces, así que
+	// degradar la tupla del wire a un array sin cota tampoco haría fallar este caso: lo atajaría la
+	// invariante de dominio.
+	it('rejects a sample of imagery with a fourth cover', async () => {
+		const dto = {
+			...toWire<CollectionDto>(sampleCanon),
+			imagery: { kind: 'sample', images: ['a.png', 'b.png', 'c.png', 'd.png'] },
+		};
 
 		await expect(request(api.getBySlug(dto.slug), `${url}/${dto.slug}`, dto)).rejects.toThrow();
 	});
@@ -103,5 +127,29 @@ describe('HttpCollectionApi', () => {
 		const collection = await request(api.getBySlug(dto.slug), `${url}/${dto.slug}`, dto);
 
 		expect(collection.description).toBe(canon?.description);
+	});
+});
+
+describe('CollectionApi', () => {
+	// Única cobertura de inyección de este contrato: todavía no lo consume ninguna página, así que
+	// ninguna spec de componente ni e2e lo ejercita.
+	it('resolves the http implementation with no explicit provider', () => {
+		TestBed.configureTestingModule({
+			providers: [provideHttpClient(), provideHttpClientTesting()],
+		});
+
+		expect(TestBed.inject(CollectionApi)).toBeInstanceOf(HttpCollectionApi);
+	});
+
+	it('lets the test double override the default implementation', () => {
+		TestBed.configureTestingModule({
+			providers: [
+				provideHttpClient(),
+				provideHttpClientTesting(),
+				provideCollectionApiMock(new StubCollectionApi(onoffCollectionsMock)),
+			],
+		});
+
+		expect(TestBed.inject(CollectionApi)).toBeInstanceOf(StubCollectionApi);
 	});
 });

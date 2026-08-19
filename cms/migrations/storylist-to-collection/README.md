@@ -91,9 +91,9 @@ Cada fase corre **por dataset**, y ningún gate de CI detecta uno sin migrar.
 7. **Probar la reversión acotada** y volver a aplicar el lote de borradores.
 
 ```bash
-pnpm -C cms exec sanity documents query '<groq>' --project-id s4dbqkc5 --dataset <ds> --api-version v2021-06-07
-pnpm -C cms exec sanity migration run storylist-to-collection --project s4dbqkc5 --dataset <ds>
-pnpm -C cms exec sanity migration run storylist-to-collection --project s4dbqkc5 --dataset <ds> --no-dry-run --no-confirm
+pnpm -C cms exec sanity documents query '<groq>' --project-id "$(node --env-file=cms/.env -p 'process.env.SANITY_STUDIO_PROJECT_ID')" --dataset <ds> --api-version v2021-06-07
+pnpm -C cms exec sanity migration run storylist-to-collection --project "$(node --env-file=cms/.env -p 'process.env.SANITY_STUDIO_PROJECT_ID')" --dataset <ds>
+pnpm -C cms exec sanity migration run storylist-to-collection --project "$(node --env-file=cms/.env -p 'process.env.SANITY_STUDIO_PROJECT_ID')" --dataset <ds> --no-dry-run --no-confirm
 ```
 
 Dos banderas que no son opcionales:
@@ -108,7 +108,7 @@ El contador de la CLI cuenta mutaciones **emitidas**, no aplicadas: una segunda 
 ## Revertir
 
 ```bash
-pnpm -C cms exec sanity migration run revert-storylist-to-collection --project s4dbqkc5 --dataset <ds> --no-dry-run --no-confirm
+pnpm -C cms exec sanity migration run revert-storylist-to-collection --project "$(node --env-file=cms/.env -p 'process.env.SANITY_STUDIO_PROJECT_ID')" --dataset <ds> --no-dry-run --no-confirm
 ```
 
 Borra solo lo que la ida creó, comprobado documento por documento con el mismo predicado que deriva el identificador —no con una segunda noción de "colección migrada", que podría divergir y borrar una creada a mano en el Studio—. Alcanza **también** a las colecciones en borrador.

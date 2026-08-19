@@ -1,10 +1,10 @@
-import { effect, Injectable, Signal, signal } from '@angular/core';
+import { effect, Service, Signal, signal } from '@angular/core';
 
 /**
  * Servicio que maneja el estado de navegación del carousel.
  * Gestiona los índices de diapositivas, direcciones de transición y timing.
  */
-@Injectable()
+@Service({ autoProvided: false })
 export class CarouselStateService {
 	// Signals de estado - Navegación
 	private readonly _activeIndex = signal(0);

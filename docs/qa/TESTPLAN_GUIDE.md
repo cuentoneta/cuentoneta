@@ -182,7 +182,7 @@ Esta documentación está escrita para que un agente de Claude Code pueda **asis
 7. **No inventar resultados**: dejar "Resultado obtenido" vacío hasta que las pruebas se ejecuten.
 8. **Señalar la cobertura faltante**: listar los casos sin test asociado como candidatos a automatizar.
 
-> Esta guía está pensada para exponerse también como archivo de referencia de Claude (`.claude/references/`) y/o alimentar un subagente asistente de QA. Ese cableado se aborda en la iniciativa de adopción de flujos de Claude (epic #1498).
+> El proyecto ya expone sus convenciones de testing como archivo de referencia de Claude, en `.claude/references/testing.md`, y las consumen sus agentes y skills. Esta guía es la contraparte de proceso de esa referencia: acá viven la estructura del plan de pruebas y sus plantillas.
 
 # 11. Herramientas del proyecto
 
@@ -193,8 +193,6 @@ Esta documentación está escrita para que un agente de Claude Code pueda **asis
 | **[Bruno](https://www.usebruno.com/)**                               | Pruebas de la API (`docs/api/`)           |
 | **[GitHub Issues](https://github.com/cuentoneta/cuentoneta/issues)** | Tracking de bugs y casos                  |
 | **GitHub Projects**                                                  | Tablero de estado de QA (ver issue #1353) |
-
-> **Nota sobre el runner:** el proyecto está migrando de Jest a **Vitest** (issue #1494). Mientras la migración no se complete, los tests unitarios corren en Jest; las convenciones de esta guía ya asumen Vitest como destino.
 
 Para el flujo general de desarrollo, ver la [Guía de Desarrollo](../DEVELOPMENT_GUIDE.md).
 

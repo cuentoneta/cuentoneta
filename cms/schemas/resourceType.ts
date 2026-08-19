@@ -20,8 +20,11 @@ export const resource = defineType({
 		defineField({
 			name: 'url',
 			title: 'URL',
-			type: 'string',
-			validation: (Rule) => Rule.required(),
+			type: 'url',
+			// La regla rige sobre la edición y no sobre lo almacenado, así que sanear los documentos que
+			// ya la incumplían es un trabajo aparte y no algo que esto repare. `mailto` está admitido
+			// porque un recurso puede ser la dirección de contacto del autor, no solo una página.
+			validation: (Rule) => Rule.required().uri({ scheme: ['http', 'https', 'mailto'] }),
 		}),
 		defineField({
 			name: 'resourceType',

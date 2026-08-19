@@ -1,0 +1,65 @@
+# Cuenta cuántos documentos incumplen cada campo que el schema declara requerido, y lo reporta en un
+# issue de seguimiento.
+#
+# `Rule.required()` gobierna la edición en el Studio, no el almacenamiento: un documento anterior a la
+# regla, o escrito por script o migración, la esquiva sin dejar señal, mientras el typegen sigue
+# emitiendo un tipo no-nullable en el que el mapper confía.
+#
+# Va programado y **no** como gate, por la misma razón que `issue-refs-sweep`: lo que verifica es una
+# propiedad del **dato**, que se vuelve falsa sin que nadie toque el repositorio, y consultarla exige
+# red. Como gate haría fallar un PR por documentos que su diff no tocó — un rojo no accionable por
+# quien lo recibe, y el incentivo inmediato sería saltearlo.
+#
+# Por lo mismo, el id de este job **no debe sumarse a los required status checks** de `develop`.
+#
+# Se pinta de rojo solo si la herramienta se rompió (credenciales, red, schema ilegible), nunca porque
+# haya campos incumplidos: eso es el hallazgo que el job existe para reportar. Sin esa distinción el
+# rojo semanal deja de significar algo.
+name: Required fields sweep
+
+on:
+  schedule:
+    # Lunes a las 6:40 UTC, entre `issue-refs-sweep` (6:00) y `seo-index-status` (7:23). GitHub
+    # desactiva un `schedule` tras 60 días sin actividad en el repo; el `workflow_dispatch` permite
+    # re-dispararlo a mano cuando eso pasa.
+    - cron: '40 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  # Para crear y actualizar el issue de seguimiento. Es lo único que este job escribe: sobre el
+  # contenido de Sanity nunca escribe, ni con `--apply`.
+  issues: write
+
+concurrency:
+  group: required-fields-sweep
+  cancel-in-progress: false
+
+jobs:
+  required-fields-sweep:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+
+      - name: Setup workspace
+        uses: ./.github/actions/setup-workspace
+
+      - name: Barrer los campos requeridos
+        env:
+          GH_TOKEN: ${{ github.token }}
+          # Producción es el dataset que importa: `staging` y `development` se sobrescriben cada noche
+          # con su copia, así que un hallazgo suyo sería el mismo con un día de atraso.
+          SANITY_STUDIO_DATASET: production
+          SANITY_STUDIO_PROJECT_ID: ${{ secrets.SANITY_STUDIO_PROJECT_ID || 's4dbqkc5' }}
+          # `production` es un dataset **privado**: sin una credencial que lo alcance, cada conteo
+          # devuelve `0` sin error y el barrido reportaría que no hay nada que atender. De ahí que use
+          # el mismo token con el que `sync-datasets` lo lee, y que el script aborte si el dataset no
+          # devuelve documentos. `SANITY_STUDIO_TOKEN` no sirve acá: `ci.yml` lo usa contra `staging`,
+          # que es público.
+          #
+          # Conviene reemplazarlo por un token de solo lectura dedicado en cuanto exista: el script
+          # nunca muta contenido, y esa garantía es mejor sostenida por el permiso del secret que por
+          # la disciplina de quien edite el script.
+          SANITY_STUDIO_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+        run: pnpm required-fields:sweep --apply

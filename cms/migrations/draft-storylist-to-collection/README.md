@@ -60,7 +60,7 @@ En el Studio esos dos van a aparecer como **cambios sin publicar que nadie hizo*
 ## Revertir
 
 ```bash
-pnpm -C cms exec sanity migration run revert-draft-storylist-to-collection --project s4dbqkc5 --dataset <ds> --no-dry-run --no-confirm
+pnpm -C cms exec sanity migration run revert-draft-storylist-to-collection --project "$(node --env-file=cms/.env -p 'process.env.SANITY_STUDIO_PROJECT_ID')" --dataset <ds> --no-dry-run --no-confirm
 ```
 
 Es la que corresponde para reintentar **este** lote. La reversión amplia alcanza las dos formas del identificador y se llevaría también las colecciones publicadas, que son sobre las que se construye la página nueva.

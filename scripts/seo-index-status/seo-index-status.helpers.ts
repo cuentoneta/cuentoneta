@@ -178,6 +178,43 @@ export function classifyRunOutcome(rows: readonly ClassifiedRow[]): ExitCode {
 		: EXIT_CODE.partialFailure;
 }
 
+/**
+ * Las filas que sí son una observación. Todo diff se deriva de acá: una inspección fallida no tiene
+ * un estado que comparar, y diffearla produciría un `Indexada → La inspección falló` que informa la
+ * falla —ya contada aparte— disfrazada de movimiento del indexado. Es la misma razón por la que el
+ * historial tampoco la persiste.
+ */
+export function observedRows(rows: readonly ClassifiedRow[]): ClassifiedRow[] {
+	return rows.filter((row) => row.state !== CRAWL_STATE.failed);
+}
+
+/** Cuántos detalles largos entran antes de que una superficie deje de leerse de un vistazo. */
+export const DETAIL_LIMIT = 10;
+
+/**
+ * Recorta una lista larga dejando dicho cuánto se recortó. Vive en el núcleo porque el resumen de la
+ * corrida y el aviso de la bitácora tienen que acotar igual: si cada uno eligiera su tope, el mismo
+ * lote de URLs se leería distinto en cada superficie.
+ */
+export function withOverflowNote(items: readonly string[], limit = DETAIL_LIMIT): string[] {
+	const shown = items.slice(0, limit);
+	const rest = items.length - shown.length;
+	return rest > 0 ? [...shown, `…y ${rest} más`] : [...shown];
+}
+
+/**
+ * Agrupa por etiqueta y ordena por frecuencia, que es la lectura útil de un conjunto de movimientos:
+ * cuántas veces pasó cada cosa, no la lista de URLs a las que les pasó.
+ */
+export function countByLabel<T>(items: readonly T[], labelOf: (item: T) => string): [string, number][] {
+	const grouped = new Map<string, number>();
+	for (const item of items) {
+		const label = labelOf(item);
+		grouped.set(label, (grouped.get(label) ?? 0) + 1);
+	}
+	return [...grouped].sort(([, a], [, b]) => b - a);
+}
+
 export type StateCounts = Readonly<Record<CrawlState, number>>;
 
 export function summarize(rows: readonly ClassifiedRow[]): StateCounts {
@@ -251,22 +288,33 @@ export function groupByCoverageState(rows: readonly ClassifiedRow[]): Map<string
 	return groups;
 }
 
-/** Observación anterior de una URL, conservada para poder leer su evolución. */
-export interface HistoryEntry {
-	checkedAt: string;
+/** Lo que una observación de una URL vale: el estado derivado y el texto que informó Google. */
+export interface ObservedValue {
 	state: CrawlState;
 	coverageState?: string;
+}
+
+/** Una observación de una URL, fechada. */
+export interface Observation extends ObservedValue {
+	checkedAt: string;
 }
 
 export interface StoredRow extends ClassifiedRow {
 	/** ISO de la corrida que produjo esta fila. */
 	checkedAt: string;
 	/**
-	 * Observaciones previas, de la más vieja a la más nueva. Solo se agrega una entrada cuando el
-	 * estado o el `coverageState` cambiaron: repetir la misma medición no debe hacer crecer el
-	 * archivo, y lo que interesa de la serie son justamente los puntos donde se movió.
+	 * El último valor que se vio DOS OBSERVACIONES seguidas —no dos corridas: una inspección que
+	 * falló no se persiste, así que no interrumpe la repetición—, fechado en la corrida donde se lo
+	 * vio por primera vez. Los campos de primer nivel siguen siendo el presente; esto es la base
+	 * contra la que se diffea, y cada eje se confirma por su cuenta.
 	 */
-	history?: HistoryEntry[];
+	confirmed?: Observation;
+	/**
+	 * Observaciones confirmadas previas, de la más vieja a la más nueva. Solo se agrega una entrada
+	 * cuando una diferencia se confirma: repetir la misma medición no debe hacer crecer el archivo, y
+	 * lo que interesa de la serie son justamente los puntos donde se movió.
+	 */
+	history?: Observation[];
 }
 
 /**
@@ -294,30 +342,90 @@ export function resolveHistoryPaths(raw: string | undefined): HistoryPaths {
 	return { file, dir: dirname(file) };
 }
 
-function movedSinceLastRun(previous: StoredRow | undefined, row: ClassifiedRow): boolean {
-	if (!previous) {
-		return false;
-	}
-	return previous.state !== row.state || previous.coverageState !== row.coverageState;
+/** Qué significa un valor observado frente a lo que ya estaba confirmado. */
+export const MOVE_KIND = Object.freeze({
+	/** Difiere de lo confirmado y ya se lo vio dos observaciones seguidas: es movimiento. */
+	confirmed: 'confirmed',
+	/** Difiere de lo confirmado pero se lo vio una sola vez: todavía no se sabe si va a durar. */
+	pending: 'pending',
+	/** Vale lo confirmado, sea porque no se movió o porque volvió. */
+	none: 'none',
+} as const);
+
+export type MoveKind = (typeof MOVE_KIND)[keyof typeof MOVE_KIND];
+
+/**
+ * La base contra la que se diffea. Cae a los campos de primer nivel cuando la fila todavía no tiene
+ * confirmada: es lo que permite leer sin migrarla la serie ya persistida, escrita antes de que el
+ * campo existiera. Con ese fallback `base` y `latest` coinciden, así que nada puede confirmarse en
+ * la primera corrida — ninguna fila vieja inventa una transición.
+ */
+function confirmedBaseOf(previous: DiffBaseline): ObservedValue {
+	return previous.confirmed ?? previous;
 }
 
 /**
- * La entrada archivada es la observación ANTERIOR, no la nueva: los campos de primer nivel siempre
- * son el presente, y `history` el camino que llevó hasta él.
+ * La regla entera: un valor cuenta como movimiento recién cuando se repite.
+ *
+ * El no obvio que la justifica es que la API contesta distinto entre corridas para lo que Google
+ * nunca rastreó, así que una diferencia suelta no distingue un cambio de indexado de un parpadeo.
+ * Las cifras de la medición que lo mostró están reproducidas en el spec.
+ *
+ * Se aplica **por eje**, sobre un valor y no sobre la observación entera. Evaluarla sobre el par
+ * (estado, `coverageState`) hacía que un `coverageState` oscilante suprimiera para siempre una
+ * transición de estado durable: al no repetirse nunca la observación completa, la transición
+ * quedaba pendiente corrida tras corrida. Eso escondía justo el titular que la herramienta existe
+ * para responder, y sobre las mismas URLs cuyo parpadeo motivó todo esto.
  */
-function historyAfter(previous: StoredRow | undefined, row: ClassifiedRow): HistoryEntry[] {
-	const history = previous?.history ?? [];
-	if (!movedSinceLastRun(previous, row)) {
-		return history;
+export function moveKind<T>(base: T, latest: T, current: T): MoveKind {
+	if (current === base) {
+		return MOVE_KIND.none;
 	}
-	return [
-		...history,
-		{
-			checkedAt: previous?.checkedAt ?? '',
-			state: previous?.state ?? row.state,
-			coverageState: previous?.coverageState,
-		},
-	];
+	return current === latest ? MOVE_KIND.confirmed : MOVE_KIND.pending;
+}
+
+/** El valor confirmado que deja esta observación, para un eje. */
+function confirmValue<T>(base: T, latest: T, current: T): T {
+	return moveKind(base, latest, current) === MOVE_KIND.confirmed ? current : base;
+}
+
+/**
+ * La confirmada y el historial que deja esta corrida, calculados juntos porque los ata una
+ * invariante: `history` crece si y solo si `confirmed` cambia. Separarlos dejaba ese acuerdo
+ * implícito entre dos funciones que recomputaban lo mismo, y un cambio en una podía desincronizar
+ * la otra en silencio.
+ *
+ * Una URL nunca vista se confirma en el acto: no hay nada oscilando todavía, y así una primera
+ * inspección sigue siendo un alta y no un movimiento. La entrada archivada es la confirmada
+ * ANTERIOR, no la nueva — los campos de primer nivel siempre son el presente, y `history` el camino
+ * de valores confirmados que llevó hasta él.
+ */
+function advance(
+	previous: StoredRow | undefined,
+	row: ClassifiedRow,
+	checkedAt: string,
+): Pick<StoredRow, 'confirmed' | 'history'> {
+	if (!previous) {
+		return { confirmed: { checkedAt, state: row.state, coverageState: row.coverageState }, history: [] };
+	}
+	// La confirmada, fechada: cuando la fila viene de la serie vieja, su fecha es la de la última
+	// observación, que es lo único que se sabe de cuándo empezó a valer.
+	const base: Observation = {
+		...confirmedBaseOf(previous),
+		checkedAt: previous.confirmed?.checkedAt ?? previous.checkedAt,
+	};
+	const state = confirmValue(base.state, previous.state, row.state);
+	const coverageState = confirmValue(base.coverageState, previous.coverageState, row.coverageState);
+	const history = previous.history ?? [];
+
+	if (state === base.state && coverageState === base.coverageState) {
+		return { confirmed: base, history };
+	}
+	// La fecha es la de la corrida donde el valor apareció por primera vez, no aquella en que se
+	// confirmó: así cada punto de la serie se lee como "desde cuándo vale esto". Cuando se confirma
+	// un solo eje, la foto entera se refecha — el dato que importa es cuándo empezó a valer ESTA
+	// combinación, y la anterior queda archivada con la suya.
+	return { confirmed: { checkedAt: previous.checkedAt, state, coverageState }, history: [...history, base] };
 }
 
 export function mergeSnapshot(store: SnapshotStore, rows: readonly ClassifiedRow[], checkedAt: string): SnapshotStore {
@@ -332,7 +440,7 @@ export function mergeSnapshot(store: SnapshotStore, rows: readonly ClassifiedRow
 		merged[row.url] = {
 			...row,
 			checkedAt,
-			history: historyAfter(store[row.url], row),
+			...advance(store[row.url], row, checkedAt),
 		};
 	}
 	return merged;
@@ -355,53 +463,91 @@ export interface CoverageTransition {
 }
 
 /**
+ * Lo que un diff necesita de la corrida anterior: su última observación y la confirmada. No pide
+ * `checkedAt` ni `history` porque no los mira — comparar es una pregunta sobre valores, no sobre
+ * fechas. `StoredRow` lo satisface, así que el runner le pasa el historial tal cual.
+ */
+export interface DiffBaseline extends ObservedValue {
+	url: string;
+	confirmed?: ObservedValue;
+}
+
+/**
+ * Un diff separa lo que se movió de lo que todavía puede ser un parpadeo de la API. Lo pendiente se
+ * informa aparte en vez de descartarse: silenciarlo dejaría sin forma de distinguir "no pasó nada"
+ * de "pasó algo que todavía no se confirmó".
+ */
+export interface CoverageDiff {
+	transitions: CoverageTransition[];
+	pending: CoverageTransition[];
+}
+
+export interface StateDiff {
+	transitions: StateTransition[];
+	pending: StateTransition[];
+	added: string[];
+}
+
+/**
  * Movimientos de `coverageState` que NO cambian el estado derivado. Existe porque la clasificación es
  * más gruesa que lo que informa Google: "Discovered - currently not indexed" y "URL is unknown to
  * Google" caen ambos en "nunca rastreada", así que una URL que Google deja de conocer se ve idéntica
  * a una que sigue en cola. Ese movimiento es justamente el que interesa vigilar, y sin esto es mudo.
+ *
+ * Es también donde más pesa exigir repetición: ese mismo par oscila entre corridas (ver `moveKind`),
+ * y contar cada parpadeo escondía al caso real entre veintitantos que no lo eran.
  */
-export function diffCoverageStates(
-	previous: readonly ClassifiedRow[],
-	current: readonly ClassifiedRow[],
-): CoverageTransition[] {
-	const before = new Map(previous.map((row) => [row.url, row.coverageState]));
-	const transitions: CoverageTransition[] = [];
+export function diffCoverageStates(previous: readonly DiffBaseline[], current: readonly ClassifiedRow[]): CoverageDiff {
+	const before = new Map(previous.map((row) => [row.url, row]));
+	const diff: CoverageDiff = { transitions: [], pending: [] };
 
 	for (const row of current) {
-		if (!before.has(row.url)) {
+		const prior = before.get(row.url);
+		if (!prior) {
 			continue;
 		}
-		const from = before.get(row.url) ?? UNREPORTED_COVERAGE;
-		const to = row.coverageState ?? UNREPORTED_COVERAGE;
-		if (from !== to) {
-			transitions.push({ url: row.url, from, to });
+		const base = confirmedBaseOf(prior);
+		const kind = moveKind(base.coverageState, prior.coverageState, row.coverageState);
+		if (kind === MOVE_KIND.none) {
+			continue;
 		}
+		const move = {
+			url: row.url,
+			from: base.coverageState ?? UNREPORTED_COVERAGE,
+			to: row.coverageState ?? UNREPORTED_COVERAGE,
+		};
+		(kind === MOVE_KIND.confirmed ? diff.transitions : diff.pending).push(move);
 	}
-	return transitions;
+	return diff;
 }
 
 /**
  * Diff contra la corrida anterior. El valor de la herramienta no está en una foto suelta sino en la
  * serie: "cuántas pasaron a indexada desde la última corrida" es la pregunta que la pantalla de
  * validación de Search Console no contesta.
+ *
+ * La base es la observación CONFIRMADA, no la última: por eso una transición se reporta una corrida
+ * después de aparecer, y una que no dura no se reporta nunca (ver `moveKind`).
  */
-export function diffStates(
-	previous: readonly ClassifiedRow[],
-	current: readonly ClassifiedRow[],
-): { transitions: StateTransition[]; added: string[] } {
-	const before = new Map(previous.map((row) => [row.url, row.state]));
-	const transitions: StateTransition[] = [];
-	const added: string[] = [];
+export function diffStates(previous: readonly DiffBaseline[], current: readonly ClassifiedRow[]): StateDiff {
+	const before = new Map(previous.map((row) => [row.url, row]));
+	const diff: StateDiff = { transitions: [], pending: [], added: [] };
 
 	for (const row of current) {
-		const from = before.get(row.url);
-		if (from === undefined) {
-			added.push(row.url);
-		} else if (from !== row.state) {
-			transitions.push({ url: row.url, from, to: row.state });
+		const prior = before.get(row.url);
+		if (!prior) {
+			diff.added.push(row.url);
+			continue;
 		}
+		const base = confirmedBaseOf(prior);
+		const kind = moveKind(base.state, prior.state, row.state);
+		if (kind === MOVE_KIND.none) {
+			continue;
+		}
+		const move = { url: row.url, from: base.state, to: row.state };
+		(kind === MOVE_KIND.confirmed ? diff.transitions : diff.pending).push(move);
 	}
-	return { transitions, added };
+	return diff;
 }
 
 export function messageOf(error: unknown): string {

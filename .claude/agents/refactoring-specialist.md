@@ -50,7 +50,7 @@ Antes de refactorizar, leé estas referencias del proyecto. Cargalas en **un ún
 | `any`                        | Prohibido sin comentario `// REASON:`                                  |
 | `enum` de TypeScript         | Prohibidos — usar `Object.freeze({...} as const)`                      |
 | Lifecycle hooks              | Prohibidos — usar signals / `computed` / `effect` / `viewChild`        |
-| Propiedades estáticas        | Prohibidas — usar servicio singleton (`providedIn: 'root'`)            |
+| Propiedades estáticas        | Prohibidas — usar servicio singleton (`@Service()`)                    |
 | Non-null assertion (`!`)     | Prohibido                                                              |
 | `firstValueFrom`/`toPromise` | Prohibidos en el frontend — derivar con `computed()`/`toSignal()`/RxJS |
 

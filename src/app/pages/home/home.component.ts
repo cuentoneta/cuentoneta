@@ -2,7 +2,7 @@
 import { Component, computed, inject } from '@angular/core';
 
 // Services
-import { ContentApi } from '../../providers/content-api.interface';
+import { ContentApi } from '../../providers/content.provider';
 
 // Utils
 import { ssrBlockingRxResource } from '@app-utils/ssr-resource';

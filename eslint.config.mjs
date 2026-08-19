@@ -10,6 +10,7 @@ import storybookSourceState from './tools/eslint/storybook-source-state.js';
 import noApplyInHostStyles from './tools/eslint/no-apply-in-host-styles.js';
 import componentConfigInClass from './tools/eslint/component-config-in-class.js';
 import zIndexScale from './tools/eslint/z-index-scale.js';
+import noFullZodInBrowser from './tools/eslint/no-full-zod-in-browser.js';
 
 // Restricciones de sintaxis comunes: CommonJS, enums, lifecycle hooks y propiedades estáticas.
 const lifecycleHooks = [
@@ -29,6 +30,15 @@ const readonlyFactories = ['effect', 'inject', 'output'];
 
 const readonlyFactoryMessage =
 	'Las dependencias inyectadas, los effects y los outputs se declaran `readonly` (la referencia no se reasigna) — ver angular-components.md.';
+
+// Vive suelto porque más de un bloque lo necesita: en flat config, un bloque posterior que redeclare
+// `no-restricted-imports` reemplaza su array en vez de mergearlo, así que quien acote por scope tiene
+// que volver a esparcirlo o perdería la restricción del corpus sin que nada avise.
+const singleWorkCorpusImportPattern = {
+	group: ['@mocks/onoff/**', '**/mocks/onoff/**'],
+	message:
+		'No importes una obra puntual del corpus: usá las colecciones de @mocks/onoff-literary-works.mock (onoffLiteraryWorksMock, onoffLiteraryWorkEpigraphsMock) o sus selectores por capacidad (onoffLiteraryWorksWithEpigraphs, onoffLiteraryWorksWithEditorialNote, …), que declaran el shape que el caso necesita y crecen con el canon.',
+};
 
 const commonRestrictedSyntax = [
 	{
@@ -289,18 +299,22 @@ export default [
 		ignores: ['src/mocks/**/*.ts'],
 		rules: {
 			'no-restricted-imports': 'off',
-			'@typescript-eslint/no-restricted-imports': [
-				'error',
-				{
-					patterns: [
-						{
-							group: ['@mocks/onoff/**', '**/mocks/onoff/**'],
-							message:
-								'No importes una obra puntual del corpus: usá las colecciones de @mocks/onoff-literary-works.mock (onoffLiteraryWorksMock, onoffLiteraryWorkEpigraphsMock) o sus selectores por capacidad (onoffLiteraryWorksWithEpigraphs, onoffLiteraryWorksWithEditorialNote, …), que declaran el shape que el caso necesita y crecen con el canon.',
-						},
-					],
-				},
-			],
+			'@typescript-eslint/no-restricted-imports': ['error', { patterns: [singleWorkCorpusImportPattern] }],
+		},
+	},
+	{
+		// El scope es todo lo que el navegador descarga, no los archivos que hoy importan zod: la regla
+		// existe para el que todavía no se escribió. `src/api/**` queda afuera, donde zod clásico es lo
+		// correcto. Va como regla propia y no como `no-restricted-imports`/`no-restricted-syntax` porque
+		// este scope se solapa con varios bloques que ya declaran esas dos, y reemplazar sus arrays
+		// desactivaría restricciones vigentes sin que nada avise.
+		name: 'no-full-zod-in-browser',
+		files: ['src/models/**/*.ts', 'src/app/**/*.ts'],
+		plugins: {
+			cuentoneta: { rules: { 'no-full-zod-in-browser': noFullZodInBrowser } },
+		},
+		rules: {
+			'cuentoneta/no-full-zod-in-browser': 'error',
 		},
 	},
 	{

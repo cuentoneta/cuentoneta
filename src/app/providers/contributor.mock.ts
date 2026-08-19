@@ -4,7 +4,7 @@ import { Observable, of } from 'rxjs';
 
 // Models
 import { Contributor, ContributorArea } from '@models/contributor.model';
-import { ContributorApi } from './contributor-api.interface';
+import { ContributorApi } from './contributor.provider';
 
 export class StubContributorApi implements ContributorApi {
 	public getAll(): Observable<Contributor[]> {

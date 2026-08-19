@@ -143,9 +143,25 @@ type ResourcesSubQuery = (
 	| NonNullable<LiteraryWorkBySlugQueryResult>
 	| StoriesByAuthorSlugQueryResult[0]
 )['resources'];
+type RawResource = NonNullable<ResourcesSubQuery>[number];
+
+// El typegen deriva `url: string` del `Rule.required()` del schema, pero esa regla valida la edición
+// en el Studio, no lo ya almacenado: hay documentos persistidos sin URL. El tipo miente, y sin este
+// guard la ausencia cruza la frontera y revienta al primer consumidor que la lea como string.
+function hasUrl(resource: RawResource): boolean {
+	return typeof resource.url === 'string' && resource.url.length > 0;
+}
+
 export function mapResources(resources: ResourcesSubQuery): Resource[] {
+	const discarded = resources?.filter((resource) => !hasUrl(resource)) ?? [];
+	if (discarded.length > 0) {
+		// Solo el título: el resto de los campos del recurso descartado son tan poco confiables como la
+		// URL que falta, y esta rama existe justamente para no lanzar.
+		console.warn('mapResources: se descartan recursos sin URL', { titles: discarded.map((r) => r.title) });
+	}
+
 	return (
-		resources?.map((resource) => ({
+		resources?.filter(hasUrl).map((resource) => ({
 			title: resource.title,
 			url: resource.url,
 			resourceType: {

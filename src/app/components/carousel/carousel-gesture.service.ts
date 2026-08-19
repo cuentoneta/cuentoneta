@@ -1,4 +1,4 @@
-import { DestroyRef, ElementRef, Injectable, Signal, signal } from '@angular/core';
+import { DestroyRef, ElementRef, Service, Signal, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { fromEvent, Observable, Subject } from 'rxjs';
 import { filter, map, throttleTime } from 'rxjs/operators';
@@ -9,7 +9,7 @@ export type NavigationCommand = 'next' | 'prev';
  * Servicio que maneja los gestos táctiles y eventos de teclado para el carousel.
  * Detecta deslizamientos y navegación por teclado, emitiendo comandos de navegación.
  */
-@Injectable()
+@Service({ autoProvided: false })
 export class CarouselGestureService {
 	/**
 	 * Umbral mínimo de píxeles para registrar un deslizamiento completo.

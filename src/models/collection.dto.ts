@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import * as z from 'zod/mini';
 import type { Media } from './media.model';
 import type { Tag } from './tag.model';
 import { literaryWorkTeaserDtoSchema } from './literary-work.dto';
@@ -26,12 +26,17 @@ const collectionBaseDtoSchema = z.object({
 	count: z.number(),
 });
 
-export const collectionDtoSchema = collectionBaseDtoSchema.extend({
+export const collectionDtoSchema = z.extend(collectionBaseDtoSchema, {
 	literaryWorks: z.array(literaryWorkTeaserDtoSchema),
 });
 
 // El teaser no transporta obras, y el `count` que sí transporta es lo que la factory usa en su lugar.
 export const collectionTeaserDtoSchema = collectionBaseDtoSchema;
+
+// El listado se valida por su propio schema en vez de encadenar `.array()` sobre el del teaser: mini
+// no expone ese encadenamiento, y declararlo acá mantiene el vocabulario de schemas en el módulo de
+// DTO en lugar de repartirlo entre los providers.
+export const collectionTeaserListDtoSchema = z.array(collectionTeaserDtoSchema);
 
 export type CollectionImageryDto = z.infer<typeof collectionImageryDtoSchema>;
 export type CollectionDto = z.infer<typeof collectionDtoSchema>;

@@ -103,19 +103,45 @@ Ningún gate de CI detecta un dataset que quedó sin migrar: el job `e2e` corre 
 
 ## Cómo correrlas
 
-Desde `cms/` (la CLI toma `projectId`/`dataset` de las env `SANITY_STUDIO_*` vía `sanity.cli.ts`):
+Desde `cms/`. Todo comando que **corra** una migración lleva su destino escrito:
 
 ```bash
-# Listar migraciones disponibles
+# Listar migraciones disponibles (no toma destino)
 pnpm exec sanity migration list
 
 # Dry-run (por defecto): muestra las mutaciones sin aplicarlas
-pnpm exec sanity migration run <slug>
+pnpm exec sanity migration run <slug> --project "$(node --env-file=.env -p 'process.env.SANITY_STUDIO_PROJECT_ID')" --dataset <destino>
 
 # Aplicar de verdad
-pnpm exec sanity migration run <slug> --no-dry-run
+pnpm exec sanity migration run <slug> --project "$(node --env-file=.env -p 'process.env.SANITY_STUDIO_PROJECT_ID')" --dataset <destino> --no-dry-run
 ```
 
 > `cms/package.json` no define un script `sanity`: la forma **`pnpm exec`** invoca el binario de `node_modules/.bin` de manera explícita. (`pnpm sanity …` también funciona hoy, porque pnpm cae al binario cuando no encuentra un script homónimo, pero esa resolución dejaría de aplicar si algún día se agregara un script con ese nombre.)
 
-Correr siempre el dry-run antes de aplicar. Para un dataset u objetivo distinto usar los flags `--dataset` / `--project` de la CLI, como hace el skill [`release-workflow`](../skills/release-workflow/SKILL.md) al migrar contra producción.
+Correr siempre el dry-run antes de aplicar.
+
+### El destino va explícito, y sus dos flags van juntos
+
+**`--project` y `--dataset` son inseparables en `sanity migration run`.** Pasar uno solo aborta antes de hacer nada:
+
+```
+Error: If either --dataset or --project is provided, both must be provided
+```
+
+**Omitir los dos tampoco es una alternativa aceptable**, aunque corra: la CLI cae a `projectId`/`dataset` de `sanity.cli.ts`, que los lee de las env `SANITY_STUDIO_*` del `.env` de `cms/`. El que importa ahí es el **dataset**: decide sobre qué contenido muta la corrida y cambia con el ambiente de cada máquina. Un README de migración publica comandos para copiar y ejecutar: si el dataset no está en el comando, quien lo copia no sabe adónde va.
+
+**Ojo con el comando de censo:** `sanity documents query` —el que suele acompañar a una migración para contar antes y verificar después— **no** acopla los dos flags, y ahí el flag de proyecto se llama **`--project-id`**. Copiar `--project` de un comando al otro no falla: lo acepta como alias deprecado y sigue, avisando por la salida en vez de abortar. Es una advertencia fácil de pasar por alto entre el resto del output.
+
+Es la forma que usa el skill [`release-workflow`](../skills/release-workflow/SKILL.md) al migrar contra producción, y la que debe heredar todo README de migración nuevo.
+
+### El id de proyecto no se escribe: se resuelve del entorno
+
+El valor de `--project` **no se copia a ningún archivo versionado** —ni a esta referencia, ni a un README de migración, ni a un skill—: se resuelve en el momento desde el archivo de entorno que genera `pnpm run config` (un `.env` en la raíz y otro en `cms/`, los dos con `SANITY_STUDIO_PROJECT_ID`).
+
+```bash
+--project "$(node --env-file=.env -p 'process.env.SANITY_STUDIO_PROJECT_ID')"
+```
+
+La sustitución lleva el valor del archivo al flag sin que nadie abra el `.env` ni lo imprima por pantalla, y sin que la documentación quede sosteniendo una copia que envejece por su cuenta. Si el archivo todavía no existe, `node` aborta y el comando no llega a correr: la respuesta es `pnpm run config`, nunca escribir el id a mano.
+
+La ruta del `--env-file` es relativa al directorio desde donde se corre — `.env` desde `cms/`, `cms/.env` desde la raíz (la forma con `pnpm -C cms exec`). Vale igual para el `--project-id` del comando de censo.

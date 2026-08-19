@@ -149,6 +149,7 @@ export default defineType({
 			title: '¿Contiene lenguaje adulto?',
 			type: 'boolean',
 			initialValue: false,
+			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
 			name: 'tags',

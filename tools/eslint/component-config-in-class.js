@@ -7,11 +7,11 @@
  * El prior de Angular/TS empuja fuerte hacia el `const` de módulo, así que la
  * convención reaparecía cada tanto pese a estar acordada.
  *
- * Solo mira archivos que declaren `@Component`, `@Directive` o `@Injectable`: en
- * un archivo sin decorador, un `const` de módulo es lo correcto.
+ * Solo mira archivos que declaren `@Component`, `@Directive`, `@Injectable` o
+ * `@Service`: en un archivo sin decorador, un `const` de módulo es lo correcto.
  */
 
-const DECORATORS = new Set(['Component', 'Directive', 'Injectable']);
+const DECORATORS = new Set(['Component', 'Directive', 'Injectable', 'Service']);
 const CONFIG_INITIALIZERS = new Set(['ObjectExpression', 'ArrayExpression']);
 
 /** El nombre del decorador de una expresión `@X(...)` o `@X`. */
@@ -95,7 +95,7 @@ export default {
 		type: 'problem',
 		docs: {
 			description:
-				'Disallow module-level object/array consts in files declaring @Component, @Directive or @Injectable; move them to a private readonly instance field.',
+				'Disallow module-level object/array consts in files declaring @Component, @Directive, @Injectable or @Service; move them to a private readonly instance field.',
 		},
 		schema: [],
 		messages: {

@@ -1,9 +1,21 @@
 # Mide el estado de indexado real de las URLs del sitio contra la URL Inspection API de Search
 # Console, y persiste la serie por URL en una rama dedicada del repo.
 #
-# El valor de la medición no es la foto: es el diff contra la corrida anterior. Cuántas URLs pasaron
-# de "nunca rastreada" a tener `lastCrawlTime` es la pregunta que la pantalla de validación de Search
-# Console no contesta, y solo se responde comparando dos puntos en el tiempo. El runner es efímero,
+# Sobre el final hace además dos chequeos contra el despliegue, que viven acá porque este job ya
+# recorre el sitemap entero y ya tiene el `BASE_URL`: el smoke de invariantes SSR sobre una muestra, y
+# el barrido de cuerpos vacíos sobre todas las URLs.
+#
+# El diagnóstico va a una bitácora —un issue de seguimiento al que cada corrida con movimiento le
+# agrega un comentario— y no solo al resumen de la corrida. Un resumen hay que acordarse de ir a
+# buscarlo, y las notificaciones nativas de Actions no cubren el caso: avisan de workflows fallidos, y
+# este está diseñado para quedar verde salvo que la herramienta se rompa. Una semana sin movimiento no
+# comenta, para que el aviso no se vuelva rutina.
+#
+# El valor de la medición no es la foto: es el diff contra la última observación confirmada —la que
+# se vio dos corridas seguidas, porque la respuesta de la API oscila para lo que Google nunca
+# rastreó—. Cuántas URLs pasaron de "nunca rastreada" a tener `lastCrawlTime` es la pregunta que la
+# pantalla de validación de Search Console no contesta, y solo se responde comparando puntos en el
+# tiempo; el porqué de exigir repetición vive en el núcleo. El runner es efímero,
 # así que sin persistencia explícita cada corrida arrancaría sin historial y el diff no existiría.
 # La rama dedicada sobrevive a la retención de artefactos y a la evicción del cache, y regala los
 # diffs en git, que es exactamente la forma de la pregunta.
@@ -43,6 +55,10 @@ permissions:
   # `.metrics`, el checkout de la rama de métricas— y que `develop` y `master` están protegidas
   # contra push directo.
   contents: write
+  # Dos mecanismos del job mantienen un issue: la bitácora donde queda el movimiento de la serie y el
+  # seguimiento del barrido de cuerpos. Es el permiso mínimo de ambos, el mismo que ya declara
+  # `required-fields-sweep`.
+  issues: write
 
 jobs:
   seo-index-status:
@@ -111,10 +127,11 @@ jobs:
       - name: Medir el estado de indexado
         env:
           GSC_SERVICE_ACCOUNT_KEY: ${{ secrets.GSC_SERVICE_ACCOUNT_KEY }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -uo pipefail
-          pnpm seo:index-status --all --history="$HISTORY_FILE" --summary="$GITHUB_STEP_SUMMARY"
-          status=$?
+          status=0
+          pnpm seo:index-status --all --history="$HISTORY_FILE" --summary="$GITHUB_STEP_SUMMARY" --apply || status=$?
           case "$status" in
             0) echo "La corrida midió todas las URLs." ;;
             2) echo "::warning::Algunas inspecciones erraron por causas transitorias; la serie se persiste igual." ;;
@@ -185,4 +202,28 @@ jobs:
             success) echo '## Smoke SSR: sin violaciones.' >> "$GITHUB_STEP_SUMMARY" ;;
             failure) echo '## Smoke SSR: encontró violaciones (ver el log del step).' >> "$GITHUB_STEP_SUMMARY" ;;
             *) echo '## Smoke SSR: no llegó a correr.' >> "$GITHUB_STEP_SUMMARY" ;;
+          esac
+
+      # Complementa al smoke recorriendo todas las URLs en vez de una muestra; el porqué está en
+      # `scripts/seo-body-sweep/seo-body-sweep.ts`. Igual que el resto del job, un hallazgo no pinta
+      # rojo: lo sigue un issue.
+      #
+      # Corre aunque la medición haya cortado el job — no depende de Search Console, solo del
+      # despliegue, y saltearlo por una credencial vencida dejaría al sitio sin su único chequeo de
+      # cobertura completa justo la semana en que algo más ya salió mal.
+      - name: Barrido de cuerpos vacíos
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -uo pipefail
+          # El shell por defecto de un `run` es `bash -e`, y `set -uo pipefail` no apaga ese errexit:
+          # sin capturar el código con `|| status=$?`, un hallazgo abortaría el step antes del `case`
+          # y lo pintaría rojo — justo lo que este job no hace por un hallazgo.
+          status=0
+          pnpm seo:body-sweep --apply --summary="$GITHUB_STEP_SUMMARY" || status=$?
+          case "$status" in
+            0) echo "Ninguna URL del sitemap sirve un cuerpo vacío." ;;
+            2) echo "::warning::El barrido encontró hallazgos; quedaron en el issue de seguimiento." ;;
+            *) echo "::error::El barrido no pudo correr (código $status)." >&2; exit "$status" ;;
           esac

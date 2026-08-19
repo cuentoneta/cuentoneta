@@ -2,7 +2,7 @@
 import { Component, computed, forwardRef, inject, input } from '@angular/core';
 
 // Services
-import { StorylistApi } from '../../providers/storylist-api.interface';
+import { StorylistApi } from '../../providers/storylist.provider';
 
 // Utils
 import { ssrBlockingRxResource } from '@app-utils/ssr-resource';

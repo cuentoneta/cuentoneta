@@ -10,6 +10,8 @@ import {
 	diffStates,
 	groupByCoverageState,
 	mergeSnapshot,
+	MOVE_KIND,
+	moveKind,
 	parseSampleSize,
 	parseSitemapLocs,
 	resolveHistoryPaths,
@@ -18,6 +20,7 @@ import {
 	summarize,
 	toSnapshot,
 	type ClassifiedRow,
+	type DiffBaseline,
 	type PacerClock,
 	type InspectionSnapshot,
 } from './seo-index-status.helpers';
@@ -28,6 +31,21 @@ function snapshot(overrides: Partial<InspectionSnapshot> = {}): InspectionSnapsh
 
 function row(overrides: Partial<InspectionSnapshot> = {}): ClassifiedRow {
 	return classify(snapshot(overrides));
+}
+
+/**
+ * Fila de la corrida anterior cuyo valor actual YA está confirmado: es el caso estable, en el que
+ * los campos de primer nivel y la confirmada coinciden. Una fila sin `confirmed` describe lo mismo
+ * por el fallback, así que las dos formas se usan indistintamente salvo donde el caso sea la
+ * diferencia entre ambas.
+ */
+function settled(latest: ClassifiedRow): DiffBaseline {
+	return { ...latest, confirmed: { state: latest.state, coverageState: latest.coverageState } };
+}
+
+/** Fila de la corrida anterior que ya vio un valor nuevo, todavía sin confirmar contra `was`. */
+function shifting(latest: ClassifiedRow, was: ClassifiedRow): DiffBaseline {
+	return { ...latest, confirmed: { state: was.state, coverageState: was.coverageState } };
 }
 
 describe('classify', () => {
@@ -120,23 +138,36 @@ describe('groupByCoverageState', () => {
 });
 
 describe('diffStates', () => {
-	it('reporta la transición a indexada entre corridas', () => {
-		const previous = [row({ url: 'a', verdict: 'NEUTRAL' })];
-		const current = [row({ url: 'a', verdict: 'PASS' })];
+	const neverCrawled = row({ url: 'a', verdict: 'NEUTRAL' });
+	const indexed = row({ url: 'a', verdict: 'PASS' });
 
-		const { transitions } = diffStates(previous, current);
+	it('reporta la transición a indexada cuando el valor nuevo ya se vio dos veces', () => {
+		const { transitions, pending } = diffStates([shifting(indexed, neverCrawled)], [indexed]);
 
 		expect(transitions).toEqual([{ url: 'a', from: CRAWL_STATE.neverCrawled, to: CRAWL_STATE.indexed }]);
+		expect(pending).toEqual([]);
+	});
+
+	it('deja pendiente el valor visto por primera vez', () => {
+		const { transitions, pending } = diffStates([settled(neverCrawled)], [indexed]);
+
+		expect(transitions).toEqual([]);
+		expect(pending).toEqual([{ url: 'a', from: CRAWL_STATE.neverCrawled, to: CRAWL_STATE.indexed }]);
+	});
+
+	it('no reporta nada cuando la observación vuelve al valor confirmado', () => {
+		const { transitions, pending } = diffStates([shifting(indexed, neverCrawled)], [neverCrawled]);
+
+		expect(transitions).toEqual([]);
+		expect(pending).toEqual([]);
 	});
 
 	it('no reporta transición cuando el estado no cambió', () => {
-		const rows = [row({ url: 'a', verdict: 'PASS' })];
-
-		expect(diffStates(rows, rows).transitions).toEqual([]);
+		expect(diffStates([settled(indexed)], [indexed]).transitions).toEqual([]);
 	});
 
 	it('separa las URLs que no estaban en la corrida anterior', () => {
-		const { added, transitions } = diffStates([row({ url: 'a' })], [row({ url: 'a' }), row({ url: 'b' })]);
+		const { added, transitions } = diffStates([settled(row({ url: 'a' }))], [row({ url: 'a' }), row({ url: 'b' })]);
 
 		expect(added).toEqual(['b']);
 		expect(transitions).toEqual([]);
@@ -183,64 +214,124 @@ describe('mergeSnapshot', () => {
 });
 
 describe('diffCoverageStates', () => {
+	const discovered = row({ url: 'a', coverageState: 'Discovered - currently not indexed' });
+	const unknown = row({ url: 'a', coverageState: 'URL is unknown to Google' });
+
 	// El caso real que motivó esta función: 5 URLs pasaron de "Discovered" a "unknown" entre dos
 	// corridas y el diff de estados no lo vio, porque ambos coverageState caen en "nunca rastreada".
 	it('detecta un movimiento de coverageState que NO cambia el estado derivado', () => {
-		const previous = [row({ url: 'a', coverageState: 'Discovered - currently not indexed' })];
-		const current = [row({ url: 'a', coverageState: 'URL is unknown to Google' })];
+		const previous = [shifting(unknown, discovered)];
 
-		expect(diffStates(previous, current).transitions).toEqual([]);
-		expect(diffCoverageStates(previous, current)).toEqual([
+		expect(diffStates(previous, [unknown]).transitions).toEqual([]);
+		expect(diffCoverageStates(previous, [unknown]).transitions).toEqual([
 			{ url: 'a', from: 'Discovered - currently not indexed', to: 'URL is unknown to Google' },
 		]);
 	});
 
-	it('no reporta nada cuando el coverageState no cambió', () => {
-		const rows = [row({ url: 'a', coverageState: 'Submitted and indexed', verdict: 'PASS' })];
+	// El defecto medido: el mismo par va y viene entre corridas separadas por minutos.
+	it('deja pendiente ese mismo movimiento mientras se lo haya visto una sola vez', () => {
+		const { transitions, pending } = diffCoverageStates([settled(discovered)], [unknown]);
 
-		expect(diffCoverageStates(rows, rows)).toEqual([]);
+		expect(transitions).toEqual([]);
+		expect(pending).toEqual([{ url: 'a', from: 'Discovered - currently not indexed', to: 'URL is unknown to Google' }]);
+	});
+
+	it('no reporta nada cuando la observación vuelve al coverageState confirmado', () => {
+		const { transitions, pending } = diffCoverageStates([shifting(unknown, discovered)], [discovered]);
+
+		expect(transitions).toEqual([]);
+		expect(pending).toEqual([]);
+	});
+
+	it('no reporta nada cuando el coverageState no cambió', () => {
+		const stable = row({ url: 'a', coverageState: 'Submitted and indexed', verdict: 'PASS' });
+
+		expect(diffCoverageStates([settled(stable)], [stable]).transitions).toEqual([]);
 	});
 
 	it('ignora las URLs que no estaban en la corrida anterior', () => {
 		const moves = diffCoverageStates([], [row({ url: 'a', coverageState: 'Submitted and indexed' })]);
 
-		expect(moves).toEqual([]);
+		expect(moves.transitions).toEqual([]);
 	});
 
 	it('usa una etiqueta explícita cuando falta el coverageState de alguna punta', () => {
-		const moves = diffCoverageStates([row({ url: 'a' })], [row({ url: 'a', coverageState: 'Submitted and indexed' })]);
+		const indexed = row({ url: 'a', coverageState: 'Submitted and indexed' });
+		const moves = diffCoverageStates([shifting(indexed, row({ url: 'a' }))], [indexed]);
 
-		expect(moves).toEqual([{ url: 'a', from: '(sin coverageState)', to: 'Submitted and indexed' }]);
+		expect(moves.transitions).toEqual([{ url: 'a', from: '(sin coverageState)', to: 'Submitted and indexed' }]);
 	});
 });
 
-describe('mergeSnapshot — historial por URL', () => {
-	it('archiva la observación ANTERIOR cuando el estado cambia', () => {
+describe('mergeSnapshot — observación confirmada', () => {
+	it('confirma en el acto la primera observación de una URL', () => {
+		const store = mergeSnapshot({}, [row({ url: 'a', verdict: 'NEUTRAL' })], '2026-08-04T00:00:00Z');
+
+		expect(store['a']?.confirmed).toEqual({
+			checkedAt: '2026-08-04T00:00:00Z',
+			state: CRAWL_STATE.neverCrawled,
+			coverageState: undefined,
+		});
+	});
+
+	it('no confirma una diferencia vista una sola vez', () => {
 		const store = mergeSnapshot({}, [row({ url: 'a', verdict: 'NEUTRAL' })], '2026-08-04T00:00:00Z');
 
 		const merged = mergeSnapshot(store, [row({ url: 'a', verdict: 'PASS' })], '2026-08-05T00:00:00Z');
 
 		expect(merged['a']?.state).toBe(CRAWL_STATE.indexed);
-		expect(merged['a']?.history).toEqual([
+		expect(merged['a']?.confirmed?.state).toBe(CRAWL_STATE.neverCrawled);
+		expect(merged['a']?.history).toEqual([]);
+	});
+
+	it('confirma la diferencia que se repite, y la fecha es la de su primera aparición', () => {
+		let store = mergeSnapshot({}, [row({ url: 'a', verdict: 'NEUTRAL' })], '2026-08-04T00:00:00Z');
+		store = mergeSnapshot(store, [row({ url: 'a', verdict: 'PASS' })], '2026-08-05T00:00:00Z');
+
+		store = mergeSnapshot(store, [row({ url: 'a', verdict: 'PASS' })], '2026-08-06T00:00:00Z');
+
+		expect(store['a']?.confirmed).toEqual({
+			checkedAt: '2026-08-05T00:00:00Z',
+			state: CRAWL_STATE.indexed,
+			coverageState: undefined,
+		});
+	});
+
+	it('archiva la confirmada anterior recién cuando la diferencia se confirma', () => {
+		let store = mergeSnapshot({}, [row({ url: 'a', verdict: 'NEUTRAL' })], '2026-08-04T00:00:00Z');
+		store = mergeSnapshot(store, [row({ url: 'a', verdict: 'PASS' })], '2026-08-05T00:00:00Z');
+
+		store = mergeSnapshot(store, [row({ url: 'a', verdict: 'PASS' })], '2026-08-06T00:00:00Z');
+
+		expect(store['a']?.history).toEqual([
 			{ checkedAt: '2026-08-04T00:00:00Z', state: CRAWL_STATE.neverCrawled, coverageState: undefined },
 		]);
 	});
 
-	it('archiva también cuando solo se mueve el coverageState', () => {
-		const store = mergeSnapshot(
-			{},
-			[row({ url: 'a', coverageState: 'Discovered - currently not indexed' })],
-			'2026-08-04T00:00:00Z',
-		);
+	it('archiva también un movimiento de coverageState que dura', () => {
+		const discovered = row({ url: 'a', coverageState: 'Discovered - currently not indexed' });
+		const unknown = row({ url: 'a', coverageState: 'URL is unknown to Google' });
+		let store = mergeSnapshot({}, [discovered], '2026-08-04T00:00:00Z');
+		store = mergeSnapshot(store, [unknown], '2026-08-05T00:00:00Z');
 
-		const merged = mergeSnapshot(
-			store,
-			[row({ url: 'a', coverageState: 'URL is unknown to Google' })],
-			'2026-08-05T00:00:00Z',
-		);
+		store = mergeSnapshot(store, [unknown], '2026-08-06T00:00:00Z');
 
-		expect(merged['a']?.history).toHaveLength(1);
-		expect(merged['a']?.history?.[0]?.coverageState).toBe('Discovered - currently not indexed');
+		expect(store['a']?.history).toHaveLength(1);
+		expect(store['a']?.history?.[0]?.coverageState).toBe('Discovered - currently not indexed');
+		expect(store['a']?.confirmed?.coverageState).toBe('URL is unknown to Google');
+	});
+
+	// El escenario del defecto: el valor va y vuelve sin llegar a confirmarse nunca.
+	it('deja la confirmada intacta cuando la observación vuelve a su valor original', () => {
+		const discovered = row({ url: 'a', coverageState: 'Discovered - currently not indexed' });
+		const unknown = row({ url: 'a', coverageState: 'URL is unknown to Google' });
+		let store = mergeSnapshot({}, [discovered], '2026-08-04T00:00:00Z');
+		store = mergeSnapshot(store, [unknown], '2026-08-05T00:00:00Z');
+
+		store = mergeSnapshot(store, [discovered], '2026-08-06T00:00:00Z');
+
+		expect(store['a']?.confirmed?.coverageState).toBe('Discovered - currently not indexed');
+		expect(store['a']?.history).toEqual([]);
 	});
 
 	// Sin esto, medir todas las semanas haría crecer el archivo aunque nada se mueva.
@@ -254,15 +345,202 @@ describe('mergeSnapshot — historial por URL', () => {
 	});
 
 	it('acumula la serie en orden, de la más vieja a la más nueva', () => {
+		const crawled = row({ url: 'a', verdict: 'NEUTRAL', lastCrawlTime: 'x' });
+		const indexed = row({ url: 'a', verdict: 'PASS' });
 		let store = mergeSnapshot({}, [row({ url: 'a', verdict: 'NEUTRAL' })], '2026-08-01T00:00:00Z');
-		store = mergeSnapshot(store, [row({ url: 'a', verdict: 'NEUTRAL', lastCrawlTime: 'x' })], '2026-08-02T00:00:00Z');
-		store = mergeSnapshot(store, [row({ url: 'a', verdict: 'PASS' })], '2026-08-03T00:00:00Z');
+		store = mergeSnapshot(store, [crawled], '2026-08-02T00:00:00Z');
+		store = mergeSnapshot(store, [crawled], '2026-08-03T00:00:00Z');
+		store = mergeSnapshot(store, [indexed], '2026-08-04T00:00:00Z');
+		store = mergeSnapshot(store, [indexed], '2026-08-05T00:00:00Z');
 
 		expect(store['a']?.history?.map((entry) => entry.state)).toEqual([
 			CRAWL_STATE.neverCrawled,
 			CRAWL_STATE.crawledNotIndexed,
 		]);
 		expect(store['a']?.state).toBe(CRAWL_STATE.indexed);
+	});
+
+	// La forma de las filas que ya viven en la rama de métricas, escritas antes de que el campo
+	// existiera: se leen sin migrarlas, y el campo se materializa en el primer merge.
+	it('usa los campos de primer nivel como base cuando la fila persistida no tiene confirmada', () => {
+		const legacy = { ...row({ url: 'a', verdict: 'NEUTRAL' }), checkedAt: '2026-08-04T00:00:00Z' };
+
+		const merged = mergeSnapshot({ a: legacy }, [row({ url: 'a', verdict: 'PASS' })], '2026-08-05T00:00:00Z');
+
+		expect(merged['a']?.confirmed?.state).toBe(CRAWL_STATE.neverCrawled);
+		expect(merged['a']?.history).toEqual([]);
+	});
+
+	// Tres valores distintos seguidos: el del medio no llega a confirmarse y no deja rastro.
+	it('confirma el tercer valor al repetirse, sin archivar el que pasó de largo', () => {
+		const crawled = row({ url: 'a', verdict: 'NEUTRAL', lastCrawlTime: 'x' });
+		const indexed = row({ url: 'a', verdict: 'PASS' });
+		let store = mergeSnapshot({}, [row({ url: 'a', verdict: 'NEUTRAL' })], '2026-08-01T00:00:00Z');
+		store = mergeSnapshot(store, [crawled], '2026-08-02T00:00:00Z');
+		store = mergeSnapshot(store, [indexed], '2026-08-03T00:00:00Z');
+
+		store = mergeSnapshot(store, [indexed], '2026-08-04T00:00:00Z');
+
+		expect(store['a']?.confirmed?.state).toBe(CRAWL_STATE.indexed);
+		expect(store['a']?.history?.map((entry) => entry.state)).toEqual([CRAWL_STATE.neverCrawled]);
+	});
+
+	// Lo que "dos observaciones seguidas" significa de verdad: una inspección que falló no se
+	// persiste, así que no interrumpe la repetición que la rodea.
+	it('una inspección fallida en el medio no rompe la cadena de confirmación', () => {
+		const indexed = row({ url: 'a', verdict: 'PASS' });
+		let store = mergeSnapshot({}, [row({ url: 'a', verdict: 'NEUTRAL' })], '2026-08-01T00:00:00Z');
+		store = mergeSnapshot(store, [indexed], '2026-08-02T00:00:00Z');
+		store = mergeSnapshot(store, [row({ url: 'a', error: '500', errorStatus: 500 })], '2026-08-03T00:00:00Z');
+
+		store = mergeSnapshot(store, [indexed], '2026-08-04T00:00:00Z');
+
+		expect(store['a']?.confirmed?.state).toBe(CRAWL_STATE.indexed);
+		expect(store['a']?.confirmed?.checkedAt).toBe('2026-08-02T00:00:00Z');
+	});
+
+	it('confirma desde una fila sin confirmada en cuanto el valor nuevo se repite', () => {
+		const legacy = { ...row({ url: 'a', verdict: 'NEUTRAL' }), checkedAt: '2026-08-04T00:00:00Z' };
+		const indexed = row({ url: 'a', verdict: 'PASS' });
+		let store = mergeSnapshot({ a: legacy }, [indexed], '2026-08-05T00:00:00Z');
+
+		store = mergeSnapshot(store, [indexed], '2026-08-06T00:00:00Z');
+
+		expect(store['a']?.confirmed?.state).toBe(CRAWL_STATE.indexed);
+		expect(store['a']?.history?.map((entry) => entry.state)).toEqual([CRAWL_STATE.neverCrawled]);
+	});
+
+	// El diff también tiene que poder leer esa fila: es la que va a encontrar la primera corrida que
+	// se ejecute contra la serie ya escrita.
+	it('el diff toma los campos de primer nivel de una fila sin confirmada', () => {
+		const legacy = { ...row({ url: 'a', verdict: 'NEUTRAL' }), checkedAt: '2026-08-04T00:00:00Z' };
+
+		const { transitions, pending } = diffStates([legacy], [row({ url: 'a', verdict: 'PASS' })]);
+
+		expect(transitions).toEqual([]);
+		expect(pending).toEqual([{ url: 'a', from: CRAWL_STATE.neverCrawled, to: CRAWL_STATE.indexed }]);
+	});
+});
+
+/**
+ * El defecto, reproducido con datos sintéticos: dos corridas separadas por 16 minutos sobre las
+ * mismas URLs devolvieron 36 movimientos de `coverageState` en ambos sentidos —23 en uno, 13 en el
+ * otro— con el estado derivado idéntico a los dos lados. Correrlo de verdad cuesta ~969 de las 2.000
+ * consultas diarias de la propiedad, así que la verificación vive acá.
+ */
+describe('la oscilación medida entre dos corridas no es movimiento', () => {
+	const DISCOVERED = 'Discovered - currently not indexed';
+	const UNKNOWN = 'URL is unknown to Google';
+
+	/** Las 23 que arrancan en "Discovered" y las 13 que arrancan en "unknown". */
+	function fleet(discoveredFirst: boolean): ClassifiedRow[] {
+		const count = discoveredFirst ? 23 : 13;
+		const prefix = discoveredFirst ? 'd' : 'u';
+		return Array.from({ length: count }, (_, index) =>
+			row({ url: `${prefix}${index}`, coverageState: discoveredFirst ? DISCOVERED : UNKNOWN }),
+		);
+	}
+
+	/** La misma flota con el `coverageState` intercambiado: el parpadeo. */
+	function flipped(rows: readonly ClassifiedRow[]): ClassifiedRow[] {
+		return rows.map((entry) =>
+			row({ url: entry.url, coverageState: entry.coverageState === DISCOVERED ? UNKNOWN : DISCOVERED }),
+		);
+	}
+
+	const firstRun = [...fleet(true), ...fleet(false)];
+	const secondRun = flipped(firstRun);
+
+	it('el estado derivado es el mismo a los dos lados de las 36', () => {
+		expect(new Set(firstRun.map((entry) => entry.state))).toEqual(new Set([CRAWL_STATE.neverCrawled]));
+		expect(new Set(secondRun.map((entry) => entry.state))).toEqual(new Set([CRAWL_STATE.neverCrawled]));
+	});
+
+	it('ninguna de las 36 cuenta como movimiento: quedan pendientes', () => {
+		const store = mergeSnapshot({}, firstRun, '2026-08-15T12:00:00Z');
+
+		const moves = diffCoverageStates(storedRows(store), secondRun);
+
+		expect(moves.transitions).toEqual([]);
+		expect(moves.pending).toHaveLength(36);
+		expect(diffStates(storedRows(store), secondRun).transitions).toEqual([]);
+	});
+
+	it('el historial no crece con el parpadeo', () => {
+		let store = mergeSnapshot({}, firstRun, '2026-08-15T12:00:00Z');
+
+		store = mergeSnapshot(store, secondRun, '2026-08-15T12:16:00Z');
+
+		expect(storedRows(store).flatMap((entry) => entry.history ?? [])).toEqual([]);
+	});
+
+	it('a la corrida siguiente vuelven a su valor y no queda nada pendiente', () => {
+		let store = mergeSnapshot({}, firstRun, '2026-08-15T12:00:00Z');
+		store = mergeSnapshot(store, secondRun, '2026-08-15T12:16:00Z');
+
+		const moves = diffCoverageStates(storedRows(store), firstRun);
+		store = mergeSnapshot(store, firstRun, '2026-08-22T12:00:00Z');
+
+		expect(moves.transitions).toEqual([]);
+		expect(moves.pending).toEqual([]);
+		expect(storedRows(store).flatMap((entry) => entry.history ?? [])).toEqual([]);
+	});
+
+	// Lo que no se puede perder al callar el parpadeo: una URL que Google DEJA de conocer de verdad.
+	it('una URL que se queda en el valor nuevo sí se reporta, una corrida después', () => {
+		const durable = row({ url: 'd0', coverageState: UNKNOWN });
+		let store = mergeSnapshot({}, firstRun, '2026-08-15T12:00:00Z');
+		store = mergeSnapshot(store, secondRun, '2026-08-15T12:16:00Z');
+
+		const moves = diffCoverageStates(storedRows(store), [durable]);
+
+		expect(moves.transitions).toEqual([{ url: 'd0', from: DISCOVERED, to: UNKNOWN }]);
+	});
+
+	/**
+	 * Cada eje se confirma por su cuenta, y esto es por qué: evaluar la regla sobre la observación
+	 * entera hacía que un `coverageState` oscilante —el de estas mismas URLs— dejara pendiente para
+	 * siempre la transición a indexada, que es el titular que el job existe para responder.
+	 */
+	it('el parpadeo del coverageState no retiene una transición de estado durable', () => {
+		const indexedA = row({ url: 'd0', verdict: 'PASS', coverageState: 'Submitted and indexed' });
+		const indexedB = row({ url: 'd0', verdict: 'PASS', coverageState: 'Indexed, not submitted in sitemap' });
+		let store = mergeSnapshot({}, [row({ url: 'd0', coverageState: DISCOVERED })], '2026-08-01T00:00:00Z');
+		store = mergeSnapshot(store, [indexedA], '2026-08-08T00:00:00Z');
+
+		const states = diffStates(storedRows(store), [indexedB]);
+		const coverage = diffCoverageStates(storedRows(store), [indexedB]);
+		store = mergeSnapshot(store, [indexedB], '2026-08-15T00:00:00Z');
+
+		// El estado se confirma en esta corrida; el eje que parpadea sigue pendiente, sin retenerlo.
+		expect(states.transitions).toEqual([{ url: 'd0', from: CRAWL_STATE.neverCrawled, to: CRAWL_STATE.indexed }]);
+		expect(coverage.transitions).toEqual([]);
+		expect(coverage.pending).toHaveLength(1);
+		expect(store['d0']?.confirmed?.state).toBe(CRAWL_STATE.indexed);
+	});
+});
+
+describe('moveKind', () => {
+	it('no ve movimiento en el valor ya confirmado', () => {
+		expect(moveKind('a', 'a', 'a')).toBe(MOVE_KIND.none);
+	});
+
+	it('confirma el valor nuevo que se repite', () => {
+		expect(moveKind('a', 'b', 'b')).toBe(MOVE_KIND.confirmed);
+	});
+
+	it('deja pendiente el valor visto por primera vez', () => {
+		expect(moveKind('a', 'a', 'b')).toBe(MOVE_KIND.pending);
+	});
+
+	// La oscilación: se fue a 'b' y volvió antes de confirmarse. No hay nada que reportar.
+	it('no ve movimiento cuando el valor vuelve al confirmado', () => {
+		expect(moveKind('a', 'b', 'a')).toBe(MOVE_KIND.none);
+	});
+
+	it('trata la ausencia de valor como un valor más', () => {
+		expect(moveKind(undefined, 'a', 'a')).toBe(MOVE_KIND.confirmed);
+		expect(moveKind('a', undefined, undefined)).toBe(MOVE_KIND.confirmed);
 	});
 });
 

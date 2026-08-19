@@ -9,7 +9,7 @@ import { ssrBlockingRxResource } from '@app-utils/ssr-resource';
 import { createAttributedText } from '@models/attributed-text.model';
 
 // Services
-import { LiteraryWorkApi } from '../../providers/literary-work-api.interface';
+import { LiteraryWorkApi } from '../../providers/literary-work.provider';
 
 // SEO
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';

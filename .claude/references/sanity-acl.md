@@ -206,6 +206,30 @@ Patrones que se repiten:
   Sanity a la forma que el dominio espera. `biography` es la excepción deliberada: el schema la
   exige (`Rule.required()`), así que el mapper la pasa **sin** `?? ''` — un valor faltante es un
   bug de datos, no un estado válido a tolerar en silencio.
+- **Un `Rule.required()` del schema no es una garantía sobre el dato persistido.** Esa validación
+  rige la **edición** en el Studio, no el almacenamiento: un documento anterior a la regla, o
+  escrito por script o migración, la esquiva sin dejar ninguna señal. El typegen, en cambio, deriva
+  la nulabilidad del **schema declarado**, así que emite un tipo no-nullable en el que el mapper
+  confía por default. Cuando esa confianza puede fallar, el mapper decide explícitamente entre
+  **descartar** el dato (accesorio para el agregado) o **lanzar** (central para el agregado) — nunca
+  dejar pasar el hueco en silencio. `mapResources` es el caso descartar: filtra, con
+  `console.warn`, todo recurso cuyo `url` no sea un string no vacío, porque un recurso es
+  información accesoria de `Author`/`Story`/`LiteraryWork` y perder uno no invalida el agregado.
+  `biography` (arriba) es el caso lanzar: sin ella, `Author` pierde su contenido central.
+- **Descartar y lanzar no son las únicas salidas: cuando existe un valor por defecto honesto, va como
+  `coalesce` en la query.** Es lo que hacen `badLanguage` (a `false`) y `originalPublication` (a `''`)
+  en las proyecciones de cuento: el dominio recibe el tipo que promete y ningún consumidor se entera.
+  La condición es que el valor sea **verdadero**, no un relleno — `approximateReadingTime` queda
+  deliberadamente sin `coalesce`, porque un `0` afirmaría "cero minutos de lectura" sobre un cuerpo
+  de miles de caracteres, y un dato inventado es peor que una ausencia que se puede detectar. Ahí la
+  decisión vuelve al borde, que falla nombrando el campo que falta.
+  El corolario práctico: **la decisión es por campo, no global**, y una misma propiedad tiene que
+  resolverse igual en todas las proyecciones que la traen. Cuando una la protege y otra no, el mismo
+  campo llega distinto según por dónde se lo pida — un spec de contrato sobre las queries es lo que
+  vuelve visible esa asimetría en el diff en lugar de dejarla para un censo manual.
+- **Qué campos incumple hoy el dato lo mide `pnpm required-fields:sweep`**, que deriva los requeridos
+  del schema versionado y cuenta los documentos que no los cumplen. Reporta, no bloquea: lo corre un
+  job programado → [`scripts.md`](scripts.md).
 - **Composición:** un mapper grande delega en otros (`mapStoryContent` usa `mapAuthor`,
   `mapResources`, `mapTags`, `mapBlockContentToTextParagraphs`, `mapMediaSources`). `mapStoryContent`
   y `mapAuthor` propagan los **tags** del cuento y del autor vía `mapTags`; los mappers de teasers
