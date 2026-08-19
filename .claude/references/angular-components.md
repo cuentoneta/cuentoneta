@@ -87,7 +87,9 @@ private readonly isExpanded = signal(false); // estado interno, no llega a la pl
 
 ## Configuración de la clase
 
-La configuración propia de un componente, directiva o servicio —un mapa `size → clase`, una tabla de widgets, una tabla de estilo— va como **`private readonly` de instancia** y se consume con `this.`. Nunca como `const` a nivel de módulo.
+La configuración propia de un componente, directiva o servicio —un mapa `size → clase`, una tabla de iconos, una tabla de estilo— va como **`private readonly` de instancia** y se consume con `this.`. Nunca como `const` a nivel de módulo.
+
+El discriminante es **de cuántos consumidores es la tabla**, no qué contiene. Una tabla que resuelve una sola clase es configuración de esa clase y va adentro; una que resuelven dos o más deja de serlo y va a su propio módulo, sin decoradores, como única cara por la que se consulta esa correspondencia — así ninguno de los consumidores declara la suya y no pueden divergir.
 
 ```ts
 // ❌ El mapa es estado del componente, pero vive fuera de él.
