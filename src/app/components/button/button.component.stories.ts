@@ -13,7 +13,7 @@ const meta: Meta<ButtonComponent> = {
 				sourceState: 'shown',
 			},
 			description: {
-				component: `<div><p>El <strong>ButtonComponent</strong> del Design System v3 es un componente basado en atributo (<code>cuentoneta-button</code>) que se aplica indistintamente sobre elementos <code>&lt;button&gt;</code> y <code>&lt;a&gt;</code>, manteniendo estilos consistentes y la semántica correcta de cada elemento (acción vs. navegación).</p><p>Su API son <strong>tres ejes independientes</strong> que se combinan libremente, en lugar de un catálogo de variantes:</p><ul><li><code>variant</code> — la <strong>apariencia</strong>: fondo, borde y color de texto. <code>filled</code> (default, fondo blanco sin borde), <code>outline</code> (fondo blanco con borde neutral-300) y <code>subtle</code> (fondo neutral-100 sin borde).</li><li><code>size</code> — la <strong>geometría</strong>: padding, tamaño de fuente y separación entre ícono y texto. <code>md</code> (default) y <code>xs</code>.</li><li><code>active</code> — el <strong>estado</strong> de opción vigente dentro de un grupo, que reemplaza la apariencia por el contraste invertido.</li></ul><p>Están separados porque mezclarlos obliga a agregar una variante nueva cada vez que una pantalla necesita una apariencia existente en otro tamaño, y esa variante termina nombrada por su consumidor en lugar de por su apariencia.</p><p>Coordinar qué opción está vigente, que la elección sea excluyente y anunciarla con <code>aria-pressed</code> son responsabilidad del componente contenedor: el botón solo sabe pintarse. <a href="./?path=/docs/componentes-v3-buttongroup--docs" target="_top"><strong>ButtonGroup</strong></a> es ese contenedor para una fila de opciones excluyentes.</p></div>`,
+				component: `<div><p>El <strong>ButtonComponent</strong> del Design System v3 es un componente basado en atributo (<code>cuentoneta-button</code>) que se aplica indistintamente sobre elementos <code>&lt;button&gt;</code> y <code>&lt;a&gt;</code>, manteniendo estilos consistentes y la semántica correcta de cada elemento (acción vs. navegación).</p><p>Su API son <strong>tres ejes independientes</strong> que se combinan libremente, en lugar de un catálogo de variantes:</p><ul><li><code>variant</code> — la <strong>apariencia</strong>: fondo, borde y color de texto. <code>filled</code> (default, fondo blanco sin borde), <code>outline</code> (fondo blanco con borde neutral-300) y <code>subtle</code> (fondo neutral-100 sin borde).</li><li><code>size</code> — la <strong>geometría</strong>: padding, tamaño de fuente y separación entre ícono y texto. <code>md</code> (default), <code>sm</code> (caja compacta conservando el cuerpo de texto de <code>md</code>) y <code>xs</code>.</li><li><code>active</code> — el <strong>estado</strong> de opción vigente dentro de un grupo, que reemplaza la apariencia por el contraste invertido.</li></ul><p>Están separados porque mezclarlos obliga a agregar una variante nueva cada vez que una pantalla necesita una apariencia existente en otro tamaño, y esa variante termina nombrada por su consumidor en lugar de por su apariencia.</p><p>Coordinar qué opción está vigente, que la elección sea excluyente y anunciarla con <code>aria-pressed</code> son responsabilidad del componente contenedor: el botón solo sabe pintarse. <a href="./?path=/docs/componentes-v3-buttongroup--docs" target="_top"><strong>ButtonGroup</strong></a> es ese contenedor para una fila de opciones excluyentes.</p></div>`,
 			},
 		},
 	},
@@ -29,10 +29,10 @@ const meta: Meta<ButtonComponent> = {
 		},
 		size: {
 			control: 'inline-radio',
-			options: ['md', 'xs'],
+			options: ['md', 'sm', 'xs'],
 			description: 'Geometría del botón: padding, tamaño de fuente y separación entre ícono y texto',
 			table: {
-				type: { summary: "'md' | 'xs'" },
+				type: { summary: "'md' | 'sm' | 'xs'" },
 				defaultValue: { summary: 'md' },
 			},
 		},
@@ -98,6 +98,7 @@ export const Sizes: Story = {
 		template: `
 			<div class="flex flex-wrap items-center gap-4">
 				<button cuentoneta-button variant="subtle" size="md"><ng-icon name="faBrandWhatsapp" />Medium</button>
+				<button cuentoneta-button variant="subtle" size="sm"><ng-icon name="faBrandWhatsapp" />Small</button>
 				<button cuentoneta-button variant="subtle" size="xs"><ng-icon name="faBrandWhatsapp" />Extra small</button>
 			</div>
 		`,
@@ -147,12 +148,18 @@ export const AxesMatrix: Story = {
 					<button cuentoneta-button variant="subtle" size="md">Subtle md</button>
 				</div>
 				<div class="flex flex-wrap items-center gap-4">
+					<button cuentoneta-button variant="filled" size="sm">Filled sm</button>
+					<button cuentoneta-button variant="outline" size="sm">Outline sm</button>
+					<button cuentoneta-button variant="subtle" size="sm">Subtle sm</button>
+				</div>
+				<div class="flex flex-wrap items-center gap-4">
 					<button cuentoneta-button variant="filled" size="xs">Filled xs</button>
 					<button cuentoneta-button variant="outline" size="xs">Outline xs</button>
 					<button cuentoneta-button variant="subtle" size="xs">Subtle xs</button>
 				</div>
 				<div class="flex flex-wrap items-center gap-4">
 					<button cuentoneta-button variant="outline" size="md" [active]="true">Vigente md</button>
+					<button cuentoneta-button variant="outline" size="sm" [active]="true">Vigente sm</button>
 					<button cuentoneta-button variant="outline" size="xs" [active]="true">Vigente xs</button>
 				</div>
 			</div>

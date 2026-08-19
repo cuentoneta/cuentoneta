@@ -91,6 +91,7 @@ describe('ButtonComponent', () => {
 	describe('size axis', () => {
 		it.each([
 			['md', ['px-6', 'py-3', 'text-sm', 'gap-2']],
+			['sm', ['px-3', 'py-2', 'text-sm', 'gap-1.5']],
 			['xs', ['px-3', 'py-2', 'text-xs', 'gap-1']],
 		])('should apply the geometry of the %s size', async (size, classes) => {
 			await render(`<button cuentoneta-button size="${size}">Botón</button>`, {
@@ -98,6 +99,29 @@ describe('ButtonComponent', () => {
 			});
 			const button = screen.getByRole('button');
 			classes.forEach((className) => expect(button).toHaveClass(className));
+		});
+
+		// La razón de existir de `sm`: comparte la caja compacta de `xs` pero conserva el cuerpo de
+		// texto de `md`. Si alguna vez se lo colapsa contra cualquiera de los dos, este caso cae.
+		it('should combine the compact box of xs with the text body of md', async () => {
+			await render(`<button cuentoneta-button size="sm">Botón</button>`, {
+				imports: [ButtonComponent],
+			});
+			const button = screen.getByRole('button');
+			expect(button).toHaveClass('px-3');
+			expect(button).toHaveClass('text-sm');
+			expect(button).not.toHaveClass('px-6');
+			expect(button).not.toHaveClass('text-xs');
+		});
+
+		it('should keep the outline appearance intact in the sm size', async () => {
+			await render(`<button cuentoneta-button variant="outline" size="sm">Botón</button>`, {
+				imports: [ButtonComponent],
+			});
+			const button = screen.getByRole('button');
+			expect(button).toHaveClass('bg-white');
+			expect(button).toHaveClass('border-neutral-300');
+			expect(button).toHaveClass('px-3');
 		});
 
 		it('should default to the md size', async () => {

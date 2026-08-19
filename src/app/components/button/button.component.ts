@@ -11,8 +11,11 @@ export type ButtonVariant = 'filled' | 'outline' | 'subtle';
 /**
  * Geometría del botón: padding, tamaño de fuente y separación entre ícono y texto.
  * No gobierna la apariencia.
+ * - `md`: la caja plena de una acción principal
+ * - `sm`: caja compacta conservando el cuerpo de texto de `md`, para filas de opciones
+ * - `xs`: la más compacta, con el texto también reducido
  */
-export type ButtonSize = 'md' | 'xs';
+export type ButtonSize = 'md' | 'sm' | 'xs';
 
 /**
  * Componente Button
@@ -73,6 +76,7 @@ export class ButtonComponent {
 
 	private readonly sizeClasses: Record<ButtonSize, string> = {
 		md: 'px-6 py-3 text-sm gap-2',
+		sm: 'px-3 py-2 text-sm gap-1.5',
 		xs: 'px-3 py-2 text-xs gap-1',
 	};
 
