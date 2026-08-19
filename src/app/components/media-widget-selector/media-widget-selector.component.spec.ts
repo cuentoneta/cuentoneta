@@ -4,6 +4,7 @@ import { isAudioRecording } from '@models/media.model';
 import { MediaWidgetSelector } from './media-widget-selector.component';
 import {
 	onoffLiteraryWorksWithMultipleMediaSources,
+	onoffLiteraryWorksWithoutMediaSources,
 	onoffLiteraryWorksWithSingleMediaSource,
 } from '@mocks/onoff-literary-works.mock';
 
@@ -16,7 +17,7 @@ describe('MediaWidgetSelector', () => {
 	describe('con varios medios', () => {
 		it('should offer one button per media source', async () => {
 			await render(MediaWidgetSelector, {
-				componentInputs: { mediaSources: multipleSourcesWork.mediaSources },
+				inputs: { mediaSources: multipleSourcesWork.mediaSources },
 			});
 
 			expect(screen.getAllByRole('button')).toHaveLength(multipleSourcesWork.mediaSources.length);
@@ -24,7 +25,7 @@ describe('MediaWidgetSelector', () => {
 
 		it('should announce the choice in the heading', async () => {
 			await render(MediaWidgetSelector, {
-				componentInputs: { mediaSources: multipleSourcesWork.mediaSources },
+				inputs: { mediaSources: multipleSourcesWork.mediaSources },
 			});
 
 			expect(screen.getByRole('heading', { name: /diferentes formatos/i })).toBeInTheDocument();
@@ -32,7 +33,7 @@ describe('MediaWidgetSelector', () => {
 
 		it('should mount the first media source before any interaction', async () => {
 			await render(MediaWidgetSelector, {
-				componentInputs: { mediaSources: multipleSourcesWork.mediaSources },
+				inputs: { mediaSources: multipleSourcesWork.mediaSources },
 			});
 
 			const [firstButton] = screen.getAllByRole('button');
@@ -43,7 +44,7 @@ describe('MediaWidgetSelector', () => {
 		// recibe, así que un cambio que pinte el botón pero no mueva el atributo debe fallar acá.
 		it('should move the pressed state to the clicked media source', async () => {
 			await render(MediaWidgetSelector, {
-				componentInputs: { mediaSources: multipleSourcesWork.mediaSources },
+				inputs: { mediaSources: multipleSourcesWork.mediaSources },
 			});
 
 			const [firstButton, secondButton] = screen.getAllByRole('button');
@@ -53,10 +54,29 @@ describe('MediaWidgetSelector', () => {
 			expect(firstButton).toHaveAttribute('aria-pressed', 'false');
 		});
 
+		// Sostener la elección entre obras dejaría montado un widget que ya no pertenece a la que se
+		// está leyendo, que es justo lo que pasa al navegar de una obra a otra sin desmontar la página.
+		it('should return the choice to the first media source when the work changes', async () => {
+			const { rerender } = await render(MediaWidgetSelector, {
+				inputs: { mediaSources: multipleSourcesWork.mediaSources },
+			});
+
+			await userEvent.setup().click(screen.getAllByRole('button')[1]);
+			expect(screen.getAllByRole('button')[1]).toHaveAttribute('aria-pressed', 'true');
+
+			await rerender({
+				inputs: { mediaSources: [...singleSourceWork.mediaSources, ...multipleSourcesWork.mediaSources] },
+			});
+
+			const [firstButton, secondButton] = screen.getAllByRole('button');
+			expect(firstButton).toHaveAttribute('aria-pressed', 'true');
+			expect(secondButton).toHaveAttribute('aria-pressed', 'false');
+		});
+
 		it('should mount the widget of the clicked media source', async () => {
 			const [, secondSource] = multipleSourcesWork.mediaSources;
 			await render(MediaWidgetSelector, {
-				componentInputs: { mediaSources: multipleSourcesWork.mediaSources },
+				inputs: { mediaSources: multipleSourcesWork.mediaSources },
 			});
 
 			await userEvent.setup().click(screen.getAllByRole('button')[1]);
@@ -68,7 +88,7 @@ describe('MediaWidgetSelector', () => {
 	describe('con un solo medio', () => {
 		it('should mount the widget without offering a choice', async () => {
 			await render(MediaWidgetSelector, {
-				componentInputs: { mediaSources: singleSourceWork.mediaSources },
+				inputs: { mediaSources: singleSourceWork.mediaSources },
 			});
 
 			expect(screen.queryAllByRole('button')).toHaveLength(0);
@@ -77,7 +97,7 @@ describe('MediaWidgetSelector', () => {
 
 		it('should keep the heading visible with its own wording', async () => {
 			await render(MediaWidgetSelector, {
-				componentInputs: { mediaSources: singleSourceWork.mediaSources },
+				inputs: { mediaSources: singleSourceWork.mediaSources },
 			});
 
 			expect(screen.getByRole('heading', { name: /otro formato/i })).toBeInTheDocument();
@@ -96,7 +116,7 @@ describe('MediaWidgetSelector', () => {
 
 		it('should offer every media source, including the repeated ones', async () => {
 			await render(MediaWidgetSelector, {
-				componentInputs: { mediaSources: repeatedTypeSources },
+				inputs: { mediaSources: repeatedTypeSources },
 			});
 
 			expect(screen.getAllByRole('button')).toHaveLength(repeatedTypeSources.length);
@@ -107,7 +127,7 @@ describe('MediaWidgetSelector', () => {
 		// serían indistinguibles entre sí.
 		it('should label the repeated type by the title of each media source', async () => {
 			await render(MediaWidgetSelector, {
-				componentInputs: { mediaSources: repeatedTypeSources },
+				inputs: { mediaSources: repeatedTypeSources },
 			});
 
 			audioSources.forEach((media) => {
@@ -116,19 +136,30 @@ describe('MediaWidgetSelector', () => {
 			expect(screen.queryByRole('button', { name: 'Audiolibro' })).not.toBeInTheDocument();
 		});
 
+		// El medio se deriva de la composición en vez de nombrar un tipo concreto: qué tipo queda sin
+		// repetir depende de qué declara el canon, y clavarlo acá haría fallar el caso por el motivo
+		// equivocado si el corpus cambia. Se afirma por la negativa —su botón no lleva el título—
+		// para no duplicar acá el vocabulario que el componente define.
 		it('should keep the format name on the types that appear once', async () => {
+			const uniqueTypeSource = repeatedTypeSources.find(
+				(media) => repeatedTypeSources.filter((other) => other.type === media.type).length === 1,
+			);
+			if (!uniqueTypeSource) {
+				throw new Error('La composición no dejó ningún tipo sin repetir');
+			}
+
 			await render(MediaWidgetSelector, {
-				componentInputs: { mediaSources: repeatedTypeSources },
+				inputs: { mediaSources: repeatedTypeSources },
 			});
 
-			expect(screen.getByRole('button', { name: 'YouTube' })).toBeInTheDocument();
+			expect(screen.queryByRole('button', { name: uniqueTypeSource.title })).not.toBeInTheDocument();
 		});
 
 		// La prueba de que los botones repetidos no son el mismo: montan medios distintos.
 		it('should mount a different widget for each of the repeated media sources', async () => {
 			const [firstAudio, secondAudio] = audioSources;
 			await render(MediaWidgetSelector, {
-				componentInputs: { mediaSources: repeatedTypeSources },
+				inputs: { mediaSources: repeatedTypeSources },
 			});
 
 			await userEvent.setup().click(screen.getByRole('button', { name: firstAudio.title }));
@@ -140,8 +171,10 @@ describe('MediaWidgetSelector', () => {
 	});
 
 	describe('sin medios', () => {
+		const [workWithoutSources] = onoffLiteraryWorksWithoutMediaSources;
+
 		it('should render nothing at all', async () => {
-			await render(MediaWidgetSelector, { componentInputs: { mediaSources: [] } });
+			await render(MediaWidgetSelector, { inputs: { mediaSources: workWithoutSources.mediaSources } });
 
 			expect(screen.queryByRole('heading')).not.toBeInTheDocument();
 			expect(screen.queryAllByRole('button')).toHaveLength(0);

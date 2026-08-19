@@ -27,15 +27,15 @@ import { toMediaWidgetOutlet } from '@components/media-widgets/media-widget-regi
 	host: { class: 'block' },
 	template: `
 		@if (options().length > 0) {
-			<section class="flex flex-col gap-5">
-				<h2 class="font-inter text-xl font-bold text-neutral-900">{{ heading() }}</h2>
+			<section class="flex flex-col gap-5" aria-labelledby="media-formats-heading">
+				<h2 id="media-formats-heading" class="font-inter text-xl font-bold text-neutral-900">{{ heading() }}</h2>
 
 				@if (hasChoice()) {
 					<cuentoneta-button-group
 						(optionSelected)="selectedId.set($event)"
-						[label]="formatsLabel"
 						[options]="options()"
 						[selectedId]="selectedId()"
+						label="Formatos disponibles"
 						size="sm"
 					/>
 				}
@@ -48,8 +48,6 @@ import { toMediaWidgetOutlet } from '@components/media-widgets/media-widget-regi
 })
 export class MediaWidgetSelector {
 	public readonly mediaSources = input<readonly Media[]>([]);
-
-	protected readonly formatsLabel = 'Formatos disponibles';
 
 	private readonly mediaTypes: Record<MediaTypeKey, { icon: string; label: string }> = {
 		audioRecording: { icon: 'faSolidFileAudio', label: 'Audiolibro' },
@@ -69,7 +67,15 @@ export class MediaWidgetSelector {
 		);
 
 		return mediaSources.map((media, index) => {
-			const { icon, label } = this.mediaTypes[media.type];
+			// Mismo corte que hace el registry al resolver el widget: el tag viaja desde el CMS y nadie
+			// lo valida en el borde, así que un tipo publicado antes de que la pantalla sepa nombrarlo
+			// tiene que fallar diciendo cuál es, y no como un TypeError al desestructurar.
+			const vocabulary = this.mediaTypes[media.type];
+			if (!vocabulary) {
+				throw new Error(`El tipo ${media.type} no está soportado.`);
+			}
+
+			const { icon, label } = vocabulary;
 			return {
 				media,
 				id: `${media.type}-${index}`,
@@ -85,7 +91,9 @@ export class MediaWidgetSelector {
 		this.entries().map(({ id, label, iconName }) => ({ id, label, iconName })),
 	);
 
-	protected readonly hasChoice = computed(() => this.mediaSources().length > 1);
+	// Sobre las opciones y no sobre los medios: es la misma lista que dibuja la fila, así que el
+	// título no puede anunciar una elección que la fila no ofrece.
+	protected readonly hasChoice = computed(() => this.options().length > 1);
 
 	protected readonly heading = computed(() =>
 		this.hasChoice()

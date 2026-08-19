@@ -3,6 +3,7 @@ import { argsToTemplate, type Meta, type StoryObj } from '@storybook/angular-vit
 import { MediaWidgetSelector } from './media-widget-selector.component';
 import {
 	onoffLiteraryWorksWithMultipleMediaSources,
+	onoffLiteraryWorksWithoutMediaSources,
 	onoffLiteraryWorksWithSingleMediaSource,
 } from '@mocks/onoff-literary-works.mock';
 
@@ -10,6 +11,7 @@ import {
 // componente decide (hay entre qué elegir o no), así que enriquecer otra obra no obliga a tocar esto.
 const [singleSourceWork] = onoffLiteraryWorksWithSingleMediaSource;
 const [multipleSourcesWork] = onoffLiteraryWorksWithMultipleMediaSources;
+const [workWithoutSources] = onoffLiteraryWorksWithoutMediaSources;
 
 const meta: Meta<MediaWidgetSelector> = {
 	component: MediaWidgetSelector,
@@ -41,7 +43,7 @@ export const MultiplesFormatos: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Una obra del corpus con varios formatos (<strong>${multipleSourcesWork.title}</strong>): el título anuncia la elección, la botonera ofrece un botón por recurso y debajo se monta el widget del elegido.</p><p>Clickeá los botones para ver cómo cambia el widget. Al abrir, queda elegido el primer medio.</p>`,
+				story: `<p>Una obra del corpus con varios formatos (<strong>${multipleSourcesWork.title}</strong>): el título anuncia la elección, la botonera ofrece un botón por recurso y debajo se monta el widget del elegido.</p><p>Clickeá los botones para ver cómo cambia el widget. Al abrir, queda elegido el primer medio.</p><p><strong>Usos:</strong> la página de lectura, para una obra que declara más de un recurso multimedia.</p>`,
 			},
 		},
 	},
@@ -53,7 +55,7 @@ export const UnSoloFormato: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Una obra del corpus con un único formato (<strong>${singleSourceWork.title}</strong>): el título cambia de texto y la botonera desaparece, pero el widget se monta igual.</p>`,
+				story: `<p>Una obra del corpus con un único formato (<strong>${singleSourceWork.title}</strong>): el título cambia de texto y la botonera desaparece, pero el widget se monta igual.</p><p><strong>Usos:</strong> la página de lectura, para una obra que declara un único recurso multimedia.</p>`,
 			},
 		},
 	},
@@ -67,7 +69,7 @@ export const TipoRepetido: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>El caso que el diseño no modela: dos recursos del mismo tipo. Los botones de audio se rotulan con el <strong>título de cada medio</strong> en lugar del nombre del formato, que los volvería indistinguibles; los tipos que aparecen una sola vez conservan el nombre del formato.</p>`,
+				story: `<p>El caso que el diseño no modela: dos recursos del mismo tipo. Los botones de audio se rotulan con el <strong>título de cada medio</strong> en lugar del nombre del formato, que los volvería indistinguibles; los tipos que aparecen una sola vez conservan el nombre del formato.</p><p><strong>Usos:</strong> ninguno todavía — es el caso que habilita el enriquecimiento del corpus previsto para las obras con multimedia repetida.</p>`,
 			},
 		},
 	},
@@ -75,12 +77,11 @@ export const TipoRepetido: Story = {
 
 export const SinFormatos: Story = {
 	render: (args) => ({ props: args, template: `<cuentoneta-media-widget-selector ${argsToTemplate(args)} />` }),
-	args: { mediaSources: [] },
+	args: { mediaSources: workWithoutSources.mediaSources },
 	parameters: {
 		docs: {
 			description: {
-				story:
-					'<p>El caso por defecto de una obra sin multimedia: el canvas queda vacío a propósito, sin título ni botonera.</p>',
+				story: `<p>Una obra del corpus sin multimedia (<strong>${workWithoutSources.title}</strong>): el canvas queda vacío a propósito, sin título ni botonera.</p><p><strong>Usos:</strong> la página de lectura, para la mayoría de las obras del catálogo, que no declaran recursos multimedia.</p>`,
 			},
 		},
 	},
