@@ -67,7 +67,7 @@ export interface ButtonGroupOption {
 				type="button"
 			>
 				@if (option.iconName) {
-					<ng-icon [name]="option.iconName" data-testid="option-icon" size="24px" />
+					<ng-icon [name]="option.iconName" [size]="iconSize" data-testid="option-icon" />
 				}
 				{{ option.label }}
 			</button>
@@ -86,6 +86,11 @@ export class ButtonGroupComponent {
 
 	/** Geometría de las opciones. La apariencia sigue siendo del grupo, no del consumidor. */
 	public readonly size = input<ButtonSize>('md');
+
+	// El diseño dibuja el ícono dentro de un marco de 24px, pero el glifo ocupa alrededor de dos
+	// tercios de ese marco. `ng-icon` dimensiona el glifo y no el marco, así que pedirle los 24px del
+	// marco lo agranda a una vez y media lo que muestra el diseño.
+	protected readonly iconSize = '16px';
 
 	/** Id de la opción elegida por la persona usuaria. El grupo no la aplica: la emite. */
 	public readonly optionSelected = output<string>();
