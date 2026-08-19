@@ -15,7 +15,7 @@ import { createSectionTitle } from '@models/section-title.model';
 import { createSlug } from '@models/slug.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import { mapAuthorTeaser, mapTags, urlFor } from '../../_utils/functions';
-import { mapMediaSources } from '../../_utils/media-sources.functions';
+import { mapMediaSources, mapMediaTeasers } from '../../_utils/media-sources.functions';
 import { client as sanityClient } from '../../_helpers/sanity-connector';
 import { collectionBySlugQuery, collectionsQuery } from '../../_queries/collection.query';
 import { MalformedCollectionError } from './collection.errors';
@@ -140,7 +140,7 @@ export class SanityCollectionRepository implements CollectionRepository {
 			totalReadingTime: raw.totalReadingTime !== null ? createReadingTime(raw.totalReadingTime) : section.readingTime,
 			sectionCount: raw.sectionCount,
 			tags: mapTags(raw.tags),
-			mediaSources: mapMediaSources(raw.mediaSources),
+			mediaSources: mapMediaTeasers(raw.mediaSources),
 			authors: raw.authors.map(mapAuthorTeaser),
 			teaserSection: section,
 		});

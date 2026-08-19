@@ -52,7 +52,8 @@ describe('navigation teasers de LiteraryWork (proyección de la vista base)', ()
 			expect(teaser.totalReadingTime).toBe(source.totalReadingTime);
 			expect(teaser.sectionCount).toBe(source.sectionCount);
 			expect(teaser.tags).toBe(source.tags);
-			expect(teaser.mediaSources).toBe(source.mediaSources);
+			// mediaSources no se transporta por referencia: la vista de navegación solo promete el tag.
+			expect(teaser.mediaSources).toEqual(source.mediaSources.map((media) => ({ type: media.type })));
 		});
 	});
 

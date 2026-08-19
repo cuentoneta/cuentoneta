@@ -16,13 +16,6 @@ import geometriaMdBody from '../literary-work/geometria.md?raw';
 import lasEscalerasMdBody from '../literary-work/las-escaleras.md?raw';
 import losPeldanosMdBody from '../literary-work/los-peldanos.md?raw';
 import {
-	geometriaAudioDescription,
-	geometriaPdfDescription,
-	geometriaSpaceDescription,
-	geometriaSpotifyDescription,
-	geometriaYoutubeDescription,
-} from '../media/geometria.media';
-import {
 	geometriasDelDesveloSpotifyDescription,
 	geometriasDelDesveloYoutubeDescription,
 } from '../media/geometrias-del-desvelo.media';
@@ -62,49 +55,11 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 			sectionCount: 1,
 			tags: [cuentoRawTag, dramaPsicologicoRawTag, filosoficoRawTag],
 			mediaSources: [
-				{
-					_key: 'geometria-audio',
-					_type: 'audioRecording',
-					title: 'Lectura de "Geometría" por su autor',
-					description: geometriaAudioDescription,
-					url: 'https://cdn.example.org/onoff/geometria.ogg',
-				},
-				{
-					_key: 'geometria-space',
-					_type: 'spaceRecording',
-					title: 'Conversación sobre el insomnio y la medida del tiempo',
-					description: geometriaSpaceDescription,
-					audioFile: { _type: 'file', asset: { _type: 'reference', _ref: 'file-geometria-space-ogg' } },
-					hostName: 'Biblioteca del Méridien',
-					hostAvatar: {
-						_type: 'image',
-						asset: { _type: 'reference', _ref: 'image-bibliotecaMeridienAvatar-96x96-png' },
-					},
-					date: '1974-06-12',
-					duration: '48:12',
-					audioUrl: 'https://cdn.example.org/onoff/geometria-space.ogg',
-				},
-				{
-					_key: 'geometria-spotify',
-					_type: 'spotifyPodcastEpisode',
-					title: 'Episodio dedicado a "Geometría"',
-					description: geometriaSpotifyDescription,
-					url: 'https://open.spotify.com/embed/episode/geometria',
-				},
-				{
-					_key: 'geometria-youtube',
-					_type: 'youTubeVideo',
-					title: 'Video ensayo sobre las coordenadas del desvelo',
-					description: geometriaYoutubeDescription,
-					videoId: 'geometriaVideoId',
-				},
-				{
-					_key: 'geometria-pdf',
-					_type: 'pdfLink',
-					title: 'Facsímil de la primera edición',
-					description: geometriaPdfDescription,
-					url: 'https://cdn.example.org/onoff/geometria.pdf',
-				},
+				{ _type: 'audioRecording' },
+				{ _type: 'spaceRecording' },
+				{ _type: 'spotifyPodcastEpisode' },
+				{ _type: 'youTubeVideo' },
+				{ _type: 'pdfLink' },
 			],
 			authors: [
 				{

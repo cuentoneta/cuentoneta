@@ -1,5 +1,6 @@
 import { spyOn } from '@test-utils';
-import { mapMediaSources } from './media-sources.functions';
+import { mapMediaSources, mapMediaTeasers } from './media-sources.functions';
+import { geometriasDelDesveloRawCollection } from '@mocks/onoff/collection/geometrias-del-desvelo.collection.raw.mock';
 import { onoffRawStoriesWithMediaSources, onoffRawTeasersWithMediaSources } from '@mocks/onoff-raw-stories.mock';
 import { isAudioRecording, isSpaceRecording, isSpotifyPodcastEpisode, isYouTubeVideo } from '@models/media.model';
 import { onoffAudioRecordingsMock } from '@mocks/onoff-media.mock';
@@ -163,5 +164,26 @@ describe('descarte de un tipo sin modelo de dominio', () => {
 		expect(warn).toHaveBeenCalledWith(expect.stringContaining('pdfLink'), {
 			_key: rawSourceOfType('pdfLink')._key,
 		});
+	});
+});
+
+describe('mapMediaTeasers', () => {
+	const rawWork = geometriasDelDesveloRawCollection.literaryWorks[0];
+
+	it('mapea cada tipo modelado a su tag, en orden', () => {
+		expect(mapMediaTeasers(rawWork.mediaSources)).toEqual([
+			{ type: 'audioRecording' },
+			{ type: 'spaceRecording' },
+			{ type: 'spotifyPodcastEpisode' },
+			{ type: 'youTubeVideo' },
+		]);
+	});
+
+	it('descarta con rastro el tipo sin modelo de dominio', () => {
+		const warn = spyOn(console, 'warn').mockImplementation(() => undefined);
+
+		mapMediaTeasers(rawWork.mediaSources);
+
+		expect(warn).toHaveBeenCalledWith(expect.stringContaining('pdfLink'));
 	});
 });

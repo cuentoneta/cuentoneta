@@ -5,9 +5,9 @@ import type {
 	LiteraryWorkNavigationTeaserWithAuthors,
 	LiteraryWorkTeaser,
 } from '@models/literary-work.model';
-import type { Media } from '@models/media.model';
+import type { MediaTeaser } from '@models/media.model';
 import { embeddedAuthorTeaserMock } from './author.mock';
-import { onoffMediaMock, onoffYouTubeVideosMock } from './onoff-media.mock';
+import { onoffMediaMock, onoffYouTubeVideosMock, toMediaTeaser } from './onoff-media.mock';
 import { onoffLiteraryWorksMock } from './onoff-literary-works.mock';
 
 // Proyecta el Author de dominio a su variante AuthorTeaser (misma base, sin biografía y con recursos
@@ -48,7 +48,7 @@ function toTeaser(literaryWork: LiteraryWork): LiteraryWorkTeaser {
 		totalReadingTime: literaryWork.totalReadingTime,
 		sectionCount: literaryWork.sectionCount,
 		tags: literaryWork.tags,
-		mediaSources: literaryWork.mediaSources,
+		mediaSources: literaryWork.mediaSources.map(toMediaTeaser),
 		authors: [embeddedAuthorTeaserMock],
 		// La sección de apertura del teaser va sin epígrafes: la proyección de teaser no los trae, porque
 		// ninguna vista de tarjeta los muestra.
@@ -81,7 +81,7 @@ export const onoffLiteraryWorkTeasersMock: LiteraryWorkTeaser[] = [
 // de armarlo cada uno por su cuenta.
 // Sale del canon; el YouTube repetido existe para que los consumidores que cuentan medios tengan más
 // elementos que tipos distintos.
-const mediaSources: Media[] = [...onoffMediaMock, ...onoffYouTubeVideosMock];
+const mediaSources: MediaTeaser[] = [...onoffMediaMock, ...onoffYouTubeVideosMock].map(toMediaTeaser);
 
 export const withMediaSources = (teaser: LiteraryWorkTeaser): LiteraryWorkTeaser => ({ ...teaser, mediaSources });
 
@@ -101,7 +101,7 @@ function toNavigationTeaser(literaryWork: LiteraryWork): LiteraryWorkNavigationT
 		totalReadingTime: literaryWork.totalReadingTime,
 		sectionCount: literaryWork.sectionCount,
 		tags: literaryWork.tags,
-		mediaSources: literaryWork.mediaSources,
+		mediaSources: literaryWork.mediaSources.map(toMediaTeaser),
 		authors: [],
 	};
 }
