@@ -16,6 +16,37 @@ La lista de características futuras a implementar puede hallarse en la sección
 
 Los hitos futuros de desarrollo, en los cuales se detallan las funcionalidades a desarrollar y los cambios a implementar, pueden encontrarse en las secciones [milestones](https://github.com/cuentoneta/cuentoneta/milestones) y [projects](https://github.com/cuentoneta/cuentoneta/projects) del repositorio de Github del proyecto.
 
+## Versión 2.10.3 (2026-08-19)
+
+La versión 2.10.3 es un patch de un solo frente: pone al día las dependencias que Dependabot dejó acumuladas mientras 2.10.2 estaba cerrado. No trae cambios de producto, y por eso su verificación no pregunta si algo nuevo funciona sino si todo lo anterior sigue funcionando.
+
+Lo que manda el riesgo son los **dos saltos mayores de Sanity**, que comparten línea de versión y se evaluaron como par: `@sanity/client` 7.25.0 → 8.0.0 en la aplicación (#2250) y `@sanity/cli` 7.18.0 → 8.0.0 en el Studio (#2247). El del CLI es el que más se siente en el release: el deploy del Studio deja de ser un paso desatendido y pasa a ser la primera ejecución real con la línea 8. El tercer mayor previsto para el hito, `@sanity/ui` 4.0.3, **no entra**: rompe el type-check del Studio y se difiere a 2.11.0 con su propio issue.
+
+El resto es puesta al día sin cambio de mayor: el grupo `minor-and-patch` de la aplicación con 44 paquetes —Angular 22.1.2, Storybook 10.5.8, Hono 4.13.2, Vite 8.2.1 y typescript-eslint 8.67.0 entre ellos (#2249)—, el del Studio con 4 (#2246), y la familia `@ng-icons` —core, font-awesome y simple-icons— de 34.0.0 a 35.0.1, que se mueve en lockstep y por eso viajó junta (#2275).
+
+Cierra una corrección de tooling detectada en el camino: Prettier reformateaba los lockfiles en cada corrida y su configuración declaraba una opción que ya no existe (#2277).
+
+### Cambios completos
+
+Ver el changelog completo en [2.10.3](https://github.com/cuentoneta/cuentoneta/releases/tag/2.10.3)
+
+### Cambios
+
+#### Sanity (saltos mayores)
+
+- [#2250] - Actualiza @sanity/client de 7.25.0 a 8.0.0 en la aplicación.
+- [#2247] - Actualiza @sanity/cli de 7.18.0 a 8.0.0 en el Studio.
+
+#### Dependencias
+
+- [#2249] - Actualiza el grupo minor-and-patch de la aplicación (44 paquetes).
+- [#2246] - Actualiza el grupo minor-and-patch del Studio (4 paquetes).
+- [#2275] - Actualiza @ng-icons a 35.0.1 en la aplicación.
+
+#### Tooling
+
+- [#2277] - Excluye los lockfiles del formateo de Prettier y quita una opción inexistente.
+
 ## Versión 2.10.2 (2026-08-19)
 
 La versión 2.10.2 es un patch de cinco frentes, todos de alcance cerrado.
