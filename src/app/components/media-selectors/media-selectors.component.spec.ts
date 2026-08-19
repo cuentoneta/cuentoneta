@@ -2,15 +2,19 @@ import { fn } from '@test-utils';
 import { MediaSelectorsComponent } from './media-selectors.component';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
-import { Media } from '@models/media.model';
-import { onoffSpotifyPodcastEpisodesMock, onoffYouTubeVideosMock } from '@mocks/onoff-media.mock';
+import { MediaTeaser } from '@models/media.model';
+import { onoffSpotifyPodcastEpisodesMock, onoffYouTubeVideosMock, toMediaTeaser } from '@mocks/onoff-media.mock';
 
 describe('MediaSelectorsComponent', () => {
 	// Dos medios de la misma plataforma más uno de otra: el caso que distingue "un selector por
 	// plataforma" de "un selector por medio". El repetido sale del canon, no de un literal nuevo.
-	const [youTube1] = onoffYouTubeVideosMock;
-	const [spotify1] = onoffSpotifyPodcastEpisodesMock;
-	const media: Media[] = [...onoffYouTubeVideosMock, ...onoffYouTubeVideosMock, ...onoffSpotifyPodcastEpisodesMock];
+	const [youTube1] = onoffYouTubeVideosMock.map(toMediaTeaser);
+	const [spotify1] = onoffSpotifyPodcastEpisodesMock.map(toMediaTeaser);
+	const media: MediaTeaser[] = [
+		...onoffYouTubeVideosMock,
+		...onoffYouTubeVideosMock,
+		...onoffSpotifyPodcastEpisodesMock,
+	].map(toMediaTeaser);
 
 	it('should render nothing when there is no media', async () => {
 		await render(MediaSelectorsComponent, { inputs: { media: [] } });

@@ -3,7 +3,7 @@ import { NgIcon, provideIcons } from '@ng-icons/core';
 import { simpleSpotify, simpleX, simpleYoutube } from '@ng-icons/simple-icons';
 import { faSolidFileAudio } from '@ng-icons/font-awesome/solid';
 
-import { Media, MediaTypeKey } from '@models/media.model';
+import { MediaTeaser, MediaTypeKey } from '@models/media.model';
 
 /**
  * Tema visual de los selectores, desacoplado de las variantes de las tarjetas consumidoras:
@@ -18,13 +18,17 @@ interface MediaSelectorItem {
 	iconName: string;
 	label: string;
 	count: number;
-	media?: Media;
+	media?: MediaTeaser;
 }
 
 /**
  * Renderiza los selectores de los recursos multimedia asociados a una
- * historia. Es un componente de presentación: no monta los widgets de los recursos, solo emite el
- * recurso seleccionado para que el componente padre decida qué renderizar.
+ * historia. Es un componente de presentación: no monta los widgets de los recursos, solo emite cuál
+ * quedó elegido para que el componente padre decida qué renderizar.
+ *
+ * Consume la **vista de teaser** del medio, que es todo lo que necesita para elegir el ícono de la
+ * plataforma. Por eso lo que emite tampoco alcanza para montar un widget: quien lo monte tiene que
+ * resolver la vista completa por su cuenta.
  *
  * Comportamiento según el input `selectable`:
  *
@@ -32,8 +36,8 @@ interface MediaSelectorItem {
  *   cuando hay más de uno del mismo tipo. Los selectores son decorativos (no clickeables). Es el
  *   modo usado por las tarjetas LiteraryWorkCardTeaser y LiteraryWorkHomeCardTeaser.
  * - `true`: se renderiza un selector clickeable por cada recurso (sin agrupar ni contador) y al
- *   hacer click se emite, vía el output `selected`, el `Media` correspondiente. Es el modo pensado
- *   para la vista Story, donde se monta el widget del recurso seleccionado.
+ *   hacer click se emite, vía el output `selected`, el `MediaTeaser` correspondiente. Es el modo
+ *   pensado para una vista que monte el widget del recurso elegido.
  */
 @Component({
 	selector: 'cuentoneta-media-selectors',
@@ -79,12 +83,12 @@ interface MediaSelectorItem {
 export class MediaSelectorsComponent {
 	// Solo lee la colección, así que la acepta de solo lectura: es como la exponen las proyecciones
 	// de LiteraryWork.
-	public readonly media = input<readonly Media[]>([]);
+	public readonly media = input<readonly MediaTeaser[]>([]);
 	public readonly orientation = input<'horizontal' | 'vertical'>('horizontal');
 	public readonly theme = input<MediaSelectorsTheme>('subtle');
 	public readonly selectable = input<boolean>(false);
 
-	public readonly selected = output<Media>();
+	public readonly selected = output<MediaTeaser>();
 
 	private readonly mediaPlatforms: Record<MediaTypeKey, { iconName: string; label: string }> = {
 		youTubeVideo: { iconName: 'simpleYoutube', label: 'YouTube' },
