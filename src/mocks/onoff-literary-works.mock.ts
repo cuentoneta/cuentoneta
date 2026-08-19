@@ -51,6 +51,12 @@ export const onoffLiteraryWorksWithMediaSources: LiteraryWork[] = onoffLiteraryW
 	(literaryWork) => literaryWork.mediaSources.length > 0,
 );
 
+// El contracaso: una obra sin multimedia, para afirmar que quien ofrece los formatos no dibuja nada
+// cuando no hay ninguno.
+export const onoffLiteraryWorksWithoutMediaSources: LiteraryWork[] = onoffLiteraryWorksMock.filter(
+	(literaryWork) => literaryWork.mediaSources.length === 0,
+);
+
 // Las dos caras que separa el umbral de "hay entre qué elegir": una obra con un solo medio y una con
 // varios. Un consumidor que ofrece la elección se comporta distinto a cada lado, y el predicado deja que
 // lo afirme sin nombrar la obra que hoy cae de ese lado.
