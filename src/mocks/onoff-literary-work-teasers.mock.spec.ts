@@ -52,8 +52,11 @@ describe('navigation teasers de LiteraryWork (proyección de la vista base)', ()
 			expect(teaser.totalReadingTime).toBe(source.totalReadingTime);
 			expect(teaser.sectionCount).toBe(source.sectionCount);
 			expect(teaser.tags).toBe(source.tags);
-			// mediaSources no se transporta por referencia: la vista de navegación solo promete el tag.
-			expect(teaser.mediaSources).toEqual(source.mediaSources.map((media) => ({ type: media.type })));
+			// mediaSources no se transporta por referencia: la vista de navegación promete el tag y el
+			// título, no la carga con la que se reproduce el recurso.
+			expect(teaser.mediaSources).toEqual(
+				source.mediaSources.map((media) => ({ type: media.type, title: media.title })),
+			);
 		});
 	});
 

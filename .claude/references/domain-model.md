@@ -79,7 +79,7 @@ export interface LiteraryWork extends LiteraryWorkBase {
 
 export interface LiteraryWorkTeaser extends LiteraryWorkBase {
 	readonly authors: readonly AuthorTeaser[];
-	readonly mediaSources: readonly MediaTeaser[]; // solo el tag; la tarjeta pinta el ícono, no reproduce el recurso
+	readonly mediaSources: readonly MediaTeaser[]; // tag + título; la tarjeta pinta el ícono y nombra el recurso, no lo reproduce
 	// …
 }
 ```

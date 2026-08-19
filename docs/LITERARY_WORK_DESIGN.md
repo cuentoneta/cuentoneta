@@ -72,7 +72,7 @@ export interface LiteraryWork extends LiteraryWorkBase {
 
 export interface LiteraryWorkTeaser extends LiteraryWorkBase {
 	readonly authors: readonly AuthorTeaser[];
-	readonly mediaSources: readonly MediaTeaser[]; // solo el tag; la tarjeta pinta el ícono, no reproduce el recurso
+	readonly mediaSources: readonly MediaTeaser[]; // tag + título; la tarjeta pinta el ícono y nombra el recurso, no lo reproduce
 	readonly teaserSection: LiteraryWorkSection; // primera sección completa
 }
 
@@ -87,7 +87,7 @@ export interface LiteraryWorkNavigationTeaserWithAuthors extends LiteraryWorkBas
 }
 ```
 
-**`mediaSources` sigue el mismo patrón que `authors`: cada vista lo declara con su propio tipo, no `LiteraryWorkBase`.** `LiteraryWork` trae `Media[]` — la vista completa, con la carga (`data`, obligatorio) con la que un widget reproduce el recurso. Las tres vistas de teaser/navegación traen `MediaTeaser[]` — solo el `type`, lo único que una tarjeta de listado consume para pintar el ícono de la plataforma; su proyección GROQ no resuelve la carga, así que no puede prometerla. Declararlo en la base obligaría a esas vistas a transportar algo que su proyección no trae — mismo razonamiento que ya aplicaba a `authors`. Detalle del tipo `Media`/`MediaTeaser` en [`DOMAIN_MODEL.md`](DOMAIN_MODEL.md#media-contenido-multimedia).
+**`mediaSources` sigue el mismo patrón que `authors`: cada vista lo declara con su propio tipo, no `LiteraryWorkBase`.** `LiteraryWork` trae `Media[]` — la vista completa, con la carga (`data`, obligatorio) con la que un widget reproduce el recurso. Las tres vistas de teaser/navegación traen `MediaTeaser[]` — el `type` con el que la tarjeta pinta el ícono de la plataforma y el `title` que identifica al recurso dentro de ella; su proyección GROQ no resuelve la carga, así que no puede prometerla. Declararlo en la base obligaría a esas vistas a transportar algo que su proyección no trae — mismo razonamiento que ya aplicaba a `authors`. Detalle del tipo `Media`/`MediaTeaser` en [`DOMAIN_MODEL.md`](DOMAIN_MODEL.md#media-contenido-multimedia).
 
 **`editorialNote` es exclusivo del agregado completo.** Vive únicamente en `LiteraryWork` — no en `LiteraryWorkBase` ni en ninguna vista de teaser/navegación (`LiteraryWorkTeaser`, `LiteraryWorkNavigationTeaser`, `LiteraryWorkNavigationTeaserWithAuthors`): las tarjetas de listado y la navegación no lo muestran ni deben transportarlo — misma razón por la que `resources`, `badLanguage`, `originalPublication` y `publishedAt` tampoco están en la base. Es un campo opcional puro: **no agrega invariante** a `createLiteraryWork` (a diferencia de `title`, `content` o `authors`, su ausencia es un estado válido del agregado). En el dominio es un `SanitizedHtml` **plano** (sin `reference`) — no `AttributedText` ([§3](#3-shape-de-sección)): el frontend lo adapta recién al construir el binding de `EditorialNoteComponent`, vía `createAttributedText({ text: editorialNote })`.
 

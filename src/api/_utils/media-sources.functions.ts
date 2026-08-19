@@ -71,13 +71,11 @@ export function mapMediaSources(
 // proyección, el rastro nombra el tipo — traerlo solo para el log volvería a transportar por obra un
 // campo que la vista no consume.
 export function mapMediaTeasers(mediaSources: CollectionWorkMediaSources): MediaTeaser[] {
-	if (!mediaSources) return [];
-
 	const teasers: MediaTeaser[] = [];
 	for (const mediaSource of mediaSources) {
 		const type = toMediaTypeKeyOrDiscard(mediaSource._type);
 		if (type) {
-			teasers.push({ type });
+			teasers.push({ type, title: mediaSource.title });
 		}
 	}
 	return teasers;
@@ -158,9 +156,10 @@ function getSpaceRecordingData(mediaSource: SpaceRecordingSource): SpaceRecordin
 		description: markdownToSanitizedHtml(createMarkdown(mediaSource.description)),
 		data: {
 			// Dos causas distintas de url nula, que conviene no conflacionar. Una: las proyecciones de
-			// story y storylist no resuelven audioUrl, y de ahí el guard. Otra: aun resolviéndolo, un
-			// spaceRecording puede no tener audioFile adjunto en Sanity. Se pasa null tal cual (en vez
-			// de '') para que el widget muestre un placeholder visible en vez de un reproductor roto.
+			// mediaSources embebidas de storylist no resuelven audioUrl —las de nivel documento sí—, y
+			// de ahí el guard. Otra: aun resolviéndolo, un spaceRecording puede no tener audioFile
+			// adjunto en Sanity. Se pasa null tal cual (en vez de '') para que el widget muestre un
+			// placeholder visible en vez de un reproductor roto.
 			url: 'audioUrl' in mediaSource ? mediaSource.audioUrl : null,
 			duration: mediaSource.duration,
 			hostName: mediaSource.hostName,

@@ -55,11 +55,11 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 			sectionCount: 1,
 			tags: [cuentoRawTag, dramaPsicologicoRawTag, filosoficoRawTag],
 			mediaSources: [
-				{ _type: 'audioRecording' },
-				{ _type: 'spaceRecording' },
-				{ _type: 'spotifyPodcastEpisode' },
-				{ _type: 'youTubeVideo' },
-				{ _type: 'pdfLink' },
+				{ _type: 'audioRecording', title: 'Lectura de "Geometría" por su autor' },
+				{ _type: 'spaceRecording', title: 'Conversación sobre el insomnio y la medida del tiempo' },
+				{ _type: 'spotifyPodcastEpisode', title: 'Episodio dedicado a "Geometría"' },
+				{ _type: 'youTubeVideo', title: 'Video ensayo sobre las coordenadas del desvelo' },
+				{ _type: 'pdfLink', title: 'Facsímil de la primera edición' },
 			],
 			authors: [
 				{

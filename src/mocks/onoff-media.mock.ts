@@ -24,10 +24,8 @@ export const onoffSpotifyPodcastEpisodesMock: SpotifyPodcastEpisode[] = onoffMed
 // pérdida de información que hace el ACL al mapear la proyección de listado, y no una lista aparte
 // que podría divergir del canon.
 export function toMediaTeaser(media: Media): MediaTeaser {
-	return { type: media.type };
+	return { type: media.type, title: media.title };
 }
-
-export const onoffMediaTeasersMock: MediaTeaser[] = onoffMediaMock.map(toMediaTeaser);
 
 // El texto plano de una descripción, para que las specs de los widgets afirmen contra el fixture en vez
 // de repetir su texto literal. Vive acá, y no en cada spec, para que todas compartan un mismo criterio

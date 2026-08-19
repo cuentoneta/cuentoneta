@@ -9,23 +9,28 @@ import type { SanitizedHtml } from '@models/sanitized-html.model';
  *    carga con la que un widget puede reproducir el recurso. `MediaTeaser` es la vista de
  *    **listado**: solo el tag, que es lo único que una tarjeta consume para pintar el ícono de la
  *    plataforma. Cada una tiene su proyección GROQ y su mapper; el teaser no puede prometer lo que
- *    su proyección no trae. `data` es obligatorio en `Media` justamente para sostener eso: si fuera
- *    opcional, un `MediaTeaser` sería asignable a `Media` y montar un widget desde un listado
- *    compilaría.
+ *    su proyección no trae. `data` es obligatorio en `Media` para que la carga no se pueda omitir
+ *    al armar la vista completa: mientras fue opcional, copiar los campos textuales de un recurso
+ *    bastaba para construir algo que el compilador aceptaba como reproducible.
  * 2. **Cómo se correlaciona el tag con su carga.** Dentro de la vista completa, `Media` es el
  *    supertipo —`data: unknown`, sin correlación— y `MediaTypes` la unión discriminada que consumen
  *    los widgets, donde cada tag ya fija su `data`. Se pasa de uno al otro con los guards de abajo,
  *    nunca con una aserción.
  */
-export interface MediaTeaser {
+export interface Media {
+	readonly title: string;
+	readonly description: SanitizedHtml;
 	readonly type: MediaTypeKey;
+	readonly data: unknown;
 }
 
-export interface Media {
-	title: string;
-	description: SanitizedHtml;
-	type: MediaTypeKey;
-	data: unknown;
+// El `title` está por identidad, no por presentación: sin él dos recursos de la misma plataforma son
+// indistinguibles, y quien ofrezca elegir entre ellos no puede decir cuál se eligió ni nombrarlos.
+// No arrastra nada caro — es un campo plano del documento, a diferencia de la descripción (que cruza
+// el pipeline de Markdown) y de la URL del audio (que dereferencia un asset).
+export interface MediaTeaser {
+	readonly type: MediaTypeKey;
+	readonly title: string;
 }
 
 export interface AudioRecording extends Media {

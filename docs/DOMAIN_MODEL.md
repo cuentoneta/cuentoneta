@@ -591,12 +591,13 @@ interface MarkDef {
 
 Dos ejes **ortogonales** organizan el modelo, y conviene no confundirlos:
 
-1. **Qué transporta la proyección.** `Media` es la vista **completa** — la de la página, con la carga (`data`, obligatorio) con la que un widget reproduce el recurso. `MediaTeaser` es la vista de **listado** — solo el `type`, que es lo único que una tarjeta consume para pintar el ícono de la plataforma. Cada una tiene su propia proyección GROQ y su propio mapper (`mapMediaSources` y `mapMediaTeasers`, respectivamente); el teaser no puede prometer lo que su proyección no trae. `data` es obligatorio en `Media` justamente para sostener esa separación: si fuera opcional, un `MediaTeaser` sería estructuralmente asignable a `Media`, y montar un widget de reproducción desde un listado compilaría igual.
+1. **Qué transporta la proyección.** `Media` es la vista **completa** — la de la página, con la carga (`data`, obligatorio) con la que un widget reproduce el recurso. `MediaTeaser` es la vista de **listado** — el `type`, con el que la tarjeta pinta el ícono de la plataforma, y el `title`, que está por **identidad**: sin él dos recursos de la misma plataforma son indistinguibles, y quien ofrezca elegir entre ellos no puede decir cuál se eligió ni nombrarlos. Ninguno de los dos arrastra costo: son campos planos del documento, a diferencia de la descripción (que cruza el pipeline de Markdown) y de la URL del audio (que dereferencia un asset). Cada una tiene su propia proyección GROQ y su propio mapper (`mapMediaSources` y `mapMediaTeasers`, respectivamente); el teaser no puede prometer lo que su proyección no trae. `data` es obligatorio en `Media` para que la carga no se pueda omitir al armar la vista completa: mientras fue opcional, copiar los campos textuales de un recurso bastaba para construir algo que el compilador aceptaba como reproducible.
 2. **Cómo se correlaciona el tag con su carga.** Dentro de la vista completa, `Media` es el **supertipo** —`data: unknown`, sin correlación entre el tag y la forma de la carga— y `MediaTypes` la **unión discriminada** que consumen los widgets, donde cada tag ya fija su `data`. Se pasa de uno al otro con los type guards de abajo, nunca con una aserción.
 
 ```typescript
 interface MediaTeaser {
 	type: MediaTypeKey; // 'audioRecording' | 'spaceRecording' | 'youTubeVideo' | 'spotifyPodcastEpisode'
+	title: string; // identidad del recurso dentro de su plataforma
 }
 
 interface Media {
@@ -612,7 +613,7 @@ interface AudioRecording extends Media {
 
 interface SpaceRecording extends Media {
 	data: {
-		url: string | null; // null en las proyecciones de story y storylist, que no resuelven audioUrl
+		url: string | null; // null en las proyecciones embebidas de storylist, que no resuelven audioUrl
 		duration: string;
 		hostName: string;
 		hostAvatar?: string;

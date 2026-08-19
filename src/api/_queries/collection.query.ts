@@ -41,7 +41,7 @@ export const collectionBySlugQuery = defineQuery(`
             'slug': slug.current,
             description
         }, []),
-        'mediaSources': coalesce(mediaSources[]{ _type }, []),
+        'mediaSources': coalesce(mediaSources[]{ _type, title }, []),
         'authors': coalesce(authors[]->{
             _id,
             'slug': slug.current,

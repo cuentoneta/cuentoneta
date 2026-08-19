@@ -79,10 +79,12 @@ describe('MediaSelectorsComponent', () => {
 			expect(onSelected).toHaveBeenLastCalledWith(spotify1);
 		});
 
-		it('should expose an accessible label per platform', async () => {
+		// En este modo cada botón es un recurso distinto, así que el nombre accesible suma su título:
+		// la etiqueta de plataforma sola no distingue dos recursos de la misma.
+		it('should name each resource by its platform and title', async () => {
 			await render(MediaSelectorsComponent, { inputs: { media, selectable: true } });
-			expect(screen.getAllByLabelText('YouTube')).toHaveLength(2);
-			expect(screen.getByLabelText('Spotify')).toBeInTheDocument();
+			expect(screen.getAllByLabelText(`YouTube: ${youTube1.title}`)).toHaveLength(2);
+			expect(screen.getByLabelText(`Spotify: ${spotify1.title}`)).toBeInTheDocument();
 		});
 	});
 });

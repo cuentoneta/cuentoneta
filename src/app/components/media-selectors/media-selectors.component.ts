@@ -26,9 +26,9 @@ interface MediaSelectorItem {
  * historia. Es un componente de presentación: no monta los widgets de los recursos, solo emite cuál
  * quedó elegido para que el componente padre decida qué renderizar.
  *
- * Consume la **vista de teaser** del medio, que es todo lo que necesita para elegir el ícono de la
- * plataforma. Por eso lo que emite tampoco alcanza para montar un widget: quien lo monte tiene que
- * resolver la vista completa por su cuenta.
+ * Consume la **vista de teaser** del medio: el tag para elegir el ícono y el título para nombrar el
+ * recurso. Por eso lo que emite no alcanza para montar un widget: quien lo monte tiene que resolver
+ * la vista completa por su cuenta.
  *
  * Comportamiento según el input `selectable`:
  *
@@ -129,9 +129,14 @@ export class MediaSelectorsComponent {
 		return `${this.selectorBaseClasses} ${theme}`;
 	});
 
-	// Nombre accesible del selector: incluye el conteo cuando se agrupan varios recursos de la
-	// misma plataforma, de modo que el badge visual pueda marcarse como decorativo (aria-hidden).
+	// Nombre accesible del selector. En modo agrupado incluye el conteo, de modo que el badge visual
+	// pueda marcarse como decorativo (aria-hidden). En modo seleccionable cada botón es un recurso
+	// distinto, así que nombra el suyo: entre dos de la misma plataforma, la etiqueta sola no los
+	// distingue.
 	protected ariaLabel(selector: MediaSelectorItem): string {
+		if (selector.media) {
+			return `${selector.label}: ${selector.media.title}`;
+		}
 		return selector.count > 1 ? `${selector.label} (${selector.count})` : selector.label;
 	}
 
