@@ -4,8 +4,7 @@ import { AudioRecordingWidgetComponent } from '@components/audio-recording-widge
 import { SpaceRecordingWidgetComponent } from '@components/space-recording-widget/space-recording-widget.component';
 import { SpotifyPodcastEpisodeWidget } from '@components/spotify-audio-widget/spotify-podcast-episode-widget';
 import { YoutubeVideoWidgetComponent } from '@components/youtube-video-widget/youtube-video-widget.component';
-import { mediaWidgetRegistry, toMediaWidgetOutlet } from './media-widget-registry';
-import type { MediaWidget } from './media-widget-registry';
+import { mediaWidgetRegistry, toMediaWidgetOutlet, type MediaWidget } from './media-widget-registry';
 
 // Mocks
 import {
@@ -16,31 +15,15 @@ import {
 	onoffYouTubeVideosMock,
 } from '@mocks/onoff-media.mock';
 
-const casosPorTipo: { descripcion: string; media: Media; widget: Type<MediaWidget> }[] = [
-	{
-		descripcion: 'audioRecording',
-		media: onoffAudioRecordingsMock[0],
-		widget: AudioRecordingWidgetComponent,
-	},
-	{
-		descripcion: 'spaceRecording',
-		media: onoffSpaceRecordingsMock[0],
-		widget: SpaceRecordingWidgetComponent,
-	},
-	{
-		descripcion: 'youTubeVideo',
-		media: onoffYouTubeVideosMock[0],
-		widget: YoutubeVideoWidgetComponent,
-	},
-	{
-		descripcion: 'spotifyPodcastEpisode',
-		media: onoffSpotifyPodcastEpisodesMock[0],
-		widget: SpotifyPodcastEpisodeWidget,
-	},
+const casesByMediaType: { media: Media; widget: Type<MediaWidget> }[] = [
+	{ media: onoffAudioRecordingsMock[0], widget: AudioRecordingWidgetComponent },
+	{ media: onoffSpaceRecordingsMock[0], widget: SpaceRecordingWidgetComponent },
+	{ media: onoffYouTubeVideosMock[0], widget: YoutubeVideoWidgetComponent },
+	{ media: onoffSpotifyPodcastEpisodesMock[0], widget: SpotifyPodcastEpisodeWidget },
 ];
 
 describe('mediaWidgetRegistry', () => {
-	test.each(casosPorTipo)('resuelve el widget de $descripcion', ({ media, widget }) => {
+	test.each(casesByMediaType)('resuelve el widget de $media.type', ({ media, widget }) => {
 		expect(toMediaWidgetOutlet(media).component).toBe(widget);
 	});
 
@@ -59,8 +42,8 @@ describe('mediaWidgetRegistry', () => {
 	});
 
 	test('el corpus ejercita todos los tipos de medio que el registry declara', () => {
-		const tiposDelCorpus = new Set(onoffMediaMock.map((media) => media.type));
+		const corpusMediaTypes = new Set(onoffMediaMock.map((media) => media.type));
 
-		expect([...tiposDelCorpus].sort()).toEqual(Object.keys(mediaWidgetRegistry).sort());
+		expect([...corpusMediaTypes].sort()).toEqual(Object.keys(mediaWidgetRegistry).sort());
 	});
 });
