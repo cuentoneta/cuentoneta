@@ -1,5 +1,5 @@
-import { Component, signal } from '@angular/core';
-import { applicationConfig, argsToTemplate, Meta, moduleMetadata, StoryObj } from '@storybook/angular-vite';
+import { Component, input, linkedSignal } from '@angular/core';
+import { applicationConfig, Meta, moduleMetadata, StoryObj } from '@storybook/angular-vite';
 import { provideIcons } from '@ng-icons/core';
 import { faBrandSpotify, faBrandYoutube } from '@ng-icons/font-awesome/brands';
 import { ButtonGroupComponent, type ButtonGroupOption } from './button-group.component';
@@ -10,15 +10,40 @@ const formats: ButtonGroupOption[] = [
 	{ id: 'podcast', label: 'Podcast' },
 ];
 
+// El contenedor que el catálogo cablea por cada story. Existe porque el grupo no guarda la
+// elección: sin alguien que se la devuelva, hacer click no movería nada y el catálogo mostraría
+// una fila inerte. La elección se rehace cuando cambian los controles, para que editar `options`
+// o `selectedId` no deje vigente un id que ya no está en la lista.
+@Component({
+	selector: 'cuentoneta-button-group-story-host',
+	imports: [ButtonGroupComponent],
+	template: `
+		<cuentoneta-button-group
+			(optionSelected)="selectedId.set($event)"
+			[label]="label()"
+			[options]="options()"
+			[selectedId]="selectedId()"
+		/>
+	`,
+})
+class ButtonGroupStoryHostComponent {
+	public readonly label = input.required<string>();
+	public readonly options = input.required<readonly ButtonGroupOption[]>();
+	public readonly initialSelectedId = input<string>();
+
+	protected readonly selectedId = linkedSignal(() => this.initialSelectedId());
+}
+
 const meta: Meta<ButtonGroupComponent> = {
 	title: 'Componentes V3/ButtonGroup',
 	component: ButtonGroupComponent,
+	decorators: [moduleMetadata({ imports: [ButtonGroupStoryHostComponent] })],
 	parameters: {
 		layout: 'centered',
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>El <strong>ButtonGroupComponent</strong> del Design System v3 presenta una fila de opciones excluyentes: recibe las opciones ya resueltas y el id de la vigente, y emite el id de la que la persona usuaria elige.</p><p><strong>No decide ni guarda la elección.</strong> La emite y espera que el consumidor se la devuelva por <code>selectedId</code>, de modo que la fuente de verdad viva en un solo lugar. Identifica por id y no por el objeto entero, que es lo que le permite servir a dominios distintos sin conocer ninguno.</p><p>La apariencia de cada opción la pone <a href="./?path=/docs/componentes-v3-button--docs" target="_top"><strong>Button</strong></a>, en su variante <code>outline</code> y con el estado <code>active</code> para la vigente; el grupo solo aporta el layout de la fila. El anuncio a lectores de pantalla es <code>aria-pressed</code> en cada opción sobre un contenedor con <code>role="group"</code>, lo que conserva el contrato de teclado nativo del botón: <code>Tab</code> para llegar, <code>Enter</code> o <code>Espacio</code> para activar.</p><p>Los íconos los registra el consumidor con <code>provideIcons</code>: el grupo resuelve el nombre por el injector y no conoce el vocabulario de la pantalla que lo monta.</p><p><strong>Hoy no tiene consumidor en la aplicación</strong>: es una pieza de catálogo, construida junto con el eje <code>active</code> de Button para que las tres decisiones que resuelve —marcar una y desmarcar el resto, emitir sin decidir, y anunciar la elección— se tomen una sola vez.</p></div>`,
+				component: `<div><p>El <strong>ButtonGroupComponent</strong> del Design System v3 presenta una fila de opciones excluyentes: recibe las opciones ya resueltas y el id de la vigente, y emite el id de la que la persona usuaria elige.</p><p><strong>No decide ni guarda la elección.</strong> La emite y espera que el consumidor se la devuelva por <code>selectedId</code>, de modo que la fuente de verdad viva en un solo lugar. Identifica por id y no por el objeto entero, que es lo que le permite servir a dominios distintos sin conocer ninguno.</p><p>Todas las entradas de este catálogo montan el grupo dentro de un contenedor que guarda la elección y se la devuelve, que es como se lo usa en una pantalla real: por eso hacer click mueve la opción vigente. El componente por sí solo no la movería, y eso lo fija su spec.</p><p>La apariencia de cada opción la pone <a href="./?path=/docs/componentes-v3-button--docs" target="_top"><strong>Button</strong></a>, en su variante <code>outline</code> y con el estado <code>active</code> para la vigente; el grupo solo aporta el layout de la fila. El anuncio a lectores de pantalla es <code>aria-pressed</code> en cada opción sobre un contenedor con <code>role="group"</code>, lo que conserva el contrato de teclado nativo del botón: <code>Tab</code> para llegar, <code>Enter</code> o <code>Espacio</code> para activar.</p><p>Los íconos los registra el consumidor con <code>provideIcons</code>: el grupo resuelve el nombre por el injector y no conoce el vocabulario de la pantalla que lo monta.</p><p><strong>Hoy no tiene consumidor en la aplicación</strong>: es una pieza de catálogo, construida junto con el eje <code>active</code> de Button para que las tres decisiones que resuelve —marcar una y desmarcar el resto, emitir sin decidir, y anunciar la elección— se tomen una sola vez.</p></div>`,
 			},
 		},
 	},
@@ -35,7 +60,7 @@ const meta: Meta<ButtonGroupComponent> = {
 		},
 		selectedId: {
 			control: 'text',
-			description: 'Id de la opción vigente. Sin valor, ninguna lo está',
+			description: 'Id de la opción vigente al montar. Desde ahí la mueve el contenedor de la story',
 			table: { type: { summary: 'string | undefined' }, defaultValue: { summary: 'undefined' } },
 		},
 		optionSelected: {
@@ -49,11 +74,13 @@ const meta: Meta<ButtonGroupComponent> = {
 export default meta;
 type Story = StoryObj<ButtonGroupComponent>;
 
+const renderInHost: Story['render'] = (args) => ({
+	props: args,
+	template: `<cuentoneta-button-group-story-host [label]="label" [options]="options" [initialSelectedId]="selectedId" />`,
+});
+
 export const Playground: Story = {
-	render: (args) => ({
-		props: args,
-		template: `<cuentoneta-button-group ${argsToTemplate(args)} />`,
-	}),
+	render: renderInHost,
 	args: {
 		label: 'Formatos disponibles',
 		options: formats,
@@ -62,17 +89,14 @@ export const Playground: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>La API completa como controles vivos. Cambiar <code>selectedId</code> mueve la opción anunciada como vigente; el grupo no la mueve por su cuenta al hacer click, porque esa decisión es del consumidor.</p><p><strong>Usos:</strong> punto de entrada para probar la API antes de montar el grupo en una pantalla.</p>`,
+				story: `<p>La API completa como controles vivos, con la elección ya cableada: hacer click mueve la opción vigente y editar <code>selectedId</code> la reposiciona.</p><p><strong>Usos:</strong> punto de entrada para probar la API antes de montar el grupo en una pantalla.</p>`,
 			},
 		},
 	},
 };
 
 export const ConIconos: Story = {
-	render: (args) => ({
-		props: args,
-		template: `<cuentoneta-button-group ${argsToTemplate(args)} />`,
-	}),
+	render: renderInHost,
 	args: {
 		label: 'Formatos disponibles',
 		options: [
@@ -96,10 +120,7 @@ export const ConIconos: Story = {
 };
 
 export const SinSeleccion: Story = {
-	render: (args) => ({
-		props: args,
-		template: `<cuentoneta-button-group ${argsToTemplate(args)} />`,
-	}),
+	render: renderInHost,
 	args: {
 		label: 'Formatos disponibles',
 		options: formats,
@@ -107,43 +128,23 @@ export const SinSeleccion: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Sin <code>selectedId</code>, ninguna opción está vigente. Es un estado legítimo y no un error: el grupo no elige un valor por defecto, porque hacerlo sería decidir por el consumidor. Un <code>selectedId</code> que no coincide con ninguna opción se comporta igual.</p><p><strong>Usos:</strong> el estado inicial de una pantalla que todavía no tiene una opción elegida.</p>`,
+				story: `<p>Sin <code>selectedId</code>, ninguna opción está vigente al montar. Es un estado legítimo y no un error: el grupo no elige un valor por defecto, porque hacerlo sería decidir por el consumidor. Un <code>selectedId</code> que no coincide con ninguna opción se comporta igual.</p><p>Hacer click elige la primera, y desde ahí ya no vuelve a haber ninguna vigente: el estado vacío es el inicial, no uno al que se regrese.</p><p><strong>Usos:</strong> el estado inicial de una pantalla que todavía no tiene una opción elegida.</p>`,
 			},
 		},
 	},
 };
 
-// La story necesita un host con estado porque la aplicación corre zoneless: mutar un prop plano
-// desde un handler no dispara detección de cambios y la elección no se repintaría.
-@Component({
-	selector: 'cuentoneta-button-group-story-host',
-	imports: [ButtonGroupComponent],
-	template: `
-		<cuentoneta-button-group
-			(optionSelected)="selectedId.set($event)"
-			[options]="options"
-			[selectedId]="selectedId()"
-			label="Formatos disponibles"
-		/>
-	`,
-})
-class ButtonGroupStoryHostComponent {
-	protected readonly options = formats;
-	protected readonly selectedId = signal('audio');
-}
-
-export const Interactivo: Story = {
-	render: () => ({
-		template: `<cuentoneta-button-group-story-host />`,
-	}),
-	decorators: [moduleMetadata({ imports: [ButtonGroupStoryHostComponent] })],
+export const OpcionUnica: Story = {
+	render: renderInHost,
+	args: {
+		label: 'Formatos disponibles',
+		options: [{ id: 'audio', label: 'Audio' }],
+		selectedId: 'audio',
+	},
 	parameters: {
-		// El canvas lo gobierna el contenedor de la story, no los args: mostrar los controles
-		// invitaría a moverlos y no pasaría nada.
-		controls: { disable: true },
 		docs: {
 			description: {
-				story: `<p>El contrato completo, con un contenedor que sí guarda la elección: el grupo emite el id, el contenedor lo aplica y se lo devuelve, y recién entonces se mueve la opción vigente. Es la única story donde hacer click cambia lo que se ve, y por eso sus controles están deshabilitados: las opciones las fija el contenedor.</p><p><strong>Usos:</strong> la referencia de cómo cablear el grupo en una pantalla real.</p>`,
+				story: `<p>Con una sola opción no hay elección que ofrecer, pero el grupo la renderiza igual y la anuncia como vigente: decidir que una fila de uno no se muestra es del consumidor, que es quien sabe si en ese caso corresponde otra cosa.</p><p><strong>Usos:</strong> el caso borde que conviene mirar antes de montar el grupo sobre una colección de tamaño variable.</p>`,
 			},
 		},
 	},
