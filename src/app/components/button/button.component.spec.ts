@@ -23,7 +23,7 @@ describe('ButtonComponent', () => {
 	describe('appearance axis', () => {
 		it.each([
 			['filled', 'bg-white'],
-			['outline', 'bg-white'],
+			['outline', 'bg-neutral-50'],
 			['subtle', 'bg-neutral-100'],
 		])('should apply the background of the %s appearance', async (variant, background) => {
 			await render(`<button cuentoneta-button variant="${variant}">Botón</button>`, {
@@ -119,7 +119,7 @@ describe('ButtonComponent', () => {
 				imports: [ButtonComponent],
 			});
 			const button = screen.getByRole('button');
-			expect(button).toHaveClass('bg-white');
+			expect(button).toHaveClass('bg-neutral-50');
 			expect(button).toHaveClass('border-neutral-300');
 			expect(button).toHaveClass('px-3');
 		});
@@ -139,7 +139,7 @@ describe('ButtonComponent', () => {
 				imports: [ButtonComponent],
 			});
 			const button = screen.getByRole('button');
-			expect(button).toHaveClass('bg-white');
+			expect(button).toHaveClass('bg-neutral-50');
 			expect(button).toHaveClass('border-neutral-300');
 			expect(button).toHaveClass('px-3');
 		});
@@ -232,7 +232,7 @@ describe('ButtonComponent', () => {
 				providers: defaultProviders,
 			});
 			const link = screen.getByRole('link');
-			expect(link).toHaveClass('bg-white');
+			expect(link).toHaveClass('bg-neutral-50');
 			expect(link).toHaveClass('border');
 			expect(link).toHaveClass('border-neutral-300');
 		});

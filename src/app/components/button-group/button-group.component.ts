@@ -67,7 +67,7 @@ export interface ButtonGroupOption {
 				type="button"
 			>
 				@if (option.iconName) {
-					<ng-icon [name]="option.iconName" data-testid="option-icon" />
+					<ng-icon [name]="option.iconName" data-testid="option-icon" size="24px" />
 				}
 				{{ option.label }}
 			</button>

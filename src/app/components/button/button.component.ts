@@ -3,7 +3,7 @@ import { Component, computed, input } from '@angular/core';
 /**
  * Apariencia del botón: fondo, borde y color de texto. No gobierna la geometría.
  * - `filled`: fondo blanco, sin borde
- * - `outline`: fondo blanco con borde neutral-300
+ * - `outline`: fondo neutral-50 con borde neutral-300
  * - `subtle`: fondo neutral-100, sin borde
  */
 export type ButtonVariant = 'filled' | 'outline' | 'subtle';
@@ -70,7 +70,7 @@ export class ButtonComponent {
 
 	private readonly variantClasses: Record<ButtonVariant, string> = {
 		filled: 'bg-white text-neutral-900 hover:bg-neutral-50 active:bg-neutral-100',
-		outline: 'bg-white text-neutral-900 border-neutral-300 hover:bg-neutral-50 active:bg-neutral-100',
+		outline: 'bg-neutral-50 text-neutral-900 border-neutral-300 hover:bg-neutral-100 active:bg-neutral-200',
 		subtle: 'bg-neutral-100 text-neutral-900 hover:bg-neutral-200 active:bg-neutral-300',
 	};
 
