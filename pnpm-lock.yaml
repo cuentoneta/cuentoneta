@@ -111,8 +111,8 @@ importers:
         specifier: ^34.0.0
         version: 34.0.0(@angular-devkit/schematics@22.1.4(chokidar@5.0.0))(@angular/common@22.1.2(@angular/core@22.1.2(@angular/compiler@22.1.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.1.2(@angular/compiler@22.1.2)(rxjs@7.8.2))(@schematics/angular@22.1.4(chokidar@5.0.0))(rxjs@7.8.2)
       '@ng-icons/font-awesome':
-        specifier: ^34.0.0
-        version: 34.0.0
+        specifier: ^35.0.1
+        version: 35.0.1
       '@ng-icons/simple-icons':
         specifier: ^34.0.0
         version: 34.0.0
@@ -2853,8 +2853,8 @@ packages:
       '@schematics/angular': '>=21.0.0'
       rxjs: ^6.5.3 || ^7.4.0
 
-  '@ng-icons/font-awesome@34.0.0':
-    resolution: {integrity: sha512-/CwqShj1sY7HAGUBnFSrPtBA5dVcRy+AkRS7uCqtVLnf/fjxtXU6gx6uiwtWbO4uwEcus+LwQUW1xklW7wzESA==}
+  '@ng-icons/font-awesome@35.0.1':
+    resolution: {integrity: sha512-fVnwEDIgdbiQeawaRfZblX2DS7Uz+Oa2HHq4m0skCvG2kydwVtJZY7iqjngpCat/2lQrUKOu8cwoU3g7Xo3TmA==}
 
   '@ng-icons/simple-icons@34.0.0':
     resolution: {integrity: sha512-4tn0rcyhwPayjWym8lLFu/38QUZa0zhB6lFc+nS6S8RqH9fx69CdWGXuDq/7KGCbqrn/6+19hereIKOHE3wLAA==}
@@ -13173,7 +13173,7 @@ snapshots:
       rxjs: 7.8.2
       tslib: 2.8.1
 
-  '@ng-icons/font-awesome@34.0.0':
+  '@ng-icons/font-awesome@35.0.1':
     dependencies:
       tslib: 2.8.1
 
