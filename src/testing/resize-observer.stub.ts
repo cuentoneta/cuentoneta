@@ -1,11 +1,11 @@
-// Stub global de ResizeObserver para tests (el entorno de tests no lo implementa). Se instala en
-// test-setup para que las directivas que miden su host se puedan renderizar, y expone el control que un
-// observer real no da: qué elementos están observados, cuándo se entrega el callback y cuántos observers
-// siguen conectados.
+// Stub global de ResizeObserver para tests. happy-dom trae un constructor que no hace nada, así que un
+// componente que lo use igual se renderiza: este stub no está para eso, sino para el control que ni el
+// no-op ni un observer real dan — qué elementos están observados, cuándo se entrega el callback y
+// cuántos observers siguen conectados.
 //
-// El entorno de tests no computa layout, así que un ResizeObserver real nunca dispararía y las medidas
-// darían todas cero. Estos helpers sustituyen ese entorno: `setMeasuredSize` fija el alto real y el
-// visible de un elemento, y `triggerResize` entrega el callback de forma síncrona.
+// El entorno de tests no computa layout, así que las medidas darían todas cero y ningún resize ocurre.
+// Estos helpers sustituyen ese entorno: `setMeasuredSize` fija el alto real y el visible de un elemento,
+// y `triggerResize` entrega el callback de forma síncrona.
 let observers: ResizeObserverStub[] = [];
 
 class ResizeObserverStub {
@@ -16,8 +16,12 @@ class ResizeObserverStub {
 		observers.push(this);
 	}
 
+	// Un ResizeObserver real entrega una primera medición al empezar a observar, sin esperar a que
+	// nada cambie de tamaño. Es el camino por el que una directiva obtiene su valor inicial, así que
+	// el stub lo reproduce: sin esto, ningún test cubriría esa entrega.
 	public observe(target: Element): void {
 		this.targets.push(target);
+		this.deliver();
 	}
 
 	public unobserve(target: Element): void {
@@ -37,7 +41,7 @@ class ResizeObserverStub {
 	}
 
 	public deliver(): void {
-		if (!this.connected) {
+		if (!this.connected || this.targets.length === 0) {
 			return;
 		}
 		const entries = this.targets.map((target) => ({ target }) as ResizeObserverEntry);

@@ -45,13 +45,11 @@ export class ClampOverflowDirective {
 		observer.observe(this.host.nativeElement);
 
 		let cancelled = false;
-		if ('fonts' in document) {
-			document.fonts.ready.then(() => {
-				if (!cancelled) {
-					this.measure();
-				}
-			});
-		}
+		document.fonts.ready.then(() => {
+			if (!cancelled) {
+				this.measure();
+			}
+		});
 
 		onCleanup(() => {
 			cancelled = true;

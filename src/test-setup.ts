@@ -31,10 +31,9 @@ class ZonelessTestModule {}
 // Algunos specs sustituyen los imports del componente vía `componentImports` y dependen de ese default.
 getTestBed().initTestEnvironment([BrowserTestingModule, ZonelessTestModule], platformBrowserTesting());
 
-// jsdom/happy-dom no implementan los observers de layout ni exponen `document.fonts`: se instalan sus
-// stubs globales para todos los tests, de modo que cualquier componente o directiva que los use se pueda
-// renderizar. Los specs que necesitan controlarlos (simular overflow, resolver la carga de fuentes)
-// reutilizan los helpers de cada stub.
+// happy-dom trae los observers de layout como constructores que no hacen nada —alcanzan para renderizar,
+// pero nunca entregan un callback— y no expone `document.fonts`. Estos stubs globales dan el control que
+// falta: los specs que necesitan simular overflow o resolver la carga de fuentes usan sus helpers.
 installIntersectionObserverStub();
 installResizeObserverStub();
 installDocumentFontsStub();

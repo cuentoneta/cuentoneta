@@ -195,7 +195,7 @@ Variantes: `queryBy*` (cuando se espera ausencia, no lanza), `findBy*` (async, e
 
 ## `IntersectionObserver` en tests
 
-`happy-dom` no implementa `IntersectionObserver`. `src/test-setup.ts` instala un **stub global** (`src/testing/intersection-observer.stub.ts`) para que cualquier componente que use IO se pueda renderizar.
+`happy-dom` trae un `IntersectionObserver` que no hace nada: alcanza para renderizar, pero nunca entrega un callback. `src/test-setup.ts` instala un **stub global** (`src/testing/intersection-observer.stub.ts`) que sí lo entrega bajo control del spec.
 
 Los specs que necesitan **simular overflow** (p. ej. `TagsListComponent` / `TagsOverflowDirective`, que recorta tags por ancho con `IntersectionObserver`) reutilizan los helpers del mismo stub:
 
@@ -231,7 +231,7 @@ describe('TagsOverflowDirective', () => {
 
 ## `ResizeObserver` en tests
 
-`happy-dom` tampoco implementa `ResizeObserver` ni computa layout: todas las medidas dan cero. `src/test-setup.ts` instala un **stub global** (`src/testing/resize-observer.stub.ts`) para que cualquier directiva o componente que mida su host se pueda renderizar.
+`happy-dom` trae un `ResizeObserver` que no hace nada y **no computa layout**: todas las medidas dan cero y ningún resize ocurre. `src/test-setup.ts` instala un **stub global** (`src/testing/resize-observer.stub.ts`) que no está para poder renderizar —el no-op alcanza para eso— sino para **controlar** la medición.
 
 Los specs que necesitan **simular una medición** (p. ej. `ClampOverflowDirective`, que decide si ofrecer un "Leer más") reutilizan los helpers del mismo stub:
 
@@ -252,7 +252,7 @@ detectChanges();
 expect(screen.getByRole('button', { name: 'Leer más' })).toBeInTheDocument();
 ```
 
-El `detectChanges()` no es ceremonia: el callback del observer corre fuera de Angular, así que la app zoneless no repinta sola tras escribir la signal.
+El `detectChanges()` aporta **sincronía**, no repintado: la escritura de la signal programa la detección igual, pero el spec asserta en la misma vuelta. La alternativa es esperarla —`await fixture.whenStable()`, como hace el spec de `TagsOverflowDirective`—; lo que no funciona es assertar sin ninguna de las dos.
 
 ### Cuál de los dos observers, y por qué no da igual
 

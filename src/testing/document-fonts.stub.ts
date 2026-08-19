@@ -26,8 +26,6 @@ export function installDocumentFontsStub(): void {
 }
 
 /** Resuelve la carga de fuentes, como haría el navegador al terminar de aplicarlas. */
-export async function resolveFontsReady(): Promise<void> {
+export function resolveFontsReady(): void {
 	resolveReady?.();
-	// Cede el turno para que las continuaciones encoladas sobre `ready` corran antes de asertar.
-	await Promise.resolve();
 }
