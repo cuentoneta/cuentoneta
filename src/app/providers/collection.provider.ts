@@ -68,7 +68,6 @@ export class HttpCollectionApi implements CollectionApi {
 			...dto,
 			slug: createSlug(dto.slug),
 			totalReadingTime: createReadingTime(dto.totalReadingTime),
-			mediaSources: dto.mediaSources,
 			teaserSection: createLiteraryWorkSection({
 				position: dto.teaserSection.position,
 				title: dto.teaserSection.title ? createSectionTitle(dto.teaserSection.title.value) : undefined,
