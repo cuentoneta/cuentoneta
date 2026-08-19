@@ -68,22 +68,23 @@ ESLint (`no-single-work-corpus-imports` en `eslint.config.mjs`) **prohíbe** imp
 
 Un spec o una story que importa una obra concreta queda atado a ella: sus aserciones citan la prosa de esa obra y enriquecer el canon no las alcanza. Las colecciones y los **selectores por capacidad** declaran el shape que el caso necesita y crecen solos.
 
-| Necesitás…                                      | Importá                                                                                                              |
-| ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| Una obra cualquiera                             | `onoffLiteraryWorksMock` (o `onoffRawLiteraryWorksMock` en el backend), y desestructurá la primera                   |
-| Una obra con título de sección                  | `onoffLiteraryWorksWithSectionTitles`                                                                                |
-| Una obra con epígrafes                          | `onoffLiteraryWorksWithEpigraphs` / `onoffRawLiteraryWorksWithEpigraphs`                                             |
-| Una obra que cita un texto en su cuerpo         | `onoffLiteraryWorksWithBlockquotes`                                                                                  |
-| Una obra con o sin nota editorial               | `onoffLiteraryWorksWith(out)EditorialNote` / `onoffRawLiteraryWorksWith(out)EditorialNote`                           |
-| Un texto con atribución (epígrafe o nota)       | `onoffLiteraryWorkEpigraphsMock`; en stories, `corpusAttributedTexts` + `attributedTextSelectArgType`                |
-| Un epígrafe cortado en varias líneas            | `onoffRawLiteraryWorksWithMultilineEpigraphs`                                                                        |
-| Una story o storylist crudas                    | `onoffRawStoriesMock`, `onoffRawStorylistsMock`, `onoffRawNavTeasersMock`                                            |
-| Un dataset para evaluar una query con `groq-js` | `onoffDatasetMock` — el dataset entero, no un subconjunto: una referencia sin documento resuelve a `null` sin fallar |
-| Una story o teaser crudos con multimedia        | `onoffRawStoriesWithMediaSources` / `onoffRawTeasersWithMediaSources`                                                |
-| Una obra con o sin etiquetas                    | `onoffRawLiteraryWorksWith(out)Tags`                                                                                 |
-| Una etiqueta cualquiera                         | `onoffTagsMock` (o `onoffRawTagsMock` en el backend), y tomá un slice                                                |
-| Etiquetas de título corto                       | `onoffTagsWithShortTitles` — para stories donde un título de dos palabras fuerza el recorte por ancho                |
-| La página de inicio cruda, o sus campañas       | `onoffRawLandingPageMock` / `onoffRawContentCampaignsMock`, ambos de `@mocks/onoff-raw-landing-page.mock`            |
+| Necesitás…                                          | Importá                                                                                                                                                                                           |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Una obra cualquiera                                 | `onoffLiteraryWorksMock` (o `onoffRawLiteraryWorksMock` en el backend), y desestructurá la primera                                                                                                |
+| Una obra con título de sección                      | `onoffLiteraryWorksWithSectionTitles`                                                                                                                                                             |
+| Una obra con epígrafes                              | `onoffLiteraryWorksWithEpigraphs` / `onoffRawLiteraryWorksWithEpigraphs`                                                                                                                          |
+| Una obra que cita un texto en su cuerpo             | `onoffLiteraryWorksWithBlockquotes`                                                                                                                                                               |
+| Una obra con o sin nota editorial                   | `onoffLiteraryWorksWith(out)EditorialNote` / `onoffRawLiteraryWorksWith(out)EditorialNote`                                                                                                        |
+| Una obra con, sin, o con un solo recurso multimedia | `onoffLiteraryWorksWith(out)MediaSources`, `onoffLiteraryWorksWithSingleMediaSource`, `onoffLiteraryWorksWithMultipleMediaSources` — el umbral de "hay entre qué elegir" separa a los dos últimos |
+| Un texto con atribución (epígrafe o nota)           | `onoffLiteraryWorkEpigraphsMock`; en stories, `corpusAttributedTexts` + `attributedTextSelectArgType`                                                                                             |
+| Un epígrafe cortado en varias líneas                | `onoffRawLiteraryWorksWithMultilineEpigraphs`                                                                                                                                                     |
+| Una story o storylist crudas                        | `onoffRawStoriesMock`, `onoffRawStorylistsMock`, `onoffRawNavTeasersMock`                                                                                                                         |
+| Un dataset para evaluar una query con `groq-js`     | `onoffDatasetMock` — el dataset entero, no un subconjunto: una referencia sin documento resuelve a `null` sin fallar                                                                              |
+| Una story o teaser crudos con multimedia            | `onoffRawStoriesWithMediaSources` / `onoffRawTeasersWithMediaSources`                                                                                                                             |
+| Una obra con o sin etiquetas                        | `onoffRawLiteraryWorksWith(out)Tags`                                                                                                                                                              |
+| Una etiqueta cualquiera                             | `onoffTagsMock` (o `onoffRawTagsMock` en el backend), y tomá un slice                                                                                                                             |
+| Etiquetas de título corto                           | `onoffTagsWithShortTitles` — para stories donde un título de dos palabras fuerza el recorte por ancho                                                                                             |
+| La página de inicio cruda, o sus campañas           | `onoffRawLandingPageMock` / `onoffRawContentCampaignsMock`, ambos de `@mocks/onoff-raw-landing-page.mock`                                                                                         |
 
 Corolario: **las aserciones se derivan del fixture**, no de prosa clavada. Si el caso necesita una palabra del texto, extraela del propio mock (`bodyHtml.replace(/<[^>]+>/g, ' ')` y tomá una palabra) en vez de escribirla a mano — así sigue pasando cuando el canon cambie. Si falta un selector para el shape que necesitás, **agregalo al agregador** (derivado por predicado, no una lista en paralelo) en vez de importar la obra.
 

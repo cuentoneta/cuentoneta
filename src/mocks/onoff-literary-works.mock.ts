@@ -51,6 +51,23 @@ export const onoffLiteraryWorksWithMediaSources: LiteraryWork[] = onoffLiteraryW
 	(literaryWork) => literaryWork.mediaSources.length > 0,
 );
 
+// El contracaso: una obra sin multimedia, para afirmar que quien ofrece los formatos no dibuja nada
+// cuando no hay ninguno.
+export const onoffLiteraryWorksWithoutMediaSources: LiteraryWork[] = onoffLiteraryWorksMock.filter(
+	(literaryWork) => literaryWork.mediaSources.length === 0,
+);
+
+// Las dos caras que separa el umbral de "hay entre qué elegir": una obra con un solo medio y una con
+// varios. Un consumidor que ofrece la elección se comporta distinto a cada lado, y el predicado deja que
+// lo afirme sin nombrar la obra que hoy cae de ese lado.
+export const onoffLiteraryWorksWithSingleMediaSource: LiteraryWork[] = onoffLiteraryWorksMock.filter(
+	(literaryWork) => literaryWork.mediaSources.length === 1,
+);
+
+export const onoffLiteraryWorksWithMultipleMediaSources: LiteraryWork[] = onoffLiteraryWorksMock.filter(
+	(literaryWork) => literaryWork.mediaSources.length > 1,
+);
+
 // Obras cuyo cuerpo cita un texto ajeno al relato: es la construcción que el original marcaba con
 // alineación y que Markdown resuelve como cita, así que su tratamiento tipográfico necesita un caso
 // del canon donde afirmarse.

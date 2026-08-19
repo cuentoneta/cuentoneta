@@ -23,7 +23,7 @@ describe('ButtonComponent', () => {
 	describe('appearance axis', () => {
 		it.each([
 			['filled', 'bg-white'],
-			['outline', 'bg-white'],
+			['outline', 'bg-neutral-50'],
 			['subtle', 'bg-neutral-100'],
 		])('should apply the background of the %s appearance', async (variant, background) => {
 			await render(`<button cuentoneta-button variant="${variant}">Botón</button>`, {
@@ -75,6 +75,31 @@ describe('ButtonComponent', () => {
 			expect(button).not.toHaveClass('border-neutral-300');
 		});
 
+		// Dos utilidades de `border-color` sobre el mismo botón se resuelven por el orden de la hoja
+		// generada y no por el de la clase, así que el color de la apariencia puede perder contra el de
+		// la caja y el borde desaparecer. Cada apariencia declara exactamente uno.
+		it.each([
+			['filled', 'border-transparent', 'border-neutral-300'],
+			['outline', 'border-neutral-300', 'border-transparent'],
+			['subtle', 'border-transparent', 'border-neutral-300'],
+		])('should declare a single border colour on the %s appearance', async (variant, declared, absent) => {
+			await render(`<button cuentoneta-button variant="${variant}">Botón</button>`, {
+				imports: [ButtonComponent],
+			});
+			const button = screen.getByRole('button');
+			expect(button).toHaveClass(declared);
+			expect(button).not.toHaveClass(absent);
+		});
+
+		it('should declare a single border colour when active', async () => {
+			await render(`<button cuentoneta-button variant="outline" [active]="true">Botón</button>`, {
+				imports: [ButtonComponent],
+			});
+			const button = screen.getByRole('button');
+			expect(button).toHaveClass('border-transparent');
+			expect(button).not.toHaveClass('border-neutral-300');
+		});
+
 		// El ancho del borde es de la caja y no de la apariencia: las tres lo reservan, así que
 		// cambiar de apariencia no mueve el layout.
 		it.each(['filled', 'outline', 'subtle'])(
@@ -91,6 +116,7 @@ describe('ButtonComponent', () => {
 	describe('size axis', () => {
 		it.each([
 			['md', ['px-6', 'py-3', 'text-sm', 'gap-2']],
+			['sm', ['px-3', 'py-2', 'text-sm', 'gap-1.5']],
 			['xs', ['px-3', 'py-2', 'text-xs', 'gap-1']],
 		])('should apply the geometry of the %s size', async (size, classes) => {
 			await render(`<button cuentoneta-button size="${size}">Botón</button>`, {
@@ -98,6 +124,29 @@ describe('ButtonComponent', () => {
 			});
 			const button = screen.getByRole('button');
 			classes.forEach((className) => expect(button).toHaveClass(className));
+		});
+
+		// La razón de existir de `sm`: comparte la caja compacta de `xs` pero conserva el cuerpo de
+		// texto de `md`. Si alguna vez se lo colapsa contra cualquiera de los dos, este caso cae.
+		it('should combine the compact box of xs with the text body of md', async () => {
+			await render(`<button cuentoneta-button size="sm">Botón</button>`, {
+				imports: [ButtonComponent],
+			});
+			const button = screen.getByRole('button');
+			expect(button).toHaveClass('px-3');
+			expect(button).toHaveClass('text-sm');
+			expect(button).not.toHaveClass('px-6');
+			expect(button).not.toHaveClass('text-xs');
+		});
+
+		it('should keep the outline appearance intact in the sm size', async () => {
+			await render(`<button cuentoneta-button variant="outline" size="sm">Botón</button>`, {
+				imports: [ButtonComponent],
+			});
+			const button = screen.getByRole('button');
+			expect(button).toHaveClass('bg-neutral-50');
+			expect(button).toHaveClass('border-neutral-300');
+			expect(button).toHaveClass('px-3');
 		});
 
 		it('should default to the md size', async () => {
@@ -115,7 +164,7 @@ describe('ButtonComponent', () => {
 				imports: [ButtonComponent],
 			});
 			const button = screen.getByRole('button');
-			expect(button).toHaveClass('bg-white');
+			expect(button).toHaveClass('bg-neutral-50');
 			expect(button).toHaveClass('border-neutral-300');
 			expect(button).toHaveClass('px-3');
 		});
@@ -208,7 +257,7 @@ describe('ButtonComponent', () => {
 				providers: defaultProviders,
 			});
 			const link = screen.getByRole('link');
-			expect(link).toHaveClass('bg-white');
+			expect(link).toHaveClass('bg-neutral-50');
 			expect(link).toHaveClass('border');
 			expect(link).toHaveClass('border-neutral-300');
 		});

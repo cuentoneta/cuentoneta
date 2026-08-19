@@ -26,6 +26,7 @@ import {
 	geometriasDelDesveloSpotifyDescription,
 	geometriasDelDesveloYoutubeDescription,
 } from '../media/geometrias-del-desvelo.media';
+import { lasEscalerasAudioDescription } from '../media/las-escaleras.media';
 import geometriasDelDesveloCollectionMd from './geometrias-del-desvelo.collection.md?raw';
 
 export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQueryResult> = {
@@ -169,7 +170,15 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 			totalReadingTime: 9,
 			sectionCount: 1,
 			tags: [novelaRawTag, absurdoRawTag, alegoriaRawTag],
-			mediaSources: [],
+			mediaSources: [
+				{
+					_key: 'las-escaleras-audio',
+					_type: 'audioRecording',
+					title: 'Lectura de "Las escaleras" por su autor',
+					description: lasEscalerasAudioDescription,
+					url: 'https://cdn.example.org/onoff/las-escaleras.ogg',
+				},
+			],
 			authors: [
 				{
 					_id: 'author_1',
