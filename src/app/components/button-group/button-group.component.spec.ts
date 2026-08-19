@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { render, screen } from '@testing-library/angular';
+import { render, screen, within } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { faBrandYoutube } from '@ng-icons/font-awesome/brands';
@@ -44,7 +44,35 @@ describe('ButtonGroupComponent', () => {
 				providers: [provideIcons({ faBrandYoutube })],
 			});
 
-			expect(screen.getByRole('button', { name: 'Video' })).toBeInTheDocument();
+			// El ícono se busca dentro del botón, y no solo por el nombre accesible: la etiqueta lo
+			// nombra igual con el ícono ausente, así que sin esta aserción el caso pasaría con la
+			// plantilla del ícono borrada.
+			const button = screen.getByRole('button', { name: 'Video' });
+			expect(await within(button).findByTestId('option-icon')).toBeInTheDocument();
+		});
+
+		it('should render no icon when the option declares none', async () => {
+			await render(ButtonGroupComponent, {
+				inputs: { label: 'Formatos', options },
+			});
+
+			expect(screen.queryAllByTestId('option-icon')).toHaveLength(0);
+		});
+
+		// El ícono es decorativo: la etiqueta ya nombra la opción. Un ícono que se anunciara ensuciaría
+		// el nombre accesible del botón, así que se afirma que ningún rol de imagen queda expuesto.
+		it('should keep the icon out of the accessibility tree', async () => {
+			await render(ButtonGroupComponent, {
+				inputs: {
+					label: 'Formatos',
+					options: [{ id: 'video', label: 'Video', iconName: 'faBrandYoutube' }],
+				},
+				imports: [NgIcon],
+				providers: [provideIcons({ faBrandYoutube })],
+			});
+
+			await screen.findByTestId('option-icon');
+			expect(screen.queryAllByRole('img')).toHaveLength(0);
 		});
 
 		it('should render an empty group without failing', async () => {

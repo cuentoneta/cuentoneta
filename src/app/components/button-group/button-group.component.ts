@@ -6,12 +6,16 @@ import { ButtonComponent } from '../button/button.component';
  * Una opción del grupo, ya resuelta por el consumidor: el grupo no sabe de dónde salen.
  */
 export interface ButtonGroupOption {
-	/** Identidad de la opción. Es lo único que el grupo emite hacia arriba. */
-	id: string;
+	/**
+	 * Identidad de la opción. Es lo único que el grupo emite hacia arriba, y lo que compara contra
+	 * `selectedId`, así que el consumidor debe entregarlo único dentro de la lista: dos opciones con
+	 * el mismo id quedan vigentes a la vez.
+	 */
+	readonly id: string;
 	/** Texto visible y nombre accesible de la opción. */
-	label: string;
+	readonly label: string;
 	/** Nombre del ícono de ng-icons. Lo registra el consumidor con `provideIcons`. */
-	iconName?: string;
+	readonly iconName?: string;
 }
 
 /**
@@ -58,7 +62,7 @@ export interface ButtonGroupOption {
 				type="button"
 			>
 				@if (option.iconName) {
-					<ng-icon [name]="option.iconName" aria-hidden="true" />
+					<ng-icon [name]="option.iconName" data-testid="option-icon" />
 				}
 				{{ option.label }}
 			</button>
