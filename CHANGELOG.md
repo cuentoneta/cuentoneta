@@ -16,6 +16,54 @@ La lista de características futuras a implementar puede hallarse en la sección
 
 Los hitos futuros de desarrollo, en los cuales se detallan las funcionalidades a desarrollar y los cambios a implementar, pueden encontrarse en las secciones [milestones](https://github.com/cuentoneta/cuentoneta/milestones) y [projects](https://github.com/cuentoneta/cuentoneta/projects) del repositorio de Github del proyecto.
 
+## Versión 2.10.2 (2026-08-19)
+
+La versión 2.10.2 es un patch de cinco frentes, todos de alcance cerrado.
+
+El primero nace del smoke post-deploy y es el más grave: **37 páginas indexables servían un cuerpo vacío**. El constructor del schema de Persona leía la URL de un recurso que no la tenía, lanzaba, y como corre en una directiva declarada como `hostDirective` de la página, la excepción se llevaba puesto el render entero — la ficha del autor y todas sus obras salían con `<main>` vacío en SSR (#2218). Se lo aborda en sus tres capas: el defecto de render con su invariante en la frontera del ACL, la validación en el Studio que impide volver a cargar un recurso sin enlace junto con el saneamiento de los 217 documentos que ya lo tenían (#2219), y la detección, porque el smoke muestrea al azar y por eso no puede encontrar una página vacía de forma confiable — ahora un barrido recorre el sitemap entero (#2220).
+
+El segundo afina el **diagnóstico semanal de indexado**, recién puesto en marcha. Su reporte contaba como movimiento un par de estados que oscila entre corridas —"Discovered" y "URL is unknown to Google" caen los dos en "nunca rastreada", así que el parpadeo se leía como cambio real y enterraba el caso que importa entre veintitantos que no lo eran (#2225)—. Y el resumen había que acordarse de ir a buscarlo a la pestaña de la corrida: ahora el job mantiene una **bitácora**, un issue al que cada corrida con movimiento le agrega un comentario, y ninguna semana sin novedad lo ensucia (#2230).
+
+El tercero ataca el **peso inicial de la aplicación**, que la adopción del decorador `@Service` dejó al descubierto (#1784): se quitaron los providers muertos y redundantes de la configuración (#2226), los DTO del frontend migraron a `zod/mini` —la librería completa era cerca de la mitad del arranque, y viajaba por dos providers eager (#2227)—, y los proveedores de API cuyos consumidores viven detrás de rutas lazy dejaron de cargarse por adelantado (#2228).
+
+El cuarto corrige una **trampa de foco**: la barra de navegación oculta al hacer scroll seguía siendo tabulable y clickeable, porque el estado oculto solo la volvía transparente y colapsaba su alto sin recortar (#2232).
+
+El quinto es de **datos y documentación**. Un barrido nuevo cuenta los documentos que incumplen un campo que el schema declara requerido, derivándolo de la misma fuente que consume el typegen, y mantiene su propio issue de seguimiento (#2233). Y dos correcciones detectadas durante el release anterior: la guía de desarrollo todavía nombraba Jest como framework de tests unitarios (#2221), y el procedimiento de una migración omitía un flag que el CLI exige (#2222).
+
+### Cambios completos
+
+Ver el changelog completo en [2.10.2](https://github.com/cuentoneta/cuentoneta/releases/tag/2.10.2)
+
+### Cambios
+
+#### Cuerpo servido e indexado
+
+- [#2218] - Resiste en la frontera el recurso de autor sin URL que vaciaba la ficha y sus obras.
+- [#2219] - Exige URL en los recursos y sanea los 217 documentos que no la tienen.
+- [#2220] - Detecta páginas con cuerpo vacío en todo el sitemap, sin depender del muestreo.
+
+#### Diagnóstico semanal de indexado
+
+- [#2225] - Deja de contar como movimiento la oscilación entre Discovered y unknown to Google.
+- [#2230] - Lleva el diagnóstico semanal a una bitácora que avisa solo cuando hay movimiento.
+
+#### Peso inicial de la aplicación
+
+- [#1784] - Adopta el decorador @Service como convención para los services singleton.
+- [#2226] - Aligera el bundle inicial quitando providers innecesarios de app.config.ts.
+- [#2227] - Migra los DTO del frontend a zod/mini para sacar la librería completa del bundle.
+- [#2228] - Lazifica los proveedores de API cuyos consumidores viven en rutas lazy.
+
+#### Accesibilidad
+
+- [#2232] - Recorta la barra de navegación oculta para que deje de ser enfocable y clickeable.
+
+#### Datos y documentación
+
+- [#2233] - Audita los campos requeridos cuyo dato persistido no los cumple.
+- [#2221] - Corrige la documentación que todavía nombraba a Jest como framework de tests.
+- [#2222] - Suma a los comandos de migración documentados el flag que el CLI exige.
+
 ## Versión 2.10.1 (2026-08-15)
 
 La versión 2.10.1 es un patch de dos frentes: el trabajo derivado del diagnóstico de indexado hecho con la URL Inspection API, y la primera pasada de acabado sobre la página de lectura.
