@@ -75,6 +75,31 @@ describe('ButtonComponent', () => {
 			expect(button).not.toHaveClass('border-neutral-300');
 		});
 
+		// Dos utilidades de `border-color` sobre el mismo botón se resuelven por el orden de la hoja
+		// generada y no por el de la clase, así que el color de la apariencia puede perder contra el de
+		// la caja y el borde desaparecer. Cada apariencia declara exactamente uno.
+		it.each([
+			['filled', 'border-transparent', 'border-neutral-300'],
+			['outline', 'border-neutral-300', 'border-transparent'],
+			['subtle', 'border-transparent', 'border-neutral-300'],
+		])('should declare a single border colour on the %s appearance', async (variant, declared, absent) => {
+			await render(`<button cuentoneta-button variant="${variant}">Botón</button>`, {
+				imports: [ButtonComponent],
+			});
+			const button = screen.getByRole('button');
+			expect(button).toHaveClass(declared);
+			expect(button).not.toHaveClass(absent);
+		});
+
+		it('should declare a single border colour when active', async () => {
+			await render(`<button cuentoneta-button variant="outline" [active]="true">Botón</button>`, {
+				imports: [ButtonComponent],
+			});
+			const button = screen.getByRole('button');
+			expect(button).toHaveClass('border-transparent');
+			expect(button).not.toHaveClass('border-neutral-300');
+		});
+
 		// El ancho del borde es de la caja y no de la apariencia: las tres lo reservan, así que
 		// cambiar de apariencia no mueve el layout.
 		it.each(['filled', 'outline', 'subtle'])(

@@ -63,15 +63,19 @@ export class ButtonComponent {
 	/** Marca al botón como la opción vigente dentro de un grupo */
 	public readonly active = input(false);
 
-	// El ancho del borde se reserva acá, transparente, y cada apariencia solo le pone color: si lo
-	// declarara `outline`, elegirla o marcarla vigente cambiaría la caja 2px y reflowearía la fila.
+	// Acá va el ancho del borde y **solo** el ancho: si lo declarara `outline`, elegirla o marcarla
+	// vigente cambiaría la caja 2px y reflowearía la fila.
+	//
+	// El color lo pone cada apariencia, y ninguna puede omitirlo. Un color acá dejaría dos utilidades
+	// de `border-color` sobre el mismo elemento —la de la base y la de la apariencia—, y cuál gana lo
+	// decidiría el orden de la hoja generada y no el de la clase: el borde de `outline` desaparecía.
 	private readonly baseClasses =
-		'inline-flex cursor-pointer items-center justify-center font-inter font-semibold no-underline transition-colors duration-200 rounded-full border border-transparent focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-500 disabled:cursor-not-allowed disabled:opacity-50';
+		'inline-flex cursor-pointer items-center justify-center font-inter font-semibold no-underline transition-colors duration-200 rounded-full border focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-500 disabled:cursor-not-allowed disabled:opacity-50';
 
 	private readonly variantClasses: Record<ButtonVariant, string> = {
-		filled: 'bg-white text-neutral-900 hover:bg-neutral-50 active:bg-neutral-100',
+		filled: 'bg-white text-neutral-900 border-transparent hover:bg-neutral-50 active:bg-neutral-100',
 		outline: 'bg-neutral-50 text-neutral-900 border-neutral-300 hover:bg-neutral-100 active:bg-neutral-200',
-		subtle: 'bg-neutral-100 text-neutral-900 hover:bg-neutral-200 active:bg-neutral-300',
+		subtle: 'bg-neutral-100 text-neutral-900 border-transparent hover:bg-neutral-200 active:bg-neutral-300',
 	};
 
 	private readonly sizeClasses: Record<ButtonSize, string> = {
@@ -80,7 +84,8 @@ export class ButtonComponent {
 		xs: 'px-3 py-2 text-xs gap-1',
 	};
 
-	private readonly activeClasses = 'bg-neutral-900 text-neutral-50 hover:bg-neutral-800 active:bg-neutral-700';
+	private readonly activeClasses =
+		'bg-neutral-900 text-neutral-50 border-transparent hover:bg-neutral-800 active:bg-neutral-700';
 
 	/** Clases del host calculadas componiendo los tres ejes */
 	protected readonly hostClasses = computed(() => {
