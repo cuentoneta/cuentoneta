@@ -1,6 +1,6 @@
 import { spyOn } from '@test-utils';
 import { mapMediaSources, mapMediaTeasers } from './media-sources.functions';
-import { geometriasDelDesveloRawCollection } from '@mocks/onoff/collection/geometrias-del-desvelo.collection.raw.mock';
+import { onoffRawCollectionWorksWithMediaSources } from '@mocks/onoff-raw-collections.mock';
 import { onoffRawStoriesWithMediaSources, onoffRawTeasersWithMediaSources } from '@mocks/onoff-raw-stories.mock';
 import { isAudioRecording, isSpaceRecording, isSpotifyPodcastEpisode, isYouTubeVideo } from '@models/media.model';
 import { onoffAudioRecordingsMock } from '@mocks/onoff-media.mock';
@@ -168,7 +168,7 @@ describe('descarte de un tipo sin modelo de dominio', () => {
 });
 
 describe('mapMediaTeasers', () => {
-	const rawWork = geometriasDelDesveloRawCollection.literaryWorks[0];
+	const rawWork = onoffRawCollectionWorksWithMediaSources[0];
 
 	it('mapea cada tipo modelado a su tag, en orden', () => {
 		expect(mapMediaTeasers(rawWork.mediaSources)).toEqual([
