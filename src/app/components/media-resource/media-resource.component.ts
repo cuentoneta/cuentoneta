@@ -4,7 +4,7 @@ import type { Media } from '@models/media.model';
 import { toMediaWidgetOutlet } from '@components/media-widgets/media-widget-registry';
 
 /**
- * @deprecated Usar `MediaWidgetSelectorComponent`, que ofrece los formatos y monta solo el elegido.
+ * @deprecated Usar `MediaWidgetSelector`, que ofrece los formatos y monta solo el elegido.
  * Este despachador monta todos los medios de una obra a la vez, la política que las páginas de Story
  * y Storylist todavía esperan; ya no tiene catálogo propio —lo toma de `mediaWidgetRegistry`—, así
  * que lo único que queda acá es esa política. Se elimina al reemplazar esas páginas por `ReadPage`.
