@@ -45,7 +45,6 @@ export type ButtonSize = 'md' | 'xs';
 @Component({
 	// eslint-disable-next-line @angular-eslint/component-selector -- Attribute selector usa el prefijo cuentoneta- pero restringido a tags <button> y <a>
 	selector: 'button[cuentoneta-button], a[cuentoneta-button]',
-	standalone: true,
 	template: `<ng-content />`,
 	host: {
 		'[class]': 'hostClasses()',

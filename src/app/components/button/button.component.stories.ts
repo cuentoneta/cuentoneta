@@ -1,7 +1,7 @@
 import { argsToTemplate, Meta, StoryObj, applicationConfig } from '@storybook/angular-vite';
 import { ButtonComponent } from './button.component';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { faBrandFacebook, faBrandTwitter, faBrandWhatsapp } from '@ng-icons/font-awesome/brands';
+import { faBrandWhatsapp } from '@ng-icons/font-awesome/brands';
 
 const meta: Meta<ButtonComponent> = {
 	title: 'Componentes V3/Button',
@@ -47,7 +47,7 @@ const meta: Meta<ButtonComponent> = {
 	},
 	decorators: [
 		applicationConfig({
-			providers: [provideIcons({ faBrandFacebook, faBrandTwitter, faBrandWhatsapp })],
+			providers: [provideIcons({ faBrandWhatsapp })],
 		}),
 	],
 };
