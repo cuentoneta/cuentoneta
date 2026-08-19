@@ -114,8 +114,8 @@ importers:
         specifier: ^34.0.0
         version: 34.0.0
       '@ng-icons/simple-icons':
-        specifier: ^34.0.0
-        version: 34.0.0
+        specifier: ^35.0.1
+        version: 35.0.1
       '@nx/angular':
         specifier: 23.1.1
         version: 23.1.1(0fdd82aae22306dd7eb72fe4dd44bfb5)
@@ -2856,8 +2856,8 @@ packages:
   '@ng-icons/font-awesome@34.0.0':
     resolution: {integrity: sha512-/CwqShj1sY7HAGUBnFSrPtBA5dVcRy+AkRS7uCqtVLnf/fjxtXU6gx6uiwtWbO4uwEcus+LwQUW1xklW7wzESA==}
 
-  '@ng-icons/simple-icons@34.0.0':
-    resolution: {integrity: sha512-4tn0rcyhwPayjWym8lLFu/38QUZa0zhB6lFc+nS6S8RqH9fx69CdWGXuDq/7KGCbqrn/6+19hereIKOHE3wLAA==}
+  '@ng-icons/simple-icons@35.0.1':
+    resolution: {integrity: sha512-DmvRfwGzSn+JR4UOAcBZgO+zJfyWvgHiifG8e+eOH3SdSAaA60FIP0nU+td9vlkDAks0278AH/NXpsqvS+6Vvg==}
 
   '@ngtools/webpack@22.1.4':
     resolution: {integrity: sha512-4zgOkrQXC3BW0400Ax5Y8X45gHSyPJaiN6MSr9X9ONFH8Vygz7f3u0NJ3+Ihw+mnlHoPORK4kBdA6VZcHU6ghw==}
@@ -13177,7 +13177,7 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  '@ng-icons/simple-icons@34.0.0':
+  '@ng-icons/simple-icons@35.0.1':
     dependencies:
       tslib: 2.8.1
 
