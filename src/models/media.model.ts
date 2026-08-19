@@ -3,16 +3,29 @@ import type { SanitizedHtml } from '@models/sanitized-html.model';
 /**
  * Modelos del contenido multimedia vinculado a una obra o a una colección.
  *
- * `Media` es el tipo **ancho**: el de las colecciones y el que devuelve el ACL, con `data?: unknown`
- * porque el supertipo no correlaciona el tag con la forma de su carga. `MediaTypes` es el **angosto**,
- * la unión discriminada que consumen los widgets, donde cada tag ya fija su `data`. Se pasa de uno al
- * otro con los guards de abajo, nunca con una aserción.
+ * Dos ejes **ortogonales** los organizan, y conviene no confundirlos:
+ *
+ * 1. **Qué transporta la proyección.** `Media` es la vista **completa**, la de la página: trae la
+ *    carga con la que un widget puede reproducir el recurso. `MediaTeaser` es la vista de
+ *    **listado**: solo el tag, que es lo único que una tarjeta consume para pintar el ícono de la
+ *    plataforma. Cada una tiene su proyección GROQ y su mapper; el teaser no puede prometer lo que
+ *    su proyección no trae. `data` es obligatorio en `Media` justamente para sostener eso: si fuera
+ *    opcional, un `MediaTeaser` sería asignable a `Media` y montar un widget desde un listado
+ *    compilaría.
+ * 2. **Cómo se correlaciona el tag con su carga.** Dentro de la vista completa, `Media` es el
+ *    supertipo —`data: unknown`, sin correlación— y `MediaTypes` la unión discriminada que consumen
+ *    los widgets, donde cada tag ya fija su `data`. Se pasa de uno al otro con los guards de abajo,
+ *    nunca con una aserción.
  */
+export interface MediaTeaser {
+	readonly type: MediaTypeKey;
+}
+
 export interface Media {
 	title: string;
 	description: SanitizedHtml;
 	type: MediaTypeKey;
-	data?: unknown;
+	data: unknown;
 }
 
 export interface AudioRecording extends Media {

@@ -1,4 +1,11 @@
-import { isAudioRecording, isSpaceRecording, isSpotifyPodcastEpisode, isYouTubeVideo, type Media } from './media.model';
+import {
+	isAudioRecording,
+	isSpaceRecording,
+	isSpotifyPodcastEpisode,
+	isYouTubeVideo,
+	type Media,
+	type MediaTeaser,
+} from './media.model';
 import {
 	onoffAudioRecordingsMock,
 	onoffSpaceRecordingsMock,
@@ -24,5 +31,25 @@ describe('type guards de Media', () => {
 		const others = everyMedia.filter((media) => media !== own);
 
 		expect(others.map((media) => guard(media))).toEqual([false, false, false]);
+	});
+});
+
+// La asimetría entre las dos vistas la evalúa el gate `typecheck`, que cubre los *.spec.ts: si
+// alguna de estas dos afirmaciones dejara de ser verdad, el gate corta acá y no en la página.
+describe('asignabilidad entre la vista de teaser y la completa', () => {
+	it('no admite un teaser donde se espera la vista completa', () => {
+		const teaser: MediaTeaser = { type: 'audioRecording' };
+
+		// @ts-expect-error un MediaTeaser no trae `data`, así que montar un widget desde un listado no compila
+		const asMedia: Media = teaser;
+
+		expect(asMedia.type).toBe('audioRecording');
+	});
+
+	it('admite la vista completa donde se espera un teaser', () => {
+		const media: Media = onoffAudioRecordingsMock[0];
+		const asTeaser: MediaTeaser = media;
+
+		expect(asTeaser.type).toBe(media.type);
 	});
 });
