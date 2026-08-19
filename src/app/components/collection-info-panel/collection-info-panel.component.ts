@@ -54,7 +54,8 @@ import { CollectionInfoPanelSkeletonComponent } from './collection-info-panel-sk
 						<p class="font-inter text-xl leading-7 font-bold text-neutral-900">{{ collection.title }}</p>
 					}
 					@if (collection.tags.length > 0) {
-						<cuentoneta-tags-list data-testid="tags">
+						<!-- Ancho completo: sin él la fila crece con su contenido y desborda la columna en vez de recortarse. -->
+						<cuentoneta-tags-list class="w-full" data-testid="tags">
 							@for (tag of collection.tags; track tag.slug) {
 								<cuentoneta-tag [label]="tag.title" variant="filled" />
 							}
@@ -76,9 +77,12 @@ export class CollectionInfoPanelComponent {
 
 	/** Sin valor, la descripción se muestra entera. */
 	public readonly descriptionLines = input(undefined, {
-		// Acotado a [1, 10] para coincidir con el safelist `line-clamp-{1..10}` de styles.css: la clase se
-		// construye dinámicamente y el escaneo estático de Tailwind no la detecta.
-		transform: (value: number | undefined) => (value === undefined ? undefined : Math.min(10, Math.max(1, value))),
+		// Acotado a los enteros de [1, 10] para coincidir con el safelist `line-clamp-{1..10}` de
+		// styles.css: la clase se construye dinámicamente, el escaneo estático de Tailwind no la detecta,
+		// y un valor fuera de esa forma —un decimal, por caso— produciría una clase inexistente y un
+		// recorte que desaparece sin que nada falle.
+		transform: (value: number | undefined) =>
+			value === undefined ? undefined : Math.min(10, Math.max(1, Math.trunc(value))),
 	});
 
 	/** Marca la portada como prioritaria: en la barra lateral entra above-the-fold. */

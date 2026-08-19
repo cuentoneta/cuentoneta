@@ -4,9 +4,25 @@ import {
 	onoffCollectionsWithRepresentativeImageryMock,
 	onoffCollectionsWithSampleImageryMock,
 } from '@mocks/onoff-collections.mock';
+import {
+	absurdoTagMock,
+	cuentoTagMock,
+	ensayoTagMock,
+	metaficcionTagMock,
+	novelaTagMock,
+	teatroTagMock,
+} from '@mocks/onoff-tags.mock';
+import { createCollection } from '@models/collection.model';
 
 const [representativeCollection] = onoffCollectionsWithRepresentativeImageryMock;
 const [sampleCollection] = onoffCollectionsWithSampleImageryMock;
+
+// El corpus trae una etiqueta por colección: la variante se deriva por la factory, que es la que hace
+// cumplir las invariantes del agregado.
+const collectionWithManyTags = createCollection({
+	...representativeCollection,
+	tags: [cuentoTagMock, novelaTagMock, ensayoTagMock, teatroTagMock, metaficcionTagMock, absurdoTagMock],
+});
 
 const meta: Meta<CollectionInfoPanelComponent> = {
 	title: 'Componentes V3/CollectionInfoPanel',
@@ -100,6 +116,24 @@ export const AbanicoDePortadas: Story = {
 		docs: {
 			description: {
 				story: `<p>La colección sin imagen propia resuelve su portada con el abanico de tres portadas de obras que contiene, que es la otra forma que declara el dominio.</p><p><strong>Usos:</strong> colecciones que no tienen una imagen editorial cargada.</p>`,
+			},
+		},
+	},
+};
+
+export const VariasEtiquetas: Story = {
+	render: (args) => ({
+		props: args,
+		template: `<cuentoneta-collection-info-panel ${argsToTemplate(args)} />`,
+	}),
+	args: {
+		collection: collectionWithManyTags,
+		descriptionLines: 8,
+	},
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>Con varias etiquetas se ve el recorte de <a href="./?path=/docs/componentes-v3-tagslist--docs" target="_top"><strong>TagsList</strong></a>: en esta columna angosta las que no entran se colapsan detrás de un contador. Es la única superficie donde ese comportamiento se puede mirar — depende de medidas reales y el entorno de tests no las computa.</p><p><strong>Usos:</strong> colecciones clasificadas con más de una etiqueta.</p>`,
 			},
 		},
 	},

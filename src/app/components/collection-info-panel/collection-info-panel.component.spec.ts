@@ -9,12 +9,24 @@ import {
 	onoffCollectionsWithRepresentativeImageryMock,
 	onoffCollectionsWithSampleImageryMock,
 } from '@mocks/onoff-collections.mock';
+import { cuentoTagMock, ensayoTagMock, novelaTagMock } from '@mocks/onoff-tags.mock';
+
+// Modelos
+import { createCollection, type Collection } from '@models/collection.model';
 
 // Utilidades de test
 import { clearAllMocks } from '@test-utils';
 
 const [representativeMock] = onoffCollectionsWithRepresentativeImageryMock;
 const [sampleMock] = onoffCollectionsWithSampleImageryMock;
+
+const availableTags = [cuentoTagMock, novelaTagMock, ensayoTagMock];
+
+// Deriva una variante del canon pasando por la factory, no por spread: el agregado está congelado y
+// armarlo a mano saltearía las invariantes que la factory existe para hacer cumplir.
+function collectionWithTags(base: Collection, count: number): Collection {
+	return createCollection({ ...base, tags: availableTags.slice(0, count) });
+}
 
 describe('CollectionInfoPanelComponent', () => {
 	beforeEach(() => {
@@ -46,18 +58,26 @@ describe('CollectionInfoPanelComponent', () => {
 			expect(screen.queryByText(representativeMock.title)).not.toBeInTheDocument();
 		});
 
-		it('should render the description served by the backend', async () => {
+		// La marcación tiene que sobrevivir: sin el bypass, el sanitizer de Angular recorta un HTML que el
+		// backend ya acotó a su allow-list, y el énfasis de la prosa se pierde sin que nada falle.
+		it('should preserve the markup of the sanitized description', async () => {
 			await render(CollectionInfoPanelComponent, { inputs: { collection: representativeMock } });
 
-			expect(screen.getByTestId('description')).not.toBeEmptyDOMElement();
+			const description = screen.getByTestId('description');
+			expect(description).not.toBeEmptyDOMElement();
+			expect(within(description).getAllByRole('paragraph').length).toBeGreaterThan(0);
 		});
 
 		// Todas las etiquetas del dominio, no la primera: recortar acá escondería en silencio las demás.
+		// El corpus trae una sola por colección, así que el caso se deriva por la factory con tres — con
+		// una, una plantilla que pintara `tags[0]` pasaría igual y el test no probaría nada.
 		it('should render every tag of the collection', async () => {
-			await render(CollectionInfoPanelComponent, { inputs: { collection: representativeMock } });
+			const collection = collectionWithTags(representativeMock, 3);
+			await render(CollectionInfoPanelComponent, { inputs: { collection } });
 
 			const tags = screen.getByTestId('tags');
-			representativeMock.tags.forEach((tag) => expect(within(tags).getByText(tag.title)).toBeInTheDocument());
+			expect(collection.tags).toHaveLength(3);
+			collection.tags.forEach((tag) => expect(within(tags).getByText(tag.title)).toBeInTheDocument());
 		});
 
 		it('should omit the tag list when the collection has none', async () => {

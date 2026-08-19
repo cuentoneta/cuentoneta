@@ -18,7 +18,8 @@ import { CoverImageSkeletonComponent } from '../cover-image/cover-image-skeleton
 				<cuentoneta-skeleton appearance="line" class="h-7 w-40 bg-neutral-300" />
 				<cuentoneta-skeleton appearance="line" class="h-6 w-24 bg-neutral-300" />
 			</div>
-			<div class="flex w-full flex-col gap-1.5">
+			<!-- Barra de 16 px con 4 px de separación: los 20 px de interlineado que usa la descripción real. -->
+			<div class="flex w-full flex-col gap-1">
 				@for (line of descriptionPlaceholders(); track $index) {
 					<cuentoneta-skeleton appearance="line" class="h-4 w-full bg-neutral-300" />
 				}
