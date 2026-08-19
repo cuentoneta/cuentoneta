@@ -13,12 +13,12 @@ const meta: Meta<ButtonComponent> = {
 				sourceState: 'shown',
 			},
 			description: {
-				component: `<div><p>El <strong>ButtonComponent</strong> del Design System v3 es un componente basado en atributo (<code>cuentoneta-button</code>) que se aplica indistintamente sobre elementos <code>&lt;button&gt;</code> y <code>&lt;a&gt;</code>, manteniendo estilos consistentes y la semántica correcta de cada elemento (acción vs. navegación).</p><p>Su API son <strong>tres ejes independientes</strong> que se combinan libremente, en lugar de un catálogo de variantes:</p><ul><li><code>type</code> — la <strong>apariencia</strong>: fondo, borde y color de texto. <code>filled</code> (default, fondo blanco sin borde), <code>outline</code> (fondo blanco con borde neutral-300) y <code>subtle</code> (fondo neutral-100 sin borde).</li><li><code>size</code> — la <strong>geometría</strong>: padding, tamaño de fuente y separación entre ícono y texto. <code>md</code> (default) y <code>xs</code>.</li><li><code>active</code> — el <strong>estado</strong> de opción vigente dentro de un grupo, que reemplaza la apariencia por el contraste invertido.</li></ul><p>Están separados porque mezclarlos obliga a agregar una variante nueva cada vez que una pantalla necesita una apariencia existente en otro tamaño, y esa variante termina nombrada por su consumidor en lugar de por su apariencia.</p><p>Coordinar qué opción está vigente, que la elección sea excluyente y anunciarla con <code>aria-pressed</code> son responsabilidad del componente contenedor: el botón solo sabe pintarse.</p></div>`,
+				component: `<div><p>El <strong>ButtonComponent</strong> del Design System v3 es un componente basado en atributo (<code>cuentoneta-button</code>) que se aplica indistintamente sobre elementos <code>&lt;button&gt;</code> y <code>&lt;a&gt;</code>, manteniendo estilos consistentes y la semántica correcta de cada elemento (acción vs. navegación).</p><p>Su API son <strong>tres ejes independientes</strong> que se combinan libremente, en lugar de un catálogo de variantes:</p><ul><li><code>variant</code> — la <strong>apariencia</strong>: fondo, borde y color de texto. <code>filled</code> (default, fondo blanco sin borde), <code>outline</code> (fondo blanco con borde neutral-300) y <code>subtle</code> (fondo neutral-100 sin borde).</li><li><code>size</code> — la <strong>geometría</strong>: padding, tamaño de fuente y separación entre ícono y texto. <code>md</code> (default) y <code>xs</code>.</li><li><code>active</code> — el <strong>estado</strong> de opción vigente dentro de un grupo, que reemplaza la apariencia por el contraste invertido.</li></ul><p>Están separados porque mezclarlos obliga a agregar una variante nueva cada vez que una pantalla necesita una apariencia existente en otro tamaño, y esa variante termina nombrada por su consumidor en lugar de por su apariencia.</p><p>Coordinar qué opción está vigente, que la elección sea excluyente y anunciarla con <code>aria-pressed</code> son responsabilidad del componente contenedor: el botón solo sabe pintarse.</p></div>`,
 			},
 		},
 	},
 	argTypes: {
-		type: {
+		variant: {
 			control: 'inline-radio',
 			options: ['filled', 'outline', 'subtle'],
 			description: 'Apariencia del botón: fondo, borde y color de texto',
@@ -61,7 +61,7 @@ export const Playground: Story = {
 		template: `<button cuentoneta-button ${argsToTemplate(args)}>Button</button>`,
 	}),
 	args: {
-		type: 'filled',
+		variant: 'filled',
 		size: 'md',
 		active: false,
 	},
@@ -78,9 +78,9 @@ export const Appearances: Story = {
 	render: () => ({
 		template: `
 			<div class="flex flex-wrap items-center gap-4">
-				<button cuentoneta-button type="filled">Filled</button>
-				<button cuentoneta-button type="outline">Outline</button>
-				<button cuentoneta-button type="subtle">Subtle</button>
+				<button cuentoneta-button variant="filled">Filled</button>
+				<button cuentoneta-button variant="outline">Outline</button>
+				<button cuentoneta-button variant="subtle">Subtle</button>
 			</div>
 		`,
 	}),
@@ -97,8 +97,8 @@ export const Sizes: Story = {
 	render: () => ({
 		template: `
 			<div class="flex flex-wrap items-center gap-4">
-				<button cuentoneta-button type="subtle" size="md"><ng-icon name="faBrandWhatsapp" />Medium</button>
-				<button cuentoneta-button type="subtle" size="xs"><ng-icon name="faBrandWhatsapp" />Extra small</button>
+				<button cuentoneta-button variant="subtle" size="md"><ng-icon name="faBrandWhatsapp" />Medium</button>
+				<button cuentoneta-button variant="subtle" size="xs"><ng-icon name="faBrandWhatsapp" />Extra small</button>
 			</div>
 		`,
 		moduleMetadata: {
@@ -119,9 +119,9 @@ export const ActiveOption: Story = {
 		props: args,
 		template: `
 			<div class="flex flex-wrap items-center gap-4">
-				<button cuentoneta-button type="filled" [active]="active">Filled</button>
-				<button cuentoneta-button type="outline" [active]="active">Outline</button>
-				<button cuentoneta-button type="subtle" [active]="active">Subtle</button>
+				<button cuentoneta-button variant="filled" [active]="active">Filled</button>
+				<button cuentoneta-button variant="outline" [active]="active">Outline</button>
+				<button cuentoneta-button variant="subtle" [active]="active">Subtle</button>
 			</div>
 		`,
 	}),
@@ -142,18 +142,18 @@ export const AxesMatrix: Story = {
 		template: `
 			<div class="flex flex-col gap-4">
 				<div class="flex flex-wrap items-center gap-4">
-					<button cuentoneta-button type="filled" size="md">Filled md</button>
-					<button cuentoneta-button type="outline" size="md">Outline md</button>
-					<button cuentoneta-button type="subtle" size="md">Subtle md</button>
+					<button cuentoneta-button variant="filled" size="md">Filled md</button>
+					<button cuentoneta-button variant="outline" size="md">Outline md</button>
+					<button cuentoneta-button variant="subtle" size="md">Subtle md</button>
 				</div>
 				<div class="flex flex-wrap items-center gap-4">
-					<button cuentoneta-button type="filled" size="xs">Filled xs</button>
-					<button cuentoneta-button type="outline" size="xs">Outline xs</button>
-					<button cuentoneta-button type="subtle" size="xs">Subtle xs</button>
+					<button cuentoneta-button variant="filled" size="xs">Filled xs</button>
+					<button cuentoneta-button variant="outline" size="xs">Outline xs</button>
+					<button cuentoneta-button variant="subtle" size="xs">Subtle xs</button>
 				</div>
 				<div class="flex flex-wrap items-center gap-4">
-					<button cuentoneta-button type="outline" size="md" [active]="true">Vigente md</button>
-					<button cuentoneta-button type="outline" size="xs" [active]="true">Vigente xs</button>
+					<button cuentoneta-button variant="outline" size="md" [active]="true">Vigente md</button>
+					<button cuentoneta-button variant="outline" size="xs" [active]="true">Vigente xs</button>
 				</div>
 			</div>
 		`,
@@ -169,7 +169,7 @@ export const AxesMatrix: Story = {
 
 export const OnAnchorElement: Story = {
 	render: () => ({
-		template: `<a cuentoneta-button type="outline" routerLink="/collection">Ver todo</a>`,
+		template: `<a cuentoneta-button variant="outline" routerLink="/collection">Ver todo</a>`,
 	}),
 	parameters: {
 		docs: {
@@ -184,10 +184,10 @@ export const Disabled: Story = {
 	render: () => ({
 		template: `
 			<div class="flex flex-wrap items-center gap-4">
-				<button cuentoneta-button type="filled" disabled>Filled</button>
-				<button cuentoneta-button type="outline" disabled>Outline</button>
-				<button cuentoneta-button type="subtle" disabled>Subtle</button>
-				<button cuentoneta-button type="outline" [active]="true" disabled>Vigente</button>
+				<button cuentoneta-button variant="filled" disabled>Filled</button>
+				<button cuentoneta-button variant="outline" disabled>Outline</button>
+				<button cuentoneta-button variant="subtle" disabled>Subtle</button>
+				<button cuentoneta-button variant="outline" [active]="true" disabled>Vigente</button>
 			</div>
 		`,
 	}),

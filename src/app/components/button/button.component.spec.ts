@@ -25,8 +25,8 @@ describe('ButtonComponent', () => {
 			['filled', 'bg-white'],
 			['outline', 'bg-white'],
 			['subtle', 'bg-neutral-100'],
-		])('should apply the background of the %s appearance', async (type, background) => {
-			await render(`<button cuentoneta-button type="${type}">Botón</button>`, {
+		])('should apply the background of the %s appearance', async (variant, background) => {
+			await render(`<button cuentoneta-button variant="${variant}">Botón</button>`, {
 				imports: [ButtonComponent],
 			});
 			const button = screen.getByRole('button');
@@ -35,7 +35,7 @@ describe('ButtonComponent', () => {
 		});
 
 		it('should draw a border only on the outline appearance', async () => {
-			await render(`<button cuentoneta-button type="outline">Outline</button>`, {
+			await render(`<button cuentoneta-button variant="outline">Outline</button>`, {
 				imports: [ButtonComponent],
 			});
 			const button = screen.getByRole('button');
@@ -43,8 +43,8 @@ describe('ButtonComponent', () => {
 			expect(button).toHaveClass('border-neutral-300');
 		});
 
-		it.each(['filled', 'subtle'])('should not draw a visible border on the %s appearance', async (type) => {
-			await render(`<button cuentoneta-button type="${type}">Botón</button>`, {
+		it.each(['filled', 'subtle'])('should not draw a visible border on the %s appearance', async (variant) => {
+			await render(`<button cuentoneta-button variant="${variant}">Botón</button>`, {
 				imports: [ButtonComponent],
 			});
 			const button = screen.getByRole('button');
@@ -55,7 +55,7 @@ describe('ButtonComponent', () => {
 		// La aserción que prueba que la apariencia no aporta geometría: el padding y el tamaño de
 		// fuente los fija el eje `size`, no la apariencia elegida.
 		it('should leave the geometry to the size axis', async () => {
-			await render(`<button cuentoneta-button type="subtle">Compartir</button>`, {
+			await render(`<button cuentoneta-button variant="subtle">Compartir</button>`, {
 				imports: [ButtonComponent],
 			});
 			const button = screen.getByRole('button');
@@ -77,12 +77,15 @@ describe('ButtonComponent', () => {
 
 		// El ancho del borde es de la caja y no de la apariencia: las tres lo reservan, así que
 		// cambiar de apariencia no mueve el layout.
-		it.each(['filled', 'outline', 'subtle'])('should reserve the border width on the %s appearance', async (type) => {
-			await render(`<button cuentoneta-button type="${type}">Botón</button>`, {
-				imports: [ButtonComponent],
-			});
-			expect(screen.getByRole('button')).toHaveClass('border');
-		});
+		it.each(['filled', 'outline', 'subtle'])(
+			'should reserve the border width on the %s appearance',
+			async (variant) => {
+				await render(`<button cuentoneta-button variant="${variant}">Botón</button>`, {
+					imports: [ButtonComponent],
+				});
+				expect(screen.getByRole('button')).toHaveClass('border');
+			},
+		);
 	});
 
 	describe('size axis', () => {
@@ -108,7 +111,7 @@ describe('ButtonComponent', () => {
 
 		// La invariancia que falla si alguien vuelve a meter geometría dentro de una apariencia.
 		it('should keep the outline appearance intact in the xs size', async () => {
-			await render(`<button cuentoneta-button type="outline" size="xs">Botón</button>`, {
+			await render(`<button cuentoneta-button variant="outline" size="xs">Botón</button>`, {
 				imports: [ButtonComponent],
 			});
 			const button = screen.getByRole('button');
@@ -118,7 +121,7 @@ describe('ButtonComponent', () => {
 		});
 
 		it('should keep the subtle appearance intact in the md size', async () => {
-			await render(`<button cuentoneta-button type="subtle" size="md">Botón</button>`, {
+			await render(`<button cuentoneta-button variant="subtle" size="md">Botón</button>`, {
 				imports: [ButtonComponent],
 			});
 			const button = screen.getByRole('button');
@@ -130,8 +133,8 @@ describe('ButtonComponent', () => {
 	describe('active state', () => {
 		it.each(['filled', 'outline', 'subtle'])(
 			'should invert the contrast of the %s appearance when active',
-			async (type) => {
-				await render(`<button cuentoneta-button type="${type}" [active]="true">Botón</button>`, {
+			async (variant) => {
+				await render(`<button cuentoneta-button variant="${variant}" [active]="true">Botón</button>`, {
 					imports: [ButtonComponent],
 				});
 				const button = screen.getByRole('button');
@@ -144,7 +147,7 @@ describe('ButtonComponent', () => {
 		// Marcar vigente a un botón `outline` no puede achicarle la caja: en un grupo de opciones,
 		// elegir una haría reflowear la fila entera.
 		it('should keep the box intact when an outline button becomes active', async () => {
-			await render(`<button cuentoneta-button type="outline" [active]="true">Botón</button>`, {
+			await render(`<button cuentoneta-button variant="outline" [active]="true">Botón</button>`, {
 				imports: [ButtonComponent],
 			});
 			expect(screen.getByRole('button')).toHaveClass('border');
@@ -162,7 +165,7 @@ describe('ButtonComponent', () => {
 		});
 
 		it('should default to inactive, preserving the chosen appearance', async () => {
-			await render(`<button cuentoneta-button type="subtle">Botón</button>`, {
+			await render(`<button cuentoneta-button variant="subtle">Botón</button>`, {
 				imports: [ButtonComponent],
 			});
 			const button = screen.getByRole('button');
@@ -199,8 +202,8 @@ describe('ButtonComponent', () => {
 			expect(screen.getByText('Ver todo')).toBeInTheDocument();
 		});
 
-		it('should apply outline type classes on anchor', async () => {
-			await render(`<a cuentoneta-button type="outline" href="/test">Outline Link</a>`, {
+		it('should apply outline variant classes on anchor', async () => {
+			await render(`<a cuentoneta-button variant="outline" href="/test">Outline Link</a>`, {
 				imports: [ButtonComponent],
 				providers: defaultProviders,
 			});
