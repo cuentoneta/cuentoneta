@@ -7,6 +7,7 @@ import { CoverImageComponent } from '@components/cover-image/cover-image.compone
 import { TagComponent } from '@components/tag/tag.component';
 import { PortableTextParserComponent } from '@components/portable-text-parser/portable-text-parser.component';
 import { NavigableCollectionTeaserComponent } from '@components/navigable-collection-teaser/navigable-collection-teaser.component';
+import { DividerComponent } from '@components/divider/divider.component';
 import { storylistMock, storylistTeaserRepresentativeMock, storylistTeaserSampleMock } from '@mocks/storylist.mock';
 
 type DrawerArgs = DrawerComponent & { direction: DrawerDirection };
@@ -120,7 +121,13 @@ export const ComposicionCollectionPage: Story = {
 	name: 'Composición CollectionPage',
 	decorators: [
 		moduleMetadata({
-			imports: [CoverImageComponent, TagComponent, PortableTextParserComponent, NavigableCollectionTeaserComponent],
+			imports: [
+				CoverImageComponent,
+				TagComponent,
+				PortableTextParserComponent,
+				NavigableCollectionTeaserComponent,
+				DividerComponent,
+			],
 		}),
 	],
 	render: (args) => ({
@@ -148,7 +155,7 @@ export const ComposicionCollectionPage: Story = {
 					classes="font-inter text-sm font-medium text-neutral-700"
 					class="flex flex-col gap-2"
 				/>
-				<div class="h-px w-full bg-neutral-200" role="separator"></div>
+				<cuentoneta-divider />
 				<div class="flex flex-col gap-4">
 					<h2 class="font-inter text-base font-bold text-neutral-900">Otras colecciones sugeridas</h2>
 					@for (item of suggested; track item.slug) {
