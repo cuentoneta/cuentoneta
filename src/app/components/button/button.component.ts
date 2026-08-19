@@ -61,12 +61,14 @@ export class ButtonComponent {
 	/** Marca al botón como la opción vigente dentro de un grupo */
 	public readonly active = input(false);
 
+	// El ancho del borde se reserva acá, transparente, y cada apariencia solo le pone color: si lo
+	// declarara `outline`, elegirla o marcarla vigente cambiaría la caja 2px y reflowearía la fila.
 	private readonly baseClasses =
-		'inline-flex cursor-pointer items-center justify-center font-inter font-semibold no-underline transition-colors duration-200 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-500 disabled:cursor-not-allowed disabled:opacity-50';
+		'inline-flex cursor-pointer items-center justify-center font-inter font-semibold no-underline transition-colors duration-200 rounded-full border border-transparent focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-500 disabled:cursor-not-allowed disabled:opacity-50';
 
 	private readonly typeClasses: Record<ButtonType, string> = {
 		filled: 'bg-white text-neutral-900 hover:bg-neutral-50 active:bg-neutral-100',
-		outline: 'bg-white text-neutral-900 border border-neutral-300 hover:bg-neutral-50 active:bg-neutral-100',
+		outline: 'bg-white text-neutral-900 border-neutral-300 hover:bg-neutral-50 active:bg-neutral-100',
 		subtle: 'bg-neutral-100 text-neutral-900 hover:bg-neutral-200 active:bg-neutral-300',
 	};
 

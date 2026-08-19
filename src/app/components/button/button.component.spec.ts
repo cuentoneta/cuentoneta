@@ -43,15 +43,17 @@ describe('ButtonComponent', () => {
 			expect(button).toHaveClass('border-neutral-300');
 		});
 
-		it.each(['filled', 'subtle'])('should not draw a border on the %s appearance', async (type) => {
+		it.each(['filled', 'subtle'])('should not draw a visible border on the %s appearance', async (type) => {
 			await render(`<button cuentoneta-button type="${type}">Botón</button>`, {
 				imports: [ButtonComponent],
 			});
-			expect(screen.getByRole('button')).not.toHaveClass('border');
+			const button = screen.getByRole('button');
+			expect(button).not.toHaveClass('border-neutral-300');
+			expect(button).toHaveClass('border-transparent');
 		});
 
-		// La aserción que prueba que la apariencia soltó su geometría: `subtle` heredó de `share` un
-		// padding y un tamaño de fuente propios, y ahora toma los del tamaño por defecto.
+		// La aserción que prueba que la apariencia no aporta geometría: el padding y el tamaño de
+		// fuente los fija el eje `size`, no la apariencia elegida.
 		it('should leave the geometry to the size axis', async () => {
 			await render(`<button cuentoneta-button type="subtle">Compartir</button>`, {
 				imports: [ButtonComponent],
@@ -70,7 +72,16 @@ describe('ButtonComponent', () => {
 			});
 			const button = screen.getByRole('button');
 			expect(button).toHaveClass('bg-white');
-			expect(button).not.toHaveClass('border');
+			expect(button).not.toHaveClass('border-neutral-300');
+		});
+
+		// El ancho del borde es de la caja y no de la apariencia: las tres lo reservan, así que
+		// cambiar de apariencia no mueve el layout.
+		it.each(['filled', 'outline', 'subtle'])('should reserve the border width on the %s appearance', async (type) => {
+			await render(`<button cuentoneta-button type="${type}">Botón</button>`, {
+				imports: [ButtonComponent],
+			});
+			expect(screen.getByRole('button')).toHaveClass('border');
 		});
 	});
 
@@ -126,9 +137,18 @@ describe('ButtonComponent', () => {
 				const button = screen.getByRole('button');
 				expect(button).toHaveClass('bg-neutral-900');
 				expect(button).toHaveClass('text-neutral-50');
-				expect(button).not.toHaveClass('border');
+				expect(button).not.toHaveClass('border-neutral-300');
 			},
 		);
+
+		// Marcar vigente a un botón `outline` no puede achicarle la caja: en un grupo de opciones,
+		// elegir una haría reflowear la fila entera.
+		it('should keep the box intact when an outline button becomes active', async () => {
+			await render(`<button cuentoneta-button type="outline" [active]="true">Botón</button>`, {
+				imports: [ButtonComponent],
+			});
+			expect(screen.getByRole('button')).toHaveClass('border');
+		});
 
 		it('should not alter the geometry', async () => {
 			await render(`<button cuentoneta-button size="xs" [active]="true">Botón</button>`, {
