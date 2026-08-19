@@ -1,4 +1,4 @@
-import { classify, type ClassifiedRow, type InspectionSnapshot } from './seo-index-status.helpers';
+import { classify, type ClassifiedRow, type DiffBaseline, type InspectionSnapshot } from './seo-index-status.helpers';
 import { formatReport, formatSummaryMarkdown } from './seo-index-status.report';
 
 const CHECKED_AT = '2026-08-14T00:00:00Z';
@@ -9,6 +9,11 @@ function snapshot(overrides: Partial<InspectionSnapshot> = {}): InspectionSnapsh
 
 function row(overrides: Partial<InspectionSnapshot> = {}): ClassifiedRow {
 	return classify(snapshot(overrides));
+}
+
+/** Fila anterior que ya vio el valor nuevo una vez: la corrida actual lo confirma al repetirlo. */
+function shifting(latest: ClassifiedRow, was: ClassifiedRow): DiffBaseline {
+	return { ...latest, confirmed: { state: was.state, coverageState: was.coverageState } };
 }
 
 describe('formatReport', () => {
@@ -39,20 +44,47 @@ describe('formatReport', () => {
 		expect(report).toContain('Google eligió: https://www.cuentoneta.ar/story/amor');
 	});
 
-	it('muestra los movimientos de coverageState agrupados por par', () => {
-		const previous = [
-			row({ url: 'a', coverageState: 'Discovered - currently not indexed' }),
-			row({ url: 'b', coverageState: 'Discovered - currently not indexed' }),
-		];
+	it('muestra los movimientos confirmados de coverageState agrupados por par', () => {
 		const current = [
 			row({ url: 'a', coverageState: 'URL is unknown to Google' }),
 			row({ url: 'b', coverageState: 'URL is unknown to Google' }),
 		];
+		const previous = current.map((latest, index) =>
+			shifting(latest, row({ url: ['a', 'b'][index], coverageState: 'Discovered - currently not indexed' })),
+		);
 
 		const report = formatReport({ rows: current, previous }).join('\n');
 
-		expect(report).toContain('Movimientos de coverageState (2)');
+		expect(report).toContain('Movimientos confirmados de coverageState (2)');
 		expect(report).toContain('2  Discovered - currently not indexed → URL is unknown to Google');
+	});
+
+	it('cuenta aparte lo observado una sola vez, sin listarlo', () => {
+		const previous = [row({ url: 'a', coverageState: 'Discovered - currently not indexed' })];
+		const current = [row({ url: 'a', coverageState: 'URL is unknown to Google' })];
+
+		const report = formatReport({ rows: current, previous }).join('\n');
+
+		expect(report).toContain('Movimientos sin confirmar (1)');
+		expect(report).toContain('1  Discovered - currently not indexed → URL is unknown to Google');
+		expect(report).not.toContain('Movimientos confirmados de coverageState');
+		expect(report).not.toContain('URL is unknown to Google →');
+	});
+
+	// Las altas comparten la forma de las filas de esa sección, así que debajo se leerían como una más.
+	it('emite las altas antes de la sección de movimientos sin confirmar', () => {
+		const report = formatReport({
+			rows: [row({ url: 'a', coverageState: 'URL is unknown to Google' }), row({ url: 'nueva' })],
+			previous: [row({ url: 'a', coverageState: 'Discovered - currently not indexed' })],
+		}).join('\n');
+
+		expect(report.indexOf('inspeccionadas por primera vez')).toBeLessThan(report.indexOf('Movimientos sin confirmar'));
+	});
+
+	it('omite la sección de observaciones sin confirmar cuando no hay ninguna', () => {
+		const rows = [row({ url: 'a', coverageState: 'Submitted and indexed', verdict: 'PASS' })];
+
+		expect(formatReport({ rows, previous: rows }).join('\n')).not.toContain('Movimientos sin confirmar');
 	});
 
 	it('omite la sección de coverageState cuando nada se movió', () => {
@@ -77,7 +109,7 @@ describe('formatReport', () => {
 	});
 
 	it('omite la sección de cambios cuando no hay corrida previa', () => {
-		expect(formatReport({ rows: [row({ url: 'a' })] }).join('\n')).not.toContain('Cambios contra el historial');
+		expect(formatReport({ rows: [row({ url: 'a' })] }).join('\n')).not.toContain('Cambios confirmados');
 	});
 
 	it('no reporta como movimiento una inspección que falló', () => {
@@ -92,12 +124,13 @@ describe('formatReport', () => {
 	});
 
 	it('incluye la sección de cambios cuando hay corrida previa', () => {
+		const indexed = row({ url: 'a', verdict: 'PASS' });
 		const report = formatReport({
-			rows: [row({ url: 'a', verdict: 'PASS' })],
-			previous: [row({ url: 'a', verdict: 'NEUTRAL' })],
+			rows: [indexed],
+			previous: [shifting(indexed, row({ url: 'a', verdict: 'NEUTRAL' }))],
 		}).join('\n');
 
-		expect(report).toContain('Cambios contra el historial');
+		expect(report).toContain('Cambios confirmados contra el historial');
 		expect(report).toContain('Nunca rastreada → Indexada');
 	});
 });
@@ -153,12 +186,23 @@ describe('formatSummaryMarkdown', () => {
 	});
 
 	it('agrupa las transiciones por par con su conteo', () => {
-		const previous = [row({ url: 'a', verdict: 'NEUTRAL' }), row({ url: 'b', verdict: 'NEUTRAL' })];
 		const rows = [row({ url: 'a', verdict: 'PASS' }), row({ url: 'b', verdict: 'PASS' })];
+		const previous = rows.map((latest, index) => shifting(latest, row({ url: ['a', 'b'][index], verdict: 'NEUTRAL' })));
 
 		const summary = formatSummaryMarkdown({ rows, previous, checkedAt: CHECKED_AT }).join('\n');
 
 		expect(summary).toContain('| Nunca rastreada → Indexada | 2 |');
+	});
+
+	it('subordina lo observado una sola vez a su propia tabla', () => {
+		const previous = [row({ url: 'a', verdict: 'NEUTRAL' })];
+		const rows = [row({ url: 'a', verdict: 'PASS' })];
+
+		const summary = formatSummaryMarkdown({ rows, previous, checkedAt: CHECKED_AT }).join('\n');
+
+		expect(summary).toContain('_Sin cambios de estado._');
+		expect(summary).toContain('#### Movimientos sin confirmar (1)');
+		expect(summary).toContain('| Nunca rastreada → Indexada | 1 |');
 	});
 
 	it('dice explícitamente que nada se movió', () => {
@@ -181,8 +225,8 @@ describe('formatSummaryMarkdown', () => {
 	});
 
 	it('reporta los movimientos de coverageState que no mueven el estado', () => {
-		const previous = [row({ url: 'a', coverageState: 'Discovered - currently not indexed' })];
 		const rows = [row({ url: 'a', coverageState: 'URL is unknown to Google' })];
+		const previous = [shifting(rows[0], row({ url: 'a', coverageState: 'Discovered - currently not indexed' }))];
 
 		const summary = formatSummaryMarkdown({ rows, previous, checkedAt: CHECKED_AT }).join('\n');
 

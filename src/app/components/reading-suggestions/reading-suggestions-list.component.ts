@@ -63,7 +63,7 @@ import type { NavigationParams } from '@app-utils/navigation-params';
 				@if (loading()) {
 					<cuentoneta-skeleton appearance="line" class="h-11 w-full max-w-56 rounded-full bg-neutral-300" />
 				} @else if (moreRoute()) {
-					<a [routerLink]="moreRoute()" cuentoneta-button type="outline" class="self-start">{{ moreLabel() }}</a>
+					<a [routerLink]="moreRoute()" cuentoneta-button variant="outline" class="self-start">{{ moreLabel() }}</a>
 				}
 			</section>
 		}

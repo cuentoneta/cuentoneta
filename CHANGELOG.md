@@ -16,6 +16,85 @@ La lista de características futuras a implementar puede hallarse en la sección
 
 Los hitos futuros de desarrollo, en los cuales se detallan las funcionalidades a desarrollar y los cambios a implementar, pueden encontrarse en las secciones [milestones](https://github.com/cuentoneta/cuentoneta/milestones) y [projects](https://github.com/cuentoneta/cuentoneta/projects) del repositorio de Github del proyecto.
 
+## Versión 2.10.3 (2026-08-19)
+
+La versión 2.10.3 es un patch de un solo frente: pone al día las dependencias que Dependabot dejó acumuladas mientras 2.10.2 estaba cerrado. No trae cambios de producto, y por eso su verificación no pregunta si algo nuevo funciona sino si todo lo anterior sigue funcionando.
+
+Lo que manda el riesgo son los **dos saltos mayores de Sanity**, que comparten línea de versión y se evaluaron como par: `@sanity/client` 7.25.0 → 8.0.0 en la aplicación (#2250) y `@sanity/cli` 7.18.0 → 8.0.0 en el Studio (#2247). El del CLI es el que más se siente en el release: el deploy del Studio deja de ser un paso desatendido y pasa a ser la primera ejecución real con la línea 8. El tercer mayor previsto para el hito, `@sanity/ui` 4.0.3, **no entra**: rompe el type-check del Studio y se difiere a 2.11.0 con su propio issue.
+
+El resto es puesta al día sin cambio de mayor: el grupo `minor-and-patch` de la aplicación con 44 paquetes —Angular 22.1.2, Storybook 10.5.8, Hono 4.13.2, Vite 8.2.1 y typescript-eslint 8.67.0 entre ellos (#2249)—, el del Studio con 4 (#2246), y la familia `@ng-icons` —core, font-awesome y simple-icons— de 34.0.0 a 35.0.1, que se mueve en lockstep y por eso viajó junta (#2275).
+
+Cierra una corrección de tooling detectada en el camino: Prettier reformateaba los lockfiles en cada corrida y su configuración declaraba una opción que ya no existe (#2277).
+
+### Cambios completos
+
+Ver el changelog completo en [2.10.3](https://github.com/cuentoneta/cuentoneta/releases/tag/2.10.3)
+
+### Cambios
+
+#### Sanity (saltos mayores)
+
+- [#2250] - Actualiza @sanity/client de 7.25.0 a 8.0.0 en la aplicación.
+- [#2247] - Actualiza @sanity/cli de 7.18.0 a 8.0.0 en el Studio.
+
+#### Dependencias
+
+- [#2249] - Actualiza el grupo minor-and-patch de la aplicación (44 paquetes).
+- [#2246] - Actualiza el grupo minor-and-patch del Studio (4 paquetes).
+- [#2275] - Actualiza @ng-icons a 35.0.1 en la aplicación.
+
+#### Tooling
+
+- [#2277] - Excluye los lockfiles del formateo de Prettier y quita una opción inexistente.
+
+## Versión 2.10.2 (2026-08-19)
+
+La versión 2.10.2 es un patch de cinco frentes, todos de alcance cerrado.
+
+El primero nace del smoke post-deploy y es el más grave: **37 páginas indexables servían un cuerpo vacío**. El constructor del schema de Persona leía la URL de un recurso que no la tenía, lanzaba, y como corre en una directiva declarada como `hostDirective` de la página, la excepción se llevaba puesto el render entero — la ficha del autor y todas sus obras salían con `<main>` vacío en SSR (#2218). Se lo aborda en sus tres capas: el defecto de render con su invariante en la frontera del ACL, la validación en el Studio que impide volver a cargar un recurso sin enlace junto con el saneamiento de los 217 documentos que ya lo tenían (#2219), y la detección, porque el smoke muestrea al azar y por eso no puede encontrar una página vacía de forma confiable — ahora un barrido recorre el sitemap entero (#2220).
+
+El segundo afina el **diagnóstico semanal de indexado**, recién puesto en marcha. Su reporte contaba como movimiento un par de estados que oscila entre corridas —"Discovered" y "URL is unknown to Google" caen los dos en "nunca rastreada", así que el parpadeo se leía como cambio real y enterraba el caso que importa entre veintitantos que no lo eran (#2225)—. Y el resumen había que acordarse de ir a buscarlo a la pestaña de la corrida: ahora el job mantiene una **bitácora**, un issue al que cada corrida con movimiento le agrega un comentario, y ninguna semana sin novedad lo ensucia (#2230).
+
+El tercero ataca el **peso inicial de la aplicación**, que la adopción del decorador `@Service` dejó al descubierto (#1784): se quitaron los providers muertos y redundantes de la configuración (#2226), los DTO del frontend migraron a `zod/mini` —la librería completa era cerca de la mitad del arranque, y viajaba por dos providers eager (#2227)—, y los proveedores de API cuyos consumidores viven detrás de rutas lazy dejaron de cargarse por adelantado (#2228).
+
+El cuarto corrige una **trampa de foco**: la barra de navegación oculta al hacer scroll seguía siendo tabulable y clickeable, porque el estado oculto solo la volvía transparente y colapsaba su alto sin recortar (#2232).
+
+El quinto es de **datos y documentación**. Un barrido nuevo cuenta los documentos que incumplen un campo que el schema declara requerido, derivándolo de la misma fuente que consume el typegen, y mantiene su propio issue de seguimiento (#2233). Y dos correcciones detectadas durante el release anterior: la guía de desarrollo todavía nombraba Jest como framework de tests unitarios (#2221), y el procedimiento de una migración omitía un flag que el CLI exige (#2222).
+
+### Cambios completos
+
+Ver el changelog completo en [2.10.2](https://github.com/cuentoneta/cuentoneta/releases/tag/2.10.2)
+
+### Cambios
+
+#### Cuerpo servido e indexado
+
+- [#2218] - Resiste en la frontera el recurso de autor sin URL que vaciaba la ficha y sus obras.
+- [#2219] - Exige URL en los recursos y sanea los 217 documentos que no la tienen.
+- [#2220] - Detecta páginas con cuerpo vacío en todo el sitemap, sin depender del muestreo.
+
+#### Diagnóstico semanal de indexado
+
+- [#2225] - Deja de contar como movimiento la oscilación entre Discovered y unknown to Google.
+- [#2230] - Lleva el diagnóstico semanal a una bitácora que avisa solo cuando hay movimiento.
+
+#### Peso inicial de la aplicación
+
+- [#1784] - Adopta el decorador @Service como convención para los services singleton.
+- [#2226] - Aligera el bundle inicial quitando providers innecesarios de app.config.ts.
+- [#2227] - Migra los DTO del frontend a zod/mini para sacar la librería completa del bundle.
+- [#2228] - Lazifica los proveedores de API cuyos consumidores viven en rutas lazy.
+
+#### Accesibilidad
+
+- [#2232] - Recorta la barra de navegación oculta para que deje de ser enfocable y clickeable.
+
+#### Datos y documentación
+
+- [#2233] - Audita los campos requeridos cuyo dato persistido no los cumple.
+- [#2221] - Corrige la documentación que todavía nombraba a Jest como framework de tests.
+- [#2222] - Suma a los comandos de migración documentados el flag que el CLI exige.
+
 ## Versión 2.10.1 (2026-08-15)
 
 La versión 2.10.1 es un patch de dos frentes: el trabajo derivado del diagnóstico de indexado hecho con la URL Inspection API, y la primera pasada de acabado sobre la página de lectura.

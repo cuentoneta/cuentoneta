@@ -13,7 +13,6 @@
  * que nadie toque el repositorio, y consultarla exige red: atarla a un PR haría fallar diffs que no
  * la tocaron. Los checks del repo siguen siendo offline y deterministas.
  */
-import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 
 import { client } from '../../src/api/_helpers/sanity-connector';
@@ -27,16 +26,13 @@ import {
 	type SweepReport,
 } from './required-fields-sweep.report';
 import { scanRequiredFields } from './required-fields-sweep.schema';
+import { findTrackingIssue, gh } from '../tracking-issue';
 
 const TRACKING_TITLE = 'Campos requeridos que el dato persistido no cumple';
 const SCHEMA_PATH = new URL('../../cms/schema.json', import.meta.url);
 
 // Sin CDN: el barrido tiene que ver el estado real, no una copia que puede tener minutos de atraso.
 const sanityClient = client.withConfig({ useCdn: false });
-
-function gh(...args: string[]): string {
-	return execFileSync('gh', args, { encoding: 'utf8' });
-}
 
 /**
  * Un dataset que no se puede leer **no falla**: sin permiso, una consulta de conteo devuelve `0` en
@@ -70,25 +66,8 @@ async function countBreaches(): Promise<{ report: SweepReport }> {
 	return { report: { breaches: breachesOf(counts), uncovered, scannedFields: queries.length } };
 }
 
-function findTrackingIssue(): { number: number; body: string } | null {
-	const raw = gh(
-		'issue',
-		'list',
-		'--state',
-		'open',
-		'--search',
-		`"${TRACKING_TITLE}" in:title`,
-		'--json',
-		'number,title,body',
-	);
-	const found = (JSON.parse(raw) as { number: number; title: string; body: string }[]).find(
-		(issue) => issue.title === TRACKING_TITLE,
-	);
-	return found ? { number: found.number, body: found.body ?? '' } : null;
-}
-
 function applyAction(report: SweepReport): void {
-	const existing = findTrackingIssue();
+	const existing = findTrackingIssue(TRACKING_TITLE);
 	const action = decideAction({ report, existing });
 
 	if (action.kind === 'create') {
