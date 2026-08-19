@@ -1,16 +1,7 @@
-import { Component, input, Type } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import type { Media, MediaTypeKey } from '@models/media.model';
-import { SpaceRecordingWidgetComponent } from '../space-recording-widget/space-recording-widget.component';
-import { AudioRecordingWidgetComponent } from '../audio-recording-widget/audio-recording-widget.component';
-import { YoutubeVideoWidgetComponent } from '../youtube-video-widget/youtube-video-widget.component';
-import { SpotifyPodcastEpisodeWidget } from '@components/spotify-audio-widget/spotify-podcast-episode-widget';
-
-type MediaTypeWidgetComponents =
-	| AudioRecordingWidgetComponent
-	| SpaceRecordingWidgetComponent
-	| YoutubeVideoWidgetComponent
-	| SpotifyPodcastEpisodeWidget;
+import type { Media } from '@models/media.model';
+import { toMediaWidgetOutlet } from '@components/media-widgets/media-widget-registry';
 
 @Component({
 	selector: 'cuentoneta-media-resource',
@@ -23,25 +14,7 @@ type MediaTypeWidgetComponents =
 	},
 })
 export class MediaResourceComponent {
-	private readonly mediaWidgetMap: Record<MediaTypeKey, Type<MediaTypeWidgetComponents>> = {
-		audioRecording: AudioRecordingWidgetComponent,
-		spotifyPodcastEpisode: SpotifyPodcastEpisodeWidget,
-		spaceRecording: SpaceRecordingWidgetComponent,
-		youTubeVideo: YoutubeVideoWidgetComponent,
-	};
-
 	public readonly mediaResources = input.required({
-		transform: (media: Media[]) => media.map((m) => this.mediaTypesAdapter(m)),
+		transform: (media: Media[]) => media.map((item) => toMediaWidgetOutlet(item)),
 	});
-
-	private mediaTypesAdapter(media: Media): {
-		component: Type<MediaTypeWidgetComponents>;
-		inputs: { media: Media };
-	} {
-		const component = this.mediaWidgetMap[media.type];
-		if (!component) {
-			throw new Error(`El tipo ${media.type} no está soportado.`);
-		}
-		return { component, inputs: { media } };
-	}
 }
