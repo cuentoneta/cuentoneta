@@ -1,4 +1,6 @@
-import { argsToTemplate, Meta, StoryObj } from '@storybook/angular-vite';
+import { argsToTemplate, type Meta, type StoryObj } from '@storybook/angular-vite';
+
+import { corpusLiteraryWorkTeasers } from '@mocks/onoff-corpus.storybook';
 
 import { DividerComponent } from './divider.component';
 
@@ -18,6 +20,7 @@ const meta: Meta<DividerComponent> = {
 	},
 	argTypes: {
 		orientation: {
+			description: 'Eje sobre el que se dibuja la línea. La vertical espera un contenedor flex o grid con alto.',
 			control: { type: 'inline-radio' },
 			options: ['horizontal', 'vertical'],
 			table: { type: { summary: `'horizontal' | 'vertical'` }, defaultValue: { summary: 'horizontal' } },
@@ -51,11 +54,15 @@ export const Playground: Story = {
 
 export const Horizontal: Story = {
 	render: () => ({
+		props: { works: corpusLiteraryWorkTeasers.slice(0, 3) },
 		template: `
 			<div class="flex max-w-md flex-col gap-4 font-inter text-sm text-neutral-700">
-				<p>La casa de Asterión</p>
-				<cuentoneta-divider />
-				<p>El jardín de senderos que se bifurcan</p>
+				@for (work of works; track work.slug; let last = $last) {
+					<p>{{ work.title }}</p>
+					@if (!last) {
+						<cuentoneta-divider />
+					}
+				}
 			</div>
 		`,
 	}),
@@ -72,11 +79,12 @@ export const Vertical: Story = {
 	render: () => ({
 		// `items-stretch` es lo que la variante vertical necesita: se estira sobre el alto del
 		// contenedor, así que dentro de un contenedor block quedaría con alto cero.
+		props: { work: corpusLiteraryWorkTeasers[0] },
 		template: `
 			<div class="flex items-stretch gap-4 font-inter text-sm text-neutral-700">
-				<p>12 min de lectura</p>
+				<p>{{ work.totalReadingTime }} min de lectura</p>
 				<cuentoneta-divider orientation="vertical" />
-				<p>Cuento</p>
+				<p>{{ work.tags[0].title }}</p>
 			</div>
 		`,
 	}),
