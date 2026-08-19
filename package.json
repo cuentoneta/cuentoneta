@@ -69,7 +69,7 @@
 		"@ng-icons/font-awesome": "^35.0.1",
 		"@ng-icons/simple-icons": "^35.0.1",
 		"@nx/angular": "23.1.1",
-		"@sanity/client": "^7.25.0",
+		"@sanity/client": "^8.0.0",
 		"@sanity/image-url": "^2.1.1",
 		"date-fns": "^4.4.0",
 		"esbuild": "0.28.2",
