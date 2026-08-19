@@ -1,6 +1,6 @@
 /**
  * Prohíbe declarar la configuración propia de un componente, directiva o servicio
- * como `const` a nivel de módulo. Un mapa `size → clase`, una tabla de widgets o
+ * como `const` a nivel de módulo. Un mapa `size → clase`, una tabla de iconos o
  * una tabla de estilos son estado de la clase que los usa: van como
  * `private readonly` de instancia y se consumen con `this.`.
  *

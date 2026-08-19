@@ -89,7 +89,9 @@ private readonly isExpanded = signal(false); // estado interno, no llega a la pl
 
 La configuración propia de un componente, directiva o servicio —un mapa `size → clase`, una tabla de iconos, una tabla de estilo— va como **`private readonly` de instancia** y se consume con `this.`. Nunca como `const` a nivel de módulo.
 
-El discriminante es **de cuántos consumidores es la tabla**, no qué contiene. Una tabla que resuelve una sola clase es configuración de esa clase y va adentro; una que resuelven dos o más deja de serlo y va a su propio módulo, sin decoradores, como única cara por la que se consulta esa correspondencia — así ninguno de los consumidores declara la suya y no pueden divergir.
+El discriminante es **de quién es la tabla**, no qué contiene ni cuántos la leen hoy. Si la correspondencia solo significa algo puertas adentro de una clase —cómo se pinta _este_ componente— es configuración suya y va adentro, aunque mañana otro quiera copiarla. Si en cambio la correspondencia es del dominio y sigue siendo verdadera fuera de cualquier clase —qué widget corresponde a cada tipo de medio, con independencia de qué política los monte—, no es configuración de nadie: va a su propio módulo, sin decoradores, como única cara por la que se consulta. Extraerla es lo que impide que dos consumidores declaren cada uno la suya y diverjan; el momento de hacerlo es cuando aparece el segundo, no cuando ya divergieron.
+
+La regla de ESLint **no verifica esa propiedad** —no puede: solo mira si el archivo declara un decorador—. Lo que verifica es la mitad mecánica: dentro de un archivo con decorador, la config va en la clase.
 
 ```ts
 // ❌ El mapa es estado del componente, pero vive fuera de él.

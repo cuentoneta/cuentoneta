@@ -127,7 +127,7 @@ const DEFAULT_INTERVAL = 24 * 60 * 60 * 1000;
 - **Módulo:** promover a nivel de módulo solo cuando se comparte entre varias funciones del mismo archivo.
 - **Global:** solo tras confirmar reuso entre varios archivos.
 
-**Excepción — archivos con `@Component`, `@Directive`, `@Injectable` o `@Service`:** ahí la configuración propia de la clase (mapas `size → clase`, tablas de iconos o de estilo) **no** se promueve a nivel de módulo aunque la usen varios métodos: va como `private readonly` de instancia. La excepción termina donde termina la propiedad: una tabla que resuelven **dos o más** clases ya no es configuración de ninguna, y se declara una sola vez en un módulo propio sin decoradores. La regla y su rationale están en [`angular-components.md`](angular-components.md#configuraci%C3%B3n-de-la-clase); la aplica la regla de ESLint `component-config-in-class`.
+**Excepción — archivos con `@Component`, `@Directive`, `@Injectable` o `@Service`:** ahí la configuración propia de la clase (mapas `size → clase`, tablas de iconos o de estilo) **no** se promueve a nivel de módulo aunque la usen varios métodos: va como `private readonly` de instancia. La excepción termina donde termina la propiedad: una correspondencia que sigue siendo verdadera fuera de cualquier clase no es configuración de ninguna, y se declara una sola vez en un módulo propio sin decoradores. La regla y su rationale están en [`angular-components.md`](angular-components.md#configuraci%C3%B3n-de-la-clase); la aplica la regla de ESLint `component-config-in-class`.
 
 **Rationale:** una constante declarada 50 líneas lejos de su único uso obliga al lector a saltar entre dos lugares. Co-locarla con su uso (cuando es único) hace el código autocontenido.
 
