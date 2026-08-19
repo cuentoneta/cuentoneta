@@ -13,7 +13,6 @@ const formats: ButtonGroupOption[] = [
 const meta: Meta<ButtonGroupComponent> = {
 	title: 'Componentes V3/ButtonGroup',
 	component: ButtonGroupComponent,
-	tags: ['autodocs'],
 	parameters: {
 		layout: 'centered',
 		docs: {
@@ -63,7 +62,7 @@ export const Playground: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>La API completa como controles vivos. Cambiar <code>selectedId</code> mueve la opción anunciada como vigente; el grupo no la mueve por su cuenta al hacer click, porque esa decisión es del consumidor.</p>`,
+				story: `<p>La API completa como controles vivos. Cambiar <code>selectedId</code> mueve la opción anunciada como vigente; el grupo no la mueve por su cuenta al hacer click, porque esa decisión es del consumidor.</p><p><strong>Usos:</strong> punto de entrada para probar la API antes de montar el grupo en una pantalla.</p>`,
 			},
 		},
 	},
@@ -90,7 +89,7 @@ export const ConIconos: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Cada opción puede llevar un ícono junto a su etiqueta. Los íconos se registran acá, en la story, y no en el preview del catálogo: registrarlos es responsabilidad del consumidor, porque son vocabulario de su pantalla. El ícono es decorativo —la etiqueta ya nombra la opción—, así que no altera el nombre accesible del botón.</p>`,
+				story: `<p>Cada opción puede llevar un ícono junto a su etiqueta. Los íconos se registran acá, en la story, y no en el preview del catálogo: registrarlos es responsabilidad del consumidor, porque son vocabulario de su pantalla. El ícono es decorativo —la etiqueta ya nombra la opción—, así que no altera el nombre accesible del botón.</p><p><strong>Usos:</strong> grupos donde el ícono identifica la opción de un vistazo, como una elección de formato o de plataforma.</p>`,
 			},
 		},
 	},
@@ -108,7 +107,7 @@ export const SinSeleccion: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Sin <code>selectedId</code>, ninguna opción está vigente. Es un estado legítimo y no un error: el grupo no elige un valor por defecto, porque hacerlo sería decidir por el consumidor. Un <code>selectedId</code> que no coincide con ninguna opción se comporta igual.</p>`,
+				story: `<p>Sin <code>selectedId</code>, ninguna opción está vigente. Es un estado legítimo y no un error: el grupo no elige un valor por defecto, porque hacerlo sería decidir por el consumidor. Un <code>selectedId</code> que no coincide con ninguna opción se comporta igual.</p><p><strong>Usos:</strong> el estado inicial de una pantalla que todavía no tiene una opción elegida.</p>`,
 			},
 		},
 	},
@@ -139,9 +138,12 @@ export const Interactivo: Story = {
 	}),
 	decorators: [moduleMetadata({ imports: [ButtonGroupStoryHostComponent] })],
 	parameters: {
+		// El canvas lo gobierna el contenedor de la story, no los args: mostrar los controles
+		// invitaría a moverlos y no pasaría nada.
+		controls: { disable: true },
 		docs: {
 			description: {
-				story: `<p>El contrato completo, con un contenedor que sí guarda la elección: el grupo emite el id, el contenedor lo aplica y se lo devuelve, y recién entonces se mueve la opción vigente. Es la única story donde hacer click cambia lo que se ve.</p>`,
+				story: `<p>El contrato completo, con un contenedor que sí guarda la elección: el grupo emite el id, el contenedor lo aplica y se lo devuelve, y recién entonces se mueve la opción vigente. Es la única story donde hacer click cambia lo que se ve, y por eso sus controles están deshabilitados: las opciones las fija el contenedor.</p><p><strong>Usos:</strong> la referencia de cómo cablear el grupo en una pantalla real.</p>`,
 			},
 		},
 	},
