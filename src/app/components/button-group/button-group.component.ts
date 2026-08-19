@@ -1,6 +1,6 @@
 import { Component, input, output } from '@angular/core';
 import { NgIcon } from '@ng-icons/core';
-import { ButtonComponent } from '../button/button.component';
+import { ButtonComponent, type ButtonSize } from '../button/button.component';
 
 /**
  * Una opción del grupo, ya resuelta por el consumidor: el grupo no sabe de dónde salen.
@@ -28,6 +28,10 @@ export interface ButtonGroupOption {
  * Identifica por id y no por el objeto entero para servir a dominios distintos sin conocer ninguno.
  * La apariencia de cada opción la pone `ButtonComponent`; acá solo se elige entre los valores que
  * ese componente ya declara.
+ *
+ * De los ejes del botón expone **solo la geometría** (`size`), porque cuánto espacio ocupa la fila
+ * depende de dónde se la monta y eso lo sabe el consumidor. La apariencia queda fija: que las
+ * opciones se vean iguales entre sí es parte de lo que hace legible un grupo excluyente.
  *
  * Los íconos los registra el consumidor con `provideIcons`: el grupo resuelve el nombre por el
  * injector y no conoce el vocabulario de la pantalla que lo monta.
@@ -57,6 +61,7 @@ export interface ButtonGroupOption {
 				(click)="optionSelected.emit(option.id)"
 				[active]="isSelected"
 				[attr.aria-pressed]="isSelected"
+				[size]="size()"
 				cuentoneta-button
 				variant="outline"
 				type="button"
@@ -78,6 +83,9 @@ export class ButtonGroupComponent {
 
 	/** Id de la opción vigente. Sin valor, ninguna lo está. */
 	public readonly selectedId = input<string>();
+
+	/** Geometría de las opciones. La apariencia sigue siendo del grupo, no del consumidor. */
+	public readonly size = input<ButtonSize>('md');
 
 	/** Id de la opción elegida por la persona usuaria. El grupo no la aplica: la emite. */
 	public readonly optionSelected = output<string>();

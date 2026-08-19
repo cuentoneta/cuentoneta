@@ -3,6 +3,7 @@ import { applicationConfig, Meta, moduleMetadata, StoryObj } from '@storybook/an
 import { provideIcons } from '@ng-icons/core';
 import { faBrandSpotify, faBrandYoutube } from '@ng-icons/font-awesome/brands';
 import { ButtonGroupComponent, type ButtonGroupOption } from './button-group.component';
+import type { ButtonSize } from '../button/button.component';
 
 const formats: ButtonGroupOption[] = [
 	{ id: 'audio', label: 'Audio' },
@@ -23,6 +24,7 @@ const formats: ButtonGroupOption[] = [
 			[label]="label()"
 			[options]="options()"
 			[selectedId]="selectedId()"
+			[size]="size()"
 		/>
 	`,
 })
@@ -30,6 +32,7 @@ class ButtonGroupStoryHostComponent {
 	public readonly label = input.required<string>();
 	public readonly options = input.required<readonly ButtonGroupOption[]>();
 	public readonly initialSelectedId = input<string>();
+	public readonly size = input<ButtonSize>('md');
 
 	protected readonly selectedId = linkedSignal(() => this.initialSelectedId());
 }
@@ -43,7 +46,7 @@ const meta: Meta<ButtonGroupComponent> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>El <strong>ButtonGroupComponent</strong> del Design System v3 presenta una fila de opciones excluyentes: recibe las opciones ya resueltas y el id de la vigente, y emite el id de la que la persona usuaria elige.</p><p><strong>No decide ni guarda la elección.</strong> La emite y espera que el consumidor se la devuelva por <code>selectedId</code>, de modo que la fuente de verdad viva en un solo lugar. Identifica por id y no por el objeto entero, que es lo que le permite servir a dominios distintos sin conocer ninguno.</p><p>Todas las entradas de este catálogo montan el grupo dentro de un contenedor que guarda la elección y se la devuelve, que es como se lo usa en una pantalla real: por eso hacer click mueve la opción vigente. El componente por sí solo no la movería, y eso lo fija su spec.</p><p>La apariencia de cada opción la pone <a href="./?path=/docs/componentes-v3-button--docs" target="_top"><strong>Button</strong></a>, en su variante <code>outline</code> y con el estado <code>active</code> para la vigente; el grupo solo aporta el layout de la fila. El anuncio a lectores de pantalla es <code>aria-pressed</code> en cada opción sobre un contenedor con <code>role="group"</code>, lo que conserva el contrato de teclado nativo del botón: <code>Tab</code> para llegar, <code>Enter</code> o <code>Espacio</code> para activar.</p><p>Los íconos los registra el consumidor con <code>provideIcons</code>: el grupo resuelve el nombre por el injector y no conoce el vocabulario de la pantalla que lo monta.</p><p><strong>Hoy no tiene consumidor en la aplicación</strong>: es una pieza de catálogo, construida junto con el eje <code>active</code> de Button para que las tres decisiones que resuelve —marcar una y desmarcar el resto, emitir sin decidir, y anunciar la elección— se tomen una sola vez.</p></div>`,
+				component: `<div><p>El <strong>ButtonGroupComponent</strong> del Design System v3 presenta una fila de opciones excluyentes: recibe las opciones ya resueltas y el id de la vigente, y emite el id de la que la persona usuaria elige.</p><p><strong>No decide ni guarda la elección.</strong> La emite y espera que el consumidor se la devuelva por <code>selectedId</code>, de modo que la fuente de verdad viva en un solo lugar. Identifica por id y no por el objeto entero, que es lo que le permite servir a dominios distintos sin conocer ninguno.</p><p>Todas las entradas de este catálogo montan el grupo dentro de un contenedor que guarda la elección y se la devuelve, que es como se lo usa en una pantalla real: por eso hacer click mueve la opción vigente. El componente por sí solo no la movería, y eso lo fija su spec.</p><p>La apariencia de cada opción la pone <a href="./?path=/docs/componentes-v3-button--docs" target="_top"><strong>Button</strong></a>, en su variante <code>outline</code> y con el estado <code>active</code> para la vigente; el grupo solo aporta el layout de la fila. El anuncio a lectores de pantalla es <code>aria-pressed</code> en cada opción sobre un contenedor con <code>role="group"</code>, lo que conserva el contrato de teclado nativo del botón: <code>Tab</code> para llegar, <code>Enter</code> o <code>Espacio</code> para activar.</p><p>Los íconos los registra el consumidor con <code>provideIcons</code>: el grupo resuelve el nombre por el injector y no conoce el vocabulario de la pantalla que lo monta.</p><p>De los ejes de Button expone <strong>solo la geometría</strong> (<code>size</code>), porque cuánto espacio ocupa la fila depende de dónde se la monta. La apariencia queda fija: que las opciones se vean iguales entre sí es parte de lo que hace legible un grupo excluyente.</p><p>Su consumidor en la aplicación es el bloque de formatos multimedia de la página de lectura.</p></div>`,
 			},
 		},
 	},
@@ -63,6 +66,12 @@ const meta: Meta<ButtonGroupComponent> = {
 			description: 'Id de la opción vigente al montar. Desde ahí la mueve el contenedor de la story',
 			table: { type: { summary: 'string | undefined' }, defaultValue: { summary: 'undefined' } },
 		},
+		size: {
+			control: 'inline-radio',
+			options: ['md', 'sm', 'xs'],
+			description: 'Geometría de las opciones. La apariencia queda fija: solo se abre este eje',
+			table: { type: { summary: "'md' | 'sm' | 'xs'" }, defaultValue: { summary: 'md' } },
+		},
 		optionSelected: {
 			action: 'optionSelected',
 			description: 'Emite el id de la opción elegida. El grupo no la aplica',
@@ -76,7 +85,7 @@ type Story = StoryObj<ButtonGroupComponent>;
 
 const renderInHost: Story['render'] = (args) => ({
 	props: args,
-	template: `<cuentoneta-button-group-story-host [label]="label" [options]="options" [initialSelectedId]="selectedId" />`,
+	template: `<cuentoneta-button-group-story-host [label]="label" [options]="options" [initialSelectedId]="selectedId" [size]="size" />`,
 });
 
 export const Playground: Story = {
@@ -129,6 +138,26 @@ export const SinSeleccion: Story = {
 		docs: {
 			description: {
 				story: `<p>Sin <code>selectedId</code>, ninguna opción está vigente al montar. Es un estado legítimo y no un error: el grupo no elige un valor por defecto, porque hacerlo sería decidir por el consumidor. Un <code>selectedId</code> que no coincide con ninguna opción se comporta igual.</p><p>Hacer click elige la primera, y desde ahí ya no vuelve a haber ninguna vigente: el estado vacío es el inicial, no uno al que se regrese.</p><p><strong>Usos:</strong> el estado inicial de una pantalla que todavía no tiene una opción elegida.</p>`,
+			},
+		},
+	},
+};
+
+export const GeometriaChica: Story = {
+	render: renderInHost,
+	args: {
+		label: 'Formatos disponibles',
+		options: [
+			{ id: 'youTubeVideo', label: 'YouTube', iconName: 'faBrandYoutube' },
+			{ id: 'spotifyPodcastEpisode', label: 'Spotify', iconName: 'faBrandSpotify' },
+		],
+		selectedId: 'youTubeVideo',
+		size: 'sm',
+	},
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>La fila en la geometría <code>sm</code>: caja compacta conservando el cuerpo de texto pleno. Es la que pide el diseño cuando el grupo acompaña al contenido en lugar de encabezar una acción.</p><p><strong>Usos:</strong> el bloque de formatos multimedia de la página de lectura.</p>`,
 			},
 		},
 	},
