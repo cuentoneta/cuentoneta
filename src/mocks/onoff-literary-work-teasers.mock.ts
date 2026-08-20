@@ -6,6 +6,9 @@ import type {
 	LiteraryWorkTeaser,
 } from '@models/literary-work.model';
 import type { MediaTeaser } from '@models/media.model';
+import { createMarkdown } from '@models/markdown.model';
+import type { SanitizedHtml } from '@models/sanitized-html.model';
+import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import { embeddedAuthorTeaserMock } from './author.mock';
 import { onoffMediaMock, onoffYouTubeVideosMock, toMediaTeaser } from './onoff-media.mock';
 import { onoffLiteraryWorksMock } from './onoff-literary-works.mock';
@@ -35,11 +38,27 @@ import { lasEscalerasLiteraryWorkMock } from './onoff/literary-work/las-escalera
 import { losPeldanosLiteraryWorkMock } from './onoff/literary-work/los-peldanos.literary-work.mock';
 import { neronLiteraryWorkMock } from './onoff/literary-work/neron.literary-work.mock';
 import { palacioNueveFronterasLiteraryWorkMock } from './onoff/literary-work/el-palacio-de-las-nueve-fronteras.literary-work.mock';
+import elOdioMd from './onoff/literary-work/el-odio.md?raw';
+import elTratadoDeLosPlaceresMd from './onoff/literary-work/el-tratado-de-los-placeres.md?raw';
+import geometriaMd from './onoff/literary-work/geometria.md?raw';
+import lasDosAntorchasMd from './onoff/literary-work/las-dos-antorchas.md?raw';
+import lasEscalerasMd from './onoff/literary-work/las-escaleras.md?raw';
+import losPeldanosMd from './onoff/literary-work/los-peldanos.md?raw';
+import neronMd from './onoff/literary-work/neron.md?raw';
+import palacioNueveFronterasMd from './onoff/literary-work/el-palacio-de-las-nueve-fronteras.md?raw';
+
+// Espeja el recorte que hace la query, para que el corpus de dominio diga lo mismo que produce el
+// ACL. Es la heurística de doble salto de línea, con el mismo tratamiento de CRLF: si acá y allá
+// divergieran, el spec de alineación lo marcaría — que es justamente para lo que existe.
+function toExcerptHtml(markdown: string): SanitizedHtml {
+	const firstBlock = markdown.split('\r\n\r\n')[0].split('\n\n')[0];
+	return markdownToSanitizedHtml(createMarkdown(firstBlock));
+}
 
 // Deriva el teaser desde la obra completa: conserva los campos de la vista base, reemplaza los autores
 // por su variante AuthorTeaser y expone el arranque de la sección de apertura como `excerpt`
 // — ver LITERARY_WORK_DESIGN.md §2.
-function toTeaser(literaryWork: LiteraryWork): LiteraryWorkTeaser {
+function toTeaser(literaryWork: LiteraryWork, markdown: string): LiteraryWorkTeaser {
 	return {
 		_id: literaryWork._id,
 		slug: literaryWork.slug,
@@ -50,18 +69,24 @@ function toTeaser(literaryWork: LiteraryWork): LiteraryWorkTeaser {
 		tags: literaryWork.tags,
 		mediaSources: literaryWork.mediaSources.map(toMediaTeaser),
 		authors: [embeddedAuthorTeaserMock],
-		excerpt: { title: literaryWork.content[0].title, bodyHtml: literaryWork.content[0].bodyHtml },
+		excerpt: { title: literaryWork.content[0].title, bodyHtml: toExcerptHtml(markdown) },
 	};
 }
 
-export const palacioNueveFronterasLiteraryWorkTeaserMock = toTeaser(palacioNueveFronterasLiteraryWorkMock);
-export const geometriaLiteraryWorkTeaserMock = toTeaser(geometriaLiteraryWorkMock);
-export const losPeldanosLiteraryWorkTeaserMock = toTeaser(losPeldanosLiteraryWorkMock);
-export const lasEscalerasLiteraryWorkTeaserMock = toTeaser(lasEscalerasLiteraryWorkMock);
-export const elOdioLiteraryWorkTeaserMock = toTeaser(elOdioLiteraryWorkMock);
-export const elTratadoDeLosPlaceresLiteraryWorkTeaserMock = toTeaser(elTratadoDeLosPlaceresLiteraryWorkMock);
-export const lasDosAntorchasLiteraryWorkTeaserMock = toTeaser(lasDosAntorchasLiteraryWorkMock);
-export const neronLiteraryWorkTeaserMock = toTeaser(neronLiteraryWorkMock);
+export const palacioNueveFronterasLiteraryWorkTeaserMock = toTeaser(
+	palacioNueveFronterasLiteraryWorkMock,
+	palacioNueveFronterasMd,
+);
+export const geometriaLiteraryWorkTeaserMock = toTeaser(geometriaLiteraryWorkMock, geometriaMd);
+export const losPeldanosLiteraryWorkTeaserMock = toTeaser(losPeldanosLiteraryWorkMock, losPeldanosMd);
+export const lasEscalerasLiteraryWorkTeaserMock = toTeaser(lasEscalerasLiteraryWorkMock, lasEscalerasMd);
+export const elOdioLiteraryWorkTeaserMock = toTeaser(elOdioLiteraryWorkMock, elOdioMd);
+export const elTratadoDeLosPlaceresLiteraryWorkTeaserMock = toTeaser(
+	elTratadoDeLosPlaceresLiteraryWorkMock,
+	elTratadoDeLosPlaceresMd,
+);
+export const lasDosAntorchasLiteraryWorkTeaserMock = toTeaser(lasDosAntorchasLiteraryWorkMock, lasDosAntorchasMd);
+export const neronLiteraryWorkTeaserMock = toTeaser(neronLiteraryWorkMock, neronMd);
 
 export const onoffLiteraryWorkTeasersMock: LiteraryWorkTeaser[] = [
 	palacioNueveFronterasLiteraryWorkTeaserMock,

@@ -133,6 +133,51 @@ export const multiSectionCollectionDocument = {
 	],
 };
 
+// El recorte del extracto corta por doble salto de línea, así que el primer bloque de la sección de
+// apertura no tiene por qué ser un párrafo de prosa: el schema no restringe el Markdown. Estas dos
+// obras cubren los arranques que hoy nadie tiene, para que el corte se afirme sobre ellos en vez de
+// descubrirse en una tarjeta.
+export const quoteOpeningLiteraryWorkDocument: LiteraryWork = {
+	...canonLiteraryWork,
+	_id: 'onoff-literary-work-arranque-con-cita',
+	slug: slugField('arranque-con-cita'),
+	content: [
+		{
+			...canonLiteraryWork.content[0],
+			_type: 'section',
+			_key: 'section-1',
+			epigraphs: [],
+			body: '> Toda geometría empieza\n> por una línea que no existe.\n\nDespués vino el resto, que es prosa.',
+		},
+	],
+};
+
+export const headingOpeningLiteraryWorkDocument: LiteraryWork = {
+	...canonLiteraryWork,
+	_id: 'onoff-literary-work-arranque-con-encabezado',
+	slug: slugField('arranque-con-encabezado'),
+	content: [
+		{
+			...canonLiteraryWork.content[0],
+			_type: 'section',
+			_key: 'section-1',
+			epigraphs: [],
+			body: '## El primer umbral\n\nY recién entonces el párrafo que la tarjeta querría mostrar.',
+		},
+	],
+};
+
+export const nonProseOpeningCollectionDocument = {
+	...canonCollection,
+	_id: 'onoff-collection-arranques-no-prosa',
+	slug: slugField('arranques-no-prosa'),
+	literaryWorks: [quoteOpeningLiteraryWorkDocument, headingOpeningLiteraryWorkDocument].map((work) => ({
+		_key: work._id,
+		_type: 'reference' as const,
+		_ref: work._id,
+	})),
+};
+
 // El tipo de documento declara `coverImage` opcional; el raw nunca ejercitó esa rama porque las ocho
 // obras del canon la traen.
 export const coverlessLiteraryWorkDocument = (() => {

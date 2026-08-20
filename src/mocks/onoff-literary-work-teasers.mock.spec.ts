@@ -8,13 +8,16 @@ import { onoffLiteraryWorksMock } from './onoff-literary-works.mock';
 import { palacioNueveFronterasLiteraryWorkMock } from './onoff/literary-work/el-palacio-de-las-nueve-fronteras.literary-work.mock';
 
 describe('onoffLiteraryWorkTeasersMock (derivación de teasers desde LiteraryWork)', () => {
-	it('should derive the excerpt from the opening section of the source work', () => {
+	// El extracto conserva el título de la sección de apertura pero recorta su cuerpo, espejando lo que
+	// hace la query. Se afirma que es un prefijo estricto: igualarlo al cuerpo entero volvería a pasar
+	// si el recorte dejara de aplicarse, y ninguna otra aserción lo notaría.
+	it('should derive the excerpt from the opening of the source work, truncated', () => {
 		const opening = palacioNueveFronterasLiteraryWorkMock.content[0];
+		const { excerpt } = palacioNueveFronterasLiteraryWorkTeaserMock;
 
-		expect(palacioNueveFronterasLiteraryWorkTeaserMock.excerpt).toEqual({
-			title: opening.title,
-			bodyHtml: opening.bodyHtml,
-		});
+		expect(excerpt.title).toEqual(opening.title);
+		expect(excerpt.bodyHtml.length).toBeLessThan(opening.bodyHtml.length);
+		expect(opening.bodyHtml.startsWith(excerpt.bodyHtml)).toBe(true);
 	});
 
 	it('should carry a rendered bodyHtml in the teaser section', () => {

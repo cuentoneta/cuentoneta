@@ -138,7 +138,7 @@ export class SanityCollectionRepository implements CollectionRepository {
 			tags: mapTags(raw.tags),
 			mediaSources: mapMediaTeasers(raw.mediaSources),
 			authors: raw.authors.map(mapAuthorTeaser),
-			excerpt: this.mapExcerpt(rawExcerpt),
+			excerpt: this.mapExcerpt(raw.slug, rawExcerpt),
 		});
 	}
 
@@ -161,7 +161,15 @@ export class SanityCollectionRepository implements CollectionRepository {
 
 	// Sin epígrafes: la tarjeta que consume el extracto muestra el cuerpo y nadie más los lee, así que
 	// la query tampoco los trae. El campo es opcional en la sección, no un vacío que haya que rellenar.
-	private mapExcerpt(raw: SanityExcerpt): LiteraryWorkExcerpt {
+	//
+	// `body` llega nullable porque el recorte de la query es un `split` indexado, y el evaluador de
+	// tipos no puede descartar el índice fuera de rango. Un extracto sin cuerpo es una obra que no se
+	// puede mostrar en un listado: se trata como dato mal curado en vez de rellenarse con vacío, que
+	// llegaría a la tarjeta como un hueco mudo.
+	private mapExcerpt(slug: string, raw: SanityExcerpt): LiteraryWorkExcerpt {
+		if (raw.body === null) {
+			throw new MalformedCollectionError(slug);
+		}
 		return createLiteraryWorkExcerpt({
 			title: raw.title ? createSectionTitle(raw.title) : undefined,
 			bodyHtml: markdownToSanitizedHtml(createMarkdown(raw.body)),
