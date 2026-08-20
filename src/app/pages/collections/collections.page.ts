@@ -47,6 +47,10 @@ export default class CollectionsPage implements CollectionsHost {
 
 	protected readonly failed = computed(() => this.catalogResource.status() === 'error');
 
+	// El vacío resuelto y la carga se ven distintos y significan cosas opuestas: sin esta señal, un
+	// catálogo que vuelve vacío con éxito se queda mostrando esqueletos, y el servidor los serializa.
+	protected readonly loading = computed(() => this.catalogResource.isLoading());
+
 	// Un fallo transitorio no puede salir 200: el borde cachearía un catálogo vacío como si fuera la
 	// página. No hay rama 404 — un catálogo no deja de existir.
 	private readonly respondErrorStatusEffect = effect(() => {

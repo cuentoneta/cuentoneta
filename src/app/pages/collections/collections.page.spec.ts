@@ -1,6 +1,7 @@
 // Librería de pruebas
 import { render, screen, within } from '@testing-library/angular';
 import { provideRouter } from '@angular/router';
+import { RESPONSE_INIT } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
 
 // Página
@@ -116,6 +117,16 @@ describe('CollectionsPage', () => {
 		expect(screen.queryByTestId('collections')).not.toBeInTheDocument();
 	});
 
+	// Un catálogo vacío resuelto no es un catálogo cargando. Sin este caso, la página se quedaba con los
+	// esqueletos puestos y el servidor los serializaba en una ruta que pide ser indexada.
+	it('should say the catalogue is empty instead of showing placeholders', async () => {
+		const { container } = await renderPage(new StubCatalogCollectionApi([]));
+
+		expect(screen.getByTestId('catalog-empty')).toBeInTheDocument();
+		// eslint-disable-next-line testing-library/no-container, testing-library/no-node-access -- el esqueleto no expone rol ni texto: la ausencia solo se afirma por selector
+		expect(container.querySelector('cuentoneta-collection-teaser-card-skeleton')).toBeNull();
+	});
+
 	// Un catálogo que falla no puede verse igual que uno vacío: sin el mensaje, la página miente diciendo
 	// que no hay colecciones.
 	it('should tell the reader when the catalogue fails to load', async () => {
@@ -123,5 +134,34 @@ describe('CollectionsPage', () => {
 
 		expect(screen.getByTestId('catalog-error')).toBeInTheDocument();
 		expect(screen.queryByTestId('collections')).not.toBeInTheDocument();
+	});
+
+	// El código de respuesta es lo que impide que el borde cachee un fallo transitorio como si fuera la
+	// página: es la razón del effect, y por eso se afirma en vez de quedar solo enunciada en un comentario.
+	describe('código de respuesta', () => {
+		const renderWithResponseInit = (api: CollectionApi, responseInit: { status?: number }) =>
+			render(CollectionsPage, {
+				providers: [
+					provideRouter([]),
+					provideCollectionApiMock(api),
+					{ provide: RESPONSE_INIT, useValue: responseInit },
+				],
+			});
+
+		it('should respond 503 when the catalogue fails', async () => {
+			const responseInit: { status?: number } = {};
+
+			await renderWithResponseInit(new FailingCollectionApi(), responseInit);
+
+			expect(responseInit.status).toBe(503);
+		});
+
+		it('should leave the status untouched when the catalogue resolves', async () => {
+			const responseInit: { status?: number } = {};
+
+			await renderWithResponseInit(new StubCatalogCollectionApi(onoffCollectionTeasersMock), responseInit);
+
+			expect(responseInit.status).toBeUndefined();
+		});
 	});
 });
