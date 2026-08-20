@@ -39,6 +39,10 @@ export type DrawerDirection = 'left' | 'right' | 'top' | 'bottom';
 	hostDirectives: [DrawerTransitionDirective, { directive: DrawerPanelDirective, inputs: ['direction'] }],
 	host: { class: 'contents' },
 	template: `
+		<!-- El display va atado al atributo \`open\`: una clase de display incondicional pisa el \`display: none\`
+		     que el navegador aplica al diálogo cerrado, y el panel queda en la página —fuera de pantalla por el
+		     transform, pero con caja y con su botón de cierre todavía enfocable. El atributo sobrevive toda la
+		     transición de salida, así que el slide sigue viéndose. -->
 		<dialog
 			[class]="panel.panelClasses()"
 			[attr.data-open]="transition.isTransitionedIn() ? '' : null"
@@ -47,7 +51,7 @@ export type DrawerDirection = 'left' | 'right' | 'top' | 'bottom';
 			[attr.aria-describedby]="description() ? descriptionId : null"
 			#dialog
 			tabindex="-1"
-			class="m-0 flex max-w-full flex-col gap-5 overflow-y-auto rounded-xl bg-white p-10 transition-transform duration-300 ease-out backdrop:bg-black/60 motion-reduce:duration-[0.01ms]"
+			class="m-0 hidden max-w-full flex-col gap-5 overflow-y-auto rounded-xl bg-white p-10 transition-transform duration-300 ease-out backdrop:bg-black/60 open:flex motion-reduce:duration-[0.01ms]"
 		>
 			<button
 				(click)="close()"
