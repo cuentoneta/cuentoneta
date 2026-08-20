@@ -54,9 +54,9 @@ describe('CollectionStructuredDataDirective', () => {
 		).toMatchObject({ '@type': 'BreadcrumbList' });
 	});
 
-	// La página de storylist emite su propio bloque bajo `collection`. Que los ids no se pisen es lo
-	// que permite distinguirlos mientras las dos rutas convivan.
-	// TODO(#2269): este caso se borra con esa página — sin emisor rival, no queda con qué colisionar.
+	// La página de storylist ocupa `collection`. Que los ids no se pisen es lo que permite distinguir
+	// los bloques mientras las dos rutas convivan.
+	// TODO(#2269): este caso se invierte al renombrarse el id — pasa a afirmar que sí emite `collection`.
 	it('should not emit under the schema id the storylist page uses', () => {
 		collectionSignal.set(geometriasDelDesveloCollectionMock);
 
