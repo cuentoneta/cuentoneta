@@ -128,7 +128,7 @@ describe('CollectionReadingSuggestionsComponent', () => {
 
 		expect(screen.getByRole('link', { name: suggestion.title })).toHaveAttribute(
 			'href',
-			`/story/${suggestion.slug}?navigation=storylist&navigationSlug=${collectionMock.slug}`,
+			`/read/${suggestion.slug}?navigation=collection&navigationSlug=${collectionMock.slug}`,
 		);
 	});
 

@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/angular';
 import { provideRouter } from '@angular/router';
-import { DeferBlockState, type ComponentFixture } from '@angular/core/testing';
+import { renderDeferBlocks } from '@testing/defer-blocks';
 import { of } from 'rxjs';
 
 import { ReadingSuggestionsComponent } from './reading-suggestions.component';
@@ -27,12 +27,6 @@ const setup = async (navigationParams: NavigationParams) =>
 			{ provide: StorylistApi, useValue: { get: () => of(collectionMock) } },
 		],
 	});
-
-const renderDeferBlocks = async (fixture: ComponentFixture<ReadingSuggestionsComponent>) => {
-	for (const deferBlock of await fixture.getDeferBlocks()) {
-		await deferBlock.render(DeferBlockState.Complete);
-	}
-};
 
 describe('ReadingSuggestionsComponent', () => {
 	beforeEach(() => {
@@ -64,7 +58,7 @@ describe('ReadingSuggestionsComponent', () => {
 	});
 
 	it('should mount the collection variant, and only that one', async () => {
-		const { fixture } = await setup({ navigation: 'storylist', navigationSlug: collectionMock.slug });
+		const { fixture } = await setup({ navigation: 'collection', navigationSlug: collectionMock.slug });
 
 		await renderDeferBlocks(fixture);
 
@@ -84,7 +78,7 @@ describe('ReadingSuggestionsComponent', () => {
 	});
 
 	it('should hand the collection variant the slug it has to fetch by', async () => {
-		const { fixture } = await setup({ navigation: 'storylist', navigationSlug: collectionMock.slug });
+		const { fixture } = await setup({ navigation: 'collection', navigationSlug: collectionMock.slug });
 
 		await renderDeferBlocks(fixture);
 

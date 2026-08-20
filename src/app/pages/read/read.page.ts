@@ -23,6 +23,12 @@ import { ButtonComponent } from '@components/button/button.component';
 import { EditorialNoteComponent } from '@components/editorial-note/editorial-note.component';
 import { LiteraryWorkSectionBodyComponent } from '@components/literary-work-section-body/literary-work-section-body.component';
 import { MediaWidgetSelector } from '@components/media-widget-selector/media-widget-selector.component';
+import { MediaWidgetSelectorSkeleton } from '@components/media-widget-selector/media-widget-selector-skeleton.component';
+import { DividerComponent } from '@components/divider/divider.component';
+import { ReadingSuggestionsComponent } from '@components/reading-suggestions/reading-suggestions.component';
+import { ReadPageSkeleton } from './read-page-skeleton.component';
+import { RouterLink } from '@angular/router';
+import { toNavigationContext, type NavigationContext, type NavigationParams } from '@app-utils/navigation-params';
 
 @Component({
 	selector: 'cuentoneta-read',
@@ -32,13 +38,25 @@ import { MediaWidgetSelector } from '@components/media-widget-selector/media-wid
 	imports: [
 		LiteraryWorkHeroHeaderComponent,
 		ButtonComponent,
+		DividerComponent,
 		EditorialNoteComponent,
 		LiteraryWorkSectionBodyComponent,
 		MediaWidgetSelector,
+		MediaWidgetSelectorSkeleton,
+		ReadPageSkeleton,
+		ReadingSuggestionsComponent,
+		RouterLink,
 	],
 })
 export default class ReadPage implements ReadHost {
 	public readonly slug = input.required<string>();
+
+	/** Contexto con el que se entró a la obra. Decide qué sugerencias se ofrecen al pie. */
+	public readonly navigation = input<NavigationContext, string | undefined>('author', {
+		transform: toNavigationContext,
+	});
+
+	public readonly navigationSlug = input<string>();
 
 	private readonly literaryWorkApi = inject(LiteraryWorkApi);
 	private readonly responseInit = inject(RESPONSE_INIT, { optional: true });
@@ -55,6 +73,24 @@ export default class ReadPage implements ReadHost {
 	);
 
 	protected readonly notFound = computed(() => this.literaryWorkResource.status() === 'error');
+
+	// El primer autor y no el `byline`: el nombre y el slug que consume la variante de autor tienen
+	// que referirse al mismo, y el byline une a todos con coma.
+	private readonly primaryAuthor = computed(() => this.literaryWork()?.authors[0]);
+
+	protected readonly primaryAuthorName = computed(() => this.primaryAuthor()?.name ?? '');
+
+	// Sin contexto en la ruta se cae al autor de la obra: una obra abierta por URL directa igual
+	// ofrece a dónde seguir leyendo.
+	protected readonly navigationParams = computed<NavigationParams>(() => {
+		const navigationSlug = this.navigationSlug();
+
+		if (navigationSlug) {
+			return { navigation: this.navigation(), navigationSlug };
+		}
+
+		return { navigation: 'author', navigationSlug: this.primaryAuthor()?.slug ?? '' };
+	});
 	protected readonly byline = computed(
 		() =>
 			this.literaryWork()
@@ -65,8 +101,8 @@ export default class ReadPage implements ReadHost {
 	// `/read/:slug` es una ruta accesible nueva que todavía no queremos exponer a buscadores: se sirve
 	// `noindex, nofollow` y sin JSON-LD. El robots se emite antes del guard a propósito, para que la
 	// señal salga también cuando la obra no carga.
-	// TODO: al implementar la página de lectura V3, revertir este opt-out — volver a marcar la página
-	// indexable y re-conectar ReadMetaTagsDirective/ReadStructuredDataDirective en `hostDirectives`.
+	// TODO(#1855): revertir el opt-out — volver a marcar la página indexable y re-conectar
+	// ReadMetaTagsDirective/ReadStructuredDataDirective en `hostDirectives`.
 	private readonly applyHeadMetadataEffect = effect(() => {
 		this.head.setRobots('noindex, nofollow');
 		const literaryWork = this.literaryWork();

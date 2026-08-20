@@ -8,7 +8,7 @@ import { AppRoutes } from '../../app.routes';
 
 // Utils
 import { ssrBlockingRxResource } from '@app-utils/ssr-resource';
-import type { NavigationContext, NavigationParams } from '@app-utils/navigation-params';
+import { toNavigationContext, type NavigationContext, type NavigationParams } from '@app-utils/navigation-params';
 
 // Services
 import { StoryApi } from '../../providers/story.provider';
@@ -58,7 +58,9 @@ export default class StoryComponent implements StoryHost {
 
 	// Providers
 	public readonly slug = input.required<string>();
-	public readonly navigation = input<NavigationContext>('author');
+	public readonly navigation = input<NavigationContext, string | undefined>('author', {
+		transform: toNavigationContext,
+	});
 	public readonly navigationSlug = input<string>();
 
 	private readonly storyService = inject(StoryApi);

@@ -6,13 +6,13 @@ import {
 	palacioNueveFronterasLiteraryWorkTeaserMock,
 } from '@mocks/onoff-literary-work-teasers.mock';
 import { clearAllMocks } from '@test-utils';
-import type { Media } from '@models/media.model';
-import { onoffSpotifyPodcastEpisodesMock, onoffYouTubeVideosMock } from '@mocks/onoff-media.mock';
+import type { MediaTeaser } from '@models/media.model';
+import { onoffSpotifyPodcastEpisodesMock, onoffYouTubeVideosMock, toMediaTeaser } from '@mocks/onoff-media.mock';
 import type { LiteraryWorkTeaser } from '@models/literary-work.model';
 import type { NavigationParams } from '@app-utils/navigation-params';
 
 describe('LiteraryWorkCardTeaserComponent', () => {
-	const literaryWorkUrl = '/story/el-palacio-de-las-nueve-fronteras?navigation=author&navigationSlug=francois-onoff';
+	const literaryWorkUrl = '/read/el-palacio-de-las-nueve-fronteras?navigation=author&navigationSlug=francois-onoff';
 	const authorUrl = '/author/francois-onoff';
 
 	let navigationParams: NavigationParams = { navigation: 'author', navigationSlug: '' };
@@ -51,7 +51,7 @@ describe('LiteraryWorkCardTeaserComponent', () => {
 		await render(LiteraryWorkCardTeaserComponent, {
 			inputs: { literaryWork: palacioNueveFronterasLiteraryWorkTeaserMock, navigationParams },
 		});
-		const link = screen.getAllByRole('link').find((l) => l.getAttribute('href')?.includes('/story/'));
+		const link = screen.getAllByRole('link').find((l) => l.getAttribute('href')?.includes('/read/'));
 		expect(link?.getAttribute('href')).toContain(literaryWorkUrl);
 	});
 
@@ -159,7 +159,7 @@ describe('LiteraryWorkCardTeaserComponent', () => {
 			expect(screen.getByTestId('cover-image')).toBeInTheDocument();
 			const links = screen.getAllByRole('link');
 			expect(links).toHaveLength(1);
-			expect(links[0]).toHaveAttribute('href', expect.stringContaining('/story/'));
+			expect(links[0]).toHaveAttribute('href', expect.stringContaining('/read/'));
 		});
 	});
 
@@ -213,7 +213,7 @@ describe('LiteraryWorkCardTeaserComponent', () => {
 	// Aquí solo se verifica la integración: que la tarjeta delegue en el componente cuando corresponde.
 	describe('Multimedia selectors', () => {
 		// Dos plataformas distintas del canon: es lo que la tarjeta delega al selector.
-		const richMedia: Media[] = [...onoffYouTubeVideosMock, ...onoffSpotifyPodcastEpisodesMock];
+		const richMedia: MediaTeaser[] = [...onoffYouTubeVideosMock, ...onoffSpotifyPodcastEpisodesMock].map(toMediaTeaser);
 		const literaryWorkWithMedia: LiteraryWorkTeaser = {
 			...palacioNueveFronterasLiteraryWorkTeaserMock,
 			mediaSources: richMedia,

@@ -4,14 +4,29 @@
 		<cuentoneta-literary-work-hero-header [literaryWork]="literaryWork" />
 	</header>
 	<section class="mx-auto flex w-full max-w-3xl flex-col gap-8 px-4 py-8">
-		<div class="flex justify-between pt-7">
-			<span class="font-inter text-xs font-semibold">{{ literaryWork.totalReadingTime }} minutos de lectura</span>
-			<button cuentoneta-button variant="outline">Compartir</button>
+		<div class="flex flex-col gap-7 pt-7">
+			<div class="flex items-center justify-between">
+				<span class="font-inter text-xs font-semibold">{{ literaryWork.totalReadingTime }} minutos de lectura</span>
+				<button cuentoneta-button variant="subtle" size="xs">Compartir</button>
+			</div>
+			<cuentoneta-divider />
 		</div>
 
+		<!--
+			El `@if` es lo que evita descargar el chunk del bloque: dentro de un `@defer` sin guarda, el
+			disparador lo pediría igual aunque el bloque no fuera a dibujar nada. La condición equivale a
+			la que el bloque evalúa por dentro, porque ofrece una opción por recurso.
+			El diferido es plano a propósito: deja el bloque fuera del HTML servido, que es contenido
+			complementario y no el cuerpo de la obra.
+			El disparador es `on idle` y no `on viewport` porque el ahorro ya lo hace el `@if`: en una obra
+			con recursos el bloque se va a mostrar igual, y `on viewport` dispararía en el primer render
+			—está a media página— compitiendo con la hidratación en vez de esperar a que el hilo se libere.
+		-->
+		@if (literaryWork.mediaSources.length > 0) { @defer (on idle) {
 		<cuentoneta-media-widget-selector [mediaSources]="literaryWork.mediaSources" />
-
-		@for (section of sections(); track section.position) {
+		} @placeholder {
+		<cuentoneta-media-widget-selector-skeleton data-testid="media-formats-placeholder" />
+		} } @for (section of sections(); track section.position) {
 
 		<section class="flex flex-col gap-4">
 			@if (section.title) {
@@ -28,12 +43,26 @@
 
 		}
 	</section>
+
+	<!-- Se monta bajo el `@if` de la obra: sin obra no hay autor de reserva y el bloque pediría sugerencias de un slug vacío. -->
+	<section class="mx-auto flex w-full max-w-3xl flex-col px-4 pb-12">
+		<cuentoneta-reading-suggestions
+			[navigationParams]="navigationParams()"
+			[authorName]="primaryAuthorName()"
+			[currentWorkSlug]="literaryWork.slug"
+		/>
+	</section>
 </article>
 } @else if (notFound()) {
-<section class="mx-auto flex w-full max-w-3xl flex-col gap-4 px-4 py-8">
+<section class="mx-auto flex w-full max-w-3xl flex-col items-start gap-4 px-4 py-8">
 	<h1>No encontramos esta obra</h1>
 	<p>La obra que buscás no existe o ya no está disponible.</p>
+	<a [routerLink]="['/']" cuentoneta-button variant="outline">Volver al inicio</a>
 </section>
 } @else {
-<p class="mx-auto w-full max-w-3xl px-4 py-8">Cargando…</p>
+<!--
+	El esqueleto se pinta con `@if`/`@else` planos y nunca dentro de un `@defer`: el recurso bloquea el
+	render del servidor, así que al serializar la obra ya está y el crawler recibe el cuerpo real.
+-->
+<cuentoneta-read-page-skeleton />
 }

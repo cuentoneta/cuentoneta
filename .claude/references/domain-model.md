@@ -67,16 +67,24 @@ interface LiteraryWorkBase {
 	readonly totalReadingTime: ReadingTime;
 	readonly sectionCount: number;
 	readonly tags: readonly Tag[];
-	readonly mediaSources: readonly Media[]; // en la base: también lo exponen los teasers de listado
 }
 
 export interface LiteraryWork extends LiteraryWorkBase {
 	readonly authors: readonly Author[]; // 1..N; la obra anónima referencia al author real "Anónimo"
+	readonly mediaSources: readonly Media[]; // vista completa, con la carga del recurso
 	readonly content: readonly LiteraryWorkSection[];
 	readonly resources: readonly Resource[];
 	// …
 }
+
+export interface LiteraryWorkTeaser extends LiteraryWorkBase {
+	readonly authors: readonly AuthorTeaser[];
+	readonly mediaSources: readonly MediaTeaser[]; // tag + título; la tarjeta pinta el ícono y nombra el recurso, no lo reproduce
+	// …
+}
 ```
+
+**`mediaSources` no vive en `LiteraryWorkBase`, igual que `authors`:** cada vista lo declara con su propio tipo, porque su proyección GROQ difiere. La vista completa trae `Media[]` (con `data` obligatorio); las vistas de teaser/navegación traen `MediaTeaser[]` (solo `type`), que es lo único que su proyección resuelve — detalle completo en [`docs/DOMAIN_MODEL.md`](../../docs/DOMAIN_MODEL.md#media-contenido-multimedia).
 
 A diferencia de esta interfaz ya implementada, `Story` (`story.model.ts`) sigue siendo anémica: primitivos sin factory que valide invariantes — ver el contraste completo en [Diseño de agregados](#diseño-de-agregados).
 

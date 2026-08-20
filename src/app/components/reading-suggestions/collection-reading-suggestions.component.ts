@@ -80,7 +80,7 @@ export class CollectionReadingSuggestionsComponent {
 	protected readonly moreLabel = computed(() => `Ver más de ${this.title()}`);
 	protected readonly moreRoute = computed(() => ['/', this.appRoutes.StoryList, this.collectionSlug()]);
 	protected readonly navigationParams = computed<NavigationParams>(() => ({
-		navigation: 'storylist',
+		navigation: 'collection',
 		navigationSlug: this.collectionSlug(),
 	}));
 }

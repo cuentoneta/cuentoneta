@@ -1,5 +1,6 @@
 import { spyOn } from '@test-utils';
-import { mapMediaSources } from './media-sources.functions';
+import { mapMediaSources, mapMediaTeasers } from './media-sources.functions';
+import { onoffRawCollectionWorksWithMediaSources } from '@mocks/onoff-raw-collections.mock';
 import { onoffRawStoriesWithMediaSources, onoffRawTeasersWithMediaSources } from '@mocks/onoff-raw-stories.mock';
 import { isAudioRecording, isSpaceRecording, isSpotifyPodcastEpisode, isYouTubeVideo } from '@models/media.model';
 import { onoffAudioRecordingsMock } from '@mocks/onoff-media.mock';
@@ -163,5 +164,32 @@ describe('descarte de un tipo sin modelo de dominio', () => {
 		expect(warn).toHaveBeenCalledWith(expect.stringContaining('pdfLink'), {
 			_key: rawSourceOfType('pdfLink')._key,
 		});
+	});
+});
+
+describe('mapMediaTeasers', () => {
+	const rawWork = onoffRawCollectionWorksWithMediaSources[0];
+
+	// Derivado del fixture: sumar un medio a la obra del canon no debe romper el caso, y sumar uno de
+	// un tipo que el dominio no modela debe quedar cubierto por el descarte de abajo.
+	const modeled = rawWork.mediaSources.filter((source) => source._type !== 'pdfLink');
+
+	it('mapea cada recurso modelado a su tag y su título, en orden', () => {
+		expect(mapMediaTeasers(rawWork.mediaSources)).toEqual(
+			modeled.map((source) => ({ type: source._type, title: source.title })),
+		);
+	});
+
+	it('descarta con rastro los tipos sin modelo de dominio', () => {
+		const unmodeled = rawWork.mediaSources.filter((source) => source._type === 'pdfLink');
+		const warn = spyOn(console, 'warn').mockImplementation(() => undefined);
+		// Un spyOn sobre un método ya espiado devuelve el mismo spy, con el historial de los casos
+		// anteriores del archivo: sin limpiarlo, contar llamadas mediría también las de ellos.
+		warn.mockClear();
+
+		mapMediaTeasers(rawWork.mediaSources);
+
+		expect(warn).toHaveBeenCalledTimes(unmodeled.length);
+		expect(warn).toHaveBeenCalledWith(expect.stringContaining('pdfLink'));
 	});
 });

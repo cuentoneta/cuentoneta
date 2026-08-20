@@ -25,6 +25,12 @@ export const onoffRawCollectionsWithoutFeaturedImage: RawCollection[] = onoffRaw
 	(collection) => collection.featuredImage === null,
 );
 
+// Las obras embebidas que declaran multimedia, que son las que ejercitan el mapeo de la vista de
+// teaser. Su proyección solo trae el tag, así que el shape difiere del de las obras de nivel documento.
+export const onoffRawCollectionWorksWithMediaSources: RawCollection['literaryWorks'] = onoffRawCollectionsMock
+	.flatMap((collection) => collection.literaryWorks)
+	.filter((work) => work.mediaSources.length > 0);
+
 // Escenarios de borde, construidos por spread sobre el canon para que cambien con él.
 // Los cuatro primeros son datos que impiden construir el agregado.
 

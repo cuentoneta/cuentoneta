@@ -245,7 +245,7 @@ interface LiteraryWork {
 
 	// Recursos Multimedia
 	resources: Resource[]; // Enlaces a recursos externos
-	mediaSources: Media[]; // Contenido multimedia asociado
+	mediaSources: Media[]; // Contenido multimedia asociado (vista completa, con la carga del recurso)
 }
 
 interface LiteraryWorkSection {
@@ -287,7 +287,7 @@ Borrador en Sanity → Publicación → Accesible para lectura en /read/:slug
 - `LiteraryWorkNavigationTeaser` - Vista mínima para navegación
 - `LiteraryWorkNavigationTeaserWithAuthors` - Vista mínima con autores resumidos
 
-`mediaSources: Media[]` **todas** las vistas (incluidas las de teaser/navegación) lo exponen; las tarjetas de listado lo consumen para mostrar los recursos multimedia de la obra.
+`mediaSources` lo exponen **todas** las vistas, cada una con el tipo de su vista: `LiteraryWork` transporta `Media[]` (la vista completa, con la carga del recurso); `LiteraryWorkTeaser`, `LiteraryWorkNavigationTeaser` y `LiteraryWorkNavigationTeaserWithAuthors` transportan `MediaTeaser[]` (solo el `type`), que es lo único que la tarjeta de listado necesita para pintar el ícono de la plataforma — ver [Media](#media-contenido-multimedia).
 
 ---
 
@@ -420,13 +420,13 @@ interface Collection {
 	};
 
 	// Recursos Multimedia
-	mediaSources: Media[]; // Contenido multimedia asociado; alineado con el schema y con LiteraryWork.mediaSources (no `media`, como en Storylist)
+	mediaSources: Media[]; // Contenido multimedia asociado (vista completa); alineado con el schema y con LiteraryWork.mediaSources (no `media`, como en Storylist)
 
 	// Metadatos
 	count: number; // Derivado: total de las obras que el agregado transporta
 
 	// Composición
-	literaryWorks: LiteraryWorkTeaser[]; // Obras literarias en la colección (ordenadas)
+	literaryWorks: LiteraryWorkTeaser[]; // Obras literarias en la colección (ordenadas); su mediaSources es MediaTeaser[], no Media[] — ver LiteraryWork
 }
 ```
 
@@ -451,7 +451,7 @@ Creación de colección → Adición de obras literarias → Publicación de col
 ```
 
 **Relación con LiteraryWork:**
-Las obras se referencian directamente en el array `literaryWorks`. Cada entrada es una proyección de tipo `LiteraryWorkTeaser`, igual que `Storylist.stories` proyecta `Story` a `StoryTeaserWithAuthor`.
+Las obras se referencian directamente en el array `literaryWorks`. Cada entrada es una proyección de tipo `LiteraryWorkTeaser`, igual que `Storylist.stories` proyecta `Story` a `StoryTeaserWithAuthor`. La proyección GROQ anidada de `mediaSources` en esas entradas trae solo el tag (`{ _type }`), que el ACL mapea con `mapMediaTeasers` a `MediaTeaser[]`; el `mediaSources` de nivel documento de `Collection` sigue siendo la vista completa, mapeada con `mapMediaSources`.
 
 **Tres diferencias con `Storylist`** (más allá de agrupar `LiteraryWork` en vez de `Story`):
 
@@ -589,14 +589,22 @@ interface MarkDef {
 
 **Propósito:** Encapsular diferentes tipos de contenido multimedia.
 
-`Media` es el tipo **ancho**: el de las colecciones y el que devuelve el ACL, con `data?: unknown` porque el supertipo no correlaciona el tag con la forma de su carga. `MediaTypes` es el **angosto**, la unión discriminada que consumen los widgets, donde cada tag ya fija su `data`. Se pasa de uno al otro con los type guards de abajo, nunca con una aserción.
+Dos ejes **ortogonales** organizan el modelo, y conviene no confundirlos:
+
+1. **Qué transporta la proyección.** `Media` es la vista **completa** — la de la página, con la carga (`data`, obligatorio) con la que un widget reproduce el recurso. `MediaTeaser` es la vista de **listado** — el `type`, con el que la tarjeta pinta el ícono de la plataforma, y el `title`, que está por **identidad**: sin él dos recursos de la misma plataforma son indistinguibles, y quien ofrezca elegir entre ellos no puede decir cuál se eligió ni nombrarlos. Ninguno de los dos arrastra costo: son campos planos del documento, a diferencia de la descripción (que cruza el pipeline de Markdown) y de la URL del audio (que dereferencia un asset). Cada una tiene su propia proyección GROQ y su propio mapper (`mapMediaSources` y `mapMediaTeasers`, respectivamente); el teaser no puede prometer lo que su proyección no trae. `data` es obligatorio en `Media` para que la carga no se pueda omitir al armar la vista completa: mientras fue opcional, copiar los campos textuales de un recurso bastaba para construir algo que el compilador aceptaba como reproducible.
+2. **Cómo se correlaciona el tag con su carga.** Dentro de la vista completa, `Media` es el **supertipo** —`data: unknown`, sin correlación entre el tag y la forma de la carga— y `MediaTypes` la **unión discriminada** que consumen los widgets, donde cada tag ya fija su `data`. Se pasa de uno al otro con los type guards de abajo, nunca con una aserción.
 
 ```typescript
+interface MediaTeaser {
+	type: MediaTypeKey; // 'audioRecording' | 'spaceRecording' | 'youTubeVideo' | 'spotifyPodcastEpisode'
+	title: string; // identidad del recurso dentro de su plataforma
+}
+
 interface Media {
 	title: string;
 	description: SanitizedHtml; // Markdown en el CMS, saneado a HTML por el ACL
-	type: MediaTypeKey; // 'audioRecording' | 'spaceRecording' | 'youTubeVideo' | 'spotifyPodcastEpisode'
-	data?: unknown;
+	type: MediaTypeKey;
+	data: unknown;
 }
 
 interface AudioRecording extends Media {
@@ -605,7 +613,7 @@ interface AudioRecording extends Media {
 
 interface SpaceRecording extends Media {
 	data: {
-		url: string | null; // null en la proyección de teaser, que no resuelve audioUrl
+		url: string | null; // null en las proyecciones embebidas de storylist, que no resuelven audioUrl
 		duration: string;
 		hostName: string;
 		hostAvatar?: string;
@@ -626,7 +634,7 @@ type MediaTypes = AudioRecording | SpaceRecording | YouTubeVideo | SpotifyPodcas
 
 **Patrón:** Polimorfismo mediante discriminador (`type`). Los type guards (`isAudioRecording`, `isSpaceRecording`, `isYouTubeVideo`, `isSpotifyPodcastEpisode`) discriminan **solo por el tag** y no por la forma de `data`: `AudioRecording` y `SpotifyPodcastEpisode` son estructuralmente idénticos (`{ url }`), así que inspeccionar `data` no alcanza para distinguirlos. `narrowMedia(media: Media): MediaTypes` los encadena y lanza si el `type` no corresponde a ningún tag que el dominio modele.
 
-**Uso:** Asociar audio, espacios de X, episodios de podcast de Spotify y videos de YouTube a una obra o colección.
+**Uso:** Asociar audio, espacios de X, episodios de podcast de Spotify y videos de YouTube a una obra o colección. `Story.media`, `LiteraryWork.mediaSources` y el `mediaSources` de nivel documento de `Collection` exponen `Media[]`; las vistas de teaser de `LiteraryWork` (incluidas las obras dentro de `Collection.literaryWorks`) exponen `MediaTeaser[]` — ver [LiteraryWork](#agregado-literarywork-obra-literaria).
 
 ---
 

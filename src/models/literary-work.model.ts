@@ -1,6 +1,6 @@
 import type { Author, AuthorTeaser } from './author.model';
 import type { LiteraryWorkSection } from './literary-work-section.model';
-import type { Media } from './media.model';
+import type { Media, MediaTeaser } from './media.model';
 import type { Resource } from './resource.model';
 import type { SanitizedHtml } from './sanitized-html.model';
 import type { Tag } from './tag.model';
@@ -18,14 +18,17 @@ interface LiteraryWorkBase {
 	// y en los teasers puede ser mayor que las secciones transportadas — ver LITERARY_WORK_DESIGN.md §7.
 	readonly sectionCount: number;
 	readonly tags: readonly Tag[];
-	// Las tarjetas de listado (vistas de teaser/navegación) muestran los recursos multimedia
-	// de la obra; por eso el campo vive en la base y no solo en el agregado completo.
-	readonly mediaSources: readonly Media[];
 }
+
+// `mediaSources` lo declara cada vista con su propio tipo, igual que `authors`: todas lo exponen,
+// pero la tarjeta de listado solo pinta el ícono de la plataforma y su proyección no resuelve la
+// carga con la que se reproduce el recurso. Declararlo en la base obligaría a las vistas de teaser
+// a prometer lo que su proyección no trae.
 
 export interface LiteraryWork extends LiteraryWorkBase {
 	// 1..N; la obra anónima referencia al author "Anónimo" (ver isAnonymous).
 	readonly authors: readonly Author[];
+	readonly mediaSources: readonly Media[];
 	readonly content: readonly LiteraryWorkSection[];
 	readonly resources: readonly Resource[];
 	readonly badLanguage?: boolean;
@@ -40,15 +43,18 @@ export interface LiteraryWork extends LiteraryWorkBase {
 // decisión de diseño del contrato — ver docs/LITERARY_WORK_DESIGN.md §2.
 export interface LiteraryWorkTeaser extends LiteraryWorkBase {
 	readonly authors: readonly AuthorTeaser[];
+	readonly mediaSources: readonly MediaTeaser[];
 	readonly teaserSection: LiteraryWorkSection;
 }
 
 export interface LiteraryWorkNavigationTeaser extends LiteraryWorkBase {
 	readonly authors: Array<never>;
+	readonly mediaSources: readonly MediaTeaser[];
 }
 
 export interface LiteraryWorkNavigationTeaserWithAuthors extends LiteraryWorkBase {
 	readonly authors: readonly AuthorTeaser[];
+	readonly mediaSources: readonly MediaTeaser[];
 }
 
 // "Anónimo" es un author real del catálogo: la obra anónima lo referencia explícitamente

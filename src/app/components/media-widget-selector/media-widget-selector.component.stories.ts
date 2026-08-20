@@ -1,4 +1,6 @@
-import { argsToTemplate, type Meta, type StoryObj } from '@storybook/angular-vite';
+import { argsToTemplate, moduleMetadata, type Meta, type StoryObj } from '@storybook/angular-vite';
+
+import { MediaWidgetSelectorSkeleton } from './media-widget-selector-skeleton.component';
 
 import { MediaWidgetSelector } from './media-widget-selector.component';
 import {
@@ -70,6 +72,42 @@ export const TipoRepetido: Story = {
 		docs: {
 			description: {
 				story: `<p>El caso que el diseño no modela: dos recursos del mismo tipo. Los botones de audio se rotulan con el <strong>título de cada medio</strong> en lugar del nombre del formato, que los volvería indistinguibles; los tipos que aparecen una sola vez conservan el nombre del formato.</p><p><strong>Usos:</strong> ninguno todavía — es el caso que habilita el enriquecimiento del corpus previsto para las obras con multimedia repetida.</p>`,
+			},
+		},
+	},
+};
+
+export const Skeleton: StoryObj = {
+	decorators: [moduleMetadata({ imports: [MediaWidgetSelectorSkeleton] })],
+	render: () => ({ template: `<cuentoneta-media-widget-selector-skeleton />` }),
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>Esqueleto de carga del bloque. Dibuja el caso general —el de una obra con varios formatos—, que es el que ocupa más alto: reservar de menos hace saltar el layout, y reservar de más solo deja un hueco que se llena.</p><p><strong>Usos:</strong> el marcador de posición del bloque diferido en la página de lectura.</p>`,
+			},
+		},
+	},
+};
+
+export const Estados: StoryObj<MediaWidgetSelector & { loading: boolean }> = {
+	decorators: [moduleMetadata({ imports: [MediaWidgetSelectorSkeleton] })],
+	argTypes: { loading: { control: 'boolean', name: 'Cargando' } },
+	render: (args) => ({
+		props: args,
+		template: `
+			@if (loading) {
+				<cuentoneta-media-widget-selector-skeleton />
+			} @else {
+				<cuentoneta-media-widget-selector [mediaSources]="mediaSources" />
+			}
+		`,
+	}),
+	args: { loading: true, mediaSources: multipleSourcesWork.mediaSources },
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'Activá/desactivá "Cargando" para alternar entre el estado real y el esqueleto, y evaluar la alineación entre los dos.',
 			},
 		},
 	},
