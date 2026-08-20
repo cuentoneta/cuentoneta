@@ -19,6 +19,10 @@ import {
 
 const READ_MORE = 'Leer más';
 
+// Holgado a propósito: el `beforeAll` corre una sola vez y su veredicto decide si los casos del panel
+// corren o se saltean, así que conviene esperar de más antes que declarar ausente un contenido que está.
+const FIXTURE_TIMEOUT = 15_000;
+
 let mostDescriptive: CollectionCatalogEntry | undefined;
 let readMoreIsVisible = false;
 
@@ -33,7 +37,13 @@ test.beforeAll(async ({ request, browser }) => {
 	const page = await browser.newPage({ viewport: DESKTOP_VIEWPORT });
 	await page.goto(`/collection/${mostDescriptive.slug}`);
 	const readMore = page.getByTestId('collection-info').getByRole('button', { name: READ_MORE });
-	readMoreIsVisible = await readMore.isVisible().catch(() => false);
+	// Se espera al control en vez de preguntar si está: el recorte se mide después de hidratar, así que una
+	// lectura instantánea devuelve "no desborda" en una página que todavía no terminó de resolverse. Solo
+	// el vencimiento del plazo significa que el contenido no da.
+	readMoreIsVisible = await readMore
+		.waitFor({ state: 'visible', timeout: FIXTURE_TIMEOUT })
+		.then(() => true)
+		.catch(() => false);
 	await page.close();
 });
 
