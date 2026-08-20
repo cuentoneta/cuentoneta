@@ -18,7 +18,7 @@ import type { NavigationParams } from '@app-utils/navigation-params';
 	host: { class: 'block' },
 	template: `
 		@switch (navigationParams().navigation) {
-			@case ('storylist') {
+			@case ('collection') {
 				@defer (on viewport) {
 					<cuentoneta-collection-reading-suggestions
 						[collectionSlug]="navigationParams().navigationSlug"

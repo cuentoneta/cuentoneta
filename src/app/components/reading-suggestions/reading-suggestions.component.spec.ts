@@ -64,7 +64,7 @@ describe('ReadingSuggestionsComponent', () => {
 	});
 
 	it('should mount the collection variant, and only that one', async () => {
-		const { fixture } = await setup({ navigation: 'storylist', navigationSlug: collectionMock.slug });
+		const { fixture } = await setup({ navigation: 'collection', navigationSlug: collectionMock.slug });
 
 		await renderDeferBlocks(fixture);
 
@@ -84,7 +84,7 @@ describe('ReadingSuggestionsComponent', () => {
 	});
 
 	it('should hand the collection variant the slug it has to fetch by', async () => {
-		const { fixture } = await setup({ navigation: 'storylist', navigationSlug: collectionMock.slug });
+		const { fixture } = await setup({ navigation: 'collection', navigationSlug: collectionMock.slug });
 
 		await renderDeferBlocks(fixture);
 
