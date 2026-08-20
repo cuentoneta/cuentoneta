@@ -54,9 +54,9 @@ export class ReadingSuggestionsComponent {
 	//
 	// El valor está medido sobre el bloque ya montado en la página de lectura, no derivado de su
 	// composición: el revestimiento cambia varias separaciones a la vez y la aritmética se desactualiza
-	// en silencio. Se reserva el alto de la **más alta** de las dos variantes —la de autor, que da tres
-	// líneas de extracto porque no pinta la fila de autoría; la de colección mide bastante menos—, de
-	// modo que ninguna empuje el pie.
+	// en silencio. Se midió con la cantidad completa de sugerencias, que es la que las dos variantes
+	// pintan cuando hay datos: reservar por variante no corresponde, porque lo que mueve el alto es
+	// cuántas obras entran y no cuál de las dos ramas las trajo.
 	//
 	// Es un alto fijo, así que solo acierta al ancho en que se midió: en pantallas angostas, donde los
 	// títulos y los extractos ocupan más líneas, el bloque va a superarlo y el pie se va a correr un
