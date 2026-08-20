@@ -1,8 +1,10 @@
-<main class="mx-auto flex w-full max-w-310 gap-16 px-4 py-8">
+<!-- El encabezado es fijo: sin el margen superior, la página arranca debajo de él. Los 32px de padding
+     son los que el diseño reserva sobre el contenido. -->
+<main class="mx-auto mt-header-height flex w-full max-w-310 gap-16 px-4 pt-8 pb-16">
 	@if (collection(); as collection) {
-	<div class="flex min-w-0 flex-1 flex-col gap-8">
-		<h1 class="font-inter text-3xl font-bold text-neutral-900">{{ collection.title }}</h1>
-		<div class="flex flex-col gap-8" data-testid="literary-works">
+	<div class="flex min-w-0 flex-1 flex-col gap-12 pt-8">
+		<h1 class="font-inter text-4xl leading-10 font-bold text-neutral-900">{{ collection.title }}</h1>
+		<div class="flex flex-col gap-9" data-testid="literary-works">
 			@for (literaryWork of collection.literaryWorks; track literaryWork._id; let index = $index) { @if (index >= 2) {
 			<cuentoneta-divider />
 			}
@@ -23,7 +25,7 @@
 
 	<cuentoneta-divider orientation="vertical" class="hidden lg:block" />
 
-	<aside class="hidden w-91 shrink-0 flex-col gap-10 lg:flex" data-testid="collection-info">
+	<aside class="hidden w-91 shrink-0 flex-col gap-6 pt-8 lg:flex" data-testid="collection-info">
 		<cuentoneta-collection-info-panel
 			(readMore)="openDescriptionDrawer(descriptionDrawer)"
 			[collection]="collection"
@@ -76,7 +78,7 @@
 
 	<cuentoneta-divider orientation="vertical" class="hidden lg:block" />
 
-	<aside class="hidden w-91 shrink-0 flex-col gap-10 lg:flex" aria-busy="true">
+	<aside class="hidden w-91 shrink-0 flex-col gap-6 pt-8 lg:flex" aria-busy="true">
 		<cuentoneta-collection-info-panel [descriptionLines]="sidebarDescriptionLines" />
 		<section class="flex flex-col gap-4">
 			@for (placeholder of [1, 2, 3]; track placeholder) {

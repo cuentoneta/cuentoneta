@@ -13,9 +13,26 @@ import {
 	teatroTagMock,
 } from '@mocks/onoff-tags.mock';
 import { createCollection } from '@models/collection.model';
+import { createMarkdown } from '@models/markdown.model';
+import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 
 const [representativeCollection] = onoffCollectionsWithRepresentativeImageryMock;
 const [sampleCollection] = onoffCollectionsWithSampleImageryMock;
+
+// Las colecciones del corpus traen un solo párrafo, así que el ritmo de la prosa no se puede ver con
+// ellas. La descripción pasa por el mismo pipeline que la del backend, para que el HTML sea el real.
+const collectionWithLongDescription = createCollection({
+	...representativeCollection,
+	description: markdownToSanitizedHtml(
+		createMarkdown(
+			[
+				'Una antología literaria, pública y de temática abierta, conformada voluntariamente por escritos de quienes integran la comunidad.',
+				'La primera versión se publicó en junio. De momento permanece abierta y suma los escritos aceptados el primer día de cada mes.',
+				'Los requisitos generales y el formato de recepción se detallan en la convocatoria vigente.',
+			].join('\n\n'),
+		),
+	),
+});
 
 // El corpus trae una etiqueta por colección: la variante se deriva por la factory, que es la que hace
 // cumplir las invariantes del agregado.
@@ -134,6 +151,24 @@ export const VariasEtiquetas: Story = {
 		docs: {
 			description: {
 				story: `<p>Con varias etiquetas se ve el recorte de <a href="./?path=/docs/componentes-v3-tagslist--docs" target="_top"><strong>TagsList</strong></a>: en esta columna angosta las que no entran se colapsan detrás de un contador. Es la única superficie donde ese comportamiento se puede mirar — depende de medidas reales y el entorno de tests no las computa.</p><p><strong>Usos:</strong> colecciones clasificadas con más de una etiqueta.</p>`,
+			},
+		},
+	},
+};
+
+export const DescripcionDeVariosParrafos: Story = {
+	render: (args) => ({
+		props: args,
+		template: `<cuentoneta-collection-info-panel ${argsToTemplate(args)} />`,
+	}),
+	args: {
+		collection: collectionWithLongDescription,
+		showTitle: false,
+	},
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>El montaje sin recorte, con una descripción de varios párrafos: es la única superficie donde se ve el ritmo vertical de la prosa. Las colecciones del corpus traen un solo párrafo, así que el resto de las entradas no lo muestran.</p><p>La separación entre párrafos es una línea en blanco, la misma que dibuja el diseño. El HTML lo emite el pipeline de Markdown sin clases, así que la regla vive en una hoja global anclada al componente.</p>`,
 			},
 		},
 	},

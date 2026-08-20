@@ -62,6 +62,7 @@ import { CollectionInfoPanelSkeletonComponent } from './collection-info-panel-sk
 					[class]="descriptionClasses()"
 					#clamp="cuentonetaClampOverflow"
 					cuentonetaClampOverflow
+					data-description
 					data-testid="description"
 				></div>
 				@if (showReadMore() && clamp.isOverflowing()) {
