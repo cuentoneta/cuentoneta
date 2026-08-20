@@ -53,9 +53,8 @@ export const sectionlessWorkRawCollection: RawCollection = {
 	),
 };
 
-// Una obra sin su tiempo de lectura total. No hay derivación que la salve: en las obras de texto lo
-// calcula el backfill, pero en un recitado es la duración del medio, cargada a mano. Sin ese dato la
-// obra no se puede mostrar en un listado, así que el ACL la trata como mal curada.
+// Una obra a la que el backfill todavía no le calculó su tiempo de lectura total. Sin ese dato no hay
+// nada que mostrar en la tarjeta, y el ACL la trata como mal curada.
 export const unbackfilledWorkRawCollection: RawCollection = {
 	...geometriasDelDesveloRawCollection,
 	literaryWorks: geometriasDelDesveloRawCollection.literaryWorks.map((work, index) =>

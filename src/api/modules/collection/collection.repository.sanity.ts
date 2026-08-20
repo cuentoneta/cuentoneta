@@ -142,10 +142,8 @@ export class SanityCollectionRepository implements CollectionRepository {
 		});
 	}
 
-	// El total persistido, sin derivación. No hay ninguna que sirva para las dos clases de obra: en las
-	// de texto el backfill lo calcula sumando las secciones, pero en un recitado o un audiovisual es la
-	// duración del medio, cargada a mano. Derivarlo del cuerpo daría el número equivocado justo para
-	// esas, y derivarlo del extracto —recortado— lo daría para todas.
+	// No hay derivación que sirva: en una obra de texto el total es la suma de sus secciones, pero en
+	// una obra recitada es la duración del medio. Cualquier cálculo acierta en una y falla en la otra.
 	private resolveTotalReadingTime(raw: SanityCollectionWork): ReadingTime {
 		if (raw.totalReadingTime === null) {
 			throw new MalformedCollectionError(raw.slug);
@@ -153,13 +151,8 @@ export class SanityCollectionRepository implements CollectionRepository {
 		return createReadingTime(raw.totalReadingTime);
 	}
 
-	// Sin epígrafes: la tarjeta que consume el extracto muestra el cuerpo y nadie más los lee, así que
-	// la query tampoco los trae. El campo es opcional en la sección, no un vacío que haya que rellenar.
-	//
-	// `body` llega nullable porque el recorte de la query es un `split` indexado, y el evaluador de
-	// tipos no puede descartar el índice fuera de rango. Un extracto sin cuerpo es una obra que no se
-	// puede mostrar en un listado: se trata como dato mal curado en vez de rellenarse con vacío, que
-	// llegaría a la tarjeta como un hueco mudo.
+	// `body` llega nullable porque el recorte es un `split` indexado y el typegen no puede descartar el
+	// índice fuera de rango. Rellenarlo con vacío dejaría un hueco mudo en la tarjeta.
 	private mapExcerpt(slug: string, raw: SanityExcerpt): LiteraryWorkExcerpt {
 		if (raw.body === null) {
 			throw new MalformedCollectionError(slug);
