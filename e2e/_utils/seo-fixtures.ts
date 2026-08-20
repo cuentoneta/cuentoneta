@@ -28,4 +28,6 @@ export const SCHEMA_IDS = Object.freeze({
 	// TODO(#2269): `collection-page` es un nombre prestado hasta que se libere `collection`.
 	collectionPage: 'collection-page',
 	breadcrumbCollection: 'breadcrumb-collection',
+	collectionCatalog: 'collection-catalog',
+	breadcrumbCollectionCatalog: 'breadcrumb-collection-catalog',
 } as const);

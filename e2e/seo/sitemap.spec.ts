@@ -49,6 +49,9 @@ test('sitemap — B: cubre las páginas estáticas y los tres tipos de contenido
 	expect(locs).toContain(origin);
 	expect(locs).toContain(`${origin}/about`);
 	expect(locs).toContain(`${origin}/dmca`);
+	// La URL exacta del catálogo, no un `includes('/collection')`: eso pasaría con cualquier
+	// `/collection/:slug`, que es lo que va a entrar cuando el indexado se reapunte.
+	expect(locs).toContain(`${origin}/collection`);
 	expect(locs.some((loc) => loc.includes('/story/'))).toBe(true);
 	expect(locs.some((loc) => loc.includes('/author/'))).toBe(true);
 	expect(locs.some((loc) => loc.includes('/storylist/'))).toBe(true);
