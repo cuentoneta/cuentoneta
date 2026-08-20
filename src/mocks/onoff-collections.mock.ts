@@ -87,6 +87,14 @@ export const onoffCollectionsWithSampleImageryMock: Collection[] = onoffCollecti
 	(collection) => collection.imagery.kind === 'sample',
 );
 
+export const onoffCollectionsShowingAuthorsMock: Collection[] = onoffCollectionsMock.filter(
+	(collection) => collection.config.showAuthors,
+);
+
+export const onoffCollectionsHidingAuthorsMock: Collection[] = onoffCollectionsMock.filter(
+	(collection) => !collection.config.showAuthors,
+);
+
 export const onoffCollectionsWithMediaSourcesMock: Collection[] = onoffCollectionsMock.filter(
 	(collection) => collection.mediaSources.length > 0,
 );

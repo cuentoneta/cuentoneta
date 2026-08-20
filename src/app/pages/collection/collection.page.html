@@ -1,0 +1,63 @@
+<main class="mx-auto flex w-full max-w-310 gap-16 px-4 py-8">
+	@if (collection(); as collection) {
+	<div class="flex min-w-0 flex-1 flex-col gap-8">
+		<h1 class="font-inter text-3xl font-bold text-neutral-900">{{ collection.title }}</h1>
+		<div class="flex flex-col gap-8" data-testid="literary-works">
+			@for (literaryWork of collection.literaryWorks; track literaryWork._id; let index = $index) { @if (index >= 2) {
+			<cuentoneta-divider />
+			}
+			<cuentoneta-literary-work-card-teaser
+				[literaryWork]="literaryWork"
+				[variant]="index === 0 ? 'highlighted' : 'on-white'"
+				[order]="index + 1"
+				[priority]="index === 0"
+				[showAuthor]="collection.config.showAuthors"
+				[showExcerpt]="true"
+				[showMultimedia]="true"
+				[excerptLines]="excerptLinesFor(collection.config.showAuthors)"
+				[tagLabel]="collection.tags[0]?.title"
+			/>
+			}
+		</div>
+	</div>
+
+	<cuentoneta-divider orientation="vertical" class="hidden lg:block" />
+
+	<aside class="hidden w-91 shrink-0 flex-col gap-10 lg:flex" data-testid="collection-info">
+		<cuentoneta-collection-info-panel [collection]="collection" />
+		@if (suggestedCollections().length > 0) {
+		<section class="flex flex-col gap-4">
+			<h2 class="font-inter text-lg font-bold text-neutral-900">Otras colecciones sugeridas</h2>
+			@for (suggested of suggestedCollections(); track suggested.slug) {
+			<cuentoneta-navigable-collection-teaser [collection]="suggested" data-testid="suggested-collection" />
+			}
+		</section>
+		}
+	</aside>
+	} @else if (notFound()) {
+	<section class="flex w-full flex-col gap-4">
+		<h1>No encontramos esta colección</h1>
+		<p>La colección que buscás no existe o ya no está disponible.</p>
+	</section>
+	} @else {
+	<div class="flex min-w-0 flex-1 flex-col gap-8" aria-busy="true">
+		<cuentoneta-skeleton appearance="line" class="h-9 w-72 bg-neutral-300" />
+		<div class="flex flex-col gap-8">
+			@for (placeholder of [1, 2, 3]; track placeholder) {
+			<cuentoneta-literary-work-card-teaser [showExcerpt]="true" [showMultimedia]="true" />
+			}
+		</div>
+	</div>
+
+	<cuentoneta-divider orientation="vertical" class="hidden lg:block" />
+
+	<aside class="hidden w-91 shrink-0 flex-col gap-10 lg:flex" aria-busy="true">
+		<cuentoneta-collection-info-panel />
+		<section class="flex flex-col gap-4">
+			@for (placeholder of [1, 2, 3]; track placeholder) {
+			<cuentoneta-navigable-collection-teaser-skeleton />
+			}
+		</section>
+	</aside>
+	}
+</main>
