@@ -49,15 +49,32 @@ export const descriptionlessRawCollection: RawCollection = {
 export const sectionlessWorkRawCollection: RawCollection = {
 	...geometriasDelDesveloRawCollection,
 	literaryWorks: geometriasDelDesveloRawCollection.literaryWorks.map((work, index) =>
-		index === 0 ? { ...work, teaserSection: [], sectionCount: 0 } : work,
+		index === 0 ? { ...work, excerpt: [], sectionCount: 0 } : work,
 	),
 };
 
 // No es un dato mal curado: es el shape de un borrador, cuya obra todavía no pasó por el backfill de
-// reading time. Cubre la única rama que el opcional del tipo obliga a escribir.
+// reading time. Cae al segundo eslabón de la cadena, el tiempo de la sección de apertura.
 export const draftLikeRawCollection: RawCollection = {
 	...geometriasDelDesveloRawCollection,
 	literaryWorks: geometriasDelDesveloRawCollection.literaryWorks.map((work, index) =>
 		index === 0 ? { ...work, totalReadingTime: null } : work,
+	),
+};
+
+// El tercer eslabón: ni el total de la obra ni el tiempo de su sección de apertura están
+// persistidos, así que el único origen posible es derivarlo del cuerpo completo — que la proyección
+// materializa solo en este caso.
+export const unbackfilledWorkRawCollection: RawCollection = {
+	...geometriasDelDesveloRawCollection,
+	literaryWorks: geometriasDelDesveloRawCollection.literaryWorks.map((work, index) =>
+		index === 0
+			? {
+					...work,
+					totalReadingTime: null,
+					openingReadingTime: null,
+					readingTimeFallbackBody: work.excerpt[0]?.body ?? '',
+				}
+			: work,
 	),
 };

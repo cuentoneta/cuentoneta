@@ -76,9 +76,9 @@ export type LiteraryWorkCardTeaserContent =
 										data-testid="description"
 										class="overflow-hidden font-inter text-sm font-medium text-ellipsis text-neutral-600"
 									/>
-								} @else if ('teaserSection' in literaryWork) {
+								} @else if ('excerpt' in literaryWork) {
 									<div
-										[innerHTML]="literaryWork.teaserSection.bodyHtml"
+										[innerHTML]="literaryWork.excerpt.bodyHtml"
 										[class]="'line-clamp-' + excerptLines()"
 										data-testid="description"
 										class="overflow-hidden font-inter text-sm font-medium text-ellipsis text-neutral-600"
@@ -171,8 +171,8 @@ export class LiteraryWorkCardTeaserComponent {
 	// ya que la clase `line-clamp-N` se construye dinámicamente y no la detecta el escaneo de Tailwind.
 	public readonly excerptLines = input(2, { transform: (value: number) => Math.min(10, Math.max(1, value)) });
 	// TODO(#2037): puente desde `Story`, cuyo extracto es Portable Text y no `SanitizedHtml`. Cuando la
-	// tríada consuma obras nativas, el extracto vuelve a salir de `teaserSection` y este input se va.
-	// Tiene precedencia sobre `teaserSection` cuando llega no vacío.
+	// tríada consuma obras nativas, el extracto vuelve a salir de `excerpt` y este input se va.
+	// Tiene precedencia sobre `excerpt` cuando llega no vacío.
 	public readonly excerptParagraphs = input<TextBlockContent[]>([]);
 	public readonly navigationParams = input<NavigationParams>();
 

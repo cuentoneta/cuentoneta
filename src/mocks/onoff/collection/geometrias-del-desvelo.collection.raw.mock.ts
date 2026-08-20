@@ -82,7 +82,9 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 					diedOnYear: 1994,
 				},
 			],
-			teaserSection: [{ _key: 'section-1', title: geometriaSectionTitle, body: geometriaMdBody, readingTime: 7 }],
+			excerpt: [{ _key: 'section-1', title: geometriaSectionTitle, body: geometriaMdBody }],
+			openingReadingTime: 7,
+			readingTimeFallbackBody: null,
 		},
 		{
 			_id: 'onoff-literary-work-los-peldanos',
@@ -114,7 +116,9 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 					diedOnYear: 1994,
 				},
 			],
-			teaserSection: [{ _key: 'section-1', title: null, body: losPeldanosMdBody, readingTime: 8 }],
+			excerpt: [{ _key: 'section-1', title: null, body: losPeldanosMdBody }],
+			openingReadingTime: 8,
+			readingTimeFallbackBody: null,
 		},
 		{
 			_id: 'onoff-literary-work-las-escaleras',
@@ -146,7 +150,9 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 					diedOnYear: 1994,
 				},
 			],
-			teaserSection: [{ _key: 'section-1', title: null, body: lasEscalerasMdBody, readingTime: 9 }],
+			excerpt: [{ _key: 'section-1', title: null, body: lasEscalerasMdBody }],
+			openingReadingTime: 9,
+			readingTimeFallbackBody: null,
 		},
 	],
 };

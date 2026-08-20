@@ -59,7 +59,9 @@ export const inventarioDeLasPasionesRawCollection: NonNullable<CollectionBySlugQ
 					diedOnYear: 1994,
 				},
 			],
-			teaserSection: [{ _key: 'section-1', title: null, body: elTratadoDeLosPlaceresMdBody, readingTime: 10 }],
+			excerpt: [{ _key: 'section-1', title: null, body: elTratadoDeLosPlaceresMdBody }],
+			openingReadingTime: 10,
+			readingTimeFallbackBody: null,
 		},
 		{
 			_id: 'onoff-literary-work-el-odio',
@@ -91,7 +93,9 @@ export const inventarioDeLasPasionesRawCollection: NonNullable<CollectionBySlugQ
 					diedOnYear: 1994,
 				},
 			],
-			teaserSection: [{ _key: 'section-1', title: elOdioSectionTitle, body: elOdioMdBody, readingTime: 6 }],
+			excerpt: [{ _key: 'section-1', title: elOdioSectionTitle, body: elOdioMdBody }],
+			openingReadingTime: 6,
+			readingTimeFallbackBody: null,
 		},
 		{
 			_id: 'onoff-literary-work-las-dos-antorchas',
@@ -123,7 +127,9 @@ export const inventarioDeLasPasionesRawCollection: NonNullable<CollectionBySlugQ
 					diedOnYear: 1994,
 				},
 			],
-			teaserSection: [{ _key: 'section-1', title: null, body: lasDosAntorchasMdBody, readingTime: 8 }],
+			excerpt: [{ _key: 'section-1', title: null, body: lasDosAntorchasMdBody }],
+			openingReadingTime: 8,
+			readingTimeFallbackBody: null,
 		},
 	],
 };

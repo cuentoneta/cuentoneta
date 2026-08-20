@@ -61,9 +61,9 @@ describe('collectionBySlugQuery', () => {
 		const withMultiSection = [...dataset, multiSectionLiteraryWorkDocument, multiSectionCollectionDocument];
 
 		const result = await run(collectionBySlugQuery, withMultiSection, { slug: 'multi-seccion' });
-		const [work] = (result as { literaryWorks: { teaserSection: unknown[]; sectionCount: number }[] }).literaryWorks;
+		const [work] = (result as { literaryWorks: { excerpt: unknown[]; sectionCount: number }[] }).literaryWorks;
 
-		expect(work?.teaserSection).toHaveLength(1);
+		expect(work?.excerpt).toHaveLength(1);
 		expect(work?.sectionCount).toBe(multiSectionLiteraryWorkDocument.content.length);
 	});
 

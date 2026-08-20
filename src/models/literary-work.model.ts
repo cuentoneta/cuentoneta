@@ -1,5 +1,6 @@
 import type { Author, AuthorTeaser } from './author.model';
 import type { LiteraryWorkSection } from './literary-work-section.model';
+import type { LiteraryWorkExcerpt } from './literary-work-excerpt.model';
 import type { Media, MediaTeaser } from './media.model';
 import type { Resource } from './resource.model';
 import type { SanitizedHtml } from './sanitized-html.model';
@@ -39,12 +40,13 @@ export interface LiteraryWork extends LiteraryWorkBase {
 	readonly editorialNote?: SanitizedHtml;
 }
 
-// El teaser expone la primera sección completa (no vacía el contenido como StoryTeaser):
-// decisión de diseño del contrato — ver docs/LITERARY_WORK_DESIGN.md §2.
+// El teaser expone un extracto del arranque de la obra, no una sección: su cuerpo va recortado, así
+// que no puede prometer el tiempo de lectura ni la posición que una sección declara — ver
+// docs/LITERARY_WORK_DESIGN.md §2.
 export interface LiteraryWorkTeaser extends LiteraryWorkBase {
 	readonly authors: readonly AuthorTeaser[];
 	readonly mediaSources: readonly MediaTeaser[];
-	readonly teaserSection: LiteraryWorkSection;
+	readonly excerpt: LiteraryWorkExcerpt;
 }
 
 export interface LiteraryWorkNavigationTeaser extends LiteraryWorkBase {

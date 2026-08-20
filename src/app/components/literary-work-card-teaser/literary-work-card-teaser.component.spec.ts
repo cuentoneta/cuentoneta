@@ -179,7 +179,7 @@ describe('LiteraryWorkCardTeaserComponent', () => {
 				inputs: { literaryWork: literaryWorkWithExcerpt, showExcerpt: true },
 			});
 
-			const firstParagraph = literaryWorkWithExcerpt.teaserSection?.bodyHtml.match(/<p>([\s\S]*?)<\/p>/)?.[1] ?? '';
+			const firstParagraph = literaryWorkWithExcerpt.excerpt?.bodyHtml.match(/<p>([\s\S]*?)<\/p>/)?.[1] ?? '';
 
 			// El pipeline emite un <p> por párrafo. Si el HTML llegara escapado, el texto igual estaría
 			// —por eso no alcanza con verificar que el elemento no quedó vacío—, pero lo contendría el div

@@ -37,9 +37,9 @@ function comparable(collection: Collection): unknown {
 			...work,
 			// `epigraphs` queda fuera porque la proyección de teaser no los trae: el ACL ni siquiera declara la
 			// clave y el corpus la declara vacía, que significan lo mismo pero no comparan igual.
-			teaserSection: {
-				...work.teaserSection,
-				title: work.teaserSection.title?.value,
+			excerpt: {
+				...work.excerpt,
+				title: work.excerpt.title?.value,
 				epigraphs: undefined,
 			},
 		})),

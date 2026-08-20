@@ -8,19 +8,18 @@ import { onoffLiteraryWorksMock } from './onoff-literary-works.mock';
 import { palacioNueveFronterasLiteraryWorkMock } from './onoff/literary-work/el-palacio-de-las-nueve-fronteras.literary-work.mock';
 
 describe('onoffLiteraryWorkTeasersMock (derivación de teasers desde LiteraryWork)', () => {
-	it('should expose the first section of the source work as teaserSection', () => {
-		expect(palacioNueveFronterasLiteraryWorkTeaserMock.teaserSection).toEqual({
-			...palacioNueveFronterasLiteraryWorkMock.content[0],
-			epigraphs: [],
+	it('should derive the excerpt from the opening section of the source work', () => {
+		const opening = palacioNueveFronterasLiteraryWorkMock.content[0];
+
+		expect(palacioNueveFronterasLiteraryWorkTeaserMock.excerpt).toEqual({
+			title: opening.title,
+			bodyHtml: opening.bodyHtml,
 		});
-		for (const teaser of onoffLiteraryWorkTeasersMock) {
-			expect(teaser.teaserSection.position).toBe(0);
-		}
 	});
 
 	it('should carry a rendered bodyHtml in the teaser section', () => {
 		for (const teaser of onoffLiteraryWorkTeasersMock) {
-			expect(teaser.teaserSection.bodyHtml).toContain('<p>');
+			expect(teaser.excerpt.bodyHtml).toContain('<p>');
 		}
 	});
 

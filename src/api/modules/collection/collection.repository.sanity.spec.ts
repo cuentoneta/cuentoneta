@@ -1,5 +1,7 @@
 import type { SanityClient } from '@sanity/client';
 import { clearAllMocks, fn } from '@test-utils';
+import { createMarkdown } from '@models/markdown.model';
+import { deriveSectionReadingTime } from '@models/reading-time.model';
 import { collectionBySlugQuery, collectionsQuery } from '../../_queries/collection.query';
 import {
 	descriptionlessRawCollection,
@@ -9,6 +11,7 @@ import {
 	onoffRawCollectionsWithoutFeaturedImage,
 	onoffRawCollectionTeasersMock,
 	sectionlessWorkRawCollection,
+	unbackfilledWorkRawCollection,
 	shortSampleRawCollection,
 } from '@mocks/onoff-raw-collections.mock';
 import { MalformedCollectionError } from './collection.errors';
@@ -100,13 +103,23 @@ describe('SanityCollectionRepository.fetchBySlug', () => {
 		expect(expected?.every((url) => url !== '')).toBe(true);
 	});
 
-	it('maps each work into a teaser with its opening section', async () => {
+	it('maps each work into a teaser with its excerpt', async () => {
 		const collection = await repoReturning(withFeaturedImage).fetchBySlug('geometrias-del-desvelo');
 		const [work] = collection?.literaryWorks ?? [];
 
-		expect(work?.teaserSection.position).toBe(0);
-		expect(work?.teaserSection.bodyHtml).toContain('<p>');
+		expect(work?.excerpt.bodyHtml).toContain('<p>');
 		expect(work?.authors.length).toBeGreaterThan(0);
+	});
+
+	// La ausencia de estos campos es lo que impide que alguien vuelva a derivar el tiempo de lectura de
+	// una obra a partir de un cuerpo recortado. Se afirma sobre el objeto que el ACL entrega, no solo
+	// sobre el tipo, porque el tipo no viaja al runtime.
+	it('does not expose reading time nor position in the excerpt', async () => {
+		const collection = await repoReturning(withFeaturedImage).fetchBySlug('geometrias-del-desvelo');
+		const [work] = collection?.literaryWorks ?? [];
+
+		expect(work?.excerpt).not.toHaveProperty('readingTime');
+		expect(work?.excerpt).not.toHaveProperty('position');
 	});
 
 	it('copies the persisted reading time of each work', async () => {
@@ -125,8 +138,17 @@ describe('SanityCollectionRepository.fetchBySlug', () => {
 		const collection = await repoReturning(draftLikeRawCollection).fetchBySlug('geometrias-del-desvelo');
 		const [work] = collection?.literaryWorks ?? [];
 
-		expect(work?.totalReadingTime).toBe(work?.teaserSection.readingTime);
-		expect(work?.totalReadingTime).toBe(draftLikeRawCollection.literaryWorks[0]?.teaserSection[0]?.readingTime);
+		expect(work?.totalReadingTime).toBe(draftLikeRawCollection.literaryWorks[0]?.openingReadingTime);
+	});
+
+	// El tercer eslabón, y el que este trabajo vuelve seguro: sin ningún tiempo persistido, el número
+	// sale del cuerpo completo que la proyección materializa aparte, nunca del extracto recortado.
+	it('derives the reading time from the full opening body when nothing is persisted', async () => {
+		const collection = await repoReturning(unbackfilledWorkRawCollection).fetchBySlug('geometrias-del-desvelo');
+		const [work] = collection?.literaryWorks ?? [];
+		const fullBody = unbackfilledWorkRawCollection.literaryWorks[0]?.readingTimeFallbackBody ?? '';
+
+		expect(work?.totalReadingTime).toBe(deriveSectionReadingTime(createMarkdown(fullBody)));
 	});
 });
 

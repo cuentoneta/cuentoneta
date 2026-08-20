@@ -73,7 +73,7 @@ export interface LiteraryWork extends LiteraryWorkBase {
 export interface LiteraryWorkTeaser extends LiteraryWorkBase {
 	readonly authors: readonly AuthorTeaser[];
 	readonly mediaSources: readonly MediaTeaser[]; // tag + título; la tarjeta pinta el ícono y nombra el recurso, no lo reproduce
-	readonly teaserSection: LiteraryWorkSection; // primera sección completa
+	readonly excerpt: LiteraryWorkExcerpt; // arranque de la sección de apertura, recortado
 }
 
 export interface LiteraryWorkNavigationTeaser extends LiteraryWorkBase {
@@ -99,7 +99,7 @@ export interface LiteraryWorkNavigationTeaserWithAuthors extends LiteraryWorkBas
 
 **Diferencias deliberadas con las vistas de `Story`:**
 
-- `StoryTeaser` **vacía** su contenido (`paragraphs: []`); `LiteraryWorkTeaser` expone la **primera sección completa** (`teaserSection`) — decisión del epic: el teaser de una obra es su primera sección.
+- `StoryTeaser` **vacía** su contenido (`paragraphs: []`); `LiteraryWorkTeaser` expone un **extracto** del arranque de la obra (`excerpt`). No es una sección: su cuerpo va recortado al primer párrafo en la query, así que el tipo no declara `readingTime` ni `position` — declararlos obligaría a inventarlos.
 - `Story.author` es exactamente uno; `LiteraryWork.authors` es 1..N (el anonimato se expresa con el author "Anónimo", ver [§10](#10-autoría-y-obra-anónima)).
 - `Story.approximateReadingTime` viene persistido del CMS (lo entra el editor); `LiteraryWork.totalReadingTime` es **derivado del texto** (suma de los `readingTime` de sus secciones, ensamblado en la factory) y **materializado write-once** en Sanity — ver [§5](#5-helper-de-reading-time).
 - `Story.review` es el análogo más cercano de `LiteraryWork.editorialNote`: mismo propósito (paratexto editorial sobre la obra), pero acá en Markdown saneado (`SanitizedHtml`) en lugar de rich text, y con nombre propio en vez de reutilizar el vocabulario de `Story`.
@@ -277,11 +277,11 @@ Para obras cuyo contenido principal es un **recitado o audiovisual** (p. ej. nar
 
 La invariante `content >= 1` **se mantiene**: una obra cuyo contenido es únicamente un recitado (p. ej. narraciones de Alberto Laiseca adaptadas de una película, sin versión textual) se publica con:
 
-1. Una **sección editorial mínima** (presentación/contexto curatorial del recitado) — le da a `/read/:slug` el cuerpo SSR indexable que la estrategia SEO del epic exige, y mantiene válidos `teaserSection` y `sectionCount`.
+1. Una **sección editorial mínima** (presentación/contexto curatorial del recitado) — le da a `/read/:slug` el cuerpo SSR indexable que la estrategia SEO del epic exige, y mantiene válidos `excerpt` y `sectionCount`.
 2. El medio en **`mediaSources`** (el schema ya soporta `youTubeVideo`/`audioRecording`/etc.).
 3. **`totalReadingTime`** (editable) cargado a mano con la duración real del medio.
 
-Permitir `content: []` se evaluó y descartó: degeneraría `totalReadingTime` (mínimo 1 falso), `teaserSection` (pasaría a opcional en cascada) y la premisa "un documento SSR indexable" del epic. Una `MediaSection` como tipo de sección (unión `TextSection | MediaSection`) queda como extensión futura si surge necesidad curatorial concreta — reabre pipeline, reading time y render, y no se justifica hoy.
+Permitir `content: []` se evaluó y descartó: degeneraría `totalReadingTime` (mínimo 1 falso), `excerpt` (pasaría a opcional en cascada) y la premisa "un documento SSR indexable" del epic. Una `MediaSection` como tipo de sección (unión `TextSection | MediaSection`) queda como extensión futura si surge necesidad curatorial concreta — reabre pipeline, reading time y render, y no se justifica hoy.
 
 ---
 

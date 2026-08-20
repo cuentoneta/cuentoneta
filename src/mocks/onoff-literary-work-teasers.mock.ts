@@ -37,8 +37,8 @@ import { neronLiteraryWorkMock } from './onoff/literary-work/neron.literary-work
 import { palacioNueveFronterasLiteraryWorkMock } from './onoff/literary-work/el-palacio-de-las-nueve-fronteras.literary-work.mock';
 
 // Deriva el teaser desde la obra completa: conserva los campos de la vista base, reemplaza los autores
-// por su variante AuthorTeaser y expone la primera sección como `teaserSection` (el teaser de
-// LiteraryWork no vacía el contenido: muestra la sección de apertura — ver LITERARY_WORK_DESIGN.md §2).
+// por su variante AuthorTeaser y expone el arranque de la sección de apertura como `excerpt`
+// — ver LITERARY_WORK_DESIGN.md §2.
 function toTeaser(literaryWork: LiteraryWork): LiteraryWorkTeaser {
 	return {
 		_id: literaryWork._id,
@@ -50,9 +50,7 @@ function toTeaser(literaryWork: LiteraryWork): LiteraryWorkTeaser {
 		tags: literaryWork.tags,
 		mediaSources: literaryWork.mediaSources.map(toMediaTeaser),
 		authors: [embeddedAuthorTeaserMock],
-		// La sección de apertura del teaser va sin epígrafes: la proyección de teaser no los trae, porque
-		// ninguna vista de tarjeta los muestra.
-		teaserSection: { ...literaryWork.content[0], epigraphs: [] },
+		excerpt: { title: literaryWork.content[0].title, bodyHtml: literaryWork.content[0].bodyHtml },
 	};
 }
 
