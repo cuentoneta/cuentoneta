@@ -6,6 +6,7 @@ import type {
 	LiteraryWorkTeaser,
 } from '@models/literary-work.model';
 import type { MediaTeaser } from '@models/media.model';
+import { createLiteraryWorkExcerpt } from '@models/literary-work-excerpt.model';
 import { createMarkdown } from '@models/markdown.model';
 import type { SanitizedHtml } from '@models/sanitized-html.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
@@ -69,7 +70,10 @@ function toTeaser(literaryWork: LiteraryWork, markdown: string): LiteraryWorkTea
 		tags: literaryWork.tags,
 		mediaSources: literaryWork.mediaSources.map(toMediaTeaser),
 		authors: [embeddedAuthorTeaserMock],
-		excerpt: { title: literaryWork.content[0].title, bodyHtml: toExcerptHtml(markdown) },
+		excerpt: createLiteraryWorkExcerpt({
+			title: literaryWork.content[0].title,
+			bodyHtml: toExcerptHtml(markdown),
+		}),
 	};
 }
 

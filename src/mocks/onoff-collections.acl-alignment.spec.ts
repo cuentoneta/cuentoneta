@@ -35,12 +35,11 @@ function comparable(collection: Collection): unknown {
 		...collection,
 		literaryWorks: collection.literaryWorks.map((work) => ({
 			...work,
-			// `epigraphs` queda fuera porque la proyección de teaser no los trae: el ACL ni siquiera declara la
-			// clave y el corpus la declara vacía, que significan lo mismo pero no comparan igual.
+			// El título se aplana a su valor: es un value object con método, y comparar objetos con
+			// comportamiento contra el literal de la fixture no diría nada útil.
 			excerpt: {
 				...work.excerpt,
 				title: work.excerpt.title?.value,
-				epigraphs: undefined,
 			},
 		})),
 	};

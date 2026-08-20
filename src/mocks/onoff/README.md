@@ -61,6 +61,8 @@ Cada uno abre con un banner de dos líneas ("Este archivo lo escribe `pnpm corpu
 
 **El emisor preserva los imports de prosa** (`scripts/generate-raw-corpus/generate-raw-corpus.emitter.ts`): su tabla de sustitución se indexa por el **valor serializado**, no por el tipo, así que una misma pasada reconoce tanto la prosa de un `.md` como el objeto entero de una etiqueta o del autor y los reemplaza por su import en vez de inlinearlos. Sin eso, cada obra generada duplicaría ~3 KB de prosa en git.
 
+**La contracara: una proyección que transforma la prosa deja de ser reconocible.** El extracto de las obras de una colección se recorta en la query, así que el valor que emite ya no coincide con el archivo `.md` y la tabla no puede sustituirlo por su import: las fixtures de colección **inlinean** ese fragmento. Es la consecuencia buscada —el emisor indexa por valor y no conoce las heurísticas de las queries que evalúa—, y el costo es acotado porque un extracto son un par de renglones, no la obra entera.
+
 ### Qué queda fuera de la generación
 
 Las exclusiones no son todas de la misma naturaleza, y la diferencia importa: algunas son permanentes y otras solo describen hasta dónde llegó la generación.

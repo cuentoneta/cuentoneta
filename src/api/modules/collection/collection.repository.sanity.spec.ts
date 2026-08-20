@@ -154,6 +154,33 @@ describe('SanityCollectionRepository.fetchBySlug', () => {
 		// regresión que la separación de campos vino a impedir.
 		expect(work?.totalReadingTime).not.toBe(deriveSectionReadingTime(createMarkdown(excerpt)));
 	});
+
+	// Las dos ramas que lanzan. La primera no puede darse con datos publicados —la query siempre trae
+	// el cuerpo de la sección de apertura cuando no hay tiempo persistido— y la segunda tampoco, porque
+	// el corte toma el primer bloque no vacío. Se afirman igual: son los dos únicos caminos por los que
+	// el ACL prefiere caerse antes que inventar un número o servir un extracto en blanco.
+	it('rejects a work with no reading time source at all', async () => {
+		const raw = {
+			...unbackfilledWorkRawCollection,
+			literaryWorks: unbackfilledWorkRawCollection.literaryWorks.map((work, index) =>
+				index === 0 ? { ...work, readingTimeFallbackBody: null } : work,
+			),
+		};
+
+		await expect(repoReturning(raw).fetchBySlug('geometrias-del-desvelo')).rejects.toThrow(MalformedCollectionError);
+	});
+
+	it('rejects a work whose excerpt carries no body', async () => {
+		const [first] = onoffRawCollectionsWithFeaturedImage;
+		const raw = {
+			...first,
+			literaryWorks: first.literaryWorks.map((work, index) =>
+				index === 0 ? { ...work, excerpt: [{ ...work.excerpt[0], body: null }] } : work,
+			),
+		};
+
+		await expect(repoReturning(raw).fetchBySlug('geometrias-del-desvelo')).rejects.toThrow(MalformedCollectionError);
+	});
 });
 
 describe('SanityCollectionRepository malformed data', () => {

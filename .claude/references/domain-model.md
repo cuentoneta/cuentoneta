@@ -138,7 +138,7 @@ Un agregado expone **múltiples interfaces** para distintos casos de uso, optimi
 
 ```typescript
 LiteraryWork; // vista completa: secciones, autores completos, tags
-LiteraryWorkTeaser; // primera sección completa + autores resumidos, para listados
+LiteraryWorkTeaser; // extracto del arranque + autores resumidos, para listados
 LiteraryWorkNavigationTeaser; // mínima, sin autores, para navegación
 LiteraryWorkNavigationTeaserWithAuthors; // mínima + autores resumidos
 ```

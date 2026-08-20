@@ -144,7 +144,8 @@ export class SanityCollectionRepository implements CollectionRepository {
 
 	// Tres eslabones, del dato más confiable al menos. El total persistido es el único que conoce la
 	// obra entera; el de la sección de apertura es una cota inferior para una obra multi-sección; y la
-	// derivación es el último recurso, sobre el cuerpo completo que la query solo trae en ese caso.
+	// derivación es el último recurso, sobre el cuerpo entero de esa sección —no de la obra— que la
+	// query solo trae en ese caso, así que también es una cota inferior.
 	// Ninguno mira el extracto: derivar minutos de un cuerpo recortado daría un número inventado.
 	private resolveTotalReadingTime(raw: SanityCollectionWork): ReadingTime {
 		if (raw.totalReadingTime !== null) {

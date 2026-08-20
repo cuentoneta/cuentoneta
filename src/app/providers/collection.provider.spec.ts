@@ -59,6 +59,20 @@ describe('HttpCollectionApi', () => {
 		expect(Object.isFrozen(collection)).toBe(true);
 	});
 
+	// El extracto cruza el wire como objeto plano y vuelve a construirse por su factory. Se afirma el
+	// contenido y la ausencia de los dos campos que el tipo no declara: el schema los validaría como
+	// opacos, así que un DTO que los trajera de más pasaría la frontera sin que nada lo notara.
+	it('rehydrates the excerpt of each work, without reading time nor position', async () => {
+		const dto = toWire<CollectionDto>(canon);
+
+		const collection = await request(api.getBySlug(dto.slug), `${url}/${dto.slug}`, dto);
+		const [work] = collection.literaryWorks;
+
+		expect(work.excerpt.bodyHtml).toBe(canon?.literaryWorks[0]?.excerpt.bodyHtml);
+		expect(work.excerpt).not.toHaveProperty('readingTime');
+		expect(work.excerpt).not.toHaveProperty('position');
+	});
+
 	// Derivarlo en la factory es lo que impide que el servidor mande un total que no coincida.
 	it('derives the count instead of trusting the payload', async () => {
 		const dto = { ...toWire<CollectionDto>(canon), count: 99 };
