@@ -66,7 +66,7 @@ describe('StoryComponent', () => {
 });
 
 describe('StoryComponent - sugerencias de lectura', () => {
-	const setup = async (navigation: 'author' | 'storylist' = 'author', navigationSlug?: string) =>
+	const setup = async (navigation: 'author' | 'collection' = 'author', navigationSlug?: string) =>
 		render(StoryComponent, {
 			componentImports: [
 				CommonModule,
@@ -90,15 +90,15 @@ describe('StoryComponent - sugerencias de lectura', () => {
 	});
 
 	it('should hand the block the context the reader arrived with', async () => {
-		await setup('storylist', storylistMock.slug);
+		await setup('collection', storylistMock.slug);
 
-		expect(screen.getByTestId('navigation')).toHaveTextContent(`storylist|${storylistMock.slug}`);
+		expect(screen.getByTestId('navigation')).toHaveTextContent(`collection|${storylistMock.slug}`);
 		expect(screen.getByTestId('current-work')).toHaveTextContent(storyMock.slug);
 		expect(screen.getByTestId('author-name')).toHaveTextContent(storyMock.author.name);
 	});
 
 	it('should fall back to the author context when the collection slug is missing', async () => {
-		await setup('storylist');
+		await setup('collection');
 
 		expect(screen.getByTestId('navigation')).toHaveTextContent(`author|${storyMock.author.slug}`);
 	});

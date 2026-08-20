@@ -12,7 +12,7 @@ import type { LiteraryWorkTeaser } from '@models/literary-work.model';
 import type { NavigationParams } from '@app-utils/navigation-params';
 
 describe('LiteraryWorkHomeCardTeaserComponent', () => {
-	const literaryWorkUrl = '/story/el-palacio-de-las-nueve-fronteras?navigation=author&navigationSlug=francois-onoff';
+	const literaryWorkUrl = '/read/el-palacio-de-las-nueve-fronteras?navigation=author&navigationSlug=francois-onoff';
 	const authorUrl = '/author/francois-onoff';
 
 	let navigationParams: NavigationParams = { navigation: 'author', navigationSlug: '' };
@@ -51,7 +51,7 @@ describe('LiteraryWorkHomeCardTeaserComponent', () => {
 		await render(LiteraryWorkHomeCardTeaserComponent, {
 			inputs: { literaryWork: palacioNueveFronterasLiteraryWorkTeaserMock, navigationParams },
 		});
-		const link = screen.getAllByRole('link').find((l) => l.getAttribute('href')?.includes('/story/'));
+		const link = screen.getAllByRole('link').find((l) => l.getAttribute('href')?.includes('/read/'));
 		expect(link?.getAttribute('href')).toContain(literaryWorkUrl);
 	});
 

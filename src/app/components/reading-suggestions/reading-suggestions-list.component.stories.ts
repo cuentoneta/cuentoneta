@@ -63,10 +63,10 @@ type Story = StoryObj<ReadingSuggestionsListComponent & { navigation: Navigation
 const navigationArgTypes = {
 	navigation: {
 		control: { type: 'select' as const },
-		options: ['author', 'storylist'],
+		options: ['author', 'collection'],
 		name: 'navigation (query param)',
 		description: 'Contexto con el que se llegó a la obra; viaja en el enlace de cada sugerencia',
-		table: { type: { summary: "'author' | 'storylist'" } },
+		table: { type: { summary: "'author' | 'collection'" } },
 	},
 	navigationSlug: {
 		control: { type: 'text' as const },
@@ -129,7 +129,7 @@ export const PorColeccion: Story = {
 		teasers: suggestions,
 		moreLabel: 'Ver más de Geometrías del desvelo',
 		moreRoute: ['/', 'storylist', 'geometrias-del-desvelo'],
-		navigation: 'storylist',
+		navigation: 'collection',
 		navigationSlug: 'geometrias-del-desvelo',
 		showAuthor: true,
 		loading: false,

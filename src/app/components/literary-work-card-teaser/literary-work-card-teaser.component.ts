@@ -177,7 +177,7 @@ export class LiteraryWorkCardTeaserComponent {
 	public readonly navigationParams = input<NavigationParams>();
 
 	protected readonly coverImageUrl = computed(() => this.literaryWork()?.coverImage);
-	protected readonly literaryWorkRouterLink = computed(() => ['/', this.appRoutes.Story, this.literaryWork()?.slug]);
+	protected readonly literaryWorkRouterLink = computed(() => ['/', this.appRoutes.Read, this.literaryWork()?.slug]);
 
 	// Mapea la variante de la tarjeta al tema visual de los selectores de multimedia.
 	protected readonly mediaTheme = computed<MediaSelectorsTheme>(() => {

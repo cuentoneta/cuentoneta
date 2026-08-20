@@ -415,6 +415,10 @@ Por eso cada paquete que el kernel importe tiene que estar declarado como depend
 
 Todo componente nuevo en **`src/app/components/`** lleva su `*.stories.ts` (documentación viva + catálogo visual). Los componentes de página (`src/app/pages/`) están exentos, y también el que **delega toda su vista** en otro componente ya catalogado — las cuatro condiciones de esa excepción, y su verificación, viven en [`coding-agent-policies.md`](coding-agent-policies.md) (Sección 2), que es su fuente. El `*.spec.ts` no se exime en ninguno de los dos casos.
 
+**La exención de las páginas es un permiso, no una prohibición.** Una página _puede_ catalogarse cuando lo que se quiere mirar es el **ensamblado**: cómo conviven sus bloques a lo largo del scroll, y cómo responde a los parámetros con que la ruta la invoca. Esas entradas van bajo la sección **`Páginas/`**, separadas del catálogo de componentes, y se montan con `applicationConfig` sobre los dobles de sus proveedores, resolviendo **por el mismo parámetro que resuelve la ruta** —el slug— en vez de devolver siempre el mismo dato: así los controles mueven la página de verdad y los estados de borde (una obra inexistente, un contexto ausente) quedan alcanzables desde el propio catálogo.
+
+`ReadPage` es la primera. Lo que la hizo valer el catálogo es que ninguna otra vista permite evaluar el bloque de sugerencias contra los dos contextos de navegación sin levantar la aplicación entera.
+
 ### Convenciones (según las stories existentes)
 
 - `title` en español bajo `Componentes V3/...` (p. ej. `'Componentes V3/Tag'`).
