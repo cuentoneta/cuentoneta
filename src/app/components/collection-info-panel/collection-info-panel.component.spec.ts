@@ -15,7 +15,8 @@ import { cuentoTagMock, ensayoTagMock, novelaTagMock } from '@mocks/onoff-tags.m
 import { createCollection, type Collection } from '@models/collection.model';
 
 // Utilidades de test
-import { clearAllMocks } from '@test-utils';
+import { clearAllMocks, fn } from '@test-utils';
+import { installResizeObserverStub, setMeasuredSize, triggerResize } from '@testing/resize-observer.stub';
 
 const [representativeMock] = onoffCollectionsWithRepresentativeImageryMock;
 const [sampleMock] = onoffCollectionsWithSampleImageryMock;
@@ -31,6 +32,12 @@ function collectionWithTags(base: Collection, count: number): Collection {
 describe('CollectionInfoPanelComponent', () => {
 	beforeEach(() => {
 		clearAllMocks();
+		installResizeObserverStub();
+	});
+
+	afterEach(() => {
+		Reflect.deleteProperty(HTMLDivElement.prototype, 'scrollHeight');
+		Reflect.deleteProperty(HTMLDivElement.prototype, 'clientHeight');
 	});
 
 	describe('sin colección', () => {
@@ -123,6 +130,76 @@ describe('CollectionInfoPanelComponent', () => {
 			});
 
 			expect(screen.getByTestId('description')).toHaveClass('line-clamp-10');
+		});
+	});
+
+	describe('acceso a la descripción completa', () => {
+		const overflowing = () => {
+			setMeasuredSize(screen.getByTestId('description'), { scrollHeight: 400, clientHeight: 160 });
+			triggerResize();
+		};
+
+		const readMoreButton = () => screen.queryByRole('button', { name: 'Leer más' });
+
+		it('should offer the access when the description overflows its clamp', async () => {
+			const { detectChanges } = await render(CollectionInfoPanelComponent, {
+				inputs: { collection: representativeMock, descriptionLines: 8, showReadMore: true },
+			});
+
+			overflowing();
+			detectChanges();
+
+			expect(readMoreButton()).toBeInTheDocument();
+		});
+
+		it('should report the request without applying it', async () => {
+			const readMore = fn();
+			const { detectChanges } = await render(CollectionInfoPanelComponent, {
+				inputs: { collection: representativeMock, descriptionLines: 8, showReadMore: true },
+				on: { readMore },
+			});
+			overflowing();
+			detectChanges();
+
+			readMoreButton()?.click();
+
+			expect(readMore).toHaveBeenCalledTimes(1);
+		});
+
+		// El montaje del panel deslizable muestra la descripción entera: ahí no hay nada más que leer.
+		it('should not offer the access when the consumer does not ask for it', async () => {
+			const { detectChanges } = await render(CollectionInfoPanelComponent, {
+				inputs: { collection: representativeMock, descriptionLines: 8 },
+			});
+
+			overflowing();
+			detectChanges();
+
+			expect(readMoreButton()).not.toBeInTheDocument();
+		});
+
+		it('should not offer the access when the description fits', async () => {
+			const { detectChanges } = await render(CollectionInfoPanelComponent, {
+				inputs: { collection: representativeMock, descriptionLines: 8, showReadMore: true },
+			});
+
+			setMeasuredSize(screen.getByTestId('description'), { scrollHeight: 160, clientHeight: 160 });
+			triggerResize();
+			detectChanges();
+
+			expect(readMoreButton()).not.toBeInTheDocument();
+		});
+
+		// Precondición de la directiva de medición: el control dentro del elemento observado cambiaría
+		// justamente lo que se mide.
+		it('should keep the access outside the measured element', async () => {
+			const { detectChanges } = await render(CollectionInfoPanelComponent, {
+				inputs: { collection: representativeMock, descriptionLines: 8, showReadMore: true },
+			});
+			overflowing();
+			detectChanges();
+
+			expect(within(screen.getByTestId('description')).queryByRole('button', { name: 'Leer más' })).toBeNull();
 		});
 	});
 });

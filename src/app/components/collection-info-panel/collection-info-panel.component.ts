@@ -1,11 +1,15 @@
 // Core
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, computed, inject, input, output } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
 // Models
 import type { Collection } from '@models/collection.model';
 
+// Directives
+import { ClampOverflowDirective } from '../../directives/clamp-overflow.directive';
+
 // Components
+import { ButtonComponent } from '../button/button.component';
 import { CollectionCoverComponent } from '../collection-cover/collection-cover.component';
 import { TagComponent } from '../tag/tag.component';
 import { TagsListComponent } from '../tags-list/tags-list.component';
@@ -27,7 +31,14 @@ import { CollectionInfoPanelSkeletonComponent } from './collection-info-panel-sk
  */
 @Component({
 	selector: 'cuentoneta-collection-info-panel',
-	imports: [CollectionCoverComponent, TagComponent, TagsListComponent, CollectionInfoPanelSkeletonComponent],
+	imports: [
+		ButtonComponent,
+		ClampOverflowDirective,
+		CollectionCoverComponent,
+		TagComponent,
+		TagsListComponent,
+		CollectionInfoPanelSkeletonComponent,
+	],
 	host: { class: 'flex w-full flex-col gap-4' },
 	template: `
 		@if (collection(); as collection) {
@@ -46,7 +57,18 @@ import { CollectionInfoPanelSkeletonComponent } from './collection-info-panel-sk
 						</cuentoneta-tags-list>
 					}
 				</div>
-				<div [innerHTML]="safeDescription()" [class]="descriptionClasses()" data-testid="description"></div>
+				<div
+					[innerHTML]="safeDescription()"
+					[class]="descriptionClasses()"
+					#clamp="cuentonetaClampOverflow"
+					cuentonetaClampOverflow
+					data-testid="description"
+				></div>
+				@if (showReadMore() && clamp.isOverflowing()) {
+					<button (click)="readMore.emit()" cuentoneta-button variant="outline" type="button" class="w-full">
+						Leer más
+					</button>
+				}
 			</div>
 		} @else {
 			<cuentoneta-collection-info-panel-skeleton [descriptionLines]="descriptionLines() ?? 4" />
@@ -71,6 +93,16 @@ export class CollectionInfoPanelComponent {
 
 	/** Marca la portada como prioritaria: en la barra lateral entra above-the-fold. */
 	public readonly priority = input(false);
+
+	/**
+	 * Ofrece el acceso a la descripción completa. Aparece solo si además la descripción desborda su
+	 * recorte, así que vive fuera del elemento medido: adentro cambiaría lo que se mide. Sin recorte la
+	 * medición es siempre falsa, de modo que un montaje sin `descriptionLines` no necesita apagarlo.
+	 */
+	public readonly showReadMore = input(false);
+
+	/** La persona usuaria pidió leer la descripción completa. Quién la muestra es de quien lo monta. */
+	public readonly readMore = output<void>();
 
 	private readonly sanitizer = inject(DomSanitizer);
 
