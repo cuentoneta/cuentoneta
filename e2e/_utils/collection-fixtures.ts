@@ -7,6 +7,7 @@
  */
 import type { APIRequestContext } from '@playwright/test';
 
+import { collectionTeaserListDtoSchema, type CollectionTeaserDto } from '@models/collection.dto';
 import { VIEWPORT_WIDTHS_NUMERIC } from '@utils/screen.utils';
 
 // La columna lateral y el panel deslizable viven tras `hidden lg:flex`, así que hace falta superar el
@@ -16,12 +17,13 @@ export const DESKTOP_VIEWPORT = Object.freeze({ width: VIEWPORT_WIDTHS_NUMERIC.x
 
 const CATALOG_ROUTE = '/api/collection';
 
-/** Lo único que los specs consumen del teaser que entrega el catálogo. */
-export interface CollectionCatalogEntry {
-	slug: string;
-	title: string;
-	description: string;
-}
+/**
+ * Lo único que los specs consumen del teaser que entrega el catálogo.
+ *
+ * Se deriva del DTO en lugar de reescribirlo: un rename en el contrato de wire rompe acá en compilación,
+ * y no en runtime como una descripción que llega vacía.
+ */
+export type CollectionCatalogEntry = Readonly<Pick<CollectionTeaserDto, 'slug' | 'title' | 'description'>>;
 
 export async function fetchCollectionCatalog(request: APIRequestContext): Promise<CollectionCatalogEntry[]> {
 	const response = await request.get(CATALOG_ROUTE);
@@ -30,7 +32,14 @@ export async function fetchCollectionCatalog(request: APIRequestContext): Promis
 	if (response.status() !== 200) {
 		throw new Error(`"${CATALOG_ROUTE}" respondió ${response.status()}: el catálogo de colecciones no está`);
 	}
-	return response.json();
+
+	// Se valida contra el schema que ya define el contrato: sin esto, un cambio de shape llegaría al spec
+	// como una descripción vacía —o sea, como "esta colección no desborda"— en vez de como lo que es.
+	const catalog = collectionTeaserListDtoSchema.safeParse(await response.json());
+	if (!catalog.success) {
+		throw new Error(`"${CATALOG_ROUTE}" no cumple el contrato del catálogo: ${catalog.error.message}`);
+	}
+	return catalog.data;
 }
 
 /** Texto plano de una descripción saneada, para compararla contra lo que se lee en pantalla. */
