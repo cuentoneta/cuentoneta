@@ -6,7 +6,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import type { Collection } from '@models/collection.model';
 
 // Components
-import { CoverImageComponent } from '../cover-image/cover-image.component';
+import { CollectionCoverComponent } from '../collection-cover/collection-cover.component';
 import { TagComponent } from '../tag/tag.component';
 import { TagsListComponent } from '../tags-list/tags-list.component';
 import { CollectionInfoPanelSkeletonComponent } from './collection-info-panel-skeleton.component';
@@ -27,27 +27,11 @@ import { CollectionInfoPanelSkeletonComponent } from './collection-info-panel-sk
  */
 @Component({
 	selector: 'cuentoneta-collection-info-panel',
-	imports: [CoverImageComponent, TagComponent, TagsListComponent, CollectionInfoPanelSkeletonComponent],
+	imports: [CollectionCoverComponent, TagComponent, TagsListComponent, CollectionInfoPanelSkeletonComponent],
 	host: { class: 'flex w-full flex-col gap-4' },
 	template: `
 		@if (collection(); as collection) {
-			@if (collection.imagery.kind === 'representative') {
-				<cuentoneta-cover-image [src]="collection.imagery.image" [priority]="priority()" data-testid="cover" />
-			} @else {
-				<section
-					class="relative isolate flex h-48 items-end justify-center overflow-hidden rounded-xl bg-neutral-100 px-3"
-					data-testid="cover-fan"
-				>
-					@for (image of collection.imagery.images; track $index) {
-						<cuentoneta-cover-image
-							[src]="image"
-							[priority]="priority()"
-							[class]="sampleImageClasses[$index]"
-							data-testid="cover"
-						/>
-					}
-				</section>
-			}
+			<cuentoneta-collection-cover [imagery]="collection.imagery" [priority]="priority()" />
 			<div class="flex w-full flex-col gap-4">
 				<div class="flex flex-col items-start gap-2">
 					@if (showTitle()) {
@@ -103,12 +87,4 @@ export class CollectionInfoPanelComponent {
 		const base = 'font-inter text-sm leading-5 font-medium text-ellipsis text-neutral-700';
 		return lines === undefined ? base : `${base} line-clamp-${lines}`;
 	});
-
-	// Posiciones de las portadas en visualización múltiple a partir de las imágenes alusivas de las obras
-	// [0] central al frente con bottom-bleed, [1] lateral izquierda y [2] derecha desplazadas, con borde neutral-100.
-	protected readonly sampleImageClasses = [
-		'absolute bottom-[-8px] left-1/2 z-raised -translate-x-1/2 border-[3px] border-neutral-100',
-		'absolute top-[calc(50%_+_39.35px)] left-[calc(50%_-_82.75px)] z-content -translate-x-1/2 -translate-y-1/2 border-[3px] border-neutral-100',
-		'absolute top-[calc(50%_+_39.35px)] left-[calc(50%_+_83.03px)] z-content -translate-x-1/2 -translate-y-1/2 border-[3px] border-neutral-100',
-	] as const;
 }
