@@ -72,6 +72,15 @@ async function openDescriptionDrawer(page: Page): Promise<Locator> {
  * pantalla. Actuar ahí mide una caja que no es la que se ve y, si además se interrumpe la transición, el
  * cierre queda esperando un `transitionend` que ya no llega.
  */
+/** La caja que ocupa el panel, para elegir un punto que quede fuera de ella. */
+async function panelBox(drawer: Locator) {
+	const box = await drawer.boundingBox();
+	if (!box) {
+		throw new Error('El panel no ocupa lugar: no habría caja de la cual quedar afuera');
+	}
+	return box;
+}
+
 async function settleIn(drawer: Locator): Promise<void> {
 	await expect
 		.poll(async () => (await drawer.boundingBox())?.x ?? Number.POSITIVE_INFINITY, {
@@ -120,10 +129,7 @@ test('el panel se cierra al hacer clic fuera', async ({ page }) => {
 	test.skip(!readMoreIsVisible, 'ninguna colección del dataset desborda el recorte');
 
 	const drawer = await openDescriptionDrawer(page);
-	const box = await drawer.boundingBox();
-	if (!box) {
-		throw new Error('El panel no ocupa lugar: no habría caja de la cual quedar afuera');
-	}
+	const box = await panelBox(drawer);
 
 	// El panel entra por la derecha, así que el margen izquierdo del viewport es backdrop. El control
 	// positivo descarta que el punto elegido caiga sobre el panel, que cerraría por otro motivo —el botón,
