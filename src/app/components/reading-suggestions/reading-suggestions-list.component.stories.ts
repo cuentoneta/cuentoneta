@@ -39,12 +39,9 @@ const meta: Meta<ReadingSuggestionsListComponent> = {
 			description: 'Mostrar el autor de cada sugerencia (se oculta en la variante de autor, donde es redundante)',
 			table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' } },
 		},
-		teasers: {
-			control: { type: 'object' },
-			description:
-				'Sugerencias ya resueltas: cada una lleva la obra y su extracto por separado. El bloque no se renderiza si llega vacío',
-			table: { type: { summary: 'readonly ReadingSuggestion[]' }, defaultValue: { summary: '[]' } },
-		},
+		// Las sugerencias las deriva el control de cantidad a partir del corpus, así que editarlas como
+		// objeto no tendría efecto: se oculta para no ofrecer un control muerto.
+		teasers: { table: { disable: true } },
 		moreRoute: {
 			control: { type: 'object' },
 			description: 'Ruta del listado completo; sin ella el acceso no se muestra',
@@ -58,7 +55,9 @@ export default meta;
 
 // El contexto de navegación se controla por sus dos partes y no como objeto: son los query params que
 // cada tarjeta arrastra a la obra destino, y separarlos deja ver en el `href` cómo los cambia cada uno.
-type Story = StoryObj<ReadingSuggestionsListComponent & { navigation: NavigationContext; navigationSlug: string }>;
+type Story = StoryObj<
+	ReadingSuggestionsListComponent & { navigation: NavigationContext; navigationSlug: string; suggestionCount: number }
+>;
 
 const navigationArgTypes = {
 	navigation: {
@@ -76,15 +75,35 @@ const navigationArgTypes = {
 	},
 };
 
+// Las cuatro cantidades que el diseño enumera como variantes del bloque. Más de tres no es alcanzable
+// en producción —el selector recorta a la cantidad acordada—, pero se ofrece igual: es lo que hace
+// explícito que el intercalado del separador no está cableado a tres.
+const suggestionCountArgType = {
+	suggestionCount: {
+		control: { type: 'inline-radio' as const },
+		options: [1, 2, 3, 5],
+		name: 'Cantidad de sugerencias',
+		description: 'Cuántas obras trae el bloque. Los separadores son siempre uno menos',
+		table: { type: { summary: 'number' }, defaultValue: { summary: '3' } },
+	},
+};
+
 // El bloque recibe la obra y su extracto por separado. Estas stories muestran obras del canon, cuyo
 // extracto ya viene en `teaserSection`, así que la lista de párrafos va vacía: la rama de Portable Text
 // es la que alimenta el puente temporal desde `Story`.
-const suggestions: ReadingSuggestion[] = corpusLiteraryWorkTeasers
-	.slice(0, 3)
-	.map((literaryWork) => ({ literaryWork, excerptParagraphs: [] }));
+const allSuggestions: ReadingSuggestion[] = corpusLiteraryWorkTeasers.map((literaryWork) => ({
+	literaryWork,
+	excerptParagraphs: [],
+}));
 
-const renderWithNavigation: Story['render'] = ({ navigation, navigationSlug, ...args }) => ({
-	props: { ...args, navigationParams: { navigation, navigationSlug } },
+// La cantidad se controla en vez de fijarse por entrada: lo que el diseño enumera como variantes del
+// bloque es cuántas sugerencias trae, y el separador intercalado depende de eso.
+const renderWithNavigation: Story['render'] = ({ navigation, navigationSlug, suggestionCount, ...args }) => ({
+	props: {
+		...args,
+		teasers: allSuggestions.slice(0, suggestionCount),
+		navigationParams: { navigation, navigationSlug },
+	},
 	template: `
 		<cuentoneta-reading-suggestions-list
 			[heading]="heading"
@@ -99,11 +118,11 @@ const renderWithNavigation: Story['render'] = ({ navigation, navigationSlug, ...
 });
 
 export const PorAutor: Story = {
-	argTypes: navigationArgTypes,
+	argTypes: { ...navigationArgTypes, ...suggestionCountArgType },
 	render: renderWithNavigation,
 	args: {
 		heading: 'Más obras de François Onoff',
-		teasers: suggestions,
+		suggestionCount: 3,
 		moreLabel: 'Ver más de François Onoff',
 		moreRoute: ['/', 'author', 'francois-onoff'],
 		navigation: 'author',
@@ -122,11 +141,11 @@ export const PorAutor: Story = {
 };
 
 export const PorColeccion: Story = {
-	argTypes: navigationArgTypes,
+	argTypes: { ...navigationArgTypes, ...suggestionCountArgType },
 	render: renderWithNavigation,
 	args: {
 		heading: 'Más obras de Geometrías del desvelo',
-		teasers: suggestions,
+		suggestionCount: 3,
 		moreLabel: 'Ver más de Geometrías del desvelo',
 		moreRoute: ['/', 'collection', 'geometrias-del-desvelo'],
 		navigation: 'collection',

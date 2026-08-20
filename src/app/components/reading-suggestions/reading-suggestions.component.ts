@@ -50,8 +50,8 @@ export class ReadingSuggestionsComponent {
 	public readonly authorName = input.required<string>();
 	public readonly currentWorkSlug = input<string>();
 
-	// Reserva el alto del bloque para que su aparición no empuje el pie de página. El valor sale de su
-	// composición: tres portadas de `h-41` (164px) más la separación entre tarjetas, el encabezado, el
-	// acceso al listado y el relleno del contenedor.
-	protected readonly placeholderClasses = 'h-189';
+	// Reserva el alto del bloque para que su aparición no empuje el pie de página. El valor está medido
+	// sobre el bloque ya montado en la página de lectura, no derivado de su composición: el revestimiento
+	// cambia varias separaciones a la vez y la aritmética se desactualiza en silencio.
+	protected readonly placeholderClasses = 'h-211';
 }
