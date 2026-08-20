@@ -75,12 +75,14 @@ describe('SitemapService', () => {
 				storylists: [],
 			});
 
-			const urls = await getSitemapUrls();
-
-			expect(urls).toContainEqual({ loc: 'https://test.cuentoneta.ar' });
-			expect(urls).toContainEqual({ loc: 'https://test.cuentoneta.ar/about' });
-			expect(urls).toContainEqual({ loc: 'https://test.cuentoneta.ar/dmca' });
-			expect(urls).toContainEqual({ loc: 'https://test.cuentoneta.ar/collection' });
+			// Sin contenido, lo que queda es exactamente el conjunto de páginas estáticas: se afirma entero
+			// y no con inclusiones, para que tanto una que se caiga como una de más rompan el caso.
+			expect(await getSitemapUrls()).toEqual([
+				{ loc: 'https://test.cuentoneta.ar' },
+				{ loc: 'https://test.cuentoneta.ar/about' },
+				{ loc: 'https://test.cuentoneta.ar/dmca' },
+				{ loc: 'https://test.cuentoneta.ar/collection' },
+			]);
 		});
 
 		it('should include story URLs', async () => {
