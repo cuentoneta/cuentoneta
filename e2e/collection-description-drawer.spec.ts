@@ -49,13 +49,13 @@ test.beforeAll(async ({ request, browser }) => {
 
 // Guardas como casos propios, no como `skip` silencioso: un dataset sin el fixture es un problema de la
 // infraestructura de test, no un motivo para que el gate quede verde sin haber mirado nada.
-test('el catálogo trae alguna colección con descripción', () => {
+test('collection — el catálogo trae alguna colección con descripción', () => {
 	expect(mostDescriptive, 'ninguna colección del catálogo tiene descripción: no habría qué recortar').toBeDefined();
 });
 
 // Es a la vez la guarda de los casos del panel y la primera mitad de la tarea que los motiva: que el
 // acceso a la descripción completa aparezca cuando el texto desborda su recorte.
-test('alguna colección desborda el recorte de ocho líneas y ofrece leerla entera', () => {
+test('collection — alguna colección desborda el recorte y ofrece leerla entera', () => {
 	expect(
 		readMoreIsVisible,
 		`la descripción más larga del catálogo ("${mostDescriptive?.slug}") no desborda el recorte: los casos del panel no verificarían nada`,
@@ -74,14 +74,6 @@ async function openDescriptionDrawer(page: Page): Promise<Locator> {
 	return drawer;
 }
 
-/**
- * Espera a que el panel llegue a su posición de entrada.
- *
- * No alcanza con que esté visible ni con que lleve `data-open`: ese atributo dispara la transición, no la
- * termina, y durante los 300 ms que dura el panel está en el documento pero todavía corrido fuera de la
- * pantalla. Actuar ahí mide una caja que no es la que se ve y, si además se interrumpe la transición, el
- * cierre queda esperando un `transitionend` que ya no llega.
- */
 /** La caja que ocupa el panel, para elegir un punto que quede fuera de ella. */
 async function panelBox(drawer: Locator) {
 	const box = await drawer.boundingBox();
@@ -91,15 +83,42 @@ async function panelBox(drawer: Locator) {
 	return box;
 }
 
+/**
+ * Espera a que el panel termine de entrar.
+ *
+ * No alcanza con que esté visible ni con que lleve `data-open`: ese atributo dispara la transición, no la
+ * termina, y durante los 300 ms que dura el panel está en el documento pero todavía corrido fuera de la
+ * pantalla. Actuar ahí mide una caja que no es la que se ve y, si además se interrumpe la transición, el
+ * cierre queda esperando un `transitionend` que ya no llega.
+ *
+ * La llegada se afirma por quietud —dos muestras consecutivas en la misma posición— y no por un umbral de
+ * pantalla: un umbral se cumple apenas el panel asoma, y cuánto margen queda entre ese instante y el final
+ * depende del ancho del panel, del viewport y de la dirección. Como efecto lateral, comparar la posición
+ * de partida con la de llegada es la única aserción de que el slide sigue ocurriendo tras atar el display
+ * al atributo `open`.
+ */
 async function settleIn(drawer: Locator): Promise<void> {
+	const startX = (await panelBox(drawer)).x;
+	let previousX = Number.POSITIVE_INFINITY;
+
 	await expect
-		.poll(async () => (await drawer.boundingBox())?.x ?? Number.POSITIVE_INFINITY, {
-			message: 'el panel no llegó a entrar en la pantalla',
-		})
-		.toBeLessThan(DESKTOP_VIEWPORT.width);
+		.poll(
+			async () => {
+				const { x } = await panelBox(drawer);
+				const isStill = x === previousX;
+				previousX = x;
+				return isStill;
+			},
+			{ message: 'el panel no llegó a detenerse en su posición de entrada' },
+		)
+		.toBe(true);
+
+	expect(previousX, 'el panel no se desplazó al abrirse: la transición de entrada dejó de ocurrir').toBeLessThan(
+		startX,
+	);
 }
 
-test('el panel muestra la descripción completa', async ({ page }) => {
+test('collection — el panel muestra la descripción completa', async ({ page }) => {
 	// eslint-disable-next-line playwright/no-skipped-test -- la ausencia del fixture ya la reportan las guardas de arriba; repetirla acá sería el mismo fallo dos veces
 	test.skip(!readMoreIsVisible, 'ninguna colección del dataset desborda el recorte');
 
@@ -114,7 +133,7 @@ test('el panel muestra la descripción completa', async ({ page }) => {
 
 // El cierre se afirma con `toBeHidden` y no leyendo el atributo `open`: el drawer llama a `close()` recién
 // al terminar la transición, así que el elemento sigue abierto durante los 300 ms que dura.
-test('el panel se cierra con el botón de cierre', async ({ page }) => {
+test('collection — el panel se cierra con el botón de cierre', async ({ page }) => {
 	// eslint-disable-next-line playwright/no-skipped-test -- la ausencia del fixture ya la reportan las guardas de arriba; repetirla acá sería el mismo fallo dos veces
 	test.skip(!readMoreIsVisible, 'ninguna colección del dataset desborda el recorte');
 
@@ -124,7 +143,7 @@ test('el panel se cierra con el botón de cierre', async ({ page }) => {
 	await expect(drawer).toBeHidden();
 });
 
-test('el panel se cierra con Escape', async ({ page }) => {
+test('collection — el panel se cierra con Escape', async ({ page }) => {
 	// eslint-disable-next-line playwright/no-skipped-test -- la ausencia del fixture ya la reportan las guardas de arriba; repetirla acá sería el mismo fallo dos veces
 	test.skip(!readMoreIsVisible, 'ninguna colección del dataset desborda el recorte');
 
@@ -134,7 +153,7 @@ test('el panel se cierra con Escape', async ({ page }) => {
 	await expect(drawer).toBeHidden();
 });
 
-test('el panel se cierra al hacer clic fuera', async ({ page }) => {
+test('collection — el panel se cierra al hacer clic fuera', async ({ page }) => {
 	// eslint-disable-next-line playwright/no-skipped-test -- la ausencia del fixture ya la reportan las guardas de arriba; repetirla acá sería el mismo fallo dos veces
 	test.skip(!readMoreIsVisible, 'ninguna colección del dataset desborda el recorte');
 
