@@ -85,6 +85,38 @@ describe('ButtonGroupComponent', () => {
 		});
 	});
 
+	describe('geometry', () => {
+		it('should apply the declared size to every option', async () => {
+			await render(ButtonGroupComponent, {
+				inputs: { label: 'Formatos', options, size: 'sm' },
+			});
+
+			options.forEach((option) => {
+				const button = screen.getByRole('button', { name: option.label });
+				expect(button).toHaveClass('px-3');
+				expect(button).toHaveClass('text-sm');
+			});
+		});
+
+		it('should default to the md size', async () => {
+			await render(ButtonGroupComponent, {
+				inputs: { label: 'Formatos', options },
+			});
+
+			expect(screen.getByRole('button', { name: 'Audio' })).toHaveClass('px-6');
+		});
+
+		// La apariencia no se abre junto con la geometría: que las opciones se vean iguales entre sí
+		// es parte de lo que hace legible un grupo excluyente.
+		it('should keep the appearance fixed regardless of the size', async () => {
+			await render(ButtonGroupComponent, {
+				inputs: { label: 'Formatos', options, size: 'sm' },
+			});
+
+			expect(screen.getByRole('button', { name: 'Audio' })).toHaveClass('border-neutral-300');
+		});
+	});
+
 	describe('selection', () => {
 		it('should announce the current option as pressed', async () => {
 			await render(ButtonGroupComponent, {

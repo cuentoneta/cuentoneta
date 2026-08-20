@@ -9,8 +9,8 @@ import type {
 import { isAudioRecording, isSpaceRecording, isSpotifyPodcastEpisode, isYouTubeVideo } from '@models/media.model';
 import { geometriaMediaMock } from './onoff/media/geometria.media.mock';
 
-// Canon de multimedia del corpus. Sale de la única obra que declara medios, así que no hay una lista
-// en paralelo que mantener: enriquecer esa obra alcanza a todos los consumidores.
+// Canon de multimedia del corpus. Sale de la obra que declara los cuatro tipos, la única que sostiene a la
+// vez todos los selectores por tipo de abajo; otras obras declaran medios, pero un subconjunto.
 export const onoffMediaMock: Media[] = geometriaMediaMock;
 
 // Selectores por tipo, derivados con los type guards del propio dominio en vez de por el tag a mano:

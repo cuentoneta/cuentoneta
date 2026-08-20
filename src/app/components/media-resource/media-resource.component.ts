@@ -4,10 +4,10 @@ import type { Media } from '@models/media.model';
 import { toMediaWidgetOutlet } from '@components/media-widgets/media-widget-registry';
 
 /**
- * @deprecated Monta **todos** los medios de una obra a la vez, que es la política de las páginas de
- * Story y Storylist. La página de lectura monta solo el elegido y resuelve su widget por
- * `mediaWidgetRegistry`. Este despachador sobrevive solo mientras esas dos páginas lo consuman; se
- * elimina junto con ellas.
+ * @deprecated Usar `MediaWidgetSelector`, que ofrece los formatos y monta solo el elegido.
+ * Este despachador monta todos los medios de una obra a la vez, la política que las páginas de Story
+ * y Storylist todavía esperan; ya no tiene catálogo propio —lo toma de `mediaWidgetRegistry`—, así
+ * que lo único que queda acá es esa política. Se elimina al reemplazar esas páginas por `ReadPage`.
  */
 @Component({
 	selector: 'cuentoneta-media-resource',

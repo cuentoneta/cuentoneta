@@ -5,7 +5,9 @@ import { ErrorHandler, NgModule } from '@angular/core';
 import { getTestBed } from '@angular/core/testing';
 import { BrowserTestingModule, platformBrowserTesting } from '@angular/platform-browser/testing';
 
+import { installDocumentFontsStub } from '@testing/document-fonts.stub';
 import { installIntersectionObserverStub } from '@testing/intersection-observer.stub';
+import { installResizeObserverStub } from '@testing/resize-observer.stub';
 
 // Angular 22 corre el TestBed en modo zoneless por defecto cuando zone.js no está presente,
 // por eso no se provee `provideZonelessChangeDetection()` explícitamente. El ErrorHandler relanza
@@ -29,6 +31,9 @@ class ZonelessTestModule {}
 // Algunos specs sustituyen los imports del componente vía `componentImports` y dependen de ese default.
 getTestBed().initTestEnvironment([BrowserTestingModule, ZonelessTestModule], platformBrowserTesting());
 
-// jsdom/happy-dom no implementan IntersectionObserver: se instala un stub global para todos los tests.
-// Los specs que necesitan controlar el observer (simular overflow) reutilizan los helpers del mismo stub.
+// happy-dom trae los observers de layout como constructores que no hacen nada —alcanzan para renderizar,
+// pero nunca entregan un callback— y no expone `document.fonts`. Estos stubs globales dan el control que
+// falta: los specs que necesitan simular overflow o resolver la carga de fuentes usan sus helpers.
 installIntersectionObserverStub();
+installResizeObserverStub();
+installDocumentFontsStub();

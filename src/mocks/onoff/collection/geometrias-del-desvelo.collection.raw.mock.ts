@@ -124,7 +124,7 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 			totalReadingTime: 9,
 			sectionCount: 1,
 			tags: [novelaRawTag, absurdoRawTag, alegoriaRawTag],
-			mediaSources: [],
+			mediaSources: [{ _type: 'audioRecording', title: 'Lectura de "Las escaleras" por su autor' }],
 			authors: [
 				{
 					_id: 'author_1',

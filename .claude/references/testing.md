@@ -22,7 +22,7 @@
 Archivos clave:
 
 - **`vitest.config.ts`** — `globals: true`, `environment: 'happy-dom'`, `setupFiles: ['src/test-setup.ts']`, `include: ['src/**/*.{test,spec}.ts']`. Inlina `@sanity` y bundles `fesm` para que Vite los transforme. Coverage solo en CI (`CI=true`/`COVERAGE=true`).
-- **`src/test-setup.ts`** — inicializa el `TestBed` zoneless (Angular 22 corre zoneless por defecto cuando `zone.js` no está presente; no se llama a `provideZonelessChangeDetection()`). El `ErrorHandler` **relanza** cualquier error no manejado para que falle el test. Instala el stub global de `IntersectionObserver`.
+- **`src/test-setup.ts`** — inicializa el `TestBed` zoneless (Angular 22 corre zoneless por defecto cuando `zone.js` no está presente; no se llama a `provideZonelessChangeDetection()`). El `ErrorHandler` **relanza** cualquier error no manejado para que falle el test. Instala los stubs globales de `IntersectionObserver`, de `ResizeObserver` y de `document.fonts`.
 - **`src/test-utils.ts`** — los wrappers obligatorios (ver abajo).
 
 > Esta es la config de **la app** (`@cuentoneta/app`). El Studio de Sanity (`cms/`) tiene su propia config de Vitest, independiente — ver [Segunda config de Vitest: el Studio (`cms/`)](#segunda-config-de-vitest-el-studio-cms).
@@ -68,22 +68,23 @@ ESLint (`no-single-work-corpus-imports` en `eslint.config.mjs`) **prohíbe** imp
 
 Un spec o una story que importa una obra concreta queda atado a ella: sus aserciones citan la prosa de esa obra y enriquecer el canon no las alcanza. Las colecciones y los **selectores por capacidad** declaran el shape que el caso necesita y crecen solos.
 
-| Necesitás…                                      | Importá                                                                                                              |
-| ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| Una obra cualquiera                             | `onoffLiteraryWorksMock` (o `onoffRawLiteraryWorksMock` en el backend), y desestructurá la primera                   |
-| Una obra con título de sección                  | `onoffLiteraryWorksWithSectionTitles`                                                                                |
-| Una obra con epígrafes                          | `onoffLiteraryWorksWithEpigraphs` / `onoffRawLiteraryWorksWithEpigraphs`                                             |
-| Una obra que cita un texto en su cuerpo         | `onoffLiteraryWorksWithBlockquotes`                                                                                  |
-| Una obra con o sin nota editorial               | `onoffLiteraryWorksWith(out)EditorialNote` / `onoffRawLiteraryWorksWith(out)EditorialNote`                           |
-| Un texto con atribución (epígrafe o nota)       | `onoffLiteraryWorkEpigraphsMock`; en stories, `corpusAttributedTexts` + `attributedTextSelectArgType`                |
-| Un epígrafe cortado en varias líneas            | `onoffRawLiteraryWorksWithMultilineEpigraphs`                                                                        |
-| Una story o storylist crudas                    | `onoffRawStoriesMock`, `onoffRawStorylistsMock`, `onoffRawNavTeasersMock`                                            |
-| Un dataset para evaluar una query con `groq-js` | `onoffDatasetMock` — el dataset entero, no un subconjunto: una referencia sin documento resuelve a `null` sin fallar |
-| Una story o teaser crudos con multimedia        | `onoffRawStoriesWithMediaSources` / `onoffRawTeasersWithMediaSources`                                                |
-| Una obra con o sin etiquetas                    | `onoffRawLiteraryWorksWith(out)Tags`                                                                                 |
-| Una etiqueta cualquiera                         | `onoffTagsMock` (o `onoffRawTagsMock` en el backend), y tomá un slice                                                |
-| Etiquetas de título corto                       | `onoffTagsWithShortTitles` — para stories donde un título de dos palabras fuerza el recorte por ancho                |
-| La página de inicio cruda, o sus campañas       | `onoffRawLandingPageMock` / `onoffRawContentCampaignsMock`, ambos de `@mocks/onoff-raw-landing-page.mock`            |
+| Necesitás…                                          | Importá                                                                                                                                                                                           |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Una obra cualquiera                                 | `onoffLiteraryWorksMock` (o `onoffRawLiteraryWorksMock` en el backend), y desestructurá la primera                                                                                                |
+| Una obra con título de sección                      | `onoffLiteraryWorksWithSectionTitles`                                                                                                                                                             |
+| Una obra con epígrafes                              | `onoffLiteraryWorksWithEpigraphs` / `onoffRawLiteraryWorksWithEpigraphs`                                                                                                                          |
+| Una obra que cita un texto en su cuerpo             | `onoffLiteraryWorksWithBlockquotes`                                                                                                                                                               |
+| Una obra con o sin nota editorial                   | `onoffLiteraryWorksWith(out)EditorialNote` / `onoffRawLiteraryWorksWith(out)EditorialNote`                                                                                                        |
+| Una obra con, sin, o con un solo recurso multimedia | `onoffLiteraryWorksWith(out)MediaSources`, `onoffLiteraryWorksWithSingleMediaSource`, `onoffLiteraryWorksWithMultipleMediaSources` — el umbral de "hay entre qué elegir" separa a los dos últimos |
+| Un texto con atribución (epígrafe o nota)           | `onoffLiteraryWorkEpigraphsMock`; en stories, `corpusAttributedTexts` + `attributedTextSelectArgType`                                                                                             |
+| Un epígrafe cortado en varias líneas                | `onoffRawLiteraryWorksWithMultilineEpigraphs`                                                                                                                                                     |
+| Una story o storylist crudas                        | `onoffRawStoriesMock`, `onoffRawStorylistsMock`, `onoffRawNavTeasersMock`                                                                                                                         |
+| Un dataset para evaluar una query con `groq-js`     | `onoffDatasetMock` — el dataset entero, no un subconjunto: una referencia sin documento resuelve a `null` sin fallar                                                                              |
+| Una story o teaser crudos con multimedia            | `onoffRawStoriesWithMediaSources` / `onoffRawTeasersWithMediaSources`                                                                                                                             |
+| Una obra con o sin etiquetas                        | `onoffRawLiteraryWorksWith(out)Tags`                                                                                                                                                              |
+| Una etiqueta cualquiera                             | `onoffTagsMock` (o `onoffRawTagsMock` en el backend), y tomá un slice                                                                                                                             |
+| Etiquetas de título corto                           | `onoffTagsWithShortTitles` — para stories donde un título de dos palabras fuerza el recorte por ancho                                                                                             |
+| La página de inicio cruda, o sus campañas           | `onoffRawLandingPageMock` / `onoffRawContentCampaignsMock`, ambos de `@mocks/onoff-raw-landing-page.mock`                                                                                         |
 
 Corolario: **las aserciones se derivan del fixture**, no de prosa clavada. Si el caso necesita una palabra del texto, extraela del propio mock (`bodyHtml.replace(/<[^>]+>/g, ' ')` y tomá una palabra) en vez de escribirla a mano — así sigue pasando cuando el canon cambie. Si falta un selector para el shape que necesitás, **agregalo al agregador** (derivado por predicado, no una lista en paralelo) en vez de importar la obra.
 
@@ -195,7 +196,7 @@ Variantes: `queryBy*` (cuando se espera ausencia, no lanza), `findBy*` (async, e
 
 ## `IntersectionObserver` en tests
 
-`happy-dom` no implementa `IntersectionObserver`. `src/test-setup.ts` instala un **stub global** (`src/testing/intersection-observer.stub.ts`) para que cualquier componente que use IO se pueda renderizar.
+`happy-dom` trae un `IntersectionObserver` que no hace nada: alcanza para renderizar, pero nunca entrega un callback. `src/test-setup.ts` instala un **stub global** (`src/testing/intersection-observer.stub.ts`) que sí lo entrega bajo control del spec.
 
 Los specs que necesitan **simular overflow** (p. ej. `TagsListComponent` / `TagsOverflowDirective`, que recorta tags por ancho con `IntersectionObserver`) reutilizan los helpers del mismo stub:
 
@@ -226,6 +227,48 @@ describe('TagsOverflowDirective', () => {
 ```
 
 > Nota: el stub es temporal. El browser mode de Vitest provee un `IntersectionObserver` real, lo que permitiría testear con layout real en vez de simular el callback a mano.
+
+---
+
+## `ResizeObserver` en tests
+
+`happy-dom` trae un `ResizeObserver` que no hace nada y **no computa layout**: todas las medidas dan cero y ningún resize ocurre. `src/test-setup.ts` instala un **stub global** (`src/testing/resize-observer.stub.ts`) que no está para poder renderizar —el no-op alcanza para eso— sino para **controlar** la medición.
+
+Los specs que necesitan **simular una medición** (p. ej. `ClampOverflowDirective`, que decide si ofrecer un "Leer más") reutilizan los helpers del mismo stub:
+
+| Helper                        | Efecto                                                                                     |
+| ----------------------------- | ------------------------------------------------------------------------------------------ |
+| `installResizeObserverStub()` | (Re)instala el stub y resetea los observers capturados                                     |
+| `setMeasuredSize(el, size)`   | Fija el `scrollHeight` y el `clientHeight` que el entorno de tests deja en cero            |
+| `triggerResize()`             | Entrega el callback de los observers **conectados**, como haría un resize real             |
+| `activeObserverCount()`       | Cuántos observers siguen conectados — afirma que una directiva desconecta el suyo al morir |
+
+```typescript
+const { detectChanges } = await render(ClampHostComponent);
+
+setMeasuredSize(screen.getByTestId('text'), { scrollHeight: 200, clientHeight: 100 });
+triggerResize();
+detectChanges();
+
+expect(screen.getByRole('button', { name: 'Leer más' })).toBeInTheDocument();
+```
+
+El `detectChanges()` aporta **sincronía**, no repintado: la escritura de la signal programa la detección igual, pero el spec asserta en la misma vuelta. La alternativa es esperarla —`await fixture.whenStable()`, como hace el spec de `TagsOverflowDirective`—; lo que no funciona es assertar sin ninguna de las dos.
+
+### Cuál de los dos observers, y por qué no da igual
+
+No son intercambiables, porque responden preguntas distintas:
+
+| Caso                                                      | Herramienta            | Por qué                                                                                                                                                           |
+| --------------------------------------------------------- | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Recorte **horizontal** de una lista de hijos (`TagsList`) | `IntersectionObserver` | Hay N nodos reales que comparar contra la caja del contenedor: el observer **es** la medición                                                                     |
+| Recorte **vertical** de un texto (`line-clamp-*`)         | `ResizeObserver`       | Lo que desborda son line boxes, no nodos: no hay target que observar. La medición es `scrollHeight > clientHeight`, y el observer solo decide **cuándo** re-medir |
+
+Un centinela dentro del `-webkit-box` del clamp alteraría el conteo de líneas que se pretende medir, y fuera del clamp nunca se recortaría: por eso el eje vertical no se resuelve con IO.
+
+### `document.fonts` en tests
+
+`happy-dom` no lo expone. `src/test-setup.ts` instala un doble **controlable** (`src/testing/document-fonts.stub.ts`), que deja `document.fonts.ready` pendiente hasta que el spec llame a `resolveFontsReady()`. Es lo que hace afirmable el caso de la fuente que carga tarde: con un `leading` explícito la caja no cambia de alto, así que el `ResizeObserver` no dispara y solo crece el contenido.
 
 ---
 
@@ -476,6 +519,7 @@ Si el componente **renderiza su propio skeleton** según un input (p. ej. cuando
 - **Service/repository de backend** → spec funcional; si necesita aislar el repository, module mocking con el bloque `eslint-disable` + nota #1503.
 - **Mocks/timers** → siempre desde `@test-utils`; `clearAllMocks()` en `beforeEach`.
 - **Componente que usa `IntersectionObserver`** → `installIntersectionObserverStub()` en `beforeEach`; simular overflow con `markOutsideViewport` / `markInsideViewport`.
+- **Directiva que mide su host** → `installResizeObserverStub()` en `beforeEach`; fijar medidas con `setMeasuredSize`, entregar el callback con `triggerResize()` y llamar a `detectChanges()`; afirmar la desconexión con `activeObserverCount()`.
 - **Lógica Node pura de `cms/`** → spec propio con Vitest standalone (`pnpm sanity:test`); dobles escritos a mano (`Spy*`/`Stub*`/`Fake*`), sin `@test-utils`.
 - **Migración de datos de Sanity (`cms/migrations/<slug>/`)** → `index.spec.ts` co-locado que ejercita `migrate.document`; corre con `pnpm sanity:test` dentro del gate `studio-build`; sin `@test-utils` (imports explícitos de `vitest`, igual que el resto de `cms/`) — ver [`sanity-migrations.md`](sanity-migrations.md).
 - **Document type de Sanity (`cms/schemas/<tipo>.ts`)** → **sin spec**. Un test que afirma que un campo se declara con cierto tipo, o que otro no está, repite lo que el archivo de al lado dice literalmente. Lo que sí protege contra una regresión ya existe: `cms/schema.json` y `src/sanity/types.ts` están versionados, así que un cambio de forma aparece en el diff de los generados, y el gate `studio-build` compila el Studio.

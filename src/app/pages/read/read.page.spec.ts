@@ -19,6 +19,8 @@ import {
 	onoffLiteraryWorksWithEditorialNote,
 	onoffLiteraryWorksWithEpigraphs,
 	onoffLiteraryWorksWithoutEditorialNote,
+	onoffLiteraryWorksWithMultipleMediaSources,
+	onoffLiteraryWorksWithoutMediaSources,
 	onoffLiteraryWorksWithSectionTitles,
 } from '@mocks/onoff-literary-works.mock';
 import { provideLiteraryWorkApiMock, StubLiteraryWorkApi } from '../../providers/literary-work.mock';
@@ -261,6 +263,28 @@ describe('ReadPage', () => {
 			expect(screen.queryAllByTestId('editorial-note').length).toBe(epigraphCount);
 		},
 	);
+
+	// La página monta el bloque de formatos, no lo implementa: estos casos afirman el cableado —que la
+	// obra le llegue y que su ausencia no deje nada dibujado—, y el comportamiento del bloque lo cubre
+	// su propio spec.
+	describe('bloque de formatos multimedia', () => {
+		const [workWithFormats] = onoffLiteraryWorksWithMultipleMediaSources;
+		const [workWithoutFormats] = onoffLiteraryWorksWithoutMediaSources;
+
+		it('ofrece los formatos de una obra que trae varios', async () => {
+			await setup(workWithFormats);
+
+			expect(screen.getByRole('heading', { name: /diferentes formatos/i })).toBeInTheDocument();
+			expect(screen.getByRole('group', { name: 'Formatos disponibles' })).toBeInTheDocument();
+		});
+
+		it('no dibuja el bloque cuando la obra no trae multimedia', async () => {
+			await setup(workWithoutFormats);
+
+			expect(screen.queryByRole('heading', { name: /formatos?/i })).not.toBeInTheDocument();
+			expect(screen.queryByRole('group', { name: 'Formatos disponibles' })).not.toBeInTheDocument();
+		});
+	});
 
 	// El guardrail `seo-host-directives.spec.ts` deriva la indexabilidad del propio código, así que
 	// sigue verde si alguien vuelve la página a indexable: estos casos son los que fijan el opt-out de
