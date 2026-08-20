@@ -1,5 +1,15 @@
 // Core
-import { Component, computed, effect, inject, input, RESPONSE_INIT, signal, untracked } from '@angular/core';
+import {
+	Component,
+	computed,
+	effect,
+	forwardRef,
+	inject,
+	input,
+	RESPONSE_INIT,
+	signal,
+	untracked,
+} from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { NgTemplateOutlet } from '@angular/common';
 
@@ -13,6 +23,7 @@ import { CollectionApi } from '../../providers/collection.provider';
 // SEO
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 import { AppRoutes } from '../../app.routes';
+import { COLLECTION_HOST, type CollectionHost } from './collection-host';
 
 // Components
 import { CollectionInfoPanelComponent } from '@components/collection-info-panel/collection-info-panel.component';
@@ -26,6 +37,7 @@ import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 @Component({
 	selector: 'cuentoneta-collection',
 	templateUrl: './collection.page.html',
+	providers: [{ provide: COLLECTION_HOST, useExisting: forwardRef(() => CollectionPage) }],
 	hostDirectives: [HeadMetadataDirective],
 	imports: [
 		CollectionInfoPanelComponent,
@@ -38,7 +50,7 @@ import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 		SkeletonComponent,
 	],
 })
-export default class CollectionPage {
+export default class CollectionPage implements CollectionHost {
 	public readonly slug = input.required<string>();
 
 	private readonly collectionApi = inject(CollectionApi);
@@ -70,7 +82,7 @@ export default class CollectionPage {
 		defaultValue: [],
 	});
 
-	protected readonly collection = computed(() =>
+	public readonly collection = computed(() =>
 		this.collectionResource.hasValue() ? this.collectionResource.value() : undefined,
 	);
 	protected readonly notFound = computed(() => this.collectionResource.status() === 'error');
