@@ -3,7 +3,6 @@ import type { CollectionBySlugQueryResult, CollectionsQueryResult } from '@sanit
 import { onoffRawCollectionTeasersMock as generatedTeasers } from './onoff/collection/collection-teasers.raw.mock';
 import { geometriasDelDesveloRawCollection } from './onoff/collection/geometrias-del-desvelo.collection.raw.mock';
 import { inventarioDeLasPasionesRawCollection } from './onoff/collection/inventario-de-las-pasiones.collection.raw.mock';
-import geometriaMdBody from './onoff/literary-work/geometria.md?raw';
 
 type RawCollection = NonNullable<CollectionBySlugQueryResult>;
 
@@ -54,31 +53,12 @@ export const sectionlessWorkRawCollection: RawCollection = {
 	),
 };
 
-// No es un dato mal curado: es el shape de un borrador, cuya obra todavía no pasó por el backfill de
-// reading time. Cae al segundo eslabón de la cadena, el tiempo de la sección de apertura.
-export const draftLikeRawCollection: RawCollection = {
-	...geometriasDelDesveloRawCollection,
-	literaryWorks: geometriasDelDesveloRawCollection.literaryWorks.map((work, index) =>
-		index === 0 ? { ...work, totalReadingTime: null } : work,
-	),
-};
-
-// El tercer eslabón: ni el total de la obra ni el tiempo de su sección de apertura están
-// persistidos, así que el único origen posible es derivarlo del cuerpo completo — que la proyección
-// materializa solo en este caso.
+// Una obra sin su tiempo de lectura total. No hay derivación que la salve: en las obras de texto lo
+// calcula el backfill, pero en un recitado es la duración del medio, cargada a mano. Sin ese dato la
+// obra no se puede mostrar en un listado, así que el ACL la trata como mal curada.
 export const unbackfilledWorkRawCollection: RawCollection = {
 	...geometriasDelDesveloRawCollection,
 	literaryWorks: geometriasDelDesveloRawCollection.literaryWorks.map((work, index) =>
-		index === 0
-			? {
-					...work,
-					totalReadingTime: null,
-					openingReadingTime: null,
-					// El cuerpo **completo**, no el extracto que trae `excerpt`. Tomarlo de ahí haría que el
-					// caso afirmara el número que este trabajo declara inventado, y pasaría igual si el
-					// repositorio volviera a derivar del recorte — que es justo la regresión a impedir.
-					readingTimeFallbackBody: geometriaMdBody,
-				}
-			: work,
+		index === 0 ? { ...work, totalReadingTime: null } : work,
 	),
 };

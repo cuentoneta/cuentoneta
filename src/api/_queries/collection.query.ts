@@ -69,15 +69,7 @@ export const collectionBySlugQuery = defineQuery(`
             _key,
             title,
             'body': string::split(string::split(body, "\\r\\n\\r\\n")[0], "\\n\\n")[@ != ""][0]
-        },
-        // El tiempo de lectura de la sección de apertura viaja como escalar y no dentro del extracto,
-        // porque el extracto no puede sostenerlo: su cuerpo va recortado. Es el segundo eslabón de la
-        // cadena con la que el repositorio resuelve el total de la obra.
-        'openingReadingTime': content[0].readingTime,
-        // Último recurso, y solo entonces: el cuerpo entero de la sección de apertura, para derivar un
-        // tiempo de lectura cuando no hay ninguno persistido. Fuera de ese caso la proyección devuelve
-        // null, así que no paga el payload que este recorte vino a eliminar.
-        'readingTimeFallbackBody': select(coalesce(totalReadingTime, content[0].readingTime) == null => content[0].body)
+        }
     }, [])
 }[0]`);
 

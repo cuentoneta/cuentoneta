@@ -1,11 +1,8 @@
 import type { SanityClient } from '@sanity/client';
 import { clearAllMocks, fn } from '@test-utils';
-import { createMarkdown } from '@models/markdown.model';
-import { deriveSectionReadingTime } from '@models/reading-time.model';
 import { collectionBySlugQuery, collectionsQuery } from '../../_queries/collection.query';
 import {
 	descriptionlessRawCollection,
-	draftLikeRawCollection,
 	emptyRawCollection,
 	onoffRawCollectionsWithFeaturedImage,
 	onoffRawCollectionsWithoutFeaturedImage,
@@ -130,44 +127,13 @@ describe('SanityCollectionRepository.fetchBySlug', () => {
 		);
 	});
 
-	// El opcional del tipo solo se da en borradores, que el sitio público no sirve: no es un dato mal
-	// curado, así que no lanza. Cae al tiempo de la sección de apertura, prefiriendo su valor
-	// persistido: afirmarlo contra ese valor —y no contra "algo mayor que cero", que la factory ya
-	// garantiza— es lo que distingue esta rama de cualquier otro número válido.
-	it('falls back to the opening section reading time', async () => {
-		const collection = await repoReturning(draftLikeRawCollection).fetchBySlug('geometrias-del-desvelo');
-		const [work] = collection?.literaryWorks ?? [];
-
-		expect(work?.totalReadingTime).toBe(draftLikeRawCollection.literaryWorks[0]?.openingReadingTime);
-	});
-
-	// El tercer eslabón, y el que este trabajo vuelve seguro: sin ningún tiempo persistido, el número
-	// sale del cuerpo completo que la proyección materializa aparte, nunca del extracto recortado.
-	it('derives the reading time from the full opening body when nothing is persisted', async () => {
-		const collection = await repoReturning(unbackfilledWorkRawCollection).fetchBySlug('geometrias-del-desvelo');
-		const [work] = collection?.literaryWorks ?? [];
-		const fullBody = unbackfilledWorkRawCollection.literaryWorks[0]?.readingTimeFallbackBody ?? '';
-		const excerpt = unbackfilledWorkRawCollection.literaryWorks[0]?.excerpt[0]?.body ?? '';
-
-		expect(work?.totalReadingTime).toBe(deriveSectionReadingTime(createMarkdown(fullBody)));
-		// Sin esta segunda aserción el caso pasaría igual derivando del extracto, que es exactamente la
-		// regresión que la separación de campos vino a impedir.
-		expect(work?.totalReadingTime).not.toBe(deriveSectionReadingTime(createMarkdown(excerpt)));
-	});
-
-	// Las dos ramas que lanzan. La primera no puede darse con datos publicados —la query siempre trae
-	// el cuerpo de la sección de apertura cuando no hay tiempo persistido— y la segunda tampoco, porque
-	// el corte toma el primer bloque no vacío. Se afirman igual: son los dos únicos caminos por los que
-	// el ACL prefiere caerse antes que inventar un número o servir un extracto en blanco.
-	it('rejects a work with no reading time source at all', async () => {
-		const raw = {
-			...unbackfilledWorkRawCollection,
-			literaryWorks: unbackfilledWorkRawCollection.literaryWorks.map((work, index) =>
-				index === 0 ? { ...work, readingTimeFallbackBody: null } : work,
-			),
-		};
-
-		await expect(repoReturning(raw).fetchBySlug('geometrias-del-desvelo')).rejects.toThrow(MalformedCollectionError);
+	// Las dos ramas que lanzan. Ninguna se da con los datos publicados de hoy; se afirman igual, porque
+	// son los dos únicos caminos por los que el ACL prefiere caerse antes que inventar un número o
+	// servir un extracto en blanco.
+	it('rejects a work without a persisted total reading time', async () => {
+		await expect(repoReturning(unbackfilledWorkRawCollection).fetchBySlug('geometrias-del-desvelo')).rejects.toThrow(
+			MalformedCollectionError,
+		);
 	});
 
 	it('rejects a work whose excerpt carries no body', async () => {

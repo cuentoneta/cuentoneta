@@ -1,6 +1,6 @@
 import {
 	descriptionlessRawCollection,
-	draftLikeRawCollection,
+	unbackfilledWorkRawCollection,
 	emptyRawCollection,
 	onoffRawCollectionsMock,
 	onoffRawCollectionsWithFeaturedImage,
@@ -88,19 +88,16 @@ describe('onoff raw collections mock', () => {
 		expect(sectionlessWorkRawCollection.literaryWorks[0]?.excerpt).toEqual([]);
 
 		expect(geometriasDelDesveloRawCollection.literaryWorks[0]?.totalReadingTime).not.toBeNull();
-		expect(draftLikeRawCollection.literaryWorks[0]?.totalReadingTime).toBeNull();
+		expect(unbackfilledWorkRawCollection.literaryWorks[0]?.totalReadingTime).toBeNull();
 	});
 
-	// El borrador se distingue del dato mal curado en que lo único ausente es el reading time: si le
-	// faltara algo más, el caso del repository dejaría de probar la rama que dice probar.
-	it('keeps the draft-like scenario otherwise complete', () => {
-		expect(draftLikeRawCollection.literaryWorks.map((work) => work._id)).toEqual(
+	// Lo único ausente tiene que ser el tiempo de lectura: si al escenario le faltara algo más, el caso
+	// del repository dejaría de probar la rama que dice probar.
+	it('keeps the unbackfilled scenario otherwise complete', () => {
+		expect(unbackfilledWorkRawCollection.literaryWorks.map((work) => work._id)).toEqual(
 			geometriasDelDesveloRawCollection.literaryWorks.map((work) => work._id),
 		);
-		expect(draftLikeRawCollection.literaryWorks[0]?.excerpt).not.toEqual([]);
-		// El escenario cae al segundo eslabón, así que el tiempo de la sección de apertura tiene que
-		// seguir presente: sin él probaría el tercero y no el que dice probar.
-		expect(draftLikeRawCollection.literaryWorks[0]?.openingReadingTime).not.toBeNull();
-		expect(draftLikeRawCollection.description).not.toBe('');
+		expect(unbackfilledWorkRawCollection.literaryWorks[0]?.excerpt).not.toEqual([]);
+		expect(unbackfilledWorkRawCollection.description).not.toBe('');
 	});
 });

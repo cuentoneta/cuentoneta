@@ -86,8 +86,6 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 					body: 'A las tres y media en punto, sin que ningún despertador lo convoque, Shannon abre los ojos. La oscuridad de la habitación tiene siempre el mismo peso, el mismo gramaje exacto, como si la noche hubiera sido recortada con escuadra. No hay sobresalto: hay precisión.',
 				},
 			],
-			openingReadingTime: 7,
-			readingTimeFallbackBody: null,
 		},
 		{
 			_id: 'onoff-literary-work-los-peldanos',
@@ -126,8 +124,6 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 					body: 'La escalera empezaba en ninguna parte y terminaba un poco más arriba de eso. La Sra. Oneiras vivía en alguno de sus peldaños, aunque jamás conseguí determinar en cuál, porque cada vez que creía haberlo hecho el peldaño se desplazaba, o yo me desplazaba, o el día entero cambiaba de número sin avisarle a nadie.',
 				},
 			],
-			openingReadingTime: 8,
-			readingTimeFallbackBody: null,
 		},
 		{
 			_id: 'onoff-literary-work-las-escaleras',
@@ -166,8 +162,6 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 					body: 'Dos años después la encontré donde la había dejado, al pie de la escalera, midiendo con el pulgar la distancia exacta que separaba un peldaño del siguiente. La Sra. Oneiras no había envejecido; se había vuelto más precisa, como una cifra que se repite hasta perder su sentido.',
 				},
 			],
-			openingReadingTime: 9,
-			readingTimeFallbackBody: null,
 		},
 	],
 };

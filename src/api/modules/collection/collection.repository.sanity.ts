@@ -10,7 +10,7 @@ import {
 import { createLiteraryWorkExcerpt, type LiteraryWorkExcerpt } from '@models/literary-work-excerpt.model';
 import type { LiteraryWorkTeaser } from '@models/literary-work.model';
 import { createMarkdown } from '@models/markdown.model';
-import { createReadingTime, deriveSectionReadingTime, type ReadingTime } from '@models/reading-time.model';
+import { createReadingTime, type ReadingTime } from '@models/reading-time.model';
 import { createSectionTitle } from '@models/section-title.model';
 import { createSlug } from '@models/slug.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
@@ -142,22 +142,15 @@ export class SanityCollectionRepository implements CollectionRepository {
 		});
 	}
 
-	// Tres eslabones, del dato más confiable al menos. El total persistido es el único que conoce la
-	// obra entera; el de la sección de apertura es una cota inferior para una obra multi-sección; y la
-	// derivación es el último recurso, sobre el cuerpo entero de esa sección —no de la obra— que la
-	// query solo trae en ese caso, así que también es una cota inferior.
-	// Ninguno mira el extracto: derivar minutos de un cuerpo recortado daría un número inventado.
+	// El total persistido, sin derivación. No hay ninguna que sirva para las dos clases de obra: en las
+	// de texto el backfill lo calcula sumando las secciones, pero en un recitado o un audiovisual es la
+	// duración del medio, cargada a mano. Derivarlo del cuerpo daría el número equivocado justo para
+	// esas, y derivarlo del extracto —recortado— lo daría para todas.
 	private resolveTotalReadingTime(raw: SanityCollectionWork): ReadingTime {
-		if (raw.totalReadingTime !== null) {
-			return createReadingTime(raw.totalReadingTime);
+		if (raw.totalReadingTime === null) {
+			throw new MalformedCollectionError(raw.slug);
 		}
-		if (raw.openingReadingTime !== null) {
-			return createReadingTime(raw.openingReadingTime);
-		}
-		if (raw.readingTimeFallbackBody !== null) {
-			return deriveSectionReadingTime(createMarkdown(raw.readingTimeFallbackBody));
-		}
-		throw new MalformedCollectionError(raw.slug);
+		return createReadingTime(raw.totalReadingTime);
 	}
 
 	// Sin epígrafes: la tarjeta que consume el extracto muestra el cuerpo y nadie más los lee, así que

@@ -63,8 +63,6 @@ export const inventarioDeLasPasionesRawCollection: NonNullable<CollectionBySlugQ
 					body: 'Conviene advertir, antes de toda enumeración, que un tratado de los placeres no es un repertorio de placeres sino su contrario exacto. Quien escribe _esto_ ya ha dejado de gozar; ha pasado al otro lado de la mesa, donde se mide y se nombra.',
 				},
 			],
-			openingReadingTime: 10,
-			readingTimeFallbackBody: null,
 		},
 		{
 			_id: 'onoff-literary-work-el-odio',
@@ -103,8 +101,6 @@ export const inventarioDeLasPasionesRawCollection: NonNullable<CollectionBySlugQ
 					body: 'No empezó por nada. Eso es lo primero que conviene aclarar. No hubo un agravio, ni una herida, ni una infancia que pudiera invocarse después como excusa. El odio estaba ahí desde antes, igual que el peso del cuerpo o el color de los ojos, una propiedad y no un acontecimiento.',
 				},
 			],
-			openingReadingTime: 6,
-			readingTimeFallbackBody: null,
 		},
 		{
 			_id: 'onoff-literary-work-las-dos-antorchas',
@@ -143,8 +139,6 @@ export const inventarioDeLasPasionesRawCollection: NonNullable<CollectionBySlugQ
 					body: 'El corredor no tenía principio que alguien recordara. Avanzábamos por él como se avanza en un cálculo: sin esperanza de llegada, atentos sólo a no perder el hilo. Dos antorchas iban con nosotros, una a cada lado, y desde el primer paso comprendí que nunca alumbrarían lo mismo.',
 				},
 			],
-			openingReadingTime: 8,
-			readingTimeFallbackBody: null,
 		},
 	],
 };
