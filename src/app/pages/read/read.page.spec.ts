@@ -297,8 +297,9 @@ describe('ReadPage', () => {
 			expect(screen.getByRole('group', { name: 'Formatos disponibles' })).toBeInTheDocument();
 		});
 
-		// Lo que saca al bloque del HTML servido: en el primer render no está, y llega recién cuando el
-		// diferido se resuelve. Sin este caso, el `@defer` se podría perder sin que nada lo note.
+		// El bloque no está en el primer render y llega recién cuando el diferido se resuelve. No es una
+		// prueba de lo que sirve el servidor —el entorno de tests no renderiza en servidor—, sino de que
+		// el diferido sigue en su lugar: sin este caso, sacarlo no rompería nada.
 		it('no forma parte del render inicial', async () => {
 			await setup(workWithFormats);
 
