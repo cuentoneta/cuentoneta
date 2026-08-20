@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 
 import { LiteraryWorkCardTeaserComponent } from '@components/literary-work-card-teaser/literary-work-card-teaser.component';
 import { ButtonComponent } from '@components/button/button.component';
+import { DividerComponent } from '@components/divider/divider.component';
 import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 import { READING_SUGGESTIONS_COUNT } from './pick-reading-suggestions';
 import type { ReadingSuggestion } from './story-teaser-to-reading-suggestion.adapter';
@@ -17,7 +18,7 @@ import type { NavigationParams } from '@app-utils/navigation-params';
  */
 @Component({
 	selector: 'cuentoneta-reading-suggestions-list',
-	imports: [RouterLink, LiteraryWorkCardTeaserComponent, ButtonComponent, SkeletonComponent],
+	imports: [RouterLink, LiteraryWorkCardTeaserComponent, ButtonComponent, DividerComponent, SkeletonComponent],
 	host: { class: 'block' },
 	template: `
 		<!-- Sin sugerencias que ofrecer no hay bloque: un encabezado y un botón sobre una lista vacía
@@ -26,23 +27,19 @@ import type { NavigationParams } from '@app-utils/navigation-params';
 			<section
 				[attr.aria-busy]="loading()"
 				data-testid="reading-suggestions"
-				class="flex w-full flex-col gap-6 rounded-2xl bg-neutral-100 p-6 md:p-10"
+				class="flex w-full flex-col gap-10 rounded-2xl bg-neutral-100 p-6 md:p-10"
 			>
 				@if (loading()) {
-					<cuentoneta-skeleton appearance="line" class="h-7 w-full max-w-72 bg-neutral-300" />
+					<cuentoneta-skeleton appearance="line" class="h-8 w-full max-w-72 bg-neutral-300" />
 				} @else {
-					<h2 class="h3 text-neutral-900">{{ heading() }}</h2>
+					<h2 class="text-2xl font-semibold text-neutral-900">{{ heading() }}</h2>
 				}
 
-				<!-- Los divisores y el espaciado viven en el contenedor: valen igual para las tarjetas reales y
-				 para los esqueletos, sin duplicar la regla en cada rama. -->
-				<ul
-					class="flex flex-col divide-y divide-neutral-200 [&>li]:py-6 [&>li:first-child]:pt-0 [&>li:last-child]:pb-0"
-				>
+				<ul class="flex flex-col gap-7">
 					<!-- Se trackea por índice a propósito: el estado de carga ocupa los mismos slots con obras
 						 vacías, y trackear por slug destruiría y recrearía cada tarjeta al llegar los datos. -->
 					@for (suggestion of displayedTeasers(); track $index) {
-						<li>
+						<li class="flex flex-col gap-7">
 							<!-- La etiqueta es el tipo literario de la obra. Que sea el primer tag es convención editorial del
 								 catálogo, no algo que el schema garantice: si el orden cambiara, cambiaría la etiqueta. -->
 							<cuentoneta-literary-work-card-teaser
@@ -56,6 +53,12 @@ import type { NavigationParams } from '@app-utils/navigation-params';
 								[showMultimedia]="true"
 								variant="on-gray"
 							/>
+							<!-- El divisor va dentro del ítem y no entre ítems porque una lista solo admite ítems como
+								 hijos, y decorativo porque la lista ya delimita sus partes: anunciarlo como separador
+								 repetiría esa información. El corte por el último es lo que evita el que sobra al final. -->
+							@if (!$last) {
+								<cuentoneta-divider [decorative]="true" data-testid="suggestion-separator" />
+							}
 						</li>
 					}
 				</ul>

@@ -78,7 +78,7 @@ export class CollectionReadingSuggestionsComponent {
 	protected readonly suggestions = computed(() => this.collection()?.suggestions ?? []);
 	protected readonly heading = computed(() => `Más obras de ${this.title()}`);
 	protected readonly moreLabel = computed(() => `Ver más de ${this.title()}`);
-	protected readonly moreRoute = computed(() => ['/', this.appRoutes.StoryList, this.collectionSlug()]);
+	protected readonly moreRoute = computed(() => ['/', this.appRoutes.Collection, this.collectionSlug()]);
 	protected readonly navigationParams = computed<NavigationParams>(() => ({
 		navigation: 'collection',
 		navigationSlug: this.collectionSlug(),

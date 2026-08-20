@@ -84,7 +84,7 @@ describe('ReadingSuggestionsComponent', () => {
 
 		expect(screen.getByRole('link', { name: `Ver más de ${collectionMock.title}` })).toHaveAttribute(
 			'href',
-			`/storylist/${collectionMock.slug}`,
+			`/collection/${collectionMock.slug}`,
 		);
 	});
 

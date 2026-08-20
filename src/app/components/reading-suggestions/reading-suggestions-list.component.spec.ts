@@ -3,6 +3,7 @@ import { provideRouter } from '@angular/router';
 import { clearAllMocks } from '@test-utils';
 
 import { ReadingSuggestionsListComponent } from './reading-suggestions-list.component';
+import { READING_SUGGESTIONS_COUNT } from './pick-reading-suggestions';
 import type { ReadingSuggestion } from './story-teaser-to-reading-suggestion.adapter';
 import type { NavigationParams } from '@app-utils/navigation-params';
 import {
@@ -44,6 +45,32 @@ const setup = (inputs: ReadingSuggestionsInputs = {}) =>
 describe('ReadingSuggestionsListComponent', () => {
 	beforeEach(() => {
 		clearAllMocks();
+	});
+
+	describe('separación entre sugerencias', () => {
+		// El separador va entre sugerencias, así que son siempre uno menos que las obras. Cubre a la vez
+		// el intercalado y que no quede uno colgando al final.
+		it.each([1, 2, 3, 5])('should draw one separator less than the %i suggestions', async (count) => {
+			await setup({ teasers: onoffLiteraryWorkTeasersMock.slice(0, count).map(toSuggestion) });
+
+			expect(screen.queryAllByTestId('suggestion-separator')).toHaveLength(count - 1);
+		});
+
+		// La invariante que justifica que el divisor sea decorativo: la lista ya delimita sus ítems, y
+		// anunciar además cada línea como separador repetiría esa información.
+		it('should not expose the separators to assistive technology', async () => {
+			await setup();
+
+			expect(screen.queryAllByRole('separator')).toHaveLength(0);
+		});
+
+		// El estado de carga ocupa los mismos slots, así que la separación tiene que acompañarlo o el
+		// layout salta al llegar las obras.
+		it('should separate the loading placeholders the same way', async () => {
+			await setup({ loading: true });
+
+			expect(screen.queryAllByTestId('suggestion-separator')).toHaveLength(READING_SUGGESTIONS_COUNT - 1);
+		});
 	});
 
 	it('should render the heading', async () => {

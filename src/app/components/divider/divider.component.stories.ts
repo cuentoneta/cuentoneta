@@ -13,7 +13,7 @@ const meta: Meta<DividerComponent> = {
 				sourceState: 'shown',
 			},
 			description: {
-				component: `<div><p>La línea divisoria del Design System v3, <strong>DividerComponent</strong>: una línea de 1px en neutral-200 que separa visualmente contenidos, secciones o grupos de elementos sin introducir una interrupción fuerte en la interfaz. El elemento anfitrión <em>es</em> la línea: no proyecta contenido, no expone acciones ni controles interactivos, y se anuncia como separador (<code>role="separator"</code>) con su orientación.</p><ul><li><strong>horizontal</strong> (default): 1px de alto, ocupa el ancho del contenedor.</li><li><strong>vertical</strong>: 1px de ancho, toma el alto disponible del contenedor.</li></ul></div>`,
+				component: `<div><p>La línea divisoria del Design System v3, <strong>DividerComponent</strong>: una línea de 1px en neutral-200 que separa visualmente contenidos, secciones o grupos de elementos sin introducir una interrupción fuerte en la interfaz. El elemento anfitrión <em>es</em> la línea: no proyecta contenido, no expone acciones ni controles interactivos, y se anuncia como separador (<code>role="separator"</code>) con su orientación, salvo que se la marque <code>decorative</code>.</p><ul><li><strong>horizontal</strong> (default): 1px de alto, ocupa el ancho del contenedor.</li><li><strong>vertical</strong>: 1px de ancho, toma el alto disponible del contenedor.</li></ul></div>`,
 			},
 		},
 		layout: 'padded',
@@ -24,6 +24,11 @@ const meta: Meta<DividerComponent> = {
 			control: { type: 'inline-radio' },
 			options: ['horizontal', 'vertical'],
 			table: { type: { summary: `'horizontal' | 'vertical'` }, defaultValue: { summary: 'horizontal' } },
+		},
+		decorative: {
+			description: 'Marca la línea como puramente visual, sin rol de separador ni orientación anunciada.',
+			control: { type: 'boolean' },
+			table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' } },
 		},
 	},
 };
@@ -92,6 +97,31 @@ export const Vertical: Story = {
 		docs: {
 			description: {
 				story: `<p>Variante <strong>vertical</strong>: separa elementos organizados horizontalmente. Mantiene un ancho fijo de 1px y ocupa la altura disponible del contenedor, por lo que espera un contenedor flex o grid con alto resuelto.</p><p><strong>Usos:</strong> Story List, Author Profile y Author List.</p>`,
+			},
+		},
+	},
+};
+
+export const Decorativo: Story = {
+	render: () => ({
+		props: { works: corpusLiteraryWorkTeasers.slice(0, 3) },
+		template: `
+			<ul class="flex max-w-md flex-col gap-4 font-inter text-sm text-neutral-700">
+				@for (work of works; track work.slug; let last = $last) {
+					<li class="flex flex-col gap-4">
+						<span>{{ work.title }}</span>
+						@if (!last) {
+							<cuentoneta-divider [decorative]="true" />
+						}
+					</li>
+				}
+			</ul>
+		`,
+	}),
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>Dentro de una lista, la línea se marca <code>decorative</code>: la propia lista ya delimita sus ítems, así que anunciarla también como separador repite esa información. Visualmente es idéntica; lo que cambia es que deja de exponer rol y orientación.</p><p><strong>Usos:</strong> las sugerencias de lectura al pie de una obra.</p>`,
 			},
 		},
 	},

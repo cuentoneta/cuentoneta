@@ -12,7 +12,7 @@ const meta: Meta<ReadingSuggestionsListComponent> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>Bloque de sugerencias de lectura que cierra la lectura de una obra: un encabezado, una tríada de obras sugeridas y un acceso al listado completo. Reemplaza al rail lateral de navegación, cambiando la navegación in-situ por una invitación a seguir leyendo.</p><p>Es presentacional puro: recibe las obras ya resueltas mediante el input <code>teasers</code> y no conoce ningún provider. Quienes las consiguen son los envoltorios conectados <strong>AuthorReadingSuggestions</strong> (más obras del mismo autor) y <strong>CollectionReadingSuggestions</strong> (más obras de la misma colección), que elige <strong>ReadingSuggestions</strong> según el contexto de navegación. Esos tres no tienen catálogo propio: delegan acá toda su vista, así que lo que hay para evaluar visualmente se ve en esta story.</p><p>Cada sugerencia se renderiza con <a href="./?path=/docs/componentes-v3-literaryworkcardteaser--docs" target="_top"><strong>LiteraryWorkCardTeaser</strong></a> en su variante <code>OnGray</code>, separadas por divisores; el acceso al listado usa <a href="./?path=/docs/componentes-v3-button--docs" target="_top"><strong>Button</strong></a> en su variante <code>Outline</code>. Los controles <code>navigation</code> y <code>navigationSlug</code> son los query params que cada tarjeta arrastra a la obra destino: al cambiarlos se ve cómo se reescribe el <code>href</code> de cada enlace.</p></div>`,
+				component: `<div><p>Bloque de sugerencias de lectura que cierra la lectura de una obra: un encabezado, una tríada de obras sugeridas y un acceso al listado completo. Reemplaza al rail lateral de navegación, cambiando la navegación in-situ por una invitación a seguir leyendo.</p><p>Es presentacional puro: recibe las obras ya resueltas mediante el input <code>teasers</code> y no conoce ningún provider. Quienes las consiguen son los envoltorios conectados <strong>AuthorReadingSuggestions</strong> (más obras del mismo autor) y <strong>CollectionReadingSuggestions</strong> (más obras de la misma colección), que elige <strong>ReadingSuggestions</strong> según el contexto de navegación. Esos tres no tienen catálogo propio: delegan acá toda su vista, así que lo que hay para evaluar visualmente se ve en esta story.</p><p>Cada sugerencia se renderiza con <a href="./?path=/docs/componentes-v3-literaryworkcardteaser--docs" target="_top"><strong>LiteraryWorkCardTeaser</strong></a> en su variante <code>OnGray</code>, separadas por <a href="./?path=/docs/componentes-v3-divider--docs" target="_top"><strong>Divider</strong></a> en su forma decorativa —la lista ya delimita sus ítems, así que la línea no se anuncia además como separador—; el acceso al listado usa <a href="./?path=/docs/componentes-v3-button--docs" target="_top"><strong>Button</strong></a> en su variante <code>Outline</code>. Los controles <code>navigation</code> y <code>navigationSlug</code> son los query params que cada tarjeta arrastra a la obra destino: al cambiarlos se ve cómo se reescribe el <code>href</code> de cada enlace.</p></div>`,
 			},
 		},
 		layout: 'padded',
@@ -39,10 +39,13 @@ const meta: Meta<ReadingSuggestionsListComponent> = {
 			description: 'Mostrar el autor de cada sugerencia (se oculta en la variante de autor, donde es redundante)',
 			table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' } },
 		},
+		// Las sugerencias las deriva el control de cantidad a partir del corpus, así que editarlas como
+		// objeto no tendría efecto. Se saca el control y no la fila entera: el input sigue siendo el
+		// principal del componente y su tipo pertenece a la documentación.
 		teasers: {
-			control: { type: 'object' },
+			control: false,
 			description:
-				'Sugerencias ya resueltas: cada una lleva la obra y su extracto por separado. El bloque no se renderiza si llega vacío',
+				'Sugerencias ya resueltas: cada una lleva la obra y su extracto por separado. El bloque no se renderiza si llega vacío. En el catálogo las deriva el control de cantidad',
 			table: { type: { summary: 'readonly ReadingSuggestion[]' }, defaultValue: { summary: '[]' } },
 		},
 		moreRoute: {
@@ -58,7 +61,9 @@ export default meta;
 
 // El contexto de navegación se controla por sus dos partes y no como objeto: son los query params que
 // cada tarjeta arrastra a la obra destino, y separarlos deja ver en el `href` cómo los cambia cada uno.
-type Story = StoryObj<ReadingSuggestionsListComponent & { navigation: NavigationContext; navigationSlug: string }>;
+type Story = StoryObj<
+	ReadingSuggestionsListComponent & { navigation: NavigationContext; navigationSlug: string; suggestionCount: number }
+>;
 
 const navigationArgTypes = {
 	navigation: {
@@ -76,15 +81,38 @@ const navigationArgTypes = {
 	},
 };
 
+// Las cuatro cantidades que el diseño enumera como variantes del bloque. Más de tres no es alcanzable
+// en producción —el selector recorta a la cantidad acordada—, pero se ofrece igual: es lo que hace
+// explícito que el intercalado del separador no está cableado a tres.
+const suggestionCountArgType = {
+	suggestionCount: {
+		control: { type: 'inline-radio' as const },
+		options: [1, 2, 3, 5],
+		name: 'Cantidad de sugerencias',
+		description: 'Cuántas obras trae el bloque. Los separadores son siempre uno menos',
+		table: { type: { summary: 'number' }, defaultValue: { summary: '3' } },
+		// El estado de carga reserva siempre la misma cantidad de slots, así que este control no lo
+		// afecta: ofrecerlo ahí mentiría sobre lo que hace.
+		if: { arg: 'loading', truthy: false },
+	},
+};
+
 // El bloque recibe la obra y su extracto por separado. Estas stories muestran obras del canon, cuyo
 // extracto ya viene en `teaserSection`, así que la lista de párrafos va vacía: la rama de Portable Text
 // es la que alimenta el puente temporal desde `Story`.
-const suggestions: ReadingSuggestion[] = corpusLiteraryWorkTeasers
-	.slice(0, 3)
-	.map((literaryWork) => ({ literaryWork, excerptParagraphs: [] }));
+const allSuggestions: ReadingSuggestion[] = corpusLiteraryWorkTeasers.map((literaryWork) => ({
+	literaryWork,
+	excerptParagraphs: [],
+}));
 
-const renderWithNavigation: Story['render'] = ({ navigation, navigationSlug, ...args }) => ({
-	props: { ...args, navigationParams: { navigation, navigationSlug } },
+// La cantidad se controla en vez de fijarse por entrada: lo que el diseño enumera como variantes del
+// bloque es cuántas sugerencias trae, y el separador intercalado depende de eso.
+const renderWithNavigation: Story['render'] = ({ navigation, navigationSlug, suggestionCount, ...args }) => ({
+	props: {
+		...args,
+		teasers: allSuggestions.slice(0, suggestionCount),
+		navigationParams: { navigation, navigationSlug },
+	},
 	template: `
 		<cuentoneta-reading-suggestions-list
 			[heading]="heading"
@@ -99,11 +127,11 @@ const renderWithNavigation: Story['render'] = ({ navigation, navigationSlug, ...
 });
 
 export const PorAutor: Story = {
-	argTypes: navigationArgTypes,
+	argTypes: { ...navigationArgTypes, ...suggestionCountArgType },
 	render: renderWithNavigation,
 	args: {
 		heading: 'Más obras de François Onoff',
-		teasers: suggestions,
+		suggestionCount: 3,
 		moreLabel: 'Ver más de François Onoff',
 		moreRoute: ['/', 'author', 'francois-onoff'],
 		navigation: 'author',
@@ -122,13 +150,13 @@ export const PorAutor: Story = {
 };
 
 export const PorColeccion: Story = {
-	argTypes: navigationArgTypes,
+	argTypes: { ...navigationArgTypes, ...suggestionCountArgType },
 	render: renderWithNavigation,
 	args: {
 		heading: 'Más obras de Geometrías del desvelo',
-		teasers: suggestions,
+		suggestionCount: 3,
 		moreLabel: 'Ver más de Geometrías del desvelo',
-		moreRoute: ['/', 'storylist', 'geometrias-del-desvelo'],
+		moreRoute: ['/', 'collection', 'geometrias-del-desvelo'],
 		navigation: 'collection',
 		navigationSlug: 'geometrias-del-desvelo',
 		showAuthor: true,
