@@ -88,37 +88,16 @@ describe('CollectionTeaserCard', () => {
 		});
 	});
 
-	describe('Variante de imagery', () => {
-		it('should render a single cover for representative imagery', async () => {
-			await render(CollectionTeaserCard, {
-				inputs: { collection: representativeMock },
-				providers: defaultProviders,
-			});
-
-			expect(screen.getAllByTestId('cover-image')).toHaveLength(1);
-		});
-
-		it('should render 3 covers for sample imagery with three images', async () => {
+	// La forma de la portada la resuelve CollectionCover y la cubre su spec: acá solo se afirma que la
+	// tarjeta le entrega el dato de dominio, que es lo único suyo en juego.
+	describe('Portada', () => {
+		it('should hand the imagery of the collection to the cover', async () => {
 			await render(CollectionTeaserCard, {
 				inputs: { collection: sampleMock },
 				providers: defaultProviders,
 			});
 
-			expect(screen.getAllByTestId('cover-image')).toHaveLength(3);
-		});
-
-		it('should render placeholders for the empty slots of a sample imagery', async () => {
-			const [firstImage] = sampleMock.imagery.kind === 'sample' ? sampleMock.imagery.images : [''];
-
-			await render(CollectionTeaserCard, {
-				inputs: {
-					collection: teaserFrom(sampleMock, { imagery: { kind: 'sample', images: [firstImage, '', ''] } }),
-				},
-				providers: defaultProviders,
-			});
-
-			expect(screen.getAllByTestId('cover-image')).toHaveLength(1);
-			expect(screen.getAllByTestId('cover-placeholder')).toHaveLength(2);
+			expect(screen.getByTestId('cover-fan')).toBeInTheDocument();
 		});
 	});
 

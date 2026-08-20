@@ -55,10 +55,11 @@ describe('CollectionCoverComponent', () => {
 		it('should mark only the front cover of the fan as priority', async () => {
 			await render(CollectionCoverComponent, { inputs: { imagery: sampleImagery, priority: true } });
 
-			const prioritised = screen
-				.getAllByTestId('cover-image')
-				.filter((image) => image.getAttribute('fetchpriority') === 'high');
-			expect(prioritised).toHaveLength(1);
+			// La del frente es la primera, y afirmar cuál —y no cuántas— es lo que distingue este
+			// contrato de marcar cualquiera de las tres.
+			const [front, ...sides] = screen.getAllByTestId('cover-image');
+			expect(front).toHaveAttribute('fetchpriority', 'high');
+			sides.forEach((side) => expect(side).not.toHaveAttribute('fetchpriority', 'high'));
 		});
 
 		it('should mark the representative cover as priority', async () => {

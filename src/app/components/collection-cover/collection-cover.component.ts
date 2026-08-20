@@ -23,21 +23,20 @@ import { CoverImageComponent } from '../cover-image/cover-image.component';
 	imports: [CoverImageComponent],
 	host: { class: 'block w-fit shrink-0' },
 	template: `
-		@if (imagery(); as imagery) {
-			@if (imagery.kind === 'representative') {
-				<cuentoneta-cover-image [src]="imagery.image" [priority]="priority()" />
-			} @else {
-				<div class="relative isolate h-41 w-67.5 overflow-hidden" data-testid="cover-fan">
-					@for (image of imagery.images; track $index) {
-						<cuentoneta-cover-image
-							[src]="image"
-							[priority]="priority() && $first"
-							[class]="sampleImageClasses[$index]"
-							data-testid="fan-slot"
-						/>
-					}
-				</div>
-			}
+		@let imagery = this.imagery();
+		@if (imagery.kind === 'representative') {
+			<cuentoneta-cover-image [src]="imagery.image" [priority]="priority()" />
+		} @else {
+			<div class="relative isolate h-41 w-67.5 overflow-hidden" data-testid="cover-fan">
+				@for (image of imagery.images; track $index) {
+					<cuentoneta-cover-image
+						[src]="image"
+						[priority]="priority() && $first"
+						[class]="sampleImageClasses[$index]"
+						data-testid="fan-slot"
+					/>
+				}
+			</div>
 		}
 	`,
 })
