@@ -208,7 +208,7 @@ describe('AuthorReadingSuggestionsComponent', () => {
 
 		expect(screen.getByRole('link', { name: suggestion.title })).toHaveAttribute(
 			'href',
-			`/story/${suggestion.slug}?navigation=author&navigationSlug=${authorTeaserMock.slug}`,
+			`/read/${suggestion.slug}?navigation=author&navigationSlug=${authorTeaserMock.slug}`,
 		);
 	});
 
