@@ -129,6 +129,9 @@ describe('CollectionPage', () => {
 
 	// Las directivas tienen su propio spec: lo que se ejercita acá es el cableado, que ninguno de los
 	// dos ve — que la página las declare y les provea la colección que resolvió.
+	// Todo lo de este bloque vive en el `head`, que no tiene rol accesible: se consulta por selector, de
+	// ahí el acceso directo al nodo.
+	/* eslint-disable testing-library/no-node-access */
 	describe('indexado', () => {
 		afterEach(() => {
 			document.head.querySelectorAll('script[data-schema-id]').forEach((el) => el.remove());
@@ -152,4 +155,5 @@ describe('CollectionPage', () => {
 			expect(document.head.querySelector('script[data-schema-id="breadcrumb-collection"]')).not.toBeNull();
 		});
 	});
+	/* eslint-enable testing-library/no-node-access */
 });
