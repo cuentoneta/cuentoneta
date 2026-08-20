@@ -61,10 +61,14 @@ export const collectionBySlugQuery = defineQuery(`
         // Windows— y ahí un corte por doble LF a secas devolvería el cuerpo entero. Las barras van
         // dobles porque la query vive en un template literal: una barra sola la consumiría JavaScript
         // y GROQ recibiría un salto de línea real dentro de la cadena, que no parsea.
+        //
+        // Se toma el primer bloque **no vacío**: un cuerpo que arranca con un renglón en blanco es
+        // contenido válido —nada en el schema lo impide— y con el índice pelado daría un extracto
+        // vacío, que el mapper trataría como obra mal curada y tumbaría la colección entera.
         'excerpt': content[0...1]{
             _key,
             title,
-            'body': string::split(string::split(body, "\\r\\n\\r\\n")[0], "\\n\\n")[0]
+            'body': string::split(string::split(body, "\\r\\n\\r\\n")[0], "\\n\\n")[@ != ""][0]
         },
         // El tiempo de lectura de la sección de apertura viaja como escalar y no dentro del extracto,
         // porque el extracto no puede sostenerlo: su cuerpo va recortado. Es el segundo eslabón de la

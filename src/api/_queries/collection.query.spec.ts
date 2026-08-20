@@ -8,6 +8,7 @@ import {
 	nonProseOpeningCollectionDocument,
 	quoteOpeningLiteraryWorkDocument,
 	headingOpeningLiteraryWorkDocument,
+	blankLeadingLineLiteraryWorkDocument,
 	multiSectionLiteraryWorkDocument,
 	onoffCollectionDocumentsMock,
 	onoffDatasetMock,
@@ -76,6 +77,7 @@ describe('collectionBySlugQuery', () => {
 		...dataset,
 		quoteOpeningLiteraryWorkDocument,
 		headingOpeningLiteraryWorkDocument,
+		blankLeadingLineLiteraryWorkDocument,
 		nonProseOpeningCollectionDocument,
 	];
 
@@ -111,6 +113,17 @@ describe('collectionBySlugQuery', () => {
 		// Markdown válido, pero un extracto pobre: el corte se queda con el encabezado y deja afuera el
 		// párrafo. Queda afirmado para que sea una decisión visible y no una sorpresa en una tarjeta.
 		expect(heading?.excerpt[0]?.body).toBe('## El primer umbral');
+	});
+
+	// El corte toma el primer bloque no vacío y no el primero a secas: con el índice pelado, un renglón
+	// en blanco delante del texto —contenido válido— daría un extracto vacío, que el mapper trata como
+	// obra mal curada y que se lleva puesta la colección entera.
+	it('skips a blank leading line instead of yielding an empty excerpt', async () => {
+		const result = await run(collectionBySlugQuery, withNonProseOpenings, { slug: 'arranques-no-prosa' });
+		const works = (result as { literaryWorks: { slug: string; excerpt: { body: string }[] }[] }).literaryWorks;
+		const blankLeading = works.find((work) => work.slug === 'arranque-en-blanco');
+
+		expect(blankLeading?.excerpt[0]?.body).toBe('El párrafo que la tarjeta tiene que mostrar igual.');
 	});
 
 	it('defaults showAuthors to false when the config is absent', async () => {

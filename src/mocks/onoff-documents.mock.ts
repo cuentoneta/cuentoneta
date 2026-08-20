@@ -167,11 +167,32 @@ export const headingOpeningLiteraryWorkDocument: LiteraryWork = {
 	],
 };
 
+// Un renglón en blanco delante del texto: artefacto de edición corriente, que el schema no impide.
+// Sin el filtro de bloques vacíos, el corte devolvería la cadena vacía y la colección entera caería.
+export const blankLeadingLineLiteraryWorkDocument: LiteraryWork = {
+	...canonLiteraryWork,
+	_id: 'onoff-literary-work-arranque-en-blanco',
+	slug: slugField('arranque-en-blanco'),
+	content: [
+		{
+			...canonLiteraryWork.content[0],
+			_type: 'section',
+			_key: 'section-1',
+			epigraphs: [],
+			body: '\n\nEl párrafo que la tarjeta tiene que mostrar igual.\n\nY el que queda afuera.',
+		},
+	],
+};
+
 export const nonProseOpeningCollectionDocument = {
 	...canonCollection,
 	_id: 'onoff-collection-arranques-no-prosa',
 	slug: slugField('arranques-no-prosa'),
-	literaryWorks: [quoteOpeningLiteraryWorkDocument, headingOpeningLiteraryWorkDocument].map((work) => ({
+	literaryWorks: [
+		quoteOpeningLiteraryWorkDocument,
+		headingOpeningLiteraryWorkDocument,
+		blankLeadingLineLiteraryWorkDocument,
+	].map((work) => ({
 		_key: work._id,
 		_type: 'reference' as const,
 		_ref: work._id,
