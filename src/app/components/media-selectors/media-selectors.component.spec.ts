@@ -2,15 +2,19 @@ import { fn } from '@test-utils';
 import { MediaSelectorsComponent } from './media-selectors.component';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
-import { Media } from '@models/media.model';
-import { onoffSpotifyPodcastEpisodesMock, onoffYouTubeVideosMock } from '@mocks/onoff-media.mock';
+import { MediaTeaser } from '@models/media.model';
+import { onoffSpotifyPodcastEpisodesMock, onoffYouTubeVideosMock, toMediaTeaser } from '@mocks/onoff-media.mock';
 
 describe('MediaSelectorsComponent', () => {
 	// Dos medios de la misma plataforma más uno de otra: el caso que distingue "un selector por
 	// plataforma" de "un selector por medio". El repetido sale del canon, no de un literal nuevo.
-	const [youTube1] = onoffYouTubeVideosMock;
-	const [spotify1] = onoffSpotifyPodcastEpisodesMock;
-	const media: Media[] = [...onoffYouTubeVideosMock, ...onoffYouTubeVideosMock, ...onoffSpotifyPodcastEpisodesMock];
+	const [youTube1] = onoffYouTubeVideosMock.map(toMediaTeaser);
+	const [spotify1] = onoffSpotifyPodcastEpisodesMock.map(toMediaTeaser);
+	const media: MediaTeaser[] = [
+		...onoffYouTubeVideosMock,
+		...onoffYouTubeVideosMock,
+		...onoffSpotifyPodcastEpisodesMock,
+	].map(toMediaTeaser);
 
 	it('should render nothing when there is no media', async () => {
 		await render(MediaSelectorsComponent, { inputs: { media: [] } });
@@ -75,10 +79,12 @@ describe('MediaSelectorsComponent', () => {
 			expect(onSelected).toHaveBeenLastCalledWith(spotify1);
 		});
 
-		it('should expose an accessible label per platform', async () => {
+		// En este modo cada botón es un recurso distinto, así que el nombre accesible suma su título:
+		// la etiqueta de plataforma sola no distingue dos recursos de la misma.
+		it('should name each resource by its platform and title', async () => {
 			await render(MediaSelectorsComponent, { inputs: { media, selectable: true } });
-			expect(screen.getAllByLabelText('YouTube')).toHaveLength(2);
-			expect(screen.getByLabelText('Spotify')).toBeInTheDocument();
+			expect(screen.getAllByLabelText(`YouTube: ${youTube1.title}`)).toHaveLength(2);
+			expect(screen.getByLabelText(`Spotify: ${spotify1.title}`)).toBeInTheDocument();
 		});
 	});
 });

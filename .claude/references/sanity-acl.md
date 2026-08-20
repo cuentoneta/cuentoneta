@@ -48,7 +48,8 @@ queda contenido en el mapper; el dominio y el frontend no se enteran.
 >
 > **Qué sí se comparte desde `_utils/`.** La divergencia no es aislarse: los repositories que la
 > adoptaron siguen usando las primitivas genéricas de traducción (`mapTags`, `mapAuthorTeaser`,
-> `mapResources`, `urlFor`, `mapMediaSources`), que no son de ningún agregado en particular. Lo que
+> `mapResources`, `urlFor`, `mapMediaSources`, `mapMediaTeasers`), que no son de ningún agregado en
+> particular — el par de multimedia son dos porque las vistas completa y de teaser traen distinto. Lo que
 > no se delega es el **ensamblado del agregado**. Cada primitiva compartida recibe la variante nueva
 > en su tipo unión de entrada; si una proyección diverge, el mapeo deja de compilar en vez de fallar
 > en silencio.

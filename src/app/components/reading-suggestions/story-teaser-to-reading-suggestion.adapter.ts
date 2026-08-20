@@ -45,7 +45,9 @@ export function adaptStoryTeaserToReadingSuggestion(story: StoryTeaserView): Rea
 			totalReadingTime: createReadingTime(Math.max(1, Math.round(story.approximateReadingTime))),
 			sectionCount: 1,
 			tags: story.tags,
-			mediaSources: story.media,
+			// El teaser de Story todavía transporta la vista completa; acá se angosta, que es lo que la
+			// vista de navegación declara y lo único que la tarjeta consume.
+			mediaSources: story.media.map((media) => ({ type: media.type, title: media.title })),
 			authors: 'author' in story ? [story.author] : [],
 		},
 		excerptParagraphs: story.paragraphs,

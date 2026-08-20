@@ -1,6 +1,6 @@
 import * as z from 'zod/mini';
 import type { Author, AuthorTeaser } from './author.model';
-import type { Media } from './media.model';
+import type { Media, MediaTeaser } from './media.model';
 import type { Resource } from './resource.model';
 import type { Tag } from './tag.model';
 
@@ -50,7 +50,7 @@ export const literaryWorkTeaserDtoSchema = z.object({
 	totalReadingTime: z.number(),
 	sectionCount: z.number(),
 	tags: z.array(opaqueDomainObject<Tag>()),
-	mediaSources: z.array(opaqueDomainObject<Media>()),
+	mediaSources: z.array(opaqueDomainObject<MediaTeaser>()),
 	authors: z.array(opaqueDomainObject<AuthorTeaser>()),
 	teaserSection: literaryWorkSectionDtoSchema,
 });

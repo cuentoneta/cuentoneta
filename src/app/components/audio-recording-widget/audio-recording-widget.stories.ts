@@ -11,7 +11,7 @@ const meta: Meta<AudioRecordingWidgetComponent> = {
 				sourceState: 'shown',
 			},
 			description: {
-				component: `<div><p>El componente <strong>AudioRecordingWidgetComponent</strong> muestra una grabación de audio de una obra: el reproductor nativo y la descripción del recurso.</p><p>La descripción llega desde el backend como HTML ya saneado (<code>SanitizedHtml</code>, derivado del Markdown que carga el CMS) y se pinta con <code>[innerHTML]</code> dentro de un <code>&lt;div&gt;</code>, porque el HTML que produce el pipeline ya trae su propio <code>&lt;p&gt;</code>.</p><p>El despachador <strong>MediaResourceComponent</strong> no tiene entrada propia en el catálogo: resuelve el widget contra el registry de medios según el tipo de media y delega acá toda la vista.</p></div>`,
+				component: `<div><p>El componente <strong>AudioRecordingWidgetComponent</strong> muestra una grabación de audio de una obra: el reproductor nativo y la descripción del recurso.</p><p>La descripción llega desde el backend como HTML ya saneado (<code>SanitizedHtml</code>, derivado del Markdown que carga el CMS) y se pinta con <code>[innerHTML]</code> dentro de un <code>&lt;div&gt;</code>, porque el HTML que produce el pipeline ya trae su propio <code>&lt;p&gt;</code>.</p><p>El despachador <strong>MediaResourceComponent</strong> —hoy deprecado, sobrevive mientras las páginas de Story y Storylist lo consuman— no tiene entrada propia en el catálogo: resuelve el widget contra el registry de medios según el tipo de media y delega acá toda la vista.</p></div>`,
 			},
 		},
 	},

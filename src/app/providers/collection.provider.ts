@@ -68,13 +68,6 @@ export class HttpCollectionApi implements CollectionApi {
 			...dto,
 			slug: createSlug(dto.slug),
 			totalReadingTime: createReadingTime(dto.totalReadingTime),
-			// Los medios transportan su descripción como HTML ya saneado, pero el schema la ve como un
-			// objeto opaco: se rehidrata por la misma factory que el cuerpo, para que la garantía sea la
-			// misma en toda la superficie.
-			mediaSources: dto.mediaSources.map((media) => ({
-				...media,
-				description: createSanitizedHtml(media.description),
-			})),
 			teaserSection: createLiteraryWorkSection({
 				position: dto.teaserSection.position,
 				title: dto.teaserSection.title ? createSectionTitle(dto.teaserSection.title.value) : undefined,
