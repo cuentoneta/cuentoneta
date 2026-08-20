@@ -110,9 +110,8 @@ export default class CollectionPage {
 		this.responseInit.status = error instanceof HttpErrorResponse && error.status === 404 ? 404 : 503;
 	});
 
-	protected excerptLinesFor(showAuthors: boolean): number {
-		return showAuthors ? 3 : 4;
-	}
+	// Con el autor a la vista, al extracto le queda una línea menos.
+	protected readonly excerptLines = computed(() => (this.collection()?.config.showAuthors ? 3 : 4));
 
 	protected openDescriptionDrawer(drawer: DrawerComponent): void {
 		this.isDescriptionDrawerOpen.set(true);
