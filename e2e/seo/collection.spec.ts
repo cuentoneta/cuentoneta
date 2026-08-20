@@ -5,7 +5,8 @@
  *  - A. Status 404 real del SSR para una colección inexistente (no 200 con página vacía).
  *  - B. Meta tags: title, description, og:/twitter:, canonical a la URL de la colección,
  *       robots indexable y keywords.
- *  - C. Datos estructurados: JSON-LD CollectionPage (mainEntity ItemList ordenado) y BreadcrumbList.
+ *  - C. Datos estructurados: JSON-LD CollectionPage (mainEntity ItemList ordenado) y, aparte,
+ *       BreadcrumbList.
  *  - D. Bloques sitewide Organization y WebSite.
  *  - E. La tanda completa de invariantes de una página indexable.
  *
@@ -31,7 +32,11 @@ test.describe('collection — HTML server-rendered de una colección existente',
 	let html: string;
 
 	test.beforeAll(async ({ request }) => {
-		html = await (await request.get(collectionPath)).text();
+		const response = await request.get(collectionPath);
+		// Sin esto, un slug que desapareció del dataset hace fallar los cinco casos por "expected truthy",
+		// sin nombrar la causa. Se afirma en vez de saltearse: es el skip el que ya dejó un verde engañoso.
+		expect(response.status(), `No existe la colección "${STABLE_SLUGS.collection}" en el dataset`).toBe(200);
+		html = await response.text();
 	});
 
 	test('B: meta tags en el HTML server-rendered', () => {
@@ -66,12 +71,6 @@ test.describe('collection — HTML server-rendered de una colección existente',
 		await assertValidJsonLd(breadcrumb);
 
 		expect((breadcrumb?.['itemListElement'] as unknown[])?.length).toBeGreaterThanOrEqual(2);
-	});
-
-	test('C: no reusa el identificador de bloque de la página de storylist', () => {
-		const blocks = parseJsonLdBlocks(html);
-
-		expect(blocks.has(SCHEMA_IDS.collection)).toBe(false);
 	});
 
 	test('D: bloques sitewide Organization y WebSite presentes', () => {

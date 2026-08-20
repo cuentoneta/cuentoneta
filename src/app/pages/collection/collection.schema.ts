@@ -20,7 +20,7 @@ export function buildCollectionPageSchema(collection: Collection, websiteUrl: st
 		inLanguage: 'es-AR',
 		mainEntity: {
 			'@type': 'ItemList',
-			numberOfItems: collection.literaryWorks.length,
+			numberOfItems: collection.count,
 			itemListElement: collection.literaryWorks.map((literaryWork, index) => ({
 				'@type': 'ListItem',
 				position: index + 1,

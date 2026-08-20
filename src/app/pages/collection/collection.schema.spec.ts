@@ -23,7 +23,7 @@ describe('buildCollectionPageSchema', () => {
 			inLanguage: 'es-AR',
 			mainEntity: {
 				'@type': 'ItemList',
-				numberOfItems: geometriasDelDesveloCollectionMock.literaryWorks.length,
+				numberOfItems: geometriasDelDesveloCollectionMock.count,
 				itemListElement: geometriasDelDesveloCollectionMock.literaryWorks.map((literaryWork, index) => ({
 					'@type': 'ListItem',
 					position: index + 1,
