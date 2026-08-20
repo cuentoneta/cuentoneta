@@ -1,5 +1,6 @@
 // Core
 import { RESPONSE_INIT } from '@angular/core';
+import { DeferBlockState, type DeferBlockFixture } from '@angular/core/testing';
 import { HttpErrorResponse } from '@angular/common/http';
 
 // 3rd party modules
@@ -24,6 +25,10 @@ import {
 	onoffLiteraryWorksWithSectionTitles,
 } from '@mocks/onoff-literary-works.mock';
 import { provideLiteraryWorkApiMock, StubLiteraryWorkApi } from '../../providers/literary-work.mock';
+import { storylistMock } from '@mocks/storylist.mock';
+import { provideStoryApiMock } from '../../providers/story.mock';
+import { provideStorylistApiMock } from '../../providers/storylist.mock';
+import { provideRouter } from '@angular/router';
 import type { LiteraryWorkApi } from '../../providers/literary-work.provider';
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
@@ -103,6 +108,19 @@ const literaryWorkWithMaliciousBody = (base: LiteraryWork): LiteraryWork => {
 	});
 };
 
+// Los bloques diferidos de la página anidan: el de las sugerencias monta un despachador que difiere a
+// su vez cada variante, así que resolver solo el primer nivel dejaría la variante sin renderizar.
+// El fixture de la página y el de un bloque diferido comparten esta operación, que es lo único que la
+// recursión necesita de cada uno.
+type DeferBlockHost = { getDeferBlocks(): Promise<DeferBlockFixture[]> };
+
+const renderDeferBlocks = async (host: DeferBlockHost): Promise<void> => {
+	for (const deferBlock of await host.getDeferBlocks()) {
+		await deferBlock.render(DeferBlockState.Complete);
+		await renderDeferBlocks(deferBlock);
+	}
+};
+
 // TODO(#1471): al implementar la ReadPage V3 completa, expandir estos tests con las variantes de media,
 // la sección "Más cuentos" y el layout V3, reemplazando los casos transitorios de abajo.
 //
@@ -110,14 +128,28 @@ const literaryWorkWithMaliciousBody = (base: LiteraryWork): LiteraryWork => {
 describe('ReadPage', () => {
 	const setup = async (
 		literaryWork: LiteraryWork,
-		options: { api?: LiteraryWorkApi; responseInit?: ResponseInit } = {},
+		options: {
+			api?: LiteraryWorkApi;
+			responseInit?: ResponseInit;
+			navigation?: string;
+			navigationSlug?: string;
+		} = {},
 	) => {
 		return await render(ReadPage, {
 			providers: [
 				provideLiteraryWorkApiMock(options.api ?? new StubLiteraryWorkApi(literaryWork)),
+				// La tríada de sugerencias resuelve sus datos por su cuenta; esta página solo le pasa el
+				// contexto. Reapuntarla a los endpoints de LiteraryWork es trabajo de otro issue.
+				provideStoryApiMock(),
+				provideStorylistApiMock(),
+				provideRouter([]),
 				...(options.responseInit ? [{ provide: RESPONSE_INIT, useValue: options.responseInit }] : []),
 			],
-			inputs: { slug: literaryWork.slug },
+			inputs: {
+				slug: literaryWork.slug,
+				...(options.navigation ? { navigation: options.navigation } : {}),
+				...(options.navigationSlug ? { navigationSlug: options.navigationSlug } : {}),
+			},
 		});
 	};
 
@@ -272,17 +304,80 @@ describe('ReadPage', () => {
 		const [workWithoutFormats] = onoffLiteraryWorksWithoutMediaSources;
 
 		it('ofrece los formatos de una obra que trae varios', async () => {
-			await setup(workWithFormats);
+			const { fixture } = await setup(workWithFormats);
+
+			await renderDeferBlocks(fixture);
 
 			expect(screen.getByRole('heading', { name: /diferentes formatos/i })).toBeInTheDocument();
 			expect(screen.getByRole('group', { name: 'Formatos disponibles' })).toBeInTheDocument();
 		});
 
+		// Lo que saca al bloque del HTML servido: en el primer render no está, y llega recién cuando el
+		// diferido se resuelve. Sin este caso, el `@defer` se podría perder sin que nada lo note.
+		it('no forma parte del render inicial', async () => {
+			await setup(workWithFormats);
+
+			expect(screen.queryByRole('heading', { name: /diferentes formatos/i })).not.toBeInTheDocument();
+			expect(screen.queryByRole('group', { name: 'Formatos disponibles' })).not.toBeInTheDocument();
+		});
+
+		// La aserción de que el chunk no se pide. Las sugerencias de lectura también viven en un bloque
+		// diferido y están siempre, así que el conteo es lo que distingue si el de formatos llegó a
+		// declararse: con recursos son dos, sin ellos queda solo el de sugerencias.
+		it('declara el bloque diferido de formatos cuando la obra trae recursos', async () => {
+			const { fixture } = await setup(workWithFormats);
+
+			expect(await fixture.getDeferBlocks()).toHaveLength(2);
+		});
+
+		it('no declara el bloque diferido de formatos cuando la obra no trae multimedia', async () => {
+			const { fixture } = await setup(workWithoutFormats);
+
+			expect(await fixture.getDeferBlocks()).toHaveLength(1);
+		});
+
 		it('no dibuja el bloque cuando la obra no trae multimedia', async () => {
-			await setup(workWithoutFormats);
+			const { fixture } = await setup(workWithoutFormats);
+
+			await renderDeferBlocks(fixture);
 
 			expect(screen.queryByRole('heading', { name: /formatos?/i })).not.toBeInTheDocument();
 			expect(screen.queryByRole('group', { name: 'Formatos disponibles' })).not.toBeInTheDocument();
+		});
+	});
+
+	// La página transporta el contexto de navegación y elige con él la variante; qué sugiere cada
+	// variante lo cubre el spec del despachador. Se afirma por el encabezado que cada una escribe,
+	// que es lo observable de haber elegido bien.
+	describe('sugerencias de lectura', () => {
+		const [work] = onoffLiteraryWorksSingleSection;
+
+		// Las dos variantes encabezan con "Más obras de …", así que lo que distingue a cuál se eligió es
+		// el nombre: el de la colección o el del autor.
+		it('ofrece las de la colección cuando se entró desde una', async () => {
+			const { fixture } = await setup(work, { navigation: 'collection', navigationSlug: storylistMock.slug });
+
+			await renderDeferBlocks(fixture);
+
+			expect(screen.getByRole('heading', { name: `Más obras de ${storylistMock.title}` })).toBeInTheDocument();
+		});
+
+		it('ofrece las del autor cuando se entró desde su listado', async () => {
+			const { fixture } = await setup(work, { navigation: 'author', navigationSlug: work.authors[0].slug });
+
+			await renderDeferBlocks(fixture);
+
+			expect(screen.getByRole('heading', { name: `Más obras de ${work.authors[0].name}` })).toBeInTheDocument();
+		});
+
+		// Una obra abierta por URL directa no trae contexto, y aun así tiene que ofrecer a dónde seguir:
+		// se cae al autor de la propia obra.
+		it('cae en las del autor de la obra cuando no hay contexto en la ruta', async () => {
+			const { fixture } = await setup(work);
+
+			await renderDeferBlocks(fixture);
+
+			expect(screen.getByRole('heading', { name: `Más obras de ${work.authors[0].name}` })).toBeInTheDocument();
 		});
 	});
 

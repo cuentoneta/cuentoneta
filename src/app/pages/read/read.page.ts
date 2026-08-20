@@ -23,6 +23,11 @@ import { ButtonComponent } from '@components/button/button.component';
 import { EditorialNoteComponent } from '@components/editorial-note/editorial-note.component';
 import { LiteraryWorkSectionBodyComponent } from '@components/literary-work-section-body/literary-work-section-body.component';
 import { MediaWidgetSelector } from '@components/media-widget-selector/media-widget-selector.component';
+import { DividerComponent } from '@components/divider/divider.component';
+import { ReadingSuggestionsComponent } from '@components/reading-suggestions/reading-suggestions.component';
+import { SkeletonComponent } from '@components/skeleton/skeleton.component';
+import { RouterLink } from '@angular/router';
+import { toNavigationContext, type NavigationContext, type NavigationParams } from '@app-utils/navigation-params';
 
 @Component({
 	selector: 'cuentoneta-read',
@@ -32,13 +37,24 @@ import { MediaWidgetSelector } from '@components/media-widget-selector/media-wid
 	imports: [
 		LiteraryWorkHeroHeaderComponent,
 		ButtonComponent,
+		DividerComponent,
 		EditorialNoteComponent,
 		LiteraryWorkSectionBodyComponent,
 		MediaWidgetSelector,
+		ReadingSuggestionsComponent,
+		RouterLink,
+		SkeletonComponent,
 	],
 })
 export default class ReadPage implements ReadHost {
 	public readonly slug = input.required<string>();
+
+	/** Contexto con el que se entró a la obra. Decide qué sugerencias se ofrecen al pie. */
+	public readonly navigation = input<NavigationContext, string | undefined>('author', {
+		transform: toNavigationContext,
+	});
+
+	public readonly navigationSlug = input<string>();
 
 	private readonly literaryWorkApi = inject(LiteraryWorkApi);
 	private readonly responseInit = inject(RESPONSE_INIT, { optional: true });
@@ -55,6 +71,28 @@ export default class ReadPage implements ReadHost {
 	);
 
 	protected readonly notFound = computed(() => this.literaryWorkResource.status() === 'error');
+
+	// Cantidad de líneas del esqueleto del cuerpo. Es una silueta de carga, no una medida del texto
+	// real, que recién se conoce cuando la obra llegó.
+	protected readonly bodyPlaceholderLines = Array.from({ length: 8 });
+
+	// El primer autor y no el `byline`: el nombre y el slug que consume la variante de autor tienen
+	// que referirse al mismo, y el byline une a todos con coma.
+	private readonly primaryAuthor = computed(() => this.literaryWork()?.authors[0]);
+
+	protected readonly primaryAuthorName = computed(() => this.primaryAuthor()?.name ?? '');
+
+	// Sin contexto en la ruta se cae al autor de la obra: una obra abierta por URL directa igual
+	// ofrece a dónde seguir leyendo.
+	protected readonly navigationParams = computed<NavigationParams>(() => {
+		const navigationSlug = this.navigationSlug();
+
+		if (navigationSlug) {
+			return { navigation: this.navigation(), navigationSlug };
+		}
+
+		return { navigation: 'author', navigationSlug: this.primaryAuthor()?.slug ?? '' };
+	});
 	protected readonly byline = computed(
 		() =>
 			this.literaryWork()
