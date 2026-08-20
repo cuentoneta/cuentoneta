@@ -8,7 +8,8 @@ import { TagComponent } from '@components/tag/tag.component';
 import { PortableTextParserComponent } from '@components/portable-text-parser/portable-text-parser.component';
 import { NavigableCollectionTeaserComponent } from '@components/navigable-collection-teaser/navigable-collection-teaser.component';
 import { DividerComponent } from '@components/divider/divider.component';
-import { storylistMock, storylistTeaserRepresentativeMock, storylistTeaserSampleMock } from '@mocks/storylist.mock';
+import { storylistMock } from '@mocks/storylist.mock';
+import { onoffCollectionTeasersMock } from '@mocks/onoff-collections.mock';
 
 type DrawerArgs = DrawerComponent & { direction: DrawerDirection };
 
@@ -134,7 +135,7 @@ export const ComposicionCollectionPage: Story = {
 		props: {
 			...args,
 			collection: storylistMock,
-			suggested: [storylistTeaserRepresentativeMock, storylistTeaserSampleMock],
+			suggested: onoffCollectionTeasersMock,
 		},
 		template: `
 			${openButton}

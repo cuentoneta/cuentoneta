@@ -1,7 +1,7 @@
 import { Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import type { StorylistTeaser } from '@models/storylist.model';
+import type { CollectionTeaser } from '@models/collection.model';
 import { AppRoutes } from '../../app.routes';
 import { ImageProfileComponent } from '../image-profile/image-profile.component';
 import { TagComponent } from '../tag/tag.component';
@@ -48,5 +48,5 @@ import { TagComponent } from '../tag/tag.component';
 export class NavigableCollectionTeaserComponent {
 	protected readonly appRoutes = AppRoutes;
 
-	public readonly collection = input.required<StorylistTeaser>();
+	public readonly collection = input.required<CollectionTeaser>();
 }
