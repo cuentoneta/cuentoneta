@@ -38,6 +38,32 @@ describe('DividerComponent', () => {
 		});
 	});
 
+	// El eje decorativo es semántico y no visual, así que se afirma por el rol y no por las clases.
+	describe('línea decorativa', () => {
+		it('should not be exposed as a separator', async () => {
+			await renderDivider(`<cuentoneta-divider [decorative]="true" />`);
+
+			expect(screen.queryByRole('separator')).not.toBeInTheDocument();
+			expect(screen.getByRole('presentation')).toBeInTheDocument();
+		});
+
+		// Un `aria-orientation` sobre un elemento presentacional no significa nada: emitirlo dejaría un
+		// atributo huérfano que ninguna tecnología asistiva puede usar.
+		it('should not announce an orientation it cannot carry', async () => {
+			await renderDivider(`<cuentoneta-divider [decorative]="true" orientation="vertical" />`);
+
+			expect(screen.getByRole('presentation')).not.toHaveAttribute('aria-orientation');
+		});
+
+		it('should keep drawing the same line', async () => {
+			await renderDivider(`<cuentoneta-divider [decorative]="true" />`);
+			const divider = screen.getByRole('presentation');
+
+			expect(divider).toHaveClass('bg-neutral-200');
+			expect(divider).toHaveClass('h-px');
+		});
+	});
+
 	describe('orientación horizontal', () => {
 		it('should be the default orientation', async () => {
 			await renderDivider(`<cuentoneta-divider />`);
