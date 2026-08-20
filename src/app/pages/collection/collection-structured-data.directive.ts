@@ -13,6 +13,8 @@ export class CollectionStructuredDataDirective extends AbstractStructuredDataDir
 
 	// Ids propios y no `collection`, que ya lo emite la página de storylist: mientras las dos rutas
 	// coexistan, un id compartido haría ambiguo qué bloque se está mirando.
+	// TODO(#2269): al morir esa página este comentario queda nombrando algo inexistente y hay que
+	// reescribirlo. Los ids no cambian: el issue explica por qué no se ocupa el lugar que se libera.
 	private readonly pageSchemaId = 'collection-page';
 	private readonly breadcrumbSchemaId = 'breadcrumb-collection';
 

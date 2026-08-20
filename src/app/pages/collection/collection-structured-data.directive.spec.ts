@@ -56,6 +56,7 @@ describe('CollectionStructuredDataDirective', () => {
 
 	// La página de storylist emite su propio bloque bajo `collection`. Que los ids no se pisen es lo
 	// que permite distinguirlos mientras las dos rutas convivan.
+	// TODO(#2269): este caso se borra con esa página — sin emisor rival, no queda con qué colisionar.
 	it('should not emit under the schema id the storylist page uses', () => {
 		collectionSignal.set(geometriasDelDesveloCollectionMock);
 
