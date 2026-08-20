@@ -126,4 +126,30 @@ describe('CollectionPage', () => {
 			expect(within(screen.getByTestId('literary-works')).getAllByTestId('description')[0]).toHaveClass('line-clamp-4');
 		});
 	});
+
+	// Las directivas tienen su propio spec: lo que se ejercita acá es el cableado, que ninguno de los
+	// dos ve — que la página las declare y les provea la colección que resolvió.
+	describe('indexado', () => {
+		afterEach(() => {
+			document.head.querySelectorAll('script[data-schema-id]').forEach((el) => el.remove());
+		});
+
+		// La canónica sale de la colección resuelta, así que verla apuntar al slug correcto prueba que la
+		// directiva la recibió. El `robots` no sirve para esto: en un build no indexable —el de los tests—
+		// se fuerza a `noindex` sin mirar lo que la página pidió, y eso lo cubre el spec de la directiva.
+		it('should point the canonical URL at the collection', async () => {
+			await renderPage(showingAuthors);
+
+			expect(document.head.querySelector('link[rel="canonical"]')?.getAttribute('href')).toContain(
+				`/collection/${showingAuthors.slug}`,
+			);
+		});
+
+		it('should emit both JSON-LD blocks', async () => {
+			await renderPage(showingAuthors);
+
+			expect(document.head.querySelector('script[data-schema-id="collection-page"]')).not.toBeNull();
+			expect(document.head.querySelector('script[data-schema-id="breadcrumb-collection"]')).not.toBeNull();
+		});
+	});
 });

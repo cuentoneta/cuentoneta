@@ -1,29 +1,18 @@
 // Core
-import {
-	Component,
-	computed,
-	effect,
-	forwardRef,
-	inject,
-	input,
-	RESPONSE_INIT,
-	signal,
-	untracked,
-} from '@angular/core';
+import { Component, computed, effect, forwardRef, inject, input, RESPONSE_INIT, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { NgTemplateOutlet } from '@angular/common';
 
 // Utils
 import { progressiveRxResource, ssrBlockingRxResource } from '@app-utils/ssr-resource';
-import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 
 // Services
 import { CollectionApi } from '../../providers/collection.provider';
 
 // SEO
-import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
-import { AppRoutes } from '../../app.routes';
 import { COLLECTION_HOST, type CollectionHost } from './collection-host';
+import { CollectionMetaTagsDirective } from './collection-meta-tags.directive';
+import { CollectionStructuredDataDirective } from './collection-structured-data.directive';
 
 // Components
 import { CollectionInfoPanelComponent } from '@components/collection-info-panel/collection-info-panel.component';
@@ -38,7 +27,7 @@ import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 	selector: 'cuentoneta-collection',
 	templateUrl: './collection.page.html',
 	providers: [{ provide: COLLECTION_HOST, useExisting: forwardRef(() => CollectionPage) }],
-	hostDirectives: [HeadMetadataDirective],
+	hostDirectives: [CollectionMetaTagsDirective, CollectionStructuredDataDirective],
 	imports: [
 		CollectionInfoPanelComponent,
 		DrawerComponent,
@@ -55,7 +44,6 @@ export default class CollectionPage implements CollectionHost {
 
 	private readonly collectionApi = inject(CollectionApi);
 	private readonly responseInit = inject(RESPONSE_INIT, { optional: true });
-	private readonly head = inject(HeadMetadataDirective);
 
 	// Cuántas colecciones se ofrecen al pie. El criterio con que se eligen todavía no existe: hoy es el
 	// orden del catálogo, salteando la que se está leyendo.
@@ -91,25 +79,6 @@ export default class CollectionPage implements CollectionHost {
 		const slug = this.slug();
 		const catalog = this.catalogResource.hasValue() ? this.catalogResource.value() : [];
 		return catalog.filter((collection) => collection.slug !== slug).slice(0, this.suggestedCollectionsCount);
-	});
-
-	// `/collection/:slug` es una ruta nueva que todavía no se expone a buscadores: se sirve
-	// `noindex, nofollow` y sin datos estructurados. El robots se emite antes del guard a propósito,
-	// para que la señal salga también cuando la colección no carga.
-	// TODO: al conectar las directivas de indexado de la página, revertir este opt-out (#1838).
-	private readonly applyHeadMetadataEffect = effect(() => {
-		this.head.setRobots('noindex, nofollow');
-		const collection = this.collection();
-		if (!collection) {
-			return;
-		}
-		untracked(() => {
-			this.head.setTitle(collection.title);
-			this.head.setDescription(
-				'Una colección de La Cuentoneta: una iniciativa que busca fomentar y hacer accesible la lectura digital.',
-			);
-			this.head.setCanonicalUrl(buildCanonicalUrl(`${AppRoutes.Collection}/${collection.slug}`));
-		});
 	});
 
 	// Un fallo transitorio no puede salir 200: el borde cachearía una página vacía como si fuera la
