@@ -26,12 +26,12 @@ test.beforeAll(async ({ request }) => {
 
 // Guardas como casos propios, no como `skip` silencioso: un dataset sin el fixture es un problema de la
 // infraestructura de test, no un motivo para que el gate quede verde sin haber mirado nada.
-test('la colección estable existe en el dataset', () => {
+test('collection — la colección estable existe en el dataset', () => {
 	expect(status, `"${ROUTE}" no responde 200: los casos de la página no verifican nada`).toBe(200);
 	expect(collection, `el catálogo no trae "${STABLE_SLUGS.collection}": no habría con qué comparar`).toBeDefined();
 });
 
-test('el catálogo ofrece otra colección además de la que se lee', () => {
+test('collection — el catálogo ofrece otra colección además de la que se lee', () => {
 	expect(
 		catalog.length,
 		'el catálogo trae una sola colección: el bloque de sugeridas no tendría qué mostrar',
@@ -45,7 +45,7 @@ async function openCollection(page: Page): Promise<void> {
 	await expect(page.locator('main h1')).toBeVisible();
 }
 
-test('el listado muestra las obras de la colección y cada una lleva a su lectura', async ({ page }) => {
+test('collection — el listado muestra las obras y cada una lleva a su lectura', async ({ page }) => {
 	// eslint-disable-next-line playwright/no-skipped-test -- la ausencia del fixture ya la reporta la guarda de arriba; repetirla acá sería el mismo fallo dos veces
 	test.skip(status !== 200, `"${ROUTE}" no responde 200 en el dataset`);
 
@@ -66,9 +66,13 @@ test('el listado muestra las obras de la colección y cada una lleva a su lectur
 	expect(new Set(destinations).size, `hay obras que comparten destino: ${destinations}`).toBe(destinations.length);
 });
 
-test('la columna muestra la información de la colección', async ({ page }) => {
+test('collection — la columna muestra la información de la colección', async ({ page }) => {
 	// eslint-disable-next-line playwright/no-skipped-test -- la ausencia del fixture ya la reporta la guarda de arriba; repetirla acá sería el mismo fallo dos veces
-	test.skip(status !== 200 || !collection, `"${ROUTE}" no responde 200 en el dataset`);
+	test.skip(status !== 200, `"${ROUTE}" no responde 200 en el dataset`);
+	// Separado del anterior y no unido por `||`: un motivo compuesto reporta siempre el primero, y quien
+	// lea el resultado diagnosticaría un 404 donde lo que falta es la entrada del catálogo.
+	// eslint-disable-next-line playwright/no-skipped-test -- ídem
+	test.skip(!collection, `el catálogo no trae "${STABLE_SLUGS.collection}"`);
 
 	await openCollection(page);
 
@@ -83,11 +87,25 @@ test('la columna muestra la información de la colección', async ({ page }) => 
 	await expect(info.getByTestId('description')).not.toBeEmpty();
 });
 
+// El panel de la descripción existe en la plantilla desde el primer render, y hasta que alguien lo abra no
+// debe aportar nada a la página. Se mira su botón de cierre porque es lo único que el panel trae siempre:
+// el resto de su contenido está gateado, así que un panel indebidamente presente pasaría inadvertido.
+test('collection — el panel de la descripción no aporta nada antes de abrirse', async ({ page }) => {
+	// eslint-disable-next-line playwright/no-skipped-test -- la ausencia del fixture ya la reporta la guarda de arriba; repetirla acá sería el mismo fallo dos veces
+	test.skip(status !== 200, `"${ROUTE}" no responde 200 en el dataset`);
+
+	await openCollection(page);
+
+	await expect(page.getByRole('button', { name: 'Cerrar' })).toHaveCount(0);
+});
+
 // Que el bloque exista prueba además que el recurso progresivo del catálogo resolvió en el cliente: en el
 // HTML del servidor no está.
-test('la columna ofrece otras colecciones y ninguna es la que se está leyendo', async ({ page }) => {
+test('collection — la columna ofrece otras colecciones y ninguna es la que se está leyendo', async ({ page }) => {
 	// eslint-disable-next-line playwright/no-skipped-test -- la ausencia del fixture ya la reporta la guarda de arriba; repetirla acá sería el mismo fallo dos veces
-	test.skip(status !== 200 || catalog.length < 2, `"${ROUTE}" no responde 200 en el dataset`);
+	test.skip(status !== 200, `"${ROUTE}" no responde 200 en el dataset`);
+	// eslint-disable-next-line playwright/no-skipped-test -- ídem
+	test.skip(catalog.length < 2, 'el catálogo trae una sola colección: no hay otra que ofrecer');
 
 	await openCollection(page);
 
