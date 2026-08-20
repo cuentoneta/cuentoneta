@@ -18,14 +18,23 @@
 			la que el bloque evalúa por dentro, porque ofrece una opción por recurso.
 			El diferido es plano a propósito: deja el bloque fuera del HTML servido, que es contenido
 			complementario y no el cuerpo de la obra.
+			El disparador es `on idle` y no `on viewport` porque el ahorro ya lo hace el `@if`: en una obra
+			con recursos el bloque se va a mostrar igual, y `on viewport` dispararía en el primer render
+			—está a media página— compitiendo con la hidratación en vez de esperar a que el hilo se libere.
 		-->
 		@if (literaryWork.mediaSources.length > 0) { @defer (on idle) {
 		<cuentoneta-media-widget-selector [mediaSources]="literaryWork.mediaSources" />
 		} @placeholder {
-		<!-- Reserva el alto del bloque —título, fila de formatos y widget— para que su llegada no empuje el cuerpo. -->
-		<div class="flex flex-col gap-5">
+		<!--
+			Reserva el alto del bloque para que su llegada no empuje el cuerpo. La fila de formatos se
+			reserva solo cuando hay entre qué elegir, que es la misma condición con la que el bloque la
+			dibuja: reservarla siempre haría saltar el layout justo en las obras de un único recurso.
+		-->
+		<div class="flex flex-col gap-5" data-testid="media-formats-placeholder">
 			<cuentoneta-skeleton class="h-7 w-2/3 bg-neutral-200" />
+			@if (literaryWork.mediaSources.length > 1) {
 			<cuentoneta-skeleton class="h-10 w-48 rounded-full bg-neutral-200" appearance="square" />
+			}
 			<cuentoneta-skeleton class="h-52 w-full rounded-xl bg-neutral-200" appearance="square" />
 		</div>
 		} } @for (section of sections(); track section.position) {

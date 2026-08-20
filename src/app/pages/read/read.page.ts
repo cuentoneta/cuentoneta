@@ -103,8 +103,8 @@ export default class ReadPage implements ReadHost {
 	// `/read/:slug` es una ruta accesible nueva que todavía no queremos exponer a buscadores: se sirve
 	// `noindex, nofollow` y sin JSON-LD. El robots se emite antes del guard a propósito, para que la
 	// señal salga también cuando la obra no carga.
-	// TODO: al implementar la página de lectura V3, revertir este opt-out — volver a marcar la página
-	// indexable y re-conectar ReadMetaTagsDirective/ReadStructuredDataDirective en `hostDirectives`.
+	// TODO(#1855): revertir el opt-out — volver a marcar la página indexable y re-conectar
+	// ReadMetaTagsDirective/ReadStructuredDataDirective en `hostDirectives`.
 	private readonly applyHeadMetadataEffect = effect(() => {
 		this.head.setRobots('noindex, nofollow');
 		const literaryWork = this.literaryWork();

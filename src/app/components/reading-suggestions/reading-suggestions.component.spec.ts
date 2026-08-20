@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/angular';
 import { provideRouter } from '@angular/router';
-import { DeferBlockState, type ComponentFixture } from '@angular/core/testing';
+import { renderDeferBlocks } from '@testing/defer-blocks';
 import { of } from 'rxjs';
 
 import { ReadingSuggestionsComponent } from './reading-suggestions.component';
@@ -27,12 +27,6 @@ const setup = async (navigationParams: NavigationParams) =>
 			{ provide: StorylistApi, useValue: { get: () => of(collectionMock) } },
 		],
 	});
-
-const renderDeferBlocks = async (fixture: ComponentFixture<ReadingSuggestionsComponent>) => {
-	for (const deferBlock of await fixture.getDeferBlocks()) {
-		await deferBlock.render(DeferBlockState.Complete);
-	}
-};
 
 describe('ReadingSuggestionsComponent', () => {
 	beforeEach(() => {

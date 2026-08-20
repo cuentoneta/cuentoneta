@@ -1,7 +1,7 @@
 // Core
 import { RESPONSE_INIT } from '@angular/core';
-import { DeferBlockState, type DeferBlockFixture } from '@angular/core/testing';
 import { HttpErrorResponse } from '@angular/common/http';
+import { renderDeferBlocks } from '@testing/defer-blocks';
 
 // 3rd party modules
 import { render, screen, within } from '@testing-library/angular';
@@ -108,23 +108,8 @@ const literaryWorkWithMaliciousBody = (base: LiteraryWork): LiteraryWork => {
 	});
 };
 
-// Los bloques diferidos de la página anidan: el de las sugerencias monta un despachador que difiere a
-// su vez cada variante, así que resolver solo el primer nivel dejaría la variante sin renderizar.
-// El fixture de la página y el de un bloque diferido comparten esta operación, que es lo único que la
-// recursión necesita de cada uno.
-type DeferBlockHost = { getDeferBlocks(): Promise<DeferBlockFixture[]> };
-
-const renderDeferBlocks = async (host: DeferBlockHost): Promise<void> => {
-	for (const deferBlock of await host.getDeferBlocks()) {
-		await deferBlock.render(DeferBlockState.Complete);
-		await renderDeferBlocks(deferBlock);
-	}
-};
-
-// TODO(#1471): al implementar la ReadPage V3 completa, expandir estos tests con las variantes de media,
-// la sección "Más cuentos" y el layout V3, reemplazando los casos transitorios de abajo.
-//
-// `ReadPage` es hoy un walking skeleton: estos tests cubren su render y sus estados mínimos.
+// Estos tests cubren el layout de la página, sus estados y el cableado del contexto de navegación.
+// La cobertura de extremo a extremo y el catálogo de variantes viven en sus propios issues.
 describe('ReadPage', () => {
 	const setup = async (
 		literaryWork: LiteraryWork,
@@ -321,19 +306,19 @@ describe('ReadPage', () => {
 			expect(screen.queryByRole('group', { name: 'Formatos disponibles' })).not.toBeInTheDocument();
 		});
 
-		// La aserción de que el chunk no se pide. Las sugerencias de lectura también viven en un bloque
-		// diferido y están siempre, así que el conteo es lo que distingue si el de formatos llegó a
-		// declararse: con recursos son dos, sin ellos queda solo el de sugerencias.
+		// La aserción de que el chunk no se pide: el marcador de posición existe solo dentro del bloque
+		// diferido, así que su ausencia dice que el bloque ni siquiera se instanció y no queda
+		// disparador que pueda descargarlo.
 		it('declara el bloque diferido de formatos cuando la obra trae recursos', async () => {
-			const { fixture } = await setup(workWithFormats);
+			await setup(workWithFormats);
 
-			expect(await fixture.getDeferBlocks()).toHaveLength(2);
+			expect(screen.getByTestId('media-formats-placeholder')).toBeInTheDocument();
 		});
 
 		it('no declara el bloque diferido de formatos cuando la obra no trae multimedia', async () => {
-			const { fixture } = await setup(workWithoutFormats);
+			await setup(workWithoutFormats);
 
-			expect(await fixture.getDeferBlocks()).toHaveLength(1);
+			expect(screen.queryByTestId('media-formats-placeholder')).not.toBeInTheDocument();
 		});
 
 		it('no dibuja el bloque cuando la obra no trae multimedia', async () => {
