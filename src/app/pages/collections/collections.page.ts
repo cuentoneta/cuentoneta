@@ -38,9 +38,12 @@ export default class CollectionsPage implements CollectionsHost {
 	// todo título que empiece con acento o eñe. Se reordena acá, como ya se hace en el índice de autores.
 	private readonly collator = new Intl.Collator('es');
 
-	public readonly collections = computed(() =>
-		[...this.catalogResource.value()].sort((first, second) => this.collator.compare(first.title, second.title)),
-	);
+	// `value()` lanza con el recurso en error, así que el guard no es defensivo: sin él, el fallo del
+	// catálogo se propaga al render en vez de caer en el estado que la página tiene previsto.
+	public readonly collections = computed(() => {
+		const catalog = this.catalogResource.hasValue() ? this.catalogResource.value() : [];
+		return [...catalog].sort((first, second) => this.collator.compare(first.title, second.title));
+	});
 
 	protected readonly failed = computed(() => this.catalogResource.status() === 'error');
 
