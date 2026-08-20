@@ -40,8 +40,14 @@ const meta: Meta<ReadingSuggestionsListComponent> = {
 			table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' } },
 		},
 		// Las sugerencias las deriva el control de cantidad a partir del corpus, así que editarlas como
-		// objeto no tendría efecto: se oculta para no ofrecer un control muerto.
-		teasers: { table: { disable: true } },
+		// objeto no tendría efecto. Se saca el control y no la fila entera: el input sigue siendo el
+		// principal del componente y su tipo pertenece a la documentación.
+		teasers: {
+			control: false,
+			description:
+				'Sugerencias ya resueltas: cada una lleva la obra y su extracto por separado. El bloque no se renderiza si llega vacío. En el catálogo las deriva el control de cantidad',
+			table: { type: { summary: 'readonly ReadingSuggestion[]' }, defaultValue: { summary: '[]' } },
+		},
 		moreRoute: {
 			control: { type: 'object' },
 			description: 'Ruta del listado completo; sin ella el acceso no se muestra',
@@ -85,6 +91,9 @@ const suggestionCountArgType = {
 		name: 'Cantidad de sugerencias',
 		description: 'Cuántas obras trae el bloque. Los separadores son siempre uno menos',
 		table: { type: { summary: 'number' }, defaultValue: { summary: '3' } },
+		// El estado de carga reserva siempre la misma cantidad de slots, así que este control no lo
+		// afecta: ofrecerlo ahí mentiría sobre lo que hace.
+		if: { arg: 'loading', truthy: false },
 	},
 };
 

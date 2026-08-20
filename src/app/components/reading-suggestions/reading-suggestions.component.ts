@@ -50,8 +50,16 @@ export class ReadingSuggestionsComponent {
 	public readonly authorName = input.required<string>();
 	public readonly currentWorkSlug = input<string>();
 
-	// Reserva el alto del bloque para que su aparición no empuje el pie de página. El valor está medido
-	// sobre el bloque ya montado en la página de lectura, no derivado de su composición: el revestimiento
-	// cambia varias separaciones a la vez y la aritmética se desactualiza en silencio.
+	// Reserva el alto del bloque para que su aparición no empuje el pie de página.
+	//
+	// El valor está medido sobre el bloque ya montado en la página de lectura, no derivado de su
+	// composición: el revestimiento cambia varias separaciones a la vez y la aritmética se desactualiza
+	// en silencio. Se reserva el alto de la **más alta** de las dos variantes —la de autor, que da tres
+	// líneas de extracto porque no pinta la fila de autoría; la de colección mide bastante menos—, de
+	// modo que ninguna empuje el pie.
+	//
+	// Es un alto fijo, así que solo acierta al ancho en que se midió: en pantallas angostas, donde los
+	// títulos y los extractos ocupan más líneas, el bloque va a superarlo y el pie se va a correr un
+	// poco. Reservar de más en el caso ancho sería peor, porque deja un hueco visible en el caso común.
 	protected readonly placeholderClasses = 'h-211';
 }
