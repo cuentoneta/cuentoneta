@@ -128,7 +128,7 @@ export const PorColeccion: Story = {
 		heading: 'Más obras de Geometrías del desvelo',
 		teasers: suggestions,
 		moreLabel: 'Ver más de Geometrías del desvelo',
-		moreRoute: ['/', 'storylist', 'geometrias-del-desvelo'],
+		moreRoute: ['/', 'collection', 'geometrias-del-desvelo'],
 		navigation: 'collection',
 		navigationSlug: 'geometrias-del-desvelo',
 		showAuthor: true,

@@ -90,7 +90,7 @@ describe('CollectionReadingSuggestionsComponent', () => {
 		expect(screen.getByRole('heading', { name: `Más obras de ${collectionMock.title}` })).toBeInTheDocument();
 		expect(screen.getByRole('link', { name: `Ver más de ${collectionMock.title}` })).toHaveAttribute(
 			'href',
-			`/storylist/${collectionMock.slug}`,
+			`/collection/${collectionMock.slug}`,
 		);
 	});
 
