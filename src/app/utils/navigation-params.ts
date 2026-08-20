@@ -14,6 +14,7 @@ export type NavigationParams = {
 // El contexto de colección se llamó `storylist` mientras ese era el nombre del dominio, y quedó
 // escrito en enlaces ya compartidos hacia afuera. Se sigue aceptando para que esos enlaces no caigan
 // en silencio a las sugerencias de autor, que es lo que haría el valor desconocido.
+// TODO(#2269): retirar el valor legado junto con el resto de `storylist`.
 const LEGACY_COLLECTION_CONTEXT = 'storylist';
 
 /**

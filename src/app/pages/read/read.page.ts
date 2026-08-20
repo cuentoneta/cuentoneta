@@ -23,9 +23,10 @@ import { ButtonComponent } from '@components/button/button.component';
 import { EditorialNoteComponent } from '@components/editorial-note/editorial-note.component';
 import { LiteraryWorkSectionBodyComponent } from '@components/literary-work-section-body/literary-work-section-body.component';
 import { MediaWidgetSelector } from '@components/media-widget-selector/media-widget-selector.component';
+import { MediaWidgetSelectorSkeleton } from '@components/media-widget-selector/media-widget-selector-skeleton.component';
 import { DividerComponent } from '@components/divider/divider.component';
 import { ReadingSuggestionsComponent } from '@components/reading-suggestions/reading-suggestions.component';
-import { SkeletonComponent } from '@components/skeleton/skeleton.component';
+import { ReadPageSkeleton } from './read-page-skeleton.component';
 import { RouterLink } from '@angular/router';
 import { toNavigationContext, type NavigationContext, type NavigationParams } from '@app-utils/navigation-params';
 
@@ -41,9 +42,10 @@ import { toNavigationContext, type NavigationContext, type NavigationParams } fr
 		EditorialNoteComponent,
 		LiteraryWorkSectionBodyComponent,
 		MediaWidgetSelector,
+		MediaWidgetSelectorSkeleton,
+		ReadPageSkeleton,
 		ReadingSuggestionsComponent,
 		RouterLink,
-		SkeletonComponent,
 	],
 })
 export default class ReadPage implements ReadHost {
@@ -71,10 +73,6 @@ export default class ReadPage implements ReadHost {
 	);
 
 	protected readonly notFound = computed(() => this.literaryWorkResource.status() === 'error');
-
-	// Cantidad de líneas del esqueleto del cuerpo. Es una silueta de carga, no una medida del texto
-	// real, que recién se conoce cuando la obra llegó.
-	protected readonly bodyPlaceholderLines = Array.from({ length: 8 });
 
 	// El primer autor y no el `byline`: el nombre y el slug que consume la variante de autor tienen
 	// que referirse al mismo, y el byline une a todos con coma.

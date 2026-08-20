@@ -7,6 +7,7 @@ describe('toNavigationContext', () => {
 
 	// El nombre viejo del contexto quedó escrito en enlaces ya compartidos hacia afuera. Sin esta
 	// entrada caerían en las sugerencias de autor sin que nada lo señale.
+	// TODO(#2269): retirar este caso junto con el valor legado.
 	it('should still resolve the legacy name of the collection context', () => {
 		expect(toNavigationContext('storylist')).toBe('collection');
 	});
