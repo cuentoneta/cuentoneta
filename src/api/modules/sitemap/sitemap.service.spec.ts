@@ -80,6 +80,7 @@ describe('SitemapService', () => {
 			expect(urls).toContainEqual({ loc: 'https://test.cuentoneta.ar' });
 			expect(urls).toContainEqual({ loc: 'https://test.cuentoneta.ar/about' });
 			expect(urls).toContainEqual({ loc: 'https://test.cuentoneta.ar/dmca' });
+			expect(urls).toContainEqual({ loc: 'https://test.cuentoneta.ar/collection' });
 		});
 
 		it('should include story URLs', async () => {
@@ -163,10 +164,14 @@ describe('SitemapService', () => {
 				storylists: entries('coleccion'),
 			});
 
-			const urls = await getSitemapUrls();
+			const locations = (await getSitemapUrls()).map(({ loc }) => loc);
 
-			expect(urls).toHaveLength(3 + 3 * 3);
-			expect(new Set(urls.map(({ loc }) => loc)).size).toBe(urls.length);
+			// Se cuenta por tipo y no el total: atado al total, el caso se rompía cada vez que entraba una
+			// página estática, y eso invita a corregir el número sin mirar qué se cayó.
+			for (const segment of ['story', 'author', 'storylist']) {
+				expect(locations.filter((location) => location.includes(`/${segment}/`))).toHaveLength(3);
+			}
+			expect(new Set(locations).size).toBe(locations.length);
 		});
 	});
 
