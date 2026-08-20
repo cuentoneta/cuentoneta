@@ -48,11 +48,13 @@ import losPeldanosMd from './onoff/literary-work/los-peldanos.md?raw';
 import neronMd from './onoff/literary-work/neron.md?raw';
 import palacioNueveFronterasMd from './onoff/literary-work/el-palacio-de-las-nueve-fronteras.md?raw';
 
-// Espeja el recorte que hace la query, para que el corpus de dominio diga lo mismo que produce el
-// ACL. Es la heurística de doble salto de línea, con el mismo tratamiento de CRLF: si acá y allá
-// divergieran, el spec de alineación lo marcaría — que es justamente para lo que existe.
+// Espeja el recorte de la query, para que el corpus de dominio diga lo mismo que produce el ACL. El
+// cruce ACL↔dominio detecta una divergencia solo sobre las formas que el canon tiene: ninguna obra
+// arranca hoy con un renglón en blanco, así que ese caso lo sostiene únicamente que las dos
+// implementaciones se toquen juntas.
 function toExcerptHtml(markdown: string): SanitizedHtml {
-	const firstBlock = markdown.split('\r\n\r\n')[0].split('\n\n')[0];
+	const blocks = markdown.split('\r\n\r\n')[0].split('\n\n');
+	const firstBlock = blocks.find((block) => block !== '') ?? '';
 	return markdownToSanitizedHtml(createMarkdown(firstBlock));
 }
 
