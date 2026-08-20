@@ -13,7 +13,7 @@ const meta: Meta<DividerComponent> = {
 				sourceState: 'shown',
 			},
 			description: {
-				component: `<div><p>La línea divisoria del Design System v3, <strong>DividerComponent</strong>: una línea de 1px en neutral-200 que separa visualmente contenidos, secciones o grupos de elementos sin introducir una interrupción fuerte en la interfaz. El elemento anfitrión <em>es</em> la línea: no proyecta contenido, no expone acciones ni controles interactivos, y se anuncia como separador (<code>role="separator"</code>) con su orientación.</p><ul><li><strong>horizontal</strong> (default): 1px de alto, ocupa el ancho del contenedor.</li><li><strong>vertical</strong>: 1px de ancho, toma el alto disponible del contenedor.</li></ul></div>`,
+				component: `<div><p>La línea divisoria del Design System v3, <strong>DividerComponent</strong>: una línea de 1px en neutral-200 que separa visualmente contenidos, secciones o grupos de elementos sin introducir una interrupción fuerte en la interfaz. El elemento anfitrión <em>es</em> la línea: no proyecta contenido, no expone acciones ni controles interactivos, y se anuncia como separador (<code>role="separator"</code>) con su orientación, salvo que se la marque <code>decorative</code>.</p><ul><li><strong>horizontal</strong> (default): 1px de alto, ocupa el ancho del contenedor.</li><li><strong>vertical</strong>: 1px de ancho, toma el alto disponible del contenedor.</li></ul></div>`,
 			},
 		},
 		layout: 'padded',
