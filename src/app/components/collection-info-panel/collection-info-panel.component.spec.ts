@@ -89,18 +89,13 @@ describe('CollectionInfoPanelComponent', () => {
 		});
 	});
 
+	// La forma de la portada la resuelve CollectionCover y la cubre su spec: acá solo se afirma que el
+	// panel le entrega el dato de dominio.
 	describe('portada', () => {
-		it('should render a single cover for representative imagery', async () => {
-			await render(CollectionInfoPanelComponent, { inputs: { collection: representativeMock } });
-
-			expect(screen.queryByTestId('cover-fan')).not.toBeInTheDocument();
-			expect(screen.getAllByTestId('cover')).toHaveLength(1);
-		});
-
-		it('should render the three-cover fan for sample imagery', async () => {
+		it('should hand the imagery of the collection to the cover', async () => {
 			await render(CollectionInfoPanelComponent, { inputs: { collection: sampleMock } });
 
-			expect(within(screen.getByTestId('cover-fan')).getAllByTestId('cover')).toHaveLength(3);
+			expect(screen.getByTestId('cover-fan')).toBeInTheDocument();
 		});
 	});
 

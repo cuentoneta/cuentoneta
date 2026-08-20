@@ -98,39 +98,16 @@ describe('StorylistTeaserCard', () => {
 		});
 	});
 
-	// Variantes del objeto de valor `imagery`
-	describe('Variante de imagery', () => {
-		it('should render a single cover for representative imagery', async () => {
-			await render(StorylistTeaserCard, {
-				inputs: { collection: storylistTeaserRepresentativeMock },
-				providers: defaultProviders,
-			});
-
-			expect(screen.getAllByTestId('cover-image')).toHaveLength(1);
-		});
-
-		it('should render 3 covers for sample imagery with three images', async () => {
+	// La forma de la portada la resuelve CollectionCover y la cubre su spec: acá solo se afirma que la
+	// tarjeta le entrega el dato de dominio.
+	describe('Portada', () => {
+		it('should hand the imagery of the storylist to the cover', async () => {
 			await render(StorylistTeaserCard, {
 				inputs: { collection: storylistTeaserSampleMock },
 				providers: defaultProviders,
 			});
 
-			expect(screen.getAllByTestId('cover-image')).toHaveLength(3);
-		});
-
-		it('should render placeholders for the empty slots of a sample imagery', async () => {
-			const teaser: StorylistTeaser = {
-				...storylistTeaserSampleMock,
-				imagery: { kind: 'sample', images: ['assets/img/mocks/stories/el-odio.png', '', ''] },
-			};
-
-			await render(StorylistTeaserCard, {
-				inputs: { collection: teaser },
-				providers: defaultProviders,
-			});
-
-			expect(screen.getAllByTestId('cover-image')).toHaveLength(1);
-			expect(screen.getAllByTestId('cover-placeholder')).toHaveLength(2);
+			expect(screen.getByTestId('cover-fan')).toBeInTheDocument();
 		});
 	});
 
