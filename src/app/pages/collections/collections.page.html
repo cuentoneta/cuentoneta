@@ -1,0 +1,30 @@
+<!-- El encabezado es fijo: sin el margen superior, la página arranca debajo de él. -->
+<main class="mx-auto mt-header-height flex w-full max-w-310 flex-col gap-8 px-4 pt-8 pb-16">
+	<!-- Encabezado y bajada quedan fuera de todo condicional: son lo que sostiene el contenido del
+	     documento cuando el catálogo no carga. -->
+	<header class="flex flex-col gap-3">
+		<h1 class="font-inter text-4xl leading-10 font-bold text-neutral-900">Colecciones</h1>
+		<p class="font-inter text-base text-neutral-700">
+			Las antologías de La Cuentoneta: cuentos, poemas y textos breves reunidos por tema, por convocatoria o por
+			autoría. Cada colección abre su propio listado de obras para leer en línea.
+		</p>
+	</header>
+
+	@if (collections().length > 0) {
+	<section class="grid grid-cols-1 gap-8 sm:grid-cols-2" data-testid="collections">
+		@for (collection of collections(); track collection.slug) {
+		<cuentoneta-collection-teaser-card [collection]="collection" class="w-full" />
+		}
+	</section>
+	} @else if (failed()) {
+	<p class="font-inter text-base text-neutral-700" data-testid="catalog-error">
+		No pudimos cargar las colecciones. Probá de nuevo en un rato.
+	</p>
+	} @else {
+	<section class="grid grid-cols-1 gap-8 sm:grid-cols-2" aria-busy="true">
+		@for (placeholder of [1, 2, 3, 4]; track placeholder) {
+		<cuentoneta-collection-teaser-card-skeleton class="w-full" />
+		}
+	</section>
+	}
+</main>

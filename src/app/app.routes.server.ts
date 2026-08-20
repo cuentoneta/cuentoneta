@@ -46,6 +46,12 @@ export const serverRoutes: Array<ServerRoute> = [
 		path: `${AppRoutes.Collection}/:slug`,
 		renderMode: RenderMode.Server,
 	},
+	// El catálogo cambia con cada colección publicada y no hay purga del borde al publicar: prerenderizarlo
+	// dejaría a cada colección nueva sin enlace entrante hasta el deploy siguiente.
+	{
+		path: AppRoutes.Collection,
+		renderMode: RenderMode.Server,
+	},
 	{
 		path: '**',
 		renderMode: RenderMode.Prerender,
