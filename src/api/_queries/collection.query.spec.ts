@@ -9,6 +9,7 @@ import {
 	quoteOpeningLiteraryWorkDocument,
 	headingOpeningLiteraryWorkDocument,
 	blankLeadingLineLiteraryWorkDocument,
+	crlfOpeningLiteraryWorkDocument,
 	multiSectionLiteraryWorkDocument,
 	onoffCollectionDocumentsMock,
 	onoffDatasetMock,
@@ -78,6 +79,7 @@ describe('collectionBySlugQuery', () => {
 		quoteOpeningLiteraryWorkDocument,
 		headingOpeningLiteraryWorkDocument,
 		blankLeadingLineLiteraryWorkDocument,
+		crlfOpeningLiteraryWorkDocument,
 		nonProseOpeningCollectionDocument,
 	];
 
@@ -93,6 +95,17 @@ describe('collectionBySlugQuery', () => {
 			expect(body).not.toBe('');
 			expect(body).not.toContain('\n\n');
 		}
+	});
+
+	// El caso que da sentido al split anidado. Sin él, un corte por doble LF a secas devolvería el
+	// cuerpo entero ante contenido con fines de línea de Windows, y CI —que corre en Linux— no lo
+	// notaría: el defecto aparecería recién al regenerar el corpus en una máquina Windows.
+	it('cuts on Windows line endings too', async () => {
+		const result = await run(collectionBySlugQuery, withNonProseOpenings, { slug: 'arranques-no-prosa' });
+		const works = (result as { literaryWorks: { slug: string; excerpt: { body: string }[] }[] }).literaryWorks;
+		const crlf = works.find((work) => work.slug === 'arranque-crlf');
+
+		expect(crlf?.excerpt[0]?.body).toBe('El párrafo que la tarjeta muestra.');
 	});
 
 	it('keeps a multiline blockquote whole when the section opens with one', async () => {

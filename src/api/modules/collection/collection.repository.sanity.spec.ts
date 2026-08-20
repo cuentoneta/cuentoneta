@@ -147,8 +147,12 @@ describe('SanityCollectionRepository.fetchBySlug', () => {
 		const collection = await repoReturning(unbackfilledWorkRawCollection).fetchBySlug('geometrias-del-desvelo');
 		const [work] = collection?.literaryWorks ?? [];
 		const fullBody = unbackfilledWorkRawCollection.literaryWorks[0]?.readingTimeFallbackBody ?? '';
+		const excerpt = unbackfilledWorkRawCollection.literaryWorks[0]?.excerpt[0]?.body ?? '';
 
 		expect(work?.totalReadingTime).toBe(deriveSectionReadingTime(createMarkdown(fullBody)));
+		// Sin esta segunda aserción el caso pasaría igual derivando del extracto, que es exactamente la
+		// regresión que la separación de campos vino a impedir.
+		expect(work?.totalReadingTime).not.toBe(deriveSectionReadingTime(createMarkdown(excerpt)));
 	});
 });
 

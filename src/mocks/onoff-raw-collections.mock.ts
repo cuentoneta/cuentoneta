@@ -3,6 +3,7 @@ import type { CollectionBySlugQueryResult, CollectionsQueryResult } from '@sanit
 import { onoffRawCollectionTeasersMock as generatedTeasers } from './onoff/collection/collection-teasers.raw.mock';
 import { geometriasDelDesveloRawCollection } from './onoff/collection/geometrias-del-desvelo.collection.raw.mock';
 import { inventarioDeLasPasionesRawCollection } from './onoff/collection/inventario-de-las-pasiones.collection.raw.mock';
+import geometriaMdBody from './onoff/literary-work/geometria.md?raw';
 
 type RawCollection = NonNullable<CollectionBySlugQueryResult>;
 
@@ -73,7 +74,10 @@ export const unbackfilledWorkRawCollection: RawCollection = {
 					...work,
 					totalReadingTime: null,
 					openingReadingTime: null,
-					readingTimeFallbackBody: work.excerpt[0]?.body ?? '',
+					// El cuerpo **completo**, no el extracto que trae `excerpt`. Tomarlo de ahí haría que el
+					// caso afirmara el número que este trabajo declara inventado, y pasaría igual si el
+					// repositorio volviera a derivar del recorte — que es justo la regresión a impedir.
+					readingTimeFallbackBody: geometriaMdBody,
 				}
 			: work,
 	),

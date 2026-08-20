@@ -184,6 +184,24 @@ export const blankLeadingLineLiteraryWorkDocument: LiteraryWork = {
 	],
 };
 
+// El mismo arranque, con fines de línea de Windows. Es la única razón por la que el corte de la query
+// va anidado, y sin este documento esa rama no la ejercita nada: CI corre en Linux, así que el corpus
+// llega con LF y un split simplificado quedaría verde hasta regenerar el corpus en Windows.
+export const crlfOpeningLiteraryWorkDocument: LiteraryWork = {
+	...canonLiteraryWork,
+	_id: 'onoff-literary-work-arranque-crlf',
+	slug: slugField('arranque-crlf'),
+	content: [
+		{
+			...canonLiteraryWork.content[0],
+			_type: 'section',
+			_key: 'section-1',
+			epigraphs: [],
+			body: 'El párrafo que la tarjeta muestra.\r\n\r\nY el que el recorte deja afuera.',
+		},
+	],
+};
+
 export const nonProseOpeningCollectionDocument = {
 	...canonCollection,
 	_id: 'onoff-collection-arranques-no-prosa',
@@ -192,6 +210,7 @@ export const nonProseOpeningCollectionDocument = {
 		quoteOpeningLiteraryWorkDocument,
 		headingOpeningLiteraryWorkDocument,
 		blankLeadingLineLiteraryWorkDocument,
+		crlfOpeningLiteraryWorkDocument,
 	].map((work) => ({
 		_key: work._id,
 		_type: 'reference' as const,

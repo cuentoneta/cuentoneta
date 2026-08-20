@@ -20,7 +20,7 @@ describe('onoffLiteraryWorkTeasersMock (derivación de teasers desde LiteraryWor
 		expect(opening.bodyHtml.startsWith(excerpt.bodyHtml)).toBe(true);
 	});
 
-	it('should carry a rendered bodyHtml in the teaser section', () => {
+	it('should carry a rendered bodyHtml in the excerpt', () => {
 		for (const teaser of onoffLiteraryWorkTeasersMock) {
 			expect(teaser.excerpt.bodyHtml).toContain('<p>');
 		}
@@ -90,7 +90,7 @@ describe('navigation teasers de LiteraryWork (proyección de la vista base)', ()
 			expect(teaser).not.toHaveProperty('originalPublication');
 			expect(teaser).not.toHaveProperty('publishedAt');
 			expect(teaser).not.toHaveProperty('editorialNote');
-			expect(teaser).not.toHaveProperty('teaserSection');
+			expect(teaser).not.toHaveProperty('excerpt');
 		}
 	});
 });

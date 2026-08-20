@@ -164,7 +164,7 @@ describe('LiteraryWorkCardTeaserComponent', () => {
 	});
 
 	describe('Description', () => {
-		// El teaser expone la primera sección completa (teaserSection) con el cuerpo ya saneado a HTML.
+		// El teaser expone un extracto del arranque de la obra, con el cuerpo ya saneado a HTML.
 		const literaryWorkWithExcerpt: LiteraryWorkTeaser = palacioNueveFronterasLiteraryWorkTeaserMock;
 
 		it('should display the description when showExcerpt is true and there is a teaser section', async () => {
