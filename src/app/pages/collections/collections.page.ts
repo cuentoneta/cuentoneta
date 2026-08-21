@@ -1,11 +1,16 @@
 // Core
-import { Component, computed, effect, forwardRef, inject, RESPONSE_INIT } from '@angular/core';
+import { Component, computed, effect, forwardRef, inject, RESPONSE_INIT, signal } from '@angular/core';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { faSolidXmark } from '@ng-icons/font-awesome/solid';
 
 // Utils
 import { ssrBlockingRxResource } from '@app-utils/ssr-resource';
 
 // Services
 import { CollectionApi } from '../../providers/collection.provider';
+
+// Models
+import type { Tag } from '@models/tag.model';
 
 // SEO
 import { COLLECTIONS_HOST, type CollectionsHost } from './collections-host';
@@ -15,13 +20,23 @@ import { CollectionsStructuredDataDirective } from './collections-structured-dat
 // Components
 import { CollectionTeaserCard } from '@components/collection-teaser-card/collection-teaser-card';
 import { CollectionTeaserCardSkeletonComponent } from '@components/collection-teaser-card/collection-teaser-card-skeleton';
+import { DividerComponent } from '@components/divider/divider.component';
+
+/** Una etiqueta del catálogo con cuántas de las colecciones a la vista la llevan. */
+export interface CollectionFacet {
+	readonly tag: Tag;
+	readonly count: number;
+}
 
 @Component({
 	selector: 'cuentoneta-collections',
 	templateUrl: './collections.page.html',
-	providers: [{ provide: COLLECTIONS_HOST, useExisting: forwardRef(() => CollectionsPage) }],
+	providers: [
+		{ provide: COLLECTIONS_HOST, useExisting: forwardRef(() => CollectionsPage) },
+		provideIcons({ faSolidXmark }),
+	],
 	hostDirectives: [CollectionsMetaTagsDirective, CollectionsStructuredDataDirective],
-	imports: [CollectionTeaserCard, CollectionTeaserCardSkeletonComponent],
+	imports: [CollectionTeaserCard, CollectionTeaserCardSkeletonComponent, DividerComponent, NgIcon],
 })
 export default class CollectionsPage implements CollectionsHost {
 	private readonly collectionApi = inject(CollectionApi);
@@ -38,8 +53,8 @@ export default class CollectionsPage implements CollectionsHost {
 	// todo título que empiece con acento o eñe. Se reordena acá, como ya se hace en el índice de autores.
 	private readonly collator = new Intl.Collator('es');
 
-	// `value()` lanza con el recurso en error, así que el guard no es defensivo: sin él, el fallo del
-	// catálogo se propaga al render en vez de caer en el estado que la página tiene previsto.
+	// El catálogo entero y sin filtrar: es lo que describen los datos estructurados, que no siguen al
+	// estado de la interfaz porque la canónica siempre apunta al catálogo completo.
 	public readonly collections = computed(() => {
 		const catalog = this.catalogResource.hasValue() ? this.catalogResource.value() : [];
 		return [...catalog].sort((first, second) => this.collator.compare(first.title, second.title));
@@ -51,6 +66,41 @@ export default class CollectionsPage implements CollectionsHost {
 	// catálogo que vuelve vacío con éxito se queda mostrando esqueletos, y el servidor los serializa.
 	protected readonly loading = computed(() => this.catalogResource.isLoading());
 
+	// El filtrado vive en memoria, sobre el catálogo ya traído: la query no se vuelve a consultar.
+	private readonly selectedSlugs = signal<readonly string[]>([]);
+
+	protected readonly visibleCollections = computed(() => {
+		const selected = this.selectedSlugs();
+		if (selected.length === 0) {
+			return this.collections();
+		}
+		return this.collections().filter((collection) =>
+			selected.every((slug) => collection.tags.some((tag) => tag.slug === slug)),
+		);
+	});
+
+	// Las facetas se cuentan sobre lo que está a la vista, no sobre el catálogo entero: por eso al
+	// elegir una etiqueta las demás bajan su número y las que no conviven con ella desaparecen.
+	protected readonly facets = computed<readonly CollectionFacet[]>(() => {
+		const counts = new Map<string, { tag: Tag; count: number }>();
+		for (const collection of this.visibleCollections()) {
+			for (const tag of collection.tags) {
+				const seen = counts.get(tag.slug);
+				counts.set(tag.slug, { tag, count: (seen?.count ?? 0) + 1 });
+			}
+		}
+		return [...counts.values()].sort((first, second) => this.collator.compare(first.tag.title, second.tag.title));
+	});
+
+	protected readonly selectedTags = computed<readonly Tag[]>(() => {
+		const selected = this.selectedSlugs();
+		const known = new Map(this.collections().flatMap((collection) => collection.tags.map((tag) => [tag.slug, tag])));
+		return selected.flatMap((slug) => {
+			const tag = known.get(slug);
+			return tag ? [tag] : [];
+		});
+	});
+
 	// Un fallo transitorio no puede salir 200: el borde cachearía un catálogo vacío como si fuera la
 	// página. No hay rama 404 — un catálogo no deja de existir.
 	private readonly respondErrorStatusEffect = effect(() => {
@@ -59,4 +109,18 @@ export default class CollectionsPage implements CollectionsHost {
 		}
 		this.responseInit.status = 503;
 	});
+
+	protected isSelected(slug: string): boolean {
+		return this.selectedSlugs().includes(slug);
+	}
+
+	protected toggleTag(slug: string): void {
+		this.selectedSlugs.update((selected) =>
+			selected.includes(slug) ? selected.filter((candidate) => candidate !== slug) : [...selected, slug],
+		);
+	}
+
+	protected clearFilters(): void {
+		this.selectedSlugs.set([]);
+	}
 }

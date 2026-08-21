@@ -1,5 +1,6 @@
 // Librería de pruebas
 import { render, screen, within } from '@testing-library/angular';
+import userEvent from '@testing-library/user-event';
 import { provideRouter } from '@angular/router';
 import { RESPONSE_INIT } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
@@ -13,9 +14,11 @@ import { provideCollectionApiMock } from '../../providers/collection.mock';
 
 // Modelos
 import { createCollectionTeaser, type Collection, type CollectionTeaser } from '@models/collection.model';
+import type { Tag } from '@models/tag.model';
 
 // Mocks
 import { onoffCollectionsMock, onoffCollectionTeasersMock } from '@mocks/onoff-collections.mock';
+import { colaborativaTagMock, surrealismoTagMock } from '@mocks/onoff-tags.mock';
 
 // Utilidades de test
 import { clearAllMocks } from '@test-utils';
@@ -70,10 +73,19 @@ describe('CollectionsPage', () => {
 		clearAllMocks();
 	});
 
-	it('should render the catalogue heading', async () => {
+	// El encabezado del catálogo es su conteo, no un título fijo: es lo primero que responde la página.
+	it('should headline the catalogue with how many collections it lists', async () => {
 		await renderPage(new StubCatalogCollectionApi(onoffCollectionTeasersMock));
 
-		expect(screen.getByRole('heading', { level: 1, name: 'Colecciones' })).toBeInTheDocument();
+		expect(
+			screen.getByRole('heading', { level: 1, name: `${onoffCollectionTeasersMock.length} Colecciones` }),
+		).toBeInTheDocument();
+	});
+
+	it('should put the count in singular when the catalogue lists one collection', async () => {
+		await renderPage(new StubCatalogCollectionApi([canonical]));
+
+		expect(screen.getByRole('heading', { level: 1, name: '1 Colección' })).toBeInTheDocument();
 	});
 
 	it('should render one card per collection in the catalogue', async () => {
@@ -113,7 +125,7 @@ describe('CollectionsPage', () => {
 	it('should keep the heading when the catalogue comes back empty', async () => {
 		await renderPage(new StubCatalogCollectionApi([]));
 
-		expect(screen.getByRole('heading', { level: 1, name: 'Colecciones' })).toBeInTheDocument();
+		expect(screen.getByRole('heading', { level: 1, name: '0 Colecciones' })).toBeInTheDocument();
 		expect(screen.queryByTestId('collections')).not.toBeInTheDocument();
 	});
 
@@ -134,6 +146,93 @@ describe('CollectionsPage', () => {
 
 		expect(screen.getByTestId('catalog-error')).toBeInTheDocument();
 		expect(screen.queryByTestId('collections')).not.toBeInTheDocument();
+	});
+
+	// El filtrado ocurre entero en memoria, sobre el catálogo ya traído: ninguno de estos casos vuelve a
+	// consultar al provider.
+	describe('filtros', () => {
+		const conEtiquetas = (slug: string, tags: readonly Tag[]): CollectionTeaser =>
+			createCollectionTeaser({
+				_id: `${canonical._id}-${slug}`,
+				slug,
+				title: slug,
+				description: canonical.description,
+				imagery: canonical.imagery,
+				tags,
+				config: canonical.config,
+				mediaSources: canonical.mediaSources,
+				count: canonical.count,
+			});
+
+		const catalogo = [
+			conEtiquetas('ambas', [colaborativaTagMock, surrealismoTagMock]),
+			conEtiquetas('solo-colaborativa', [colaborativaTagMock]),
+			conEtiquetas('solo-surrealismo', [surrealismoTagMock]),
+		];
+
+		const renderCatalogo = () => renderPage(new StubCatalogCollectionApi(catalogo));
+
+		it('should count each facet over the catalogue', async () => {
+			await renderCatalogo();
+
+			expect(
+				within(screen.getByTestId('filters')).getByLabelText(`${colaborativaTagMock.title} (2)`),
+			).toBeInTheDocument();
+			expect(
+				within(screen.getByTestId('filters')).getByLabelText(`${surrealismoTagMock.title} (2)`),
+			).toBeInTheDocument();
+		});
+
+		it('should narrow the listing to the collections carrying the chosen tag', async () => {
+			await renderCatalogo();
+
+			await userEvent.click(screen.getByLabelText(`${colaborativaTagMock.title} (2)`));
+
+			expect(within(screen.getByTestId('collections')).getAllByRole('link')).toHaveLength(2);
+			expect(screen.getByRole('heading', { level: 1, name: '2 Colecciones' })).toBeInTheDocument();
+		});
+
+		// Lo que pide la nota del diseño: al elegir una etiqueta, las que no conviven con ella dejan de
+		// ofrecerse, y las que sí ajustan su número a lo que queda a la vista.
+		it('should drop the facets that no longer apply and recount the rest', async () => {
+			await renderCatalogo();
+
+			await userEvent.click(screen.getByLabelText(`${colaborativaTagMock.title} (2)`));
+
+			expect(screen.getByLabelText(`${surrealismoTagMock.title} (1)`)).toBeInTheDocument();
+		});
+
+		it('should offer a chip that removes the filter it names', async () => {
+			await renderCatalogo();
+			await userEvent.click(screen.getByLabelText(`${colaborativaTagMock.title} (2)`));
+
+			await userEvent.click(screen.getByRole('button', { name: `Quitar el filtro ${colaborativaTagMock.title}` }));
+
+			expect(screen.getByRole('heading', { level: 1, name: '3 Colecciones' })).toBeInTheDocument();
+		});
+
+		it('should clear every filter at once', async () => {
+			await renderCatalogo();
+			await userEvent.click(screen.getByLabelText(`${colaborativaTagMock.title} (2)`));
+
+			await userEvent.click(screen.getByRole('button', { name: 'Limpiar filtros' }));
+
+			expect(screen.getByRole('heading', { level: 1, name: '3 Colecciones' })).toBeInTheDocument();
+			expect(screen.queryByTestId('active-filters')).not.toBeInTheDocument();
+		});
+
+		// Acotar las facetas a lo que está a la vista tiene una consecuencia que conviene dejar afirmada:
+		// toda faceta ofrecida tiene al menos una colección detrás, así que no hay forma de llegar a un
+		// resultado vacío eligiendo filtros. Por eso la página no tiene estado de «ninguna coincide».
+		it('should never let a combination of offered facets empty the listing', async () => {
+			await renderCatalogo();
+			await userEvent.click(screen.getByLabelText(`${colaborativaTagMock.title} (2)`));
+
+			await userEvent.click(screen.getByLabelText(`${surrealismoTagMock.title} (1)`));
+
+			expect(within(screen.getByTestId('collections')).getAllByRole('link')).toHaveLength(1);
+			expect(screen.getByRole('heading', { level: 1, name: '1 Colección' })).toBeInTheDocument();
+		});
 	});
 
 	// El código de respuesta es lo que impide que el borde cachee un fallo transitorio como si fuera la

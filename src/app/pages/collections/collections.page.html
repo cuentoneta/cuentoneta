@@ -1,34 +1,88 @@
 <!-- El encabezado es fijo: sin el margen superior, la página arranca debajo de él. -->
-<main class="mx-auto mt-header-height flex w-full max-w-310 flex-col gap-8 px-4 pt-8 pb-16">
-	<!-- Encabezado y bajada quedan fuera de todo condicional: son lo que sostiene el contenido del
-	     documento cuando el catálogo no carga. -->
-	<header class="flex flex-col gap-3">
-		<h1 class="font-inter text-4xl leading-10 font-bold text-neutral-900">Colecciones</h1>
-		<p class="font-inter text-base text-neutral-700">
-			Las antologías de La Cuentoneta: cuentos, poemas y textos breves reunidos por tema, por convocatoria o por
-			autoría. Cada colección abre su propio listado de obras para leer en línea.
-		</p>
-	</header>
+<main class="mx-auto mt-header-height flex w-full max-w-310 items-stretch gap-8 px-4 pt-8 pb-16">
+	<aside class="hidden w-50 shrink-0 flex-col gap-6 lg:flex" data-testid="filters">
+		<div class="flex items-center justify-between">
+			<h2 class="font-inter text-base leading-6 font-bold text-neutral-900">Filtros</h2>
+			@if (selectedTags().length > 0) {
+			<button
+				(click)="clearFilters()"
+				type="button"
+				class="cursor-pointer font-inter text-xs leading-4 font-semibold text-neutral-900 underline hover:text-brand-500"
+			>
+				Limpiar filtros
+			</button>
+			}
+		</div>
 
-	@if (loading()) {
-	<section class="grid grid-cols-1 gap-8 sm:grid-cols-2" aria-busy="true">
-		@for (placeholder of [1, 2, 3, 4]; track placeholder) {
-		<cuentoneta-collection-teaser-card-skeleton class="w-full" />
+		@if (selectedTags().length > 0) {
+		<ul class="flex list-none flex-wrap gap-2" data-testid="active-filters">
+			@for (tag of selectedTags(); track tag.slug) {
+			<li>
+				<button
+					(click)="toggleTag(tag.slug)"
+					[attr.aria-label]="'Quitar el filtro ' + tag.title"
+					type="button"
+					class="flex cursor-pointer items-center gap-1 rounded-full bg-brand-100 px-2.5 py-1.5 font-inter text-[10px] leading-[14px] font-semibold text-brand-500"
+				>
+					{{ tag.title }}
+					<ng-icon name="faSolidXmark" size="14" aria-hidden="true" />
+				</button>
+			</li>
+			}
+		</ul>
 		}
-	</section>
-	} @else if (failed()) {
-	<p class="font-inter text-base text-neutral-700" data-testid="catalog-error">
-		No pudimos cargar las colecciones. Probá de nuevo en un rato.
-	</p>
-	} @else if (collections().length > 0) {
-	<section class="grid grid-cols-1 gap-8 sm:grid-cols-2" data-testid="collections">
-		@for (collection of collections(); track collection.slug) {
-		<cuentoneta-collection-teaser-card [collection]="collection" class="w-full" />
+
+		<fieldset class="flex flex-col gap-3 border-0 p-0">
+			<legend class="font-inter text-sm leading-5 font-semibold text-neutral-900">Categoría</legend>
+			<ul class="flex list-none flex-col gap-2.5">
+				@for (facet of facets(); track facet.tag.slug) {
+				<li class="flex items-center gap-1.5">
+					<input
+						(change)="toggleTag(facet.tag.slug)"
+						[checked]="isSelected(facet.tag.slug)"
+						[id]="'facet-' + facet.tag.slug"
+						class="size-5 cursor-pointer accent-brand-500"
+						type="checkbox"
+					/>
+					<label
+						[for]="'facet-' + facet.tag.slug"
+						class="cursor-pointer font-inter text-xs leading-4 font-medium text-neutral-900"
+					>
+						{{ facet.tag.title }} ({{ facet.count }})
+					</label>
+				</li>
+				}
+			</ul>
+		</fieldset>
+	</aside>
+
+	<cuentoneta-divider class="hidden lg:block" orientation="vertical" />
+
+	<div class="flex min-w-0 flex-1 flex-col gap-12 lg:pl-5">
+		<h1 class="font-inter text-2xl leading-8 font-bold text-neutral-900">
+			{{ visibleCollections().length }} {{ visibleCollections().length === 1 ? 'Colección' : 'Colecciones' }}
+		</h1>
+
+		@if (loading()) {
+		<section class="flex flex-col gap-8" aria-busy="true">
+			@for (placeholder of [1, 2, 3, 4]; track placeholder) {
+			<cuentoneta-collection-teaser-card-skeleton class="w-full" />
+			}
+		</section>
+		} @else if (failed()) {
+		<p class="font-inter text-base text-neutral-700" data-testid="catalog-error">
+			No pudimos cargar las colecciones. Probá de nuevo en un rato.
+		</p>
+		} @else if (visibleCollections().length > 0) {
+		<section class="flex flex-col gap-8" data-testid="collections">
+			@for (collection of visibleCollections(); track collection.slug) {
+			<cuentoneta-collection-teaser-card [collection]="collection" class="w-full" />
+			}
+		</section>
+		} @else {
+		<p class="font-inter text-base text-neutral-700" data-testid="catalog-empty">
+			Todavía no hay colecciones publicadas.
+		</p>
 		}
-	</section>
-	} @else {
-	<p class="font-inter text-base text-neutral-700" data-testid="catalog-empty">
-		Todavía no hay colecciones publicadas.
-	</p>
-	}
+	</div>
 </main>
