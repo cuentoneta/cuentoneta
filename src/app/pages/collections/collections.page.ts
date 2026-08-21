@@ -1,7 +1,7 @@
 // Core
 import { Component, computed, effect, forwardRef, inject, RESPONSE_INIT, signal } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { faSolidXmark } from '@ng-icons/font-awesome/solid';
+import { faSolidCheck, faSolidChevronDown, faSolidXmark } from '@ng-icons/font-awesome/solid';
 
 // Utils
 import { ssrBlockingRxResource } from '@app-utils/ssr-resource';
@@ -33,7 +33,7 @@ export interface CollectionFacet {
 	templateUrl: './collections.page.html',
 	providers: [
 		{ provide: COLLECTIONS_HOST, useExisting: forwardRef(() => CollectionsPage) },
-		provideIcons({ faSolidXmark }),
+		provideIcons({ faSolidCheck, faSolidChevronDown, faSolidXmark }),
 	],
 	hostDirectives: [CollectionsMetaTagsDirective, CollectionsStructuredDataDirective],
 	imports: [CollectionTeaserCard, CollectionTeaserCardSkeletonComponent, DividerComponent, NgIcon],
@@ -68,6 +68,11 @@ export default class CollectionsPage implements CollectionsHost {
 
 	// El filtrado vive en memoria, sobre el catálogo ya traído: la query no se vuelve a consultar.
 	private readonly selectedSlugs = signal<readonly string[]>([]);
+
+	// El diseño dibuja el grupo con un chevron, que en un panel de filtros anuncia que se pliega. Se
+	// implementa como tal en vez de dejarlo decorativo: un control que no controla nada engaña.
+	private readonly categoryGroupOpen = signal(true);
+	protected readonly isCategoryGroupOpen = this.categoryGroupOpen.asReadonly();
 
 	protected readonly visibleCollections = computed(() => {
 		const selected = this.selectedSlugs();
@@ -122,5 +127,9 @@ export default class CollectionsPage implements CollectionsHost {
 
 	protected clearFilters(): void {
 		this.selectedSlugs.set([]);
+	}
+
+	protected toggleCategoryGroup(): void {
+		this.categoryGroupOpen.update((open) => !open);
 	}
 }

@@ -33,17 +33,48 @@
 		}
 
 		<fieldset class="flex flex-col gap-3 border-0 p-0">
-			<legend class="font-inter text-sm leading-5 font-semibold text-neutral-900">Categoría</legend>
-			<ul class="flex list-none flex-col gap-2.5">
+			<legend class="p-0">
+				<button
+					(click)="toggleCategoryGroup()"
+					[attr.aria-expanded]="isCategoryGroupOpen()"
+					aria-controls="category-facets"
+					type="button"
+					class="flex cursor-pointer items-center gap-1 font-inter text-sm leading-5 font-semibold text-neutral-900"
+				>
+					Categoría
+					<ng-icon
+						[class.-rotate-90]="!isCategoryGroupOpen()"
+						name="faSolidChevronDown"
+						size="24"
+						aria-hidden="true"
+						class="transition-transform"
+					/>
+				</button>
+			</legend>
+			@if (isCategoryGroupOpen()) {
+			<ul class="flex list-none flex-col gap-2.5" id="category-facets">
 				@for (facet of facets(); track facet.tag.slug) {
 				<li class="flex items-center gap-1.5">
-					<input
-						(change)="toggleTag(facet.tag.slug)"
-						[checked]="isSelected(facet.tag.slug)"
-						[id]="'facet-' + facet.tag.slug"
-						class="size-5 cursor-pointer accent-brand-500"
-						type="checkbox"
-					/>
+					<span class="relative flex size-5 shrink-0 items-center justify-center">
+						<input
+							(change)="toggleTag(facet.tag.slug)"
+							[checked]="isSelected(facet.tag.slug)"
+							[id]="'facet-' + facet.tag.slug"
+							class="peer size-5 cursor-pointer appearance-none rounded border-2 border-neutral-300 bg-white checked:border-brand-500 checked:bg-brand-500"
+							type="checkbox"
+						/>
+						<!-- La marca va aparte y no como pseudo-elemento: en un elemento reemplazado como el
+						     input, ::after no se renderiza de forma confiable. El color va por estilo y no por
+						     utilidad: sobre el host del icono la clase no resuelve, y acá el contraste contra la
+						     caja rellena es lo único que hace visible la marca. -->
+						<ng-icon
+							[style.color]="'var(--color-white)'"
+							name="faSolidCheck"
+							size="12"
+							aria-hidden="true"
+							class="pointer-events-none absolute hidden peer-checked:block"
+						/>
+					</span>
 					<label
 						[for]="'facet-' + facet.tag.slug"
 						class="cursor-pointer font-inter text-xs leading-4 font-medium text-neutral-900"
@@ -53,6 +84,7 @@
 				</li>
 				}
 			</ul>
+			}
 		</fieldset>
 	</aside>
 

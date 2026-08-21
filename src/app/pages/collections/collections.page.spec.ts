@@ -211,6 +211,20 @@ describe('CollectionsPage', () => {
 			expect(screen.getByRole('heading', { level: 1, name: '3 Colecciones' })).toBeInTheDocument();
 		});
 
+		// El chevron del diseño anuncia que el grupo se pliega, así que se implementó como control real.
+		it('should collapse the category group without dropping the filters in effect', async () => {
+			await renderCatalogo();
+			await userEvent.click(screen.getByLabelText(`${colaborativaTagMock.title} (2)`));
+
+			await userEvent.click(screen.getByRole('button', { name: /Categoría/ }));
+
+			expect(screen.getByRole('button', { name: /Categoría/ })).toHaveAttribute('aria-expanded', 'false');
+			expect(screen.queryByLabelText(`${colaborativaTagMock.title} (2)`)).not.toBeInTheDocument();
+			// El filtro sigue aplicado: plegar el grupo esconde los controles, no deshace la elección.
+			expect(screen.getByRole('heading', { level: 1, name: '2 Colecciones' })).toBeInTheDocument();
+			expect(screen.getByTestId('active-filters')).toBeInTheDocument();
+		});
+
 		it('should clear every filter at once', async () => {
 			await renderCatalogo();
 			await userEvent.click(screen.getByLabelText(`${colaborativaTagMock.title} (2)`));
