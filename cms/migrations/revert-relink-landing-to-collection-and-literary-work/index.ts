@@ -1,9 +1,11 @@
 import { at, defineMigration, unset } from 'sanity/migrate';
 
 // Mismo shape mínimo que la migración de ida, más los campos nuevos, que son los que esta reversión mira.
+// `_type` va como `string` por el mismo motivo que allá: el runner lo tipa así y acotarlo vuelve la
+// función incompatible con la firma que espera.
 interface RelinkedDocument {
 	_id: string;
-	_type: 'landingPage' | 'rotatingContent';
+	_type: string;
 	cards?: unknown[];
 	latestReads?: unknown[];
 	mostRead?: unknown[];

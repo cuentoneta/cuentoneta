@@ -6,22 +6,19 @@ import {
 	type KeyedReference,
 } from './build-relinked-references';
 
-// El shape mínimo que la migración lee. No se importan los tipos del typegen: declaran los campos nuevos
-// como opcionales y los viejos igual, así que no aportan sobre esto y atan la migración al schema vigente.
-interface LandingPageDocument {
+// El shape mínimo que la migración lee, con los campos de los dos tipos en un solo lugar. No se importan
+// los tipos del typegen: declaran todos los campos como opcionales, así que no aportan sobre esto y atan
+// la migración al schema vigente.
+//
+// `_type` va como `string` y no como unión de literales: el runner tipa el documento como `SanityDocument`,
+// donde es `string`, y acotarlo acá vuelve la función incompatible con la firma que espera.
+interface RelinkableDocument {
 	_id: string;
-	_type: 'landingPage';
+	_type: string;
 	cards?: KeyedReference[];
 	latestReads?: KeyedReference[];
-}
-
-interface RotatingContentDocument {
-	_id: string;
-	_type: 'rotatingContent';
 	mostRead?: KeyedReference[];
 }
-
-type MigratedDocument = LandingPageDocument | RotatingContentDocument;
 
 /**
  * Puebla los campos que referencian colecciones y obras a partir de los que referencian storylists e
@@ -46,7 +43,7 @@ export default defineMigration({
 	// el conteo con el que se verifica la corrida.
 	filter: "!(_id in path('drafts.**'))",
 	migrate: {
-		document(doc: MigratedDocument) {
+		document(doc: RelinkableDocument) {
 			if (doc._type === 'rotatingContent') {
 				const mostReadLiteraryWorks = buildLiteraryWorkReferences(doc.mostRead);
 				return mostReadLiteraryWorks.length > 0
