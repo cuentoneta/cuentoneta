@@ -28,6 +28,12 @@ export type EditorialNoteVariant = 'note' | 'highlight';
 		'[class]': 'hostClasses()',
 		'data-testid': 'editorial-note',
 	},
+	styles: `
+		@reference '#tailwind-theme';
+		aside {
+			@apply flex flex-col gap-2;
+		}
+	`,
 })
 export class EditorialNoteComponent {
 	public readonly note = input.required<AttributedText>();
