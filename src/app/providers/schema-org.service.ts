@@ -43,7 +43,11 @@ export class SchemaOrgService {
 	private writeScript(id: string, schema: WithContext<Thing>, scope: 'sitewide' | 'page'): void {
 		const script = this.resolveScript(id);
 		script.setAttribute('data-schema-scope', scope);
-		script.textContent = JSON.stringify(schema);
+		// El contenido de un <script> es texto crudo: el serializador de HTML no escapa nada ahí adentro,
+		// y `JSON.stringify` no escapa `<`. Un título del CMS que contenga `</script` cerraría el bloque en
+		// el HTML servido y el resto del JSON quedaría suelto en la página. Escapar el `<` como secuencia
+		// unicode preserva el valor —al parsearlo vuelve a ser `<`— y no puede cerrar la etiqueta.
+		script.textContent = JSON.stringify(schema).replaceAll('<', '\\u003c');
 	}
 
 	private resolveScript(id: string): HTMLScriptElement {

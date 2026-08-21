@@ -33,6 +33,22 @@ describe('SchemaOrgService', () => {
 		});
 	});
 
+	// El contenido de un <script> es texto crudo: nada se escapa ahí adentro, así que un `</script` que
+	// venga en un dato del CMS cerraría el bloque en el HTML servido y volcaría el resto del JSON a la
+	// página. Se afirma sobre el texto emitido y no sobre el valor parseado, que es donde no se ve.
+	it('should not let a value close the script tag it travels in', () => {
+		service.setJsonLd('organization', {
+			'@context': CONTEXT,
+			'@type': 'Organization',
+			name: 'Antología </script><img src=x onerror=alert(1)>',
+		});
+
+		const script = scriptFor('organization');
+		expect(script?.textContent).not.toContain('</script');
+		// El valor no se pierde: escapado y todo, al parsearlo vuelve a ser el original.
+		expect(JSON.parse(script?.textContent ?? '{}').name).toBe('Antología </script><img src=x onerror=alert(1)>');
+	});
+
 	it('should reuse the same script on repeated calls (idempotent by id)', () => {
 		service.setJsonLd('website', { '@context': CONTEXT, '@type': 'WebSite', name: 'A' });
 		service.setJsonLd('website', { '@context': CONTEXT, '@type': 'WebSite', name: 'B' });
