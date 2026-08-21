@@ -9,9 +9,9 @@ import { provideCollectionApiMock } from '../../providers/collection.mock';
 import type { CollectionApi } from '../../providers/collection.provider';
 import CollectionsPage from './collections.page';
 
-// El corpus tiene dos colecciones, que llenan una sola fila de la grilla. Para poder mirar el catálogo
-// como catálogo —varias filas y el orden con acentos— se derivan más entradas del canon, en vez de
-// escribir teasers a mano.
+// El corpus tiene dos colecciones, que no alcanzan para mirar el catálogo como catálogo. Para ver la
+// lista larga, el orden con acentos y las facetas con más de una etiqueta, se derivan más entradas del
+// canon, en vez de escribir teasers a mano.
 const [canonical] = onoffCollectionTeasersMock;
 const derived = (title: string, slug: string): CollectionTeaser =>
 	createCollectionTeaser({
@@ -80,7 +80,7 @@ const meta: Meta<CollectionsPageArgs> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>El catálogo de colecciones, <strong>CollectionsPage</strong>, montado sobre el corpus de Onoff. Como el resto de las entradas bajo <strong>Páginas</strong>, no cataloga un componente sino el ensamblado completo: el encabezado, la bajada y la grilla de tarjetas que llevan al detalle.</p><p>El único control elige el escenario del catálogo, que es lo único que mueve la página: no recibe parámetros de ruta.</p><p>Se compone de <a href="./?path=/docs/componentes-v3-collectionteasercard--docs" target="_top"><strong>CollectionTeaserCard</strong></a>, la misma tarjeta que enlaza a <a href="./?path=/docs/páginas-collectionpage--docs" target="_top"><strong>CollectionPage</strong></a>, y de su esqueleto.</p><p>El orden no es el que entrega el backend: se resuelve en la página con colación en español, porque la base compara por punto de código y mandaría al final del catálogo todo título que empiece con acento o eñe. El escenario <strong>extended</strong> es el que lo hace visible.</p><p>El encabezado fijo de la aplicación no se monta en el catálogo, así que el margen superior de la página se ve como espacio en blanco.</p></div>`,
+				component: `<div><p>El catálogo de colecciones, <strong>CollectionsPage</strong>, montado sobre el corpus de Onoff. Como el resto de las entradas bajo <strong>Páginas</strong>, no cataloga un componente sino el ensamblado completo: la columna de filtros, el encabezado con el conteo y la lista de tarjetas que llevan al detalle.</p><p>El único control elige el escenario del catálogo, que es lo único que mueve la página desde afuera: no recibe parámetros de ruta. Los filtros son estado propio y se manejan desde la columna izquierda.</p><p>Las facetas se cuentan sobre lo que está a la vista, así que al elegir una etiqueta las demás ajustan su número y las que no conviven con ella desaparecen. De ahí se sigue que no hay forma de vaciar el listado eligiendo filtros: toda faceta ofrecida tiene al menos una colección detrás.</p><p>Se compone de <a href="./?path=/docs/componentes-v3-collectionteasercard--docs" target="_top"><strong>CollectionTeaserCard</strong></a>, la misma tarjeta que enlaza a <a href="./?path=/docs/páginas-collectionpage--docs" target="_top"><strong>CollectionPage</strong></a>, y de su esqueleto, más <a href="./?path=/docs/componentes-v3-divider--docs" target="_top"><strong>Divider</strong></a> entre las dos columnas.</p><p>El orden no es el que entrega el backend: se resuelve en la página con colación en español, porque la base compara por punto de código y mandaría al final del catálogo todo título que empiece con acento o eñe. El escenario <strong>extended</strong> es el que lo hace visible.</p><p>El encabezado fijo de la aplicación no se monta en el catálogo, así que el margen superior de la página se ve como espacio en blanco.</p></div>`,
 			},
 		},
 	},
@@ -102,7 +102,7 @@ export const Playground: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>El catálogo con el control vivo. Cambiá <strong>Catálogo</strong> para recorrer los cinco estados, y en particular para alternar entre <strong>extended</strong> y <strong>loading</strong>: la grilla real y la de esqueletos ocupan el mismo lugar, así que la alineación entre las dos se puede evaluar de un vistazo.</p>`,
+				story: `<p>El catálogo con el control vivo. Cambiá <strong>Catálogo</strong> para recorrer los cinco estados, y en particular para alternar entre <strong>extended</strong> y <strong>loading</strong>: la lista real y la de esqueletos ocupan el mismo lugar, así que la alineación entre las dos se puede evaluar de un vistazo.</p>`,
 			},
 		},
 	},
@@ -113,7 +113,7 @@ export const CatalogoDelCorpus: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Las dos colecciones del corpus, tal como las sirve el backend. Llenan una sola fila de la grilla.</p><p><strong>Usos:</strong> mirar la tarjeta con datos reales, sin entradas derivadas.</p>`,
+				story: `<p>Las dos colecciones del corpus, tal como las sirve el backend.</p><p><strong>Usos:</strong> mirar la tarjeta con datos reales, sin entradas derivadas.</p>`,
 			},
 		},
 	},
@@ -124,7 +124,7 @@ export const CatalogoExtendido: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>El corpus más cuatro entradas derivadas, para ver la grilla con varias filas. Es la única entrada donde el orden se puede evaluar: <strong>Ámbar y ceniza</strong> y <strong>Ñandubay</strong> aparecen donde corresponde alfabéticamente y no al final, que es donde los pondría una comparación por punto de código.</p>`,
+				story: `<p>El corpus más cuatro entradas derivadas, para ver la lista larga y probar los filtros con varias etiquetas. Es la única entrada donde el orden se puede evaluar: <strong>Ámbar y ceniza</strong> y <strong>Ñandubay</strong> aparecen donde corresponde alfabéticamente y no al final, que es donde los pondría una comparación por punto de código.</p>`,
 			},
 		},
 	},
@@ -135,7 +135,7 @@ export const CatalogoCargando: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>El catálogo mientras carga: la grilla de esqueletos, en el mismo lugar y con la misma geometría que la grilla real. Alternar con <strong>extended</strong> desde el control de <strong>Playground</strong> es lo que permite verificar que una no salte respecto de la otra.</p><p>En la aplicación servida este estado no llega al HTML: el recurso bloquea el render del servidor. Se ve al navegar dentro de la aplicación.</p>`,
+				story: `<p>El catálogo mientras carga: la lista de esqueletos, en el mismo lugar y con la misma geometría que la lista real. Alternar con <strong>extended</strong> desde el control de <strong>Playground</strong> es lo que permite verificar que una no salte respecto de la otra.</p><p>En la aplicación servida este estado no llega al HTML: el recurso bloquea el render del servidor. Se ve al navegar dentro de la aplicación.</p>`,
 			},
 		},
 	},
