@@ -17,32 +17,35 @@ import { CollectionCoverComponent } from '../collection-cover/collection-cover.c
 	imports: [RouterLink, CollectionCoverComponent],
 
 	template: `
-		<article>
+		<article class="relative flex items-start gap-5">
 			@if (collection(); as collection) {
-				<a [routerLink]="['/' + appRoutes.Collection, collection.slug]" class="flex items-start gap-5">
-					<section class="flex h-48 items-end justify-center overflow-hidden rounded-xl bg-neutral-100 px-3 sm:flex-1">
-						<cuentoneta-collection-cover [imagery]="collection.imagery" />
-					</section>
-					<section class="flex flex-1 flex-col gap-1 overflow-hidden">
-						<header
-							class="hover:text-interactive-500 line-clamp-2 cursor-pointer font-inter text-lg leading-6 font-bold"
-						>
-							{{ collection.title }}
-						</header>
-						<div
-							[innerHTML]="safeDescription()"
-							class="line-clamp-4 font-inter text-sm text-ellipsis text-neutral-700"
-							data-testid="description"
-						></div>
-						<footer class="flex flex-col gap-1 font-inter text-xs text-neutral-600 sm:flex-row">
-							@if (collection.tags[0]) {
-								<span class="font-inter text-xs font-bold text-brand-500"> {{ collection.tags[0].title }} </span>
-								<span class="hidden sm:inline">•</span>
-							}
-							<span>{{ collection.count }} {{ collection.count === 1 ? 'obra' : 'obras' }}</span>
-						</footer>
-					</section>
-				</a>
+				<section class="flex h-48 items-end justify-center overflow-hidden rounded-xl bg-neutral-100 px-3 sm:flex-1">
+					<cuentoneta-collection-cover [imagery]="collection.imagery" />
+				</section>
+				<section class="flex flex-1 flex-col gap-1 overflow-hidden">
+					<!-- El enlace se estira con ::after sobre toda la tarjeta en vez de envolverla: la descripción
+					     es HTML del CMS y puede traer enlaces propios, y un <a> dentro de otro <a> es marcación
+					     inválida que el parser deshace, expulsando el texto fuera del enlace. -->
+					<a
+						[routerLink]="['/' + appRoutes.Collection, collection.slug]"
+						[attr.aria-label]="collection.title"
+						class="hover:text-interactive-500 line-clamp-2 font-inter text-lg leading-6 font-bold after:absolute after:inset-0 after:content-['']"
+					>
+						{{ collection.title }}
+					</a>
+					<div
+						[innerHTML]="safeDescription()"
+						class="line-clamp-4 font-inter text-sm text-ellipsis text-neutral-700"
+						data-testid="description"
+					></div>
+					<footer class="flex flex-col gap-1 font-inter text-xs text-neutral-600 sm:flex-row">
+						@if (collection.tags[0]) {
+							<span class="font-inter text-xs font-bold text-brand-500"> {{ collection.tags[0].title }} </span>
+							<span class="hidden sm:inline">•</span>
+						}
+						<span>{{ collection.count }} {{ collection.count === 1 ? 'obra' : 'obras' }}</span>
+					</footer>
+				</section>
 			}
 		</article>
 	`,

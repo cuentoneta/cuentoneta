@@ -1,0 +1,17 @@
+/*
+  Enlaces dentro de la descripción de una tarjeta de colección.
+
+  La tarjeta lleva su enlace estirado con un ::after que cubre toda la superficie, así que cualquier
+  enlace propio de la descripción queda debajo: alcanzable con el teclado pero muerto para el puntero.
+  Esa asimetría es peor que cualquiera de las dos alternativas coherentes, así que se los levanta por
+  encima del overlay — el mismo remedio que ya aplica el enlace de autor de la tarjeta de obra.
+
+  La regla es global porque el HTML lo emite el pipeline de Markdown y no lleva clases: ninguna utilidad
+  de Tailwind puede alcanzarlo. Va anclada al selector del componente que posee ese HTML.
+*/
+cuentoneta-collection-teaser-card {
+	& [data-testid='description'] a {
+		position: relative;
+		z-index: var(--z-index-content);
+	}
+}

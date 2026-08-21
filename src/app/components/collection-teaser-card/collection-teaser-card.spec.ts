@@ -13,6 +13,8 @@ import {
 
 // Modelos
 import { createCollectionTeaser, type CollectionTeaser } from '@models/collection.model';
+import { createMarkdown } from '@models/markdown.model';
+import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 
 // Utilidades de test
 import { clearAllMocks } from '@test-utils';
@@ -85,6 +87,35 @@ describe('CollectionTeaserCard', () => {
 			const description = screen.getByTestId('description');
 			expect(description.innerHTML).toContain('<p>');
 			expect(description.textContent).not.toContain('<p>');
+		});
+
+		// Con la descripción envuelta en el enlace de la tarjeta, un enlace propio de la prosa producía
+		// marcación inválida: el parser cerraba el enlace externo antes de tiempo y expulsaba el bloque de
+		// texto fuera de él, con lo que la tarjeta se desarmaba. El corpus no tiene descripciones con
+		// enlaces, así que el caso se deriva.
+		it('should keep the card intact when the description carries links of its own', async () => {
+			const conEnlace = teaserFrom(representativeMock, {
+				description: markdownToSanitizedHtml(
+					createMarkdown('Una colección con [un enlace propio](https://www.cuentoneta.ar/about) en la prosa.'),
+				),
+			});
+
+			const { container } = await render(CollectionTeaserCard, {
+				inputs: { collection: conEnlace },
+				providers: defaultProviders,
+			});
+
+			// No se afirma la ausencia de `a a`: al ser marcación inválida el parser la deshace sola, así que
+			// tampoco aparecía cuando el defecto estaba vivo. Lo que distingue una versión de otra es en qué
+			// queda la tarjeta después de esa reparación — antes, la portada quedaba dentro del enlace y el
+			// bloque de texto salía despedido a hermano suyo.
+			/* eslint-disable testing-library/no-container, testing-library/no-node-access -- la estructura resultante no se expresa por rol ni por texto */
+			const article = container.querySelector('article');
+			expect([...(article?.children ?? [])].map((child) => child.tagName)).toEqual(['SECTION', 'SECTION']);
+			/* eslint-enable testing-library/no-container, testing-library/no-node-access */
+			expect(
+				within(screen.getByTestId('description')).getByRole('link', { name: 'un enlace propio' }),
+			).toBeInTheDocument();
 		});
 	});
 
