@@ -11,9 +11,6 @@ import {
 	novelaRawTag,
 } from '../../onoff-raw-tags.mock';
 import { elOdioSectionTitle } from '../literary-work/el-odio.epigraph';
-import elOdioMdBody from '../literary-work/el-odio.md?raw';
-import elTratadoDeLosPlaceresMdBody from '../literary-work/el-tratado-de-los-placeres.md?raw';
-import lasDosAntorchasMdBody from '../literary-work/las-dos-antorchas.md?raw';
 import inventarioDeLasPasionesCollectionMd from './inventario-de-las-pasiones.collection.md?raw';
 
 export const inventarioDeLasPasionesRawCollection: NonNullable<CollectionBySlugQueryResult> = {
@@ -59,7 +56,13 @@ export const inventarioDeLasPasionesRawCollection: NonNullable<CollectionBySlugQ
 					diedOnYear: 1994,
 				},
 			],
-			teaserSection: [{ _key: 'section-1', title: null, body: elTratadoDeLosPlaceresMdBody, readingTime: 10 }],
+			excerpt: [
+				{
+					_key: 'section-1',
+					title: null,
+					body: 'Conviene advertir, antes de toda enumeración, que un tratado de los placeres no es un repertorio de placeres sino su contrario exacto. Quien escribe _esto_ ya ha dejado de gozar; ha pasado al otro lado de la mesa, donde se mide y se nombra.',
+				},
+			],
 		},
 		{
 			_id: 'onoff-literary-work-el-odio',
@@ -91,7 +94,13 @@ export const inventarioDeLasPasionesRawCollection: NonNullable<CollectionBySlugQ
 					diedOnYear: 1994,
 				},
 			],
-			teaserSection: [{ _key: 'section-1', title: elOdioSectionTitle, body: elOdioMdBody, readingTime: 6 }],
+			excerpt: [
+				{
+					_key: 'section-1',
+					title: elOdioSectionTitle,
+					body: 'No empezó por nada. Eso es lo primero que conviene aclarar. No hubo un agravio, ni una herida, ni una infancia que pudiera invocarse después como excusa. El odio estaba ahí desde antes, igual que el peso del cuerpo o el color de los ojos, una propiedad y no un acontecimiento.',
+				},
+			],
 		},
 		{
 			_id: 'onoff-literary-work-las-dos-antorchas',
@@ -123,7 +132,13 @@ export const inventarioDeLasPasionesRawCollection: NonNullable<CollectionBySlugQ
 					diedOnYear: 1994,
 				},
 			],
-			teaserSection: [{ _key: 'section-1', title: null, body: lasDosAntorchasMdBody, readingTime: 8 }],
+			excerpt: [
+				{
+					_key: 'section-1',
+					title: null,
+					body: 'El corredor no tenía principio que alguien recordara. Avanzábamos por él como se avanza en un cálculo: sin esperanza de llegada, atentos sólo a no perder el hilo. Dos antorchas iban con nosotros, una a cada lado, y desde el primer paso comprendí que nunca alumbrarían lo mismo.',
+				},
+			],
 		},
 	],
 };

@@ -133,6 +133,91 @@ export const multiSectionCollectionDocument = {
 	],
 };
 
+// El recorte del extracto corta por doble salto de línea, así que el primer bloque de la sección de
+// apertura no tiene por qué ser un párrafo de prosa: el schema no restringe el Markdown. Estas dos
+// obras cubren los arranques que hoy nadie tiene, para que el corte se afirme sobre ellos en vez de
+// descubrirse en una tarjeta.
+export const quoteOpeningLiteraryWorkDocument: LiteraryWork = {
+	...canonLiteraryWork,
+	_id: 'onoff-literary-work-arranque-con-cita',
+	slug: slugField('arranque-con-cita'),
+	content: [
+		{
+			...canonLiteraryWork.content[0],
+			_type: 'section',
+			_key: 'section-1',
+			epigraphs: [],
+			body: '> Toda geometría empieza\n> por una línea que no existe.\n\nDespués vino el resto, que es prosa.',
+		},
+	],
+};
+
+export const headingOpeningLiteraryWorkDocument: LiteraryWork = {
+	...canonLiteraryWork,
+	_id: 'onoff-literary-work-arranque-con-encabezado',
+	slug: slugField('arranque-con-encabezado'),
+	content: [
+		{
+			...canonLiteraryWork.content[0],
+			_type: 'section',
+			_key: 'section-1',
+			epigraphs: [],
+			body: '## El primer umbral\n\nY recién entonces el párrafo que la tarjeta querría mostrar.',
+		},
+	],
+};
+
+// Un renglón en blanco delante del texto: artefacto de edición corriente, que el schema no impide.
+// Sin el filtro de bloques vacíos, el corte devolvería la cadena vacía y la colección entera caería.
+export const blankLeadingLineLiteraryWorkDocument: LiteraryWork = {
+	...canonLiteraryWork,
+	_id: 'onoff-literary-work-arranque-en-blanco',
+	slug: slugField('arranque-en-blanco'),
+	content: [
+		{
+			...canonLiteraryWork.content[0],
+			_type: 'section',
+			_key: 'section-1',
+			epigraphs: [],
+			body: '\n\nEl párrafo que la tarjeta tiene que mostrar igual.\n\nY el que queda afuera.',
+		},
+	],
+};
+
+// El mismo arranque, con fines de línea de Windows. Es la única razón por la que el corte de la query
+// va anidado, y sin este documento esa rama no la ejercita nada: CI corre en Linux, así que el corpus
+// llega con LF y un split simplificado quedaría verde hasta regenerar el corpus en Windows.
+export const crlfOpeningLiteraryWorkDocument: LiteraryWork = {
+	...canonLiteraryWork,
+	_id: 'onoff-literary-work-arranque-crlf',
+	slug: slugField('arranque-crlf'),
+	content: [
+		{
+			...canonLiteraryWork.content[0],
+			_type: 'section',
+			_key: 'section-1',
+			epigraphs: [],
+			body: 'El párrafo que la tarjeta muestra.\r\n\r\nY el que el recorte deja afuera.',
+		},
+	],
+};
+
+export const nonProseOpeningCollectionDocument = {
+	...canonCollection,
+	_id: 'onoff-collection-arranques-no-prosa',
+	slug: slugField('arranques-no-prosa'),
+	literaryWorks: [
+		quoteOpeningLiteraryWorkDocument,
+		headingOpeningLiteraryWorkDocument,
+		blankLeadingLineLiteraryWorkDocument,
+		crlfOpeningLiteraryWorkDocument,
+	].map((work) => ({
+		_key: work._id,
+		_type: 'reference' as const,
+		_ref: work._id,
+	})),
+};
+
 // El tipo de documento declara `coverImage` opcional; el raw nunca ejercitó esa rama porque las ocho
 // obras del canon la traen.
 export const coverlessLiteraryWorkDocument = (() => {

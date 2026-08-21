@@ -12,9 +12,6 @@ import {
 	surrealismoRawTag,
 } from '../../onoff-raw-tags.mock';
 import { geometriaSectionTitle } from '../literary-work/geometria.epigraph';
-import geometriaMdBody from '../literary-work/geometria.md?raw';
-import lasEscalerasMdBody from '../literary-work/las-escaleras.md?raw';
-import losPeldanosMdBody from '../literary-work/los-peldanos.md?raw';
 import {
 	geometriasDelDesveloSpotifyDescription,
 	geometriasDelDesveloYoutubeDescription,
@@ -82,7 +79,13 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 					diedOnYear: 1994,
 				},
 			],
-			teaserSection: [{ _key: 'section-1', title: geometriaSectionTitle, body: geometriaMdBody, readingTime: 7 }],
+			excerpt: [
+				{
+					_key: 'section-1',
+					title: geometriaSectionTitle,
+					body: 'A las tres y media en punto, sin que ningún despertador lo convoque, Shannon abre los ojos. La oscuridad de la habitación tiene siempre el mismo peso, el mismo gramaje exacto, como si la noche hubiera sido recortada con escuadra. No hay sobresalto: hay precisión.',
+				},
+			],
 		},
 		{
 			_id: 'onoff-literary-work-los-peldanos',
@@ -114,7 +117,13 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 					diedOnYear: 1994,
 				},
 			],
-			teaserSection: [{ _key: 'section-1', title: null, body: losPeldanosMdBody, readingTime: 8 }],
+			excerpt: [
+				{
+					_key: 'section-1',
+					title: null,
+					body: 'La escalera empezaba en ninguna parte y terminaba un poco más arriba de eso. La Sra. Oneiras vivía en alguno de sus peldaños, aunque jamás conseguí determinar en cuál, porque cada vez que creía haberlo hecho el peldaño se desplazaba, o yo me desplazaba, o el día entero cambiaba de número sin avisarle a nadie.',
+				},
+			],
 		},
 		{
 			_id: 'onoff-literary-work-las-escaleras',
@@ -146,7 +155,13 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 					diedOnYear: 1994,
 				},
 			],
-			teaserSection: [{ _key: 'section-1', title: null, body: lasEscalerasMdBody, readingTime: 9 }],
+			excerpt: [
+				{
+					_key: 'section-1',
+					title: null,
+					body: 'Dos años después la encontré donde la había dejado, al pie de la escalera, midiendo con el pulgar la distancia exacta que separaba un peldaño del siguiente. La Sra. Oneiras no había envejecido; se había vuelto más precisa, como una cifra que se repite hasta perder su sentido.',
+				},
+			],
 		},
 	],
 };

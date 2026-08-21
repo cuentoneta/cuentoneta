@@ -10,7 +10,7 @@ type StoryTeaserView = StoryTeaser | StoryTeaserWithAuthor;
  * TODO(#2037): view model temporal — se elimina cuando existan los endpoints LiteraryWork nativos.
  *
  * El extracto viaja aparte de la obra porque su forma no es la misma: una `LiteraryWork` lo sirve como
- * `SanitizedHtml` en su `teaserSection`, mientras que una `Story` lo tiene en Portable Text. Sumarlo a
+ * `SanitizedHtml` en su `excerpt`, mientras que una `Story` lo tiene en Portable Text. Sumarlo a
  * la proyección de obra la haría mentir sobre lo que transporta.
  */
 export interface ReadingSuggestion {

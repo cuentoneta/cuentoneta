@@ -13,8 +13,7 @@ import {
 	type Collection,
 	type CollectionTeaser,
 } from '@models/collection.model';
-import { createAttributedText } from '@models/attributed-text.model';
-import { createLiteraryWorkSection } from '@models/literary-work-section.model';
+import { createLiteraryWorkExcerpt } from '@models/literary-work-excerpt.model';
 import type { LiteraryWorkTeaser } from '@models/literary-work.model';
 import { createReadingTime } from '@models/reading-time.model';
 import { createSanitizedHtml } from '@models/sanitized-html.model';
@@ -68,17 +67,9 @@ export class HttpCollectionApi implements CollectionApi {
 			...dto,
 			slug: createSlug(dto.slug),
 			totalReadingTime: createReadingTime(dto.totalReadingTime),
-			teaserSection: createLiteraryWorkSection({
-				position: dto.teaserSection.position,
-				title: dto.teaserSection.title ? createSectionTitle(dto.teaserSection.title.value) : undefined,
-				epigraphs: dto.teaserSection.epigraphs?.map((epigraph) =>
-					createAttributedText({
-						text: createSanitizedHtml(epigraph.text),
-						reference: epigraph.reference ? createSanitizedHtml(epigraph.reference) : undefined,
-					}),
-				),
-				bodyHtml: createSanitizedHtml(dto.teaserSection.bodyHtml),
-				readingTime: createReadingTime(dto.teaserSection.readingTime),
+			excerpt: createLiteraryWorkExcerpt({
+				title: dto.excerpt.title ? createSectionTitle(dto.excerpt.title.value) : undefined,
+				bodyHtml: createSanitizedHtml(dto.excerpt.bodyHtml),
 			}),
 		};
 	}

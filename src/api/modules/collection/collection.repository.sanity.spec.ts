@@ -3,12 +3,12 @@ import { clearAllMocks, fn } from '@test-utils';
 import { collectionBySlugQuery, collectionsQuery } from '../../_queries/collection.query';
 import {
 	descriptionlessRawCollection,
-	draftLikeRawCollection,
 	emptyRawCollection,
 	onoffRawCollectionsWithFeaturedImage,
 	onoffRawCollectionsWithoutFeaturedImage,
 	onoffRawCollectionTeasersMock,
 	sectionlessWorkRawCollection,
+	unbackfilledWorkRawCollection,
 	shortSampleRawCollection,
 } from '@mocks/onoff-raw-collections.mock';
 import { MalformedCollectionError } from './collection.errors';
@@ -100,13 +100,23 @@ describe('SanityCollectionRepository.fetchBySlug', () => {
 		expect(expected?.every((url) => url !== '')).toBe(true);
 	});
 
-	it('maps each work into a teaser with its opening section', async () => {
+	it('maps each work into a teaser with its excerpt', async () => {
 		const collection = await repoReturning(withFeaturedImage).fetchBySlug('geometrias-del-desvelo');
 		const [work] = collection?.literaryWorks ?? [];
 
-		expect(work?.teaserSection.position).toBe(0);
-		expect(work?.teaserSection.bodyHtml).toContain('<p>');
+		expect(work?.excerpt.bodyHtml).toContain('<p>');
 		expect(work?.authors.length).toBeGreaterThan(0);
+	});
+
+	// La ausencia de estos campos es lo que impide que alguien vuelva a derivar el tiempo de lectura de
+	// una obra a partir de un cuerpo recortado. Se afirma sobre el objeto que el ACL entrega, no solo
+	// sobre el tipo, porque el tipo no viaja al runtime.
+	it('does not expose reading time nor position in the excerpt', async () => {
+		const collection = await repoReturning(withFeaturedImage).fetchBySlug('geometrias-del-desvelo');
+		const [work] = collection?.literaryWorks ?? [];
+
+		expect(work?.excerpt).not.toHaveProperty('readingTime');
+		expect(work?.excerpt).not.toHaveProperty('position');
 	});
 
 	it('copies the persisted reading time of each work', async () => {
@@ -117,16 +127,25 @@ describe('SanityCollectionRepository.fetchBySlug', () => {
 		);
 	});
 
-	// El opcional del tipo solo se da en borradores, que el sitio público no sirve: no es un dato mal
-	// curado, así que no lanza. Cae al tiempo de la sección de apertura, prefiriendo su valor
-	// persistido: afirmarlo contra ese valor —y no contra "algo mayor que cero", que la factory ya
-	// garantiza— es lo que distingue esta rama de cualquier otro número válido.
-	it('falls back to the opening section reading time', async () => {
-		const collection = await repoReturning(draftLikeRawCollection).fetchBySlug('geometrias-del-desvelo');
-		const [work] = collection?.literaryWorks ?? [];
+	// Las dos ramas que lanzan. Ninguna se da con los datos publicados de hoy; se afirman igual, porque
+	// son los dos únicos caminos por los que el ACL prefiere caerse antes que inventar un número o
+	// servir un extracto en blanco.
+	it('rejects a work without a persisted total reading time', async () => {
+		await expect(repoReturning(unbackfilledWorkRawCollection).fetchBySlug('geometrias-del-desvelo')).rejects.toThrow(
+			MalformedCollectionError,
+		);
+	});
 
-		expect(work?.totalReadingTime).toBe(work?.teaserSection.readingTime);
-		expect(work?.totalReadingTime).toBe(draftLikeRawCollection.literaryWorks[0]?.teaserSection[0]?.readingTime);
+	it('rejects a work whose excerpt carries no body', async () => {
+		const [first] = onoffRawCollectionsWithFeaturedImage;
+		const raw = {
+			...first,
+			literaryWorks: first.literaryWorks.map((work, index) =>
+				index === 0 ? { ...work, excerpt: [{ ...work.excerpt[0], body: null }] } : work,
+			),
+		};
+
+		await expect(repoReturning(raw).fetchBySlug('geometrias-del-desvelo')).rejects.toThrow(MalformedCollectionError);
 	});
 });
 

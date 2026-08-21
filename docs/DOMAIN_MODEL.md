@@ -283,7 +283,7 @@ Borrador en Sanity → Publicación → Accesible para lectura en /read/:slug
 **Vistas Polimórficas:**
 
 - `LiteraryWork` - Vista completa (todas las secciones, autores completos)
-- `LiteraryWorkTeaser` - Vista resumida: a diferencia de `StoryTeaser` (que vacía `paragraphs`), expone la **primera sección completa** (`teaserSection`) — decisión de diseño del epic #1481
+- `LiteraryWorkTeaser` - Vista resumida: a diferencia de `StoryTeaser` (que vacía `paragraphs`), expone un **extracto** del arranque de la obra (`excerpt`), que no declara tiempo de lectura ni posición porque su cuerpo va recortado
 - `LiteraryWorkNavigationTeaser` - Vista mínima para navegación
 - `LiteraryWorkNavigationTeaserWithAuthors` - Vista mínima con autores resumidos
 

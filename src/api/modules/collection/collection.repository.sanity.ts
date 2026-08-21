@@ -7,10 +7,10 @@ import {
 	type CollectionImagery,
 	type CollectionTeaser,
 } from '@models/collection.model';
-import { createLiteraryWorkSection, type LiteraryWorkSection } from '@models/literary-work-section.model';
+import { createLiteraryWorkExcerpt, type LiteraryWorkExcerpt } from '@models/literary-work-excerpt.model';
 import type { LiteraryWorkTeaser } from '@models/literary-work.model';
 import { createMarkdown } from '@models/markdown.model';
-import { createReadingTime, deriveSectionReadingTime } from '@models/reading-time.model';
+import { createReadingTime, type ReadingTime } from '@models/reading-time.model';
 import { createSectionTitle } from '@models/section-title.model';
 import { createSlug } from '@models/slug.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
@@ -25,7 +25,7 @@ import type { CollectionRepository } from './collection.repository';
 // documento crudo y no el agregado.
 type SanityCollection = NonNullable<CollectionBySlugQueryResult>;
 type SanityCollectionWork = SanityCollection['literaryWorks'][number];
-type SanityTeaserSection = SanityCollectionWork['teaserSection'][number];
+type SanityExcerpt = SanityCollectionWork['excerpt'][number];
 type SanityCollectionTeaser = CollectionsQueryResult[number];
 type SanityFeaturedImage = SanityCollection['featuredImage'];
 
@@ -119,13 +119,12 @@ export class SanityCollectionRepository implements CollectionRepository {
 	}
 
 	private mapLiteraryWorkTeaser(raw: SanityCollectionWork): LiteraryWorkTeaser {
-		const [teaserSection] = raw.teaserSection;
-		if (!teaserSection) {
+		const [rawExcerpt] = raw.excerpt;
+		if (!rawExcerpt) {
 			// Sin sección de apertura el teaser es inconstruible: es la contracara de la invariante
 			// "al menos una sección" que la obra ya hace cumplir.
 			throw new MalformedCollectionError(raw.slug);
 		}
-		const section = this.mapTeaserSection(teaserSection);
 		// Se congela como el agregado que lo contiene: el teaser no tiene factory propia —la vista de
 		// obra no la necesitó hasta ahora—, pero eso no es razón para que sea el único objeto mutable
 		// dentro de una colección congelada.
@@ -134,29 +133,33 @@ export class SanityCollectionRepository implements CollectionRepository {
 			slug: createSlug(raw.slug),
 			title: raw.title,
 			coverImage: raw.coverImage ? urlFor(raw.coverImage) : '',
-			// En publicado el total siempre viene; la otra rama cubre el opcional del tipo, que solo se da
-			// en borradores, y ahí cae al tiempo de la sección de apertura —una cota inferior para una obra
-			// multi-sección—.
-			totalReadingTime: raw.totalReadingTime !== null ? createReadingTime(raw.totalReadingTime) : section.readingTime,
+			totalReadingTime: this.resolveTotalReadingTime(raw),
 			sectionCount: raw.sectionCount,
 			tags: mapTags(raw.tags),
 			mediaSources: mapMediaTeasers(raw.mediaSources),
 			authors: raw.authors.map(mapAuthorTeaser),
-			teaserSection: section,
+			excerpt: this.mapExcerpt(raw.slug, rawExcerpt),
 		});
 	}
 
-	// Sin epígrafes: la tarjeta que consume el teaser muestra el cuerpo y nadie más los lee, así que la
-	// query tampoco los trae. El campo es opcional en la sección, no un vacío que haya que rellenar.
-	private mapTeaserSection(raw: SanityTeaserSection): LiteraryWorkSection {
-		return createLiteraryWorkSection({
-			position: 0,
+	// No hay derivación que sirva: en una obra de texto el total es la suma de sus secciones, pero en
+	// una obra recitada es la duración del medio. Cualquier cálculo acierta en una y falla en la otra.
+	private resolveTotalReadingTime(raw: SanityCollectionWork): ReadingTime {
+		if (raw.totalReadingTime === null) {
+			throw new MalformedCollectionError(raw.slug);
+		}
+		return createReadingTime(raw.totalReadingTime);
+	}
+
+	// `body` llega nullable porque el recorte es un `split` indexado y el typegen no puede descartar el
+	// índice fuera de rango. Rellenarlo con vacío dejaría un hueco mudo en la tarjeta.
+	private mapExcerpt(slug: string, raw: SanityExcerpt): LiteraryWorkExcerpt {
+		if (raw.body === null) {
+			throw new MalformedCollectionError(slug);
+		}
+		return createLiteraryWorkExcerpt({
 			title: raw.title ? createSectionTitle(raw.title) : undefined,
 			bodyHtml: markdownToSanitizedHtml(createMarkdown(raw.body)),
-			readingTime:
-				raw.readingTime !== null
-					? createReadingTime(raw.readingTime)
-					: deriveSectionReadingTime(createMarkdown(raw.body)),
 		});
 	}
 }

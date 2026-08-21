@@ -22,6 +22,14 @@ export const literaryWorkSectionDtoSchema = z.object({
 	readingTime: z.number(),
 });
 
+// El extracto de un listado no declara `readingTime` ni `position`: su cuerpo va recortado y no
+// puede sostenerlos. Es un schema propio y no una variante del de sección, para que el contrato de
+// wire diga lo mismo que el de dominio.
+export const literaryWorkExcerptDtoSchema = z.object({
+	title: z.optional(z.object({ value: z.string() })),
+	bodyHtml: z.string(),
+});
+
 export const literaryWorkDtoSchema = z.object({
 	_id: z.string(),
 	slug: z.string(),
@@ -52,10 +60,11 @@ export const literaryWorkTeaserDtoSchema = z.object({
 	tags: z.array(opaqueDomainObject<Tag>()),
 	mediaSources: z.array(opaqueDomainObject<MediaTeaser>()),
 	authors: z.array(opaqueDomainObject<AuthorTeaser>()),
-	teaserSection: literaryWorkSectionDtoSchema,
+	excerpt: literaryWorkExcerptDtoSchema,
 });
 
 export type LiteraryWorkEpigraphDto = z.infer<typeof literaryWorkEpigraphDtoSchema>;
 export type LiteraryWorkTeaserDto = z.infer<typeof literaryWorkTeaserDtoSchema>;
 export type LiteraryWorkSectionDto = z.infer<typeof literaryWorkSectionDtoSchema>;
+export type LiteraryWorkExcerptDto = z.infer<typeof literaryWorkExcerptDtoSchema>;
 export type LiteraryWorkDto = z.infer<typeof literaryWorkDtoSchema>;

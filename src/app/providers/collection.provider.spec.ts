@@ -59,6 +59,29 @@ describe('HttpCollectionApi', () => {
 		expect(Object.isFrozen(collection)).toBe(true);
 	});
 
+	// Un servidor que mande campos de más en el extracto —uno desactualizado, que todavía sirva la forma
+	// de sección— no debe tirar la página: el DTO llega con `readingTime` y `position` inyectados y se
+	// afirma que la frontera lo acepta y rehidrata igual. Lo que haría fallar este caso es endurecer el
+	// schema a `strictObject`, que pasaría a rechazar la respuesta entera.
+	it('tolerates a wire excerpt carrying fields it does not declare', async () => {
+		const dto = toWire<CollectionDto>(canon);
+		const [firstWork] = dto.literaryWorks;
+		const tampered = {
+			...dto,
+			literaryWorks: [
+				{ ...firstWork, excerpt: { ...firstWork.excerpt, readingTime: 7, position: 0 } },
+				...dto.literaryWorks.slice(1),
+			],
+		};
+
+		const collection = await request(api.getBySlug(dto.slug), `${url}/${dto.slug}`, tampered);
+		const [work] = collection.literaryWorks;
+
+		expect(work.excerpt.bodyHtml).toBe(canon?.literaryWorks[0]?.excerpt.bodyHtml);
+		expect(work.excerpt).not.toHaveProperty('readingTime');
+		expect(work.excerpt).not.toHaveProperty('position');
+	});
+
 	// Derivarlo en la factory es lo que impide que el servidor mande un total que no coincida.
 	it('derives the count instead of trusting the payload', async () => {
 		const dto = { ...toWire<CollectionDto>(canon), count: 99 };

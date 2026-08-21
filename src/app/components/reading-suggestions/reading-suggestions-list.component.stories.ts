@@ -98,7 +98,7 @@ const suggestionCountArgType = {
 };
 
 // El bloque recibe la obra y su extracto por separado. Estas stories muestran obras del canon, cuyo
-// extracto ya viene en `teaserSection`, así que la lista de párrafos va vacía: la rama de Portable Text
+// extracto ya viene en `excerpt`, así que la lista de párrafos va vacía: la rama de Portable Text
 // es la que alimenta el puente temporal desde `Story`.
 const allSuggestions: ReadingSuggestion[] = corpusLiteraryWorkTeasers.map((literaryWork) => ({
 	literaryWork,

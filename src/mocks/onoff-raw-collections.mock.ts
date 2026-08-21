@@ -49,13 +49,13 @@ export const descriptionlessRawCollection: RawCollection = {
 export const sectionlessWorkRawCollection: RawCollection = {
 	...geometriasDelDesveloRawCollection,
 	literaryWorks: geometriasDelDesveloRawCollection.literaryWorks.map((work, index) =>
-		index === 0 ? { ...work, teaserSection: [], sectionCount: 0 } : work,
+		index === 0 ? { ...work, excerpt: [], sectionCount: 0 } : work,
 	),
 };
 
-// No es un dato mal curado: es el shape de un borrador, cuya obra todavía no pasó por el backfill de
-// reading time. Cubre la única rama que el opcional del tipo obliga a escribir.
-export const draftLikeRawCollection: RawCollection = {
+// Una obra a la que el backfill todavía no le calculó su tiempo de lectura total. Sin ese dato no hay
+// nada que mostrar en la tarjeta, y el ACL la trata como mal curada.
+export const unbackfilledWorkRawCollection: RawCollection = {
 	...geometriasDelDesveloRawCollection,
 	literaryWorks: geometriasDelDesveloRawCollection.literaryWorks.map((work, index) =>
 		index === 0 ? { ...work, totalReadingTime: null } : work,
