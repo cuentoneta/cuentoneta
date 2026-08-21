@@ -155,3 +155,47 @@ export const readingTimeBackfillCandidatesQuery = defineQuery(`
     totalReadingTime,
     'content': coalesce(content[]{ _key, body, readingTime }, [])
 }`);
+
+// Las obras de un autor, como teasers, para el bloque de sugerencias al pie de la lectura.
+//
+// El filtro recorre `authors[]` porque una obra admite varios: a diferencia de una story, que declara
+// un autor único, acá la pertenencia es de conjunto.
+//
+// La proyección repite literal la que `collectionBySlugQuery` usa para las obras de una colección
+// —`defineQuery` exige literales para que el typegen las lea, así que no se puede extraer—, incluido
+// el recorte del extracto y su heurística de doble salto de línea. Si las dos divergen, el corpus
+// derivado deja de tipar, que es la señal de que hay que volver a alinearlas.
+//
+// No se acota: quién elige las tres que se muestran, y con qué criterio, es del consumidor.
+export const literaryWorksByAuthorSlugQuery = defineQuery(`
+*[_type == 'literaryWork' && $slug in authors[]->slug.current && !(_id in path('drafts.**'))]
+{
+    _id,
+    'slug': slug.current,
+    title,
+    coverImage,
+    totalReadingTime,
+    'sectionCount': count(content),
+    'tags': coalesce(tags[] -> {
+        title,
+        'slug': slug.current,
+        description
+    }, []),
+    'mediaSources': coalesce(mediaSources[]{ _type, title }, []),
+    'authors': coalesce(authors[]->{
+        _id,
+        'slug': slug.current,
+        name,
+        image,
+        nationality->,
+        bornOn,
+        bornOnYear,
+        diedOn,
+        diedOnYear
+    }, []),
+    'excerpt': content[0...1]{
+        _key,
+        title,
+        'body': string::split(string::split(body, "\r\n\r\n")[0], "\n\n")[@ != ""][0]
+    }
+} | order(title asc)`);
