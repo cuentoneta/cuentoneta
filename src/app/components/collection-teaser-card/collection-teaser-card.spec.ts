@@ -13,6 +13,7 @@ import {
 
 // Modelos
 import { createCollectionTeaser, type CollectionTeaser } from '@models/collection.model';
+import { absurdoTagMock, colaborativaTagMock, surrealismoTagMock } from '@mocks/onoff-tags.mock';
 import { createMarkdown } from '@models/markdown.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 
@@ -121,6 +122,41 @@ describe('CollectionTeaserCard', () => {
 
 	// La forma de la portada la resuelve CollectionCover y la cubre su spec: acá solo se afirma que la
 	// tarjeta le entrega el dato de dominio, que es lo único suyo en juego.
+	// El título es lo que titula la tarjeta dentro de un listado, así que tiene que ser un encabezado:
+	// sin eso, una grilla de tarjetas no ofrece nada por donde saltar con un lector de pantalla.
+	describe('Título como encabezado', () => {
+		it('should expose the title as a heading that links to the collection', async () => {
+			await render(CollectionTeaserCard, {
+				inputs: { collection: representativeMock },
+				providers: defaultProviders,
+			});
+
+			const heading = screen.getByRole('heading', { name: representativeMock.title });
+			expect(within(heading).getByRole('link')).toHaveAttribute('href', `/collection/${representativeMock.slug}`);
+		});
+	});
+
+	describe('Etiquetas', () => {
+		it('should announce the remaining tags with a counter', async () => {
+			const conVariasEtiquetas = teaserFrom(representativeMock, {
+				tags: [colaborativaTagMock, surrealismoTagMock, absurdoTagMock],
+			});
+
+			await render(CollectionTeaserCard, { inputs: { collection: conVariasEtiquetas }, providers: defaultProviders });
+
+			expect(screen.getByText(new RegExp(`${colaborativaTagMock.title}\\s*\\+2`))).toBeInTheDocument();
+		});
+
+		it('should not add a counter when the collection carries a single tag', async () => {
+			const conUnaEtiqueta = teaserFrom(representativeMock, { tags: [colaborativaTagMock] });
+
+			await render(CollectionTeaserCard, { inputs: { collection: conUnaEtiqueta }, providers: defaultProviders });
+
+			expect(screen.getByText(colaborativaTagMock.title)).toBeInTheDocument();
+			expect(screen.queryByText(/\+\d/)).not.toBeInTheDocument();
+		});
+	});
+
 	describe('Portada', () => {
 		it('should hand the imagery of the collection to the cover', async () => {
 			await render(CollectionTeaserCard, {
