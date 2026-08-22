@@ -13,6 +13,12 @@ export type OpsTaskDescriptor = {
 	readonly load: () => Promise<OpsTask>;
 };
 
+export type OpsCatalog = Readonly<Record<string, OpsTaskDescriptor>>;
+
+export const EXIT_CODES = Object.freeze({ success: 0, failure: 1 } as const);
+
+export type ExitCode = (typeof EXIT_CODES)[keyof typeof EXIT_CODES];
+
 export const OPS_TASKS = Object.freeze({
 	'reading-time:backfill': {
 		description: 'Persiste el reading time faltante de las obras (dry-run por defecto; --no-dry-run aplica)',
