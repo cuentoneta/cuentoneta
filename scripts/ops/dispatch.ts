@@ -16,9 +16,19 @@ export interface DispatchOutput {
 }
 
 export function resolveInvocation(tasks: OpsCatalog, argv: readonly string[]): Invocation {
-	const positional = argv.filter((arg) => arg !== NO_DRY_RUN_FLAG);
-	const [taskId, ...unexpected] = positional;
-	const [firstUnexpected] = unexpected;
+	let taskId: string | undefined;
+	let firstUnexpected: string | undefined;
+	let apply = false;
+
+	for (const arg of argv) {
+		if (arg === NO_DRY_RUN_FLAG) {
+			apply = true;
+		} else if (taskId === undefined) {
+			taskId = arg;
+		} else if (firstUnexpected === undefined) {
+			firstUnexpected = arg;
+		}
+	}
 
 	if (taskId === undefined) return { action: 'usage' };
 
@@ -27,11 +37,11 @@ export function resolveInvocation(tasks: OpsCatalog, argv: readonly string[]): I
 	if (!Object.hasOwn(tasks, taskId)) return { action: 'reject', reason: `Tarea desconocida: ${taskId}` };
 	if (firstUnexpected !== undefined) return { action: 'reject', reason: `Argumento desconocido: ${firstUnexpected}` };
 
-	return { action: 'execute', descriptor: tasks[taskId], args: { apply: argv.includes(NO_DRY_RUN_FLAG) } };
+	return { action: 'execute', descriptor: tasks[taskId], args: { apply } };
 }
 
 export function formatCatalog(tasks: OpsCatalog): readonly string[] {
-	const idWidth = Math.max(...Object.keys(tasks).map((id) => id.length));
+	const idWidth = Object.keys(tasks).reduce((max, id) => Math.max(max, id.length), 0);
 	return Object.entries(tasks).map(([id, task]) => `  ${id.padEnd(idWidth)}  ${task.description}`);
 }
 
