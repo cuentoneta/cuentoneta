@@ -33,6 +33,7 @@ describe('parseInvocation', () => {
 		expect(parseInvocation(['reading-time:backfill', '--no-dry-run'])).toEqual({
 			taskId: 'reading-time:backfill',
 			apply: true,
+			unknownArgs: [],
 		});
 	});
 
@@ -46,6 +47,20 @@ describe('parseInvocation', () => {
 
 	it('queda sin tarea cuando solo se pasan flags', () => {
 		expect(parseInvocation(['--no-dry-run']).taskId).toBeNull();
+	});
+
+	it('marca como desconocidos los argumentos que no son ni el id ni el flag', () => {
+		expect(parseInvocation(['reading-time:backfill', '--no-dry-run', 'extra', 'otro']).unknownArgs).toEqual([
+			'extra',
+			'otro',
+		]);
+	});
+
+	it('trata un flag mal tipeado como argumento desconocido, sin activar el modo aplicar', () => {
+		const parsed = parseInvocation(['assets:delete-unused', '--dry-run']);
+
+		expect(parsed.apply).toBe(false);
+		expect(parsed.unknownArgs).toEqual(['--dry-run']);
 	});
 });
 
@@ -86,6 +101,29 @@ describe('dispatch', () => {
 		await dispatch({ 'tarea:prueba': descriptor }, ['tarea:prueba'], output);
 
 		expect(run).toHaveBeenCalledWith({ apply: false });
+	});
+
+	it('acepta el flag antes del id', async () => {
+		const { run, descriptor } = stubTask();
+		const { output } = stubOutput();
+
+		const exitCode = await dispatch({ 'tarea:prueba': descriptor }, ['--no-dry-run', 'tarea:prueba'], output);
+
+		expect(exitCode).toBe(0);
+		expect(run).toHaveBeenCalledWith({ apply: true });
+	});
+
+	it('rechaza argumentos adicionales sin cargar la tarea', async () => {
+		const { run, load, descriptor } = stubTask();
+		const { logged, errors, output } = stubOutput();
+
+		const exitCode = await dispatch({ 'tarea:prueba': descriptor }, ['tarea:prueba', 'extra'], output);
+
+		expect(exitCode).toBe(1);
+		expect(load).not.toHaveBeenCalled();
+		expect(run).not.toHaveBeenCalled();
+		expect(errors.join('\n')).toContain('Argumento desconocido: extra');
+		expect(logged.join('\n')).toContain('tarea:prueba');
 	});
 
 	it('imprime el catálogo y termina bien cuando no hay tarea, sin cargar ninguna', async () => {
