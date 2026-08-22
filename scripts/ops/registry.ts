@@ -18,6 +18,10 @@ export const OPS_TASKS = Object.freeze({
 		description: 'Persiste el reading time faltante de las obras (dry-run por defecto; --no-dry-run aplica)',
 		load: () => import('./tasks/backfill-reading-time').then((m) => m.task),
 	},
+	'assets:delete-unused': {
+		description: 'Borra los assets de Sanity sin ninguna referencia (destructivo)',
+		load: () => import('./tasks/delete-unused-assets').then((m) => m.task),
+	},
 } as const satisfies Record<string, OpsTaskDescriptor>);
 
 export type OpsTaskId = keyof typeof OPS_TASKS;
