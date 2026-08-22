@@ -50,11 +50,11 @@ Corolario: esta migración **no exige publicar nada** — ni cuentos ni fichas d
 
 **Publicar el cuento no publica su obra.** Son documentos distintos. Al publicar un cuento más adelante hay que publicar también su obra, o aceptar que queda rezagada respecto del cuento. Automatizarlo —por webhook o por una migración de sincronización— es un trabajo aparte.
 
-**El backfill de tiempo de lectura no las alcanza.** `readingTimeBackfillCandidatesQuery` excluye borradores, así que `pnpm backfill:reading-time` no puebla estas obras. No rompe nada mientras estén en borrador: el repository deriva el tiempo cuando falta. Pero al publicar una conviene volver a correr el backfill para persistirlo.
+**El backfill de tiempo de lectura no las alcanza.** `readingTimeBackfillCandidatesQuery` excluye borradores, así que `pnpm ops reading-time:backfill` no puebla estas obras. No rompe nada mientras estén en borrador: el repository deriva el tiempo cuando falta. Pero al publicar una conviene volver a correr el backfill para persistirlo.
 
 ## Advertencias
 
-**`scripts/remove-all-unpublished-drafts.ts` borra todos los borradores del dataset.** Correrlo después de esta migración se lleva puestas las obras que creó, junto con los cuentos de origen.
+**`pnpm ops drafts:remove-unpublished` borra todos los borradores del dataset.** Correrlo después de esta migración se lleva puestas las obras que creó, junto con los cuentos de origen.
 
 **`development` se borra y reimporta** desde `production` por `sync-datasets.yml`: una corrida de prueba puede desaparecer en la sincronización siguiente. Conviene ejecutar la secuencia completa de una sentada.
 

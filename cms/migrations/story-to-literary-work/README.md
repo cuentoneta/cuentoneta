@@ -17,7 +17,7 @@ No modifica los cuentos: itera `story` y crea documentos al lado. La baja del sc
 | `review`                 | `editorialNote`                   | Campo **de documento**, no de sección. Se omite si la reseña está vacía   |
 | `publishedAt`            | `publishedAt`                     | Cae al `_createdAt` **del cuento** cuando falta (581 de 613 lo necesitan) |
 | `approximateReadingTime` | —                                 | **No se copia**: otro algoritmo de conteo                                 |
-| —                        | `readingTime`, `totalReadingTime` | **No se escriben**: los puebla `pnpm backfill:reading-time`               |
+| —                        | `readingTime`, `totalReadingTime` | **No se escriben**: los puebla `pnpm ops reading-time:backfill`           |
 
 El resto (`coverImage`, `tags`, `mediaSources`, `resources`, `badLanguage`, `originalPublication`) viaja sin transformar, y la clave se omite cuando el cuento no la tiene: las factories del dominio rechazan contenido vacío, así que un valor en blanco haría fallar la construcción del agregado al leerlo.
 
@@ -63,8 +63,8 @@ Repetir la corrida después, para probar la idempotencia. El contador de la CLI 
 ### 5. Poblar los tiempos de lectura
 
 ```bash
-pnpm backfill:reading-time                 # en seco
-pnpm backfill:reading-time --no-dry-run    # persiste
+pnpm ops reading-time:backfill                 # en seco
+pnpm ops reading-time:backfill --no-dry-run    # persiste
 ```
 
 ### 6. Verificar la lectura

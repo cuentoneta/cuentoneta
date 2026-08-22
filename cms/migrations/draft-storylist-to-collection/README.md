@@ -55,7 +55,7 @@ En el Studio esos dos van a aparecer como **cambios sin publicar que nadie hizo*
 
 ## Cuidado con el limpiador de borradores
 
-`scripts/remove-all-unpublished-drafts.ts` borra **todos** los borradores del dataset: correrlo después de esta migración se lleva puestas las colecciones que crea.
+`pnpm ops drafts:remove-unpublished` borra **todos** los borradores del dataset: correrlo después de esta migración se lleva puestas las colecciones que crea.
 
 ## Revertir
 
