@@ -15,9 +15,11 @@
  *   solo archivo. El hueco (exportado sin consumidor externo) requiere análisis
  *   cross-file y no se cubre acá.
  * - Instancias construidas (`new X()`, fábrica local, cadena fluida de
- *   métodos de dominio tipo `unified().use(...)`, `await`): están hoisteadas
- *   a propósito para evaluarse una vez; moverlas las reconstruiría por
- *   llamada. Una cadena de transformación pura de la stdlib
+ *   métodos de dominio tipo `unified().use(...)`, `await`), literales que
+ *   llevan una construcción adentro y métodos que mutan su receptor
+ *   (`sort`, `reverse`, …): están hoisteadas a propósito para evaluarse una
+ *   vez; moverlas las reconstruiría por llamada o re-mutaría su receptor.
+ *   Una cadena de transformación pura de la stdlib
  *   (`env.split(',').map(...)`), en cambio, sí se reporta: deriva datos.
  * - Destructuring (`const { a } = obj`): el id no es renombrable como bloque.
  */
@@ -56,6 +58,15 @@ const TRANSFORM_METHODS = new Set([
 	'toSorted',
 	'toReversed',
 ]);
+
+/**
+ * Métodos que mutan su receptor y devuelven la misma referencia. Mover una
+ * constante inicializada con ellos re-mutaría el valor original en cada
+ * llamada: se eximen igual que las instancias construidas, porque seguir el
+ * mensaje de la regla sería incorrecto. La derivación legítima usa sus
+ * contrapartidas puras (`toSorted`, `toReversed`, …), que sí se reportan.
+ */
+const MUTATING_METHODS = new Set(['sort', 'reverse', 'splice', 'fill', 'copyWithin']);
 
 /** Envoltorios que no cambian la naturaleza del valor: `as`, `satisfies` y `Object.freeze(...)` revelan lo de adentro. */
 function unwrapValue(node) {
@@ -129,14 +140,29 @@ function methodName(member) {
 
 /** ¿Hay una construcción (`new`/llamada) en algún punto del subárbol? */
 function containsConstruction(node) {
-	if (!node) {
+	if (!node || typeof node !== 'object') {
 		return false;
 	}
 	if (node.type === 'CallExpression' || node.type === 'NewExpression') {
 		return true;
 	}
-	for (const key of ['callee', 'object', 'left', 'right']) {
-		if (containsConstruction(node[key])) {
+	for (const key of [
+		'properties',
+		'elements',
+		'key',
+		'value',
+		'argument',
+		'callee',
+		'object',
+		'left',
+		'right',
+		'test',
+		'consequent',
+		'alternate',
+		'expressions',
+	]) {
+		const child = node[key];
+		if (Array.isArray(child) ? child.some(containsConstruction) : containsConstruction(child)) {
 			return true;
 		}
 	}
@@ -144,14 +170,18 @@ function containsConstruction(node) {
 }
 
 /**
- * El callee encadena un método de dominio sobre otra llamada: instancia
- * configurada. Las cadenas de transformación puras (solo `TRANSFORM_METHODS`
+ * El callee encadena un método de dominio sobre otra llamada, o un método que
+ * muta su receptor: instancia cuya re-construcción por llamada cambia el
+ * comportamiento. Las cadenas de transformación puras (solo `TRANSFORM_METHODS`
  * hasta su base) no califican: son derivación de datos.
  */
 function isConfiguredInstance(callee) {
 	let current = callee;
 	while (current?.type === 'MemberExpression') {
 		const method = methodName(current);
+		if (method !== null && MUTATING_METHODS.has(method)) {
+			return true;
+		}
 		if (!TRANSFORM_METHODS.has(method ?? '') && containsConstruction(current.object)) {
 			return true;
 		}
@@ -163,6 +193,12 @@ function isConfiguredInstance(callee) {
 /** El valor debajo de los envoltorios, clasificado como construcción deliberada o no. */
 function isDeliberatelyConstructed(value, moduleLevelNames) {
 	if (value.type === 'NewExpression' || value.type === 'AwaitExpression') {
+		return true;
+	}
+	// Un literal que lleva una construcción adentro se evalúa una vez a propósito:
+	// moverlo la reconstruiría por lectura, igual que si estuviera desnuda.
+	const isWrappingLiteral = value.type === 'ObjectExpression' || value.type === 'ArrayExpression';
+	if (isWrappingLiteral && containsConstruction(value)) {
 		return true;
 	}
 	if (value.type !== 'CallExpression') {

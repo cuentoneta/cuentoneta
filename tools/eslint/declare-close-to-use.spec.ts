@@ -41,6 +41,16 @@ ruleTester.run('declare-close-to-use', rule, {
 			code: `declare function unified(): { use(p: unknown): unknown };\ndeclare const remarkParse: unknown;\nconst pipeline = unified().use(remarkParse);\nfunction render(md: string) {\n\treturn pipeline;\n}\nrender('x');`,
 			filename: 'a.ts',
 		},
+		// Método que muta su receptor: moverla re-mutaría el original en cada llamada.
+		{
+			code: `const segments = ['b', 'a'];\nconst ordered = segments.reverse();\nfunction first() {\n\treturn ordered[0];\n}\nfirst();`,
+			filename: 'a.ts',
+		},
+		// Construcción envuelta en literal: misma exención que su equivalente desnudo.
+		{
+			code: `const patterns = Object.freeze({ slug: new RegExp('^[a-z]+$') });\nfunction matches(value: string) {\n\treturn patterns.slug.test(value);\n}\nmatches('a');`,
+			filename: 'a.ts',
+		},
 		// Lecturas solo a nivel de módulo (una constante alimentando otra): moverlas rompería su consumo.
 		{
 			code: `const base = { limit: 2 };\nconst config = { ...base, extra: 1 };\nconsole.log(config.limit);`,
