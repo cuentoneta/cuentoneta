@@ -9,6 +9,7 @@ import requireEnvironmentProviders from './tools/eslint/require-environment-prov
 import storybookSourceState from './tools/eslint/storybook-source-state.js';
 import noApplyInHostStyles from './tools/eslint/no-apply-in-host-styles.js';
 import componentConfigInClass from './tools/eslint/component-config-in-class.js';
+import declareCloseToUse from './tools/eslint/declare-close-to-use.js';
 import zIndexScale from './tools/eslint/z-index-scale.js';
 import noFullZodInBrowser from './tools/eslint/no-full-zod-in-browser.js';
 
@@ -357,6 +358,22 @@ export default [
 		},
 		rules: {
 			'custom-component-config/component-config-in-class': 'error',
+		},
+	},
+	{
+		// Familia de component-config-in-class por el eje complementario: aquella mira tipo de archivo y
+		// forma del valor, esta mira el grafo de referencias, y entre las dos cubren specs, stories,
+		// mocks y scripts. Arranca en `warn` porque la deuda preexistente (~75 hallazgos) se quema
+		// aparte; subir a `error` es posterior al burn-down. Va como regla propia y no dentro de
+		// commonRestrictedSyntax porque su scope (src + scripts) coincide con bloques que ya declaran
+		// esa regla de arrays: fusionarla obligaría a recomponer arrays ajenos.
+		name: 'declare-close-to-use',
+		files: ['src/**/*.ts', 'scripts/**/*.ts'],
+		plugins: {
+			'custom-declare-close': { rules: { 'declare-close-to-use': declareCloseToUse } },
+		},
+		rules: {
+			'custom-declare-close/declare-close-to-use': 'warn',
 		},
 	},
 	{
