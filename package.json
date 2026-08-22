@@ -17,7 +17,7 @@
 		"dev": "nx run @cuentoneta/app:serve:development",
 		"build": "nx run @cuentoneta/app:build:production --skip-nx-cache",
 		"config": "node --import tsx ./scripts/set-environment.ts",
-		"backfill:reading-time": "node --import tsx --env-file=.env ./scripts/backfill-reading-time.ts",
+		"ops": "node --import tsx --env-file-if-exists=.env ./scripts/ops/run.ts",
 		"delete-unused-assets": "node --import tsx --env-file=.env ./scripts/delete-unused-assets.ts",
 		"storybook": "nx run @cuentoneta/app:storybook",
 		"storybook:build": "nx run @cuentoneta/app:build-storybook",
