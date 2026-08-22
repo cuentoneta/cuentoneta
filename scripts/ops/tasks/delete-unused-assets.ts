@@ -6,6 +6,7 @@
  */
 import { client } from '../../../src/api/_helpers/sanity-connector';
 import { Transaction } from '@sanity/client';
+import { isInsufficientPermissionsError } from './delete-unused-assets.helpers';
 import type { OpsTask } from '../registry';
 
 const UNUSED_ASSETS_QUERY = `
@@ -31,7 +32,7 @@ export const task: OpsTask = {
 				.commit({ visibility: 'async' });
 			console.log('Done!');
 		} catch (error) {
-			if (error instanceof Error && error.message.includes('Insufficient permissions')) {
+			if (isInsufficientPermissionsError(error)) {
 				throw new Error(`${error.message} ¿Falta SANITY_STUDIO_TOKEN?`, { cause: error });
 			}
 			throw error;
