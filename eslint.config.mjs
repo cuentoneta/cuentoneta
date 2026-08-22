@@ -363,8 +363,9 @@ export default [
 	{
 		// Familia de component-config-in-class por el eje complementario: aquella mira tipo de archivo y
 		// forma del valor, esta mira el grafo de referencias, y entre las dos cubren specs, stories,
-		// mocks y scripts. Arranca en `warn` porque la deuda preexistente (~75 hallazgos) se quema
-		// aparte; subir a `error` es posterior al burn-down. Va como regla propia y no dentro de
+		// mocks y scripts. Arranca en `warn` porque la deuda preexistente se quema
+		// aparte (la línea de base medida vive en el cuerpo del PR); subir a `error`
+		// es posterior al burn-down. Va como regla propia y no dentro de
 		// commonRestrictedSyntax porque su scope (src + scripts) coincide con bloques que ya declaran
 		// esa regla de arrays: fusionarla obligaría a recomponer arrays ajenos.
 		name: 'declare-close-to-use',
