@@ -5,7 +5,7 @@ import { OPS_TASKS, type OpsTaskArgs, type OpsTaskDescriptor } from './registry'
 type TaskRun = (args: OpsTaskArgs) => Promise<void>;
 
 function stubTask(description = 'Descripción de prueba') {
-	const run = fn<TaskRun>(async () => {});
+	const run = fn<TaskRun>(() => Promise.resolve());
 	const load = fn(() => Promise.resolve({ run }));
 	const descriptor: OpsTaskDescriptor = { description, load };
 	return { run, load, descriptor };
