@@ -23,11 +23,13 @@ export function resolveInvocation(tasks: OpsCatalog, argv: readonly string[]): I
 	for (const arg of argv) {
 		if (arg === NO_DRY_RUN_FLAG) {
 			apply = true;
-		} else if (taskId === undefined) {
-			taskId = arg;
-		} else if (firstUnexpected === undefined) {
-			firstUnexpected = arg;
+			continue;
 		}
+		if (taskId === undefined) {
+			taskId = arg;
+			continue;
+		}
+		firstUnexpected ??= arg;
 	}
 
 	if (taskId === undefined) return { action: 'usage' };
@@ -52,22 +54,22 @@ function usageText(tasks: OpsCatalog): string {
 export async function dispatch(tasks: OpsCatalog, argv: readonly string[], output: DispatchOutput): Promise<ExitCode> {
 	const invocation = resolveInvocation(tasks, argv);
 
-	if (invocation.action === 'usage') {
-		output.log(usageText(tasks));
-		return EXIT_CODES.success;
-	}
-	if (invocation.action === 'reject') {
-		output.error(invocation.reason);
-		output.log(usageText(tasks));
-		return EXIT_CODES.failure;
-	}
-
-	try {
-		const task = await invocation.descriptor.load();
-		await task.run(invocation.args);
-		return EXIT_CODES.success;
-	} catch (error) {
-		output.error(error);
-		return EXIT_CODES.failure;
+	switch (invocation.action) {
+		case 'usage':
+			output.log(usageText(tasks));
+			return EXIT_CODES.success;
+		case 'reject':
+			output.error(invocation.reason);
+			output.log(usageText(tasks));
+			return EXIT_CODES.failure;
+		case 'execute':
+			try {
+				const task = await invocation.descriptor.load();
+				await task.run(invocation.args);
+				return EXIT_CODES.success;
+			} catch (error) {
+				output.error(error);
+				return EXIT_CODES.failure;
+			}
 	}
 }
