@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/angular';
 
 import { EditorialTextBlockComponent } from './editorial-text-block.component';
-import { Epigraph } from '@models/story.model';
+import type { Epigraph } from '@models/story.model';
 import { epigraphMock } from '@mocks/epigraph-mock';
 
 const epigraphWithoutReference: Epigraph = { ...epigraphMock, reference: [] };

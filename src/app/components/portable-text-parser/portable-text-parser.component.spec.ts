@@ -1,5 +1,6 @@
 import { PortableTextParserComponent } from './portable-text-parser.component';
-import { render, RenderResult, screen, within } from '@testing-library/angular';
+import type { RenderResult } from '@testing-library/angular';
+import { render, screen, within } from '@testing-library/angular';
 import { portableTextWithListsMock, simpleOrderedListMock } from '@mocks/portable-text-with-lists.mock';
 import type { TextBlockContent } from '@models/block-content.model';
 

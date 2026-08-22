@@ -1,4 +1,5 @@
-import { createClient, SanityClient } from '@sanity/client';
+import type { SanityClient } from '@sanity/client';
+import { createClient } from '@sanity/client';
 import { environment } from './environment';
 
 export const client: SanityClient = createClient({

@@ -21,7 +21,8 @@ import { createSectionTitle } from '@models/section-title.model';
 import { createSlug } from '@models/slug.model';
 import { collectionDtoSchema, collectionTeaserListDtoSchema, type CollectionDto } from '@models/collection.dto';
 import type { LiteraryWorkTeaserDto } from '@models/literary-work.dto';
-import { ApiUrl, Endpoints } from './endpoints';
+import type { ApiUrl } from './endpoints';
+import { Endpoints } from './endpoints';
 
 // El listado devuelve teasers: la vista de catálogo muestra cada colección sin sus obras.
 export interface CollectionApi {

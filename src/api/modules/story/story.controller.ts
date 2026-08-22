@@ -6,7 +6,7 @@ import { zValidator } from '@hono/zod-validator';
 import { mostReadStorySchema, storyControllerSchema } from './story.schema';
 import { slugSchema } from '@schemas/common.schemas';
 
-import { StoriesByAuthorSlugArgs } from '../../interfaces/queryArgs';
+import type { StoriesByAuthorSlugArgs } from '../../interfaces/queryArgs';
 import {
 	getMostReadStoryNavigationTeasers,
 	getStories,

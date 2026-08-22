@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/angular-vite';
+import type { Meta, StoryObj } from '@storybook/angular-vite';
 import { YoutubeVideoWidgetComponent } from './youtube-video-widget.component';
 import { onoffYouTubeVideosMock } from '@mocks/onoff-media.mock';
 

@@ -1,5 +1,5 @@
 import { Component, input } from '@angular/core';
-import { StorylistTeaser } from '@models/storylist.model';
+import type { StorylistTeaser } from '@models/storylist.model';
 import { StorylistTeaserCard } from '@components/storylist-teaser-card/storylist-teaser-card';
 import { CollectionTeaserCardSkeletonComponent } from '@components/collection-teaser-card/collection-teaser-card-skeleton';
 

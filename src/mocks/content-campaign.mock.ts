@@ -1,4 +1,4 @@
-import { ContentCampaign } from '@models/content-campaign.model';
+import type { ContentCampaign } from '@models/content-campaign.model';
 import { onoffImageAssets } from './onoff-image-assets.mock';
 export const contentCampaignMock: ContentCampaign[] = [
 	{

@@ -1,4 +1,4 @@
-import { Epigraph } from '@models/story.model';
+import type { Epigraph } from '@models/story.model';
 
 export const epigraphMock: Epigraph = {
 	text: [

@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core';
 import { TagComponent } from '@components/tag/tag.component';
-import { Storylist } from '@models/storylist.model';
+import type { Storylist } from '@models/storylist.model';
 import { StorylistTitleSkeleton } from './storylist-title-skeleton';
 
 @Component({

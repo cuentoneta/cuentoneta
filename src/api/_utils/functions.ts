@@ -8,22 +8,24 @@ import { mapImagery } from './storylist-imagery.functions';
 // Tipos de Sanity
 
 // Sanity utils
-import { createImageUrlBuilder, SanityImageSource } from '@sanity/image-url';
+import type { SanityImageSource } from '@sanity/image-url';
+import { createImageUrlBuilder } from '@sanity/image-url';
 
 // Modelos
-import { Author, AuthorProfile, AuthorTeaser } from '@models/author.model';
-import { ContentCampaign, viewportElementSizes } from '@models/content-campaign.model';
-import { LandingPageContent, RotatingContent } from '@models/landing-page-content.model';
-import { StorylistTeaser } from '@models/storylist.model';
-import { Resource } from '@models/resource.model';
-import { Story, StoryNavigationTeaserWithAuthor, StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
-import { Tag } from '@models/tag.model';
-import { TextBlockContent } from '@models/block-content.model';
+import type { Author, AuthorProfile, AuthorTeaser } from '@models/author.model';
+import type { ContentCampaign } from '@models/content-campaign.model';
+import { viewportElementSizes } from '@models/content-campaign.model';
+import type { LandingPageContent, RotatingContent } from '@models/landing-page-content.model';
+import type { StorylistTeaser } from '@models/storylist.model';
+import type { Resource } from '@models/resource.model';
+import type { Story, StoryNavigationTeaserWithAuthor, StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
+import type { Tag } from '@models/tag.model';
+import type { TextBlockContent } from '@models/block-content.model';
 import { createMarkdown } from '@models/markdown.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 
 // Tipos de Sanity
-import {
+import type {
 	AuthorBySlugQueryResult,
 	AuthorsQueryResult,
 	BlockContent,
@@ -39,7 +41,7 @@ import {
 } from '@sanity-types';
 
 // Tipos de datos
-import { DateString, IsoDateTime } from '@utils/date.utils';
+import type { DateString, IsoDateTime } from '@utils/date.utils';
 
 // Unwrapper de tipos definidos en Array<...>
 type UnwrapArray<A> = A extends unknown[] ? UnwrapArray<A[number]> : A;

@@ -1,7 +1,7 @@
-import { StoryTeaserWithAuthor } from './story.model';
-import { Tag } from '@models/tag.model';
-import { TextBlockContent } from '@models/block-content.model';
-import { Media } from '@models/media.model';
+import type { StoryTeaserWithAuthor } from './story.model';
+import type { Tag } from '@models/tag.model';
+import type { TextBlockContent } from '@models/block-content.model';
+import type { Media } from '@models/media.model';
 
 export interface StorylistTab {
 	title: string;

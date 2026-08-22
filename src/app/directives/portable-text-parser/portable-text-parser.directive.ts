@@ -1,5 +1,5 @@
 import { Directive, ElementRef, Renderer2, effect, input, inject } from '@angular/core';
-import { TextBlockContent } from '@models/block-content.model';
+import type { TextBlockContent } from '@models/block-content.model';
 
 @Directive({
 	selector: '[cuentonetaPortableText]',

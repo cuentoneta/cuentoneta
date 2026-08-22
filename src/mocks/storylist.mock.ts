@@ -1,4 +1,4 @@
-import { Storylist, StorylistTeaser } from '@models/storylist.model';
+import type { Storylist, StorylistTeaser } from '@models/storylist.model';
 import { colaborativaTagMock } from './onoff-tags.mock';
 import { onoffImageAssets } from './onoff-image-assets.mock';
 

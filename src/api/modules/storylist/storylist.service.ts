@@ -1,8 +1,8 @@
 // Interfaces
-import { Storylist, StorylistTeaser } from '@models/storylist.model';
+import type { Storylist, StorylistTeaser } from '@models/storylist.model';
 
 // Funciones de repository
-import { StoryListBySlugArgs } from '../../interfaces/queryArgs';
+import type { StoryListBySlugArgs } from '../../interfaces/queryArgs';
 import { fetchAllStorylistTeasers, fetchStorylistBySlug } from './storylist.repository';
 
 export async function getAllStorylistTeasers(): Promise<StorylistTeaser[]> {

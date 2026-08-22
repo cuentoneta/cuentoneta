@@ -1,7 +1,8 @@
 import { Component, input } from '@angular/core';
 
 import { ShareButtonComponent } from '../share-button/share-button.component';
-import { FacebookPlatform, SharingPlatform, TwitterPlatform, WhatsappPlatform } from './sharing-platform';
+import type { SharingPlatform } from './sharing-platform';
+import { FacebookPlatform, TwitterPlatform, WhatsappPlatform } from './sharing-platform';
 
 @Component({
 	selector: 'cuentoneta-share-content',

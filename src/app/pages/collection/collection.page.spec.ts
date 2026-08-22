@@ -2,7 +2,8 @@
 import { render, screen, within } from '@testing-library/angular';
 import { provideRouter } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Observable, of, throwError } from 'rxjs';
+import type { Observable } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 // Página
 import CollectionPage from './collection.page';

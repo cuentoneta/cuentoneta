@@ -8,7 +8,7 @@ import {
 } from './content.repository';
 
 // Modelos
-import { LandingPageContent, RotatingContent } from '@models/landing-page-content.model';
+import type { LandingPageContent, RotatingContent } from '@models/landing-page-content.model';
 
 // Utils
 import { addWeeks } from 'date-fns';

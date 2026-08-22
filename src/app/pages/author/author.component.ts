@@ -1,14 +1,16 @@
 // Core
 import { Component, computed, forwardRef, inject, input } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
-import { Router, UrlTree } from '@angular/router';
-import { map, Observable } from 'rxjs';
+import type { UrlTree } from '@angular/router';
+import { Router } from '@angular/router';
+import type { Observable } from 'rxjs';
+import { map } from 'rxjs';
 
 // Routing
 import { AppRoutes } from '../../app.routes';
 
 // Modelos
-import { StoryTeaser } from '@models/story.model';
+import type { StoryTeaser } from '@models/story.model';
 
 // SEO
 import { AuthorMetaTagsDirective } from './author-meta-tags.directive';

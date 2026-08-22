@@ -1,6 +1,6 @@
 import { Component, computed, input } from '@angular/core';
 
-import { TextBlockContent } from '@models/block-content.model';
+import type { TextBlockContent } from '@models/block-content.model';
 import { PortableTextDirective } from '../../directives/portable-text-parser/portable-text-parser.directive';
 
 type TextBlockType = 'regular' | 'heading' | 'ordered-list' | 'unordered-list';

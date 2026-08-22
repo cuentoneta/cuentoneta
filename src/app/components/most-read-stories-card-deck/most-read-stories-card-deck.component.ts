@@ -2,7 +2,7 @@ import { Component, input } from '@angular/core';
 
 import { StoryCardTeaserComponent } from '../story-card-teaser/story-card-teaser.component';
 import { StoryCardTeaserSkeletonComponent } from '../story-card-teaser/story-card-teaser-skeleton.component';
-import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
+import type { StoryNavigationTeaserWithAuthor } from '@models/story.model';
 
 @Component({
 	selector: 'cuentoneta-most-read-stories-card-deck',

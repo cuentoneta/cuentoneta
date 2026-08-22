@@ -2,8 +2,8 @@
 import { client } from '../../_helpers/sanity-connector';
 
 // Modelos
-import { Storylist, StorylistTeaser } from '@models/storylist.model';
-import { StoryTeaserWithAuthor } from '@models/story.model';
+import type { Storylist, StorylistTeaser } from '@models/storylist.model';
+import type { StoryTeaserWithAuthor } from '@models/story.model';
 
 // Queries
 import { storylistQuery, storylistTeasersQuery } from '@queries/storylist.query';

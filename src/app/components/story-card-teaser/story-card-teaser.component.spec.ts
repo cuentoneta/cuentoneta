@@ -1,9 +1,10 @@
 import { StoryCardTeaserComponent } from './story-card-teaser.component';
-import { DefaultUrlSerializer, UrlTree } from '@angular/router';
+import type { UrlTree } from '@angular/router';
+import { DefaultUrlSerializer } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
 import { storyNavigationTeaserWithAuthorMock, storyTeaserMock } from '@mocks/story.mock';
 import { authorTeaserMock } from '@mocks/author.mock';
-import { StoryTeaserWithAuthor } from '@models/story.model';
+import type { StoryTeaserWithAuthor } from '@models/story.model';
 
 describe('StoryCardTeaserComponent', () => {
 	const storyUrl = '/story/el-espejo-del-tiempo?navigation=author&navigationSlug=francois-onoff';

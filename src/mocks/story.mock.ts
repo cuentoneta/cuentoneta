@@ -1,5 +1,5 @@
 import { onoffMediaMock } from './onoff-media.mock';
-import { Story, StoryNavigationTeaserWithAuthor, StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
+import type { Story, StoryNavigationTeaserWithAuthor, StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
 import { authorMock, authorTeaserMock } from './author.mock';
 
 export const storyMock: Story = {

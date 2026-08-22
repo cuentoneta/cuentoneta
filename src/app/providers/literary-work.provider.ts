@@ -15,7 +15,8 @@ import { createReadingTime } from '@models/reading-time.model';
 import { createSanitizedHtml } from '@models/sanitized-html.model';
 import { createIsoDateTime } from '@utils/date.utils';
 import { literaryWorkDtoSchema, type LiteraryWorkDto, type LiteraryWorkSectionDto } from '@models/literary-work.dto';
-import { ApiUrl, Endpoints } from './endpoints';
+import type { ApiUrl } from './endpoints';
+import { Endpoints } from './endpoints';
 
 export interface LiteraryWorkApi {
 	getBySlug(slug: string): Observable<LiteraryWork>;

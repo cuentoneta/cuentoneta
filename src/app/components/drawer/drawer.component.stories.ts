@@ -1,6 +1,8 @@
-import { moduleMetadata, Meta, StoryObj } from '@storybook/angular-vite';
+import type { Meta, StoryObj } from '@storybook/angular-vite';
+import { moduleMetadata } from '@storybook/angular-vite';
 
-import { DrawerComponent, DrawerDirection } from './drawer.component';
+import type { DrawerDirection } from './drawer.component';
+import { DrawerComponent } from './drawer.component';
 import { DrawerHeaderDirective } from './drawer-header.directive';
 import { DrawerFooterDirective } from './drawer-footer.directive';
 import { CoverImageComponent } from '@components/cover-image/cover-image.component';

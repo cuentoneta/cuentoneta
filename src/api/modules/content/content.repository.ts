@@ -8,13 +8,13 @@ import {
 	latestLandingPageReferencesQuery,
 	rotatingContentQuery,
 } from '@queries/content.query';
-import {
+import type {
 	LandingPageContentQueryResult,
 	LandingPageListQueryResult,
 	LatestLandingPageReferencesQueryResult,
 } from '@sanity-types';
 import { mapLandingPageContent, mapStoryNavigationTeaserWithAuthor } from '../../_utils/functions';
-import { LandingPageContent, RotatingContent } from '@models/landing-page-content.model';
+import type { LandingPageContent, RotatingContent } from '@models/landing-page-content.model';
 
 export async function fetchLandingPageContent(slug: string): Promise<LandingPageContentQueryResult> {
 	return client.fetch(landingPageContentQuery, { slug });

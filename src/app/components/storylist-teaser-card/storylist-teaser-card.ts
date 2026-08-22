@@ -6,7 +6,7 @@ import { RouterLink } from '@angular/router';
 import { AppRoutes } from '../../app.routes';
 
 // Models
-import { StorylistTeaser } from '@models/storylist.model';
+import type { StorylistTeaser } from '@models/storylist.model';
 
 // Components
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';

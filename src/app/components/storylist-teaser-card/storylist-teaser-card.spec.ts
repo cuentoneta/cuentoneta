@@ -9,7 +9,7 @@ import { StorylistTeaserCard } from './storylist-teaser-card';
 import { storylistTeaserRepresentativeMock, storylistTeaserSampleMock } from '@mocks/storylist.mock';
 
 // Modelos
-import { StorylistTeaser } from '@models/storylist.model';
+import type { StorylistTeaser } from '@models/storylist.model';
 
 // Utilidades de test
 import { clearAllMocks } from '@test-utils';

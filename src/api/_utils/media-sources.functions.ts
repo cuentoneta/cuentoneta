@@ -1,5 +1,5 @@
 // Tipos de Sanity
-import {
+import type {
 	CollectionBySlugQueryResult,
 	LiteraryWorkBySlugQueryResult,
 	StoryBySlugQueryResult,
@@ -7,7 +7,7 @@ import {
 } from '@sanity-types';
 
 // Modelos
-import {
+import type {
 	AudioRecording,
 	Media,
 	MediaTeaser,

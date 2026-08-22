@@ -1,5 +1,6 @@
 import { LiteraryWorkCardTeaserComponent } from './literary-work-card-teaser.component';
-import { DefaultUrlSerializer, UrlTree } from '@angular/router';
+import type { UrlTree } from '@angular/router';
+import { DefaultUrlSerializer } from '@angular/router';
 import { render, screen, within } from '@testing-library/angular';
 import {
 	onoffLiteraryWorkTeasersMock,

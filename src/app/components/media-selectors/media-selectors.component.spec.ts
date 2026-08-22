@@ -2,7 +2,7 @@ import { fn } from '@test-utils';
 import { MediaSelectorsComponent } from './media-selectors.component';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
-import { MediaTeaser } from '@models/media.model';
+import type { MediaTeaser } from '@models/media.model';
 import { onoffSpotifyPodcastEpisodesMock, onoffYouTubeVideosMock, toMediaTeaser } from '@mocks/onoff-media.mock';
 
 describe('MediaSelectorsComponent', () => {

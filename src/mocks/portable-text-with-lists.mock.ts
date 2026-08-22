@@ -1,4 +1,4 @@
-import { TextBlockContent } from '@models/block-content.model';
+import type { TextBlockContent } from '@models/block-content.model';
 
 // Mock de Portable Text con contenido de listas
 // Contiene texto con párrafos, listas sin ordenar (bullet) y listas ordenadas (number)

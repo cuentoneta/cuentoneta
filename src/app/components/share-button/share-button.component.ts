@@ -7,7 +7,7 @@ import {
 	inject,
 	input,
 } from '@angular/core';
-import { SharingPlatform } from '../share-content/sharing-platform';
+import type { SharingPlatform } from '../share-content/sharing-platform';
 import { TooltipDirective } from '../../directives/tooltip.directive';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { NgComponentOutlet } from '@angular/common';

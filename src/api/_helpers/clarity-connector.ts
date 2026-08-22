@@ -1,5 +1,5 @@
 import { environment } from './environment';
-import { ClarityApiResponse } from '../_utils/clarity.utils';
+import type { ClarityApiResponse } from '../_utils/clarity.utils';
 
 export const fetchClarityData = async (): Promise<ClarityApiResponse> => {
 	const response = await fetch('https://www.clarity.ms/export-data/api/v1/project-live-insights', {

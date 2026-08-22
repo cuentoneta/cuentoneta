@@ -1,6 +1,6 @@
-import { StorylistTeaser } from '@models/storylist.model';
-import { ContentCampaign } from '@models/content-campaign.model';
-import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
+import type { StorylistTeaser } from '@models/storylist.model';
+import type { ContentCampaign } from '@models/content-campaign.model';
+import type { StoryNavigationTeaserWithAuthor } from '@models/story.model';
 
 export interface LandingPageContent {
 	_id: string;

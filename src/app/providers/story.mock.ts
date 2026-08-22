@@ -1,9 +1,11 @@
 // Core
-import { EnvironmentProviders, makeEnvironmentProviders } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import type { EnvironmentProviders } from '@angular/core';
+import { makeEnvironmentProviders } from '@angular/core';
+import type { Observable } from 'rxjs';
+import { of } from 'rxjs';
 
 // Models
-import { Story, StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
+import type { Story, StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
 import { storyMock, storyTeaserMock, storyTeaserWithAuthorMock } from '@mocks/story.mock';
 import { StoryApi } from './story.provider';
 

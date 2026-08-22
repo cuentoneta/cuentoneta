@@ -12,7 +12,7 @@ import { CollectionTeaserCardSkeletonComponent } from '@components/collection-te
 import { storylistTeaserRepresentativeMock } from '@mocks/storylist.mock';
 
 // Modelos
-import { StorylistTeaser } from '@models/storylist.model';
+import type { StorylistTeaser } from '@models/storylist.model';
 
 // Función auxiliar para generar múltiples teasers a partir del mock existente
 function generateTeaserMocks(count: number): StorylistTeaser[] {

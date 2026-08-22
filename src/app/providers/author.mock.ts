@@ -1,9 +1,11 @@
 // Core
-import { EnvironmentProviders, makeEnvironmentProviders } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import type { EnvironmentProviders } from '@angular/core';
+import { makeEnvironmentProviders } from '@angular/core';
+import type { Observable } from 'rxjs';
+import { of } from 'rxjs';
 
 // Models
-import { AuthorProfile, AuthorTeaser } from '@models/author.model';
+import type { AuthorProfile, AuthorTeaser } from '@models/author.model';
 import { authorMock, authorTeaserMock } from '@mocks/author.mock';
 import { AuthorApi } from './author.provider';
 

@@ -12,11 +12,11 @@ import {
 } from '../../_utils/functions';
 
 // Modelos
-import { Story, StoryNavigationTeaser, StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
+import type { Story, StoryNavigationTeaser, StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
 
 // Interfaces
-import { RotatingContent } from '@models/landing-page-content.model';
-import { StoriesByAuthorSlugArgs } from '../../interfaces/queryArgs';
+import type { RotatingContent } from '@models/landing-page-content.model';
+import type { StoriesByAuthorSlugArgs } from '../../interfaces/queryArgs';
 
 // Servicios
 import { getLandingPageContent, getRotatingContent } from '../content/content.service';

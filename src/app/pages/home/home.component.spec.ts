@@ -5,7 +5,7 @@ import { provideRouter } from '@angular/router';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { provideContentApiMock } from '../../providers/content.mock';
 import { Component, input } from '@angular/core';
-import { Storylist } from '@models/storylist.model';
+import type { Storylist } from '@models/storylist.model';
 
 describe.skip('HomeComponent', () => {
 	const setup = async () => {

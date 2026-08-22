@@ -391,6 +391,16 @@ export default [
 		},
 	},
 	{
+		// El alcance es todo `src/`, no solo el catálogo de stories donde se midió la deuda: la convención
+		// de imports type-only (ver typescript.md) vale para cada archivo, y declararla acá hace que el
+		// próximo archivo nazca cumpliéndola en vez de depender del recuerdo de quien lo escribe.
+		name: 'consistent-type-imports',
+		files: ['src/**/*.ts'],
+		rules: {
+			'@typescript-eslint/consistent-type-imports': 'error',
+		},
+	},
+	{
 		// projectService auto-detecta el tsconfig de cada archivo; el parser ya lo fija el preset de nx.
 		name: 'typed-linting',
 		files: ['src/**/*.ts'],

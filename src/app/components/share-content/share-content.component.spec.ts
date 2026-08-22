@@ -1,4 +1,5 @@
-import { render, screen, RenderResult } from '@testing-library/angular';
+import type { RenderResult } from '@testing-library/angular';
+import { render, screen } from '@testing-library/angular';
 import { ShareContentComponent } from './share-content.component';
 
 describe('ShareContentComponent', () => {

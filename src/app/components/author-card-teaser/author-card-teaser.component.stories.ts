@@ -1,4 +1,5 @@
-import { argsToTemplate, componentWrapperDecorator, Meta, moduleMetadata, StoryObj } from '@storybook/angular-vite';
+import type { Meta, StoryObj } from '@storybook/angular-vite';
+import { argsToTemplate, componentWrapperDecorator, moduleMetadata } from '@storybook/angular-vite';
 
 import { AuthorCardTeaserComponent } from './author-card-teaser.component';
 import { AuthorCardTeaserSkeletonComponent } from './author-card-teaser-skeleton.component';

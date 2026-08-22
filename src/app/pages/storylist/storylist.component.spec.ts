@@ -9,7 +9,7 @@ import { render } from '@testing-library/angular';
 import { provideMock } from '@testing-library/angular/jest-utils';
 
 // Models
-import { Storylist } from '@models/storylist.model';
+import type { Storylist } from '@models/storylist.model';
 
 // Directives
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';

@@ -1,6 +1,6 @@
 import { Component, computed, input } from '@angular/core';
 
-import { Epigraph } from '@models/story.model';
+import type { Epigraph } from '@models/story.model';
 import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
 
 export type EditorialTextBlockVariant = 'note' | 'highlight';
