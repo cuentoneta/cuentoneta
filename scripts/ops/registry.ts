@@ -22,6 +22,10 @@ export const OPS_TASKS = Object.freeze({
 		description: 'Borra los assets de Sanity sin ninguna referencia (destructivo)',
 		load: () => import('./tasks/delete-unused-assets').then((m) => m.task),
 	},
+	'drafts:remove-unpublished': {
+		description: 'Borra TODOS los borradores no publicados de Sanity (destructivo)',
+		load: () => import('./tasks/remove-unpublished-drafts').then((m) => m.task),
+	},
 } as const satisfies Record<string, OpsTaskDescriptor>);
 
 export type OpsTaskId = keyof typeof OPS_TASKS;
