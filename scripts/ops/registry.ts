@@ -27,5 +27,3 @@ export const OPS_TASKS = Object.freeze({
 		load: () => import('./tasks/remove-unpublished-drafts').then((m) => m.task),
 	},
 } as const satisfies Record<string, OpsTaskDescriptor>);
-
-export type OpsTaskId = keyof typeof OPS_TASKS;
