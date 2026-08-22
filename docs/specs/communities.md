@@ -2574,7 +2574,7 @@ const routes: Routes = [
 **Ubicación:** `src/app/providers/community.service.ts`
 
 ```typescript
-@Injectable({ providedIn: 'root' })
+@Service()
 export class CommunityService {
 	private http = inject(HttpClient);
 	private url = `${environment.apiUrl}/api/community`;
@@ -2601,7 +2601,7 @@ export class CommunityService {
 **Ubicación:** `src/app/providers/event.service.ts`
 
 ```typescript
-@Injectable({ providedIn: 'root' })
+@Service()
 export class EventService {
 	private http = inject(HttpClient);
 	private url = `${environment.apiUrl}/api/event`;
@@ -2618,7 +2618,7 @@ export class EventService {
 **Ubicación:** `src/app/providers/blog-entry.service.ts`
 
 ```typescript
-@Injectable({ providedIn: 'root' })
+@Service()
 export class BlogEntryService {
 	private http = inject(HttpClient);
 	private url = `${environment.apiUrl}/api/blog`;
@@ -2636,7 +2636,7 @@ export class BlogEntryService {
 **Ubicación:** `src/app/providers/contest.service.ts`
 
 ```typescript
-@Injectable({ providedIn: 'root' })
+@Service()
 export class ContestService {
 	private http = inject(HttpClient);
 	private url = `${environment.apiUrl}/api/contest`;
