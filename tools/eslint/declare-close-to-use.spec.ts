@@ -130,5 +130,11 @@ ruleTester.run('declare-close-to-use', rule, {
 			filename: 'a.ts',
 			errors: [{ messageId: 'movable' }],
 		},
+		// Llamada diferida dentro del cuerpo de una arrow: no corre al evaluar el literal, así que es dato movible.
+		{
+			code: `const api = { load: (id: string) => client.fetch(id) };\nfunction use() {\n\treturn api.load('1');\n}\nuse();`,
+			filename: 'a.ts',
+			errors: [{ messageId: 'movable' }],
+		},
 	],
 });
