@@ -2,27 +2,7 @@ import { argsToTemplate, Meta, moduleMetadata, StoryObj } from '@storybook/angul
 
 import { CollectionTeasersDeck } from './collection-teasers-deck';
 import { CollectionTeaserCardSkeletonComponent } from '@components/collection-teaser-card/collection-teaser-card-skeleton';
-import { onoffCollectionTeasersMock } from '@mocks/onoff-collections.mock';
-import { createCollectionTeaser, type CollectionTeaser } from '@models/collection.model';
-
-// El agregado de dominio está congelado: los teasers adicionales salen de la factory del modelo,
-// no de un spread, para no saltear las invariantes que ella hace cumplir.
-function teasersOfLength(count: number): CollectionTeaser[] {
-	const [base] = onoffCollectionTeasersMock;
-	return Array.from({ length: count }, (_, index) =>
-		createCollectionTeaser({
-			_id: `${base._id}-${index + 1}`,
-			slug: `${base.slug}-${index + 1}`,
-			title: `Colección ${index + 1}`,
-			description: base.description,
-			imagery: base.imagery,
-			tags: base.tags,
-			config: base.config,
-			mediaSources: base.mediaSources,
-			count: base.count,
-		}),
-	);
-}
+import { onoffCollectionTeasersOfLength } from '@mocks/onoff-collections.mock';
 
 const meta: Meta<CollectionTeasersDeck> = {
 	component: CollectionTeasersDeck,
@@ -57,7 +37,7 @@ export const Primary: StoryObj<CollectionTeasersDeck> = {
 		template: `<cuentoneta-collection-teasers-deck ${argsToTemplate(args)} />`,
 	}),
 	args: {
-		teasers: teasersOfLength(4),
+		teasers: onoffCollectionTeasersOfLength(4),
 	},
 	parameters: {
 		docs: {
@@ -97,7 +77,7 @@ export const Estados: StoryObj<CollectionTeasersDeck & { loading: boolean }> = {
 	}),
 	args: {
 		loading: true,
-		teasers: teasersOfLength(4),
+		teasers: onoffCollectionTeasersOfLength(4),
 	},
 	parameters: {
 		docs: {
