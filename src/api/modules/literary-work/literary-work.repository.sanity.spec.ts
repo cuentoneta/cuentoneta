@@ -13,7 +13,8 @@ import {
 } from '@mocks/onoff-raw-literary-works.mock';
 import { onoffRawLiteraryWorksWithoutEditorialNote } from '@mocks/onoff-raw-literary-works.mock';
 import { createMarkdown } from '@models/markdown.model';
-import { createReadingTime, deriveSectionReadingTime, sumReadingTimes } from '@models/reading-time.model';
+import { deriveSectionReadingTime } from '@models/reading-time-derivation.model';
+import { createReadingTime, sumReadingTimes } from '@models/reading-time.model';
 import { SanityLiteraryWorkRepository } from './literary-work.repository.sanity';
 
 // El repository solo hace `fetch` (sin escritura), así que el spy del client implementa solo eso; se
