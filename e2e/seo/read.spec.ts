@@ -62,9 +62,8 @@ test.describe('read — HTML server-rendered de una obra existente', () => {
 		expect(article?.['headline']).toBeTruthy();
 		expect(article?.['datePublished']).toBeTruthy();
 
-		const authors = Array.isArray(article?.['author']) ? (article?.['author'] as Record<string, unknown>[]) : [];
-		expect(authors.length).toBeGreaterThanOrEqual(1);
-		expect(authors[0]?.['@type']).toBe('Person');
+		const [firstAuthor] = article?.['author'] as Record<string, unknown>[];
+		expect(firstAuthor?.['@type']).toBe('Person');
 		expect((article?.['publisher'] as Record<string, unknown>)?.['@type']).toBe('Organization');
 		expect(String(article?.['mainEntityOfPage'])).toContain('/read/');
 	});
