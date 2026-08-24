@@ -16,7 +16,8 @@ Las piezas se agrupan **por entidad**, una carpeta cada una, salvo cuando dos en
 onoff/
 ├── story/          <slug>.story.mock.ts · <slug>.story.raw.mock.ts
 ├── literary-work/  <slug>.literary-work.document.ts · <slug>.literary-work.raw.mock.ts (generado)
-│                   <slug>.literary-work.mock.ts + su prosa: <slug>.md · <slug>.editorial-note.md · <slug>.epigraph.ts
+│                   literary-works-by-author.raw.mock.ts (generado) · <slug>.literary-work.mock.ts
+│                   + su prosa: <slug>.md · <slug>.editorial-note.md · <slug>.epigraph.ts
 ├── collection/     <slug>.collection.document.ts · <slug>.collection.raw.mock.ts (generado) · <slug>.collection.md
 ├── landing-page/   onoff.landing-page.document.ts · <slug>.content-campaign.document.ts
 │                   landing-page.raw.mock.ts (generado)
@@ -42,13 +43,14 @@ Antes de esta capa de documentos el flujo corría al revés: el raw se escribía
 
 ### El generador (`pnpm corpus:generate`)
 
-`pnpm corpus:generate` → `node --import tsx ./scripts/generate-raw-corpus/generate-raw-corpus.ts`. Por cada obra, cada colección y la página de inicio, evalúa la query GROQ real (`literaryWorkBySlugQuery`, `collectionBySlugQuery`, `collectionsQuery` para el listado y `landingPageContentQuery` para la landing, que va con su semana como parámetro) con `groq-js` sobre `onoffDatasetMock` — el dataset plano de todos los documentos del corpus — y escribe el resultado en su fixture `*.raw.mock.ts`.
+`pnpm corpus:generate` → `node --import tsx ./scripts/generate-raw-corpus/generate-raw-corpus.ts`. Por cada obra, cada colección, la página de inicio y el listado de obras del autor, evalúa la query GROQ real (`literaryWorkBySlugQuery`, `collectionBySlugQuery`, `collectionsQuery` para el listado, `literaryWorksByAuthorSlugQuery`, que va con el slug del autor como parámetro, y `landingPageContentQuery` para la landing, que va con su semana) con `groq-js` sobre `onoffDatasetMock` — el dataset plano de todos los documentos del corpus — y escribe el resultado en su fixture `*.raw.mock.ts`.
 
-**Archivos generados (12):**
+**Archivos generados (13):**
 
 - Las 8 `literary-work/<slug>.literary-work.raw.mock.ts`.
 - Las 2 `collection/<slug>.collection.raw.mock.ts`.
 - `collection/collection-teasers.raw.mock.ts` (resultado de `collectionsQuery`, el listado).
+- `literary-work/literary-works-by-author.raw.mock.ts` (resultado de `literaryWorksByAuthorSlugQuery`; se consume desde el agregador `onoff-raw-literary-works.mock.ts`).
 - `landing-page/landing-page.raw.mock.ts` (resultado de `landingPageContentQuery`).
 
 Cada uno abre con un banner de dos líneas ("Este archivo lo escribe `pnpm corpus:generate`... No se edita a mano: cualquier cambio se pierde en la próxima corrida.") y está marcado `linguist-generated=true` en `.gitattributes` — enumerados uno por uno, no por glob `*.raw.mock.ts`, porque las fixtures de `story/` y `storylist/` se siguen escribiendo a mano.

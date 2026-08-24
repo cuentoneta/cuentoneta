@@ -140,6 +140,49 @@ export const literaryWorkSectionBySlugQuery = defineQuery(`
     }
 }[0]`);
 
+// Obras de un autor como teasers: alimenta las sugerencias de lectura al pie de otra obra del mismo
+// autor. La proyección por obra es la misma que la de las obras de una colección
+// (collectionBySlugQuery), porque alimentan la misma tarjeta; se repite el literal y no se concatena
+// porque defineQuery lo necesita para el typegen.
+//
+// Sin paginación a propósito: quien consume resuelve qué obras mostrar sobre el conjunto completo.
+export const literaryWorksByAuthorSlugQuery = defineQuery(`
+*[_type == 'literaryWork' && $slug in authors[]->slug.current && !(_id in path('drafts.**'))]
+| order(title asc)
+{
+    _id,
+    'slug': slug.current,
+    title,
+    coverImage,
+    totalReadingTime,
+    'sectionCount': count(content),
+    'tags': coalesce(tags[] -> {
+        title,
+        'slug': slug.current,
+        description
+    }, []),
+    'mediaSources': coalesce(mediaSources[]{ _type, title }, []),
+    'authors': coalesce(authors[]->{
+        _id,
+        'slug': slug.current,
+        name,
+        image,
+        nationality->,
+        bornOn,
+        bornOnYear,
+        diedOn,
+        diedOnYear
+    }, []),
+    // El cuerpo va recortado al primer bloque no vacío con una heurística de doble salto de línea,
+    // tolerante a CRLF: el detalle completo del porqué está en la proyección de obras de
+    // collectionBySlugQuery, que comparte este shape de extracto.
+    'excerpt': content[0...1]{
+        _key,
+        title,
+        'body': string::split(string::split(body, "\\r\\n\\r\\n")[0], "\\n\\n")[@ != ""][0]
+    }
+}`);
+
 // Candidatas del backfill de reading time: obras a las que les falta el total o el reading time de
 // alguna sección. La proyección trae **todas** las secciones, no solo las incompletas, porque el
 // total se resuelve sumando el conjunto completo. Pagina por `_id` (cursor estable) y no por offset,

@@ -7,18 +7,27 @@ import { map, type Observable } from 'rxjs';
 import { environment } from '../environments/environment';
 
 // Models
-import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
+import * as z from 'zod/mini';
+import { createLiteraryWork, type LiteraryWork, type LiteraryWorkTeaser } from '@models/literary-work.model';
 import { createAttributedText } from '@models/attributed-text.model';
 import { createLiteraryWorkSection, type LiteraryWorkSection } from '@models/literary-work-section.model';
+import {
+	toLiteraryWorkTeaser,
+	literaryWorkDtoSchema,
+	literaryWorkTeaserDtoSchema,
+	type LiteraryWorkDto,
+	type LiteraryWorkSectionDto,
+} from '@models/literary-work.dto';
 import { createSectionTitle } from '@models/section-title.model';
 import { createReadingTime } from '@models/reading-time.model';
 import { createSanitizedHtml } from '@models/sanitized-html.model';
 import { createIsoDateTime } from '@utils/date.utils';
-import { literaryWorkDtoSchema, type LiteraryWorkDto, type LiteraryWorkSectionDto } from '@models/literary-work.dto';
 import { ApiUrl, Endpoints } from './endpoints';
 
 export interface LiteraryWorkApi {
 	getBySlug(slug: string): Observable<LiteraryWork>;
+	// Teasers de las obras del autor: alimenta las sugerencias de lectura al pie de una obra suya.
+	getByAuthorSlug(slug: string): Observable<LiteraryWorkTeaser[]>;
 }
 
 @Service()
@@ -30,6 +39,12 @@ export class HttpLiteraryWorkApi implements LiteraryWorkApi {
 		return this.http
 			.get<unknown>(`${this.url}/${slug}`)
 			.pipe(map((response) => this.toLiteraryWork(literaryWorkDtoSchema.parse(response))));
+	}
+
+	public getByAuthorSlug(slug: string): Observable<LiteraryWorkTeaser[]> {
+		return this.http
+			.get<unknown>(`${this.url}/author/${slug}`)
+			.pipe(map((response) => z.array(literaryWorkTeaserDtoSchema).parse(response).map(toLiteraryWorkTeaser)));
 	}
 
 	private toSection(dto: LiteraryWorkSectionDto): LiteraryWorkSection {

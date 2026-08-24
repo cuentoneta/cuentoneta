@@ -88,7 +88,20 @@ function landingPageTarget(queries: Record<string, string>, slug: string): Targe
 	};
 }
 
-function targetsFor(queries: Record<string, string>, landingPageSlug: string): Target[] {
+// El listado completo de obras del autor del corpus. El slug va atado al documento del autor, igual
+// que el de la landing: es un parámetro de la query y no una capa que los cruces comparen.
+function literaryWorksByAuthorTarget(queries: Record<string, string>, authorSlug: string): Target {
+	return {
+		file: join('src/mocks/onoff/literary-work', 'literary-works-by-author.raw.mock.ts'),
+		exportName: 'onoffRawLiteraryWorksByAuthorMock',
+		typeImport: 'LiteraryWorksByAuthorSlugQueryResult',
+		typeAnnotation: 'LiteraryWorksByAuthorSlugQueryResult',
+		query: queryNamed(queries, 'literaryWorksByAuthorSlugQuery'),
+		params: { slug: authorSlug },
+	};
+}
+
+function targetsFor(queries: Record<string, string>, landingPageSlug: string, authorSlug: string): Target[] {
 	const bySlug = (
 		exports: Record<string, string>,
 		directory: string,
@@ -128,6 +141,7 @@ function targetsFor(queries: Record<string, string>, landingPageSlug: string): T
 			query: queryNamed(queries, 'collectionsQuery'),
 		},
 		landingPageTarget(queries, landingPageSlug),
+		literaryWorksByAuthorTarget(queries, authorSlug),
 	];
 }
 
@@ -173,9 +187,13 @@ await withCorpus(async (load) => {
 	const { onoffLandingPageDocument } = (await load('/src/mocks/onoff/landing-page/onoff.landing-page.document.ts')) as {
 		onoffLandingPageDocument: { slug: { current: string } };
 	};
+	const { rawOnoffAuthor } = (await load('/src/mocks/onoff-raw-author.mock.ts')) as {
+		rawOnoffAuthor: { slug: string };
+	};
 	const targets = targetsFor(
 		{ ...collectionQueries, ...literaryWorkQueries, ...contentQueries },
 		onoffLandingPageDocument.slug.current,
+		rawOnoffAuthor.slug,
 	);
 
 	for (const target of targets) {

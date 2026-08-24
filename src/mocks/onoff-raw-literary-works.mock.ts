@@ -1,4 +1,4 @@
-import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
+import type { LiteraryWorkBySlugQueryResult, LiteraryWorksByAuthorSlugQueryResult } from '@sanity-types';
 import { palacioNueveFronterasSectionTitle } from './onoff/literary-work/el-palacio-de-las-nueve-fronteras.epigraph';
 import {
 	palacioFirstSectionReadingTime,
@@ -15,6 +15,7 @@ import { lasEscalerasRawLiteraryWork } from './onoff/literary-work/las-escaleras
 import { losPeldanosRawLiteraryWork } from './onoff/literary-work/los-peldanos.literary-work.raw.mock';
 import { neronRawLiteraryWork } from './onoff/literary-work/neron.literary-work.raw.mock';
 import { palacioNueveFronterasRawLiteraryWork } from './onoff/literary-work/el-palacio-de-las-nueve-fronteras.literary-work.raw.mock';
+import { onoffRawLiteraryWorksByAuthorMock as generatedWorksByAuthor } from './onoff/literary-work/literary-works-by-author.raw.mock';
 
 // Corpus raw (shape crudo de Sanity, `NonNullable<LiteraryWorkBySlugQueryResult>`) de las obras
 // (ficticias) de François Onoff — contraparte cruda de `onoffLiteraryWorksMock`, en el mismo orden.
@@ -28,6 +29,10 @@ export const onoffRawLiteraryWorksMock: NonNullable<LiteraryWorkBySlugQueryResul
 	lasDosAntorchasRawLiteraryWork,
 	neronRawLiteraryWork,
 ];
+
+// Llega ordenado por título, que es el criterio de la query y no el orden en que este módulo declara
+// las obras. Se repite por el agregador para que quien lo consume no importe una obra puntual del corpus.
+export const onoffRawLiteraryWorksByAuthorMock: LiteraryWorksByAuthorSlugQueryResult = generatedWorksByAuthor;
 
 // Selector por capacidad (contraparte raw de `onoffLiteraryWorksWithEpigraphs`): las obras crudas cuyo
 // content trae epígrafes, para ejercitar el mapeo raw→dominio del epígrafe sin conocer un slug concreto.

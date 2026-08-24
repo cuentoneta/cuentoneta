@@ -11,9 +11,12 @@ import {
 	onoffRawLiteraryWorksWithTags,
 	unmaterializedRawLiteraryWork,
 } from '@mocks/onoff-raw-literary-works.mock';
+import { onoffRawLiteraryWorksByAuthorMock } from '@mocks/onoff-raw-literary-works.mock';
 import { onoffRawLiteraryWorksWithoutEditorialNote } from '@mocks/onoff-raw-literary-works.mock';
 import { createMarkdown } from '@models/markdown.model';
 import { createReadingTime, deriveSectionReadingTime, sumReadingTimes } from '@models/reading-time.model';
+import { MalformedLiteraryWorkError } from './literary-work.errors';
+import { literaryWorksByAuthorSlugQuery } from '../../_queries/literary-work.query';
 import { SanityLiteraryWorkRepository } from './literary-work.repository.sanity';
 
 // El repository solo hace `fetch` (sin escritura), así que el spy del client implementa solo eso; se
@@ -21,6 +24,13 @@ import { SanityLiteraryWorkRepository } from './literary-work.repository.sanity'
 function repoReturning(raw: unknown): SanityLiteraryWorkRepository {
 	const client = { fetch: fn(() => Promise.resolve(raw)) } as unknown as SanityClient;
 	return new SanityLiteraryWorkRepository(client);
+}
+
+// Variante que también devuelve el spy, para los casos que afirman qué query se pidió.
+function repoWith(raw: unknown) {
+	const fetch = fn(() => Promise.resolve(raw));
+	const repository = new SanityLiteraryWorkRepository({ fetch } as unknown as SanityClient);
+	return { repository, fetch };
 }
 
 describe('SanityLiteraryWorkRepository.fetchBySlug', () => {
@@ -214,5 +224,85 @@ describe('SanityLiteraryWorkRepository.fetchBySlug', () => {
 
 	it('devuelve null para un slug desconocido', async () => {
 		expect(await repoReturning(null).fetchBySlug('no-existe')).toBeNull();
+	});
+});
+
+describe('SanityLiteraryWorkRepository.fetchByAuthorSlug', () => {
+	it('pide la query de listado por autor con el slug como parámetro', async () => {
+		const { repository, fetch } = repoWith(onoffRawLiteraryWorksByAuthorMock);
+
+		await repository.fetchByAuthorSlug('francois-onoff');
+
+		expect(fetch).toHaveBeenCalledWith(literaryWorksByAuthorSlugQuery, { slug: 'francois-onoff' });
+	});
+
+	it.each(onoffRawLiteraryWorksByAuthorMock)('mapea el teaser de "$slug" a dominio congelado', async (rawTeaser) => {
+		const [teaser] = await repoReturning([rawTeaser]).fetchByAuthorSlug('francois-onoff');
+
+		expect(Object.isFrozen(teaser)).toBe(true);
+		expect(teaser.slug).toBe(rawTeaser.slug);
+		expect(teaser.totalReadingTime).toBe(rawTeaser.totalReadingTime);
+		expect(teaser.sectionCount).toBe(rawTeaser.sectionCount);
+	});
+
+	it.each(onoffRawLiteraryWorksByAuthorMock)('sirve el extracto saneado de "$slug"', async (rawTeaser) => {
+		const [teaser] = await repoReturning([rawTeaser]).fetchByAuthorSlug('francois-onoff');
+
+		expect(teaser.excerpt.bodyHtml).toContain('<p>');
+		// El extracto no transporta readingTime ni posición: no es una sección, es el arranque recortado.
+		expect(teaser.excerpt).not.toHaveProperty('readingTime');
+		expect(teaser.excerpt).not.toHaveProperty('position');
+	});
+
+	it.each(onoffRawLiteraryWorksByAuthorMock)(
+		'angosta autores y medios a sus vistas de teaser en "$slug"',
+		async (rawTeaser) => {
+			const [teaser] = await repoReturning([rawTeaser]).fetchByAuthorSlug('francois-onoff');
+
+			expect(teaser.authors[0]).not.toHaveProperty('biography');
+			for (const media of teaser.mediaSources) {
+				expect(Object.keys(media).sort()).toEqual(['title', 'type']);
+			}
+		},
+	);
+
+	it('lanza MalformedLiteraryWorkError ante una obra sin tiempo de lectura persistido', async () => {
+		const [unbackfilled] = onoffRawLiteraryWorksByAuthorMock.map((work) => ({ ...work, totalReadingTime: null }));
+
+		await expect(repoReturning([unbackfilled]).fetchByAuthorSlug('francois-onoff')).rejects.toThrow(
+			MalformedLiteraryWorkError,
+		);
+	});
+
+	it('lanza MalformedLiteraryWorkError ante un extracto sin cuerpo', async () => {
+		const [first] = onoffRawLiteraryWorksByAuthorMock;
+		const bodyless = { ...first, excerpt: [{ ...first.excerpt[0], body: null }] };
+
+		await expect(repoReturning([bodyless]).fetchByAuthorSlug('francois-onoff')).rejects.toThrow(
+			MalformedLiteraryWorkError,
+		);
+	});
+
+	it('lanza MalformedLiteraryWorkError ante una obra sin sección de apertura', async () => {
+		const [first] = onoffRawLiteraryWorksByAuthorMock;
+		const sectionless = { ...first, excerpt: [] };
+
+		await expect(repoReturning([sectionless]).fetchByAuthorSlug('francois-onoff')).rejects.toThrow(
+			MalformedLiteraryWorkError,
+		);
+	});
+
+	// Un listado que esconde el elemento roto es un bug de datos que nadie ve: se cae entero, con la
+	// primera obra sana por delante para que no pase por casualidad.
+	it('tumba el listado entero en vez de filtrar la obra rota', async () => {
+		const [sane, broken, ...rest] = onoffRawLiteraryWorksByAuthorMock;
+
+		await expect(
+			repoReturning([sane, { ...broken, totalReadingTime: null }, ...rest]).fetchByAuthorSlug('francois-onoff'),
+		).rejects.toThrow(MalformedLiteraryWorkError);
+	});
+
+	it('resuelve un listado vacío sin fallar', async () => {
+		expect(await repoReturning([]).fetchByAuthorSlug('autor-sin-obras')).toEqual([]);
 	});
 });

@@ -1,0 +1,28 @@
+meta {
+  name: Get literary works by author slug
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{apiUrl}}{{baseApiPath}}/literary-work/author/:slug
+  body: none
+  auth: none
+}
+
+params:path {
+  slug: francois-onoff
+}
+
+docs {
+  Listar las obras de un autor como teasers (metadata de tarjeta + extracto del arranque).
+  Alimenta las sugerencias de lectura al pie de otra obra del mismo autor.
+
+  Autor sin obras (o slug inexistente) responde 200 con []. No hay 404: el módulo no conoce
+  la entidad Author, solo sus referencias.
+
+  Obra mal curada (sin totalReadingTime persistido o sin extracto) responde 500 con body
+  { error: 'literary_work_malformed' } — ver docs/LITERARY_WORK_DESIGN.md §7.
+
+  Autor del corpus de Onoff: francois-onoff (fuente: src/mocks/onoff-raw-author.mock.ts).
+}

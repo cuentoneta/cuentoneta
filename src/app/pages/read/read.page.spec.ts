@@ -10,6 +10,7 @@ import { throwError, type Observable } from 'rxjs';
 
 // Models
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
+import type { LiteraryWorkTeaser } from '@models/literary-work.model';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';
 import { createMarkdown } from '@models/markdown.model';
 import { deriveSectionReadingTime } from '@models/reading-time.model';
@@ -24,10 +25,10 @@ import {
 	onoffLiteraryWorksWithoutMediaSources,
 	onoffLiteraryWorksWithSectionTitles,
 } from '@mocks/onoff-literary-works.mock';
+import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
+import { onoffCollectionsMock } from '@mocks/onoff-collections.mock';
 import { provideLiteraryWorkApiMock, StubLiteraryWorkApi } from '../../providers/literary-work.mock';
-import { storylistMock } from '@mocks/storylist.mock';
-import { provideStoryApiMock } from '../../providers/story.mock';
-import { provideStorylistApiMock } from '../../providers/storylist.mock';
+import { provideCollectionApiMock, StubCollectionApi } from '../../providers/collection.mock';
 import { provideRouter } from '@angular/router';
 import type { LiteraryWorkApi } from '../../providers/literary-work.provider';
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
@@ -39,6 +40,10 @@ class StubFailingLiteraryWorkApi implements LiteraryWorkApi {
 	constructor(private readonly status: number) {}
 
 	public getBySlug(): Observable<LiteraryWork> {
+		return throwError(() => new HttpErrorResponse({ status: this.status, statusText: 'error' }));
+	}
+
+	public getByAuthorSlug(): Observable<LiteraryWorkTeaser[]> {
 		return throwError(() => new HttpErrorResponse({ status: this.status, statusText: 'error' }));
 	}
 }
@@ -122,11 +127,10 @@ describe('ReadPage', () => {
 	) => {
 		return await render(ReadPage, {
 			providers: [
-				provideLiteraryWorkApiMock(options.api ?? new StubLiteraryWorkApi(literaryWork)),
-				// La tríada de sugerencias resuelve sus datos por su cuenta; esta página solo le pasa el
-				// contexto. Reapuntarla a los endpoints de LiteraryWork es trabajo de otro issue.
-				provideStoryApiMock(),
-				provideStorylistApiMock(),
+				// La tríada de sugerencias comparte el doble: la obra para la lectura y los teasers canned
+				// para las sugerencias del autor.
+				provideLiteraryWorkApiMock(options.api ?? new StubLiteraryWorkApi(literaryWork, onoffLiteraryWorkTeasersMock)),
+				provideCollectionApiMock(new StubCollectionApi(onoffCollectionsMock)),
 				provideRouter([]),
 				...(options.responseInit ? [{ provide: RESPONSE_INIT, useValue: options.responseInit }] : []),
 			],
@@ -337,15 +341,16 @@ describe('ReadPage', () => {
 	// que es lo observable de haber elegido bien.
 	describe('sugerencias de lectura', () => {
 		const [work] = onoffLiteraryWorksSingleSection;
+		const [collection] = onoffCollectionsMock;
 
 		// Las dos variantes encabezan con "Más obras de …", así que lo que distingue a cuál se eligió es
 		// el nombre: el de la colección o el del autor.
 		it('ofrece las de la colección cuando se entró desde una', async () => {
-			const { fixture } = await setup(work, { navigation: 'collection', navigationSlug: storylistMock.slug });
+			const { fixture } = await setup(work, { navigation: 'collection', navigationSlug: collection.slug });
 
 			await renderDeferBlocks(fixture);
 
-			expect(screen.getByRole('heading', { name: `Más obras de ${storylistMock.title}` })).toBeInTheDocument();
+			expect(screen.getByRole('heading', { name: `Más obras de ${collection.title}` })).toBeInTheDocument();
 		});
 
 		it('ofrece las del autor cuando se entró desde su listado', async () => {

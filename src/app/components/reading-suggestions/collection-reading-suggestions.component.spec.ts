@@ -4,21 +4,26 @@ import { Observable, of, Subject, throwError } from 'rxjs';
 
 import { CollectionReadingSuggestionsComponent } from './collection-reading-suggestions.component';
 import { READING_SUGGESTIONS_COUNT } from './pick-reading-suggestions';
-import { StorylistApi } from '../../providers/storylist.provider';
-import type { Storylist } from '@models/storylist.model';
-import { storylistMock } from '@mocks/storylist.mock';
-import { onoffStoryTeasersMock } from '@mocks/onoff-story-teasers.mock';
+import { CollectionApi } from '../../providers/collection.provider';
+import type { Collection } from '@models/collection.model';
+import { onoffCollectionsMock } from '@mocks/onoff-collections.mock';
+import type { LiteraryWorkTeaser } from '@models/literary-work.model';
 import { clearAllMocks, fn, restoreAllMocks, spyOn } from '@test-utils';
 
-// Las obras salen de la proyección de teaser, que es la que el componente consume: trae el cuerpo
-// recortado del que se deriva el extracto.
-const collectionMock: Storylist = {
-	...storylistMock,
-	stories: onoffStoryTeasersMock,
+const [collectionMock] = onoffCollectionsMock;
+
+// El extracto llega como HTML saneado y se pinta con [innerHTML]: lo comparable del render es una
+// palabra larga de su texto plano, que sobrevive igual con o sin tags alrededor.
+const excerptWord = (teaser: LiteraryWorkTeaser): string => {
+	const [word] = teaser.excerpt.bodyHtml.replace(/<[^>]+>/g, ' ').match(/\p{L}{6,}/gu) ?? [];
+	if (word === undefined) {
+		throw new Error(`El extracto de "${teaser.slug}" no tiene palabra larga`);
+	}
+	return word;
 };
 
 const setup = async (
-	get: (slug: string) => Observable<Storylist>,
+	getBySlug: (slug: string) => Observable<Collection>,
 	inputs: { collectionSlug?: string; currentWorkSlug?: string } = {},
 ) => {
 	const view = await render(CollectionReadingSuggestionsComponent, {
@@ -26,7 +31,7 @@ const setup = async (
 			collectionSlug: collectionMock.slug,
 			...inputs,
 		},
-		providers: [provideRouter([]), { provide: StorylistApi, useValue: { get } }],
+		providers: [provideRouter([]), { provide: CollectionApi, useValue: { getBySlug } }],
 	});
 	view.detectChanges();
 	return view;
@@ -44,29 +49,29 @@ describe('CollectionReadingSuggestionsComponent', () => {
 		restoreAllMocks();
 	});
 
-	it('should fetch the navigation teasers of the collection', async () => {
-		const get = fn<(slug: string) => Observable<Storylist>>();
-		get.mockReturnValue(of(collectionMock));
+	it('should fetch the collection carrying its works', async () => {
+		const getBySlug = fn<(slug: string) => Observable<Collection>>();
+		getBySlug.mockReturnValue(of(collectionMock));
 
-		await setup(get);
+		await setup(getBySlug);
 
-		expect(get).toHaveBeenCalledWith(collectionMock.slug);
+		expect(getBySlug).toHaveBeenCalledWith(collectionMock.slug);
 	});
 
 	it('should not fetch when there is no collection slug', async () => {
-		const get = fn<(slug: string) => Observable<Storylist>>();
-		get.mockReturnValue(of(collectionMock));
+		const getBySlug = fn<(slug: string) => Observable<Collection>>();
+		getBySlug.mockReturnValue(of(collectionMock));
 
-		await setup(get, { collectionSlug: '' });
+		await setup(getBySlug, { collectionSlug: '' });
 
-		expect(get).not.toHaveBeenCalled();
+		expect(getBySlug).not.toHaveBeenCalled();
 	});
 
 	it('should render the works of the collection as suggestions', async () => {
 		await setup(() => of(collectionMock));
 
-		for (const story of collectionMock.stories.slice(0, READING_SUGGESTIONS_COUNT)) {
-			expect(screen.getByRole('link', { name: story.title })).toBeInTheDocument();
+		for (const work of collectionMock.literaryWorks.slice(0, READING_SUGGESTIONS_COUNT)) {
+			expect(screen.getByRole('link', { name: work.title })).toBeInTheDocument();
 		}
 	});
 
@@ -77,7 +82,7 @@ describe('CollectionReadingSuggestionsComponent', () => {
 	});
 
 	it('should exclude the work being read', async () => {
-		const [current] = collectionMock.stories;
+		const [current] = collectionMock.literaryWorks;
 
 		await setup(() => of(collectionMock), { currentWorkSlug: current.slug });
 
@@ -95,7 +100,7 @@ describe('CollectionReadingSuggestionsComponent', () => {
 	});
 
 	it('should show the loading state until the collection arrives', async () => {
-		const collection = new Subject<Storylist>();
+		const collection = new Subject<Collection>();
 
 		const view = await setup(() => collection);
 
@@ -108,9 +113,9 @@ describe('CollectionReadingSuggestionsComponent', () => {
 	});
 
 	it('should stay hidden when the collection has no other work to suggest', async () => {
-		const [onlyWork] = collectionMock.stories;
+		const [onlyWork] = collectionMock.literaryWorks;
 
-		await setup(() => of({ ...collectionMock, stories: [onlyWork] }), { currentWorkSlug: onlyWork.slug });
+		await setup(() => of({ ...collectionMock, literaryWorks: [onlyWork] }), { currentWorkSlug: onlyWork.slug });
 
 		expect(screen.queryByTestId('reading-suggestions')).not.toBeInTheDocument();
 	});
@@ -124,7 +129,7 @@ describe('CollectionReadingSuggestionsComponent', () => {
 	it('should carry the collection context into each suggestion link', async () => {
 		await setup(() => of(collectionMock));
 
-		const [suggestion] = collectionMock.stories;
+		const [suggestion] = collectionMock.literaryWorks;
 
 		expect(screen.getByRole('link', { name: suggestion.title })).toHaveAttribute(
 			'href',
@@ -138,8 +143,8 @@ describe('CollectionReadingSuggestionsComponent', () => {
 		expect(screen.getAllByTestId('author')).toHaveLength(READING_SUGGESTIONS_COUNT);
 	});
 
-	// El extracto se verifica sobre lo que produce el camino real —proveedor → picker → adapter → bloque
-	// → tarjeta—, no sobre un teaser del corpus armado a mano.
+	// El extracto se verifica sobre lo que produce el camino real —proveedor → picker → bloque →
+	// tarjeta—, no sobre un texto armado a mano.
 	it('should show the excerpt of each suggested work', async () => {
 		await setup(() => of(collectionMock));
 
@@ -147,19 +152,7 @@ describe('CollectionReadingSuggestionsComponent', () => {
 
 		expect(excerpts).toHaveLength(READING_SUGGESTIONS_COUNT);
 		for (const [index, excerpt] of excerpts.entries()) {
-			const [firstParagraph] = collectionMock.stories[index].paragraphs;
-			expect(excerpt.textContent).toContain(firstParagraph.children[0].text);
+			expect(excerpt.textContent).toContain(excerptWord(collectionMock.literaryWorks[index]));
 		}
-	});
-
-	// La regresión que dejó la capacidad muerta sin que ningún test se enterara: con una proyección sin
-	// cuerpo hay tarjetas pero no hay extracto, y el bloque se ve igual de completo.
-	it('should render no excerpt when the projection carries no body', async () => {
-		const withoutBody = collectionMock.stories.map((story) => ({ ...story, paragraphs: [] }));
-
-		await setup(() => of({ ...collectionMock, stories: withoutBody }));
-
-		expect(screen.getAllByRole('link').length).toBeGreaterThan(0);
-		expect(screen.queryAllByTestId('description')).toHaveLength(0);
 	});
 });

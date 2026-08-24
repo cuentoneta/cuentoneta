@@ -1769,6 +1769,91 @@ export type LiteraryWorkSectionBySlugQueryResult = {
 } | null;
 
 // Source: ../src/api/_queries/literary-work.query.ts
+// Variable: literaryWorksByAuthorSlugQuery
+// Query: *[_type == 'literaryWork' && $slug in authors[]->slug.current && !(_id in path('drafts.**'))]| order(title asc){    _id,    'slug': slug.current,    title,    coverImage,    totalReadingTime,    'sectionCount': count(content),    'tags': coalesce(tags[] -> {        title,        'slug': slug.current,        description    }, []),    'mediaSources': coalesce(mediaSources[]{ _type, title }, []),    'authors': coalesce(authors[]->{        _id,        'slug': slug.current,        name,        image,        nationality->,        bornOn,        bornOnYear,        diedOn,        diedOnYear    }, []),    // El cuerpo va recortado al primer bloque no vacío con una heurística de doble salto de línea,    // tolerante a CRLF: el detalle completo del porqué está en la proyección de obras de    // collectionBySlugQuery, que comparte este shape de extracto.    'excerpt': content[0...1]{        _key,        title,        'body': string::split(string::split(body, "\r\n\r\n")[0], "\n\n")[@ != ""][0]    }}
+export type LiteraryWorksByAuthorSlugQueryResult = Array<{
+	_id: string;
+	slug: string;
+	title: string;
+	coverImage: {
+		asset?: SanityImageAssetReference;
+		media?: unknown;
+		hotspot?: SanityImageHotspot;
+		crop?: SanityImageCrop;
+		_type: 'image';
+	} | null;
+	totalReadingTime: number | null;
+	sectionCount: number;
+	tags:
+		| Array<{
+				title: string;
+				slug: string;
+				description: string;
+		  }>
+		| Array<never>;
+	mediaSources:
+		| Array<never>
+		| Array<
+				| {
+						_type: 'audioRecording';
+						title: string;
+				  }
+				| {
+						_type: 'pdfLink';
+						title: string;
+				  }
+				| {
+						_type: 'spaceRecording';
+						title: string;
+				  }
+				| {
+						_type: 'spotifyPodcastEpisode';
+						title: string;
+				  }
+				| {
+						_type: 'youTubeVideo';
+						title: string;
+				  }
+		  >;
+	authors: Array<{
+		_id: string;
+		slug: string;
+		name: string;
+		image: {
+			asset?: SanityImageAssetReference;
+			media?: unknown;
+			hotspot?: SanityImageHotspot;
+			crop?: SanityImageCrop;
+			_type: 'image';
+		};
+		nationality: {
+			_id: string;
+			_type: 'nationality';
+			_createdAt: string;
+			_updatedAt: string;
+			_rev: string;
+			country: string;
+			flag: {
+				asset?: SanityImageAssetReference;
+				media?: unknown;
+				hotspot?: SanityImageHotspot;
+				crop?: SanityImageCrop;
+				_type: 'image';
+			};
+		};
+		bornOn: string | null;
+		bornOnYear: ComputedNumber | null;
+		diedOn: string | null;
+		diedOnYear: ComputedNumber | null;
+	}>;
+	excerpt: Array<{
+		_key: string;
+		title: string | null;
+		body: string | null;
+	}>;
+}>;
+
+// Source: ../src/api/_queries/literary-work.query.ts
 // Variable: readingTimeBackfillCandidatesQuery
 // Query: *[_type == 'literaryWork' && !(_id in path('drafts.**')) && _id > $cursor  && (!defined(totalReadingTime) || count(content[!defined(readingTime)]) > 0)]| order(_id asc) [0...$pageSize] {    _id,    'slug': slug.current,    totalReadingTime,    'content': coalesce(content[]{ _key, body, readingTime }, [])}
 export type ReadingTimeBackfillCandidatesQueryResult = Array<{
@@ -2572,6 +2657,7 @@ declare module '@sanity/client' {
 		"\n*[_type == 'contributor' && !(_id in path('drafts.**'))]\n{\n\tname,\n\t'slug': slug.current,\n\tarea,\n\tlink {\n\t\thandle,\n\t\turl\n\t},\n\tnotes\n}|order(name asc)\n": AllContributorsQueryResult;
 		"\n*[_type == 'literaryWork' && slug.current == $slug && !(_id in path('drafts.**'))]\n{\n    _id,\n    'slug': slug.current,\n    title,\n    coverImage,\n    editorialNote,\n    'badLanguage': coalesce(badLanguage, false),\n    'originalPublication': coalesce(originalPublication, ''),\n    'publishedAt': coalesce(publishedAt, _createdAt),\n    totalReadingTime,\n    'sectionCount': count(content),\n    'tags': coalesce(tags[] -> {\n        title,\n        'slug': slug.current,\n        description\n    }, []),\n    'mediaSources': coalesce(mediaSources[]{\n        ...,\n        _type == 'spaceRecording' => {\n            'audioUrl': audioFile.asset->url\n        }\n    }, []),\n    'resources': coalesce(resources[]{\n        title,\n        url,\n        resourceType->{\n            'slug': slug.current,\n            title,\n            description\n        }\n    }, []),\n    'authors': coalesce(authors[]-> {\n        _id,\n        'slug': slug.current,\n        name,\n        image,\n        nationality->,\n        biography,\n        bornOn,\n        bornOnYear,\n        diedOn,\n        diedOnYear,\n        'resources': coalesce(resources[]{\n            title,\n            url,\n            resourceType->{\n                'slug': slug.current,\n                title,\n                description\n            }\n        }, []),\n        'tags': []\n    }, []),\n    'content': coalesce(content[]{\n        _key,\n        title,\n        'epigraphs': coalesce(epigraphs[]{ text, reference }, []),\n        body,\n        readingTime\n    }, [])\n}[0]": LiteraryWorkBySlugQueryResult;
 		"\n*[_type == 'literaryWork' && slug.current == $slug && !(_id in path('drafts.**'))]\n{\n    _id,\n    'slug': slug.current,\n    title,\n    coverImage,\n    editorialNote,\n    'badLanguage': coalesce(badLanguage, false),\n    'originalPublication': coalesce(originalPublication, ''),\n    'publishedAt': coalesce(publishedAt, _createdAt),\n    totalReadingTime,\n    'sectionCount': count(content),\n    'tags': coalesce(tags[] -> {\n        title,\n        'slug': slug.current,\n        description\n    }, []),\n    'mediaSources': coalesce(mediaSources[]{\n        ...,\n        _type == 'spaceRecording' => {\n            'audioUrl': audioFile.asset->url\n        }\n    }, []),\n    'resources': coalesce(resources[]{\n        title,\n        url,\n        resourceType->{\n            'slug': slug.current,\n            title,\n            description\n        }\n    }, []),\n    'authors': coalesce(authors[]-> {\n        _id,\n        'slug': slug.current,\n        name,\n        image,\n        nationality->,\n        biography,\n        bornOn,\n        bornOnYear,\n        diedOn,\n        diedOnYear,\n        'resources': coalesce(resources[]{\n            title,\n            url,\n            resourceType->{\n                'slug': slug.current,\n                title,\n                description\n            }\n        }, []),\n        'tags': []\n    }, []),\n    'section': content[$section...$sectionEnd]{\n        _key,\n        title,\n        'epigraphs': coalesce(epigraphs[]{ text, reference }, []),\n        body,\n        readingTime\n    }\n}[0]": LiteraryWorkSectionBySlugQueryResult;
+		"\n*[_type == 'literaryWork' && $slug in authors[]->slug.current && !(_id in path('drafts.**'))]\n| order(title asc)\n{\n    _id,\n    'slug': slug.current,\n    title,\n    coverImage,\n    totalReadingTime,\n    'sectionCount': count(content),\n    'tags': coalesce(tags[] -> {\n        title,\n        'slug': slug.current,\n        description\n    }, []),\n    'mediaSources': coalesce(mediaSources[]{ _type, title }, []),\n    'authors': coalesce(authors[]->{\n        _id,\n        'slug': slug.current,\n        name,\n        image,\n        nationality->,\n        bornOn,\n        bornOnYear,\n        diedOn,\n        diedOnYear\n    }, []),\n    // El cuerpo va recortado al primer bloque no vac\xEDo con una heur\xEDstica de doble salto de l\xEDnea,\n    // tolerante a CRLF: el detalle completo del porqu\xE9 est\xE1 en la proyecci\xF3n de obras de\n    // collectionBySlugQuery, que comparte este shape de extracto.\n    'excerpt': content[0...1]{\n        _key,\n        title,\n        'body': string::split(string::split(body, \"\\r\\n\\r\\n\")[0], \"\\n\\n\")[@ != \"\"][0]\n    }\n}": LiteraryWorksByAuthorSlugQueryResult;
 		"\n*[_type == 'literaryWork' && !(_id in path('drafts.**')) && _id > $cursor\n  && (!defined(totalReadingTime) || count(content[!defined(readingTime)]) > 0)]\n| order(_id asc) [0...$pageSize] {\n    _id,\n    'slug': slug.current,\n    totalReadingTime,\n    'content': coalesce(content[]{ _key, body, readingTime }, [])\n}": ReadingTimeBackfillCandidatesQueryResult;
 		'{\n\t"stories": *[_type == "story" && !(_id in path(\'drafts.**\'))]{ "slug": slug.current, "lastmod": coalesce(publishedAt, _createdAt) },\n\t"authors": *[_type == "author" && !(_id in path(\'drafts.**\'))]{ "slug": slug.current, "lastmod": _createdAt },\n\t"storylists": *[_type == "storylist" && !(_id in path(\'drafts.**\'))]{ "slug": slug.current, "lastmod": _createdAt }\n}': SitemapSlugsQueryResult;
 		"\n*[_type == 'story' && author->slug.current == $slug && !(_id in path('drafts.**'))][$start...$end]\n{\n    _id,\n    'slug': slug.current,\n    title,\n    'badLanguage': coalesce(badLanguage, false),\n    'body': coalesce(body[0...3], []),\n    'originalPublication': coalesce(originalPublication, ''),\n    approximateReadingTime,\n    coverImage,\n    'mediaSources': coalesce(mediaSources[], []),\n    'resources': coalesce(resources[]{\n        title,\n        url,\n        resourceType->{\n            'slug': slug.current,\n            title,\n            description\n        }\n    }, []),\n}|order(title asc)": StoriesByAuthorSlugQueryResult;

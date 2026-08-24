@@ -294,9 +294,8 @@ Contrato para Slice 1 (patrón `fetch*`/`get*` de [`sanity-acl.md`](../.claude/r
 interface LiteraryWorkRepository {
 	// Desviación intencional del patrón fetch*()-crudo de sanity-acl.md: devuelve dominio mapeado
 	// (repositorio-como-puerto, dirección roadmap #1503). Materializa el shape crudo puertas adentro.
-	// Única lectura expuesta: la obra completa por slug. La lectura de una sección puntual se difiere
-	// hasta que exista un caso de uso.
 	fetchBySlug(slug: string): Promise<LiteraryWork | null>;
+	fetchByAuthorSlug(slug: string): Promise<LiteraryWorkTeaser[]>; // listado de teasers por autor ([§7](#7-contrato-del-endpoint))
 }
 
 // Adaptador real: SanityLiteraryWorkRepository implements LiteraryWorkRepository (GROQ)
@@ -338,6 +337,21 @@ La ACL del repository (ver arriba) es responsable de: validar invariantes contra
 | Respuesta 404   | `{ error: string }` JSON cuando el slug no existe — el controller atrapa `LiteraryWorkNotFoundError` y responde 404 propio, sin degradar al 500 del `onError` global (ver decisión abajo)                          |
 | Registro        | `apiRoutes.route('/literary-work', literaryWorkController)` en `src/api/routes.ts`                                                                                                                                 |
 | Colección Bruno | `docs/api/bruno/literary-work/get-literary-work-by-slug.bru` — se crea **en el mismo PR** que el endpoint (DoD de Slice 1); este contrato es su fuente                                                             |
+
+### `GET /literary-work/author/:slug`
+
+Listado de teasers de las obras que referencian al autor — alimenta las sugerencias de lectura al pie de una obra (la tríada `ReadingSuggestions`). La ruta va **antes** del comodín `/:slug` en el controller: el orden de registro es el que Hono usa para resolver.
+
+| Aspecto         | Contrato                                                                                                                                                                                                                                                                                                                                     |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Params          | `{ slug: string }` — mismo `slugSchema`                                                                                                                                                                                                                                                                                                      |
+| Respuesta 200   | `LiteraryWorkTeaser[]` (JSON; forma idéntica a la interfaz de [§2](#2-modelo-de-dominio-y-vistas-polimórficas)), ordenado por título. Sin paginación: quien consume resuelve qué mostrar sobre el conjunto completo                                                                                                                          |
+| Respuesta vacía | `[]` para un autor sin obras **o inexistente** — sin 404: el módulo no conoce la entidad `Author`, solo sus referencias, y distinguir ambos casos no es su decisión                                                                                                                                                                          |
+| Respuesta 500   | `{ error: 'literary_work_malformed' }` cuando alguna obra del listado es inconstruible como teaser (sin `totalReadingTime` persistido o sin extracto). El listado entero falla en vez de servirse recortado en silencio — misma doctrina que el módulo de colección; el mensaje del error nombra la obra culpable y por eso no viaja al body |
+| Caché           | Mismo middleware `readCacheHeaders` que la lectura: lo cubre el wildcard `/literary-work/*` de `routes.ts`                                                                                                                                                                                                                                   |
+| Colección Bruno | `docs/api/bruno/literary-work/get-literary-works-by-author-slug.bru`                                                                                                                                                                                                                                                                         |
+
+Las obras de una colección se sirven desde el módulo homónimo (`GET /collection/:slug`), cuyo agregado ya transporta `literaryWorks: LiteraryWorkTeaser[]`: la proyección GROQ por obra es la misma que este endpoint, pero el dueño del dato es el agregado `Collection`.
 
 ### Lectura de sección puntual — trabajo futuro diferido
 

@@ -3,6 +3,12 @@ import type { Author, AuthorTeaser } from './author.model';
 import type { Media, MediaTeaser } from './media.model';
 import type { Resource } from './resource.model';
 import type { Tag } from './tag.model';
+import { createLiteraryWorkExcerpt } from './literary-work-excerpt.model';
+import type { LiteraryWorkTeaser } from './literary-work.model';
+import { createReadingTime } from './reading-time.model';
+import { createSanitizedHtml } from './sanitized-html.model';
+import { createSectionTitle } from './section-title.model';
+import { createSlug } from './slug.model';
 
 // Los tipos de dominio anémicos anidados (Author/Tag/Media/Resource) se validan como opacos: se
 // verifica que cada elemento sea un objeto, pero no su estructura interna — su contrato de wire
@@ -68,3 +74,21 @@ export type LiteraryWorkTeaserDto = z.infer<typeof literaryWorkTeaserDtoSchema>;
 export type LiteraryWorkSectionDto = z.infer<typeof literaryWorkSectionDtoSchema>;
 export type LiteraryWorkExcerptDto = z.infer<typeof literaryWorkExcerptDtoSchema>;
 export type LiteraryWorkDto = z.infer<typeof literaryWorkDtoSchema>;
+
+/**
+ * ACL del frontend para la vista de teaser: dto → dominio por las mismas factories que el agregado,
+ * así un dato inválido lanza en la frontera y no en un template. La comparten los providers que
+ * consumen teasers (obra por autor, colección), porque el shape lo fija el contrato de la obra y no
+ * quien la muestre.
+ */
+export function toLiteraryWorkTeaser(dto: LiteraryWorkTeaserDto): LiteraryWorkTeaser {
+	return Object.freeze({
+		...dto,
+		slug: createSlug(dto.slug),
+		totalReadingTime: createReadingTime(dto.totalReadingTime),
+		excerpt: createLiteraryWorkExcerpt({
+			title: dto.excerpt.title ? createSectionTitle(dto.excerpt.title.value) : undefined,
+			bodyHtml: createSanitizedHtml(dto.excerpt.bodyHtml),
+		}),
+	});
+}

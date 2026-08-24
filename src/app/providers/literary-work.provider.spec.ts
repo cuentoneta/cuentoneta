@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import type { LiteraryWork } from '@models/literary-work.model';
+import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
 import {
 	onoffLiteraryWorksMock,
 	onoffLiteraryWorksWithEditorialNote,
@@ -9,10 +9,11 @@ import {
 	onoffLiteraryWorksWithEpigraphs,
 	onoffLiteraryWorksWithSectionTitles,
 } from '@mocks/onoff-literary-works.mock';
+import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
 import { environment } from '../environments/environment';
 import { Endpoints } from './endpoints';
 import { HttpLiteraryWorkApi, LiteraryWorkApi } from './literary-work.provider';
-import type { LiteraryWorkDto } from '@models/literary-work.dto';
+import type { LiteraryWorkDto, LiteraryWorkTeaserDto } from '@models/literary-work.dto';
 import { provideLiteraryWorkApiMock, StubLiteraryWorkApi } from './literary-work.mock';
 
 // El DTO de wire es la serialización JSON del agregado: los métodos (toAnchor) y los brands se
@@ -20,6 +21,10 @@ import { provideLiteraryWorkApiMock, StubLiteraryWorkApi } from './literary-work
 // en vez de hand-authorear un objeto mock paralelo.
 function toWireDto(literaryWork: LiteraryWork): LiteraryWorkDto {
 	return JSON.parse(JSON.stringify(literaryWork)) as LiteraryWorkDto;
+}
+
+function teaserToWireDto(teaser: LiteraryWorkTeaser): LiteraryWorkTeaserDto {
+	return JSON.parse(JSON.stringify(teaser)) as LiteraryWorkTeaserDto;
 }
 
 // Quita claves sin dejarlas en `undefined`: el punto del caso que lo usa es que la clave **no viaje**,
@@ -170,6 +175,42 @@ describe('HttpLiteraryWorkApi', () => {
 		http.expectOne(`${environment.apiUrl}${Endpoints.LiteraryWork}/${dto.slug}`).flush(malformed);
 
 		await expect(result).rejects.toThrow();
+	});
+
+	describe('getByAuthorSlug', () => {
+		// El payload válido y el roto comparten unión: el shape roto se tipa entero —un
+		// totalReadingTime como string es exactamente lo que zod debe rechazar en la frontera— y la
+		// firma declara qué se le flushes al stream.
+		type WireBrokenTeaserDto = Omit<LiteraryWorkTeaserDto, 'totalReadingTime'> & { readonly totalReadingTime: string };
+		type WireTeaserPayload = LiteraryWorkTeaserDto | WireBrokenTeaserDto;
+
+		function requestTeasersByAuthor(slug: string, body: readonly WireTeaserPayload[]): Promise<LiteraryWorkTeaser[]> {
+			const result = new Promise<LiteraryWorkTeaser[]>((resolve, reject) => {
+				api.getByAuthorSlug(slug).subscribe({ next: resolve, error: reject });
+			});
+			http.expectOne(`${environment.apiUrl}${Endpoints.LiteraryWork}/author/${slug}`).flush(body);
+			return result;
+		}
+
+		it('rehidrata los teasers del autor al dominio, congelados', async () => {
+			const dtos = onoffLiteraryWorkTeasersMock.map(teaserToWireDto);
+
+			const teasers = await requestTeasersByAuthor(onoffLiteraryWorksMock[0].authors[0].slug, dtos);
+
+			expect(teasers.map(({ slug }) => slug)).toEqual(onoffLiteraryWorkTeasersMock.map(({ slug }) => slug));
+			for (const teaser of teasers) {
+				expect(Object.isFrozen(teaser)).toBe(true);
+				expect(teaser.excerpt.bodyHtml.length).toBeGreaterThan(0);
+				expect(teaser.totalReadingTime).toBeTypeOf('number');
+			}
+		});
+
+		it('errors the stream when a teaser violates the wire shape', async () => {
+			const [firstDto, ...restDtos] = onoffLiteraryWorkTeasersMock.map(teaserToWireDto);
+			const malformed: WireTeaserPayload[] = [{ ...firstDto, totalReadingTime: 'seis' }, ...restDtos];
+
+			await expect(requestTeasersByAuthor(onoffLiteraryWorksMock[0].authors[0].slug, malformed)).rejects.toThrow();
+		});
 	});
 });
 
