@@ -64,7 +64,7 @@
 					<span class="relative flex size-5 shrink-0 items-center justify-center">
 						<input
 							(change)="toggleTag(facet.tag.slug)"
-							[checked]="isSelected(facet.tag.slug)"
+							[checked]="facet.selected"
 							[id]="'facet-' + facet.tag.slug"
 							class="peer size-5 cursor-pointer appearance-none rounded border-2 border-neutral-300 bg-white checked:border-brand-500 checked:bg-brand-500"
 							type="checkbox"

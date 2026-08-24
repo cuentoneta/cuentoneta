@@ -20,6 +20,7 @@ import { DividerComponent } from '@components/divider/divider.component';
 export interface CollectionFacet {
 	readonly tag: Tag;
 	readonly count: number;
+	readonly selected: boolean;
 }
 
 @Component({
@@ -33,11 +34,10 @@ export interface CollectionFacet {
 	imports: [CollectionTeaserCard, CollectionTeaserCardSkeletonComponent, DividerComponent, NgIcon],
 })
 export default class CollectionsPage implements CollectionsHost {
+	// Providers
 	private readonly collectionApi = inject(CollectionApi);
 	private readonly responseInit = inject(RESPONSE_INIT, { optional: true });
 
-	// Bloqueante y no progresivo: el HTML se serializa antes de la respuesta, y el hub saldría sin
-	// ninguno de los enlaces que viene a ofrecer.
 	private readonly catalogResource = ssrBlockingRxResource({
 		stream: () => this.collectionApi.getAll(),
 		defaultValue: [],
@@ -47,8 +47,6 @@ export default class CollectionsPage implements CollectionsHost {
 	// acento o eñe inicial, y Sanity no expone colación con plegado.
 	private readonly collator = new Intl.Collator('es');
 
-	// Sin filtrar: es lo que describen los datos estructurados, y la canónica apunta siempre al
-	// catálogo completo.
 	public readonly collections = computed(() => {
 		const catalog = this.catalogResource.hasValue() ? this.catalogResource.value() : [];
 		return [...catalog].sort((first, second) => this.collator.compare(first.title, second.title));
@@ -76,11 +74,12 @@ export default class CollectionsPage implements CollectionsHost {
 	// Se cuentan sobre lo visible y no sobre el catálogo entero: de ahí que al elegir una etiqueta las
 	// demás bajen su número y las que no conviven con ella desaparezcan.
 	protected readonly facets = computed<readonly CollectionFacet[]>(() => {
-		const counts = new Map<string, { tag: Tag; count: number }>();
+		const selected = new Set(this.selectedSlugs());
+		const counts = new Map<string, CollectionFacet>();
 		for (const collection of this.visibleCollections()) {
 			for (const tag of collection.tags) {
 				const seen = counts.get(tag.slug);
-				counts.set(tag.slug, { tag, count: (seen?.count ?? 0) + 1 });
+				counts.set(tag.slug, { tag, count: (seen?.count ?? 0) + 1, selected: selected.has(tag.slug) });
 			}
 		}
 		return [...counts.values()].sort((first, second) => this.collator.compare(first.tag.title, second.tag.title));
@@ -103,10 +102,6 @@ export default class CollectionsPage implements CollectionsHost {
 		}
 		this.responseInit.status = 503;
 	});
-
-	protected isSelected(slug: string): boolean {
-		return this.selectedSlugs().includes(slug);
-	}
 
 	protected toggleTag(slug: string): void {
 		this.selectedSlugs.update((selected) =>
