@@ -27,7 +27,7 @@ La aplicación implementa un patrón centralizado llamado **`rotatingContent`** 
 
 Actualmente, este documento almacena:
 
-- **Obras más leídas** (`mostReadLiteraryWorks`) - Ranking actualizado automáticamente de manera diaria. Sustituye a `mostRead`, que referenciaba historias y está en baja.
+- **Lo más leído** - Ranking actualizado automáticamente de manera diaria. Vive hoy en `mostRead`, que referencia historias y está en baja; su reemplazo es `mostReadLiteraryWorks`, ya declarado en el schema y todavía sin escritor.
 
 Las funcionalidades relacionadas a contenido rotativo están y deben de ser implementadas a nivel de servidor, a fin de ejecutar procedimientos en intervalos de tiempo dados, regulares o esporádicos, para garantizar que el contenido mostrado en la plataforma esté actualizado y sea coherente con la hoja de ruta de contenido del proyecto.
 
@@ -41,7 +41,9 @@ Las **historias más leídas** son un ejemplo de contenido dentro del patrón de
 
 De manera diaria se ejecuta un cron job, definido en `vercel.json` para su ejecución a las 03:30 am (GMT -3), que se encarga, partiendo de esas listas, de alojar en el documento singleton `rotatingContent` las referencias correspondientes.
 
-El destino de esa escritura pasa a ser `mostReadLiteraryWorks`, con referencias a documentos `literaryWork`. Mientras dure la convivencia de las dos rutas de lectura, el conteo de páginas populares contempla los dos prefijos de URL: leer uno solo dejaría afuera la mitad del tráfico y la lista quedaría subestimada.
+Hoy escribe en `mostRead`, con referencias a documentos `story`.
+
+> **Pendiente del cambio de contrato.** El destino pasará a ser `mostReadLiteraryWorks`, con referencias a `literaryWork`, y el conteo de páginas populares tendrá que contemplar los dos prefijos de URL mientras las dos rutas de lectura convivan: leer uno solo dejaría afuera la mitad del tráfico y subestimaría la lista. Nada de eso está implementado todavía.
 
 ### Ubicación en el Código
 
