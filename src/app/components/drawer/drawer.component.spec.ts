@@ -98,7 +98,7 @@ describe('DrawerComponent', () => {
 
 	it('should emit closed before afterClosed when close arrives in the same frame as open', async () => {
 		const { fixture } = await render(HostComponent);
-		const drawer = fixture.debugElement.query(By.directive(DrawerComponent)).componentInstance as DrawerComponent;
+		const drawer = fixture.debugElement.query(By.css('cuentoneta-drawer')).injector.get(DrawerComponent);
 
 		// Ambas llamadas en la misma tarea: garantiza que el cierre aterriza antes del frame diferido
 		// de la apertura, sin depender del scheduling real de `requestAnimationFrame`.
