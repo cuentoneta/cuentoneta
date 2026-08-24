@@ -78,6 +78,17 @@ export function expectationsFor(path: string): IndexableHtmlExpectations | null 
 			requiredInternalLinkPrefix: '/author/',
 		};
 	}
+	if (path.startsWith('/read/')) {
+		const pattern = slugToTitlePattern(slugOf(path));
+		return {
+			path,
+			canonicalContains: path,
+			titlePattern: pattern,
+			h1Pattern: pattern,
+			requiredJsonLdIds: [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.article, SCHEMA_IDS.breadcrumbRead],
+			requiredInternalLinkPrefix: '/author/',
+		};
+	}
 	if (path.startsWith('/author/')) {
 		return {
 			path,

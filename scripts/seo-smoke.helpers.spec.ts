@@ -124,6 +124,16 @@ describe('expectationsFor', () => {
 		expect(expectations?.requiredJsonLdIds).toContain('article');
 	});
 
+	it('read: patrón por slug + JSON-LD Article y breadcrumb-read + enlace a autor', () => {
+		const expectations = expectationsFor('/read/el-fin');
+		expect(expectations?.titlePattern?.test('El fin')).toBe(true);
+		expect(expectations?.h1Pattern?.test('El fin')).toBe(true);
+		expect(expectations?.canonicalContains).toBe('/read/el-fin');
+		expect(expectations?.requiredInternalLinkPrefix).toBe('/author/');
+		expect(expectations?.requiredJsonLdIds).toContain('article');
+		expect(expectations?.requiredJsonLdIds).toContain('breadcrumb-read');
+	});
+
 	it('author: patrón por slug + ProfilePage + enlace a cuento', () => {
 		const expectations = expectationsFor('/author/jorge-luis-borges');
 		expect(expectations?.titlePattern?.test('Jorge Luis Borges')).toBe(true);
