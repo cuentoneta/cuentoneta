@@ -169,10 +169,12 @@ export class DrawerComponent {
 		}
 		this.isClosing.set(true);
 		this.tracker.unregister(this);
+		// `closed` se emite antes de delegar el cierre: si la transición completa de forma síncrona
+		// (apertura sin asentar), `afterClosed` correría dentro de esa llamada y quedaría adelantado.
+		this.closed.emit();
 		this.transition.close(dialog, () => {
 			this.isClosing.set(false);
 			this.afterClosed.emit();
 		});
-		this.closed.emit();
 	}
 }

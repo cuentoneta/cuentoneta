@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { render, screen } from '@testing-library/angular';
 import userEvent, { type UserEvent } from '@testing-library/user-event';
 
@@ -13,9 +14,9 @@ import { DrawerTrackerService } from './drawer-tracker.service';
 	template: `
 		<button (click)="drawer.open()" type="button">Abrir</button>
 		<cuentoneta-drawer
-			(opened)="openedCount = openedCount + 1"
-			(closed)="closedCount = closedCount + 1"
-			(afterClosed)="afterClosedCount = afterClosedCount + 1"
+			(opened)="openedCount = openedCount + 1; mark('opened')"
+			(closed)="closedCount = closedCount + 1; mark('closed')"
+			(afterClosed)="afterClosedCount = afterClosedCount + 1; mark('afterClosed')"
 			[direction]="direction"
 			[title]="title"
 			[description]="description"
@@ -44,6 +45,11 @@ class HostComponent {
 	public openedCount = 0;
 	public closedCount = 0;
 	public afterClosedCount = 0;
+	public readonly eventLog: string[] = [];
+
+	public mark(eventName: string): void {
+		this.eventLog.push(eventName);
+	}
 }
 
 const getDialog = (): HTMLDialogElement => screen.getByRole('dialog', { hidden: true }) as HTMLDialogElement;
@@ -88,6 +94,20 @@ describe('DrawerComponent', () => {
 		dialog.dispatchEvent(new Event('transitionend'));
 		expect(dialog.open).toBe(false);
 		expect(fixture.componentInstance.afterClosedCount).toBe(1);
+	});
+
+	it('should emit closed before afterClosed when close arrives in the same frame as open', async () => {
+		const { fixture } = await render(HostComponent);
+		const drawer = fixture.debugElement.query(By.directive(DrawerComponent)).componentInstance as DrawerComponent;
+
+		// Ambas llamadas en la misma tarea: garantiza que el cierre aterriza antes del frame diferido
+		// de la apertura, sin depender del scheduling real de `requestAnimationFrame`.
+		drawer.open();
+		drawer.close();
+
+		expect(fixture.componentInstance.closedCount).toBe(1);
+		expect(fixture.componentInstance.afterClosedCount).toBe(1);
+		expect(fixture.componentInstance.eventLog).toEqual(['opened', 'closed', 'afterClosed']);
 	});
 
 	it('should emit closed and afterClosed only once when close is triggered repeatedly mid-transition', async () => {
