@@ -39,16 +39,24 @@ interface RelinkableDocument {
 export default defineMigration({
 	title: 'Reapuntar las referencias de la página de inicio y del contenido rotativo al dominio nuevo',
 	documentTypes: ['landingPage', 'rotatingContent'],
-	// Los borradores quedan fuera: la landing publicada es la única que se sirve, y migrarlos sólo ensucia
-	// el conteo con el que se verifica la corrida.
-	filter: "!(_id in path('drafts.**'))",
+	// Sin filtro: los borradores también se migran. Sólo se sirve el documento publicado, así que migrarlos
+	// no aporta a lo que se lee, pero omitirlos sí quita: publicar un borrador reemplaza al publicado por el
+	// contenido del borrador, y uno creado antes de la corrida no trae los campos nuevos. Dejarlos afuera
+	// convierte cada publicación pendiente en una pérdida silenciosa de lo migrado.
 	migrate: {
 		document(doc: RelinkableDocument) {
+			// Los dos tipos se nombran explícitamente en vez de tratar a `landingPage` como el caso por
+			// defecto: si mañana se suma un tipo a la lista de arriba, el default le escribiría campos que no
+			// tiene en vez de ignorarlo.
 			if (doc._type === 'rotatingContent') {
 				const mostReadLiteraryWorks = buildLiteraryWorkReferences(doc.mostRead);
 				return mostReadLiteraryWorks.length > 0
 					? [at('mostReadLiteraryWorks', setIfMissing(mostReadLiteraryWorks))]
 					: [];
+			}
+
+			if (doc._type !== 'landingPage') {
+				return [];
 			}
 
 			const collections = buildCollectionReferences(doc.cards);

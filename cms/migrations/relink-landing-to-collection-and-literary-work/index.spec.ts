@@ -1,4 +1,3 @@
-import { evaluate, parse } from 'groq-js';
 import { describe, expect, it } from 'vitest';
 
 import type { KeyedReference } from './build-relinked-references';
@@ -45,21 +44,19 @@ describe('migración de reapuntado de la página de inicio y el contenido rotati
 		expect(migration.documentTypes).toEqual(['landingPage', 'rotatingContent']);
 	});
 
-	// El filtro se ejecuta con el mismo motor que GROQ y no se compara como texto: una aserción textual
-	// pasa igual con un filtro roto mientras el literal coincida.
-	describe('el filtro decide qué entra', () => {
-		const matching = async (...docs: Record<string, unknown>[]) => {
-			const result = await evaluate(parse(`*[${migration.filter}]._id`), { dataset: docs });
-			return (await result.get()) as string[];
-		};
+	// Los borradores entran a propósito: publicar uno creado antes de la corrida reemplaza al documento
+	// publicado por su contenido, así que dejarlos afuera convierte cada publicación pendiente en una
+	// pérdida silenciosa de lo migrado.
+	it('migra un borrador igual que un documento publicado', () => {
+		const borrador = { ...landingPage(), _id: 'drafts.landing-2026-01' };
 
-		it('admite un documento publicado', async () => {
-			expect(await matching({ _id: 'publicado', _type: 'landingPage' })).toEqual(['publicado']);
-		});
+		expect(writtenRefs(migrateDocument(borrador), 'collections')).toEqual([
+			'collection-from-storylist-storylist-verano',
+		]);
+	});
 
-		it('deja fuera un borrador', async () => {
-			expect(await matching({ _id: 'drafts.borrador', _type: 'landingPage' })).toEqual([]);
-		});
+	it('ignora un tipo de documento que no es ninguno de los dos', () => {
+		expect(migrateDocument({ _id: 'autor-1', _type: 'author' })).toEqual([]);
 	});
 
 	describe('página de inicio', () => {
