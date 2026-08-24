@@ -14,11 +14,8 @@ describe('SkeletonComponent', () => {
 		await render('<cuentoneta-skeleton /><cuentoneta-skeleton /><cuentoneta-skeleton />', {
 			imports: [SkeletonComponent],
 		});
-		const bars = screen.getAllByRole('status');
-		expect(bars).toHaveLength(3);
-		for (const bar of bars) {
-			expect(bar).not.toHaveAttribute('aria-label');
-		}
+		expect(screen.getAllByRole('status')).toHaveLength(3);
+		expect(screen.queryAllByRole('status', { name: /.+/ })).toEqual([]);
 	});
 
 	it('should animate with animate-pulse on the host', async () => {
