@@ -51,6 +51,10 @@ export const appRoutes: Routes = [
 		loadComponent: () => import('./pages/collection/collection.page'),
 	},
 	{
+		path: AppRoutes.Collection,
+		loadComponent: () => import('./pages/collections/collections.page'),
+	},
+	{
 		path: AppRoutes.About,
 		loadComponent: () => import('./pages/about/about.component'),
 	},
