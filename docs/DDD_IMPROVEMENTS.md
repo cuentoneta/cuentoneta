@@ -69,7 +69,7 @@ interface StoryRepository {
 }
 
 // 2. Implementación de repositorio (capa de infraestructura)
-@Injectable({ providedIn: 'root' })
+@Service({ autoProvided: false })
 class SanityStoryRepository implements StoryRepository {
 	constructor(private sanityClient: SanityClient) {}
 
@@ -114,7 +114,7 @@ class SanityStoryRepository implements StoryRepository {
 }
 
 // 3. Servicio de aplicación usando inyección (capa de aplicación)
-@Injectable({ providedIn: 'root' })
+@Service({ autoProvided: false })
 class StoryApplicationService {
 	constructor(private storyRepository: StoryRepository) {}
 
@@ -132,7 +132,7 @@ class StoryApplicationService {
 }
 
 // 4. Uso en componentes/servicios frontend
-@Injectable({ providedIn: 'root' })
+@Service()
 class StoryService {
 	constructor(private http: HttpClient) {}
 
@@ -302,7 +302,7 @@ interface EventPublisher {
 	subscribe(eventName: string, handler: (event: DomainEvent) => Promise<void>): void;
 }
 
-@Injectable({ providedIn: 'root' })
+@Service()
 class InMemoryEventPublisher implements EventPublisher {
 	private subscribers: Map<string, ((event: DomainEvent) => Promise<void>)[]> = new Map();
 
@@ -379,7 +379,7 @@ class Story {
 }
 
 // 5. Servicio que publica eventos
-@Injectable({ providedIn: 'root' })
+@Service()
 class StoryApplicationService {
 	constructor(
 		private storyRepository: StoryRepository,
@@ -411,7 +411,7 @@ class StoryApplicationService {
 }
 
 // 6. Suscriptores a eventos
-@Injectable({ providedIn: 'root' })
+@Service()
 class StoryEventHandlers {
 	constructor(
 		private eventPublisher: EventPublisher,
@@ -453,7 +453,7 @@ interface EventStore {
 	getEventsSince(timestamp: Date): Promise<DomainEvent[]>;
 }
 
-@Injectable({ providedIn: 'root' })
+@Service()
 class SanityEventStore implements EventStore {
 	constructor(private sanityClient: SanityClient) {}
 
@@ -621,7 +621,7 @@ class SanityStoryRepository implements StoryRepository {
 }
 
 // 4. Uso desde el servicio de aplicación
-@Injectable({ providedIn: 'root' })
+@Service()
 class StoryApplicationService {
 	constructor(private storyRepository: StoryRepository) {}
 
