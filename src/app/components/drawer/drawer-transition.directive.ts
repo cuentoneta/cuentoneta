@@ -24,11 +24,16 @@ export class DrawerTransitionDirective {
 	}
 
 	/**
-	 * Dispara la transición de salida y llama a `onComplete` recién después de `transitionend`. Si la apertura
-	 * todavía no asentó (frame diferido pendiente), cierra de forma síncrona: la salida no tendría transición que
-	 * esperar —el estado de entrada ya era `false`—, y dejar el frame vivo reabriría el panel tras el cierre.
+	 * Dispara la transición de salida y llama a `onComplete` recién después de `transitionend`. Es idempotente:
+	 * sobre un diálogo ya cerrado completa de una vez, sin apilar listeners. Si la apertura todavía no asentó
+	 * (frame diferido pendiente), cierra de forma síncrona: la salida no tendría transición que esperar —el
+	 * estado de entrada ya era `false`—, y dejar el frame vivo reabriría el panel tras el cierre.
 	 */
 	public close(element: HTMLDialogElement, onComplete: () => void): void {
+		if (!element.open) {
+			onComplete();
+			return;
+		}
 		if (this.pendingEntryFrame !== null) {
 			cancelAnimationFrame(this.pendingEntryFrame);
 			this.pendingEntryFrame = null;

@@ -62,4 +62,23 @@ describe('DrawerTransitionDirective', () => {
 		expect(directive.isTransitionedIn()).toBe(false);
 		expect(onComplete).toHaveBeenCalledTimes(1);
 	});
+
+	it('should complete a late close immediately without leaving transition listeners behind', () => {
+		useFakeTimers();
+
+		const firstComplete = fn();
+		const secondComplete = fn();
+		directive.open(dialog);
+		directive.close(dialog, firstComplete);
+		expect(dialog.open).toBe(false);
+
+		// Un cierre tardío sobre el diálogo ya cerrado se resuelve de una vez: no apila un listener
+		// de `transitionend` que nunca llegaría a dispararse con naturalidad.
+		directive.close(dialog, secondComplete);
+		expect(secondComplete).toHaveBeenCalledTimes(1);
+
+		dialog.dispatchEvent(new Event('transitionend'));
+		expect(firstComplete).toHaveBeenCalledTimes(1);
+		expect(secondComplete).toHaveBeenCalledTimes(1);
+	});
 });
