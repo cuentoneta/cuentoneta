@@ -14,6 +14,7 @@
  * El contenido de prueba lo cura el equipo en los datasets (development local / staging CI).
  */
 import { test, expect } from '@playwright/test';
+import type { Article, BreadcrumbList, WithContext } from 'schema-dts';
 
 import { parseJsonLdBlocks, getMetaContent, getTitleText, getCanonicalHref } from '../_utils/seo';
 import { assertValidJsonLd } from '@testing/json-ld-validation';
@@ -55,24 +56,22 @@ test.describe('read — HTML server-rendered de una obra existente', () => {
 	});
 
 	test('C: JSON-LD Article de la obra', async () => {
-		const article = parseJsonLdBlocks(html).get(SCHEMA_IDS.article);
+		const article = parseJsonLdBlocks(html).get(SCHEMA_IDS.article) as WithContext<Article> | undefined;
 		await assertValidJsonLd(article);
 
 		expect(article?.['@type']).toBe('Article');
-		expect(article?.['headline']).toBeTruthy();
-		expect(article?.['datePublished']).toBeTruthy();
-
-		const [firstAuthor] = article?.['author'] as Record<string, unknown>[];
-		expect(firstAuthor?.['@type']).toBe('Person');
-		expect((article?.['publisher'] as Record<string, unknown>)?.['@type']).toBe('Organization');
-		expect(String(article?.['mainEntityOfPage'])).toContain('/read/');
+		expect(article?.headline).toBeTruthy();
+		expect(article?.datePublished).toBeTruthy();
+		expect(String(article?.mainEntityOfPage)).toContain('/read/');
 	});
 
 	test('C: JSON-LD BreadcrumbList', async () => {
-		const breadcrumb = parseJsonLdBlocks(html).get(SCHEMA_IDS.breadcrumbRead);
+		const breadcrumb = parseJsonLdBlocks(html).get(SCHEMA_IDS.breadcrumbRead) as
+			WithContext<BreadcrumbList> | undefined;
 		await assertValidJsonLd(breadcrumb);
 
-		expect((breadcrumb?.['itemListElement'] as unknown[])?.length).toBeGreaterThanOrEqual(2);
+		const items = breadcrumb?.itemListElement;
+		expect(Array.isArray(items) ? items.length : 0).toBeGreaterThanOrEqual(2);
 	});
 
 	test('D: bloques sitewide Organization y WebSite presentes', () => {

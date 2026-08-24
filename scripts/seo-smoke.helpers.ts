@@ -66,8 +66,12 @@ export function selectByType(paths: readonly string[], prefix: string, size: num
 	return full ? ofType : sample(ofType, size);
 }
 
-export function expectationsFor(path: string): IndexableHtmlExpectations | null {
-	if (path.startsWith('/story/')) {
+type ExpectationsFactory = (path: string) => IndexableHtmlExpectations;
+
+// Prefijos disjuntos: el `/` de cola cierra el segmento (`/storylist/` no matchea `/story/`), así que
+// el orden de la tabla no afecta el resultado.
+const EXPECTATIONS_FACTORIES: Readonly<Record<string, ExpectationsFactory>> = {
+	'/story/': (path) => {
 		const pattern = slugToTitlePattern(slugOf(path));
 		return {
 			path,
@@ -77,8 +81,8 @@ export function expectationsFor(path: string): IndexableHtmlExpectations | null 
 			requiredJsonLdIds: [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.article, SCHEMA_IDS.breadcrumbStory],
 			requiredInternalLinkPrefix: '/author/',
 		};
-	}
-	if (path.startsWith('/read/')) {
+	},
+	'/read/': (path) => {
 		const pattern = slugToTitlePattern(slugOf(path));
 		return {
 			path,
@@ -88,26 +92,27 @@ export function expectationsFor(path: string): IndexableHtmlExpectations | null 
 			requiredJsonLdIds: [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.article, SCHEMA_IDS.breadcrumbRead],
 			requiredInternalLinkPrefix: '/author/',
 		};
-	}
-	if (path.startsWith('/author/')) {
-		return {
-			path,
-			canonicalContains: path,
-			titlePattern: slugToTitlePattern(slugOf(path)),
-			requiredJsonLdIds: [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.profilePage, SCHEMA_IDS.breadcrumbAuthor],
-			requiredInternalLinkPrefix: '/story/',
-		};
-	}
-	if (path.startsWith('/storylist/')) {
+	},
+	'/author/': (path) => ({
+		path,
+		canonicalContains: path,
+		titlePattern: slugToTitlePattern(slugOf(path)),
+		requiredJsonLdIds: [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.profilePage, SCHEMA_IDS.breadcrumbAuthor],
+		requiredInternalLinkPrefix: '/story/',
+	}),
+	'/storylist/': (path) =>
 		// El título de la storylist es editorial (no deriva del slug); sin titlePattern/h1Pattern.
-		return {
+		({
 			path,
 			canonicalContains: path,
 			requiredJsonLdIds: [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.collection, SCHEMA_IDS.breadcrumbStorylist],
 			requiredInternalLinkPrefix: '/story/',
-		};
-	}
-	return null;
+		}),
+};
+
+export function expectationsFor(path: string): IndexableHtmlExpectations | null {
+	const factory = Object.entries(EXPECTATIONS_FACTORIES).find(([prefix]) => path.startsWith(prefix))?.[1];
+	return factory ? factory(path) : null;
 }
 
 // Cuando una fecha se repite en más de esta proporción del sitemap, ya no está describiendo cuándo
