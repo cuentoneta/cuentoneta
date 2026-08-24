@@ -15,7 +15,7 @@ import {
 import { createCollectionTeaser, type CollectionTeaser } from '@models/collection.model';
 import { absurdoTagMock, colaborativaTagMock, surrealismoTagMock } from '@mocks/onoff-tags.mock';
 import { createMarkdown } from '@models/markdown.model';
-import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
+import { markdownToLinklessSanitizedHtml } from '@utils/markdown-pipeline.utils';
 
 // Utilidades de test
 import { clearAllMocks } from '@test-utils';
@@ -90,28 +90,16 @@ describe('CollectionTeaserCard', () => {
 			expect(description.textContent).not.toContain('<p>');
 		});
 
-		it('should drop the links of the prose, keeping their text', async () => {
-			const conEnlace = teaserFrom(representativeMock, {
-				description: markdownToSanitizedHtml(
-					createMarkdown('Una colección con [un enlace propio](https://www.cuentoneta.ar/about) en la prosa.'),
-				),
-			});
-
-			await render(CollectionTeaserCard, { inputs: { collection: conEnlace }, providers: defaultProviders });
-
-			const description = screen.getByTestId('description');
-			expect(within(description).queryByRole('link')).not.toBeInTheDocument();
-			expect(description.textContent).toContain('un enlace propio');
-		});
-
+		// Que la prosa no traiga enlaces lo garantiza el ACL, y lo cubre su propio spec: acá se afirma la
+		// consecuencia, que es el único destino de la tarjeta.
 		it('should leave the card with a single destination', async () => {
-			const conEnlace = teaserFrom(representativeMock, {
-				description: markdownToSanitizedHtml(
+			const conProsa = teaserFrom(representativeMock, {
+				description: markdownToLinklessSanitizedHtml(
 					createMarkdown('Una colección con [un enlace propio](https://www.cuentoneta.ar/about) en la prosa.'),
 				),
 			});
 
-			await render(CollectionTeaserCard, { inputs: { collection: conEnlace }, providers: defaultProviders });
+			await render(CollectionTeaserCard, { inputs: { collection: conProsa }, providers: defaultProviders });
 
 			expect(screen.getAllByRole('link')).toHaveLength(1);
 			expect(screen.getByRole('link')).toHaveAttribute('href', `/collection/${representativeMock.slug}`);

@@ -8,7 +8,6 @@ import { AppRoutes } from '../../app.routes';
 
 // Models
 import type { CollectionTeaser } from '@models/collection.model';
-import type { SanitizedHtml } from '@models/sanitized-html.model';
 
 // Components
 import { CollectionCoverComponent } from '../collection-cover/collection-cover.component';
@@ -67,19 +66,11 @@ export class CollectionTeaserCard {
 	// El backend entrega la descripción ya saneada por el pipeline compartido, y el brand del tipo es la
 	// prueba de que pasó por ahí. Sin el bypass, el sanitizer de Angular vuelve a recortar una marcación
 	// que ya está acotada a la allow-list, y el énfasis de la prosa se pierde.
+	//
+	// La prosa del teaser llega además sin enlaces, porque el ACL la convierte con un pipeline que no los
+	// admite: de eso depende que la tarjeta tenga un único destino.
 	protected readonly safeDescription = computed(() => {
 		const collection = this.collection();
-		return collection ? this.sanitizer.bypassSecurityTrustHtml(withoutLinks(collection.description)) : undefined;
+		return collection ? this.sanitizer.bypassSecurityTrustHtml(collection.description) : undefined;
 	});
-}
-
-/**
- * Descarta los enlaces de la prosa conservando su texto. La tarjeta entera es un único destino, y un
- * enlace propio de la descripción competiría con él: tapado para el puntero, alcanzable con el teclado.
- *
- * Basta con quitar las etiquetas porque la entrada ya viene acotada a la allow-list del pipeline y un
- * ancla no puede anidarse dentro de otra.
- */
-function withoutLinks(description: SanitizedHtml): string {
-	return description.replace(/<a\b[^>]*>/gi, '').replace(/<\/a>/gi, '');
 }

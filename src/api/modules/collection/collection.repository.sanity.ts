@@ -9,11 +9,12 @@ import {
 } from '@models/collection.model';
 import { createLiteraryWorkExcerpt, type LiteraryWorkExcerpt } from '@models/literary-work-excerpt.model';
 import type { LiteraryWorkTeaser } from '@models/literary-work.model';
-import { createMarkdown } from '@models/markdown.model';
+import { createMarkdown, type Markdown } from '@models/markdown.model';
 import { createReadingTime, type ReadingTime } from '@models/reading-time.model';
 import { createSectionTitle } from '@models/section-title.model';
 import { createSlug } from '@models/slug.model';
-import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
+import type { SanitizedHtml } from '@models/sanitized-html.model';
+import { markdownToLinklessSanitizedHtml, markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import { mapAuthorTeaser, mapTags, urlFor } from '../../_utils/functions';
 import { mapMediaSources, mapMediaTeasers } from '../../_utils/media-sources.functions';
 import { client as sanityClient } from '../../_helpers/sanity-connector';
@@ -66,7 +67,7 @@ export class SanityCollectionRepository implements CollectionRepository {
 		const sampleCoverCount = 3;
 		const literaryWorks = raw.literaryWorks.map((work) => this.mapLiteraryWorkTeaser(work));
 		return createCollection({
-			...this.mapShared(raw),
+			...this.mapShared(raw, markdownToSanitizedHtml),
 			imagery: this.resolveImagery(
 				raw.slug,
 				raw.featuredImage,
@@ -76,9 +77,12 @@ export class SanityCollectionRepository implements CollectionRepository {
 		});
 	}
 
+	// La prosa del teaser va sin enlaces: se pinta dentro de una tarjeta que ya es un destino, así que
+	// un enlace propio anidaría anclas y competiría con ella. La vista completa sí los conserva —ahí la
+	// prosa no está dentro de nada.
 	private mapCollectionTeaser(raw: SanityCollectionTeaser): CollectionTeaser {
 		return createCollectionTeaser({
-			...this.mapShared(raw),
+			...this.mapShared(raw, markdownToLinklessSanitizedHtml),
 			imagery: this.resolveImagery(
 				raw.slug,
 				raw.featuredImage,
@@ -90,13 +94,17 @@ export class SanityCollectionRepository implements CollectionRepository {
 	}
 
 	// Lo que las dos vistas mapean igual. La descripción va sin default: el vacío tiene que lanzar y
-	// quedar envuelto, no colarse como una colección sin prosa.
-	private mapShared(raw: SanityCollection | SanityCollectionTeaser) {
+	// quedar envuelto, no colarse como una colección sin prosa. Cada vista elige con qué pipeline la
+	// convierte, pero esa invariante se hace cumplir en un solo lugar.
+	private mapShared(
+		raw: SanityCollection | SanityCollectionTeaser,
+		toSanitizedHtml: (markdown: Markdown) => SanitizedHtml,
+	) {
 		return {
 			_id: raw._id,
 			slug: raw.slug,
 			title: raw.title,
-			description: markdownToSanitizedHtml(createMarkdown(raw.description)),
+			description: toSanitizedHtml(createMarkdown(raw.description)),
 			tags: mapTags(raw.tags),
 			config: { showAuthors: raw.config.showAuthors },
 			mediaSources: mapMediaSources(raw.mediaSources),

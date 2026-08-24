@@ -62,17 +62,41 @@ const literaryWorkSanitizationSchema: Options = {
 	},
 };
 
-// Singleton de módulo: construir el procesador unified es costoso y el pipeline es inmutable.
-const pipeline = unified()
-	.use(remarkParse)
-	// Va antes de remarkRehype: opera sobre mdast. El porqué del salto duro, en
-	// docs/LITERARY_WORK_DESIGN.md §9.
-	.use(remarkBreaks)
-	.use(remarkRehype)
-	.use(rehypeSanityImages)
-	.use(rehypeSanitize, literaryWorkSanitizationSchema)
-	.use(rehypeStringify);
+// Mismo allow-list sin el ancla. Sacar un tag del allow-list no descarta su contenido: el
+// sanitizador desanida el elemento y conserva sus hijos, incluido el énfasis que lleve adentro.
+const linklessSanitizationSchema: Options = {
+	...literaryWorkSanitizationSchema,
+	tagNames: (literaryWorkSanitizationSchema.tagNames ?? defaultSchema.tagNames ?? []).filter((tag) => tag !== 'a'),
+};
+
+// Singletons de módulo: construir el procesador unified es costoso y el pipeline es inmutable.
+function buildPipeline(schema: Options) {
+	return (
+		unified()
+			.use(remarkParse)
+			// Va antes de remarkRehype: opera sobre mdast. El porqué del salto duro, en
+			// docs/LITERARY_WORK_DESIGN.md §9.
+			.use(remarkBreaks)
+			.use(remarkRehype)
+			.use(rehypeSanityImages)
+			.use(rehypeSanitize, schema)
+			.use(rehypeStringify)
+	);
+}
+
+const pipeline = buildPipeline(literaryWorkSanitizationSchema);
+const linklessPipeline = buildPipeline(linklessSanitizationSchema);
 
 export function markdownToSanitizedHtml(markdown: Markdown): SanitizedHtml {
 	return createSanitizedHtml(String(pipeline.processSync(markdown)));
+}
+
+/**
+ * Igual que `markdownToSanitizedHtml`, pero el resultado no lleva enlaces: el texto del enlace
+ * sobrevive, la navegación no. Para la prosa que se pinta **dentro** de algo que ya es un destino,
+ * como la tarjeta de un listado, donde un enlace propio anidaría anclas —marcación inválida— y
+ * competiría con el destino de la tarjeta.
+ */
+export function markdownToLinklessSanitizedHtml(markdown: Markdown): SanitizedHtml {
+	return createSanitizedHtml(String(linklessPipeline.processSync(markdown)));
 }
