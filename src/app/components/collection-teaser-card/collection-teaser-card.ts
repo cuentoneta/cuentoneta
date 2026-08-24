@@ -23,11 +23,10 @@ import { CollectionCoverComponent } from '../collection-cover/collection-cover.c
 					<cuentoneta-collection-cover [imagery]="collection.imagery" />
 				</section>
 				<section class="flex flex-1 flex-col gap-1 overflow-hidden">
-					<!-- TODO(#2271): al montar el deck en la home el nivel deja de ser el correcto, porque ahí las
-					     tarjetas cuelgan del encabezado de sección propio del deck. -->
+					<!-- TODO(#2271): al montar el deck en la home el nivel deja de ser el
+					  correcto, porque ahí las tarjetas cuelgan del encabezado de sección
+					  propio del deck. -->
 					<h2 class="line-clamp-2 font-inter text-lg leading-6 font-bold text-neutral-900">
-						<!-- Enlace estirado y no envolvente: la descripción es HTML del CMS y puede traer enlaces
-						     propios, que anidados serían marcación inválida. -->
 						<a
 							[routerLink]="['/' + appRoutes.Collection, collection.slug]"
 							class="hover:text-interactive-500 after:absolute after:inset-0 after:content-['']"
@@ -58,18 +57,12 @@ import { CollectionCoverComponent } from '../collection-cover/collection-cover.c
 	`,
 })
 export class CollectionTeaserCard {
-	public readonly collection = input<CollectionTeaser>();
 	protected readonly appRoutes = AppRoutes;
-
 	private readonly sanitizer = inject(DomSanitizer);
 
-	// El backend entrega la descripción ya saneada por el pipeline compartido, y el brand del tipo es la
-	// prueba de que pasó por ahí. Sin el bypass, el sanitizer de Angular vuelve a recortar una marcación
-	// que ya está acotada a la allow-list, y el énfasis de la prosa se pierde.
-	//
-	// La prosa del teaser llega además sin enlaces, porque el ACL la convierte con un pipeline que no los
-	// admite: de eso depende que la tarjeta tenga un único destino.
-	protected readonly safeDescription = computed(() => {
+	public readonly collection = input<CollectionTeaser>();
+
+	protected readonly description = computed(() => {
 		const collection = this.collection();
 		return collection ? this.sanitizer.bypassSecurityTrustHtml(collection.description) : undefined;
 	});
