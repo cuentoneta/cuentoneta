@@ -18,7 +18,48 @@ import { DividerComponent } from '@components/divider/divider.component';
 
 @Component({
 	selector: 'cuentoneta-collections',
-	templateUrl: './collections.page.html',
+	template: `
+		<!-- El encabezado es fijo: sin el margen superior, la página arranca debajo de él. -->
+		<main class="mx-auto mt-header-height flex w-full max-w-310 items-stretch gap-8 px-4 pt-8 pb-16">
+			<cuentoneta-collection-filters
+				(cleared)="clearFilters()"
+				(toggled)="toggleTag($event.slug)"
+				[facets]="facets()"
+				class="hidden w-50 shrink-0 lg:flex"
+				data-testid="filters"
+			/>
+
+			<cuentoneta-divider class="hidden lg:block" orientation="vertical" />
+
+			<div class="flex min-w-0 flex-1 flex-col gap-12 lg:pl-5">
+				<h1 class="font-inter text-2xl leading-8 font-bold text-neutral-900">
+					{{ visibleCollections().length }} {{ visibleCollections().length === 1 ? 'Colección' : 'Colecciones' }}
+				</h1>
+
+				@if (loading()) {
+					<section class="flex flex-col gap-8" aria-busy="true">
+						@for (placeholder of [1, 2, 3, 4]; track placeholder) {
+							<cuentoneta-collection-teaser-card-skeleton class="w-full" />
+						}
+					</section>
+				} @else if (failed()) {
+					<p class="font-inter text-base text-neutral-700" data-testid="catalog-error">
+						No pudimos cargar las colecciones. Probá de nuevo en un rato.
+					</p>
+				} @else if (visibleCollections().length > 0) {
+					<section class="flex flex-col gap-8" data-testid="collections">
+						@for (collection of visibleCollections(); track collection.slug) {
+							<cuentoneta-collection-teaser-card [collection]="collection" class="w-full" />
+						}
+					</section>
+				} @else {
+					<p class="font-inter text-base text-neutral-700" data-testid="catalog-empty">
+						Todavía no hay colecciones publicadas.
+					</p>
+				}
+			</div>
+		</main>
+	`,
 	providers: [{ provide: COLLECTIONS_HOST, useExisting: forwardRef(() => CollectionsPage) }],
 	hostDirectives: [CollectionsMetaTagsDirective, CollectionsStructuredDataDirective],
 	imports: [CollectionFiltersComponent, CollectionTeaserCard, CollectionTeaserCardSkeletonComponent, DividerComponent],
