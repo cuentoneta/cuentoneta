@@ -32,7 +32,6 @@ describe('CollectionsStructuredDataDirective', () => {
 			.forEach((el) => el.remove());
 	});
 
-	// Un listado de cero ítems describe un catálogo vacío, que dice algo falso sobre el sitio.
 	it('should not emit JSON-LD while the catalogue is empty', () => {
 		instantiate();
 		TestBed.tick();
@@ -55,8 +54,6 @@ describe('CollectionsStructuredDataDirective', () => {
 		).toMatchObject({ '@type': 'BreadcrumbList' });
 	});
 
-	// Los identificadores de la página de detalle son vecinos cercanos: que no se pisen es lo que permite
-	// distinguir los dos bloques al mirar el HTML servido.
 	it('should not emit under the schema ids the collection detail page uses', () => {
 		collectionsSignal.set(onoffCollectionTeasersMock);
 

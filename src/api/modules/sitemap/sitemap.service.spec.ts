@@ -75,8 +75,6 @@ describe('SitemapService', () => {
 				storylists: [],
 			});
 
-			// Sin contenido, lo que queda es exactamente el conjunto de páginas estáticas: se afirma entero
-			// y no con inclusiones, para que tanto una que se caiga como una de más rompan el caso.
 			expect(await getSitemapUrls()).toEqual([
 				{ loc: 'https://test.cuentoneta.ar' },
 				{ loc: 'https://test.cuentoneta.ar/about' },
@@ -168,8 +166,6 @@ describe('SitemapService', () => {
 
 			const locations = (await getSitemapUrls()).map(({ loc }) => loc);
 
-			// Se cuenta por tipo y no el total: atado al total, el caso se rompía cada vez que entraba una
-			// página estática, y eso invita a corregir el número sin mirar qué se cayó.
 			for (const segment of ['story', 'author', 'storylist']) {
 				expect(locations.filter((location) => location.includes(`/${segment}/`))).toHaveLength(3);
 			}

@@ -9,9 +9,8 @@ import { provideCollectionApiMock } from '../../providers/collection.mock';
 import type { CollectionApi } from '../../providers/collection.provider';
 import CollectionsPage from './collections.page';
 
-// El corpus tiene dos colecciones, que no alcanzan para mirar el catálogo como catálogo. Para ver la
-// lista larga, el orden con acentos y las facetas con más de una etiqueta, se derivan más entradas del
-// canon, en vez de escribir teasers a mano.
+// El corpus no alcanza para ver la lista larga, el orden con acentos ni las facetas con más de una
+// etiqueta.
 const [canonical] = onoffCollectionTeasersMock;
 const derived = (title: string, slug: string): CollectionTeaser =>
 	createCollectionTeaser({
@@ -51,7 +50,7 @@ class StubScenarioCollectionApi implements CollectionApi {
 		if (this.scenario === 'failure') {
 			return throwError(() => new Error('sin catálogo'));
 		}
-		// Nunca emite: deja el recurso pendiente, que es la única forma de sostener el esqueleto a la vista.
+		// `NEVER` deja el recurso pendiente, que es la única forma de sostener el esqueleto a la vista.
 		if (this.scenario === 'loading') {
 			return NEVER;
 		}
@@ -64,8 +63,8 @@ type CollectionsPageArgs = { scenario: Scenario };
 const meta: Meta<CollectionsPageArgs> = {
 	component: CollectionsPage,
 	title: 'Páginas/CollectionsPage',
-	// El doble se construye por render y no se comparte: la página de autodocs monta las cinco entradas a
-	// la vez, y una instancia común dejaría que el escenario de una resolviera dentro de otra.
+	// Uno por render: la página de autodocs monta todas las entradas a la vez y una instancia común
+	// dejaría que el escenario de una resolviera dentro de otra.
 	decorators: [
 		(story, context) =>
 			applicationConfig({

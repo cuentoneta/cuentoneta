@@ -90,10 +90,6 @@ describe('CollectionTeaserCard', () => {
 			expect(description.textContent).not.toContain('<p>');
 		});
 
-		// Con la descripción envuelta en el enlace de la tarjeta, un enlace propio de la prosa producía
-		// marcación inválida: el parser cerraba el enlace externo antes de tiempo y expulsaba el bloque de
-		// texto fuera de él, con lo que la tarjeta se desarmaba. El corpus no tiene descripciones con
-		// enlaces, así que el caso se deriva.
 		it('should keep the card intact when the description carries links of its own', async () => {
 			const conEnlace = teaserFrom(representativeMock, {
 				description: markdownToSanitizedHtml(
@@ -106,10 +102,7 @@ describe('CollectionTeaserCard', () => {
 				providers: defaultProviders,
 			});
 
-			// No se afirma la ausencia de `a a`: al ser marcación inválida el parser la deshace sola, así que
-			// tampoco aparecía cuando el defecto estaba vivo. Lo que distingue una versión de otra es en qué
-			// queda la tarjeta después de esa reparación — antes, la portada quedaba dentro del enlace y el
-			// bloque de texto salía despedido a hermano suyo.
+			// Afirmar la ausencia de `a a` no sirve: el parser deshace solo el anidamiento inválido.
 			/* eslint-disable testing-library/no-container, testing-library/no-node-access -- la estructura resultante no se expresa por rol ni por texto */
 			const article = container.querySelector('article');
 			expect([...(article?.children ?? [])].map((child) => child.tagName)).toEqual(['SECTION', 'SECTION']);
@@ -122,41 +115,6 @@ describe('CollectionTeaserCard', () => {
 
 	// La forma de la portada la resuelve CollectionCover y la cubre su spec: acá solo se afirma que la
 	// tarjeta le entrega el dato de dominio, que es lo único suyo en juego.
-	// El título es lo que titula la tarjeta dentro de un listado, así que tiene que ser un encabezado:
-	// sin eso, una grilla de tarjetas no ofrece nada por donde saltar con un lector de pantalla.
-	describe('Título como encabezado', () => {
-		it('should expose the title as a heading that links to the collection', async () => {
-			await render(CollectionTeaserCard, {
-				inputs: { collection: representativeMock },
-				providers: defaultProviders,
-			});
-
-			const heading = screen.getByRole('heading', { name: representativeMock.title });
-			expect(within(heading).getByRole('link')).toHaveAttribute('href', `/collection/${representativeMock.slug}`);
-		});
-	});
-
-	describe('Etiquetas', () => {
-		it('should announce the remaining tags with a counter', async () => {
-			const conVariasEtiquetas = teaserFrom(representativeMock, {
-				tags: [colaborativaTagMock, surrealismoTagMock, absurdoTagMock],
-			});
-
-			await render(CollectionTeaserCard, { inputs: { collection: conVariasEtiquetas }, providers: defaultProviders });
-
-			expect(screen.getByText(new RegExp(`${colaborativaTagMock.title}\\s*\\+2`))).toBeInTheDocument();
-		});
-
-		it('should not add a counter when the collection carries a single tag', async () => {
-			const conUnaEtiqueta = teaserFrom(representativeMock, { tags: [colaborativaTagMock] });
-
-			await render(CollectionTeaserCard, { inputs: { collection: conUnaEtiqueta }, providers: defaultProviders });
-
-			expect(screen.getByText(colaborativaTagMock.title)).toBeInTheDocument();
-			expect(screen.queryByText(/\+\d/)).not.toBeInTheDocument();
-		});
-	});
-
 	describe('Portada', () => {
 		it('should hand the imagery of the collection to the cover', async () => {
 			await render(CollectionTeaserCard, {
@@ -169,14 +127,14 @@ describe('CollectionTeaserCard', () => {
 	});
 
 	describe('Título de la colección', () => {
-		it('should render title inside the link', async () => {
+		it('should render the title as a heading that links to the collection', async () => {
 			await render(CollectionTeaserCard, {
 				inputs: { collection: representativeMock },
 				providers: defaultProviders,
 			});
 
-			const link = screen.getByRole('link');
-			expect(within(link).getByText(representativeMock.title)).toBeInTheDocument();
+			const heading = screen.getByRole('heading', { name: representativeMock.title });
+			expect(within(heading).getByRole('link')).toHaveAttribute('href', `/collection/${representativeMock.slug}`);
 		});
 	});
 
@@ -202,12 +160,22 @@ describe('CollectionTeaserCard', () => {
 
 		it('should display the tag', async () => {
 			await render(CollectionTeaserCard, {
-				inputs: { collection: representativeMock },
+				inputs: { collection: teaserFrom(representativeMock, { tags: [colaborativaTagMock] }) },
 				providers: defaultProviders,
 			});
 
-			const [tag] = representativeMock.tags;
-			expect(screen.getByText(tag.title, { exact: false })).toBeInTheDocument();
+			expect(screen.getByText(colaborativaTagMock.title)).toBeInTheDocument();
+			expect(screen.queryByText(/\+\d/)).not.toBeInTheDocument();
+		});
+
+		it('should announce the tags it does not name with a counter', async () => {
+			const conVariasEtiquetas = teaserFrom(representativeMock, {
+				tags: [colaborativaTagMock, surrealismoTagMock, absurdoTagMock],
+			});
+
+			await render(CollectionTeaserCard, { inputs: { collection: conVariasEtiquetas }, providers: defaultProviders });
+
+			expect(screen.getByText(new RegExp(`${colaborativaTagMock.title}\\s*\\+2`))).toBeInTheDocument();
 		});
 	});
 

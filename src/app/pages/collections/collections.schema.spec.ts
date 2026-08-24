@@ -34,7 +34,6 @@ describe('buildCollectionCatalogSchema', () => {
 		});
 	});
 
-	// La URL del sitio llega con barra final; sin recortarla el bloque publicaría URLs con barra doble.
 	it('should not emit double slashes when the website URL ends in one', () => {
 		const schema = buildCollectionCatalogSchema(onoffCollectionTeasersMock, websiteUrl);
 

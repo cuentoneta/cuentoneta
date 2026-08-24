@@ -1,30 +1,22 @@
-// Librería de pruebas
 import { render, screen, within } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { provideRouter } from '@angular/router';
 import { RESPONSE_INIT } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
 
-// Página
 import CollectionsPage from './collections.page';
 
-// Providers
 import type { CollectionApi } from '../../providers/collection.provider';
 import { provideCollectionApiMock } from '../../providers/collection.mock';
 
-// Modelos
 import { createCollectionTeaser, type Collection, type CollectionTeaser } from '@models/collection.model';
 import type { Tag } from '@models/tag.model';
 
-// Mocks
 import { onoffCollectionsMock, onoffCollectionTeasersMock } from '@mocks/onoff-collections.mock';
 import { colaborativaTagMock, surrealismoTagMock } from '@mocks/onoff-tags.mock';
 
-// Utilidades de test
 import { clearAllMocks } from '@test-utils';
 
-// El doble compartido resuelve el catálogo desde colecciones completas; acá la página solo consume el
-// listado, así que el doble entrega teasers directamente y deja `getBySlug` fuera de juego.
 class StubCatalogCollectionApi implements CollectionApi {
 	constructor(private readonly teasers: readonly CollectionTeaser[]) {}
 
@@ -52,8 +44,7 @@ const renderPage = (api: CollectionApi) =>
 		providers: [provideRouter([]), provideCollectionApiMock(api)],
 	});
 
-// Derivados del canon: el corpus no tiene títulos que empiecen con acento, que es justo lo que el orden
-// tiene que resolver.
+// El corpus no tiene títulos con acento inicial, que es lo que el orden tiene que resolver.
 const [canonical] = onoffCollectionTeasersMock;
 const withTitle = (title: string, slug: string): CollectionTeaser =>
 	createCollectionTeaser({
@@ -73,7 +64,6 @@ describe('CollectionsPage', () => {
 		clearAllMocks();
 	});
 
-	// El encabezado del catálogo es su conteo, no un título fijo: es lo primero que responde la página.
 	it('should headline the catalogue with how many collections it lists', async () => {
 		await renderPage(new StubCatalogCollectionApi(onoffCollectionTeasersMock));
 
@@ -105,8 +95,7 @@ describe('CollectionsPage', () => {
 		expect(hrefs).toEqual(expect.arrayContaining(onoffCollectionsMock.map(({ slug }) => `/collection/${slug}`)));
 	});
 
-	// El orden que trae la query compara por punto de código, así que manda `Ámbar` detrás de `Zoológico`.
-	// Es el caso que justifica reordenar en la página en vez de confiar en la colación de la base.
+	// La colación de la base pondría `Ámbar` detrás de `Zoológico`.
 	it('should order titles with accent folding, not by code point', async () => {
 		const desordenadas = [
 			withTitle('Zoológico', 'zoologico'),
@@ -129,8 +118,6 @@ describe('CollectionsPage', () => {
 		expect(screen.queryByTestId('collections')).not.toBeInTheDocument();
 	});
 
-	// Un catálogo vacío resuelto no es un catálogo cargando. Sin este caso, la página se quedaba con los
-	// esqueletos puestos y el servidor los serializaba en una ruta que pide ser indexada.
 	it('should say the catalogue is empty instead of showing placeholders', async () => {
 		const { container } = await renderPage(new StubCatalogCollectionApi([]));
 
@@ -139,8 +126,6 @@ describe('CollectionsPage', () => {
 		expect(container.querySelector('cuentoneta-collection-teaser-card-skeleton')).toBeNull();
 	});
 
-	// Un catálogo que falla no puede verse igual que uno vacío: sin el mensaje, la página miente diciendo
-	// que no hay colecciones.
 	it('should tell the reader when the catalogue fails to load', async () => {
 		await renderPage(new FailingCollectionApi());
 
@@ -148,8 +133,6 @@ describe('CollectionsPage', () => {
 		expect(screen.queryByTestId('collections')).not.toBeInTheDocument();
 	});
 
-	// El filtrado ocurre entero en memoria, sobre el catálogo ya traído: ninguno de estos casos vuelve a
-	// consultar al provider.
 	describe('filtros', () => {
 		const conEtiquetas = (slug: string, tags: readonly Tag[]): CollectionTeaser =>
 			createCollectionTeaser({
@@ -192,8 +175,6 @@ describe('CollectionsPage', () => {
 			expect(screen.getByRole('heading', { level: 1, name: '2 Colecciones' })).toBeInTheDocument();
 		});
 
-		// Lo que pide la nota del diseño: al elegir una etiqueta, las que no conviven con ella dejan de
-		// ofrecerse, y las que sí ajustan su número a lo que queda a la vista.
 		it('should drop the facets that no longer apply and recount the rest', async () => {
 			await renderCatalogo();
 
@@ -211,7 +192,6 @@ describe('CollectionsPage', () => {
 			expect(screen.getByRole('heading', { level: 1, name: '3 Colecciones' })).toBeInTheDocument();
 		});
 
-		// El chevron del diseño anuncia que el grupo se pliega, así que se implementó como control real.
 		it('should collapse the category group without dropping the filters in effect', async () => {
 			await renderCatalogo();
 			await userEvent.click(screen.getByLabelText(`${colaborativaTagMock.title} (2)`));
@@ -220,7 +200,6 @@ describe('CollectionsPage', () => {
 
 			expect(screen.getByRole('button', { name: /Categoría/ })).toHaveAttribute('aria-expanded', 'false');
 			expect(screen.queryByLabelText(`${colaborativaTagMock.title} (2)`)).not.toBeInTheDocument();
-			// El filtro sigue aplicado: plegar el grupo esconde los controles, no deshace la elección.
 			expect(screen.getByRole('heading', { level: 1, name: '2 Colecciones' })).toBeInTheDocument();
 			expect(screen.getByTestId('active-filters')).toBeInTheDocument();
 		});
@@ -235,9 +214,8 @@ describe('CollectionsPage', () => {
 			expect(screen.queryByTestId('active-filters')).not.toBeInTheDocument();
 		});
 
-		// Acotar las facetas a lo que está a la vista tiene una consecuencia que conviene dejar afirmada:
-		// toda faceta ofrecida tiene al menos una colección detrás, así que no hay forma de llegar a un
-		// resultado vacío eligiendo filtros. Por eso la página no tiene estado de «ninguna coincide».
+		// Toda faceta ofrecida tiene al menos una colección detrás: por eso la página no tiene estado de
+		// «ninguna coincide» — sería inalcanzable.
 		it('should never let a combination of offered facets empty the listing', async () => {
 			await renderCatalogo();
 			await userEvent.click(screen.getByLabelText(`${colaborativaTagMock.title} (2)`));
@@ -249,8 +227,6 @@ describe('CollectionsPage', () => {
 		});
 	});
 
-	// El código de respuesta es lo que impide que el borde cachee un fallo transitorio como si fuera la
-	// página: es la razón del effect, y por eso se afirma en vez de quedar solo enunciada en un comentario.
 	describe('código de respuesta', () => {
 		const renderWithResponseInit = (api: CollectionApi, responseInit: { status?: number }) =>
 			render(CollectionsPage, {

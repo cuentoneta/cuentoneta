@@ -32,8 +32,8 @@
 		</ul>
 		}
 
-		<!-- Grupo con `role`/`aria-labelledby` y no `fieldset`/`legend`: el legend queda fuera del flujo flex
-		     del fieldset, así que la separación con la lista no se aplicaba y el grupo salía 12 px corrido. -->
+		<!-- No es `fieldset`/`legend`: el legend queda fuera del flujo flex y la separación con la lista no
+		     se aplica. -->
 		<div class="flex flex-col gap-3" role="group" aria-labelledby="category-group-label">
 			<div>
 				<button
@@ -45,8 +45,7 @@
 					class="flex cursor-pointer items-center gap-1 font-inter text-sm leading-5 font-semibold text-neutral-900"
 				>
 					Categoría
-					<!-- La caja del icono mide 24 pero el trazo del chevron ocupa ~11 de ancho por ~7 de alto:
-					     el diseño lo dibuja centrado y chico dentro de esa caja, no llenándola. -->
+					<!-- El diseño dibuja el trazo chico y centrado dentro de una caja de 24, no llenándola. -->
 					<span class="flex size-6 items-center justify-center">
 						<ng-icon
 							[class.-rotate-90]="!isCategoryGroupOpen()"
@@ -70,10 +69,8 @@
 							class="peer size-5 cursor-pointer appearance-none rounded border-2 border-neutral-300 bg-white checked:border-brand-500 checked:bg-brand-500"
 							type="checkbox"
 						/>
-						<!-- La marca va aparte y no como pseudo-elemento: en un elemento reemplazado como el
-						     input, ::after no se renderiza de forma confiable. El color va por estilo y no por
-						     utilidad: sobre el host del icono la clase no resuelve, y acá el contraste contra la
-						     caja rellena es lo único que hace visible la marca. -->
+						<!-- Aparte y no como `::after`: en un elemento reemplazado no se renderiza. El color va por
+						     estilo porque la utilidad no resuelve sobre el host del icono. -->
 						<ng-icon
 							[style.color]="'var(--color-white)'"
 							name="faSolidCheck"

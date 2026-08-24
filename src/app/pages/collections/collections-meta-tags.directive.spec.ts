@@ -19,8 +19,6 @@ describe('CollectionsMetaTagsDirective', () => {
 		});
 	});
 
-	// A diferencia de las demás páginas indexables, no depende de que un dato resuelva: el catálogo puede
-	// venir vacío o fallar y la página igual tiene que anunciarse.
 	it('should set the title without waiting for any data', () => {
 		const titleSpy = spyOn(TestBed.inject(Title), 'setTitle');
 

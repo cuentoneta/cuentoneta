@@ -5,10 +5,8 @@ import { type CollectionTeaser } from '@models/collection.model';
 import { buildBreadcrumbSchema } from '@utils/schema-org.builders';
 
 /**
- * Construye el JSON-LD del catálogo de colecciones, con un `ItemList` ordenado de las colecciones que
- * lo integran, para que los answer engines entiendan el hub y no solo cada colección por separado.
- *
- * El orden del `ItemList` es el del array que entra: la página ya lo resolvió.
+ * Construye el JSON-LD del catálogo de colecciones. El orden del `ItemList` es el del array que
+ * entra: la página ya lo resolvió.
  */
 export function buildCollectionCatalogSchema(
 	collections: readonly CollectionTeaser[],

@@ -16,7 +16,7 @@ export class CollectionsStructuredDataDirective extends AbstractStructuredDataDi
 
 	protected applyStructuredData(): void {
 		const collections = this.host.collections();
-		// Un `ItemList` de cero ítems describe un catálogo vacío, que es peor que no describir nada.
+		// Un `ItemList` vacío afirma que el sitio no tiene colecciones; no emitir nada no afirma nada.
 		if (collections.length === 0) {
 			return;
 		}

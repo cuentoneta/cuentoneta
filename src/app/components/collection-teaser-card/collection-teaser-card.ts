@@ -26,9 +26,8 @@ import { CollectionCoverComponent } from '../collection-cover/collection-cover.c
 					<!-- TODO(#2271): al montar el deck en la home el nivel deja de ser el correcto, porque ahí las
 					     tarjetas cuelgan del encabezado de sección propio del deck. -->
 					<h2 class="line-clamp-2 font-inter text-lg leading-6 font-bold text-neutral-900">
-						<!-- El enlace se estira con ::after sobre toda la tarjeta en vez de envolverla: la descripción
-						     es HTML del CMS y puede traer enlaces propios, y un <a> dentro de otro <a> es marcación
-						     inválida que el parser deshace, expulsando el texto fuera del enlace. -->
+						<!-- Enlace estirado y no envolvente: la descripción es HTML del CMS y puede traer enlaces
+						     propios, que anidados serían marcación inválida. -->
 						<a
 							[routerLink]="['/' + appRoutes.Collection, collection.slug]"
 							class="hover:text-interactive-500 after:absolute after:inset-0 after:content-['']"
@@ -43,8 +42,6 @@ import { CollectionCoverComponent } from '../collection-cover/collection-cover.c
 					></div>
 					<footer class="flex flex-col gap-1 font-inter text-xs text-neutral-600 sm:flex-row">
 						@if (collection.tags[0]; as tag) {
-							<!-- Las etiquetas restantes se anuncian con un contador y no se enumeran: la tarjeta tiene
-							     una línea para esto, y el diseño reserva ahí el nombre de la primera. -->
 							<span class="font-inter text-xs font-bold text-brand-500">
 								{{ tag.title }}
 								@if (collection.tags.length > 1) {

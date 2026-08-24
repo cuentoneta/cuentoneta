@@ -1,23 +1,17 @@
-// Core
 import { Component, computed, effect, forwardRef, inject, RESPONSE_INIT, signal } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { faSolidCheck, faSolidChevronDown, faSolidXmark } from '@ng-icons/font-awesome/solid';
 
-// Utils
 import { ssrBlockingRxResource } from '@app-utils/ssr-resource';
 
-// Services
 import { CollectionApi } from '../../providers/collection.provider';
 
-// Models
 import type { Tag } from '@models/tag.model';
 
-// SEO
 import { COLLECTIONS_HOST, type CollectionsHost } from './collections-host';
 import { CollectionsMetaTagsDirective } from './collections-meta-tags.directive';
 import { CollectionsStructuredDataDirective } from './collections-structured-data.directive';
 
-// Components
 import { CollectionTeaserCard } from '@components/collection-teaser-card/collection-teaser-card';
 import { CollectionTeaserCardSkeletonComponent } from '@components/collection-teaser-card/collection-teaser-card-skeleton';
 import { DividerComponent } from '@components/divider/divider.component';
@@ -42,19 +36,19 @@ export default class CollectionsPage implements CollectionsHost {
 	private readonly collectionApi = inject(CollectionApi);
 	private readonly responseInit = inject(RESPONSE_INIT, { optional: true });
 
-	// El catálogo es el contenido de la página, no un accesorio: con un recurso progresivo el HTML se
-	// serializa antes de la respuesta y el hub saldría sin ninguno de los enlaces que viene a ofrecer.
+	// Bloqueante y no progresivo: el HTML se serializa antes de la respuesta, y el hub saldría sin
+	// ninguno de los enlaces que viene a ofrecer.
 	private readonly catalogResource = ssrBlockingRxResource({
 		stream: () => this.collectionApi.getAll(),
 		defaultValue: [],
 	});
 
-	// El `order(title asc)` de la query compara por punto de código, así que manda al final del catálogo
-	// todo título que empiece con acento o eñe. Se reordena acá, como ya se hace en el índice de autores.
+	// El `order(title asc)` de la query compara por punto de código: manda al final todo título con
+	// acento o eñe inicial, y Sanity no expone colación con plegado.
 	private readonly collator = new Intl.Collator('es');
 
-	// El catálogo entero y sin filtrar: es lo que describen los datos estructurados, que no siguen al
-	// estado de la interfaz porque la canónica siempre apunta al catálogo completo.
+	// Sin filtrar: es lo que describen los datos estructurados, y la canónica apunta siempre al
+	// catálogo completo.
 	public readonly collections = computed(() => {
 		const catalog = this.catalogResource.hasValue() ? this.catalogResource.value() : [];
 		return [...catalog].sort((first, second) => this.collator.compare(first.title, second.title));
@@ -62,15 +56,10 @@ export default class CollectionsPage implements CollectionsHost {
 
 	protected readonly failed = computed(() => this.catalogResource.status() === 'error');
 
-	// El vacío resuelto y la carga se ven distintos y significan cosas opuestas: sin esta señal, un
-	// catálogo que vuelve vacío con éxito se queda mostrando esqueletos, y el servidor los serializa.
 	protected readonly loading = computed(() => this.catalogResource.isLoading());
 
-	// El filtrado vive en memoria, sobre el catálogo ya traído: la query no se vuelve a consultar.
 	private readonly selectedSlugs = signal<readonly string[]>([]);
 
-	// El diseño dibuja el grupo con un chevron, que en un panel de filtros anuncia que se pliega. Se
-	// implementa como tal en vez de dejarlo decorativo: un control que no controla nada engaña.
 	private readonly categoryGroupOpen = signal(true);
 	protected readonly isCategoryGroupOpen = this.categoryGroupOpen.asReadonly();
 
@@ -84,8 +73,8 @@ export default class CollectionsPage implements CollectionsHost {
 		);
 	});
 
-	// Las facetas se cuentan sobre lo que está a la vista, no sobre el catálogo entero: por eso al
-	// elegir una etiqueta las demás bajan su número y las que no conviven con ella desaparecen.
+	// Se cuentan sobre lo visible y no sobre el catálogo entero: de ahí que al elegir una etiqueta las
+	// demás bajen su número y las que no conviven con ella desaparezcan.
 	protected readonly facets = computed<readonly CollectionFacet[]>(() => {
 		const counts = new Map<string, { tag: Tag; count: number }>();
 		for (const collection of this.visibleCollections()) {
@@ -106,8 +95,8 @@ export default class CollectionsPage implements CollectionsHost {
 		});
 	});
 
-	// Un fallo transitorio no puede salir 200: el borde cachearía un catálogo vacío como si fuera la
-	// página. No hay rama 404 — un catálogo no deja de existir.
+	// Un fallo transitorio no puede salir 200: el borde lo cachearía como si fuera la página. No hay
+	// rama 404 — un catálogo no deja de existir.
 	private readonly respondErrorStatusEffect = effect(() => {
 		if (!this.catalogResource.error() || !this.responseInit) {
 			return;

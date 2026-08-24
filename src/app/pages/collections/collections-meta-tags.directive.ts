@@ -10,8 +10,7 @@ import { AbstractMetaTagsDirective } from '../../directives/abstract-meta-tags.d
 	hostDirectives: [HeadMetadataDirective],
 })
 export class CollectionsMetaTagsDirective extends AbstractMetaTagsDirective {
-	// A diferencia de las demás páginas indexables, no inyecta el host: nada de lo que emite depende del
-	// catálogo, y atarlo a la lista sumaría una dependencia que solo puede fallar.
+	// No inyecta el host: nada de lo que emite depende del catálogo, y el catálogo puede fallar.
 	protected applyMetaTags(): void {
 		untracked(() => {
 			this.head.setTitle('Colecciones');

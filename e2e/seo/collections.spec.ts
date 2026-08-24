@@ -1,15 +1,8 @@
 /**
  * Tests e2e de SEO para el catálogo de colecciones (`/collection`).
  *
- * Sobre el HTML server-rendered (lo que ve el crawler, sin ejecutar JS):
- *  - A. Meta tags: title, description, og:/twitter:, canonical a `/collection`, robots indexable y keywords.
- *  - B. Datos estructurados: JSON-LD CollectionPage con el `ItemList` del catálogo, y aparte el BreadcrumbList.
- *  - C. Bloques sitewide Organization y WebSite.
- *  - D. La tanda completa de invariantes de una página indexable, con enlaces salientes a `/collection/`.
- *
- * La tanda corre sin `fixme`: la página sirve su grilla sin diferir, así que el HTML trae H1 real y los
- * enlaces a cada colección. Y el catálogo se **afirma** no vacío en vez de saltearse — un skip acá dejaría
- * un verde engañoso justo donde el valor del cambio se mide.
+ * A diferencia del de storylist, la tanda completa de invariantes corre sin `fixme`: esta página no
+ * difiere nada, así que el HTML trae encabezado real y los enlaces a cada colección.
  */
 import { test, expect } from '@playwright/test';
 
