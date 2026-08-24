@@ -85,8 +85,9 @@ describe('DrawerTransitionDirective', () => {
 	it('should reopen normally after a close that landed before the entry frame ran', () => {
 		useFakeTimers();
 
+		const firstComplete = fn();
 		directive.open(dialog);
-		directive.close(dialog, () => {});
+		directive.close(dialog, firstComplete);
 		directive.open(dialog);
 
 		expect(dialog.open).toBe(true);
@@ -100,5 +101,6 @@ describe('DrawerTransitionDirective', () => {
 		dialog.dispatchEvent(new Event('transitionend'));
 		expect(dialog.open).toBe(false);
 		expect(completed).toBe(true);
+		expect(firstComplete).toHaveBeenCalledTimes(1);
 	});
 });
