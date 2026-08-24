@@ -1,37 +1,27 @@
 import { Component, computed, effect, forwardRef, inject, RESPONSE_INIT, signal } from '@angular/core';
-import { NgIcon, provideIcons } from '@ng-icons/core';
-import { faSolidCheck, faSolidChevronDown, faSolidXmark } from '@ng-icons/font-awesome/solid';
 
 import { ssrBlockingRxResource } from '@app-utils/ssr-resource';
 
 import { CollectionApi } from '../../providers/collection.provider';
 
-import type { Tag } from '@models/tag.model';
-
 import { COLLECTIONS_HOST, type CollectionsHost } from './collections-host';
 import { CollectionsMetaTagsDirective } from './collections-meta-tags.directive';
 import { CollectionsStructuredDataDirective } from './collections-structured-data.directive';
 
+import {
+	CollectionFiltersComponent,
+	type CollectionFacet,
+} from '@components/collection-filters/collection-filters.component';
 import { CollectionTeaserCard } from '@components/collection-teaser-card/collection-teaser-card';
 import { CollectionTeaserCardSkeletonComponent } from '@components/collection-teaser-card/collection-teaser-card-skeleton';
 import { DividerComponent } from '@components/divider/divider.component';
 
-/** Una etiqueta del catálogo con cuántas de las colecciones a la vista la llevan. */
-export interface CollectionFacet {
-	readonly tag: Tag;
-	readonly count: number;
-	readonly selected: boolean;
-}
-
 @Component({
 	selector: 'cuentoneta-collections',
 	templateUrl: './collections.page.html',
-	providers: [
-		{ provide: COLLECTIONS_HOST, useExisting: forwardRef(() => CollectionsPage) },
-		provideIcons({ faSolidCheck, faSolidChevronDown, faSolidXmark }),
-	],
+	providers: [{ provide: COLLECTIONS_HOST, useExisting: forwardRef(() => CollectionsPage) }],
 	hostDirectives: [CollectionsMetaTagsDirective, CollectionsStructuredDataDirective],
-	imports: [CollectionTeaserCard, CollectionTeaserCardSkeletonComponent, DividerComponent, NgIcon],
+	imports: [CollectionFiltersComponent, CollectionTeaserCard, CollectionTeaserCardSkeletonComponent, DividerComponent],
 })
 export default class CollectionsPage implements CollectionsHost {
 	// Providers
@@ -58,9 +48,6 @@ export default class CollectionsPage implements CollectionsHost {
 
 	private readonly selectedSlugs = signal<readonly string[]>([]);
 
-	private readonly categoryGroupOpen = signal(true);
-	protected readonly isCategoryGroupOpen = this.categoryGroupOpen.asReadonly();
-
 	protected readonly visibleCollections = computed(() => {
 		const selected = this.selectedSlugs();
 		if (selected.length === 0) {
@@ -85,15 +72,6 @@ export default class CollectionsPage implements CollectionsHost {
 		return [...counts.values()].sort((first, second) => this.collator.compare(first.tag.title, second.tag.title));
 	});
 
-	protected readonly selectedTags = computed<readonly Tag[]>(() => {
-		const selected = this.selectedSlugs();
-		const known = new Map(this.collections().flatMap((collection) => collection.tags.map((tag) => [tag.slug, tag])));
-		return selected.flatMap((slug) => {
-			const tag = known.get(slug);
-			return tag ? [tag] : [];
-		});
-	});
-
 	// Un fallo transitorio no puede salir 200: el borde lo cachearía como si fuera la página. No hay
 	// rama 404 — un catálogo no deja de existir.
 	private readonly respondErrorStatusEffect = effect(() => {
@@ -111,9 +89,5 @@ export default class CollectionsPage implements CollectionsHost {
 
 	protected clearFilters(): void {
 		this.selectedSlugs.set([]);
-	}
-
-	protected toggleCategoryGroup(): void {
-		this.categoryGroupOpen.update((open) => !open);
 	}
 }
