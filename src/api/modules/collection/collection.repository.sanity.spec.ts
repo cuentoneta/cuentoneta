@@ -4,6 +4,8 @@ import { collectionBySlugQuery, collectionsQuery } from '../../_queries/collecti
 import {
 	descriptionlessRawCollection,
 	emptyRawCollection,
+	linkedDescriptionRawCollection,
+	linkedDescriptionRawCollectionTeasers,
 	onoffRawCollectionsWithFeaturedImage,
 	onoffRawCollectionsWithoutFeaturedImage,
 	onoffRawCollectionTeasersMock,
@@ -207,6 +209,23 @@ describe('SanityCollectionRepository.fetchAll', () => {
 
 		expect(teasers.map((teaser) => teaser.literaryWorks)).toEqual(onoffRawCollectionTeasersMock.map(() => []));
 		expect(teasers.map((teaser) => teaser.count)).toEqual(onoffRawCollectionTeasersMock.map((teaser) => teaser.count));
+	});
+
+	// Fija dónde vive la decisión: la prosa del teaser sale sin enlaces desde la traducción, no desde
+	// quien la renderiza.
+	it('strips the links of the description, keeping their text', async () => {
+		const teasers = await repoReturning(linkedDescriptionRawCollectionTeasers).fetchAll();
+
+		expect(teasers.map(({ description }) => description).join()).not.toContain('<a');
+		teasers.forEach(({ description }) => expect(description).toContain('un enlace propio'));
+	});
+
+	// La contracara: la vista completa no se pinta dentro de nada, así que ahí el enlace es legítimo y
+	// tiene que sobrevivir. Sin este caso, descartarlo en las dos vistas pasaría inadvertido.
+	it('keeps the links of the description in the full view', async () => {
+		const collection = await repoReturning(linkedDescriptionRawCollection).fetchBySlug('geometrias-del-desvelo');
+
+		expect(collection?.description).toContain('href="https://www.cuentoneta.ar/about"');
 	});
 
 	// Se afirma que las dos ramas quedan cubiertas, sin atarse al orden: el listado llega ordenado por
