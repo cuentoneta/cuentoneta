@@ -14,6 +14,9 @@ export type SkeletonAppearance = (typeof SkeletonAppearance)[keyof typeof Skelet
  * forma: `line` agrega un radio chico, `circle` fuerza un avatar redondo y `square` deja el radio en
  * manos del consumidor (no impone ninguno) para evitar colisiones de cascada con su clase `rounded-*`.
  * Para varias barras, el consumidor repite el elemento con `@for`.
+ *
+ * Declara `role="status"` y `aria-busy`, pero deliberadamente ningún nombre accesible: como cada
+ * barra se repite por pantalla, un nombre propio haría que cada instancia se anunciara por separado.
  */
 @Component({
 	selector: 'cuentoneta-skeleton',
@@ -21,7 +24,6 @@ export type SkeletonAppearance = (typeof SkeletonAppearance)[keyof typeof Skelet
 	host: {
 		role: 'status',
 		'aria-busy': 'true',
-		'aria-label': 'Cargando',
 		class: 'block animate-pulse',
 		'[class.rounded]': "appearance() === 'line'",
 		'[class.rounded-full]': "appearance() === 'circle'",

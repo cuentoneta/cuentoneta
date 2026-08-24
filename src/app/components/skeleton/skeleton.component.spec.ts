@@ -3,9 +3,22 @@ import { render, screen } from '@testing-library/angular';
 import { SkeletonAppearance, SkeletonComponent } from './skeleton.component';
 
 describe('SkeletonComponent', () => {
-	it('should expose role="status" with the loading label for assistive technology', async () => {
+	it('should expose role="status" and aria-busy without an accessible name', async () => {
 		await render(SkeletonComponent);
-		expect(screen.getByRole('status', { name: 'Cargando' })).toHaveAttribute('aria-busy', 'true');
+		const bar = screen.getByRole('status');
+		expect(bar).toHaveAttribute('aria-busy', 'true');
+		expect(bar).not.toHaveAttribute('aria-label');
+	});
+
+	it('should not expose an accessible name on any bar when rendered multiple times', async () => {
+		await render('<cuentoneta-skeleton /><cuentoneta-skeleton /><cuentoneta-skeleton />', {
+			imports: [SkeletonComponent],
+		});
+		const bars = screen.getAllByRole('status');
+		expect(bars).toHaveLength(3);
+		for (const bar of bars) {
+			expect(bar).not.toHaveAttribute('aria-label');
+		}
 	});
 
 	it('should animate with animate-pulse on the host', async () => {
