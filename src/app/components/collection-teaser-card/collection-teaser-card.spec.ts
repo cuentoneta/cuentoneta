@@ -13,6 +13,9 @@ import {
 
 // Modelos
 import { createCollectionTeaser, type CollectionTeaser } from '@models/collection.model';
+import { absurdoTagMock, colaborativaTagMock, surrealismoTagMock } from '@mocks/onoff-tags.mock';
+import { createMarkdown } from '@models/markdown.model';
+import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 
 // Utilidades de test
 import { clearAllMocks } from '@test-utils';
@@ -86,6 +89,33 @@ describe('CollectionTeaserCard', () => {
 			expect(description.innerHTML).toContain('<p>');
 			expect(description.textContent).not.toContain('<p>');
 		});
+
+		it('should drop the links of the prose, keeping their text', async () => {
+			const conEnlace = teaserFrom(representativeMock, {
+				description: markdownToSanitizedHtml(
+					createMarkdown('Una colección con [un enlace propio](https://www.cuentoneta.ar/about) en la prosa.'),
+				),
+			});
+
+			await render(CollectionTeaserCard, { inputs: { collection: conEnlace }, providers: defaultProviders });
+
+			const description = screen.getByTestId('description');
+			expect(within(description).queryByRole('link')).not.toBeInTheDocument();
+			expect(description.textContent).toContain('un enlace propio');
+		});
+
+		it('should leave the card with a single destination', async () => {
+			const conEnlace = teaserFrom(representativeMock, {
+				description: markdownToSanitizedHtml(
+					createMarkdown('Una colección con [un enlace propio](https://www.cuentoneta.ar/about) en la prosa.'),
+				),
+			});
+
+			await render(CollectionTeaserCard, { inputs: { collection: conEnlace }, providers: defaultProviders });
+
+			expect(screen.getAllByRole('link')).toHaveLength(1);
+			expect(screen.getByRole('link')).toHaveAttribute('href', `/collection/${representativeMock.slug}`);
+		});
 	});
 
 	// La forma de la portada la resuelve CollectionCover y la cubre su spec: acá solo se afirma que la
@@ -102,14 +132,14 @@ describe('CollectionTeaserCard', () => {
 	});
 
 	describe('Título de la colección', () => {
-		it('should render title inside the link', async () => {
+		it('should render the title as a heading that links to the collection', async () => {
 			await render(CollectionTeaserCard, {
 				inputs: { collection: representativeMock },
 				providers: defaultProviders,
 			});
 
-			const link = screen.getByRole('link');
-			expect(within(link).getByText(representativeMock.title)).toBeInTheDocument();
+			const heading = screen.getByRole('heading', { name: representativeMock.title });
+			expect(within(heading).getByRole('link')).toHaveAttribute('href', `/collection/${representativeMock.slug}`);
 		});
 	});
 
@@ -135,12 +165,22 @@ describe('CollectionTeaserCard', () => {
 
 		it('should display the tag', async () => {
 			await render(CollectionTeaserCard, {
-				inputs: { collection: representativeMock },
+				inputs: { collection: teaserFrom(representativeMock, { tags: [colaborativaTagMock] }) },
 				providers: defaultProviders,
 			});
 
-			const [tag] = representativeMock.tags;
-			expect(screen.getByText(tag.title, { exact: false })).toBeInTheDocument();
+			expect(screen.getByText(colaborativaTagMock.title)).toBeInTheDocument();
+			expect(screen.queryByText(/\+\d/)).not.toBeInTheDocument();
+		});
+
+		it('should announce the tags it does not name with a counter', async () => {
+			const conVariasEtiquetas = teaserFrom(representativeMock, {
+				tags: [colaborativaTagMock, surrealismoTagMock, absurdoTagMock],
+			});
+
+			await render(CollectionTeaserCard, { inputs: { collection: conVariasEtiquetas }, providers: defaultProviders });
+
+			expect(screen.getByText(new RegExp(`${colaborativaTagMock.title}\\s*\\+2`))).toBeInTheDocument();
 		});
 	});
 
