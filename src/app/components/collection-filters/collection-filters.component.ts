@@ -2,10 +2,10 @@ import { Component, computed, input, output, signal } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { faSolidCheck, faSolidChevronDown, faSolidXmark } from '@ng-icons/font-awesome/solid';
 
+import type { CollectionTeaser } from '@models/collection.model';
 import type { Tag } from '@models/tag.model';
 
-/** Una etiqueta del catálogo con cuántas de las colecciones a la vista la llevan, y si está elegida. */
-export interface CollectionFacet {
+interface CollectionFacet {
 	readonly tag: Tag;
 	readonly count: number;
 	readonly selected: boolean;
@@ -109,10 +109,26 @@ export interface CollectionFacet {
 	`,
 })
 export class CollectionFiltersComponent {
-	public readonly facets = input.required<readonly CollectionFacet[]>();
+	/** Las colecciones sobre las que se cuentan las facetas: las que están a la vista, no el catálogo. */
+	public readonly collections = input.required<readonly CollectionTeaser[]>();
+	public readonly selected = input.required<readonly string[]>();
 
 	public readonly toggled = output<Tag>();
 	public readonly cleared = output<void>();
+
+	private readonly collator = new Intl.Collator('es');
+
+	protected readonly facets = computed<readonly CollectionFacet[]>(() => {
+		const selected = new Set(this.selected());
+		const counts = new Map<string, CollectionFacet>();
+		for (const collection of this.collections()) {
+			for (const tag of collection.tags) {
+				const seen = counts.get(tag.slug);
+				counts.set(tag.slug, { tag, count: (seen?.count ?? 0) + 1, selected: selected.has(tag.slug) });
+			}
+		}
+		return [...counts.values()].sort((first, second) => this.collator.compare(first.tag.title, second.tag.title));
+	});
 
 	protected readonly selectedTags = computed(() =>
 		this.facets()

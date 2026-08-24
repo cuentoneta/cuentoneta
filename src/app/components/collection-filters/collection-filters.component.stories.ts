@@ -1,20 +1,33 @@
 import { argsToTemplate, type Meta, type StoryObj } from '@storybook/angular-vite';
 
+import { createCollectionTeaser, type CollectionTeaser } from '@models/collection.model';
+import type { Tag } from '@models/tag.model';
+import { onoffCollectionTeasersMock } from '@mocks/onoff-collections.mock';
 import { absurdoTagMock, colaborativaTagMock, cuentoTagMock, surrealismoTagMock } from '@mocks/onoff-tags.mock';
 
-import { CollectionFiltersComponent, type CollectionFacet } from './collection-filters.component';
+import { CollectionFiltersComponent } from './collection-filters.component';
 
-const facet = (tag: CollectionFacet['tag'], count: number, selected = false): CollectionFacet => ({
-	tag,
-	count,
-	selected,
-});
+// El corpus no reparte sus etiquetas de forma que se vean conteos distintos entre facetas, así que
+// las colecciones se derivan del canon con la combinación que hace falta mirar.
+const [canonical] = onoffCollectionTeasersMock;
+const conEtiquetas = (slug: string, tags: readonly Tag[]): CollectionTeaser =>
+	createCollectionTeaser({
+		_id: `${canonical._id}-${slug}`,
+		slug,
+		title: slug,
+		description: canonical.description,
+		imagery: canonical.imagery,
+		tags,
+		config: canonical.config,
+		mediaSources: canonical.mediaSources,
+		count: canonical.count,
+	});
 
-const catalogo: readonly CollectionFacet[] = [
-	facet(colaborativaTagMock, 8),
-	facet(cuentoTagMock, 5),
-	facet(surrealismoTagMock, 3),
-	facet(absurdoTagMock, 1),
+const catalogo: readonly CollectionTeaser[] = [
+	conEtiquetas('una', [colaborativaTagMock, surrealismoTagMock]),
+	conEtiquetas('otra', [colaborativaTagMock, cuentoTagMock]),
+	conEtiquetas('tercera', [colaborativaTagMock]),
+	conEtiquetas('cuarta', [cuentoTagMock, absurdoTagMock]),
 ];
 
 const meta: Meta<CollectionFiltersComponent> = {
@@ -28,12 +41,13 @@ const meta: Meta<CollectionFiltersComponent> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>La columna de filtros del catálogo, <strong>CollectionFilters</strong>. Es un componente de presentación: recibe las facetas ya calculadas y avisa qué etiqueta se tocó, sin decidir nada sobre el filtrado.</p><p>Los chips de lo elegido no son una entrada aparte: se derivan de las facetas marcadas como seleccionadas, así que no hay dos fuentes que puedan discrepar.</p><p>Lo único que decide por su cuenta es si el grupo de categorías está plegado, que es estado de presentación suyo.</p><p>Se usa en <a href="./?path=/docs/páginas-collectionspage--docs" target="_top"><strong>CollectionsPage</strong></a>, que calcula las facetas sobre las colecciones a la vista: de ahí que al elegir una etiqueta las demás bajen su número y las que no conviven con ella desaparezcan.</p></div>`,
+				component: `<div><p>La columna de filtros del catálogo, <strong>CollectionFilters</strong>. Cuenta las etiquetas de las colecciones que recibe y ofrece una faceta por cada una, con cuántas la llevan.</p><p>No decide nada sobre el filtrado: avisa qué etiqueta se tocó y quién lo consume resuelve qué hacer. La selección entra como dato, así que el panel nunca discrepa de lo que la página está mostrando.</p><p>Recibe las colecciones <strong>a la vista</strong>, no el catálogo entero: de ahí que al elegir una etiqueta las demás bajen su número y las que no conviven con ella desaparezcan. Como toda faceta ofrecida tiene al menos una colección detrás, no hay forma de vaciar el listado eligiendo filtros.</p><p>Los chips de lo elegido salen de las mismas facetas, y lo único que resuelve por su cuenta es si el grupo está plegado.</p><p>Se usa en <a href="./?path=/docs/páginas-collectionspage--docs" target="_top"><strong>CollectionsPage</strong></a>.</p></div>`,
 			},
 		},
 	},
 	argTypes: {
-		facets: { name: 'Facetas', table: { type: { summary: 'readonly CollectionFacet[]' } } },
+		collections: { name: 'Colecciones a la vista', table: { type: { summary: 'readonly CollectionTeaser[]' } } },
+		selected: { name: 'Etiquetas elegidas', table: { type: { summary: 'readonly string[]' } } },
 		toggled: { action: 'toggled' },
 		cleared: { action: 'cleared' },
 	},
@@ -43,57 +57,55 @@ export default meta;
 type Story = StoryObj<CollectionFiltersComponent>;
 
 export const Playground: Story = {
-	args: { facets: catalogo },
+	args: { collections: catalogo, selected: [] },
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>El panel con el control vivo. Los eventos salen por el panel de <strong>Actions</strong>: la etiqueta viaja entera en <code>toggled</code>, así que quien lo consume no tiene que resolver el slug contra nada.</p>`,
+				story: `<p>El panel con los controles vivos. Los eventos salen por el panel de <strong>Actions</strong>: la etiqueta viaja entera en <code>toggled</code>, así que quien escucha no tiene que resolver el slug contra nada.</p><p>Agregá una etiqueta a <strong>Etiquetas elegidas</strong> para ver cómo cambian los conteos y aparecen los chips.</p>`,
 			},
 		},
 	},
 };
 
 export const SinFiltrosElegidos: Story = {
-	args: { facets: catalogo },
+	args: { collections: catalogo, selected: [] },
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>El estado de arranque: todas las categorías disponibles y nada elegido. Sin selección no hay chips ni acceso a limpiar, porque no habría qué limpiar.</p>`,
+				story: `<p>El estado de arranque: una faceta por etiqueta del catálogo y nada elegido. Sin selección no hay chips ni acceso a limpiar, porque no habría qué limpiar.</p>`,
 			},
 		},
 	},
 };
 
 export const ConFiltrosElegidos: Story = {
-	args: {
-		facets: [facet(colaborativaTagMock, 8, true), facet(surrealismoTagMock, 3, true), facet(cuentoTagMock, 2)],
-	},
+	args: { collections: catalogo, selected: [colaborativaTagMock.slug, cuentoTagMock.slug] },
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Con dos categorías elegidas aparecen sus chips y el acceso a limpiar todo. Los conteos son los del subconjunto que queda a la vista, no los del catálogo entero.</p><p><strong>Usos:</strong> evaluar cómo conviven los chips con el encabezado cuando el nombre de la etiqueta es largo.</p>`,
+				story: `<p>Con dos etiquetas elegidas aparecen sus chips y el acceso a limpiar todo.</p><p><strong>Usos:</strong> evaluar cómo conviven los chips con el encabezado cuando el nombre de la etiqueta es largo, y cuándo pasan a una segunda línea.</p>`,
 			},
 		},
 	},
 };
 
-export const UnaSolaCategoria: Story = {
-	args: { facets: [facet(colaborativaTagMock, 8, true)] },
+export const UnaSolaColeccionALaVista: Story = {
+	args: { collections: [catalogo[2]], selected: [colaborativaTagMock.slug] },
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>El caso al que se llega filtrando por una categoría que no convive con ninguna otra: queda su propia faceta y nada más. Es el estado que hace visible por qué las facetas no pueden vaciar el listado.</p>`,
+				story: `<p>Al que se llega filtrando por una etiqueta que no convive con ninguna otra: queda su propia faceta y nada más. Es el estado que hace visible por qué elegir filtros no puede vaciar el listado.</p>`,
 			},
 		},
 	},
 };
 
 export const CatalogoSinEtiquetas: Story = {
-	args: { facets: [] },
+	args: { collections: [], selected: [] },
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Sin etiquetas en el catálogo el grupo queda vacío, pero el encabezado se conserva: la columna no desaparece ni cambia de ancho.</p>`,
+				story: `<p>Sin colecciones que contar el grupo queda vacío, pero el encabezado se conserva: la columna no desaparece ni cambia de ancho.</p>`,
 			},
 		},
 	},

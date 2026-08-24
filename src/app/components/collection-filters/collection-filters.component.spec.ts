@@ -1,65 +1,83 @@
 import { render, screen, within } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 
-import { absurdoTagMock, colaborativaTagMock, surrealismoTagMock } from '@mocks/onoff-tags.mock';
+import { createCollectionTeaser, type CollectionTeaser } from '@models/collection.model';
+import type { Tag } from '@models/tag.model';
+import { onoffCollectionTeasersMock } from '@mocks/onoff-collections.mock';
+import { colaborativaTagMock, cuentoTagMock, surrealismoTagMock } from '@mocks/onoff-tags.mock';
 import { clearAllMocks, fn } from '@test-utils';
 
-import { CollectionFiltersComponent, type CollectionFacet } from './collection-filters.component';
+import { CollectionFiltersComponent } from './collection-filters.component';
 
-const facet = (tag: CollectionFacet['tag'], count: number, selected = false): CollectionFacet => ({
-	tag,
-	count,
-	selected,
-});
+const [canonical] = onoffCollectionTeasersMock;
+const conEtiquetas = (slug: string, tags: readonly Tag[]): CollectionTeaser =>
+	createCollectionTeaser({
+		_id: `${canonical._id}-${slug}`,
+		slug,
+		title: slug,
+		description: canonical.description,
+		imagery: canonical.imagery,
+		tags,
+		config: canonical.config,
+		mediaSources: canonical.mediaSources,
+		count: canonical.count,
+	});
 
-const facets: readonly CollectionFacet[] = [
-	facet(colaborativaTagMock, 8),
-	facet(surrealismoTagMock, 3),
-	facet(absurdoTagMock, 1),
+const collections = [
+	conEtiquetas('una', [colaborativaTagMock, surrealismoTagMock]),
+	conEtiquetas('otra', [colaborativaTagMock]),
+	conEtiquetas('tercera', [colaborativaTagMock, cuentoTagMock]),
 ];
 
-const renderFilters = (given: readonly CollectionFacet[] = facets) => {
+const renderFilters = async (selected: readonly string[] = []) => {
 	const toggled = fn();
 	const cleared = fn();
-	return render(CollectionFiltersComponent, {
-		inputs: { facets: given },
+	const view = await render(CollectionFiltersComponent, {
+		inputs: { collections, selected },
 		on: { toggled, cleared },
-	}).then((result) => ({ ...result, toggled, cleared }));
+	});
+	return { ...view, toggled, cleared };
 };
+
+const facetFor = (tag: Tag, count: number) => screen.getByLabelText(`${tag.title} (${count})`);
 
 describe('CollectionFiltersComponent', () => {
 	beforeEach(() => {
 		clearAllMocks();
 	});
 
-	it('should offer every facet with its count', async () => {
+	it('should count each tag over the collections it receives', async () => {
 		await renderFilters();
 
-		expect(screen.getByLabelText(`${colaborativaTagMock.title} (8)`)).toBeInTheDocument();
-		expect(screen.getByLabelText(`${surrealismoTagMock.title} (3)`)).toBeInTheDocument();
-		expect(screen.getByLabelText(`${absurdoTagMock.title} (1)`)).toBeInTheDocument();
+		expect(facetFor(colaborativaTagMock, 3)).toBeInTheDocument();
+		expect(facetFor(surrealismoTagMock, 1)).toBeInTheDocument();
+		expect(facetFor(cuentoTagMock, 1)).toBeInTheDocument();
+	});
+
+	it('should offer each tag once, however many collections carry it', async () => {
+		await renderFilters();
+
+		expect(within(screen.getByRole('group')).getAllByRole('checkbox')).toHaveLength(3);
 	});
 
 	it('should emit the tag whose facet is activated', async () => {
 		const { toggled } = await renderFilters();
 
-		await userEvent.click(screen.getByLabelText(`${surrealismoTagMock.title} (3)`));
+		await userEvent.click(facetFor(surrealismoTagMock, 1));
 
 		expect(toggled).toHaveBeenCalledWith(surrealismoTagMock);
 	});
 
-	it('should check the facets marked as selected', async () => {
-		await renderFilters([facet(colaborativaTagMock, 8, true), facet(surrealismoTagMock, 3)]);
+	it('should check the facets named in the selection', async () => {
+		await renderFilters([colaborativaTagMock.slug]);
 
-		expect(screen.getByLabelText(`${colaborativaTagMock.title} (8)`)).toBeChecked();
-		expect(screen.getByLabelText(`${surrealismoTagMock.title} (3)`)).not.toBeChecked();
+		expect(facetFor(colaborativaTagMock, 3)).toBeChecked();
+		expect(facetFor(surrealismoTagMock, 1)).not.toBeChecked();
 	});
 
 	describe('filtros en uso', () => {
-		const conSeleccion = () => renderFilters([facet(colaborativaTagMock, 8, true), facet(surrealismoTagMock, 3)]);
-
-		it('should show a chip for each selected facet', async () => {
-			await conSeleccion();
+		it('should show a chip for each selected tag', async () => {
+			await renderFilters([colaborativaTagMock.slug]);
 
 			const chips = within(screen.getByTestId('active-filters')).getAllByRole('button');
 			expect(chips).toHaveLength(1);
@@ -67,7 +85,7 @@ describe('CollectionFiltersComponent', () => {
 		});
 
 		it('should emit the tag whose chip is dismissed', async () => {
-			const { toggled } = await conSeleccion();
+			const { toggled } = await renderFilters([colaborativaTagMock.slug]);
 
 			await userEvent.click(screen.getByRole('button', { name: `Quitar el filtro ${colaborativaTagMock.title}` }));
 
@@ -75,7 +93,7 @@ describe('CollectionFiltersComponent', () => {
 		});
 
 		it('should emit once when asked to clear everything', async () => {
-			const { cleared } = await conSeleccion();
+			const { cleared } = await renderFilters([colaborativaTagMock.slug, surrealismoTagMock.slug]);
 
 			await userEvent.click(screen.getByRole('button', { name: 'Limpiar filtros' }));
 
@@ -83,7 +101,7 @@ describe('CollectionFiltersComponent', () => {
 		});
 	});
 
-	it('should offer nothing to clear while no facet is selected', async () => {
+	it('should offer nothing to clear while nothing is selected', async () => {
 		await renderFilters();
 
 		expect(screen.queryByRole('button', { name: 'Limpiar filtros' })).not.toBeInTheDocument();
@@ -91,12 +109,19 @@ describe('CollectionFiltersComponent', () => {
 	});
 
 	it('should collapse the category group without losing what is selected', async () => {
-		await renderFilters([facet(colaborativaTagMock, 8, true), facet(surrealismoTagMock, 3)]);
+		await renderFilters([colaborativaTagMock.slug]);
 
 		await userEvent.click(screen.getByRole('button', { name: /Categoría/ }));
 
 		expect(screen.getByRole('button', { name: /Categoría/ })).toHaveAttribute('aria-expanded', 'false');
-		expect(screen.queryByLabelText(`${surrealismoTagMock.title} (3)`)).not.toBeInTheDocument();
+		expect(screen.queryByLabelText(`${surrealismoTagMock.title} (1)`)).not.toBeInTheDocument();
 		expect(screen.getByTestId('active-filters')).toBeInTheDocument();
+	});
+
+	it('should keep its heading when there are no tags to offer', async () => {
+		await render(CollectionFiltersComponent, { inputs: { collections: [], selected: [] } });
+
+		expect(screen.getByRole('heading', { name: 'Filtros' })).toBeInTheDocument();
+		expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
 	});
 });

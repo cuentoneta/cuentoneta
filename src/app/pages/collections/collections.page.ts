@@ -8,10 +8,7 @@ import { COLLECTIONS_HOST, type CollectionsHost } from './collections-host';
 import { CollectionsMetaTagsDirective } from './collections-meta-tags.directive';
 import { CollectionsStructuredDataDirective } from './collections-structured-data.directive';
 
-import {
-	CollectionFiltersComponent,
-	type CollectionFacet,
-} from '@components/collection-filters/collection-filters.component';
+import { CollectionFiltersComponent } from '@components/collection-filters/collection-filters.component';
 import { CollectionTeaserCard } from '@components/collection-teaser-card/collection-teaser-card';
 import { CollectionTeaserCardSkeletonComponent } from '@components/collection-teaser-card/collection-teaser-card-skeleton';
 import { DividerComponent } from '@components/divider/divider.component';
@@ -24,7 +21,8 @@ import { DividerComponent } from '@components/divider/divider.component';
 			<cuentoneta-collection-filters
 				(cleared)="clearFilters()"
 				(toggled)="toggleTag($event.slug)"
-				[facets]="facets()"
+				[collections]="visibleCollections()"
+				[selected]="selectedSlugs()"
 				class="hidden w-50 shrink-0 lg:flex"
 				data-testid="filters"
 			/>
@@ -87,7 +85,7 @@ export default class CollectionsPage implements CollectionsHost {
 
 	protected readonly loading = computed(() => this.catalogResource.isLoading());
 
-	private readonly selectedSlugs = signal<readonly string[]>([]);
+	protected readonly selectedSlugs = signal<readonly string[]>([]);
 
 	protected readonly visibleCollections = computed(() => {
 		const selected = this.selectedSlugs();
@@ -97,20 +95,6 @@ export default class CollectionsPage implements CollectionsHost {
 		return this.collections().filter((collection) =>
 			selected.every((slug) => collection.tags.some((tag) => tag.slug === slug)),
 		);
-	});
-
-	// Se cuentan sobre lo visible y no sobre el catálogo entero: de ahí que al elegir una etiqueta las
-	// demás bajen su número y las que no conviven con ella desaparezcan.
-	protected readonly facets = computed<readonly CollectionFacet[]>(() => {
-		const selected = new Set(this.selectedSlugs());
-		const counts = new Map<string, CollectionFacet>();
-		for (const collection of this.visibleCollections()) {
-			for (const tag of collection.tags) {
-				const seen = counts.get(tag.slug);
-				counts.set(tag.slug, { tag, count: (seen?.count ?? 0) + 1, selected: selected.has(tag.slug) });
-			}
-		}
-		return [...counts.values()].sort((first, second) => this.collator.compare(first.tag.title, second.tag.title));
 	});
 
 	// Un fallo transitorio no puede salir 200: el borde lo cachearía como si fuera la página. No hay
