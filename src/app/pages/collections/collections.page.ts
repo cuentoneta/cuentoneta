@@ -1,13 +1,15 @@
-import { Component, computed, effect, inject, RESPONSE_INIT } from '@angular/core';
+import { Component, computed, effect, forwardRef, inject, RESPONSE_INIT } from '@angular/core';
 
-import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 import { ssrBlockingRxResource } from '@app-utils/ssr-resource';
 
 import { CollectionTeaserCard } from '@components/collection-teaser-card/collection-teaser-card';
 import { CollectionTeaserCardSkeletonComponent } from '@components/collection-teaser-card/collection-teaser-card-skeleton';
 
-import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 import { CollectionApi } from '../../providers/collection.provider';
+
+import { COLLECTIONS_HOST, type CollectionsHost } from './collections-host';
+import { CollectionsMetaTagsDirective } from './collections-meta-tags.directive';
+import { CollectionsStructuredDataDirective } from './collections-structured-data.directive';
 
 @Component({
 	selector: 'cuentoneta-collections',
@@ -41,12 +43,12 @@ import { CollectionApi } from '../../providers/collection.provider';
 			}
 		</main>
 	`,
-	hostDirectives: [HeadMetadataDirective],
+	providers: [{ provide: COLLECTIONS_HOST, useExisting: forwardRef(() => CollectionsPage) }],
+	hostDirectives: [CollectionsMetaTagsDirective, CollectionsStructuredDataDirective],
 	imports: [CollectionTeaserCard, CollectionTeaserCardSkeletonComponent],
 })
-export default class CollectionsPage {
+export default class CollectionsPage implements CollectionsHost {
 	private readonly collectionApi = inject(CollectionApi);
-	private readonly metaTagsDirective = inject(HeadMetadataDirective);
 	private readonly responseInit = inject(RESPONSE_INIT, { optional: true });
 
 	private readonly catalogResource = ssrBlockingRxResource({
@@ -58,7 +60,7 @@ export default class CollectionsPage {
 	// acento o eñe inicial, y Sanity no expone colación con plegado.
 	private readonly collator = new Intl.Collator('es');
 
-	protected readonly collections = computed(() => {
+	public readonly collections = computed(() => {
 		const catalog = this.catalogResource.hasValue() ? this.catalogResource.value() : [];
 		return [...catalog].sort((first, second) => this.collator.compare(first.title, second.title));
 	});
@@ -75,16 +77,4 @@ export default class CollectionsPage {
 		}
 		this.responseInit.status = 503;
 	});
-
-	constructor() {
-		this.updateMetaTags();
-	}
-
-	// TODO(#2288): quitar el `noindex` al sumar los metadatos propios y los datos estructurados.
-	private updateMetaTags() {
-		this.metaTagsDirective.setTitle('Colecciones');
-		this.metaTagsDirective.setDefaultDescription();
-		this.metaTagsDirective.setCanonicalUrl(buildCanonicalUrl('collection'));
-		this.metaTagsDirective.setRobots('noindex, follow');
-	}
 }
