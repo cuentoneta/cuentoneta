@@ -81,4 +81,24 @@ describe('DrawerTransitionDirective', () => {
 		expect(firstComplete).toHaveBeenCalledTimes(1);
 		expect(secondComplete).toHaveBeenCalledTimes(1);
 	});
+
+	it('should reopen normally after a close that landed before the entry frame ran', () => {
+		useFakeTimers();
+
+		directive.open(dialog);
+		directive.close(dialog, () => {});
+		directive.open(dialog);
+
+		expect(dialog.open).toBe(true);
+		expect(directive.isTransitionedIn()).toBe(false);
+
+		runOnlyPendingTimers();
+		expect(directive.isTransitionedIn()).toBe(true);
+
+		let completed = false;
+		directive.close(dialog, () => (completed = true));
+		dialog.dispatchEvent(new Event('transitionend'));
+		expect(dialog.open).toBe(false);
+		expect(completed).toBe(true);
+	});
 });
