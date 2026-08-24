@@ -43,9 +43,7 @@ export class SchemaOrgService {
 	private writeScript(id: string, schema: WithContext<Thing>, scope: 'sitewide' | 'page'): void {
 		const script = this.resolveScript(id);
 		script.setAttribute('data-schema-scope', scope);
-		// El contenido de un `<script>` es texto crudo y `JSON.stringify` no escapa `<`: un valor con
-		// `</script` cerraría el bloque. La secuencia unicode preserva el valor al parsear.
-		script.textContent = JSON.stringify(schema).replaceAll('<', '\\u003c');
+		script.textContent = JSON.stringify(schema);
 	}
 
 	private resolveScript(id: string): HTMLScriptElement {
