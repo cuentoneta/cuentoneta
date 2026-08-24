@@ -450,17 +450,20 @@ La idea clave: un mismo `Story` se modela distinto según el contexto. En **Cat�
 
 Cada contexto **posee las definiciones** de sus términos, co-localizadas con sus interfaces. Una misma palabra puede tener un matiz distinto por contexto, y esa divergencia es esperada. Términos clave (de `docs/DOMAIN_MODEL.md`):
 
-| Término            | Definición                                                                           | Contexto              |
-| ------------------ | ------------------------------------------------------------------------------------ | --------------------- |
-| **Historia**       | Obra literaria curada y publicada                                                    | Catálogo de Contenido |
-| **Obra literaria** | Obra narrativa con secciones/capítulos, entidad paralela a Historia (`LiteraryWork`) | Catálogo de Contenido |
-| **Slug**           | Identificador amigable, único e inmutable basado en el título                        | Todos                 |
-| **Epígrafe**       | Cita literaria que precede al texto principal                                        | Catálogo de Contenido |
-| **Teaser**         | Vista reducida de una entidad para listados y navegación                             | Todos                 |
-| **Colección**      | Agrupación temática u editorial de obras (`Collection`; `Storylist`, en baja)        | Curación              |
-| **Recurso**        | Enlace externo a información complementaria (`Resource`)                             | Catálogo de Contenido |
-| **Etiqueta**       | Tag de taxonomía (`Tag`) referenciable desde `Story`, `Author` y `Storylist`         | Todos                 |
-| **Curaduría**      | Proceso de seleccionar, ordenar y presentar historias                                | Curación              |
+| Término            | Definición                                                                                       | Contexto              |
+| ------------------ | ------------------------------------------------------------------------------------------------ | --------------------- |
+| **Historia**       | Obra literaria curada y publicada                                                                | Catálogo de Contenido |
+| **Obra literaria** | Obra narrativa con secciones/capítulos, entidad paralela a Historia (`LiteraryWork`)             | Catálogo de Contenido |
+| **Slug**           | Identificador amigable, único e inmutable basado en el título                                    | Todos                 |
+| **Epígrafe**       | Cita literaria que precede al texto principal                                                    | Catálogo de Contenido |
+| **Teaser**         | Vista reducida de una entidad para listados y navegación                                         | Todos                 |
+| **Colección**      | Agrupación temática u editorial de obras (`Collection`; `Storylist`, en baja)                    | Curación              |
+| **Recurso**        | Enlace externo a información complementaria (`Resource`)                                         | Catálogo de Contenido |
+| **Etiqueta**       | Tag de taxonomía (`Tag`) referenciable desde `Story`, `Author` y `Storylist`                     | Todos                 |
+| **Curaduría**      | Proceso de seleccionar, ordenar y presentar historias                                            | Curación              |
+| **Faceta**         | Etiqueta con su conteo dentro del resultado visible y su estado de selección (`CollectionFacet`) | Curación              |
+
+**Faceta** es vocabulario **foráneo** al negocio: viene de la clasificación facetada de la biblioteconomía y del `faceting` de los motores de búsqueda, y nombra la etiqueta contada **sobre el resultado visible**, no sobre el catálogo entero. Es un modelo de lectura derivado, no un agregado: no se persiste, ninguna query lo produce y hoy se calcula en el frontend. Su semántica —el conteo sigue a lo que está a la vista, la faceta vacía no se ofrece, combinar dos es conjunción— está en [`docs/DOMAIN_MODEL.md`](../../docs/DOMAIN_MODEL.md), y conviene leerla antes de tocar el filtrado: de ahí se sigue que elegir filtros no pueda vaciar un listado.
 
 **Convención para contextos nuevos:** al introducir un bounded context, definí su vocabulario junto a sus interfaces y aclará, por cada término, a qué términos existentes mapea o de cuáles diverge deliberadamente.
 

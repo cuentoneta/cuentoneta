@@ -783,10 +783,31 @@ El **Lenguaje Ubicuo** es el lenguaje estructurado alrededor del modelo de domin
 | **Recurso**              | Enlace externo a información complementaria                                                                                            | Catálogo de Contenido |
 | **Campaña de Contenido** | Promoción temporal de contenido con variantes responsivas                                                                              | Página de Inicio      |
 | **Curaduría**            | Proceso de seleccionar, ordenar y presentar historias                                                                                  | Curación              |
+| **Faceta**               | Etiqueta con su conteo dentro del resultado visible y su estado de selección (`CollectionFacet`)                                       | Curación              |
 
 ---
 
 ## Patrones y Estrategias
+
+### Patrón: Faceta (Faceted Navigation)
+
+**Descripción:** una **faceta** es una etiqueta acompañada de cuántas entidades del resultado **visible** la llevan, más si está elegida como filtro. No es la etiqueta: `Tag` es un documento del CMS que existe con independencia de que algo lo use, mientras que una faceta solo existe contra un conjunto de resultados concreto y su número cambia cada vez que ese conjunto cambia.
+
+**Origen del término:** viene de la clasificación facetada de la biblioteconomía (S. R. Ranganathan, década de 1930), que clasifica un objeto por varios ejes independientes en lugar de por un único árbol jerárquico. Recuperación de información lo adoptó, y de ahí pasó a los motores de búsqueda —Solr y Elasticsearch llaman _faceting_ a la agregación que cuenta documentos por valor de campo— y a las interfaces de catálogo, donde _faceted navigation_ nombra la columna de filtros con su conteo al lado. Es vocabulario **foráneo al dominio de La Cuentoneta**: se adopta porque nombra con precisión una figura que ya existía sin nombre, no porque el negocio hablara así.
+
+**Semántica que hay que preservar:**
+
+- El conteo se calcula sobre lo que está a la vista, **no** sobre el catálogo entero: al elegir una etiqueta, las demás ajustan su número a lo que queda.
+- Una faceta que llegaría a cero no se ofrece. De ahí se sigue una garantía que conviene no romper: elegir filtros **nunca puede vaciar el listado**, porque toda faceta ofrecida tiene al menos una entidad detrás.
+- Combinar dos facetas es conjunción, no disyunción: el resultado son las entidades que llevan **todas** las etiquetas elegidas.
+- La selección no es estado de la faceta sino del listado: quien filtra decide, y la faceta se limita a reflejar esa decisión. Así el panel nunca puede discrepar de lo que se está mostrando.
+
+**Dónde vive:** es un **modelo de lectura derivado**, no un agregado ni un objeto de valor del contenido. No se persiste en Sanity, ninguna query GROQ la produce y no viaja por el API: hoy se calcula en el frontend sobre las entidades ya cargadas. Si el filtrado pasara a resolverse contra la base, lo que cambia es dónde se cuenta —la agregación la haría la query—, no el concepto ni su semántica.
+
+**Qué no es:**
+
+- No es una etiqueta con un contador pegado: fuera de un resultado concreto, una faceta no significa nada.
+- No es una taxonomía nueva. Las facetas de hoy salen de las etiquetas existentes; otro eje de clasificación (autor, año, extensión) daría facetas distintas sobre el mismo patrón.
 
 ### Patrón: Clave de Negocio (Business Key)
 
