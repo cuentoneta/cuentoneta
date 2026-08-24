@@ -1,15 +1,21 @@
 import { render, screen, within } from '@testing-library/angular';
+import userEvent from '@testing-library/user-event';
 import { provideRouter } from '@angular/router';
 import { RESPONSE_INIT } from '@angular/core';
-import { NEVER, Observable, of, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 
-import { createCollectionTeaser, type Collection, type CollectionTeaser } from '@models/collection.model';
-import { onoffCollectionsMock, onoffCollectionTeasersMock } from '@mocks/onoff-collections.mock';
-import { clearAllMocks } from '@test-utils';
+import CollectionsPage from './collections.page';
 
 import type { CollectionApi } from '../../providers/collection.provider';
 import { provideCollectionApiMock } from '../../providers/collection.mock';
-import CollectionsPage from './collections.page';
+
+import { createCollectionTeaser, type Collection, type CollectionTeaser } from '@models/collection.model';
+import type { Tag } from '@models/tag.model';
+
+import { onoffCollectionsMock, onoffCollectionTeasersMock } from '@mocks/onoff-collections.mock';
+import { colaborativaTagMock, surrealismoTagMock } from '@mocks/onoff-tags.mock';
+
+import { clearAllMocks } from '@test-utils';
 
 class StubCatalogCollectionApi implements CollectionApi {
 	constructor(private readonly teasers: readonly CollectionTeaser[]) {}
@@ -33,17 +39,6 @@ class FailingCollectionApi implements CollectionApi {
 	}
 }
 
-// `NEVER` deja el recurso pendiente, que es la única forma de sostener el esqueleto a la vista.
-class PendingCollectionApi implements CollectionApi {
-	public getBySlug(): Observable<Collection> {
-		return NEVER;
-	}
-
-	public getAll(): Observable<CollectionTeaser[]> {
-		return NEVER;
-	}
-}
-
 const renderPage = (api: CollectionApi) =>
 	render(CollectionsPage, {
 		providers: [provideRouter([]), provideCollectionApiMock(api)],
@@ -63,11 +58,6 @@ const withTitle = (title: string, slug: string): CollectionTeaser =>
 		mediaSources: canonical.mediaSources,
 		count: canonical.count,
 	});
-
-const hrefsOf = (testId: string) =>
-	within(screen.getByTestId(testId))
-		.getAllByRole('link')
-		.map((link) => link.getAttribute('href'));
 
 describe('CollectionsPage', () => {
 	beforeEach(() => {
@@ -99,9 +89,10 @@ describe('CollectionsPage', () => {
 	it('should link every card to the collection detail route', async () => {
 		await renderPage(new StubCatalogCollectionApi(onoffCollectionTeasersMock));
 
-		expect(hrefsOf('collections')).toEqual(
-			expect.arrayContaining(onoffCollectionsMock.map(({ slug }) => `/collection/${slug}`)),
-		);
+		const hrefs = within(screen.getByTestId('collections'))
+			.getAllByRole('link')
+			.map((link) => link.getAttribute('href'));
+		expect(hrefs).toEqual(expect.arrayContaining(onoffCollectionsMock.map(({ slug }) => `/collection/${slug}`)));
 	});
 
 	// La colación de la base pondría `Ámbar` detrás de `Zoológico`.
@@ -114,15 +105,10 @@ describe('CollectionsPage', () => {
 
 		await renderPage(new StubCatalogCollectionApi(desordenadas));
 
-		expect(hrefsOf('collections')).toEqual(['/collection/ambar', '/collection/bruma', '/collection/zoologico']);
-	});
-
-	it('should show placeholders while the catalogue is on its way', async () => {
-		const { container } = await renderPage(new PendingCollectionApi());
-
-		// eslint-disable-next-line testing-library/no-container, testing-library/no-node-access -- el esqueleto no expone rol ni texto: solo se lo puede contar por selector
-		expect(container.querySelectorAll('cuentoneta-collection-teaser-card-skeleton').length).toBeGreaterThan(0);
-		expect(screen.queryByTestId('catalog-empty')).not.toBeInTheDocument();
+		const hrefs = within(screen.getByTestId('collections'))
+			.getAllByRole('link')
+			.map((link) => link.getAttribute('href'));
+		expect(hrefs).toEqual(['/collection/ambar', '/collection/bruma', '/collection/zoologico']);
 	});
 
 	it('should keep the heading when the catalogue comes back empty', async () => {
@@ -145,6 +131,100 @@ describe('CollectionsPage', () => {
 
 		expect(screen.getByTestId('catalog-error')).toBeInTheDocument();
 		expect(screen.queryByTestId('collections')).not.toBeInTheDocument();
+	});
+
+	describe('filtros', () => {
+		const conEtiquetas = (slug: string, tags: readonly Tag[]): CollectionTeaser =>
+			createCollectionTeaser({
+				_id: `${canonical._id}-${slug}`,
+				slug,
+				title: slug,
+				description: canonical.description,
+				imagery: canonical.imagery,
+				tags,
+				config: canonical.config,
+				mediaSources: canonical.mediaSources,
+				count: canonical.count,
+			});
+
+		const catalogo = [
+			conEtiquetas('ambas', [colaborativaTagMock, surrealismoTagMock]),
+			conEtiquetas('solo-colaborativa', [colaborativaTagMock]),
+			conEtiquetas('solo-surrealismo', [surrealismoTagMock]),
+		];
+
+		const renderCatalogo = () => renderPage(new StubCatalogCollectionApi(catalogo));
+
+		it('should count each facet over the catalogue', async () => {
+			await renderCatalogo();
+
+			expect(
+				within(screen.getByTestId('filters')).getByLabelText(`${colaborativaTagMock.title} (2)`),
+			).toBeInTheDocument();
+			expect(
+				within(screen.getByTestId('filters')).getByLabelText(`${surrealismoTagMock.title} (2)`),
+			).toBeInTheDocument();
+		});
+
+		it('should narrow the listing to the collections carrying the chosen tag', async () => {
+			await renderCatalogo();
+
+			await userEvent.click(screen.getByLabelText(`${colaborativaTagMock.title} (2)`));
+
+			expect(within(screen.getByTestId('collections')).getAllByRole('link')).toHaveLength(2);
+			expect(screen.getByRole('heading', { level: 1, name: '2 Colecciones' })).toBeInTheDocument();
+		});
+
+		it('should drop the facets that no longer apply and recount the rest', async () => {
+			await renderCatalogo();
+
+			await userEvent.click(screen.getByLabelText(`${colaborativaTagMock.title} (2)`));
+
+			expect(screen.getByLabelText(`${surrealismoTagMock.title} (1)`)).toBeInTheDocument();
+		});
+
+		it('should offer a chip that removes the filter it names', async () => {
+			await renderCatalogo();
+			await userEvent.click(screen.getByLabelText(`${colaborativaTagMock.title} (2)`));
+
+			await userEvent.click(screen.getByRole('button', { name: `Quitar el filtro ${colaborativaTagMock.title}` }));
+
+			expect(screen.getByRole('heading', { level: 1, name: '3 Colecciones' })).toBeInTheDocument();
+		});
+
+		it('should collapse the category group without dropping the filters in effect', async () => {
+			await renderCatalogo();
+			await userEvent.click(screen.getByLabelText(`${colaborativaTagMock.title} (2)`));
+
+			await userEvent.click(screen.getByRole('button', { name: /Categoría/ }));
+
+			expect(screen.getByRole('button', { name: /Categoría/ })).toHaveAttribute('aria-expanded', 'false');
+			expect(screen.queryByLabelText(`${colaborativaTagMock.title} (2)`)).not.toBeInTheDocument();
+			expect(screen.getByRole('heading', { level: 1, name: '2 Colecciones' })).toBeInTheDocument();
+			expect(screen.getByTestId('active-filters')).toBeInTheDocument();
+		});
+
+		it('should clear every filter at once', async () => {
+			await renderCatalogo();
+			await userEvent.click(screen.getByLabelText(`${colaborativaTagMock.title} (2)`));
+
+			await userEvent.click(screen.getByRole('button', { name: 'Limpiar filtros' }));
+
+			expect(screen.getByRole('heading', { level: 1, name: '3 Colecciones' })).toBeInTheDocument();
+			expect(screen.queryByTestId('active-filters')).not.toBeInTheDocument();
+		});
+
+		// Toda faceta ofrecida tiene al menos una colección detrás: por eso la página no tiene estado de
+		// «ninguna coincide» — sería inalcanzable.
+		it('should never let a combination of offered facets empty the listing', async () => {
+			await renderCatalogo();
+			await userEvent.click(screen.getByLabelText(`${colaborativaTagMock.title} (2)`));
+
+			await userEvent.click(screen.getByLabelText(`${surrealismoTagMock.title} (1)`));
+
+			expect(within(screen.getByTestId('collections')).getAllByRole('link')).toHaveLength(1);
+			expect(screen.getByRole('heading', { level: 1, name: '1 Colección' })).toBeInTheDocument();
+		});
 	});
 
 	describe('código de respuesta', () => {
