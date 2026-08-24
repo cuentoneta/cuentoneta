@@ -35,7 +35,7 @@ import { CollectionCoverComponent } from '../collection-cover/collection-cover.c
 						</a>
 					</h2>
 					<div
-						[innerHTML]="description()"
+						[innerHTML]="safeDescription()"
 						class="line-clamp-4 font-inter text-sm text-ellipsis text-neutral-700"
 						data-testid="description"
 					></div>
@@ -62,7 +62,7 @@ export class CollectionTeaserCard {
 
 	public readonly collection = input<CollectionTeaser>();
 
-	protected readonly description = computed(() => {
+	protected readonly safeDescription = computed(() => {
 		const collection = this.collection();
 		return collection ? this.sanitizer.bypassSecurityTrustHtml(collection.description) : undefined;
 	});
