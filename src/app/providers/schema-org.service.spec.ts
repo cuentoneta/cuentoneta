@@ -33,7 +33,6 @@ describe('SchemaOrgService', () => {
 		});
 	});
 
-	// Se afirma sobre el texto emitido y no sobre el valor parseado, que es donde el problema no se ve.
 	it('should not let a value close the script tag it travels in', () => {
 		service.setJsonLd('organization', {
 			'@context': CONTEXT,

@@ -46,8 +46,6 @@ export const serverRoutes: Array<ServerRoute> = [
 		path: `${AppRoutes.Collection}/:slug`,
 		renderMode: RenderMode.Server,
 	},
-	// No `Prerender`: sin purga del borde, cada colección nueva quedaría sin enlace entrante hasta el
-	// deploy siguiente.
 	{
 		path: AppRoutes.Collection,
 		renderMode: RenderMode.Server,
