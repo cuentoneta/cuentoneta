@@ -1,5 +1,5 @@
 // Core
-import { Component, computed, effect, forwardRef, inject, input, RESPONSE_INIT, untracked } from '@angular/core';
+import { Component, computed, effect, forwardRef, inject, input, RESPONSE_INIT } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 
 // Utils
@@ -12,9 +12,8 @@ import { createAttributedText } from '@models/attributed-text.model';
 import { LiteraryWorkApi } from '../../providers/literary-work.provider';
 
 // SEO
-import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
-import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
-import { AppRoutes } from '../../app.routes';
+import { ReadMetaTagsDirective } from './read-meta-tags.directive';
+import { ReadStructuredDataDirective } from './read-structured-data.directive';
 import { READ_HOST, type ReadHost } from './read-host';
 
 // Components
@@ -34,7 +33,7 @@ import { toNavigationContext, type NavigationContext, type NavigationParams } fr
 	selector: 'cuentoneta-read',
 	templateUrl: './read.page.html',
 	providers: [{ provide: READ_HOST, useExisting: forwardRef(() => ReadPage) }],
-	hostDirectives: [HeadMetadataDirective],
+	hostDirectives: [ReadMetaTagsDirective, ReadStructuredDataDirective],
 	imports: [
 		LiteraryWorkHeroHeaderComponent,
 		ButtonComponent,
@@ -60,7 +59,6 @@ export default class ReadPage implements ReadHost {
 
 	private readonly literaryWorkApi = inject(LiteraryWorkApi);
 	private readonly responseInit = inject(RESPONSE_INIT, { optional: true });
-	private readonly head = inject(HeadMetadataDirective);
 
 	private readonly literaryWorkResource = ssrBlockingRxResource({
 		params: this.slug,
@@ -97,27 +95,6 @@ export default class ReadPage implements ReadHost {
 				?.authors.map((author) => author.name)
 				.join(', ') ?? '',
 	);
-
-	// `/read/:slug` es una ruta accesible nueva que todavía no queremos exponer a buscadores: se sirve
-	// `noindex, nofollow` y sin JSON-LD. El robots se emite antes del guard a propósito, para que la
-	// señal salga también cuando la obra no carga.
-	// TODO(#1855): revertir el opt-out — volver a marcar la página indexable y re-conectar
-	// ReadMetaTagsDirective/ReadStructuredDataDirective en `hostDirectives`.
-	private readonly applyHeadMetadataEffect = effect(() => {
-		this.head.setRobots('noindex, nofollow');
-		const literaryWork = this.literaryWork();
-		if (!literaryWork) {
-			return;
-		}
-		untracked(() => {
-			this.head.setTitle(`${literaryWork.title} - ${this.byline()}`);
-			// TODO: Revisar textos definitivos a la hora de implementar la página de lectura V3
-			this.head.setDescription(
-				'Una lectura en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.',
-			);
-			this.head.setCanonicalUrl(buildCanonicalUrl(`${AppRoutes.Read}/${literaryWork.slug}`));
-		});
-	});
 
 	// TODO(#1471): mover esta lógica a un service y revisar si hace falta declarar tipos de rendering.
 	protected readonly sections = computed(
