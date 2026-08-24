@@ -33,6 +33,18 @@ describe('SchemaOrgService', () => {
 		});
 	});
 
+	it('should not let a value close the script tag it travels in', () => {
+		service.setJsonLd('organization', {
+			'@context': CONTEXT,
+			'@type': 'Organization',
+			name: 'Antología </script><img src=x onerror=alert(1)>',
+		});
+
+		const script = scriptFor('organization');
+		expect(script?.textContent).not.toContain('</script');
+		expect(JSON.parse(script?.textContent ?? '{}').name).toBe('Antología </script><img src=x onerror=alert(1)>');
+	});
+
 	it('should reuse the same script on repeated calls (idempotent by id)', () => {
 		service.setJsonLd('website', { '@context': CONTEXT, '@type': 'WebSite', name: 'A' });
 		service.setJsonLd('website', { '@context': CONTEXT, '@type': 'WebSite', name: 'B' });

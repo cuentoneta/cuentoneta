@@ -33,15 +33,16 @@ describe('HeaderComponent', () => {
 	it('should link the catalog pages from the navbar', async () => {
 		await renderHeader();
 		expect(screen.getByText(/Obras/)).toHaveProperty('href', expect.stringMatching(/\/story$/));
+		expect(screen.getByText(/Colecciones/)).toHaveProperty('href', expect.stringMatching(/\/collection$/));
 		expect(screen.getByText(/Autores/)).toHaveProperty('href', expect.stringMatching(/\/authors$/));
 	});
 
 	// Toda la navegación queda expuesta: getByRole descarta lo marcado aria-hidden, así que
-	// encontrar las cuatro entradas prueba que ninguna quedó fuera del árbol de accesibilidad.
+	// encontrar cada entrada prueba que ninguna quedó fuera del árbol de accesibilidad.
 	it('should expose every navbar link to assistive tech', async () => {
 		await renderHeader();
 
-		for (const label of ['Inicio', 'Obras', 'Autores', 'Nosotros']) {
+		for (const label of ['Inicio', 'Obras', 'Colecciones', 'Autores', 'Nosotros']) {
 			expect(screen.getByRole('link', { name: label })).toBeInTheDocument();
 		}
 	});

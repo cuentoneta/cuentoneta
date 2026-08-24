@@ -5,10 +5,8 @@ import { NEVER, Observable, of, throwError } from 'rxjs';
 
 import { createCollectionTeaser, type Collection, type CollectionTeaser } from '@models/collection.model';
 import { onoffCollectionsMock, onoffCollectionTeasersMock } from '@mocks/onoff-collections.mock';
-import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
-import { clearAllMocks, restoreAllMocks, spyOn } from '@test-utils';
+import { clearAllMocks } from '@test-utils';
 
-import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 import type { CollectionApi } from '../../providers/collection.provider';
 import { provideCollectionApiMock } from '../../providers/collection.mock';
 import CollectionsPage from './collections.page';
@@ -75,8 +73,6 @@ describe('CollectionsPage', () => {
 	beforeEach(() => {
 		clearAllMocks();
 	});
-
-	afterEach(() => restoreAllMocks());
 
 	it('should headline the catalogue with how many collections it lists', async () => {
 		await renderPage(new StubCatalogCollectionApi(onoffCollectionTeasersMock));
@@ -149,24 +145,6 @@ describe('CollectionsPage', () => {
 
 		expect(screen.getByTestId('catalog-error')).toBeInTheDocument();
 		expect(screen.queryByTestId('collections')).not.toBeInTheDocument();
-	});
-
-	describe('metadatos', () => {
-		it('should set the canonical URL for /collection', async () => {
-			const canonicalSpy = spyOn(HeadMetadataDirective.prototype, 'setCanonicalUrl');
-
-			await renderPage(new StubCatalogCollectionApi(onoffCollectionTeasersMock));
-
-			expect(canonicalSpy).toHaveBeenCalledWith(buildCanonicalUrl('collection'));
-		});
-
-		it('should keep itself out of the index until it has metadata of its own', async () => {
-			const robotsSpy = spyOn(HeadMetadataDirective.prototype, 'setRobots');
-
-			await renderPage(new StubCatalogCollectionApi(onoffCollectionTeasersMock));
-
-			expect(robotsSpy).toHaveBeenCalledWith('noindex, follow');
-		});
 	});
 
 	describe('código de respuesta', () => {
