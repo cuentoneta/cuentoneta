@@ -90,26 +90,31 @@ describe('CollectionTeaserCard', () => {
 			expect(description.textContent).not.toContain('<p>');
 		});
 
-		it('should keep the card intact when the description carries links of its own', async () => {
+		it('should drop the links of the prose, keeping their text', async () => {
 			const conEnlace = teaserFrom(representativeMock, {
 				description: markdownToSanitizedHtml(
 					createMarkdown('Una colección con [un enlace propio](https://www.cuentoneta.ar/about) en la prosa.'),
 				),
 			});
 
-			const { container } = await render(CollectionTeaserCard, {
-				inputs: { collection: conEnlace },
-				providers: defaultProviders,
+			await render(CollectionTeaserCard, { inputs: { collection: conEnlace }, providers: defaultProviders });
+
+			const description = screen.getByTestId('description');
+			expect(within(description).queryByRole('link')).not.toBeInTheDocument();
+			expect(description.textContent).toContain('un enlace propio');
+		});
+
+		it('should leave the card with a single destination', async () => {
+			const conEnlace = teaserFrom(representativeMock, {
+				description: markdownToSanitizedHtml(
+					createMarkdown('Una colección con [un enlace propio](https://www.cuentoneta.ar/about) en la prosa.'),
+				),
 			});
 
-			// Afirmar la ausencia de `a a` no sirve: el parser deshace solo el anidamiento inválido.
-			/* eslint-disable testing-library/no-container, testing-library/no-node-access -- la estructura resultante no se expresa por rol ni por texto */
-			const article = container.querySelector('article');
-			expect([...(article?.children ?? [])].map((child) => child.tagName)).toEqual(['SECTION', 'SECTION']);
-			/* eslint-enable testing-library/no-container, testing-library/no-node-access */
-			expect(
-				within(screen.getByTestId('description')).getByRole('link', { name: 'un enlace propio' }),
-			).toBeInTheDocument();
+			await render(CollectionTeaserCard, { inputs: { collection: conEnlace }, providers: defaultProviders });
+
+			expect(screen.getAllByRole('link')).toHaveLength(1);
+			expect(screen.getByRole('link')).toHaveAttribute('href', `/collection/${representativeMock.slug}`);
 		});
 	});
 

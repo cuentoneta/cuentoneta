@@ -8,6 +8,7 @@ import { AppRoutes } from '../../app.routes';
 
 // Models
 import type { CollectionTeaser } from '@models/collection.model';
+import type { SanitizedHtml } from '@models/sanitized-html.model';
 
 // Components
 import { CollectionCoverComponent } from '../collection-cover/collection-cover.component';
@@ -68,6 +69,17 @@ export class CollectionTeaserCard {
 	// que ya está acotada a la allow-list, y el énfasis de la prosa se pierde.
 	protected readonly safeDescription = computed(() => {
 		const collection = this.collection();
-		return collection ? this.sanitizer.bypassSecurityTrustHtml(collection.description) : undefined;
+		return collection ? this.sanitizer.bypassSecurityTrustHtml(withoutLinks(collection.description)) : undefined;
 	});
+}
+
+/**
+ * Descarta los enlaces de la prosa conservando su texto. La tarjeta entera es un único destino, y un
+ * enlace propio de la descripción competiría con él: tapado para el puntero, alcanzable con el teclado.
+ *
+ * Basta con quitar las etiquetas porque la entrada ya viene acotada a la allow-list del pipeline y un
+ * ancla no puede anidarse dentro de otra.
+ */
+function withoutLinks(description: SanitizedHtml): string {
+	return description.replace(/<a\b[^>]*>/gi, '').replace(/<\/a>/gi, '');
 }
