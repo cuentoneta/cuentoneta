@@ -1,3 +1,5 @@
+import { fn, runOnlyPendingTimers, useFakeTimers, useRealTimers } from '@test-utils';
+
 import { DrawerTransitionDirective } from './drawer-transition.directive';
 
 const nextFrame = (): Promise<void> => new Promise((resolve) => requestAnimationFrame(() => resolve()));
@@ -12,7 +14,10 @@ describe('DrawerTransitionDirective', () => {
 		document.body.appendChild(dialog);
 	});
 
-	afterEach(() => dialog.remove());
+	afterEach(() => {
+		useRealTimers();
+		dialog.remove();
+	});
 
 	it('should open the dialog and flag the transition on the next frame', async () => {
 		directive.open(dialog);
@@ -36,5 +41,25 @@ describe('DrawerTransitionDirective', () => {
 		dialog.dispatchEvent(new Event('transitionend'));
 		expect(dialog.open).toBe(false);
 		expect(completed).toBe(true);
+	});
+
+	it('should close synchronously when close arrives before the entry frame runs', () => {
+		useFakeTimers();
+
+		const onComplete = fn();
+		directive.open(dialog);
+		directive.close(dialog, onComplete);
+
+		expect(dialog.open).toBe(false);
+		expect(onComplete).toHaveBeenCalledTimes(1);
+		expect(directive.isTransitionedIn()).toBe(false);
+
+		// El frame diferido quedó cancelado: correrlo no reabre el panel, y el cierre no deja
+		// ningún listener de `transitionend` colgado que dispare una segunda finalización.
+		runOnlyPendingTimers();
+		dialog.dispatchEvent(new Event('transitionend'));
+		expect(dialog.open).toBe(false);
+		expect(directive.isTransitionedIn()).toBe(false);
+		expect(onComplete).toHaveBeenCalledTimes(1);
 	});
 });
