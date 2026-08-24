@@ -46,8 +46,8 @@ export const descriptionlessRawCollection: RawCollection = {
 	description: '',
 };
 
-// La prosa del canon no tiene enlaces, y el editor puede escribirlos: hace falta un escenario donde el
-// Markdown los traiga para poder afirmar qué hace cada vista con ellos.
+// El canon no ejercita el caso: hace falta un escenario cuyo Markdown traiga enlaces para poder
+// afirmar qué hace cada vista con ellos.
 const linkedDescriptionMd = 'Una colección con [un enlace propio](https://www.cuentoneta.ar/about) en la prosa.';
 
 export const linkedDescriptionRawCollection: RawCollection = {

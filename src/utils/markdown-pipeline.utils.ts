@@ -62,8 +62,8 @@ const literaryWorkSanitizationSchema: Options = {
 	},
 };
 
-// Mismo allow-list sin el ancla. Sacar un tag del allow-list no descarta su contenido: el
-// sanitizador desanida el elemento y conserva sus hijos, incluido el énfasis que lleve adentro.
+// Sacar un tag del allow-list no descarta su contenido: el sanitizador desanida el elemento y
+// conserva sus hijos, incluido el énfasis que lleve adentro.
 const linklessSanitizationSchema: Options = {
 	...literaryWorkSanitizationSchema,
 	tagNames: (literaryWorkSanitizationSchema.tagNames ?? defaultSchema.tagNames ?? []).filter((tag) => tag !== 'a'),

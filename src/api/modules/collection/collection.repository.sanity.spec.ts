@@ -211,9 +211,8 @@ describe('SanityCollectionRepository.fetchAll', () => {
 		expect(teasers.map((teaser) => teaser.count)).toEqual(onoffRawCollectionTeasersMock.map((teaser) => teaser.count));
 	});
 
-	// La prosa del teaser se pinta dentro de una tarjeta que ya es un destino: un enlace propio anidaría
-	// anclas —marcación inválida que el navegador deshace desarmando la tarjeta— y competiría con ella.
-	// Se descarta acá, en la traducción, y no en quien la renderiza.
+	// Fija dónde vive la decisión: la prosa del teaser sale sin enlaces desde la traducción, no desde
+	// quien la renderiza.
 	it('strips the links of the description, keeping their text', async () => {
 		const teasers = await repoReturning(linkedDescriptionRawCollectionTeasers).fetchAll();
 

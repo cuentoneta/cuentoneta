@@ -77,9 +77,8 @@ export class SanityCollectionRepository implements CollectionRepository {
 		});
 	}
 
-	// La prosa del teaser va sin enlaces: se pinta dentro de una tarjeta que ya es un destino, así que
-	// un enlace propio anidaría anclas y competiría con ella. La vista completa sí los conserva —ahí la
-	// prosa no está dentro de nada.
+	// Cada vista elige su pipeline: el teaser sin enlaces, la vista completa con ellos. Ahí la prosa no
+	// se pinta dentro de nada, así que el enlace es legítimo.
 	private mapCollectionTeaser(raw: SanityCollectionTeaser): CollectionTeaser {
 		return createCollectionTeaser({
 			...this.mapShared(raw, markdownToLinklessSanitizedHtml),
@@ -94,8 +93,7 @@ export class SanityCollectionRepository implements CollectionRepository {
 	}
 
 	// Lo que las dos vistas mapean igual. La descripción va sin default: el vacío tiene que lanzar y
-	// quedar envuelto, no colarse como una colección sin prosa. Cada vista elige con qué pipeline la
-	// convierte, pero esa invariante se hace cumplir en un solo lugar.
+	// quedar envuelto, no colarse como una colección sin prosa.
 	private mapShared(
 		raw: SanityCollection | SanityCollectionTeaser,
 		toSanitizedHtml: (markdown: Markdown) => SanitizedHtml,
