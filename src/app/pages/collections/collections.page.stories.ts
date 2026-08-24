@@ -3,23 +3,33 @@ import { provideRouter } from '@angular/router';
 import { NEVER, of, throwError, type Observable } from 'rxjs';
 
 import { createCollectionTeaser, type Collection, type CollectionTeaser } from '@models/collection.model';
+import type { Tag } from '@models/tag.model';
 import { onoffCollectionTeasersMock } from '@mocks/onoff-collections.mock';
+import {
+	absurdoTagMock,
+	colaborativaTagMock,
+	cuentoTagMock,
+	surrealismoTagMock,
+	teatroTagMock,
+	tragediaTagMock,
+} from '@mocks/onoff-tags.mock';
 
 import { provideCollectionApiMock } from '../../providers/collection.mock';
 import type { CollectionApi } from '../../providers/collection.provider';
 import CollectionsPage from './collections.page';
 
-// El corpus no alcanza para ver la lista larga, el orden con acentos ni las facetas con más de una
-// etiqueta.
+// Las dos colecciones del corpus llevan la misma etiqueta, así que con ellas el panel ofrece una sola
+// faceta y no hay nada que filtrar. Las entradas derivadas reparten las etiquetas a propósito para que
+// se vean conteos distintos, facetas que desaparecen al elegir y combinaciones que conviven.
 const [canonical] = onoffCollectionTeasersMock;
-const derived = (title: string, slug: string): CollectionTeaser =>
+const derived = (title: string, slug: string, tags: readonly Tag[]): CollectionTeaser =>
 	createCollectionTeaser({
 		_id: `${canonical._id}-${slug}`,
 		slug,
 		title,
 		description: canonical.description,
 		imagery: canonical.imagery,
-		tags: canonical.tags,
+		tags,
 		config: canonical.config,
 		mediaSources: canonical.mediaSources,
 		count: canonical.count,
@@ -29,10 +39,11 @@ const catalogues = {
 	corpus: onoffCollectionTeasersMock,
 	extended: [
 		...onoffCollectionTeasersMock,
-		derived('Ámbar y ceniza', 'ambar-y-ceniza'),
-		derived('Bitácora de la espera', 'bitacora-de-la-espera'),
-		derived('Ñandubay', 'nandubay'),
-		derived('Zoológico de bolsillo', 'zoologico-de-bolsillo'),
+		derived('Ámbar y ceniza', 'ambar-y-ceniza', [colaborativaTagMock, surrealismoTagMock]),
+		derived('Bitácora de la espera', 'bitacora-de-la-espera', [cuentoTagMock, tragediaTagMock]),
+		derived('Ñandubay', 'nandubay', [colaborativaTagMock, cuentoTagMock]),
+		derived('Teatro de sombras', 'teatro-de-sombras', [teatroTagMock]),
+		derived('Zoológico de bolsillo', 'zoologico-de-bolsillo', [surrealismoTagMock, absurdoTagMock]),
 	],
 	empty: [] as readonly CollectionTeaser[],
 } as const;
@@ -123,7 +134,7 @@ export const CatalogoExtendido: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>El corpus más cuatro entradas derivadas, para ver la lista larga y probar los filtros con varias etiquetas. Es la única entrada donde el orden se puede evaluar: <strong>Ámbar y ceniza</strong> y <strong>Ñandubay</strong> aparecen donde corresponde alfabéticamente y no al final, que es donde los pondría una comparación por punto de código.</p>`,
+				story: `<p>El corpus más cinco entradas derivadas, con las etiquetas repartidas para que el panel de filtros se pueda ejercitar entero. Es la única entrada donde eso es posible: las colecciones del corpus llevan todas la misma etiqueta, así que con ellas hay una sola faceta y nada que elegir.</p><p>Qué mirar acá:</p><ul><li>Facetas con <strong>conteos distintos</strong>, que es lo que revela cuántas colecciones lleva cada etiqueta.</li><li>Al elegir una, las que <strong>no conviven</strong> con ella desaparecen y las que sí ajustan su número a lo que queda.</li><li>Elegir dos que conviven deja el cruce; como toda faceta ofrecida tiene al menos una colección detrás, <strong>no hay forma de vaciar el listado</strong>.</li><li>El encabezado sigue al resultado, porque es el conteo de lo que se está mostrando.</li></ul><p>También es donde se evalúa el orden: <strong>Ámbar y ceniza</strong> y <strong>Ñandubay</strong> aparecen donde corresponde alfabéticamente y no al final, que es donde los pondría una comparación por punto de código.</p>`,
 			},
 		},
 	},
