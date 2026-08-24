@@ -12,7 +12,7 @@ import { CollectionApi } from '../../providers/collection.provider';
 @Component({
 	selector: 'cuentoneta-collections',
 	template: `
-		<!-- El encabezado es fijo: sin el margen superior, la página arranca debajo de él. -->
+		<!-- TODO(#2348): el despeje del encabezado fijo pasa al shell; hoy cada página lo repite. -->
 		<main class="mx-auto mt-header-height flex w-full max-w-310 flex-col gap-12 px-4 pt-8 pb-16">
 			<h1 class="font-inter text-2xl leading-8 font-bold text-neutral-900">
 				{{ collections().length }} {{ collections().length === 1 ? 'Colección' : 'Colecciones' }}
