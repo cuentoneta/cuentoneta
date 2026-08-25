@@ -4,6 +4,7 @@ import {
 	mapAuthorTeaser,
 	mapBlockContentToTextParagraphs,
 	mapContentCampaigns,
+	mapHighlightedAuthors,
 	mapLandingPageContent,
 	mapResources,
 	mapStoryNavigationTeaserWithAuthor,
@@ -13,7 +14,14 @@ import {
 } from './functions';
 import { elOdioRawTeaser, onoffRawNavTeasersMock } from '@mocks/onoff-raw-stories.mock';
 import { rawOnoffAuthor, rawOnoffAuthorTeaser } from '@mocks/onoff-raw-author.mock';
-import { onoffRawContentCampaignsMock, onoffRawLandingPageMock } from '@mocks/onoff-raw-landing-page.mock';
+import {
+	divergentDuplicateRawHighlightedAuthor,
+	onoffRawContentCampaignsMock,
+	onoffRawHighlightedAuthorsMock,
+	onoffRawLandingPageMock,
+	overflowingRawHighlightedAuthors,
+	untaggedRawHighlightedAuthor,
+} from '@mocks/onoff-raw-landing-page.mock';
 import type { RotatingContent } from '@models/landing-page-content.model';
 import { onoffRawTagsMock } from '@mocks/onoff-raw-tags.mock';
 import { withoutUrl } from '@testing/resource-without-url';
@@ -212,7 +220,15 @@ describe('mapLandingPageContent (ACL)', () => {
 	it('exposes exactly the domain contract, dropping the raw slug and name', () => {
 		const result = mapLandingPageContent(raw);
 
-		expect(Object.keys(result).sort()).toEqual(['_id', 'campaigns', 'cards', 'config', 'latestReads', 'mostRead']);
+		expect(Object.keys(result).sort()).toEqual([
+			'_id',
+			'campaigns',
+			'cards',
+			'config',
+			'highlightedAuthors',
+			'latestReads',
+			'mostRead',
+		]);
 	});
 
 	it('takes its identity from the rotating content that overrides the landing page', () => {
@@ -231,6 +247,84 @@ describe('mapLandingPageContent (ACL)', () => {
 
 		expect(expectedSlugs.length).toBeGreaterThan(0);
 		expect(mapLandingPageContent(raw).campaigns.map(({ slug }) => slug)).toEqual(expectedSlugs);
+	});
+
+	it('maps every highlighted author the query returned, in order', () => {
+		const expectedIds = onoffRawLandingPageMock.highlightedAuthors.map(({ author }) => author._id);
+
+		expect(expectedIds.length).toBeGreaterThan(0);
+		expect(mapLandingPageContent(raw).highlightedAuthors.map(({ author }) => author._id)).toEqual(expectedIds);
+	});
+});
+
+describe('mapHighlightedAuthors (ACL)', () => {
+	const [canonical] = onoffRawHighlightedAuthorsMock;
+
+	it('leads with the tags of the week and follows with the ones the author already carries', () => {
+		const [result] = mapHighlightedAuthors([canonical]);
+
+		const weekly = canonical.additionalTags.map(({ slug }) => slug);
+		const derived = canonical.author.tags.map(({ slug }) => slug).filter((slug) => !weekly.includes(slug));
+
+		expect(weekly.length).toBeGreaterThan(0);
+		expect(derived.length).toBeGreaterThan(0);
+		expect(result.tags.map(({ slug }) => slug)).toEqual([...weekly, ...derived]);
+	});
+
+	it('lists a tag present in both sources only once', () => {
+		const shared = canonical.additionalTags.filter(({ slug }) =>
+			canonical.author.tags.some((tag) => tag.slug === slug),
+		);
+
+		expect(shared.length).toBeGreaterThan(0);
+
+		const slugs = mapHighlightedAuthors([canonical])[0].tags.map(({ slug }) => slug);
+
+		expect(slugs).toEqual([...new Set(slugs)]);
+	});
+
+	// El descarte tiene que quedarse con la etiqueta de la semana, no con la del autor: es la que da
+	// contexto a la tirada, y el epic contempla que las dos difieran en algo más que el slug.
+	it('keeps the tag of the week, not the derived one, when both carry the same slug', () => {
+		const entry = divergentDuplicateRawHighlightedAuthor;
+		const [weekly] = entry.additionalTags;
+		const derived = entry.author.tags.find((tag) => tag.slug === weekly.slug);
+
+		expect(derived?.title).not.toBe(weekly.title);
+
+		const survivor = mapHighlightedAuthors([entry])[0].tags.find((tag) => tag.slug === weekly.slug);
+
+		expect(survivor?.title).toBe(weekly.title);
+	});
+
+	it('keeps the first six entries when the document carries more', () => {
+		const result = mapHighlightedAuthors(overflowingRawHighlightedAuthors);
+
+		expect(overflowingRawHighlightedAuthors.length).toBeGreaterThan(6);
+		expect(result.map(({ author }) => author._id)).toEqual(
+			overflowingRawHighlightedAuthors.slice(0, 6).map(({ author }) => author._id),
+		);
+	});
+
+	it('produces an empty tag list for an author with no tags of either kind', () => {
+		expect(mapHighlightedAuthors([untaggedRawHighlightedAuthor])[0].tags).toEqual([]);
+	});
+
+	it('carries the count the query computed', () => {
+		expect(mapHighlightedAuthors([canonical])[0].storyCount).toBe(canonical.storyCount);
+	});
+
+	// Los tags del destacado son los de la tirada, no los del autor: el teaser los entrega vacíos en
+	// toda vista, y este mapper es el que decide cuáles se muestran.
+	it('maps the author as a teaser, whose own tag list stays empty', () => {
+		const [result] = mapHighlightedAuthors([canonical]);
+
+		expect(result.author).toEqual(mapAuthorTeaser(canonical.author));
+		expect(result.author.tags).toEqual([]);
+	});
+
+	it('returns an empty array when the document has no highlighted authors', () => {
+		expect(mapHighlightedAuthors([])).toEqual([]);
 	});
 });
 

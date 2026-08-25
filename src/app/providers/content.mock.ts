@@ -15,6 +15,7 @@ export class StubContentApi implements ContentApi {
 			campaigns: [],
 			mostRead: [],
 			latestReads: [],
+			highlightedAuthors: [],
 		};
 		return of(landingPageContent);
 	}
