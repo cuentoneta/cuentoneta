@@ -1,0 +1,23 @@
+meta {
+  name: Get all collections
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{apiUrl}}{{baseApiPath}}/collection
+  body: none
+  auth: none
+}
+
+docs {
+  Catálogo de colecciones, en vista de teaser: cada entrada trae su portada resuelta y el conteo de
+  obras, pero no las obras en sí (`literaryWorks` viaja vacío).
+
+  Una colección mal curada tumba la llamada entera en vez de filtrarse del listado: el ACL prefiere
+  fallar a servir un catálogo que esconde elementos en silencio. Responde 500 con body
+  { error: "collection_malformed" }. La respuesta no nombra a la colección culpable: el mensaje que
+  la identifica viaja en el error, del lado del servidor.
+
+  Un catálogo sin colecciones es un resultado legítimo y responde 200 con un arreglo vacío.
+}

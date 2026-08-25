@@ -305,7 +305,9 @@ pnpm run dev
 Navega por la colección y ejecuta los endpoints que necesites probar. Todos los endpoints están organizados por recurso:
 
 - `/story` - Endpoints de cuentos
+- `/literary-work` - Endpoints de obras literarias
 - `/author` - Endpoints de autores
+- `/collection` - Endpoints de colecciones de obras literarias
 - `/storylist` - Endpoints de listas de cuentos
 - `/content` - Contenido de landing page
 - `/contributor` - Información de contribuyentes
