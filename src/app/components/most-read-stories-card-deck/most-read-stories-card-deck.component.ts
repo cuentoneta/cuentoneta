@@ -21,13 +21,13 @@ import type { LiteraryWorkNavigationTeaserWithAuthors } from '@models/literary-w
 						[order]="$index + 1"
 						[navigationParams]="{
 							navigation: 'author',
-							navigationSlug: literaryWork.authors[0]?.slug,
+							navigationSlug: literaryWork.authors[0].slug,
 						}"
 						data-testid="card"
 					/>
 				}
 			} @loading (minimum 500ms) {
-				@for (_ of [].constructor(SKELETON_COUNT); track $index) {
+				@for (_ of [].constructor(skeletonCount); track $index) {
 					<cuentoneta-literary-work-home-card-teaser-skeleton data-testid="skeleton" />
 				}
 			}
@@ -37,6 +37,6 @@ import type { LiteraryWorkNavigationTeaserWithAuthors } from '@models/literary-w
 	},
 })
 export class MostReadStoriesCardDeckComponent {
-	protected readonly SKELETON_COUNT = 6;
+	protected readonly skeletonCount = 6;
 	public readonly literaryWorks = input<readonly LiteraryWorkNavigationTeaserWithAuthors[]>([]);
 }

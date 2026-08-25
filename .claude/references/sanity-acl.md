@@ -335,13 +335,12 @@ como métodos privados de `SanityLiteraryWorkRepository`. El service (`getLitera
 el dominio ya mapeado y elige la implementación del repository por parámetro (default: la de
 Sanity) — eso es lo que permite testearlo con el doble en memoria sin contenedor de DI.
 
-`collection` y `content` siguen la misma forma: puerto (`CollectionRepository` / `ContentRepository`)
-
-- adaptador (`SanityCollectionRepository` / `SanityContentRepository`, con la ACL en privados) +
-  doble en memoria (`InMemoryCollectionRepository` / `InMemoryContentRepository`). `content` es el caso
-  que además **consume** la ACL de otro repository: para las colecciones destacadas de la landing
-  reutiliza `mapSanityCollectionTeaser` de `collection/collection-teaser.acl.ts` en vez de reensamblar
-  el teaser por su cuenta — ver la nota de "qué sí se comparte" al principio de este documento.
+`collection` y `content` siguen la misma forma: puerto (`CollectionRepository` / `ContentRepository`),
+adaptador (`SanityCollectionRepository` / `SanityContentRepository`, con la ACL en privados) y doble
+en memoria (`InMemoryCollectionRepository` / `InMemoryContentRepository`). `content` es el caso que
+además **consume** la ACL de otro repository: para las colecciones destacadas de la landing reutiliza
+`mapSanityCollectionTeaser` de `collection/collection-teaser.acl.ts` en vez de reensamblar el teaser
+por su cuenta — ver la nota de "qué sí se comparte" al principio de este documento.
 
 ---
 

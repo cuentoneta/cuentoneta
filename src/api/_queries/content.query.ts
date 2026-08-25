@@ -4,9 +4,9 @@ import { defineQuery } from 'groq';
 // —ningún consumidor de estos slots muestra cuerpo— y con `mediaSources` en su forma de teaser, que
 // solo lleva la plataforma y el título y no resuelve la carga con la que se reproduce el recurso.
 //
-// La proyección se repite literal en las tres apariciones de abajo porque `defineQuery` necesita
-// literales para que el typegen las lea. Lo que impide que se desincronicen es el mapper compartido
-// del repository, tipado contra la unión de las tres.
+// Cada aparición de abajo repite el literal porque `defineQuery` lo exige: el typegen parsea el string
+// de la llamada, así que una constante compartida dejaría de emitir tipos. Lo que impide que se
+// desincronicen es el mapper del repository, tipado contra la unión de todas ellas.
 
 export const rotatingContentQuery = defineQuery(`
 *[_type == 'rotatingContent' && _id == 'rotatingContent'][0]{
