@@ -46,6 +46,7 @@ export const latestLandingPageReferencesQuery = defineQuery(`
     'cards': coalesce(cards[],[]),
     'campaigns': coalesce(campaigns[],[]),
     'latestReads': coalesce(latestReads,[]),
+    'highlightedAuthors': coalesce(highlightedAuthors,[]),
 } | order(config desc, _createdAt desc)[0]
 `);
 
@@ -108,5 +109,33 @@ export const landingPageContentQuery = defineQuery(`
 						diedOnYear,
             'resources': [],
         }
+    },[]),
+    'highlightedAuthors': coalesce(highlightedAuthors[]{
+        'author': author->{
+            _id,
+            'slug': slug.current,
+            name,
+            image,
+            nationality->,
+            bornOn,
+            bornOnYear,
+            diedOn,
+            diedOnYear,
+            'resources': [],
+            'tags': coalesce(tags[]->{
+                title,
+                'slug': slug.current,
+                description
+            }, [])
+        },
+        'additionalTags': coalesce(additionalTags[]->{
+            title,
+            'slug': slug.current,
+            description
+        }, []),
+        'storyCount': count(*[
+            !(_id in path('drafts.**')) &&
+            ((_type == 'story' && author._ref == ^.author._ref) || (_type == 'literaryWork' && ^.author._ref in authors[]._ref))
+        ])
     },[]),
 }`);

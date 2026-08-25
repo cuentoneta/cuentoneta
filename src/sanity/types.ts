@@ -1268,7 +1268,7 @@ export type LandingPageListQueryResult = Array<{
 
 // Source: ../src/api/_queries/content.query.ts
 // Variable: latestLandingPageReferencesQuery
-// Query: *[_type == 'landingPage' && !(_id in path('drafts.**')) && config <= $currentSlug]{    _id,    _type,    'slug': slug.current,    config,    'cards': coalesce(cards[],[]),    'campaigns': coalesce(campaigns[],[]),    'latestReads': coalesce(latestReads,[]),} | order(config desc, _createdAt desc)[0]
+// Query: *[_type == 'landingPage' && !(_id in path('drafts.**')) && config <= $currentSlug]{    _id,    _type,    'slug': slug.current,    config,    'cards': coalesce(cards[],[]),    'campaigns': coalesce(campaigns[],[]),    'latestReads': coalesce(latestReads,[]),    'highlightedAuthors': coalesce(highlightedAuthors,[]),} | order(config desc, _createdAt desc)[0]
 export type LatestLandingPageReferencesQueryResult = {
 	_id: string;
 	_type: 'landingPage';
@@ -1295,11 +1295,23 @@ export type LatestLandingPageReferencesQueryResult = {
 				} & StoryReference
 		  >
 		| Array<never>;
+	highlightedAuthors:
+		| Array<{
+				author: AuthorReference;
+				additionalTags?: Array<
+					{
+						_key: string;
+					} & TagReference
+				>;
+				_type: 'highlightedAuthor';
+				_key: string;
+		  }>
+		| Array<never>;
 } | null;
 
 // Source: ../src/api/_queries/content.query.ts
 // Variable: landingPageContentQuery
-// Query: *[_type == 'landingPage' && !(_id in path('drafts.**')) && slug.current == $slug][0]{    _id,    'slug': slug.current,    config,    'cards': coalesce(cards[]->{        _id,        title,        'slug': slug.current,        description,        featuredImage,        'tags': coalesce(tags[] -> {            title,            'slug': slug.current,            description        }, []),        'storyCoverImages': coalesce(stories[]->coverImage, []),        'count': coalesce(count(stories), 0),				config,				'tabs': [],	      'mediaSources': coalesce(mediaSources[], []),    },[]),    'campaigns': coalesce(campaigns[]->{        _id,        'title': coalesce(title, ''),        'slug': coalesce(slug.current, ''),        'url': coalesce(url, ''),        'contents': {            'xs': {                'image': contents.xs.image            },            'md': {                'image': contents.md.image            }        }    },[]),    'latestReads': coalesce(latestReads[]->{        _id,        'slug': slug.current,        title,        'badLanguage': coalesce(badLanguage, false),        'body': [],        'originalPublication': coalesce(originalPublication, ''),        approximateReadingTime,        coverImage,        'resources': [],        'mediaSources': coalesce(mediaSources[], []),        'author': author-> {             _id,            'slug': slug.current,            name,            image,            nationality->,						bornOn,						bornOnYear,						diedOn,						diedOnYear,            'resources': [],        }    },[]),}
+// Query: *[_type == 'landingPage' && !(_id in path('drafts.**')) && slug.current == $slug][0]{    _id,    'slug': slug.current,    config,    'cards': coalesce(cards[]->{        _id,        title,        'slug': slug.current,        description,        featuredImage,        'tags': coalesce(tags[] -> {            title,            'slug': slug.current,            description        }, []),        'storyCoverImages': coalesce(stories[]->coverImage, []),        'count': coalesce(count(stories), 0),				config,				'tabs': [],	      'mediaSources': coalesce(mediaSources[], []),    },[]),    'campaigns': coalesce(campaigns[]->{        _id,        'title': coalesce(title, ''),        'slug': coalesce(slug.current, ''),        'url': coalesce(url, ''),        'contents': {            'xs': {                'image': contents.xs.image            },            'md': {                'image': contents.md.image            }        }    },[]),    'latestReads': coalesce(latestReads[]->{        _id,        'slug': slug.current,        title,        'badLanguage': coalesce(badLanguage, false),        'body': [],        'originalPublication': coalesce(originalPublication, ''),        approximateReadingTime,        coverImage,        'resources': [],        'mediaSources': coalesce(mediaSources[], []),        'author': author-> {             _id,            'slug': slug.current,            name,            image,            nationality->,						bornOn,						bornOnYear,						diedOn,						diedOnYear,            'resources': [],        }    },[]),    'highlightedAuthors': coalesce(highlightedAuthors[]{        'author': author->{            _id,            'slug': slug.current,            name,            image,            nationality->,            bornOn,            bornOnYear,            diedOn,            diedOnYear,            'resources': [],            'tags': coalesce(tags[]->{                title,                'slug': slug.current,                description            }, [])        },        'additionalTags': coalesce(additionalTags[]->{            title,            'slug': slug.current,            description        }, []),        'storyCount': count(*[            !(_id in path('drafts.**')) &&            ((_type == 'story' && author._ref == ^.author._ref) || (_type == 'literaryWork' && ^.author._ref in authors[]._ref))        ])    },[]),}
 export type LandingPageContentQueryResult = {
 	_id: string;
 	slug: string;
@@ -1503,6 +1515,57 @@ export type LandingPageContentQueryResult = {
 					diedOnYear: ComputedNumber | null;
 					resources: Array<never>;
 				};
+		  }>
+		| Array<never>;
+	highlightedAuthors:
+		| Array<{
+				author: {
+					_id: string;
+					slug: string;
+					name: string;
+					image: {
+						asset?: SanityImageAssetReference;
+						media?: unknown;
+						hotspot?: SanityImageHotspot;
+						crop?: SanityImageCrop;
+						_type: 'image';
+					};
+					nationality: {
+						_id: string;
+						_type: 'nationality';
+						_createdAt: string;
+						_updatedAt: string;
+						_rev: string;
+						country: string;
+						flag: {
+							asset?: SanityImageAssetReference;
+							media?: unknown;
+							hotspot?: SanityImageHotspot;
+							crop?: SanityImageCrop;
+							_type: 'image';
+						};
+					};
+					bornOn: string | null;
+					bornOnYear: ComputedNumber | null;
+					diedOn: string | null;
+					diedOnYear: ComputedNumber | null;
+					resources: Array<never>;
+					tags:
+						| Array<{
+								title: string;
+								slug: string;
+								description: string;
+						  }>
+						| Array<never>;
+				};
+				additionalTags:
+					| Array<{
+							title: string;
+							slug: string;
+							description: string;
+					  }>
+					| Array<never>;
+				storyCount: number;
 		  }>
 		| Array<never>;
 } | null;
@@ -2600,8 +2663,8 @@ declare module '@sanity/client' {
 		"\n*[_type == 'collection' && !(_id in path('drafts.**'))]\n| order(title asc)\n{\n    _id,\n    'slug': slug.current,\n    title,\n    description,\n    featuredImage,\n    'config': { 'showAuthors': coalesce(config.showAuthors, false) },\n    'tags': coalesce(tags[] -> {\n        title,\n        'slug': slug.current,\n        description\n    }, []),\n    'mediaSources': coalesce(mediaSources[]{\n        ...,\n        _type == 'spaceRecording' => {\n            'audioUrl': audioFile.asset->url\n        }\n    }, []),\n    'count': coalesce(count(literaryWorks), 0),\n    'literaryWorkCoverImages': coalesce(literaryWorks[0...3]->coverImage, [])\n}": CollectionsQueryResult;
 		"\n*[_type == 'rotatingContent' && _id == 'rotatingContent'][0]{\n    _id,\n    name,\n    'mostRead': coalesce(mostRead[]->{\n        _id,\n        'slug': slug.current,\n        title,\n        'badLanguage': coalesce(badLanguage, false),\n        'body': [],\n        'originalPublication': coalesce(originalPublication, ''),\n        approximateReadingTime,\n        coverImage,\n        'resources': [],\n        'mediaSources': coalesce(mediaSources[], []),\n        'author': author-> {\n            _id,\n            'slug': slug.current,\n            name,\n            image,\n            nationality->,\n\t\t\t\t\t\tbornOn,\n\t\t\t\t\t\tbornOnYear,\n\t\t\t\t\t\tdiedOn,\n\t\t\t\t\t\tdiedOnYear,\n            'resources': [],\n        }\n    },[])\n}": RotatingContentQueryResult;
 		"\n*[_type == 'landingPage' && !(_id in path('drafts.**')) && slug.current in $slugs]{\n\t\t_id,\n\t\t'slug': slug.current,\n\t\tconfig,\n}": LandingPageListQueryResult;
-		"\n*[_type == 'landingPage' && !(_id in path('drafts.**')) && config <= $currentSlug]{\n    _id,\n    _type,\n    'slug': slug.current,\n    config,\n    'cards': coalesce(cards[],[]),\n    'campaigns': coalesce(campaigns[],[]),\n    'latestReads': coalesce(latestReads,[]),\n} | order(config desc, _createdAt desc)[0]\n": LatestLandingPageReferencesQueryResult;
-		"\n*[_type == 'landingPage' && !(_id in path('drafts.**')) && slug.current == $slug][0]{\n    _id,\n    'slug': slug.current,\n    config,\n    'cards': coalesce(cards[]->{\n        _id,\n        title,\n        'slug': slug.current,\n        description,\n        featuredImage,\n        'tags': coalesce(tags[] -> {\n            title,\n            'slug': slug.current,\n            description\n        }, []),\n        'storyCoverImages': coalesce(stories[]->coverImage, []),\n        'count': coalesce(count(stories), 0),\n\t\t\t\tconfig,\n\t\t\t\t'tabs': [],\n\t      'mediaSources': coalesce(mediaSources[], []),\n    },[]),\n    'campaigns': coalesce(campaigns[]->{\n        _id,\n        'title': coalesce(title, ''),\n        'slug': coalesce(slug.current, ''),\n        'url': coalesce(url, ''),\n        'contents': {\n            'xs': {\n                'image': contents.xs.image\n            },\n            'md': {\n                'image': contents.md.image\n            }\n        }\n    },[]),\n    'latestReads': coalesce(latestReads[]->{\n        _id,\n        'slug': slug.current,\n        title,\n        'badLanguage': coalesce(badLanguage, false),\n        'body': [],\n        'originalPublication': coalesce(originalPublication, ''),\n        approximateReadingTime,\n        coverImage,\n        'resources': [],\n        'mediaSources': coalesce(mediaSources[], []),\n        'author': author-> { \n            _id,\n            'slug': slug.current,\n            name,\n            image,\n            nationality->,\n\t\t\t\t\t\tbornOn,\n\t\t\t\t\t\tbornOnYear,\n\t\t\t\t\t\tdiedOn,\n\t\t\t\t\t\tdiedOnYear,\n            'resources': [],\n        }\n    },[]),\n}": LandingPageContentQueryResult;
+		"\n*[_type == 'landingPage' && !(_id in path('drafts.**')) && config <= $currentSlug]{\n    _id,\n    _type,\n    'slug': slug.current,\n    config,\n    'cards': coalesce(cards[],[]),\n    'campaigns': coalesce(campaigns[],[]),\n    'latestReads': coalesce(latestReads,[]),\n    'highlightedAuthors': coalesce(highlightedAuthors,[]),\n} | order(config desc, _createdAt desc)[0]\n": LatestLandingPageReferencesQueryResult;
+		"\n*[_type == 'landingPage' && !(_id in path('drafts.**')) && slug.current == $slug][0]{\n    _id,\n    'slug': slug.current,\n    config,\n    'cards': coalesce(cards[]->{\n        _id,\n        title,\n        'slug': slug.current,\n        description,\n        featuredImage,\n        'tags': coalesce(tags[] -> {\n            title,\n            'slug': slug.current,\n            description\n        }, []),\n        'storyCoverImages': coalesce(stories[]->coverImage, []),\n        'count': coalesce(count(stories), 0),\n\t\t\t\tconfig,\n\t\t\t\t'tabs': [],\n\t      'mediaSources': coalesce(mediaSources[], []),\n    },[]),\n    'campaigns': coalesce(campaigns[]->{\n        _id,\n        'title': coalesce(title, ''),\n        'slug': coalesce(slug.current, ''),\n        'url': coalesce(url, ''),\n        'contents': {\n            'xs': {\n                'image': contents.xs.image\n            },\n            'md': {\n                'image': contents.md.image\n            }\n        }\n    },[]),\n    'latestReads': coalesce(latestReads[]->{\n        _id,\n        'slug': slug.current,\n        title,\n        'badLanguage': coalesce(badLanguage, false),\n        'body': [],\n        'originalPublication': coalesce(originalPublication, ''),\n        approximateReadingTime,\n        coverImage,\n        'resources': [],\n        'mediaSources': coalesce(mediaSources[], []),\n        'author': author-> { \n            _id,\n            'slug': slug.current,\n            name,\n            image,\n            nationality->,\n\t\t\t\t\t\tbornOn,\n\t\t\t\t\t\tbornOnYear,\n\t\t\t\t\t\tdiedOn,\n\t\t\t\t\t\tdiedOnYear,\n            'resources': [],\n        }\n    },[]),\n    'highlightedAuthors': coalesce(highlightedAuthors[]{\n        'author': author->{\n            _id,\n            'slug': slug.current,\n            name,\n            image,\n            nationality->,\n            bornOn,\n            bornOnYear,\n            diedOn,\n            diedOnYear,\n            'resources': [],\n            'tags': coalesce(tags[]->{\n                title,\n                'slug': slug.current,\n                description\n            }, [])\n        },\n        'additionalTags': coalesce(additionalTags[]->{\n            title,\n            'slug': slug.current,\n            description\n        }, []),\n        'storyCount': count(*[\n            !(_id in path('drafts.**')) &&\n            ((_type == 'story' && author._ref == ^.author._ref) || (_type == 'literaryWork' && ^.author._ref in authors[]._ref))\n        ])\n    },[]),\n}": LandingPageContentQueryResult;
 		"\n*[_type == 'contributor' && !(_id in path('drafts.**'))]\n{\n\tname,\n\t'slug': slug.current,\n\tarea,\n\tlink {\n\t\thandle,\n\t\turl\n\t},\n\tnotes\n}|order(name asc)\n": AllContributorsQueryResult;
 		"\n*[_type == 'literaryWork' && slug.current == $slug && !(_id in path('drafts.**'))]\n{\n    _id,\n    'slug': slug.current,\n    title,\n    coverImage,\n    editorialNote,\n    'badLanguage': coalesce(badLanguage, false),\n    'originalPublication': coalesce(originalPublication, ''),\n    'publishedAt': coalesce(publishedAt, _createdAt),\n    totalReadingTime,\n    'sectionCount': count(content),\n    'tags': coalesce(tags[] -> {\n        title,\n        'slug': slug.current,\n        description\n    }, []),\n    'mediaSources': coalesce(mediaSources[]{\n        ...,\n        _type == 'spaceRecording' => {\n            'audioUrl': audioFile.asset->url\n        }\n    }, []),\n    'resources': coalesce(resources[]{\n        title,\n        url,\n        resourceType->{\n            'slug': slug.current,\n            title,\n            description\n        }\n    }, []),\n    'authors': coalesce(authors[]-> {\n        _id,\n        'slug': slug.current,\n        name,\n        image,\n        nationality->,\n        biography,\n        bornOn,\n        bornOnYear,\n        diedOn,\n        diedOnYear,\n        'resources': coalesce(resources[]{\n            title,\n            url,\n            resourceType->{\n                'slug': slug.current,\n                title,\n                description\n            }\n        }, []),\n        'tags': []\n    }, []),\n    'content': coalesce(content[]{\n        _key,\n        title,\n        'epigraphs': coalesce(epigraphs[]{ text, reference }, []),\n        body,\n        readingTime\n    }, [])\n}[0]": LiteraryWorkBySlugQueryResult;
 		"\n*[_type == 'literaryWork' && slug.current == $slug && !(_id in path('drafts.**'))]\n{\n    _id,\n    'slug': slug.current,\n    title,\n    coverImage,\n    editorialNote,\n    'badLanguage': coalesce(badLanguage, false),\n    'originalPublication': coalesce(originalPublication, ''),\n    'publishedAt': coalesce(publishedAt, _createdAt),\n    totalReadingTime,\n    'sectionCount': count(content),\n    'tags': coalesce(tags[] -> {\n        title,\n        'slug': slug.current,\n        description\n    }, []),\n    'mediaSources': coalesce(mediaSources[]{\n        ...,\n        _type == 'spaceRecording' => {\n            'audioUrl': audioFile.asset->url\n        }\n    }, []),\n    'resources': coalesce(resources[]{\n        title,\n        url,\n        resourceType->{\n            'slug': slug.current,\n            title,\n            description\n        }\n    }, []),\n    'authors': coalesce(authors[]-> {\n        _id,\n        'slug': slug.current,\n        name,\n        image,\n        nationality->,\n        biography,\n        bornOn,\n        bornOnYear,\n        diedOn,\n        diedOnYear,\n        'resources': coalesce(resources[]{\n            title,\n            url,\n            resourceType->{\n                'slug': slug.current,\n                title,\n                description\n            }\n        }, []),\n        'tags': []\n    }, []),\n    'section': content[$section...$sectionEnd]{\n        _key,\n        title,\n        'epigraphs': coalesce(epigraphs[]{ text, reference }, []),\n        body,\n        readingTime\n    }\n}[0]": LiteraryWorkSectionBySlugQueryResult;
