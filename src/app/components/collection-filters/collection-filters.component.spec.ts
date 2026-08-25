@@ -54,6 +54,15 @@ describe('CollectionFiltersComponent', () => {
 		expect(facetFor(cuentoTagMock, 1)).toBeInTheDocument();
 	});
 
+	// El nombre no puede salir del `legend`: si contiene un botón, el `fieldset` queda sin nombrar. Este
+	// caso fija el cableado, no el cómputo — happy-dom es más permisivo que el navegador y no reprodujo
+	// el fallo que se ve en Chrome.
+	it('should name the category group', async () => {
+		await renderFilters();
+
+		expect(screen.getByRole('group', { name: 'Categoría' })).toBeInTheDocument();
+	});
+
 	it('should offer each tag once, however many collections carry it', async () => {
 		await renderFilters();
 

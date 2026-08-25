@@ -48,33 +48,34 @@ interface CollectionFacet {
 			</ul>
 		}
 
-		<!-- No es \`fieldset\`/\`legend\`: el legend queda fuera del flujo flex y la separación con la lista no
-		     se aplica. -->
-		<div class="flex flex-col gap-3" role="group" aria-labelledby="category-group-label">
-			<div>
+		<!-- El nombre va por \`aria-label\` y no por el \`legend\`: un legend que contiene un botón deja al
+		     \`fieldset\` sin nombre. Por eso el rótulo se repite, y las dos copias salen del mismo campo.
+		     La separación con la lista tampoco puede venir de \`gap\` —el legend no es flex item—, así que la
+		     lleva la lista y se va con ella al plegar. -->
+		<fieldset [attr.aria-label]="categoryLabel" class="min-w-0">
+			<legend>
 				<button
 					(click)="toggleCategoryGroup()"
 					[attr.aria-expanded]="isCategoryGroupOpen()"
 					aria-controls="category-facets"
-					id="category-group-label"
 					type="button"
 					class="flex cursor-pointer items-center gap-1 font-inter text-sm leading-5 font-semibold text-neutral-900"
 				>
-					Categoría
-					<!-- El diseño dibuja el trazo chico y centrado dentro de una caja de 24, no llenándola. -->
-					<span class="flex size-6 items-center justify-center">
+					{{ categoryLabel }}
+					<!-- El diseño dibuja el trazo chico y centrado dentro de una caja de 24, no llenándola. El
+					     \`aria-hidden\` va acá y no solo en el icono: adentro del botón, el icono le borra el nombre. -->
+					<span aria-hidden="true" class="flex size-6 items-center justify-center">
 						<ng-icon
 							[class.-rotate-90]="!isCategoryGroupOpen()"
 							name="faSolidChevronDown"
 							size="12"
-							aria-hidden="true"
 							class="transition-transform"
 						/>
 					</span>
 				</button>
-			</div>
+			</legend>
 			@if (isCategoryGroupOpen()) {
-				<ul class="flex list-none flex-col gap-2.5" id="category-facets">
+				<ul class="mt-3 flex list-none flex-col gap-2.5" id="category-facets">
 					@for (facet of facets(); track facet.tag.slug) {
 						<li class="flex items-center gap-1.5">
 							<span class="relative flex size-5 shrink-0 items-center justify-center">
@@ -105,7 +106,7 @@ interface CollectionFacet {
 					}
 				</ul>
 			}
-		</div>
+		</fieldset>
 	`,
 })
 export class CollectionFiltersComponent {
@@ -115,6 +116,8 @@ export class CollectionFiltersComponent {
 
 	public readonly toggled = output<Tag>();
 	public readonly cleared = output<void>();
+
+	protected readonly categoryLabel = 'Categoría';
 
 	private readonly collator = new Intl.Collator('es');
 
