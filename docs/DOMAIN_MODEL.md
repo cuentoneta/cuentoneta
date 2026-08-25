@@ -546,7 +546,7 @@ interface LandingPageContent {
 
 interface HighlightedAuthor {
 	author: AuthorTeaser;
-	tags: readonly Tag[]; // Etiquetas de la semana primero, después las del autor, sin repetir
+	tags: readonly Tag[]; // Las etiquetas derivadas del autor
 	storyCount: number; // Obras del autor, contadas sobre los dos tipos de documento
 }
 ```
@@ -556,7 +556,7 @@ interface HighlightedAuthor {
 - Agregar contenido de múltiples contextos para presentación en página inicio
 - Mantener datos de lectura y estadísticas
 
-`HighlightedAuthor` es una proyección de curación de este contexto, no una vista del agregado `Author`: sus etiquetas son las de la tirada y su conteo es un dato que solo esta pantalla paga. Por eso ninguno de los dos vive en `AuthorTeaser`, que entrega su propia lista de etiquetas vacía.
+`HighlightedAuthor` es una proyección de curación de este contexto, no una vista del agregado `Author`: su conteo es un dato que solo esta pantalla paga, y sus etiquetas viajan en el wrapper porque `AuthorTeaser` entrega la suya vacía en toda vista del repositorio.
 
 El tope de seis rige la edición en el Studio y no lo ya persistido, así que el mapeo lo vuelve a aplicar como salvaguarda.
 

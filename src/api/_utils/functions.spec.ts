@@ -15,7 +15,6 @@ import {
 import { elOdioRawTeaser, onoffRawNavTeasersMock } from '@mocks/onoff-raw-stories.mock';
 import { rawOnoffAuthor, rawOnoffAuthorTeaser } from '@mocks/onoff-raw-author.mock';
 import {
-	divergentDuplicateRawHighlightedAuthor,
 	onoffRawContentCampaignsMock,
 	onoffRawHighlightedAuthorsMock,
 	onoffRawLandingPageMock,
@@ -260,41 +259,11 @@ describe('mapLandingPageContent (ACL)', () => {
 describe('mapHighlightedAuthors (ACL)', () => {
 	const [canonical] = onoffRawHighlightedAuthorsMock;
 
-	it('leads with the tags of the week and follows with the ones the author already carries', () => {
-		const [result] = mapHighlightedAuthors([canonical]);
+	it('maps every tag the author carries, in order', () => {
+		const expected = canonical.tags.map(({ slug }) => slug);
 
-		const weekly = canonical.additionalTags.map(({ slug }) => slug);
-		const derived = canonical.author.tags.map(({ slug }) => slug).filter((slug) => !weekly.includes(slug));
-
-		expect(weekly.length).toBeGreaterThan(0);
-		expect(derived.length).toBeGreaterThan(0);
-		expect(result.tags.map(({ slug }) => slug)).toEqual([...weekly, ...derived]);
-	});
-
-	it('lists a tag present in both sources only once', () => {
-		const shared = canonical.additionalTags.filter(({ slug }) =>
-			canonical.author.tags.some((tag) => tag.slug === slug),
-		);
-
-		expect(shared.length).toBeGreaterThan(0);
-
-		const slugs = mapHighlightedAuthors([canonical])[0].tags.map(({ slug }) => slug);
-
-		expect(slugs).toEqual([...new Set(slugs)]);
-	});
-
-	// El descarte tiene que quedarse con la etiqueta de la semana, no con la del autor: es la que da
-	// contexto a la tirada, y el epic contempla que las dos difieran en algo más que el slug.
-	it('keeps the tag of the week, not the derived one, when both carry the same slug', () => {
-		const entry = divergentDuplicateRawHighlightedAuthor;
-		const [weekly] = entry.additionalTags;
-		const derived = entry.author.tags.find((tag) => tag.slug === weekly.slug);
-
-		expect(derived?.title).not.toBe(weekly.title);
-
-		const survivor = mapHighlightedAuthors([entry])[0].tags.find((tag) => tag.slug === weekly.slug);
-
-		expect(survivor?.title).toBe(weekly.title);
+		expect(expected.length).toBeGreaterThan(0);
+		expect(mapHighlightedAuthors([canonical])[0].tags.map(({ slug }) => slug)).toEqual(expected);
 	});
 
 	it('keeps the first six entries when the document carries more', () => {
@@ -306,7 +275,7 @@ describe('mapHighlightedAuthors (ACL)', () => {
 		);
 	});
 
-	it('produces an empty tag list for an author with no tags of either kind', () => {
+	it('produces an empty tag list for an author with no tags', () => {
 		expect(mapHighlightedAuthors([untaggedRawHighlightedAuthor])[0].tags).toEqual([]);
 	});
 
@@ -314,8 +283,8 @@ describe('mapHighlightedAuthors (ACL)', () => {
 		expect(mapHighlightedAuthors([canonical])[0].storyCount).toBe(canonical.storyCount);
 	});
 
-	// Los tags del destacado son los de la tirada, no los del autor: el teaser los entrega vacíos en
-	// toda vista, y este mapper es el que decide cuáles se muestran.
+	// El teaser entrega su lista de etiquetas vacía en toda vista del repositorio, así que las del
+	// destacado viajan en el wrapper aunque salgan del mismo autor.
 	it('maps the author as a teaser, whose own tag list stays empty', () => {
 		const [result] = mapHighlightedAuthors([canonical]);
 

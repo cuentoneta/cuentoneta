@@ -42,14 +42,7 @@ describe('ContentService', () => {
 			campaigns: [{ _id: 'campaign-1' }, { _id: 'campaign-2' }],
 			cards: [{ _id: 'card-1' }],
 			latestReads: [{ _id: 'story-1' }, { _id: 'story-2' }],
-			highlightedAuthors: [
-				{
-					_key: 'highlighted-1',
-					_type: 'highlightedAuthor',
-					author: { _type: 'reference', _ref: 'author-1' },
-					additionalTags: [{ _key: 'tag-1', _type: 'reference', _ref: 'tag-1' }],
-				},
-			],
+			highlightedAuthors: [{ _key: 'highlighted-1', _type: 'reference', _ref: 'author-1' }],
 		};
 
 		beforeEach(() => {
@@ -160,8 +153,8 @@ describe('ContentService', () => {
 			});
 		});
 
-		// Los destacados son el único contenido de la landing que se edita como objetos y no como
-		// referencias planas; si la rotación los dejara afuera se vaciarían solos cada semana, sin error.
+		// El clonado enumera los campos que copia, así que un campo nuevo que quede afuera no rompe nada:
+		// los destacados se vaciarían solos cada semana, sin emitir ningún error.
 		it('should carry the highlighted authors over to every cloned week', async () => {
 			const weeksInTheFuture = 3;
 
