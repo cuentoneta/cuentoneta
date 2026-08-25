@@ -3,10 +3,11 @@ import { provideRouter } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { of, throwError, type Observable } from 'rxjs';
 
-import type { LiteraryWork } from '@models/literary-work.model';
+import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
 import type { Storylist } from '@models/storylist.model';
 import type { StoryTeaser } from '@models/story.model';
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
+import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
 import { onoffCollectionsMock } from '@mocks/onoff-collections.mock';
 import { onoffStoryTeasersMock } from '@mocks/onoff-story-teasers.mock';
 import { storylistMock } from '@mocks/storylist.mock';
@@ -27,6 +28,10 @@ class CorpusLiteraryWorkApi implements LiteraryWorkApi {
 		return literaryWork
 			? of(literaryWork)
 			: throwError(() => new HttpErrorResponse({ status: 404, statusText: 'Not Found' }));
+	}
+
+	public getByAuthorSlug(slug: string): Observable<LiteraryWorkTeaser[]> {
+		return of(onoffLiteraryWorkTeasersMock.filter(({ authors }) => authors.some((author) => author.slug === slug)));
 	}
 }
 

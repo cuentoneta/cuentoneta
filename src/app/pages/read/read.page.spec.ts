@@ -9,7 +9,7 @@ import { restoreAllMocks, spyOn } from '@test-utils';
 import { throwError, type Observable } from 'rxjs';
 
 // Models
-import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
+import { createLiteraryWork, type LiteraryWork, type LiteraryWorkTeaser } from '@models/literary-work.model';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';
 import { createMarkdown } from '@models/markdown.model';
 import { deriveSectionReadingTime } from '@models/reading-time.model';
@@ -39,6 +39,10 @@ class StubFailingLiteraryWorkApi implements LiteraryWorkApi {
 	constructor(private readonly status: number) {}
 
 	public getBySlug(): Observable<LiteraryWork> {
+		return throwError(() => new HttpErrorResponse({ status: this.status, statusText: 'error' }));
+	}
+
+	public getByAuthorSlug(): Observable<LiteraryWorkTeaser[]> {
 		return throwError(() => new HttpErrorResponse({ status: this.status, statusText: 'error' }));
 	}
 }

@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import type { LiteraryWork } from '@models/literary-work.model';
+import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
 import {
 	onoffLiteraryWorksMock,
 	onoffLiteraryWorksWithEditorialNote,
@@ -9,6 +9,7 @@ import {
 	onoffLiteraryWorksWithEpigraphs,
 	onoffLiteraryWorksWithSectionTitles,
 } from '@mocks/onoff-literary-works.mock';
+import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
 import { environment } from '../environments/environment';
 import { Endpoints } from './endpoints';
 import { HttpLiteraryWorkApi, LiteraryWorkApi } from './literary-work.provider';
@@ -170,6 +171,43 @@ describe('HttpLiteraryWorkApi', () => {
 		http.expectOne(`${environment.apiUrl}${Endpoints.LiteraryWork}/${dto.slug}`).flush(malformed);
 
 		await expect(result).rejects.toThrow();
+	});
+
+	describe('getByAuthorSlug', () => {
+		// El DTO de wire se deriva del canon por serialización, nunca a mano: es la misma forma en que
+		// viaja de verdad, y enriquecer el corpus alcanza a estos casos solo.
+		const wireTeasers = JSON.parse(JSON.stringify(onoffLiteraryWorkTeasersMock)) as unknown[];
+
+		function requestByAuthorSlug(slug: string, payload: unknown[]): Promise<LiteraryWorkTeaser[]> {
+			const result = new Promise<LiteraryWorkTeaser[]>((resolve, reject) => {
+				api.getByAuthorSlug(slug).subscribe({ next: resolve, error: reject });
+			});
+			http.expectOne(`${environment.apiUrl}${Endpoints.LiteraryWork}/author/${slug}`).flush(payload);
+			return result;
+		}
+
+		it('rehydrates the listing into domain teasers', async () => {
+			const rehydrated = await requestByAuthorSlug('francois-onoff', wireTeasers);
+
+			expect(rehydrated).toHaveLength(onoffLiteraryWorkTeasersMock.length);
+			rehydrated.forEach((teaser, index) => {
+				expect(teaser.slug).toBe(onoffLiteraryWorkTeasersMock[index].slug);
+				expect(teaser.excerpt.bodyHtml).toBe(onoffLiteraryWorkTeasersMock[index].excerpt.bodyHtml);
+			});
+		});
+
+		it('resolves an empty listing as an empty array', async () => {
+			expect(await requestByAuthorSlug('sin-obras', [])).toEqual([]);
+		});
+
+		// La frontera valida acá y no en un template: un dato inválido corta el stream con error en vez
+		// de llegar a la tarjeta como un hueco mudo.
+		it('errors the stream when a teaser violates the DTO schema', async () => {
+			const [first, ...rest] = wireTeasers as Array<Record<string, unknown>>;
+			const malformed = [{ ...first, totalReadingTime: 'dos' }, ...rest];
+
+			await expect(requestByAuthorSlug('francois-onoff', malformed)).rejects.toThrow();
+		});
 	});
 });
 

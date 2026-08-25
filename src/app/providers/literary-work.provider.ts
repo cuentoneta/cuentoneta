@@ -14,11 +14,19 @@ import { createSectionTitle } from '@models/section-title.model';
 import { createReadingTime } from '@models/reading-time.model';
 import { createSanitizedHtml } from '@models/sanitized-html.model';
 import { createIsoDateTime } from '@utils/date.utils';
-import { literaryWorkDtoSchema, type LiteraryWorkDto, type LiteraryWorkSectionDto } from '@models/literary-work.dto';
+import {
+	literaryWorkDtoSchema,
+	literaryWorkTeaserListDtoSchema,
+	toLiteraryWorkTeaser,
+	type LiteraryWorkDto,
+	type LiteraryWorkSectionDto,
+} from '@models/literary-work.dto';
+import type { LiteraryWorkTeaser } from '@models/literary-work.model';
 import { ApiUrl, Endpoints } from './endpoints';
 
 export interface LiteraryWorkApi {
 	getBySlug(slug: string): Observable<LiteraryWork>;
+	getByAuthorSlug(slug: string): Observable<LiteraryWorkTeaser[]>;
 }
 
 @Service()
@@ -30,6 +38,12 @@ export class HttpLiteraryWorkApi implements LiteraryWorkApi {
 		return this.http
 			.get<unknown>(`${this.url}/${slug}`)
 			.pipe(map((response) => this.toLiteraryWork(literaryWorkDtoSchema.parse(response))));
+	}
+
+	public getByAuthorSlug(slug: string): Observable<LiteraryWorkTeaser[]> {
+		return this.http
+			.get<unknown>(`${this.url}/author/${slug}`)
+			.pipe(map((response) => literaryWorkTeaserListDtoSchema.parse(response).map(toLiteraryWorkTeaser)));
 	}
 
 	private toSection(dto: LiteraryWorkSectionDto): LiteraryWorkSection {
