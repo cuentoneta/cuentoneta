@@ -409,26 +409,25 @@ describe('ReadPage', () => {
 		});
 	});
 
-	// El guardrail `seo-host-directives.spec.ts` deriva la indexabilidad del propio código, así que
-	// sigue verde si alguien vuelve la página a indexable: estos casos son los que fijan el opt-out de
-	// indexación y la metadata que ReadMetaTagsDirective dejó de aportar al quedar aparcada.
+	// La política de cabecera la escriben las hostDirectives de SEO de la página; estos casos fijan lo
+	// observable a través de ellas y el borde sin obra, donde ambas hacen early-return.
 	describe('metadata de la cabecera', () => {
-		it('marca la página como no indexable', async () => {
+		it('marca la página como indexable', async () => {
 			const robotsSpy = spyOn(HeadMetadataDirective.prototype, 'setRobots');
 
 			await setup(representativeLiteraryWork);
 
-			expect(robotsSpy).toHaveBeenCalledWith('noindex, nofollow');
+			expect(robotsSpy).toHaveBeenCalledWith('index, follow');
 		});
 
-		// El noindex no depende de que la obra cargue: si el meta solo se emitiera con datos, un fallo
-		// del backend serviría la página sin señal para el crawler.
-		it('marca la página como no indexable incluso cuando la obra no carga', async () => {
+		// Sin obra no hay señal que escribir: las directivas no emiten nada y rige el default del
+		// documento hasta que los datos llegan.
+		it('no emite robots cuando la obra no carga', async () => {
 			const robotsSpy = spyOn(HeadMetadataDirective.prototype, 'setRobots');
 
 			await setup(representativeLiteraryWork, { api: new StubFailingLiteraryWorkApi(404) });
 
-			expect(robotsSpy).toHaveBeenCalledWith('noindex, nofollow');
+			expect(robotsSpy).not.toHaveBeenCalled();
 		});
 
 		it('titula la página con el título de la obra y su byline', async () => {

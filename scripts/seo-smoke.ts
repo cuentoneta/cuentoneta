@@ -124,7 +124,7 @@ function reportSitemapDocument(xml: string): boolean {
 function sampledPaths(baseline: readonly string[], xml: string): string[] {
 	const paths = parseSitemap(xml);
 	const excluded = new Set(baseline);
-	return ['/story/', '/author/', '/storylist/']
+	return ['/story/', '/author/', '/storylist/', '/read/']
 		.flatMap((prefix) => selectByType(paths, prefix, SAMPLE_SIZE, FULL))
 		.filter((path) => !excluded.has(path));
 }
@@ -173,7 +173,12 @@ async function run(): Promise<void> {
 	const baseline =
 		SLUGS_OVERRIDE.length > 0
 			? SLUGS_OVERRIDE
-			: [`/story/${STABLE_SLUGS.story}`, `/author/${STABLE_SLUGS.author}`, `/storylist/${STABLE_SLUGS.storylist}`];
+			: [
+					`/story/${STABLE_SLUGS.story}`,
+					`/author/${STABLE_SLUGS.author}`,
+					`/storylist/${STABLE_SLUGS.storylist}`,
+					`/read/${STABLE_SLUGS.literaryWork}`,
+				];
 
 	let failed = await reportBaseline(baseline);
 	// Con slugs explícitos no hay muestra que tomar: el llamador ya dijo qué quiere ejercer.

@@ -1,10 +1,20 @@
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
+
+import { assertValidJsonLd } from '@testing/json-ld-validation';
 import { buildLiteraryWorkArticleSchema, buildLiteraryWorkBreadcrumb } from './read.schema';
 
 const WEBSITE = 'https://test.cuentoneta.ar';
 
+const [representativeLiteraryWork] = onoffLiteraryWorksMock;
+
 describe('read.schema', () => {
 	describe('buildLiteraryWorkArticleSchema', () => {
+		it('construye un Article válido según schema.org', async () => {
+			await expect(
+				assertValidJsonLd(buildLiteraryWorkArticleSchema(representativeLiteraryWork, WEBSITE)),
+			).resolves.toBeUndefined();
+		});
+
 		it.each(onoffLiteraryWorksMock)('construye un Article con headline y mainEntity de "$slug"', (literaryWork) => {
 			const article = buildLiteraryWorkArticleSchema(literaryWork, WEBSITE);
 
@@ -32,6 +42,12 @@ describe('read.schema', () => {
 	});
 
 	describe('buildLiteraryWorkBreadcrumb', () => {
+		it('construye un BreadcrumbList válido según schema.org', async () => {
+			await expect(
+				assertValidJsonLd(buildLiteraryWorkBreadcrumb(representativeLiteraryWork, WEBSITE)),
+			).resolves.toBeUndefined();
+		});
+
 		it.each(onoffLiteraryWorksMock)('construye un BreadcrumbList de 2 niveles para "$slug"', (literaryWork) => {
 			const breadcrumb = buildLiteraryWorkBreadcrumb(literaryWork, WEBSITE);
 

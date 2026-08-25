@@ -8,9 +8,6 @@ import { type LiteraryWork } from '@models/literary-work.model';
 import { ReadStructuredDataDirective } from './read-structured-data.directive';
 import { READ_HOST } from './read-host';
 
-// La directiva está APARCADA: ReadPage no la declara en `hostDirectives` mientras dure el opt-out de
-// indexación de `/read/:slug`. Este spec la mantiene viva y verde para la rehabilitación, pero no
-// describe lo que hoy se despliega — la página no emite JSON-LD de la obra.
 describe('ReadStructuredDataDirective', () => {
 	const literaryWorkSignal = signal<LiteraryWork | undefined>(undefined);
 

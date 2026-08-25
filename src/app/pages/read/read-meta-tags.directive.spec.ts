@@ -11,9 +11,6 @@ import { HeadMetadataDirective } from '../../directives/head-metadata.directive'
 import { ReadMetaTagsDirective } from './read-meta-tags.directive';
 import { READ_HOST } from './read-host';
 
-// La directiva está APARCADA: ReadPage no la declara en `hostDirectives` mientras dure el opt-out de
-// indexación de `/read/:slug`. Este spec la mantiene viva y verde para la rehabilitación, pero no
-// describe lo que hoy se despliega — la página se sirve `noindex, nofollow`, no `index, follow`.
 describe('ReadMetaTagsDirective', () => {
 	const literaryWorkSignal = signal<LiteraryWork | undefined>(undefined);
 
