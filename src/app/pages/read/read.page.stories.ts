@@ -1,12 +1,17 @@
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular-vite';
 import { provideRouter } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
-import { of, throwError, type Observable } from 'rxjs';
+import { NEVER, of, throwError, type Observable } from 'rxjs';
 
 import type { LiteraryWork } from '@models/literary-work.model';
 import type { Storylist } from '@models/storylist.model';
 import type { StoryTeaser } from '@models/story.model';
-import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
+import {
+	onoffLiteraryWorksMock,
+	onoffLiteraryWorksWithMultipleMediaSources,
+	onoffLiteraryWorksWithoutMediaSources,
+	onoffLiteraryWorksWithSingleMediaSource,
+} from '@mocks/onoff-literary-works.mock';
 import { onoffCollectionsMock } from '@mocks/onoff-collections.mock';
 import { onoffStoryTeasersMock } from '@mocks/onoff-story-teasers.mock';
 import { storylistMock } from '@mocks/storylist.mock';
@@ -18,11 +23,18 @@ import type { LiteraryWorkApi } from '../../providers/literary-work.provider';
 import type { StorylistApi } from '../../providers/storylist.provider';
 import ReadPage from './read.page';
 
+// Slug que nunca resuelve, para sostener el esqueleto de la página a la vista. No es una obra del
+// corpus a propósito: si lo fuera, enriquecerla la sacaría del escenario sin que nadie lo note.
+const pendingSlug = '__pendiente__';
+
 // Resuelve por slug contra el corpus, en vez de devolver siempre la misma obra: así el control de obra
 // mueve la página entera, y un slug que no existe cae en el estado de obra inexistente, que también es
 // parte de lo que hay que poder mirar.
 class CorpusLiteraryWorkApi implements LiteraryWorkApi {
 	public getBySlug(slug: string): Observable<LiteraryWork> {
+		if (slug === pendingSlug) {
+			return NEVER;
+		}
 		const literaryWork = onoffLiteraryWorksMock.find((candidate) => candidate.slug === slug);
 		return literaryWork
 			? of(literaryWork)
@@ -48,9 +60,12 @@ class CorpusStorylistApi implements StorylistApi {
 	}
 }
 
-const corpusSlugLabels = Object.fromEntries(
-	onoffLiteraryWorksMock.map((literaryWork) => [literaryWork.slug, literaryWork.title]),
-);
+// El centinela entra al control junto a las obras: así el esqueleto y la página real se alternan en el
+// mismo slot, ida y vuelta, que es lo que permite comparar sus altos.
+const corpusSlugLabels = Object.fromEntries([
+	...onoffLiteraryWorksMock.map((literaryWork) => [literaryWork.slug, literaryWork.title]),
+	[pendingSlug, '— Cargando —'],
+]);
 
 // Los destinos de navegación que el corpus puede sostener: el autor de las obras y las dos colecciones.
 const authorSlugs = [...new Set(onoffLiteraryWorksMock.flatMap((work) => work.authors.map(({ slug }) => slug)))];
@@ -81,7 +96,7 @@ const meta: Meta<ReadPageArgs> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>La página de lectura, <strong>ReadPage</strong>, montada sobre el corpus de Onoff. Es la única entrada del catálogo bajo <strong>Páginas</strong>: no cataloga un componente sino el ensamblado completo, que es lo que permite mirar cómo conviven el encabezado, la barra de lectura, el bloque de formatos, el cuerpo y las sugerencias.</p><p>Los tres controles reproducen lo que la ruta le entrega a la página:</p><ul><li><code>slug</code> — qué obra del corpus se lee. Un slug que no existe cae en el estado de obra inexistente.</li><li><code>navigation</code> y <code>navigationSlug</code> — el contexto con el que se llegó, que decide qué <a href="./?path=/docs/componentes-v3-readingsuggestionslist--docs" target="_top"><strong>sugerencias de lectura</strong></a> se ofrecen al pie: las del autor o las de una colección.</li></ul><p>Las sugerencias viven en un bloque diferido por viewport, así que aparecen al bajar hasta el pie.</p></div>`,
+				component: `<div><p>La página de lectura, <strong>ReadPage</strong>, montada sobre el corpus de Onoff. Como el resto de las entradas bajo <strong>Páginas</strong>, no cataloga un componente sino el ensamblado completo, que es lo que permite mirar cómo conviven el encabezado, la barra de lectura, el bloque de formatos, el cuerpo y las sugerencias.</p><p>Los tres controles reproducen lo que la ruta le entrega a la página:</p><ul><li><code>slug</code> — qué obra del corpus se lee. Un slug que no existe cae en el estado de obra inexistente, y la entrada <code>— Cargando —</code> deja la página en su esqueleto.</li><li><code>navigation</code> y <code>navigationSlug</code> — el contexto con el que se llegó, que decide qué <a href="./?path=/docs/componentes-v3-readingsuggestionslist--docs" target="_top"><strong>sugerencias de lectura</strong></a> se ofrecen al pie: las del autor o las de una colección.</li></ul><p>Los dos ejes que el diseño define se recorren desde acá: el <strong>tipo de multimedia</strong>, según cuántos formatos declare la obra —lo resuelve <a href="./?path=/docs/componentes-v3-mediawidgetselector--docs" target="_top"><strong>MediaWidgetSelector</strong></a>—, y la <strong>forma de las sugerencias</strong>, según el contexto de navegación.</p><p>Las sugerencias viven en un bloque diferido por viewport, así que aparecen al bajar hasta el pie. El bloque de formatos también es diferido, pero dispara al quedar el hilo libre y resuelve de inmediato: su esqueleto no es observable acá, y está catalogado en las entradas de <strong>MediaWidgetSelector</strong>.</p><p>Los destinos de los medios del corpus son ficticios, así que los reproductores no cargan contenido real: lo que se evalúa en estas entradas es la disposición.</p></div>`,
 			},
 		},
 	},
@@ -89,7 +104,7 @@ const meta: Meta<ReadPageArgs> = {
 		slug: {
 			name: 'Obra',
 			control: { type: 'select', labels: corpusSlugLabels },
-			options: onoffLiteraryWorksMock.map(({ slug }) => slug),
+			options: [...onoffLiteraryWorksMock.map(({ slug }) => slug), pendingSlug],
 			table: { type: { summary: 'string' } },
 		},
 		navigation: {
@@ -114,12 +129,21 @@ const [firstWork] = onoffLiteraryWorksMock;
 const [firstAuthorSlug] = authorSlugs;
 const [firstCollectionSlug, secondCollectionSlug] = collectionSlugs;
 
+// Las tres obras del eje multimedia se toman por capacidad y no por slug: el corpus reparte los medios
+// por el umbral que el bloque de formatos decide —hay entre qué elegir, hay uno solo, o no hay—, así que
+// enriquecer otra obra no obliga a tocar esto.
+const [multipleSourcesWork] = onoffLiteraryWorksWithMultipleMediaSources;
+const [singleSourceWork] = onoffLiteraryWorksWithSingleMediaSource;
+const [workWithoutSources] = onoffLiteraryWorksWithoutMediaSources;
+
 export const Playground: Story = {
-	args: { slug: firstWork.slug, navigation: 'author', navigationSlug: firstAuthorSlug },
+	// Abre en la obra con formatos, no en la primera del corpus: la primera no declara ninguno, y con
+	// ella la entrada principal del catálogo ocultaba el bloque entero sin decir que existía.
+	args: { slug: multipleSourcesWork.slug, navigation: 'author', navigationSlug: firstAuthorSlug },
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>La página completa con los tres controles vivos. Cambiá <strong>Obra</strong> para recorrer el corpus, y <strong>Contexto</strong> con su destino para ver cómo cambian las sugerencias del pie.</p>`,
+				story: `<p>La página completa con los tres controles vivos. Cambiá <strong>Obra</strong> para recorrer el corpus —y con ella, cuántos formatos se ofrecen—, y <strong>Contexto</strong> con su destino para ver cómo cambian las sugerencias del pie.</p>`,
 			},
 		},
 	},
@@ -175,6 +199,50 @@ export const ObraInexistente: Story = {
 		docs: {
 			description: {
 				story: `<p>El estado de obra inexistente, con su salida de vuelta al inicio.</p>`,
+			},
+		},
+	},
+};
+
+export const ConVariosFormatos: Story = {
+	args: { slug: multipleSourcesWork.slug, navigation: 'author', navigationSlug: firstAuthorSlug },
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>Una obra que se ofrece en varios formatos. Lo que se mira acá es el <strong>ensamblado</strong>, no el widget: dónde queda el bloque de formatos entre la barra de lectura y el cuerpo, y cómo cada reproductor se comporta dentro de la columna de lectura, que es más angosta que el ancho del canvas.</p><p>La botonera del propio <a href="./?path=/docs/componentes-v3-mediawidgetselector--docs" target="_top"><strong>MediaWidgetSelector</strong></a> recorre los tipos disponibles sin salir de la página: es la misma interacción que hace un lector.</p><p>Los destinos de los medios del corpus son ficticios, así que los reproductores no cargan contenido real. Lo que esta entrada permite evaluar es la disposición, no la reproducción.</p><p><strong>Usos:</strong> la obra mejor acompañada del catálogo, que es donde el bloque de formatos compite por espacio con el resto de la página.</p>`,
+			},
+		},
+	},
+};
+
+export const ConUnSoloFormato: Story = {
+	args: { slug: singleSourceWork.slug, navigation: 'author', navigationSlug: firstAuthorSlug },
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>La obra ofrecida en un único formato, vista dentro de la página. Es el umbral que el bloque decide por su cuenta: sin nada entre qué elegir, la botonera desaparece y el widget se monta directo.</p><p>Los destinos del corpus son ficticios: se evalúa la disposición, no la reproducción.</p><p><strong>Usos:</strong> comparar contra <strong>ConVariosFormatos</strong> cuánto alto se lleva la botonera cuando sí está.</p>`,
+			},
+		},
+	},
+};
+
+export const SinFormatos: Story = {
+	args: { slug: workWithoutSources.slug, navigation: 'author', navigationSlug: firstAuthorSlug },
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>El caso de la mayoría del corpus: la obra no declara formatos y el bloque no se monta en absoluto, así que el cuerpo sigue directo desde la barra de lectura.</p><p><strong>Usos:</strong> el contracaso para evaluar el espaciado de la página sin el bloque, que es como se ve casi siempre.</p>`,
+			},
+		},
+	},
+};
+
+export const Cargando: Story = {
+	args: { slug: pendingSlug, navigation: 'author', navigationSlug: firstAuthorSlug },
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>La página mientras resuelve la obra: el esqueleto que su propia plantilla dibuja. Cambiá <strong>Obra</strong> a cualquier entrada del corpus para alternar contra la página real en el mismo lugar — es lo que permite evaluar si el esqueleto y el contenido tienen el mismo alto, o si al resolver la página salta.</p><p>En la aplicación servida este estado no llega al HTML: el recurso bloquea el render del servidor. Se ve al navegar dentro de la aplicación.</p>`,
 			},
 		},
 	},
