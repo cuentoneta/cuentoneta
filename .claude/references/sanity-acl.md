@@ -42,9 +42,9 @@ queda contenido en el mapper; el dominio y el frontend no se enteran.
 >
 > El módulo `literary-work` está completo de punta a punta (repository → service → controller), con
 > el contrato en [`docs/LITERARY_WORK_DESIGN.md`](../../docs/LITERARY_WORK_DESIGN.md) §6.
-> `collection` está a mitad de camino: tiene su repository, y el service y el controller son trabajo
-> posterior. Los ejemplos de código de abajo se conservan sobre `story`, que sigue vigente para ese
-> patrón.
+> `collection` también, con la misma forma: la ACL vive dentro de su repository, y el service y el
+> controller quedan del lado del dominio. Los ejemplos de código de abajo se conservan sobre `story`,
+> que sigue vigente para ese patrón.
 >
 > **Qué sí se comparte desde `_utils/`.** La divergencia no es aislarse: los repositories que la
 > adoptaron siguen usando las primitivas genéricas de traducción (`mapTags`, `mapAuthorTeaser`,
