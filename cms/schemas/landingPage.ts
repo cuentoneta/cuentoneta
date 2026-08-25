@@ -113,5 +113,38 @@ export default defineType({
 				}),
 			],
 		}),
+		defineField({
+			name: 'highlightedAuthors',
+			title: 'Autores destacados',
+			type: 'array',
+			validation: (Rule) => Rule.max(6),
+			of: [
+				defineArrayMember({
+					name: 'highlightedAuthor',
+					title: 'Autor destacado',
+					type: 'object',
+					fields: [
+						defineField({
+							name: 'author',
+							title: 'Autor',
+							type: 'reference',
+							to: [{ type: 'author' }],
+							validation: (Rule) => Rule.required(),
+						}),
+						defineField({
+							name: 'additionalTags',
+							title: 'Etiquetas de la semana',
+							description:
+								'Etiquetas puntuales de esta tirada (por ejemplo "Cumpleaños"). Se muestran antes de las que el autor ya tiene asignadas.',
+							type: 'array',
+							of: [defineArrayMember({ type: 'reference', to: [{ type: 'tag' }] })],
+						}),
+					],
+					preview: {
+						select: { title: 'author.name' },
+					},
+				}),
+			],
+		}),
 	],
 });
