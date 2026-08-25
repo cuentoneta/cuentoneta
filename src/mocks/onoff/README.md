@@ -10,7 +10,7 @@ Este directorio (`src/mocks/onoff/`) es la **única ubicación** del corpus de l
 
 ## Cómo está organizado
 
-Las piezas se agrupan **por entidad**, una carpeta cada una, salvo cuando dos entidades no se pueden montar por separado: `landing-page/` lleva la landing y sus campañas juntas porque la campaña no tiene query propia —es sub-proyección de la de landing—, y una carpeta aparte quedaría con documentos y sin fixture generada. `document/` y `media/` agrupan por concern por el mismo motivo. Los mocks y fixtures conservan igualmente el infijo de entidad en el nombre, así que siguen siendo unívocos fuera de contexto; la prosa no lo lleva, porque su extensión ya la distingue:
+Las piezas se agrupan **por entidad**, una carpeta cada una, salvo cuando dos entidades no se pueden montar por separado: `landing-page/` lleva la landing, el contenido rotativo y las campañas juntos porque ninguno de los otros dos tiene query propia con su propia carpeta que valga la pena — la campaña es sub-proyección de la de landing, y el contenido rotativo comparte pantalla con la landing aunque tenga su propio documento y su propia query. `document/` y `media/` agrupan por concern por el mismo motivo. Los mocks y fixtures conservan igualmente el infijo de entidad en el nombre, así que siguen siendo unívocos fuera de contexto; la prosa no lo lleva, porque su extensión ya la distingue:
 
 ```
 onoff/
@@ -19,7 +19,8 @@ onoff/
 │                   <slug>.literary-work.mock.ts + su prosa: <slug>.md · <slug>.editorial-note.md · <slug>.epigraph.ts
 ├── collection/     <slug>.collection.document.ts · <slug>.collection.raw.mock.ts (generado) · <slug>.collection.md
 ├── landing-page/   onoff.landing-page.document.ts · <slug>.content-campaign.document.ts
-│                   landing-page.raw.mock.ts (generado)
+│                   onoff.rotating-content.document.ts
+│                   landing-page.raw.mock.ts · rotating-content.raw.mock.ts (generados)
 ├── storylist/      <slug>.storylist.raw.mock.ts
 ├── author/         francois-onoff.biography.md · author.document.projection.ts
 ├── media/          <slug>.media.ts · <slug>.media.mock.ts · <slug>.media.raw.mock.ts
@@ -42,14 +43,15 @@ Antes de esta capa de documentos el flujo corría al revés: el raw se escribía
 
 ### El generador (`pnpm corpus:generate`)
 
-`pnpm corpus:generate` → `node --import tsx ./scripts/generate-raw-corpus/generate-raw-corpus.ts`. Por cada obra, cada colección y la página de inicio, evalúa la query GROQ real (`literaryWorkBySlugQuery`, `collectionBySlugQuery`, `collectionsQuery` para el listado y `landingPageContentQuery` para la landing, que va con su semana como parámetro) con `groq-js` sobre `onoffDatasetMock` — el dataset plano de todos los documentos del corpus — y escribe el resultado en su fixture `*.raw.mock.ts`.
+`pnpm corpus:generate` → `node --import tsx ./scripts/generate-raw-corpus/generate-raw-corpus.ts`. Por cada obra, cada colección, la página de inicio y el contenido rotativo, evalúa la query GROQ real (`literaryWorkBySlugQuery`, `collectionBySlugQuery`, `collectionsQuery` para el listado, `landingPageContentQuery` para la landing —que va con su semana como parámetro— y `rotatingContentQuery` para lo más leído) con `groq-js` sobre `onoffDatasetMock` — el dataset plano de todos los documentos del corpus — y escribe el resultado en su fixture `*.raw.mock.ts`.
 
-**Archivos generados (12):**
+**Archivos generados (13):**
 
 - Las 8 `literary-work/<slug>.literary-work.raw.mock.ts`.
 - Las 2 `collection/<slug>.collection.raw.mock.ts`.
 - `collection/collection-teasers.raw.mock.ts` (resultado de `collectionsQuery`, el listado).
 - `landing-page/landing-page.raw.mock.ts` (resultado de `landingPageContentQuery`).
+- `landing-page/rotating-content.raw.mock.ts` (resultado de `rotatingContentQuery`, lo más leído).
 
 Cada uno abre con un banner de dos líneas ("Este archivo lo escribe `pnpm corpus:generate`... No se edita a mano: cualquier cambio se pierde en la próxima corrida.") y está marcado `linguist-generated=true` en `.gitattributes` — enumerados uno por uno, no por glob `*.raw.mock.ts`, porque las fixtures de `story/` y `storylist/` se siguen escribiendo a mano.
 
@@ -82,7 +84,7 @@ Las exclusiones no son todas de la misma naturaleza, y la diferencia importa: al
 
 **Todavía no:** el autor **sí** es derivable —tiene queries top-level (`authorBySlugQuery`, `authorsQuery`) y su documento ya está en el dataset—, pero el shape que hoy declara `rawOnoffAuthor` es el del autor embebido en la obra, que ninguna query devuelve sola. Generarlo exige apuntar a la query de autor y aceptar el shape que esa devuelve. Es trabajo pendiente, no un imposible: la única exclusión de esta tabla que puede desaparecer sin cambiar nada del diseño.
 
-Una sub-proyección **sí** puede generarse cuando su query tiene capa de documentos: es lo que pasa con `ContentCampaign`, que se deriva del resultado generado de la landing page (ver [Corpus raw: página de inicio](#corpus-raw-página-de-inicio-y-contentcampaign-generado)). Lo que la vuelve inderivable no es ser sub-proyección, sino que ninguna query la devuelva.
+Una sub-proyección **sí** puede generarse cuando su query tiene capa de documentos: es lo que pasa con `ContentCampaign`, que se deriva del resultado generado de la landing page (ver [Corpus raw: página de inicio](#corpus-raw-página-de-inicio-contenido-rotativo-y-contentcampaign-generado)). Lo que la vuelve inderivable no es ser sub-proyección, sino que ninguna query la devuelva.
 
 > Las fichas Markdown por obra (metadata + reseña) que vivían en `tools/story-mocks/onoff/` se retiraron en #1653: los mocks TS de este directorio son ahora la fuente.
 
@@ -162,19 +164,21 @@ Contraparte cruda del corpus de dominio `LiteraryWork`, tipada contra `NonNullab
   - `unmaterializedRawLiteraryWork` — `totalReadingTime` y `content[].readingTime` en `null` (ejercita el fallback puro de lectura del repository y el backfill, que es el único que persiste).
 - **Autor raw:** `rawOnoffAuthor` (reusado del corpus raw de Story, estructuralmente idéntico).
 
-## Corpus raw: página de inicio y `ContentCampaign` (generado)
+## Corpus raw: página de inicio, contenido rotativo y `ContentCampaign` (generado)
 
 `landing-page/landing-page.raw.mock.ts` (`onoffRawLandingPageMock`) es el resultado de `landingPageContentQuery` sobre la capa de documentos de `landing-page/`: un documento de landing y los dos de campaña que referencia. La semana de la landing —su `config` y su `slug`— es la del timestamp de sistema del corpus, para que el elenco siga hablando de un solo momento; el target del generador **la lee del documento** en vez de declararla por su cuenta, porque es el parámetro de entrada de la query y no una de las capas que los cruces comparan.
 
 El documento de landing es el único que no lleva su slug en el nombre del archivo (`onoff.landing-page.document.ts`): su slug es una semana, y nombrarlo así obligaría a renombrar el archivo cada vez que el corpus se moviera de fecha.
 
-**La landing no declara `cards` ni `latestReads`.** Esos campos referencian `storylist` y `story`, que el corpus no modela como documentos (ver [Qué queda fuera de la generación](#qué-queda-fuera-de-la-generación)): declararlos dejaría referencias colgadas y la guarda del generador abortaría. La query los resuelve a `[]`, y la fixture lo afirma.
+**La landing declara `collections` y `latestLiteraryWorks`, no `cards` ni `latestReads`.** Los dos últimos referencian `storylist` y `story`, que el corpus no modela como documentos (ver [Qué queda fuera de la generación](#qué-queda-fuera-de-la-generación)): declararlos dejaría referencias colgadas y la guarda del generador abortaría. Sus reemplazos no tienen ese problema, porque referencian `collection` y `literaryWork`, que sí están en el dataset — y `landingPageContentQuery` ya no proyecta los campos en baja, así que la fixture generada tampoco los transporta.
 
 **Se genera el resultado entero de la query, no solo `campaigns`.** Un archivo generado afirma "esto es lo que la query devuelve", y recortar obligaría al gate de frescura a replicar el mismo recorte para poder comparar: la transformación quedaría afirmada por sí misma.
 
 - **Agregador:** `../onoff-raw-landing-page.mock.ts`, que expone `onoffRawLandingPageMock` —el generado alcanzable desde afuera de `src/mocks/`— y `onoffRawContentCampaignsMock`, derivado de `….campaigns` (mismo patrón que `geometriaRawMediaSources` derivando de la cara de obra). La campaña no tiene agregador propio por el mismo motivo por el que no tiene carpeta propia: sin query propia, un módulo aparte sacaría su valor entero de este. Vive un nivel arriba porque lo importan specs de `src/api/`, desde donde la regla de ESLint prohíbe alcanzar `@mocks/onoff/**`; y declara consts propias en vez de re-exportar, que la prohibición de barrels rechaza.
 - **Cruce contra el ACL:** `../onoff-content-campaigns.acl-alignment.spec.ts`. El corpus de dominio (`../content-campaign.mock.ts`) se sigue escribiendo a mano en vez de derivarse del mapper: derivarlo lo volvería una tautología del ACL y ninguna regresión del mapeo se notaría en sus consumidores.
 - **Los literales de `title`, `slug` y `url` se duplican a propósito** entre el documento y el mock de dominio. Compartirlos por un módulo neutral dejaría al cruce sin filo: una fuente única mueve las dos capas a la vez y la comparación no podría fallar nunca. La prosa larga sí se comparte; las imágenes también, pero por sus dos caras (`ref` y `path`), que no son el mismo valor.
+
+**Contenido rotativo:** `landing-page/rotating-content.raw.mock.ts` (`onoffRawRotatingContentMock`) es el resultado de `rotatingContentQuery` sobre `landing-page/onoff.rotating-content.document.ts` — otro documento y otra query, aunque las dos alimenten la misma pantalla que la landing. Referencia dos obras (`el-odio`, `las-escaleras`) **distintas** de las que la landing destaca como novedades: compartir el elenco entre los dos slots volvería indistinguible, en el cruce contra el ACL, un mapeo que los confundiera. Tiene agregador propio en `../onoff-raw-landing-page.mock.ts` (`onoffRawRotatingContentMock`, re-exportado) en vez de vivir como sub-proyección de la landing, porque es la contraparte cruda de un documento y una query independientes.
 
 ## Imágenes: el puente a los assets locales
 

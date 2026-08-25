@@ -383,7 +383,7 @@ Un **domain event** es un hecho en pasado sobre algo que **ya ocurrió**: `Story
 
 Los eventos permiten que un bounded context reaccione a otro sin llamada directa: el contexto productor registra el hecho y los consumidores se suscriben. Esto **desacopla** contextos.
 
-**Estado — roadmap (#1503).** Los domain events **no están implementados** todavía. La comunicación entre contextos hoy pasa por los **mappers del ACL** y llamadas directas a services. Esta sección documenta el patrón para el momento en que ese acoplamiento directo se vuelva una carga — por ejemplo, cuando publicar un `Story` deba propagarse a varios contextos (Página de Inicio: `mostRead`/`latestReads`; perfil de `Author`; notificaciones) que no conviene cablear en un único service. El diseño detallado (incluyendo `StoryPublished`, `StoryCreated`, `AuthorAssigned`) vive en `docs/DDD_IMPROVEMENTS.md` §2. Los nombres son ilustrativos; los autoritativos se acordarán al introducir los eventos.
+**Estado — roadmap (#1503).** Los domain events **no están implementados** todavía. La comunicación entre contextos hoy pasa por los **mappers del ACL** y llamadas directas a services. Esta sección documenta el patrón para el momento en que ese acoplamiento directo se vuelva una carga — por ejemplo, cuando publicar una obra deba propagarse a varios contextos (Página de Inicio: `mostRead`/`latestReads`; perfil de `Author`; notificaciones) que no conviene cablear en un único service. El diseño detallado (incluyendo `StoryPublished`, `StoryCreated`, `AuthorAssigned`) vive en `docs/DDD_IMPROVEMENTS.md` §2. Los nombres son ilustrativos; los autoritativos se acordarán al introducir los eventos.
 
 ## Type-state pattern
 
@@ -444,7 +444,7 @@ Un **bounded context** es un ámbito dentro del cual aplican consistentemente un
 | **Administración**         | `Contributor`                           | Colaboradores del proyecto por área                |
 | **Página de Inicio**       | `LandingPageContent`, `ContentCampaign` | Agregar contenido de varios contextos para el home |
 
-La idea clave: un mismo `Story` se modela distinto según el contexto. En **Catálogo** es la vista completa (`Story` con párrafos, epígrafes, autor completo). En **Curación**, dentro de una `Storylist`, es una proyección `StoryTeaserWithAuthor` — solo lo esencial para listar. En **Página de Inicio** es `StoryNavigationTeaserWithAuthor` dentro de `mostRead`/`latestReads`. Las **vistas polimórficas + los mappers del ACL** son las fronteras explícitas entre estos modelos. `LiteraryWork` sigue el mismo principio con sus propias vistas (`LiteraryWorkTeaser`, `LiteraryWorkNavigationTeaser`, …), aunque todavía no participa de `Storylist` ni de la Página de Inicio.
+La idea clave: un mismo concepto se modela distinto según el contexto. En **Catálogo**, `Story` es la vista completa (`Story` con párrafos, epígrafes, autor completo). En **Curación**, dentro de una `Storylist`, es una proyección `StoryTeaserWithAuthor` — solo lo esencial para listar. En **Página de Inicio**, ese mismo rol de navegación lo cubre hoy `LiteraryWork`, no `Story`: `LiteraryWorkNavigationTeaserWithAuthors` es la vista que viaja dentro de `mostRead`/`latestReads`. El rol editorial del slot no cambió; lo que cambió es qué agregado lo llena, porque la landing referencia obras y no historias. Las **vistas polimórficas + los mappers del ACL** son las fronteras explícitas entre estos modelos. `LiteraryWork` sigue el mismo principio con sus propias vistas (`LiteraryWorkTeaser`, `LiteraryWorkNavigationTeaser`, …) y hoy sí participa de la Página de Inicio; todavía no participa de `Storylist`.
 
 ### Lenguaje ubicuo
 
@@ -474,7 +474,7 @@ Elegí el modelo de consistencia **por frontera**, no por proyecto:
 | Modelo       | Cuándo aplicarlo                                        | Ejemplo en cuentoneta                                                                                                                                           |
 | ------------ | ------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Fuerte**   | Invariantes que deben valer de inmediato, en una unidad | Agregado `LiteraryWork`: título no vacío, ≥1 autor y ≥1 sección con posiciones contiguas siempre consistentes al construir (`createLiteraryWork`, implementado) |
-| **Eventual** | Estado best-effort donde un lag breve es aceptable      | _Futuro:_ un `StoryPublished` que actualice `mostRead`/`latestReads` del home                                                                                   |
+| **Eventual** | Estado best-effort donde un lag breve es aceptable      | El cron de "lo más leído": el ranking de `mostRead` se actualiza una vez al día, no al instante de cada lectura                                                 |
 
 **Regla:** consistencia **fuerte** _dentro_ de la frontera de un agregado; consistencia **eventual** _entre_ agregados o contextos (propagada por [domain events](#domain-events)). El pivote de la decisión es la invariante: si _debe_ ser siempre verdadera, mantenela dentro de un agregado bajo consistencia fuerte; si tolera una ventana breve de staleness, dejá que converja.
 

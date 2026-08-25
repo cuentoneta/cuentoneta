@@ -444,7 +444,7 @@ interface Collection {
 
 Muestra la colección **sin transportar sus obras**, así que no puede derivar `count`: lo **recibe** como dato —la query lo trae contando referencias sin resolverlas— y exige que sea al menos uno. Es la invariante "al menos una obra" traducida a lo único que el teaser sí transporta. Las demás —título no vacío, slug válido, abanico de tres— le siguen aplicando igual.
 
-Existe como factory y no como proyección suelta porque el repository produce teasers desde la query: armarlos como objeto literal perdería esas reglas sin que nada avise.
+Existe como factory y no como proyección suelta porque el repository produce teasers desde la query: armarlos como objeto literal perdería esas reglas sin que nada avise. El ensamblado del teaser (`mapSanityCollectionTeaser`, `mapSharedCollectionFields`, `resolveCollectionImagery`) vive en `src/api/modules/collection/collection-teaser.acl.ts` — módulo compartido entre `SanityCollectionRepository` y `SanityContentRepository`, porque las dos proyectan una colección referenciada, cada una desde su propio agregado. Ver [`sanity-acl.md`](../.claude/references/sanity-acl.md).
 
 **Ciclo de Vida:**
 
@@ -459,13 +459,13 @@ Las obras se referencian directamente en el array `literaryWorks`. Cada entrada 
 
 `Collection` no define su propia noción de obra: la toma entera de `LiteraryWork`. Estas son las costuras por las que se tocan, y son las que hay que revisar de conjunto ante cualquier cambio en el vocabulario de la obra.
 
-| Capa                      | Dónde                                                        | Qué toca                                                                                                                   |
-| ------------------------- | ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
-| **DTO de transporte**     | `src/models/collection.dto.ts`                               | Reutiliza el schema del teaser de obra en vez de declarar uno propio                                                       |
-| **ACL**                   | `src/api/modules/collection/collection.repository.sanity.ts` | Ensambla el teaser de obra con las primitivas compartidas (`createSlug`, `createReadingTime`, `createLiteraryWorkExcerpt`) |
-| **Provider del frontend** | `src/app/providers/collection.provider.ts`                   | `toLiteraryWorkTeaser`, ACL simétrico al del backend sobre el mismo DTO                                                    |
-| **Tipos del kernel**      | `@models/*`                                                  | `Slug`, `Tag`, `Media`/`MediaTeaser`, `SanitizedHtml`, `ReadingTime` — compartidos, no duplicados                          |
-| **Schema del Studio**     | `cms/schemas/collection.ts`                                  | El campo `literaryWorks` referencia documentos `literaryWork`                                                              |
+| Capa                      | Dónde                                                 | Qué toca                                                                                                                                                                                                   |
+| ------------------------- | ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **DTO de transporte**     | `src/models/collection.dto.ts`                        | Reutiliza el schema del teaser de obra en vez de declarar uno propio                                                                                                                                       |
+| **ACL**                   | `src/api/modules/collection/collection-teaser.acl.ts` | Ensambla el teaser de obra con las primitivas compartidas (`createSlug`, `createReadingTime`, `createLiteraryWorkExcerpt`); lo consumen `collection.repository.sanity.ts` y `content.repository.sanity.ts` |
+| **Provider del frontend** | `src/app/providers/collection.provider.ts`            | `toLiteraryWorkTeaser`, ACL simétrico al del backend sobre el mismo DTO                                                                                                                                    |
+| **Tipos del kernel**      | `@models/*`                                           | `Slug`, `Tag`, `Media`/`MediaTeaser`, `SanitizedHtml`, `ReadingTime` — compartidos, no duplicados                                                                                                          |
+| **Schema del Studio**     | `cms/schemas/collection.ts`                           | El campo `literaryWorks` referencia documentos `literaryWork`                                                                                                                                              |
 
 **Tres diferencias con `Storylist`** (más allá de agrupar `LiteraryWork` en vez de `Story`):
 
@@ -535,13 +535,20 @@ interface ContributorLink {
 interface LandingPageContent {
 	// Identidad
 	_id: string; // Identificador único
+	config: string; // Slug de la semana vigente (YYYY-SS)
 
 	// Composición
-	cards: StorylistTeaser[]; // Colecciones destacadas
-	campaigns: ContentCampaign[]; // Campañas de marketing
-	mostRead: StoryNavigationTeaserWithAuthor[]; // Top 10 historias más leídas
-	latestReads: StoryNavigationTeaserWithAuthor[]; // Últimas historias publicadas
+	collections: readonly CollectionTeaser[]; // Colecciones destacadas
+	campaigns: readonly ContentCampaign[]; // Campañas de marketing
+	mostRead: readonly LiteraryWorkNavigationTeaserWithAuthors[]; // Top de obras más leídas
+	latestReads: readonly LiteraryWorkNavigationTeaserWithAuthors[]; // Últimas obras publicadas
 	highlightedAuthors: readonly HighlightedAuthor[]; // Hasta 6 autores destacados de la semana
+}
+
+interface RotatingContent {
+	_id: string;
+	name: string;
+	mostRead: readonly LiteraryWorkNavigationTeaserWithAuthors[]; // Ranking de obras más leídas
 }
 
 interface HighlightedAuthor {
@@ -550,6 +557,8 @@ interface HighlightedAuthor {
 	storyCount: number; // Obras del autor, contadas sobre los dos tipos de documento
 }
 ```
+
+`mostRead` y `latestReads` conservan su nombre porque nombran el **rol editorial** del slot, que no cambió — lo que cambió es lo que transportan: obras (`LiteraryWorkNavigationTeaserWithAuthors`) en lugar de historias. `collections` sí se renombró: `cards` nombraba el componente que lo pintaba, no el contenido, y hoy agrupa `CollectionTeaser` (ver [el agregado](#agregado-collection-colección-de-obras-literarias)). `RotatingContent` es la proyección que el cron de "lo más leído" persiste y expone por separado del resto de la landing — detalle del productor en [Estrategias de Actualización de Contenido](./CONTENT_UPDATE_STRATEGIES.md).
 
 **Responsabilidades:**
 

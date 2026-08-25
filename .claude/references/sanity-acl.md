@@ -27,12 +27,13 @@ queda contenido en el mapper; el dominio y el frontend no se enteran.
 > **Alcance de los ejemplos de este archivo.** El pipeline se ejemplifica con el módulo `story`
 > (`src/api/modules/story/`), hoy el único módulo de contenido narrativo con esta capa completa
 > (repository → mapper → service → controller), con el ACL como **mappers puros en
-> `_utils/*.functions.ts`** (ver más abajo). `LiteraryWork` y `Collection` **divergen a propósito**: su
-> ACL (la traducción raw Sanity → dominio) vive **dentro del repository** como métodos privados, no
-> como funciones en `_utils/`. No es una variación accidental — es la **dirección arquitectónica
-> objetivo**: el repository es dueño de su propia ACL y entrega el agregado de dominio listo; el
-> service recibe dominio, sin una capa de mappers intermedia. `story` y `storylist` conservan por
-> ahora el patrón mapper-en-`_utils` de los ejemplos de abajo, hasta que se migren.
+> `_utils/*.functions.ts`** (ver más abajo). `LiteraryWork`, `Collection` y `content` **divergen a
+> propósito**: su ACL (la traducción raw Sanity → dominio) vive **dentro del repository** como
+> métodos privados, no como funciones en `_utils/`. No es una variación accidental — es la
+> **dirección arquitectónica objetivo**: el repository es dueño de su propia ACL y entrega el
+> agregado de dominio listo; el service recibe dominio, sin una capa de mappers intermedia. `story`
+> y `storylist` conservan por ahora el patrón mapper-en-`_utils` de los ejemplos de abajo, hasta que
+> se migren.
 >
 > **Split de archivos de los módulos que ya divergen** — tres archivos, no uno: `<dominio>.repository.ts`
 > (el puerto, la interfaz), `<dominio>.repository.sanity.ts` (el adaptador, con la ACL en privados) y
@@ -42,9 +43,9 @@ queda contenido en el mapper; el dominio y el frontend no se enteran.
 >
 > El módulo `literary-work` está completo de punta a punta (repository → service → controller), con
 > el contrato en [`docs/LITERARY_WORK_DESIGN.md`](../../docs/LITERARY_WORK_DESIGN.md) §6.
-> `collection` también, con la misma forma: la ACL vive dentro de su repository, y el service y el
-> controller quedan del lado del dominio. Los ejemplos de código de abajo se conservan sobre `story`,
-> que sigue vigente para ese patrón.
+> `collection` y `content` también, con la misma forma: la ACL vive dentro de su repository, y el
+> service y el controller quedan del lado del dominio. Los ejemplos de código de abajo se conservan
+> sobre `story`, que sigue vigente para ese patrón.
 >
 > **Qué sí se comparte desde `_utils/`.** La divergencia no es aislarse: los repositories que la
 > adoptaron siguen usando las primitivas genéricas de traducción (`mapTags`, `mapAuthorTeaser`,
@@ -53,6 +54,15 @@ queda contenido en el mapper; el dominio y el frontend no se enteran.
 > no se delega es el **ensamblado del agregado**. Cada primitiva compartida recibe la variante nueva
 > en su tipo unión de entrada; si una proyección diverge, el mapeo deja de compilar en vez de fallar
 > en silencio.
+>
+> **Un módulo que diverge también puede compartir ACL con otro, cuando los dos proyectan el mismo
+> agregado ajeno.** `src/api/modules/collection/collection-teaser.acl.ts` (`mapSanityCollectionTeaser`,
+> `mapSharedCollectionFields`, `resolveCollectionImagery`) no es una primitiva genérica de `_utils/`
+> ni el ACL privado de un solo repository: es el ensamblado del teaser de `Collection`, y lo
+> consumen tanto `SanityCollectionRepository` (el catálogo y el detalle de colecciones) como
+> `SanityContentRepository` (las colecciones destacadas de la landing) porque las dos dereferencian
+> una `Collection` y necesitan construir exactamente la misma vista. Vive en el módulo de `collection`
+> — dueño del agregado que describe — y no en el de `content`, que solo lo consume.
 >
 > **`defineQuery` exige literales.** El typegen parsea el string de la llamada, así que una constante
 > concatenada o un template interpolado dejan de emitir tipos. Por eso dos queries con la misma
@@ -90,8 +100,9 @@ queda contenido en el mapper; el dominio y el frontend no se enteran.
 | **Service**    | `<dominio>.service.ts`        | `get*()`: llama al repository y **mapea** al dominio; lógica de negocio |
 | **Controller** | `<dominio>.controller.ts`     | Rutas Hono + `zValidator`; llama al service y responde `c.json(...)`    |
 
-El módulo **story** (`src/api/modules/story/`) es el ejemplo canónico. Todos los demás módulos
-(`author`, `storylist`, `content`, `contributor`, `sitemap`) siguen la misma forma.
+El módulo **story** (`src/api/modules/story/`) es el ejemplo canónico. `author`, `storylist`,
+`contributor` y `sitemap` siguen la misma forma; `literary-work`, `collection` y `content` divergen
+a propósito (ver la nota de arriba).
 
 ---
 
@@ -244,8 +255,11 @@ Patrones que se repiten:
   `literary-work` para su contenido en Markdown (ver la nota de divergencia arriba).
 
 Mappers principales (no exhaustivo): `mapAuthor`, `mapAuthorTeaser`, `mapResources`, `mapTags`,
-`mapStoryContent`, `mapStoryTeaser`, `mapStoryTeaserWithAuthor`, `mapStoryNavigationTeaser`,
-`mapStoryNavigationTeaserWithAuthor`, `mapLandingPageContent`, `mapContentCampaigns`.
+`mapStoryContent`, `mapStoryTeaser`, `mapStoryTeaserWithAuthor`, `mapContentCampaigns`. Los mappers de
+la landing (`mapLandingPageContent`, `mapHighlightedAuthors`, la vista de navegación de obra) ya no
+viven acá: son métodos privados de `SanityContentRepository`, siguiendo la divergencia descripta
+arriba. El que armaba los teasers de `storylist` para la landing se retiró junto con el campo que los
+alimentaba.
 
 ### Helpers de imagen (también parte de la capa de mappers)
 
@@ -320,6 +334,14 @@ la ACL (traducción raw → dominio) no queda en `_utils/functions.ts`, sino **d
 como métodos privados de `SanityLiteraryWorkRepository`. El service (`getLiteraryWorkBySlug`) recibe
 el dominio ya mapeado y elige la implementación del repository por parámetro (default: la de
 Sanity) — eso es lo que permite testearlo con el doble en memoria sin contenedor de DI.
+
+`collection` y `content` siguen la misma forma: puerto (`CollectionRepository` / `ContentRepository`)
+
+- adaptador (`SanityCollectionRepository` / `SanityContentRepository`, con la ACL en privados) +
+  doble en memoria (`InMemoryCollectionRepository` / `InMemoryContentRepository`). `content` es el caso
+  que además **consume** la ACL de otro repository: para las colecciones destacadas de la landing
+  reutiliza `mapSanityCollectionTeaser` de `collection/collection-teaser.acl.ts` en vez de reensamblar
+  el teaser por su cuenta — ver la nota de "qué sí se comparte" al principio de este documento.
 
 ---
 
