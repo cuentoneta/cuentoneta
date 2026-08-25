@@ -52,7 +52,7 @@ export class AuthorReadingSuggestionsComponent {
 			this.authorSlug() ? { slug: this.authorSlug(), currentWorkSlug: this.currentWorkSlug() } : undefined,
 		stream: ({ params }) =>
 			this.literaryWorkService
-				.getByAuthorSlug(params.slug)
+				.getTeasers({ author: params.slug })
 				.pipe(map((works) => pickReadingSuggestions(works, params.currentWorkSlug).map(toReadingSuggestion))),
 		defaultValue: [],
 	});

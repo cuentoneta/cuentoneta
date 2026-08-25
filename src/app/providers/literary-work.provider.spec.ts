@@ -12,7 +12,7 @@ import {
 import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
 import { environment } from '../environments/environment';
 import { Endpoints } from './endpoints';
-import { HttpLiteraryWorkApi, LiteraryWorkApi } from './literary-work.provider';
+import { HttpLiteraryWorkApi, LiteraryWorkApi, type LiteraryWorkTeaserFilter } from './literary-work.provider';
 import type { LiteraryWorkDto } from '@models/literary-work.dto';
 import { provideLiteraryWorkApiMock, StubLiteraryWorkApi } from './literary-work.mock';
 
@@ -173,21 +173,31 @@ describe('HttpLiteraryWorkApi', () => {
 		await expect(result).rejects.toThrow();
 	});
 
-	describe('getByAuthorSlug', () => {
+	describe('getTeasers', () => {
 		// El DTO de wire se deriva del canon por serialización, nunca a mano: es la misma forma en que
 		// viaja de verdad, y enriquecer el corpus alcanza a estos casos solo.
 		const wireTeasers = JSON.parse(JSON.stringify(onoffLiteraryWorkTeasersMock)) as unknown[];
 
-		function requestByAuthorSlug(slug: string, payload: unknown[]): Promise<LiteraryWorkTeaser[]> {
+		function requestTeasers(filter: LiteraryWorkTeaserFilter, url: string, payload: unknown[]) {
 			const result = new Promise<LiteraryWorkTeaser[]>((resolve, reject) => {
-				api.getByAuthorSlug(slug).subscribe({ next: resolve, error: reject });
+				api.getTeasers(filter).subscribe({ next: resolve, error: reject });
 			});
-			http.expectOne(`${environment.apiUrl}${Endpoints.LiteraryWork}/author/${slug}`).flush(payload);
+			http.expectOne(url).flush(payload);
 			return result;
 		}
 
-		it('rehydrates the listing into domain teasers', async () => {
-			const rehydrated = await requestByAuthorSlug('francois-onoff', wireTeasers);
+		it('requests the catalog with no query params when there is no filter', async () => {
+			const rehydrated = await requestTeasers({}, `${environment.apiUrl}${Endpoints.LiteraryWork}`, wireTeasers);
+
+			expect(rehydrated).toHaveLength(onoffLiteraryWorkTeasersMock.length);
+		});
+
+		it('rehydrates the listing filtered by author into domain teasers', async () => {
+			const rehydrated = await requestTeasers(
+				{ author: 'francois-onoff' },
+				`${environment.apiUrl}${Endpoints.LiteraryWork}?author=francois-onoff`,
+				wireTeasers,
+			);
 
 			expect(rehydrated).toHaveLength(onoffLiteraryWorkTeasersMock.length);
 			rehydrated.forEach((teaser, index) => {
@@ -197,7 +207,13 @@ describe('HttpLiteraryWorkApi', () => {
 		});
 
 		it('resolves an empty listing as an empty array', async () => {
-			expect(await requestByAuthorSlug('sin-obras', [])).toEqual([]);
+			const listing = await requestTeasers(
+				{ author: 'sin-obras' },
+				`${environment.apiUrl}${Endpoints.LiteraryWork}?author=sin-obras`,
+				[],
+			);
+
+			expect(listing).toEqual([]);
 		});
 
 		// La frontera valida acá y no en un template: un dato inválido corta el stream con error en vez
@@ -206,7 +222,13 @@ describe('HttpLiteraryWorkApi', () => {
 			const [first, ...rest] = wireTeasers as Array<Record<string, unknown>>;
 			const malformed = [{ ...first, totalReadingTime: 'dos' }, ...rest];
 
-			await expect(requestByAuthorSlug('francois-onoff', malformed)).rejects.toThrow();
+			await expect(
+				requestTeasers(
+					{ author: 'francois-onoff' },
+					`${environment.apiUrl}${Endpoints.LiteraryWork}?author=francois-onoff`,
+					malformed,
+				),
+			).rejects.toThrow();
 		});
 	});
 });

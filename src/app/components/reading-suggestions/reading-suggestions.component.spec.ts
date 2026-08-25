@@ -19,7 +19,7 @@ const setup = async (navigationParams: NavigationParams) =>
 		inputs: { navigationParams, authorName: authorTeaserMock.name, currentWorkSlug: 'una-obra-cualquiera' },
 		providers: [
 			provideRouter([]),
-			{ provide: LiteraryWorkApi, useValue: { getByAuthorSlug: () => of(onoffLiteraryWorkTeasersMock) } },
+			{ provide: LiteraryWorkApi, useValue: { getTeasers: () => of(onoffLiteraryWorkTeasersMock) } },
 			{ provide: CollectionApi, useValue: { getBySlug: () => of(collectionMock) } },
 		],
 	});
@@ -96,7 +96,7 @@ describe('ReadingSuggestionsComponent', () => {
 				provideRouter([]),
 				{
 					provide: LiteraryWorkApi,
-					useValue: { getByAuthorSlug: () => of(onoffLiteraryWorkTeasersMock) },
+					useValue: { getTeasers: () => of(onoffLiteraryWorkTeasersMock) },
 				},
 			],
 		});

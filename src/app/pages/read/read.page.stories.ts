@@ -10,7 +10,7 @@ import { onoffCollectionsMock } from '@mocks/onoff-collections.mock';
 
 import { provideLiteraryWorkApiMock } from '../../providers/literary-work.mock';
 import { provideCollectionApiMock, StubCollectionApi } from '../../providers/collection.mock';
-import type { LiteraryWorkApi } from '../../providers/literary-work.provider';
+import type { LiteraryWorkApi, LiteraryWorkTeaserFilter } from '../../providers/literary-work.provider';
 import ReadPage from './read.page';
 
 // Resuelve por slug contra el corpus, en vez de devolver siempre la misma obra: así el control de obra
@@ -24,8 +24,12 @@ class CorpusLiteraryWorkApi implements LiteraryWorkApi {
 			: throwError(() => new HttpErrorResponse({ status: 404, statusText: 'Not Found' }));
 	}
 
-	public getByAuthorSlug(slug: string): Observable<LiteraryWorkTeaser[]> {
-		return of(onoffLiteraryWorkTeasersMock.filter(({ authors }) => authors.some((author) => author.slug === slug)));
+	public getTeasers(filter: LiteraryWorkTeaserFilter = {}): Observable<LiteraryWorkTeaser[]> {
+		return of(
+			filter.author
+				? onoffLiteraryWorkTeasersMock.filter(({ authors }) => authors.some(({ slug }) => slug === filter.author))
+				: [...onoffLiteraryWorkTeasersMock],
+		);
 	}
 }
 

@@ -24,9 +24,15 @@ import {
 import type { LiteraryWorkTeaser } from '@models/literary-work.model';
 import { ApiUrl, Endpoints } from './endpoints';
 
+// Espeja el contrato del endpoint: el filtrado del catálogo va por query params, así que acá es un
+// registro de campos opcionales — un criterio nuevo suma un campo, no un método.
+export interface LiteraryWorkTeaserFilter {
+	readonly author?: string;
+}
+
 export interface LiteraryWorkApi {
 	getBySlug(slug: string): Observable<LiteraryWork>;
-	getByAuthorSlug(slug: string): Observable<LiteraryWorkTeaser[]>;
+	getTeasers(filter?: LiteraryWorkTeaserFilter): Observable<LiteraryWorkTeaser[]>;
 }
 
 @Service()
@@ -40,9 +46,9 @@ export class HttpLiteraryWorkApi implements LiteraryWorkApi {
 			.pipe(map((response) => this.toLiteraryWork(literaryWorkDtoSchema.parse(response))));
 	}
 
-	public getByAuthorSlug(slug: string): Observable<LiteraryWorkTeaser[]> {
+	public getTeasers(filter: LiteraryWorkTeaserFilter = {}): Observable<LiteraryWorkTeaser[]> {
 		return this.http
-			.get<unknown>(`${this.url}/author/${slug}`)
+			.get<unknown>(this.url, { params: filter.author ? { author: filter.author } : {} })
 			.pipe(map((response) => literaryWorkTeaserListDtoSchema.parse(response).map(toLiteraryWorkTeaser)));
 	}
 

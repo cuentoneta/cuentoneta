@@ -1,7 +1,7 @@
 import { restoreAllMocks, spyOn } from '@test-utils';
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
-import { getLiteraryWorkBySlug, getLiteraryWorksByAuthorSlug } from './literary-work.service';
+import { getLiteraryWorkBySlug, getLiteraryWorkTeasers } from './literary-work.service';
 import { LiteraryWorkNotFoundError, MalformedLiteraryWorkError } from './literary-work.errors';
 import { InMemoryLiteraryWorkRepository } from './literary-work.repository.mock';
 import type { LiteraryWorkRepository, LiteraryWorkTeaserListing } from './literary-work.repository';
@@ -27,20 +27,26 @@ class StubLiteraryWorkRepository implements LiteraryWorkRepository {
 		throw new Error('No participa de estos casos.');
 	}
 
-	public async fetchByAuthorSlug(): Promise<LiteraryWorkTeaserListing> {
+	public async fetchTeasers(): Promise<LiteraryWorkTeaserListing> {
 		return this.listing;
 	}
 }
 
-describe('getLiteraryWorksByAuthorSlug', () => {
+describe('getLiteraryWorkTeasers', () => {
 	const [firstTeaser] = onoffLiteraryWorkTeasersMock;
 	const [author] = firstTeaser.authors;
 	const repository = new InMemoryLiteraryWorkRepository([], onoffLiteraryWorkTeasersMock);
 
 	afterEach(() => restoreAllMocks());
 
-	it('devuelve los teasers de las obras del autor', async () => {
-		const literaryWorks = await getLiteraryWorksByAuthorSlug(author.slug, repository);
+	it('devuelve el catálogo entero sin filtro', async () => {
+		const literaryWorks = await getLiteraryWorkTeasers({}, repository);
+
+		expect(literaryWorks).toHaveLength(onoffLiteraryWorkTeasersMock.length);
+	});
+
+	it('devuelve los teasers de las obras del autor filtrado', async () => {
+		const literaryWorks = await getLiteraryWorkTeasers({ author: author.slug }, repository);
 
 		expect(literaryWorks.length).toBeGreaterThan(0);
 		literaryWorks.forEach(({ authors }) => {
@@ -49,24 +55,25 @@ describe('getLiteraryWorksByAuthorSlug', () => {
 	});
 
 	it('devuelve un listado vacío para un autor sin obras, sin convertirlo en error', async () => {
-		expect(await getLiteraryWorksByAuthorSlug('sin-obras', repository)).toEqual([]);
+		expect(await getLiteraryWorkTeasers({ author: 'sin-obras' }, repository)).toEqual([]);
 	});
 
 	// El caso que impide "simplificar" la tolerancia sin ver lo que saca: una obra que el CMS dejó
-	// inconsistente no debe llevarse puestas a las demás en un bloque accesorio.
+	// inconsistente no debe llevarse puestas a las demás en un listado.
 	it('devuelve las obras sanas y registra la descartada', async () => {
 		const warn = spyOn(console, 'warn').mockImplementation(() => undefined);
 		const malformed = new MalformedLiteraryWorkError('una-obra-rota', { cause: new Error('sin extracto') });
 		const stub = new StubLiteraryWorkRepository({ literaryWorks: [firstTeaser], malformed: [malformed] });
 
-		const literaryWorks = await getLiteraryWorksByAuthorSlug(author.slug, stub);
+		const literaryWorks = await getLiteraryWorkTeasers({ author: author.slug }, stub);
 
 		expect(literaryWorks).toEqual([firstTeaser]);
 		expect(warn).toHaveBeenCalledWith(expect.stringContaining('una-obra-rota'), malformed.cause);
 	});
 
 	// La política es por obra y no cambia con la cantidad: distinguir "todas rotas" de "algunas rotas"
-	// introduciría un umbral que nadie puede nombrar, y el bloque ya sabe no dibujarse ante lista vacía.
+	// introduciría un umbral que nadie puede nombrar, y el consumidor ya sabe no dibujarse ante lista
+	// vacía.
 	it('devuelve un listado vacío cuando todas las obras están mal curadas', async () => {
 		spyOn(console, 'warn').mockImplementation(() => undefined);
 		const stub = new StubLiteraryWorkRepository({
@@ -74,6 +81,6 @@ describe('getLiteraryWorksByAuthorSlug', () => {
 			malformed: [new MalformedLiteraryWorkError('una'), new MalformedLiteraryWorkError('otra')],
 		});
 
-		expect(await getLiteraryWorksByAuthorSlug(author.slug, stub)).toEqual([]);
+		expect(await getLiteraryWorkTeasers({ author: author.slug }, stub)).toEqual([]);
 	});
 });

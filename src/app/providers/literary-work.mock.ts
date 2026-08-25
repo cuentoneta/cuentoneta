@@ -4,7 +4,7 @@ import { Observable, of } from 'rxjs';
 
 // Models
 import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
-import { LiteraryWorkApi } from './literary-work.provider';
+import { LiteraryWorkApi, type LiteraryWorkTeaserFilter } from './literary-work.provider';
 
 export class StubLiteraryWorkApi implements LiteraryWorkApi {
 	constructor(
@@ -16,8 +16,12 @@ export class StubLiteraryWorkApi implements LiteraryWorkApi {
 		return of(this.literaryWork);
 	}
 
-	public getByAuthorSlug(): Observable<LiteraryWorkTeaser[]> {
-		return of([...this.teasers]);
+	public getTeasers(filter: LiteraryWorkTeaserFilter = {}): Observable<LiteraryWorkTeaser[]> {
+		return of(
+			filter.author
+				? this.teasers.filter(({ authors }) => authors.some((author) => author.slug === filter.author))
+				: [...this.teasers],
+		);
 	}
 }
 

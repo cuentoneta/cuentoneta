@@ -76,39 +76,49 @@ describe('literaryWorkController', () => {
 		expect(response.headers.get('Vercel-CDN-Cache-Control')).toBeNull();
 	});
 
-	describe('GET /author/:slug', () => {
-		it('should return the works of the author with a 200', async () => {
-			const response = await controller.request(`/author/${knownAuthor.slug}`);
+	describe('GET /', () => {
+		it('should return the whole catalog as teasers when no filter is given', async () => {
+			const response = await controller.request('/');
 			const body = await response.json();
 
 			expect(response.status).toBe(200);
 			expect(Array.isArray(body)).toBe(true);
-			expect(body.length).toBeGreaterThan(0);
+			expect(body).toHaveLength(onoffLiteraryWorkTeasersMock.length);
 		});
 
-		// Un autor sin obras no es un error: la ausencia legítima es un listado vacío, y este caso es
-		// lo que impide que alguien lo convierta después en un 404.
+		it('should return only the works of the author given in the filter', async () => {
+			const response = await controller.request(`/?author=${knownAuthor.slug}`);
+			const body: { authors: { slug: string }[] }[] = await response.json();
+
+			expect(response.status).toBe(200);
+			expect(body.length).toBeGreaterThan(0);
+			body.forEach(({ authors }) => {
+				expect(authors.some(({ slug }) => slug === knownAuthor.slug)).toBe(true);
+			});
+		});
+
+		// Un filtro sin resultados no es un error: la ausencia legítima es un listado vacío, y este
+		// caso es lo que impide que alguien lo convierta después en un 404.
 		it('should return an empty listing for an author without works', async () => {
-			const response = await controller.request('/author/sin-obras');
+			const response = await controller.request('/?author=sin-obras');
 
 			expect(response.status).toBe(200);
 			expect(await response.json()).toEqual([]);
 		});
 
-		// Los dos paths difieren en segmentos y hoy no compiten en Hono; el orden es convención del
-		// repo. Este caso fija la forma de la respuesta —un arreglo, no la obra— para que un cambio
-		// futuro de rutas que sí los haga competir no pase inadvertido.
-		it('should not fall through to the work-by-slug route', async () => {
-			const response = await controller.request(`/author/${knownAuthor.slug}`);
+		it('should reject a filter value outside the slug alphabet', async () => {
+			const response = await controller.request('/?author=no%20es%20un%20slug');
 
-			expect(Array.isArray(await response.json())).toBe(true);
+			expect(response.status).toBe(400);
 		});
 
-		it('should emit the edge cache headers on the author listing in production', async () => {
+		// Sin trailing slash, que es la URL que el frontend arma de verdad: si el patrón del middleware
+		// no cubriera el path exacto del listado, este caso lo delataría.
+		it('should emit the edge cache headers on the listing in production', async () => {
 			environment.production = true;
 			environment.readCacheSMaxAge = 900;
 
-			const response = await appUnderTest().request(`/literary-work/author/${knownAuthor.slug}`);
+			const response = await appUnderTest().request(`/literary-work?author=${knownAuthor.slug}`);
 
 			expect(response.headers.get('Vercel-CDN-Cache-Control')).toBe(
 				'public, s-maxage=900, stale-while-revalidate=604800',

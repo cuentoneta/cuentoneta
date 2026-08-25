@@ -4,7 +4,7 @@ import { Observable, of, Subject, throwError } from 'rxjs';
 
 import { AuthorReadingSuggestionsComponent } from './author-reading-suggestions.component';
 import { READING_SUGGESTIONS_COUNT } from './pick-reading-suggestions';
-import { LiteraryWorkApi } from '../../providers/literary-work.provider';
+import { LiteraryWorkApi, type LiteraryWorkTeaserFilter } from '../../providers/literary-work.provider';
 import type { LiteraryWorkTeaser } from '@models/literary-work.model';
 import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
 import { authorTeaserMock } from '@mocks/author.mock';
@@ -13,7 +13,7 @@ import { clearAllMocks, fn, restoreAllMocks, spyOn } from '@test-utils';
 import { firstProseWord } from '@testing/corpus-prose';
 
 const setup = async (
-	getByAuthorSlug: (slug: string) => Observable<LiteraryWorkTeaser[]>,
+	getTeasers: (filter: LiteraryWorkTeaserFilter) => Observable<LiteraryWorkTeaser[]>,
 	inputs: { authorSlug?: string; currentWorkSlug?: string } = {},
 ) => {
 	const view = await render(AuthorReadingSuggestionsComponent, {
@@ -22,7 +22,7 @@ const setup = async (
 			authorName: authorTeaserMock.name,
 			...inputs,
 		},
-		providers: [provideRouter([]), { provide: LiteraryWorkApi, useValue: { getByAuthorSlug } }],
+		providers: [provideRouter([]), { provide: LiteraryWorkApi, useValue: { getTeasers } }],
 	});
 	view.detectChanges();
 	return view;
@@ -40,22 +40,22 @@ describe('AuthorReadingSuggestionsComponent', () => {
 		restoreAllMocks();
 	});
 
-	it('should fetch the navigation teasers of the author', async () => {
-		const getByAuthorSlug = fn<(slug: string) => Observable<LiteraryWorkTeaser[]>>();
-		getByAuthorSlug.mockReturnValue(of(onoffLiteraryWorkTeasersMock));
+	it('should fetch the teaser catalog filtered by the author', async () => {
+		const getTeasers = fn<(filter: LiteraryWorkTeaserFilter) => Observable<LiteraryWorkTeaser[]>>();
+		getTeasers.mockReturnValue(of(onoffLiteraryWorkTeasersMock));
 
-		await setup(getByAuthorSlug);
+		await setup(getTeasers);
 
-		expect(getByAuthorSlug).toHaveBeenCalledWith(authorTeaserMock.slug);
+		expect(getTeasers).toHaveBeenCalledWith({ author: authorTeaserMock.slug });
 	});
 
 	it('should not fetch when there is no author slug', async () => {
-		const getByAuthorSlug = fn<(slug: string) => Observable<LiteraryWorkTeaser[]>>();
-		getByAuthorSlug.mockReturnValue(of(onoffLiteraryWorkTeasersMock));
+		const getTeasers = fn<(filter: LiteraryWorkTeaserFilter) => Observable<LiteraryWorkTeaser[]>>();
+		getTeasers.mockReturnValue(of(onoffLiteraryWorkTeasersMock));
 
-		await setup(getByAuthorSlug, { authorSlug: '' });
+		await setup(getTeasers, { authorSlug: '' });
 
-		expect(getByAuthorSlug).not.toHaveBeenCalled();
+		expect(getTeasers).not.toHaveBeenCalled();
 	});
 
 	it('should render the fetched works as suggestions', async () => {
@@ -113,16 +113,16 @@ describe('AuthorReadingSuggestionsComponent', () => {
 
 	it('should resolve them again when the work being read changes', async () => {
 		const [first, second] = onoffLiteraryWorkTeasersMock;
-		const getByAuthorSlug = fn<(slug: string) => Observable<LiteraryWorkTeaser[]>>();
-		getByAuthorSlug.mockReturnValue(of(onoffLiteraryWorkTeasersMock));
+		const getTeasers = fn<(filter: LiteraryWorkTeaserFilter) => Observable<LiteraryWorkTeaser[]>>();
+		getTeasers.mockReturnValue(of(onoffLiteraryWorkTeasersMock));
 
-		const view = await setup(getByAuthorSlug, { currentWorkSlug: first.slug });
+		const view = await setup(getTeasers, { currentWorkSlug: first.slug });
 		await view.rerender({
 			inputs: { authorSlug: authorTeaserMock.slug, authorName: authorTeaserMock.name, currentWorkSlug: second.slug },
 		});
 		await view.fixture.whenStable();
 
-		expect(getByAuthorSlug).toHaveBeenCalledTimes(2);
+		expect(getTeasers).toHaveBeenCalledTimes(2);
 		expect(screen.queryByRole('link', { name: second.title })).not.toBeInTheDocument();
 	});
 

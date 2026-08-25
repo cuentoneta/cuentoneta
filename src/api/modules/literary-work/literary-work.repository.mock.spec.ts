@@ -19,13 +19,20 @@ describe('InMemoryLiteraryWorkRepository.fetchBySlug', () => {
 	});
 });
 
-describe('InMemoryLiteraryWorkRepository.fetchByAuthorSlug', () => {
+describe('InMemoryLiteraryWorkRepository.fetchTeasers', () => {
 	const [firstTeaser] = onoffLiteraryWorkTeasersMock;
 	const [authorOfFirst] = firstTeaser.authors;
 	const repository = new InMemoryLiteraryWorkRepository([], onoffLiteraryWorkTeasersMock);
 
-	it('devuelve los teasers de las obras del autor, sin nada que reportar', async () => {
-		const { literaryWorks, malformed } = await repository.fetchByAuthorSlug(authorOfFirst.slug);
+	it('devuelve el catálogo entero sin filtro, sin nada que reportar', async () => {
+		const { literaryWorks, malformed } = await repository.fetchTeasers({});
+
+		expect(literaryWorks).toHaveLength(onoffLiteraryWorkTeasersMock.length);
+		expect(malformed).toEqual([]);
+	});
+
+	it('devuelve solo los teasers de las obras del autor filtrado', async () => {
+		const { literaryWorks, malformed } = await repository.fetchTeasers({ author: authorOfFirst.slug });
 
 		expect(literaryWorks.length).toBeGreaterThan(0);
 		literaryWorks.forEach(({ authors }) => {
@@ -35,13 +42,13 @@ describe('InMemoryLiteraryWorkRepository.fetchByAuthorSlug', () => {
 	});
 
 	it('devuelve un listado vacío para un autor sin obras', async () => {
-		const { literaryWorks } = await repository.fetchByAuthorSlug('sin-obras');
+		const { literaryWorks } = await repository.fetchTeasers({ author: 'sin-obras' });
 
 		expect(literaryWorks).toEqual([]);
 	});
 
 	it('devuelve un listado vacío sin teasers cargados', async () => {
-		const { literaryWorks } = await new InMemoryLiteraryWorkRepository().fetchByAuthorSlug(authorOfFirst.slug);
+		const { literaryWorks } = await new InMemoryLiteraryWorkRepository().fetchTeasers({ author: authorOfFirst.slug });
 
 		expect(literaryWorks).toEqual([]);
 	});

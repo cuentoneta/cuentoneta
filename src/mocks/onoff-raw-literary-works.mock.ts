@@ -1,4 +1,4 @@
-import type { LiteraryWorkBySlugQueryResult, LiteraryWorksByAuthorSlugQueryResult } from '@sanity-types';
+import type { LiteraryWorkBySlugQueryResult, LiteraryWorkTeasersResult } from '@sanity-types';
 import { palacioNueveFronterasSectionTitle } from './onoff/literary-work/el-palacio-de-las-nueve-fronteras.epigraph';
 import {
 	palacioFirstSectionReadingTime,
@@ -128,7 +128,7 @@ export const mixedMaterializationRawLiteraryWork: NonNullable<LiteraryWorkBySlug
 // generada de las colecciones —que proyecta sus obras con exactamente la misma vista— en vez de
 // generarse aparte: si las dos proyecciones divergen, esta asignación deja de tipar, y esa es la
 // señal de realinearlas. Se deduplica por _id porque una obra puede estar curada en ambas colecciones.
-export const onoffRawLiteraryWorkTeasersMock: LiteraryWorksByAuthorSlugQueryResult = [
+export const onoffRawLiteraryWorkTeasersMock: LiteraryWorkTeasersResult = [
 	...new Map(
 		onoffRawCollectionsMock.flatMap(({ literaryWorks }) => literaryWorks).map((teaser) => [teaser._id, teaser]),
 	).values(),

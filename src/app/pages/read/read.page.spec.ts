@@ -42,7 +42,7 @@ class StubFailingLiteraryWorkApi implements LiteraryWorkApi {
 		return throwError(() => new HttpErrorResponse({ status: this.status, statusText: 'error' }));
 	}
 
-	public getByAuthorSlug(): Observable<LiteraryWorkTeaser[]> {
+	public getTeasers(): Observable<LiteraryWorkTeaser[]> {
 		return throwError(() => new HttpErrorResponse({ status: this.status, statusText: 'error' }));
 	}
 }

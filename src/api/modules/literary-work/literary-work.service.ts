@@ -1,6 +1,6 @@
 import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
 import { LiteraryWorkNotFoundError } from './literary-work.errors';
-import type { LiteraryWorkRepository } from './literary-work.repository';
+import type { LiteraryWorkRepository, LiteraryWorkTeaserFilter } from './literary-work.repository';
 import { SanityLiteraryWorkRepository } from './literary-work.repository.sanity';
 
 // El repository es stateless, así que instanciarlo por llamada (default) no comparte estado.
@@ -16,17 +16,17 @@ export async function getLiteraryWorkBySlug(
 }
 
 // Acá vive la decisión de tolerar, que es una política de listado y no de traducción: una obra que el
-// CMS dejó inconsistente no debe llevarse puestas a las demás en un bloque accesorio al pie de la
-// lectura. La política es por obra y no cambia con la cantidad — todas mal curadas es un listado
-// vacío, que el bloque ya sabe no dibujar; lo que distingue ese caso de "el autor no tiene obras" no
-// es el status sino el registro del descarte.
-export async function getLiteraryWorksByAuthorSlug(
-	slug: string,
+// CMS dejó inconsistente no debe llevarse puestas a las demás en un listado. La política es por obra
+// y no cambia con la cantidad — todas mal curadas es un listado vacío, que el consumidor ya sabe no
+// dibujar; lo que distingue ese caso de "el filtro no tiene resultados" no es el status sino el
+// registro del descarte.
+export async function getLiteraryWorkTeasers(
+	filter: LiteraryWorkTeaserFilter,
 	repository: LiteraryWorkRepository = new SanityLiteraryWorkRepository(),
 ): Promise<readonly LiteraryWorkTeaser[]> {
-	const { literaryWorks, malformed } = await repository.fetchByAuthorSlug(slug);
+	const { literaryWorks, malformed } = await repository.fetchTeasers(filter);
 	for (const error of malformed) {
-		console.warn(`[LiteraryWork] Obra descartada de las sugerencias de lectura: "${error.slug}"`, error.cause);
+		console.warn(`[LiteraryWork] Obra descartada del listado de teasers: "${error.slug}"`, error.cause);
 	}
 	return literaryWorks;
 }

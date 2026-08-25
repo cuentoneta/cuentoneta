@@ -1,5 +1,5 @@
 import type { SanityClient } from '@sanity/client';
-import type { LiteraryWorkBySlugQueryResult, LiteraryWorksByAuthorSlugQueryResult } from '@sanity-types';
+import type { LiteraryWorkBySlugQueryResult, LiteraryWorkTeasersResult } from '@sanity-types';
 import { createLiteraryWork, type LiteraryWork, type LiteraryWorkTeaser } from '@models/literary-work.model';
 import { createAttributedText, type AttributedText } from '@models/attributed-text.model';
 import { createLiteraryWorkExcerpt, type LiteraryWorkExcerpt } from '@models/literary-work-excerpt.model';
@@ -13,15 +13,19 @@ import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import { mapAuthor, mapAuthorTeaser, mapResources, mapTags, urlFor } from '../../_utils/functions';
 import { mapMediaSources, mapMediaTeasers } from '../../_utils/media-sources.functions';
 import { client as sanityClient } from '../../_helpers/sanity-connector';
-import { literaryWorkBySlugQuery, literaryWorksByAuthorSlugQuery } from '../../_queries/literary-work.query';
+import { literaryWorkBySlugQuery, literaryWorkTeasers } from '../../_queries/literary-work.query';
 import { MalformedLiteraryWorkError } from './literary-work.errors';
-import type { LiteraryWorkRepository, LiteraryWorkTeaserListing } from './literary-work.repository';
+import type {
+	LiteraryWorkRepository,
+	LiteraryWorkTeaserFilter,
+	LiteraryWorkTeaserListing,
+} from './literary-work.repository';
 
 type SanityLiteraryWork = NonNullable<LiteraryWorkBySlugQueryResult>;
 type SanityLiteraryWorkSection = SanityLiteraryWork['content'][number];
 type SanityEpigraph = NonNullable<SanityLiteraryWorkSection['epigraphs']>[number];
 type SanityLiteraryWorkMetadata = Omit<SanityLiteraryWork, 'content'>;
-type SanityLiteraryWorkTeaser = LiteraryWorksByAuthorSlugQueryResult[number];
+type SanityLiteraryWorkTeaser = LiteraryWorkTeasersResult[number];
 type SanityTeaserExcerpt = SanityLiteraryWorkTeaser['excerpt'][number];
 
 export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
@@ -38,8 +42,8 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 	// El mapeo por obra falla rápido y acá no se ablanda: la que no se puede traducir se reporta en
 	// `malformed` en vez de propagarse, porque qué hacer con ella —tolerarla en un bloque accesorio,
 	// tumbar un agregado— lo decide quien conoce el caso de uso, no este adaptador.
-	public async fetchByAuthorSlug(slug: string): Promise<LiteraryWorkTeaserListing> {
-		const raw = await this.client.fetch(literaryWorksByAuthorSlugQuery, { slug });
+	public async fetchTeasers(filter: LiteraryWorkTeaserFilter): Promise<LiteraryWorkTeaserListing> {
+		const raw = await this.client.fetch(literaryWorkTeasers, { author: filter.author ?? null });
 
 		const literaryWorks: LiteraryWorkTeaser[] = [];
 		const malformed: MalformedLiteraryWorkError[] = [];

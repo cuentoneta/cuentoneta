@@ -4,7 +4,7 @@
  * `Collection`.
  *
  * El mapper de teaser existe **dos veces** por diseño —cada repository es dueño de su ACL— y el cruce
- * de colección ejercita solo su copia. La de `literary-work`, que sirve al listado por autor, quedaría
+ * de colección ejercita solo su copia. La de `literary-work`, que sirve al catálogo, quedaría
  * sin nadie que la cruce contra el corpus: la duplicación sancionada es exactamente lo que puede
  * divergir en silencio, y este spec es lo que lo impide.
  */
@@ -48,7 +48,7 @@ describe('el corpus de dominio de los teasers de obra coincide con el mapeo del 
 		async (slug) => {
 			const raw = onoffRawLiteraryWorkTeasersMock.find((candidate) => candidate.slug === slug);
 			const expected = onoffLiteraryWorkTeasersMock.find((teaser) => teaser.slug === slug);
-			const { literaryWorks } = await repoReturning([raw]).fetchByAuthorSlug('x');
+			const { literaryWorks } = await repoReturning([raw]).fetchTeasers({});
 			const [mapped] = literaryWorks;
 
 			expect(mapped).toBeDefined();

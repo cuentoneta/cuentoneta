@@ -221,9 +221,9 @@ describe('SanityLiteraryWorkRepository.fetchBySlug', () => {
 	});
 });
 
-describe('SanityLiteraryWorkRepository.fetchByAuthorSlug', () => {
+describe('SanityLiteraryWorkRepository.fetchTeasers', () => {
 	it('mapea el listado a teasers congelados con el extracto saneado', async () => {
-		const { literaryWorks, malformed } = await repoReturning(onoffRawLiteraryWorkTeasersMock).fetchByAuthorSlug('x');
+		const { literaryWorks, malformed } = await repoReturning(onoffRawLiteraryWorkTeasersMock).fetchTeasers({});
 
 		expect(literaryWorks).toHaveLength(onoffRawLiteraryWorkTeasersMock.length);
 		expect(malformed).toEqual([]);
@@ -234,7 +234,7 @@ describe('SanityLiteraryWorkRepository.fetchByAuthorSlug', () => {
 	});
 
 	it('devuelve un listado vacío para un autor sin obras', async () => {
-		const { literaryWorks, malformed } = await repoReturning([]).fetchByAuthorSlug('sin-obras');
+		const { literaryWorks, malformed } = await repoReturning([]).fetchTeasers({ author: 'sin-obras' });
 
 		expect(literaryWorks).toEqual([]);
 		expect(malformed).toEqual([]);
@@ -246,7 +246,7 @@ describe('SanityLiteraryWorkRepository.fetchByAuthorSlug', () => {
 		const [sane, ...rest] = onoffRawLiteraryWorkTeasersMock;
 		const broken = { ...sane, _id: `${sane._id}-rota`, slug: `${sane.slug}-rota`, totalReadingTime: null };
 
-		const { literaryWorks, malformed } = await repoReturning([broken, ...rest]).fetchByAuthorSlug('x');
+		const { literaryWorks, malformed } = await repoReturning([broken, ...rest]).fetchTeasers({});
 
 		expect(literaryWorks).toHaveLength(rest.length);
 		expect(malformed).toHaveLength(1);
@@ -257,7 +257,7 @@ describe('SanityLiteraryWorkRepository.fetchByAuthorSlug', () => {
 		const [sane] = onoffRawLiteraryWorkTeasersMock;
 		const excerptless = { ...sane, excerpt: [] };
 
-		const { literaryWorks, malformed } = await repoReturning([excerptless]).fetchByAuthorSlug('x');
+		const { literaryWorks, malformed } = await repoReturning([excerptless]).fetchTeasers({});
 
 		expect(literaryWorks).toEqual([]);
 		expect(malformed[0]).toBeInstanceOf(MalformedLiteraryWorkError);

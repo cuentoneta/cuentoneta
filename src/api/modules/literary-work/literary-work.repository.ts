@@ -13,7 +13,13 @@ export interface LiteraryWorkTeaserListing {
 	readonly malformed: readonly MalformedLiteraryWorkError[];
 }
 
+// El filtro es un registro y no un slug posicional: cada criterio nuevo suma acá un campo opcional,
+// no una firma ni una sub-ruta.
+export interface LiteraryWorkTeaserFilter {
+	readonly author?: string;
+}
+
 export interface LiteraryWorkRepository {
 	fetchBySlug(slug: string): Promise<LiteraryWork | null>;
-	fetchByAuthorSlug(slug: string): Promise<LiteraryWorkTeaserListing>;
+	fetchTeasers(filter: LiteraryWorkTeaserFilter): Promise<LiteraryWorkTeaserListing>;
 }

@@ -1,0 +1,26 @@
+meta {
+  name: Get literary works
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{apiUrl}}{{baseApiPath}}/literary-work?author=francois-onoff
+  body: none
+  auth: none
+}
+
+params:query {
+  author: francois-onoff
+}
+
+docs {
+  Obtener el catálogo de obras como teasers, filtrable por query params. Sin filtros devuelve
+  todas las obras; `author` acota a las de un autor. Cada criterio de filtrado nuevo es un query
+  param más, no una sub-ruta.
+
+  Devuelve el listado completo, ordenado por título: quién elige las que se muestran es del
+  consumidor. Un filtro sin resultados (o un autor inexistente) responde 200 con un arreglo
+  vacío — la ausencia de obras es legítima, no un 404. Una obra que la curaduría dejó
+  inconsistente se descarta del listado y se registra en el servidor, sin afectar a las demás.
+}

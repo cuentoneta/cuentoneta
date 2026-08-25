@@ -1,5 +1,9 @@
 import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
-import type { LiteraryWorkRepository, LiteraryWorkTeaserListing } from './literary-work.repository';
+import type {
+	LiteraryWorkRepository,
+	LiteraryWorkTeaserFilter,
+	LiteraryWorkTeaserListing,
+} from './literary-work.repository';
 
 export class InMemoryLiteraryWorkRepository implements LiteraryWorkRepository {
 	private readonly literaryWorks: ReadonlyArray<LiteraryWork>;
@@ -16,10 +20,10 @@ export class InMemoryLiteraryWorkRepository implements LiteraryWorkRepository {
 
 	// Nada que traducir significa nada que reportar: el doble trabaja sobre teasers ya construidos,
 	// así que `malformed` es siempre vacío.
-	public async fetchByAuthorSlug(slug: string): Promise<LiteraryWorkTeaserListing> {
-		return {
-			literaryWorks: this.teasers.filter(({ authors }) => authors.some((author) => author.slug === slug)),
-			malformed: [],
-		};
+	public async fetchTeasers(filter: LiteraryWorkTeaserFilter): Promise<LiteraryWorkTeaserListing> {
+		const literaryWorks = filter.author
+			? this.teasers.filter(({ authors }) => authors.some((author) => author.slug === filter.author))
+			: this.teasers;
+		return { literaryWorks, malformed: [] };
 	}
 }

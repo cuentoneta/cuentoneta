@@ -156,10 +156,14 @@ export const readingTimeBackfillCandidatesQuery = defineQuery(`
     'content': coalesce(content[]{ _key, body, readingTime }, [])
 }`);
 
-// Las obras de un autor, como teasers, para el bloque de sugerencias al pie de la lectura.
+// El catálogo de obras como teasers, filtrable por criterios — hoy solo `author`; la paginación
+// (limit/offset) y el filtrado por tags se sumarán acá mismo. Cada criterio es un parámetro nullable
+// y no una query aparte: una condición acá y un query param en el endpoint, no una sub-ruta ni otra
+// proyección duplicada.
 //
-// El filtro recorre `authors[]` porque una obra admite varios: a diferencia de una story, que declara
-// un autor único, acá la pertenencia es de conjunto.
+// `$author == null` cubre el listado sin filtro; con filtro se recorre `authors[]` porque una obra
+// admite varios: a diferencia de una story, que declara un autor único, acá la pertenencia es de
+// conjunto.
 //
 // La proyección repite literal la que `collectionBySlugQuery` usa para las obras de una colección
 // —`defineQuery` exige literales para que el typegen las lea, así que no se puede extraer—, incluido
@@ -167,8 +171,8 @@ export const readingTimeBackfillCandidatesQuery = defineQuery(`
 // derivado deja de tipar, que es la señal de que hay que volver a alinearlas.
 //
 // No se acota: quién elige las tres que se muestran, y con qué criterio, es del consumidor.
-export const literaryWorksByAuthorSlugQuery = defineQuery(`
-*[_type == 'literaryWork' && $slug in authors[]->slug.current && !(_id in path('drafts.**'))]
+export const literaryWorkTeasers = defineQuery(`
+*[_type == 'literaryWork' && !(_id in path('drafts.**')) && ($author == null || $author in authors[]->slug.current)]
 {
     _id,
     'slug': slug.current,
