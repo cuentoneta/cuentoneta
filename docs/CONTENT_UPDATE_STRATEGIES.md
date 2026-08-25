@@ -134,6 +134,8 @@ Este proceso garantiza que:
 
 `highlightedAuthors` es el único campo que se edita como objetos y no como referencias planas, porque cada entrada lleva sus propias etiquetas de la semana además del autor. El tope de seis lo impone el Studio sobre la edición, así que no gobierna lo ya guardado.
 
+Como los otros tres, viaja en la copia semanal: si quedara afuera, los destacados se vaciarían en cada rotación sin emitir ningún error.
+
 ### Nomenclatura de Slugs
 
 Las landing pages se identifican mediante slugs en formato **`YYYY-SS`**, con numeración de semana **ISO-8601**:

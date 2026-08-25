@@ -133,9 +133,10 @@ export const landingPageContentQuery = defineQuery(`
             'slug': slug.current,
             description
         }, []),
-        'storyCount': count(*[
+        'storyCount': count(array::unique(*[
             !(_id in path('drafts.**')) &&
-            ((_type == 'story' && author._ref == ^.author._ref) || (_type == 'literaryWork' && ^.author._ref in authors[]._ref))
-        ])
+            _type in ['story', 'literaryWork'] &&
+            references(^.author._ref)
+        ].slug.current))
     },[]),
 }`);
