@@ -39,20 +39,21 @@ export async function fetchRotatingContent(): Promise<RotatingContent> {
 	return { ...result, mostRead: mapStoryNavigationTeaserWithAuthor(result.mostRead) };
 }
 
-type LandingPageReference = { _key: string; _type: string; _ref: string };
+type KeyedReference = { _key: string; _type: 'reference'; _ref: string };
 
 type LandingPageCreatePayload = {
 	_type: string;
 	config: string;
 	slug: { _type: string; current: string };
-	campaigns: LandingPageReference[];
-	cards: LandingPageReference[];
-	latestReads: LandingPageReference[];
+	campaigns: KeyedReference[];
+	cards: KeyedReference[];
+	latestReads: KeyedReference[];
 	highlightedAuthors: Array<{
 		_key: string;
-		_type: string;
-		author: { _type: string; _ref: string };
-		additionalTags?: LandingPageReference[];
+		_type: 'highlightedAuthor';
+		// La referencia al autor no lleva `_key`: es un campo del objeto, no un elemento de array.
+		author: { _type: 'reference'; _ref: string };
+		additionalTags?: KeyedReference[];
 	}>;
 };
 
