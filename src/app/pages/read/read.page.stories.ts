@@ -4,16 +4,13 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { of, throwError, type Observable } from 'rxjs';
 
 import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
-import type { Storylist } from '@models/storylist.model';
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
 import { onoffCollectionsMock } from '@mocks/onoff-collections.mock';
-import { storylistMock } from '@mocks/storylist.mock';
 
 import { provideLiteraryWorkApiMock } from '../../providers/literary-work.mock';
-import { provideStorylistApiMock } from '../../providers/storylist.mock';
+import { provideCollectionApiMock, StubCollectionApi } from '../../providers/collection.mock';
 import type { LiteraryWorkApi } from '../../providers/literary-work.provider';
-import type { StorylistApi } from '../../providers/storylist.provider';
 import ReadPage from './read.page';
 
 // Resuelve por slug contra el corpus, en vez de devolver siempre la misma obra: así el control de obra
@@ -29,16 +26,6 @@ class CorpusLiteraryWorkApi implements LiteraryWorkApi {
 
 	public getByAuthorSlug(slug: string): Observable<LiteraryWorkTeaser[]> {
 		return of(onoffLiteraryWorkTeasersMock.filter(({ authors }) => authors.some((author) => author.slug === slug)));
-	}
-}
-
-// El corpus tiene una sola colección con su listado completo, así que la segunda se compone tomándole
-// el título y el slug al canon de colecciones: alcanza para distinguir a cuál se está mirando, que es
-// lo que el encabezado de las sugerencias anuncia.
-class CorpusStorylistApi implements StorylistApi {
-	public get(slug: string): Observable<Storylist> {
-		const collection = onoffCollectionsMock.find((candidate) => candidate.slug === slug);
-		return of({ ...storylistMock, slug, title: collection?.title ?? storylistMock.title });
 	}
 }
 
@@ -65,7 +52,7 @@ const meta: Meta<ReadPageArgs> = {
 			providers: [
 				provideRouter([]),
 				provideLiteraryWorkApiMock(new CorpusLiteraryWorkApi()),
-				provideStorylistApiMock(new CorpusStorylistApi()),
+				provideCollectionApiMock(new StubCollectionApi(onoffCollectionsMock)),
 			],
 		}),
 	],

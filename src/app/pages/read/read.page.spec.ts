@@ -25,8 +25,8 @@ import {
 	onoffLiteraryWorksWithSectionTitles,
 } from '@mocks/onoff-literary-works.mock';
 import { provideLiteraryWorkApiMock, StubLiteraryWorkApi } from '../../providers/literary-work.mock';
-import { storylistMock } from '@mocks/storylist.mock';
-import { provideStorylistApiMock } from '../../providers/storylist.mock';
+import { onoffCollectionsMock } from '@mocks/onoff-collections.mock';
+import { provideCollectionApiMock, StubCollectionApi } from '../../providers/collection.mock';
 import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
 import { provideRouter } from '@angular/router';
 import type { LiteraryWorkApi } from '../../providers/literary-work.provider';
@@ -127,7 +127,7 @@ describe('ReadPage', () => {
 		return await render(ReadPage, {
 			providers: [
 				provideLiteraryWorkApiMock(options.api ?? new StubLiteraryWorkApi(literaryWork, onoffLiteraryWorkTeasersMock)),
-				provideStorylistApiMock(),
+				provideCollectionApiMock(new StubCollectionApi(onoffCollectionsMock)),
 				provideRouter([]),
 				...(options.responseInit ? [{ provide: RESPONSE_INIT, useValue: options.responseInit }] : []),
 			],
@@ -342,11 +342,13 @@ describe('ReadPage', () => {
 		// Las dos variantes encabezan con "Más obras de …", así que lo que distingue a cuál se eligió es
 		// el nombre: el de la colección o el del autor.
 		it('ofrece las de la colección cuando se entró desde una', async () => {
-			const { fixture } = await setup(work, { navigation: 'collection', navigationSlug: storylistMock.slug });
+			const { fixture } = await setup(work, { navigation: 'collection', navigationSlug: onoffCollectionsMock[0].slug });
 
 			await renderDeferBlocks(fixture);
 
-			expect(screen.getByRole('heading', { name: `Más obras de ${storylistMock.title}` })).toBeInTheDocument();
+			expect(
+				screen.getByRole('heading', { name: `Más obras de ${onoffCollectionsMock[0].title}` }),
+			).toBeInTheDocument();
 		});
 
 		it('ofrece las del autor cuando se entró desde su listado', async () => {
