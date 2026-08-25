@@ -18,18 +18,20 @@ import { AuthorCardTeaserSkeletonComponent } from '@components/author-card-tease
 	selector: 'cuentoneta-highlighted-authors',
 	imports: [RouterLink, ButtonComponent, AuthorCardTeaserComponent, AuthorCardTeaserSkeletonComponent],
 	template: `
-		<div class="flex items-start justify-between gap-4">
+		<div class="flex items-center justify-between gap-4">
 			<div class="flex flex-col content-between gap-1">
 				<h2 class="font-inter text-2xl font-bold">Autores/as destacados/as</h2>
 				<div class="font-inter text-sm text-neutral-600">Una selección curada de autores y autoras imprescindibles</div>
 			</div>
+			<!-- El nombre visible no dice adónde lleva fuera de su contexto visual, y va a competir con el
+			     de cualquier sección hermana que sume el suyo. -->
 			<a
 				[routerLink]="['/', appRoutes.Authors]"
 				cuentoneta-button
 				variant="outline"
 				size="sm"
 				class="shrink-0"
-				data-testid="see-all"
+				aria-label="Ver todos los autores"
 			>
 				Ver todo
 			</a>
@@ -46,8 +48,10 @@ import { AuthorCardTeaserSkeletonComponent } from '@components/author-card-tease
 					/>
 				}
 			} @loading (minimum 500ms) {
-				@for (_ of [].constructor(SKELETON_COUNT); track $index) {
-					<cuentoneta-author-card-teaser-skeleton class="w-full" />
+				<!-- Un esqueleto por destacado recibido, y no una cantidad fija: es lo que hace que el alto de
+				     la grilla en carga coincida con el real por construcción, sin fijarlo desde afuera. -->
+				@for (_ of authors(); track $index) {
+					<cuentoneta-author-card-teaser-skeleton class="w-full" data-testid="skeleton" />
 				}
 			}
 		</section>
@@ -57,7 +61,6 @@ import { AuthorCardTeaserSkeletonComponent } from '@components/author-card-tease
 	},
 })
 export class HighlightedAuthorsComponent {
-	protected readonly SKELETON_COUNT = 6;
 	protected readonly appRoutes = AppRoutes;
 
 	public readonly authors = input<readonly HighlightedAuthor[]>([]);

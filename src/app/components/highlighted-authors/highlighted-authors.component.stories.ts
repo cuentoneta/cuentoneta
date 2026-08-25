@@ -70,7 +70,7 @@ export const SinEtiquetas: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>La grilla sin etiquetas de autor. <strong>No es un borde: es el estado con el que la sección sale a producción</strong>, porque las etiquetas del autor se derivan de las editoriales de sus obras y esa reconciliación todavía no corre.</p><p>Es la story contra la que hay que dar el diseño por bueno: sin la fila de etiquetas, la tarjeta pierde alto y la grilla se compacta.</p>`,
+				story: `<p>La grilla sin etiquetas de autor. <strong>No es un borde: es el estado con el que la sección sale a producción</strong>, porque las etiquetas del autor se derivan de las editoriales de sus obras y esa reconciliación todavía no corre.</p><p>Es la story contra la que hay que dar el diseño por bueno: sin la fila de etiquetas, la tarjeta pierde alto y la grilla se compacta.</p><p><strong>Usos:</strong> la sección de autores destacados de la página de inicio, en su estado de salida.</p>`,
 			},
 		},
 	},
@@ -95,7 +95,7 @@ export const Estados: StoryObj<HighlightedAuthorsComponent & { loading: boolean 
 					</div>
 					<section class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
 						@for (_ of authors; track $index) {
-							<cuentoneta-author-card-teaser-skeleton class="w-full" />
+							<cuentoneta-author-card-teaser-skeleton class="w-full" data-testid="skeleton" />
 						}
 					</section>
 				</div>
@@ -112,7 +112,7 @@ export const Estados: StoryObj<HighlightedAuthorsComponent & { loading: boolean 
 		docs: {
 			description: {
 				story:
-					'Activá/desactivá "Cargando" para alternar entre el estado real y el estado de carga de la sección: encabezado fijo más un esqueleto por slot de la grilla —iterando los mismos datos, la paridad con la rama real vale por construcción—. El enlace "Ver todo" no se replica: la rama de carga no navega.',
+					'Activá/desactivá "Cargando" para alternar entre el estado real y el estado de carga de la sección: encabezado fijo más un esqueleto por slot de la grilla —iterando los mismos datos, la paridad con la rama real vale por construcción—. El enlace "Ver todo" no se replica: la rama de carga no navega.<br><br><strong>Usos:</strong> la sección de autores destacados de la página de inicio, mientras resuelve el contenido de la semana.',
 			},
 		},
 	},
@@ -130,7 +130,7 @@ export const Vacia: Story = {
 		docs: {
 			description: {
 				story:
-					'Sin destacados el @defer no dispara: queda el encabezado de sección con su enlace al índice de autores, sin tarjetas ni skeletons. Es el valor default del input authors, y el enlace sigue siendo navegable.',
+					'Sin destacados el @defer no dispara: queda el encabezado de sección con su enlace al índice de autores, sin tarjetas ni skeletons. Es el valor default del input authors, y el enlace sigue siendo navegable.<br><br><strong>Usos:</strong> la sección de autores destacados de la página de inicio, en una semana sin curaduría cargada.',
 			},
 		},
 	},

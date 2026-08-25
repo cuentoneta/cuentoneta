@@ -1,21 +1,19 @@
-// Librería de pruebas
 import { render, screen } from '@testing-library/angular';
 import { DeferBlockState } from '@angular/core/testing';
 import { provideRouter, RouterLink } from '@angular/router';
 
-// Componentes
 import { HighlightedAuthorsComponent } from './highlighted-authors.component';
 import { ButtonComponent } from '@components/button/button.component';
 import { AuthorCardTeaserComponent } from '@components/author-card-teaser/author-card-teaser.component';
 import { AuthorCardTeaserSkeletonComponent } from '@components/author-card-teaser/author-card-teaser-skeleton.component';
 
-// Mocks
 import { onoffHighlightedAuthorsOfLength, onoffUntaggedHighlightedAuthor } from '@mocks/onoff-highlighted-authors.mock';
 
 describe('HighlightedAuthorsComponent', () => {
 	const defaultProviders = [provideRouter([])];
-	// `componentImports` reemplaza los imports del componente bajo prueba, no los suma: sin `RouterLink` ni
-	// el botón, el enlace del encabezado se renderiza como un `<a>` sin `href` y deja de tener rol de link.
+	// `componentImports` reemplaza los imports del componente bajo prueba, no los suma. Sin `RouterLink` el
+	// enlace del encabezado se renderiza como un `<a>` sin `href` y deja de tener rol de link; el botón va
+	// por consistencia con lo que el componente declara, aunque solo aporte clases.
 	const defaultImports = [
 		HighlightedAuthorsComponent,
 		RouterLink,
@@ -54,14 +52,17 @@ describe('HighlightedAuthorsComponent', () => {
 				componentImports: defaultImports,
 			});
 
-			expect(screen.getByRole('link', { name: 'Ver todo' })).toHaveAttribute('href', '/authors');
+			expect(screen.getByRole('link', { name: 'Ver todos los autores' })).toHaveAttribute('href', '/authors');
 		});
 	});
 
 	describe('Comportamiento del bloque defer', () => {
-		it('should render one skeleton per grid slot while loading', async () => {
+		// Se afirma sobre el marcador de esqueleto y con una cantidad distinta de seis: la tarjeta real y el
+		// esqueleto son ambos `<article>`, así que contar artículos con la grilla llena se cumpliría igual
+		// aunque la rama de carga dibujara una cantidad fija o el bloque hubiera resuelto.
+		it('should render exactly one skeleton per highlighted author while loading', async () => {
 			const { fixture } = await render(HighlightedAuthorsComponent, {
-				inputs: { authors: onoffHighlightedAuthorsOfLength(6) },
+				inputs: { authors: onoffHighlightedAuthorsOfLength(3) },
 				providers: defaultProviders,
 				componentImports: defaultImports,
 			});
@@ -69,7 +70,7 @@ describe('HighlightedAuthorsComponent', () => {
 			const [deferBlockFixture] = await fixture.getDeferBlocks();
 			await deferBlockFixture.render(DeferBlockState.Loading);
 
-			expect(screen.getAllByRole('article')).toHaveLength(6);
+			expect(screen.getAllByTestId('skeleton')).toHaveLength(3);
 		});
 
 		it('should render one card per highlighted author when data is available', async () => {
@@ -122,19 +123,23 @@ describe('HighlightedAuthorsComponent', () => {
 		});
 
 		it('should transition from loading to complete state', async () => {
+			const highlighted = onoffHighlightedAuthorsOfLength(6);
 			const { fixture } = await render(HighlightedAuthorsComponent, {
-				inputs: { authors: onoffHighlightedAuthorsOfLength(6) },
+				inputs: { authors: highlighted },
 				providers: defaultProviders,
 				componentImports: defaultImports,
 			});
 
 			const [deferBlockFixture] = await fixture.getDeferBlocks();
+			const [{ author }] = highlighted;
 
 			await deferBlockFixture.render(DeferBlockState.Loading);
-			expect(screen.queryAllByRole('link', { name: /François/ })).toHaveLength(0);
+			expect(screen.getAllByTestId('skeleton')).toHaveLength(6);
+			expect(screen.queryByRole('link', { name: author.name })).not.toBeInTheDocument();
 
 			await deferBlockFixture.render(DeferBlockState.Complete);
-			expect(screen.getAllByRole('link', { name: /François/ })).toHaveLength(6);
+			expect(screen.queryAllByTestId('skeleton')).toHaveLength(0);
+			expect(screen.getByRole('link', { name: author.name })).toBeInTheDocument();
 		});
 	});
 
@@ -156,17 +161,18 @@ describe('HighlightedAuthorsComponent', () => {
 		});
 	});
 
-	describe('Inputs del componente', () => {
-		it('should default to an empty list', async () => {
-			const { fixture } = await render(HighlightedAuthorsComponent, {
+	describe('Sin destacados', () => {
+		it('should render neither cards nor skeletons when the input is omitted', async () => {
+			await render(HighlightedAuthorsComponent, {
 				providers: defaultProviders,
 				componentImports: defaultImports,
 			});
 
-			expect(fixture.componentInstance.authors()).toEqual([]);
+			expect(screen.queryAllByRole('article')).toHaveLength(0);
+			expect(screen.queryAllByTestId('skeleton')).toHaveLength(0);
 		});
 
-		it('should render neither cards nor skeletons when there is nothing highlighted', async () => {
+		it('should render neither cards nor skeletons when the week has nothing highlighted', async () => {
 			await render(HighlightedAuthorsComponent, {
 				inputs: { authors: [] },
 				providers: defaultProviders,
@@ -174,6 +180,7 @@ describe('HighlightedAuthorsComponent', () => {
 			});
 
 			expect(screen.queryAllByRole('article')).toHaveLength(0);
+			expect(screen.queryAllByTestId('skeleton')).toHaveLength(0);
 		});
 	});
 });
