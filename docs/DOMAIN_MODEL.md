@@ -58,7 +58,7 @@ Un **Contexto Acotado** (Bounded Context) es un límite explícito dentro del cu
 ```
 GET /api/author/:slug              # Obtener autor completo
 GET /api/story/:slug               # Obtener historia completa
-POST /api/story/most-read          # Obtener historias más leídas
+GET /api/story/most-read           # Obtener historias más leídas
 ```
 
 ---
@@ -70,7 +70,7 @@ POST /api/story/most-read          # Obtener historias más leídas
 **Agregados Raíz:**
 
 - `Storylist` - Colecciones de historias
-- `Collection` - Colecciones de obras literarias, **en reemplazo de `Storylist`**. El módulo está completo de punta a punta: modelo de dominio con invariantes hechas cumplir en código (`createCollection`, `createCollectionTeaser`) y su propio corpus de mocks, repository de Sanity con la ACL adentro, service, controller y rutas montadas — la colección por slug, que transporta sus obras, y el catálogo, que devuelve teasers. El contenido ya migró desde el Studio y `/collection` es la ruta que se indexa. `Storylist` sobrevive solo hasta que se den de baja su document type y las redirecciones permanentes de sus URLs, cada uno con su propio issue
+- `Collection` - Colecciones de obras literarias, la **forma objetivo** que va a reemplazar a `Storylist`. Sirve su catálogo y su detalle, pero el reemplazo todavía no está consumado: las dos conviven, y solo `Storylist` se lista por slug en el sitemap. Ver [el agregado](#agregado-collection-colección-de-obras-literarias)
 
 **Responsabilidades:**
 
@@ -84,8 +84,8 @@ POST /api/story/most-read          # Obtener historias más leídas
 ```
 GET /api/collection                # Catálogo de colecciones, en vista de teaser
 GET /api/collection/:slug          # Colección completa, con sus obras literarias
+GET /api/storylist/teasers         # Resúmenes de todas las colecciones, en la forma anterior
 GET /api/storylist/:slug           # Obtener colección completa
-GET /api/storylist/:slug/teaser    # Obtener resumen de colección
 ```
 
 ---
@@ -402,7 +402,7 @@ Las historias se referencian directamente en el array `stories`. Cada entrada es
 
 **Raíz de Agregado:** `Collection`
 
-> `Collection` **reemplaza** a `Storylist`: agrupa `LiteraryWork` en vez de `Story`. Nació como entidad paralela e independiente, y hoy el reemplazo está consumado en lo que se sirve — el contenido migró y `/collection` es la ruta indexada—; `Storylist` sobrevive solo hasta la baja de su document type y las redirecciones de sus URLs, cada una un trabajo aparte. Es la **segunda** raíz de agregado con **invariantes hechas cumplir en código** (factory `createCollection` + el value object `Slug`, en `src/models/collection.model.ts`), después de `LiteraryWork`: `Storylist` y `Author` siguen teniendo las suyas descritas más abajo, pero no exigidas por un constructor. Esa es la dirección del proyecto, no una excepción puntual — cada entidad nueva del catálogo suma sus invariantes al código en vez de solo documentarlas.
+> `Collection` es la forma **destinada a reemplazar** a `Storylist`: agrupa `LiteraryWork` en vez de `Story`. Nació como entidad paralela e independiente y hoy sirve su catálogo y su detalle, pero el reemplazo no está consumado: `Storylist` sigue vigente, sirviendo su propia página, y es la única de las dos que el sitemap lista por slug. La baja de su document type y las redirecciones permanentes de sus URLs son trabajos aparte, cada uno con su propio issue. Es la **segunda** raíz de agregado con **invariantes hechas cumplir en código** (factory `createCollection` + el value object `Slug`, en `src/models/collection.model.ts`), después de `LiteraryWork`: `Storylist` y `Author` siguen teniendo las suyas descritas más abajo, pero no exigidas por un constructor. Esa es la dirección del proyecto, no una excepción puntual — cada entidad nueva del catálogo suma sus invariantes al código en vez de solo documentarlas.
 
 ```typescript
 interface Collection {
@@ -428,7 +428,7 @@ interface Collection {
 	count: number; // Derivado: total de las obras que el agregado transporta
 
 	// Composición
-	literaryWorks: LiteraryWorkTeaser[]; // Obras literarias en la colección (ordenadas); su mediaSources es MediaTeaser[], no Media[] — ver LiteraryWork
+	readonly literaryWorks: readonly LiteraryWorkTeaser[]; // Obras literarias en la colección (ordenadas); su mediaSources es MediaTeaser[], no Media[] — ver LiteraryWork
 }
 ```
 
@@ -453,7 +453,7 @@ Creación de colección → Adición de obras literarias → Publicación de col
 ```
 
 **Relación con LiteraryWork:**
-Las obras se referencian directamente en el array `literaryWorks`. Cada entrada es una proyección de tipo `LiteraryWorkTeaser`, igual que `Storylist.stories` proyecta `Story` a `StoryTeaserWithAuthor`. La proyección GROQ anidada de `mediaSources` en esas entradas trae solo el tag (`{ _type }`), que el ACL mapea con `mapMediaTeasers` a `MediaTeaser[]`; el `mediaSources` de nivel documento de `Collection` sigue siendo la vista completa, mapeada con `mapMediaSources`.
+Las obras se referencian directamente en el array `literaryWorks`. Cada entrada es una proyección de tipo `LiteraryWorkTeaser`, igual que `Storylist.stories` proyecta `Story` a `StoryTeaserWithAuthor`. La proyección GROQ anidada de `mediaSources` en esas entradas trae solo `{ _type, title }`, que el ACL mapea con `mapMediaTeasers` a `MediaTeaser[]`; el `mediaSources` de nivel documento de `Collection` sigue siendo la vista completa, mapeada con `mapMediaSources`.
 
 **Puntos de contacto con `LiteraryWork`:**
 
@@ -461,9 +461,7 @@ Las obras se referencian directamente en el array `literaryWorks`. Cada entrada 
 
 | Capa                      | Dónde                                                        | Qué toca                                                                                                                   |
 | ------------------------- | ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
-| **Modelo**                | `src/models/collection.model.ts`                             | `literaryWorks: readonly LiteraryWorkTeaser[]` en la vista completa; `Array<never>` en la de teaser                        |
 | **DTO de transporte**     | `src/models/collection.dto.ts`                               | Reutiliza el schema del teaser de obra en vez de declarar uno propio                                                       |
-| **Query GROQ**            | `src/api/_queries/collection.query.ts`                       | Proyección anidada `literaryWorks[]->`, con `mediaSources` reducido a su tag                                               |
 | **ACL**                   | `src/api/modules/collection/collection.repository.sanity.ts` | Ensambla el teaser de obra con las primitivas compartidas (`createSlug`, `createReadingTime`, `createLiteraryWorkExcerpt`) |
 | **Provider del frontend** | `src/app/providers/collection.provider.ts`                   | `toLiteraryWorkTeaser`, ACL simétrico al del backend sobre el mismo DTO                                                    |
 | **Tipos del kernel**      | `@models/*`                                                  | `Slug`, `Tag`, `Media`/`MediaTeaser`, `SanitizedHtml`, `ReadingTime` — compartidos, no duplicados                          |
@@ -996,7 +994,8 @@ La arquitectura de La Cuentoneta sigue un modelo de capas explícito:
 │  ┌─────────────────────────┐  ┌─────────────────────────┐   │
 │  │  CATÁLOGO DE CONTENIDO  │  │ CURACIÓN Y COLECCIONES │   │
 │  │                         │  │                         │   │
-│  │  • Story                │  │  • Storylist           │   │
+│  │  • Story                │  │  • Collection          │   │
+│  │  • LiteraryWork         │  │  • Storylist           │   │
 │  │  • Author               │  │                        │   │
 │  │  • Resource             │  │                        │   │
 │  │  • Media                │  └─────────────────────────┘   │

@@ -133,7 +133,7 @@ El **archivo** sigue siendo `<dominio>.mock.ts` y la **factory** `provide<X>ApiM
 | API de autores          | `AuthorApi`                      | `HttpAuthorApi`         | `StubAuthorApi`             |
 | API de storylists       | `StorylistApi`                   | `HttpStorylistApi`      | `StubStorylistApi`          |
 | API de obras literarias | `LiteraryWorkApi`\*              | `HttpLiteraryWorkApi`\* | `StubLiteraryWorkApi`\*     |
-| API de colecciones      | `CollectionApi`                  | `HttpCollectionApi`     | `StubCollectionApi`         |
+| API de colecciones      | `CollectionApi`*                 | `HttpCollectionApi`*    | `StubCollectionApi`*        |
 | Service (impl. única)   | `LayoutService` (token homónimo) | `WindowLayoutService`   | `ControllableLayoutService` |
 
 > Los dobles de API son **`Stub*`** (devuelven canned, ignoran la entrada); el de `LayoutService` es un **`Fake*` de entorno**, calificado `Controllable*` porque el viewport lo fija el test (`simulateViewport()`), no `window` como en el real (`WindowLayoutService`). No es `InMemory*`: no sustituye almacenamiento, sustituye el navegador. La diferencia no es de capa sino de qué sustituye el doble — ver la taxonomía de arriba.
