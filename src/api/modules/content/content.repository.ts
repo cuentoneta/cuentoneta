@@ -1,84 +1,28 @@
-// Sanity
-import { client } from '../../_helpers/sanity-connector';
+import type { LandingPageContent, RotatingContent } from '@models/landing-page-content.model';
+import type { LandingPageListQueryResult, LatestLandingPageReferencesQueryResult } from '@sanity-types';
 
-// Queries
-import {
-	landingPageContentQuery,
-	landingPageListQuery,
-	latestLandingPageReferencesQuery,
-	rotatingContentQuery,
-} from '@queries/content.query';
-import {
-	LandingPageContentQueryResult,
-	LandingPageListQueryResult,
-	LatestLandingPageReferencesQueryResult,
-} from '@sanity-types';
-import { mapLandingPageContent, mapStoryNavigationTeaserWithAuthor } from '../../_utils/functions';
-import { LandingPageContent, RotatingContent } from '@models/landing-page-content.model';
+export type KeyedReference = { _key: string; _type: 'reference'; _ref: string };
 
-export async function fetchLandingPageContent(slug: string): Promise<LandingPageContentQueryResult> {
-	return client.fetch(landingPageContentQuery, { slug });
-}
-
-export async function fetchLatestLandingPageReferences(
-	currentSlug: string,
-): Promise<LatestLandingPageReferencesQueryResult> {
-	return client.fetch(latestLandingPageReferencesQuery, { currentSlug });
-}
-
-export async function fetchLandingPagesList(slugs: string[]): Promise<LandingPageListQueryResult> {
-	return client.fetch(landingPageListQuery, { slugs });
-}
-
-export async function fetchRotatingContent(): Promise<RotatingContent> {
-	const result = await client.fetch(rotatingContentQuery);
-	if (!result) {
-		throw new Error('Rotating content not found');
-	}
-
-	return { ...result, mostRead: mapStoryNavigationTeaserWithAuthor(result.mostRead) };
-}
-
-type KeyedReference = { _key: string; _type: 'reference'; _ref: string };
-
-type LandingPageCreatePayload = {
+// La carga de una semana futura se arma copiando las referencias de la última semana curada, sin
+// resolverlas: el generador no lee contenido, lo reapunta. Por eso el payload habla de referencias
+// crudas y no de dominio.
+export type LandingPageCreatePayload = {
 	_type: string;
 	config: string;
 	slug: { _type: string; current: string };
 	campaigns: KeyedReference[];
 	cards: KeyedReference[];
 	latestReads: KeyedReference[];
+	collections: KeyedReference[];
+	latestLiteraryWorks: KeyedReference[];
 	highlightedAuthors: KeyedReference[];
 };
 
-export async function createLandingPages(landingPageObjects: LandingPageCreatePayload[]) {
-	return Promise.all(landingPageObjects.map((object) => client.create(object)));
-}
-
-// TODO: Rever estructura luego de migrar funciones de mapeo
-export async function fetchAndMapLandingPageContent(slug: string): Promise<LandingPageContent> {
-	const landingPageResult = await fetchLandingPageContent(slug);
-	const rotatingContentResult = await fetchRotatingContent();
-
-	if (!landingPageResult || !rotatingContentResult) {
-		throw new Error('Landing page content not found');
-	}
-
-	return {
-		...mapLandingPageContent({ ...landingPageResult, ...rotatingContentResult }),
-	};
-}
-
-/**
- * Updates the mostRead stories in the rotating content document
- */
-export async function updateRotatingContentMostRead(
-	stories: Array<{ _key: string; _type: string; _ref: string }>,
-): Promise<void> {
-	const rotatingContent = await fetchRotatingContent();
-	if (!rotatingContent) {
-		throw new Error('Rotating content not found');
-	}
-
-	await client.patch(rotatingContent._id, { set: { mostRead: stories } }).commit();
+export interface ContentRepository {
+	fetchLandingPageContent(slug: string): Promise<LandingPageContent | null>;
+	fetchRotatingContent(): Promise<RotatingContent | null>;
+	fetchLandingPagesList(slugs: string[]): Promise<LandingPageListQueryResult>;
+	fetchLatestLandingPageReferences(currentSlug: string): Promise<LatestLandingPageReferencesQueryResult>;
+	createLandingPages(landingPageObjects: LandingPageCreatePayload[]): Promise<unknown[]>;
+	updateMostReadLiteraryWorks(references: readonly KeyedReference[]): Promise<void>;
 }

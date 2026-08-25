@@ -1,32 +1,41 @@
 import { defineQuery } from 'groq';
 
+// La vista de navegación de una obra: lo que las tarjetas de la página de inicio pintan. Sin extracto
+// —ningún consumidor de estos slots muestra cuerpo— y con `mediaSources` en su forma de teaser, que
+// solo lleva la plataforma y el título y no resuelve la carga con la que se reproduce el recurso.
+//
+// La proyección se repite literal en las tres apariciones de abajo porque `defineQuery` necesita
+// literales para que el typegen las lea. Lo que impide que se desincronicen es el mapper compartido
+// del repository, tipado contra la unión de las tres.
+
 export const rotatingContentQuery = defineQuery(`
 *[_type == 'rotatingContent' && _id == 'rotatingContent'][0]{
     _id,
     name,
-    'mostRead': coalesce(mostRead[]->{
+    'mostReadLiteraryWorks': coalesce(mostReadLiteraryWorks[]->{
         _id,
         'slug': slug.current,
         title,
-        'badLanguage': coalesce(badLanguage, false),
-        'body': [],
-        'originalPublication': coalesce(originalPublication, ''),
-        approximateReadingTime,
         coverImage,
-        'resources': [],
-        'mediaSources': coalesce(mediaSources[], []),
-        'author': author-> {
+        totalReadingTime,
+        'sectionCount': count(content),
+        'tags': coalesce(tags[] -> {
+            title,
+            'slug': slug.current,
+            description
+        }, []),
+        'mediaSources': coalesce(mediaSources[]{ _type, title }, []),
+        'authors': coalesce(authors[]->{
             _id,
             'slug': slug.current,
             name,
             image,
             nationality->,
-						bornOn,
-						bornOnYear,
-						diedOn,
-						diedOnYear,
-            'resources': [],
-        }
+            bornOn,
+            bornOnYear,
+            diedOn,
+            diedOnYear
+        }, [])
     },[])
 }`);
 
@@ -37,6 +46,9 @@ export const landingPageListQuery = defineQuery(`
 		config,
 }`);
 
+// Las referencias crudas de la última semana cargada, que la generación de semanas futuras copia
+// hacia adelante. Se proyectan también los campos en baja: siguen siendo editables en el Studio hasta
+// el PR que los retira, y dejar de copiarlos vaciaría la landing vieja de las semanas nuevas.
 export const latestLandingPageReferencesQuery = defineQuery(`
 *[_type == 'landingPage' && !(_id in path('drafts.**')) && config <= $currentSlug]{
     _id,
@@ -46,6 +58,8 @@ export const latestLandingPageReferencesQuery = defineQuery(`
     'cards': coalesce(cards[],[]),
     'campaigns': coalesce(campaigns[],[]),
     'latestReads': coalesce(latestReads,[]),
+    'collections': coalesce(collections,[]),
+    'latestLiteraryWorks': coalesce(latestLiteraryWorks,[]),
     'highlightedAuthors': coalesce(highlightedAuthors,[]),
 } | order(config desc, _createdAt desc)[0]
 `);
@@ -55,22 +69,26 @@ export const landingPageContentQuery = defineQuery(`
     _id,
     'slug': slug.current,
     config,
-    'cards': coalesce(cards[]->{
+    'collections': coalesce(collections[]->{
         _id,
-        title,
         'slug': slug.current,
+        title,
         description,
         featuredImage,
+        'config': { 'showAuthors': coalesce(config.showAuthors, false) },
         'tags': coalesce(tags[] -> {
             title,
             'slug': slug.current,
             description
         }, []),
-        'storyCoverImages': coalesce(stories[]->coverImage, []),
-        'count': coalesce(count(stories), 0),
-				config,
-				'tabs': [],
-	      'mediaSources': coalesce(mediaSources[], []),
+        'mediaSources': coalesce(mediaSources[]{
+            ...,
+            _type == 'spaceRecording' => {
+                'audioUrl': audioFile.asset->url
+            }
+        }, []),
+        'count': coalesce(count(literaryWorks), 0),
+        'literaryWorkCoverImages': coalesce(literaryWorks[0...3]->coverImage, [])
     },[]),
     'campaigns': coalesce(campaigns[]->{
         _id,
@@ -86,29 +104,30 @@ export const landingPageContentQuery = defineQuery(`
             }
         }
     },[]),
-    'latestReads': coalesce(latestReads[]->{
+    'latestLiteraryWorks': coalesce(latestLiteraryWorks[]->{
         _id,
         'slug': slug.current,
         title,
-        'badLanguage': coalesce(badLanguage, false),
-        'body': [],
-        'originalPublication': coalesce(originalPublication, ''),
-        approximateReadingTime,
         coverImage,
-        'resources': [],
-        'mediaSources': coalesce(mediaSources[], []),
-        'author': author-> { 
+        totalReadingTime,
+        'sectionCount': count(content),
+        'tags': coalesce(tags[] -> {
+            title,
+            'slug': slug.current,
+            description
+        }, []),
+        'mediaSources': coalesce(mediaSources[]{ _type, title }, []),
+        'authors': coalesce(authors[]->{
             _id,
             'slug': slug.current,
             name,
             image,
             nationality->,
-						bornOn,
-						bornOnYear,
-						diedOn,
-						diedOnYear,
-            'resources': [],
-        }
+            bornOn,
+            bornOnYear,
+            diedOn,
+            diedOnYear
+        }, [])
     },[]),
     'highlightedAuthors': coalesce(highlightedAuthors[]->{
         'author': {

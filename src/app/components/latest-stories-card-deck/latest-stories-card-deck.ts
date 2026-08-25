@@ -1,12 +1,12 @@
 import { Component, input } from '@angular/core';
 
-import { StoryCardTeaserComponent } from '../story-card-teaser/story-card-teaser.component';
-import { StoryCardTeaserSkeletonComponent } from '../story-card-teaser/story-card-teaser-skeleton.component';
-import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
+import { LiteraryWorkHomeCardTeaserComponent } from '../literary-work-home-card-teaser/literary-work-home-card-teaser.component';
+import { LiteraryWorkHomeCardTeaserSkeletonComponent } from '../literary-work-home-card-teaser/literary-work-home-card-teaser-skeleton.component';
+import type { LiteraryWorkNavigationTeaserWithAuthors } from '@models/literary-work.model';
 
 @Component({
 	selector: 'cuentoneta-latest-stories-card-deck',
-	imports: [StoryCardTeaserComponent, StoryCardTeaserSkeletonComponent],
+	imports: [LiteraryWorkHomeCardTeaserComponent, LiteraryWorkHomeCardTeaserSkeletonComponent],
 	template: ` <div class="flex content-between items-center gap-4 text-neutral-500">
 			<hr class="w-6" />
 			<h2 class="h3 text-center font-source-serif italic">Últimas novedades</h2>
@@ -14,22 +14,21 @@ import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
 		</div>
 
 		<section class="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-8">
-			@defer (when stories().length > 0) {
-				@for (story of stories(); track $index) {
-					<cuentoneta-story-card-teaser
-						[story]="story"
-						[showAuthor]="true"
+			@defer (when literaryWorks().length > 0) {
+				@for (literaryWork of literaryWorks(); track literaryWork.slug) {
+					<cuentoneta-literary-work-home-card-teaser
+						[literaryWork]="literaryWork"
 						[order]="$index + 1"
 						[navigationParams]="{
 							navigation: 'author',
-							navigationSlug: story.author.slug,
+							navigationSlug: literaryWork.authors[0]?.slug,
 						}"
 						data-testid="card"
 					/>
 				}
 			} @loading (minimum 500ms) {
-				@for (_ of [].constructor(6); track $index) {
-					<cuentoneta-story-card-teaser-skeleton [showAuthor]="true" [order]="$index + 1" data-testid="skeleton" />
+				@for (_ of [].constructor(SKELETON_COUNT); track $index) {
+					<cuentoneta-literary-work-home-card-teaser-skeleton data-testid="skeleton" />
 				}
 			}
 		</section>`,
@@ -38,5 +37,6 @@ import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
 	},
 })
 export class LatestStoriesCardDeck {
-	public readonly stories = input<StoryNavigationTeaserWithAuthor[]>([]);
+	protected readonly SKELETON_COUNT = 6;
+	public readonly literaryWorks = input<readonly LiteraryWorkNavigationTeaserWithAuthors[]>([]);
 }

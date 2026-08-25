@@ -12,7 +12,8 @@ import {
 } from '../../_utils/functions';
 
 // Modelos
-import { Story, StoryNavigationTeaser, StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
+import { Story, StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
+import type { LiteraryWorkNavigationTeaserWithAuthors } from '@models/literary-work.model';
 
 // Interfaces
 import { RotatingContent } from '@models/landing-page-content.model';
@@ -22,8 +23,11 @@ import { StoriesByAuthorSlugArgs } from '../../interfaces/queryArgs';
 import { getLandingPageContent, getRotatingContent } from '../content/content.service';
 import { fetchClarityData } from '../../_helpers/clarity-connector';
 
-// Repository
-import { updateRotatingContentMostRead } from '../content/content.repository';
+// Repositories
+import type { ContentRepository } from '../content/content.repository';
+import { SanityContentRepository } from '../content/content.repository.sanity';
+import type { LiteraryWorkRepository } from '../literary-work/literary-work.repository';
+import { SanityLiteraryWorkRepository } from '../literary-work/literary-work.repository.sanity';
 
 // Funciones de mapeo
 import { mapMediaSources } from '../../_utils/media-sources.functions';
@@ -56,7 +60,7 @@ export async function getStoriesBySlug(slugs: string[]): Promise<StoryTeaser[]> 
 export async function getMostReadStoryNavigationTeasers(
 	limit: number = 6,
 	offset: number = 0,
-): Promise<StoryNavigationTeaser[]> {
+): Promise<readonly LiteraryWorkNavigationTeaserWithAuthors[]> {
 	const result = await getLandingPageContent();
 
 	if (!result) {
@@ -66,24 +70,34 @@ export async function getMostReadStoryNavigationTeasers(
 	return result.mostRead.slice(offset, offset + limit);
 }
 
-export async function updateMostReadStories(): Promise<RotatingContent> {
+// Las dos rutas de lectura conviven mientras dure la migración y el tráfico está repartido entre
+// ellas, así que se leen ambos prefijos: quedarse con uno solo vaciaría la lista a medida que los
+// lectores se corren a la otra. La obra migrada conserva el slug de su historia de origen, y por eso
+// el mismo slug puede llegar por los dos caminos y se deduplica antes de resolverlo.
+export async function updateMostReadStories(
+	contentRepository: ContentRepository = new SanityContentRepository(),
+	literaryWorkRepository: LiteraryWorkRepository = new SanityLiteraryWorkRepository(),
+): Promise<RotatingContent> {
 	const popularPagesMetrics = (await fetchClarityData()).find((metric) => metric.metricName === 'PopularPages');
 	if (!popularPagesMetrics) {
 		throw new Error('Could not fetch metrics.');
 	}
 
-	const prefix = `${environment.basePath}/story/`;
-	const mostReadStoriesSlugs = popularPagesMetrics.information
-		.filter((entry) => entry.url.startsWith(prefix))
-		.map((entry) => entry.url.split(prefix).pop() as string);
+	const readingPathPrefixes = [`${environment.basePath}/story/`, `${environment.basePath}/read/`];
+	const slugs = new Set(
+		popularPagesMetrics.information.flatMap((entry) => {
+			const prefix = readingPathPrefixes.find((candidate) => entry.url.startsWith(candidate));
+			return prefix ? [entry.url.slice(prefix.length)] : [];
+		}),
+	);
 
-	const stories = await getStoriesBySlug(mostReadStoriesSlugs);
+	const literaryWorks = await literaryWorkRepository.fetchIdsBySlugs([...slugs]);
 
-	// Actualiza landing page referencias a las historias marcadas como "más leídas" actuales
-	const mostReadStories = stories.map((s) => ({ _key: s._id, _type: 'story', _ref: s._id }));
-	await updateRotatingContentMostRead(mostReadStories);
+	await contentRepository.updateMostReadLiteraryWorks(
+		literaryWorks.map(({ _id }) => ({ _key: _id, _type: 'reference' as const, _ref: _id })),
+	);
 
-	return await getRotatingContent();
+	return await getRotatingContent(contentRepository);
 }
 
 export async function getStories(limit: number = 100, offset: number = 0): Promise<StoryTeaserWithAuthor[]> {

@@ -1,4 +1,4 @@
-import type { CollectionBySlugQueryResult, CollectionsQueryResult } from '@sanity-types';
+import type { CollectionBySlugQueryResult, CollectionsQueryResult, LandingPageContentQueryResult } from '@sanity-types';
 import { createCollectionTeaser, type CollectionImagery, type CollectionTeaser } from '@models/collection.model';
 import { createMarkdown, type Markdown } from '@models/markdown.model';
 import type { SanitizedHtml } from '@models/sanitized-html.model';
@@ -13,10 +13,12 @@ import { MalformedCollectionError } from './collection.errors';
 // tres portadas de muestra—, y una segunda definición haría que la misma colección se construyera por
 // un camino y fallara por el otro.
 //
-// El origen es una unión de proyecciones, no una sola: cuando un segundo repository dereferencia
-// colecciones con su propia proyección, entra acá. El seguro contra la deriva es el tipo — si una
-// diverge, la unión deja de aceptar el mapeo y el typecheck lo denuncia.
-type SanityCollectionTeaserSource = CollectionsQueryResult[number];
+// El origen es una unión de proyecciones, no una sola: el catálogo de colecciones y la página de
+// inicio dereferencian colecciones cada una por su lado, y `defineQuery` exige literales, así que la
+// proyección se repite. El seguro contra la deriva es el tipo — si una diverge, la unión deja de
+// aceptar el mapeo y el typecheck lo denuncia.
+type SanityCollectionTeaserSource =
+	CollectionsQueryResult[number] | NonNullable<LandingPageContentQueryResult>['collections'][number];
 type SanityFeaturedImage = NonNullable<CollectionBySlugQueryResult>['featuredImage'];
 
 export function mapSanityCollectionTeaser(raw: SanityCollectionTeaserSource): CollectionTeaser {

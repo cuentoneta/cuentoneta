@@ -1,5 +1,5 @@
 import { onoffImageAssets } from './onoff-image-assets.mock';
-import type { RotatingContentQueryResult, StoryBySlugQueryResult } from '@sanity-types';
+import type { StoryBySlugQueryResult, StorylistQueryResult } from '@sanity-types';
 import onoffBiographyMdBody from './onoff/author/francois-onoff.biography.md?raw';
 
 export const rawOnoffAuthor: NonNullable<StoryBySlugQueryResult>['author'] = {
@@ -41,7 +41,7 @@ export const rawOnoffAuthor: NonNullable<StoryBySlugQueryResult>['author'] = {
 	tags: [],
 };
 
-export const rawOnoffAuthorTeaser: NonNullable<RotatingContentQueryResult>['mostRead'][0]['author'] = {
+export const rawOnoffAuthorTeaser: NonNullable<StorylistQueryResult>['stories'][0]['author'] = {
 	_id: 'author_1',
 	slug: 'francois-onoff',
 	name: 'François Onoff',

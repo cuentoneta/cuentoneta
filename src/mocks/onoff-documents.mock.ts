@@ -1,4 +1,11 @@
-import type { Collection, ContentCampaign, LandingPage, LiteraryWork, SanityFileAsset } from '@sanity-types';
+import type {
+	Collection,
+	ContentCampaign,
+	LandingPage,
+	LiteraryWork,
+	RotatingContent,
+	SanityFileAsset,
+} from '@sanity-types';
 import { onoffAuthorDocument } from './onoff/author/author.document.projection';
 import { geometriasDelDesveloCollectionDocument } from './onoff/collection/geometrias-del-desvelo.collection.document';
 import { inventarioDeLasPasionesCollectionDocument } from './onoff/collection/inventario-de-las-pasiones.collection.document';
@@ -17,6 +24,7 @@ import {
 import { coleccionCompletaContentCampaignDocument } from './onoff/landing-page/coleccion-completa-onoff.content-campaign.document';
 import { palacioNueveFronterasContentCampaignDocument } from './onoff/landing-page/el-palacio-de-las-nueve-fronteras.content-campaign.document';
 import { onoffLandingPageDocument } from './onoff/landing-page/onoff.landing-page.document';
+import { onoffRotatingContentDocument } from './onoff/landing-page/onoff.rotating-content.document';
 import { elOdioLiteraryWorkDocument } from './onoff/literary-work/el-odio.literary-work.document';
 import { elPalacioDeLasNueveFronterasLiteraryWorkDocument } from './onoff/literary-work/el-palacio-de-las-nueve-fronteras.literary-work.document';
 import { elTratadoDeLosPlaceresLiteraryWorkDocument } from './onoff/literary-work/el-tratado-de-los-placeres.literary-work.document';
@@ -66,6 +74,8 @@ export const onoffContentCampaignDocumentsMock: ContentCampaign[] = [
 
 export const onoffLandingPageDocumentsMock: LandingPage[] = [onoffLandingPageDocument];
 
+export const onoffRotatingContentDocumentsMock: RotatingContent[] = [onoffRotatingContentDocument];
+
 // El dataset plano que consume `groq-js`: lleva todos los documentos, incluidos los de soporte y los
 // de asset. Un documento que falte no hace fallar la evaluación — la dereferencia queda en null sin
 // avisar—, así que conviene pedir el dataset entero y no armar subconjuntos por caso.
@@ -79,6 +89,7 @@ export const onoffDatasetMock: Record<string, unknown>[] = [
 	...onoffLiteraryWorkAssetDocumentsMock,
 	...onoffContentCampaignDocumentsMock,
 	...onoffLandingPageDocumentsMock,
+	...onoffRotatingContentDocumentsMock,
 ];
 
 // Escenarios de borde por spread sobre el canon, para que sigan al corpus. Cada uno estrena `_id` y
@@ -300,10 +311,9 @@ export const legacyStorylistDocument = {
 	slug: slugField('storylist'),
 };
 
-// Las tres proyecciones de abajo dereferencian el cuento en vez de proyectarlo directo (`stories[]->`,
-// `mostRead[]->`, `latestReads[]->`), así que necesitan un documento contenedor propio apuntando por
-// `_ref` a `incompleteLegacyStoryDocument`. Cada uno es un escenario de un solo caso, sin otro
-// consumidor, y por eso no se suma a `onoffDatasetMock`.
+// La proyección de abajo dereferencia el cuento en vez de proyectarlo directo (`stories[]->`), así que
+// necesita un documento contenedor propio apuntando por `_ref` a `incompleteLegacyStoryDocument`. Es un
+// escenario de un solo caso, sin otro consumidor, y por eso no se suma a `onoffDatasetMock`.
 
 export const storylistWithIncompleteStoryDocument = {
 	...documentSystemFields('onoff-storylist-campos-incumplidos'),
@@ -311,20 +321,4 @@ export const storylistWithIncompleteStoryDocument = {
 	slug: slugField('storylist-campos-incumplidos'),
 	title: 'Storylist de prueba',
 	stories: [documentReference(incompleteLegacyStoryDocument._id, 'story-incompleto')],
-};
-
-// El id es literal porque `rotatingContentQuery` filtra por `_id == 'rotatingContent'`: es un singleton.
-export const rotatingContentWithIncompleteStoryDocument = {
-	...documentSystemFields('rotatingContent'),
-	_type: 'rotatingContent' as const,
-	name: 'Contenido rotativo de prueba',
-	mostRead: [documentReference(incompleteLegacyStoryDocument._id, 'story-incompleto')],
-};
-
-export const landingPageWithIncompleteStoryDocument = {
-	...documentSystemFields('onoff-landing-page-campos-incumplidos'),
-	_type: 'landingPage' as const,
-	slug: slugField('landing-page-campos-incumplidos'),
-	config: '1974-24',
-	latestReads: [documentReference(incompleteLegacyStoryDocument._id, 'story-incompleto')],
 };
