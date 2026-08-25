@@ -19,6 +19,30 @@ describe('InMemoryLiteraryWorkRepository.fetchBySlug', () => {
 	});
 });
 
+describe('InMemoryLiteraryWorkRepository.fetchIdsBySlugs', () => {
+	const [firstLiteraryWork] = onoffLiteraryWorksMock;
+	const repository = new InMemoryLiteraryWorkRepository(onoffLiteraryWorksMock);
+
+	it('devuelve el identificador de cada obra conocida', async () => {
+		const slugs = onoffLiteraryWorksMock.map(({ slug }) => slug);
+
+		expect(await repository.fetchIdsBySlugs(slugs)).toEqual(
+			onoffLiteraryWorksMock.map(({ _id, slug }) => ({ _id, slug })),
+		);
+	});
+
+	// Un slug que no resuelve simplemente no vuelve: no hay obra a la que referenciar.
+	it('descarta los slugs desconocidos en vez de devolverlos sin identificador', async () => {
+		const identities = await repository.fetchIdsBySlugs([firstLiteraryWork.slug, 'no-existe']);
+
+		expect(identities).toEqual([{ _id: firstLiteraryWork._id, slug: firstLiteraryWork.slug }]);
+	});
+
+	it('devuelve un listado vacío sin obras cargadas', async () => {
+		expect(await new InMemoryLiteraryWorkRepository().fetchIdsBySlugs([firstLiteraryWork.slug])).toEqual([]);
+	});
+});
+
 describe('InMemoryLiteraryWorkRepository.fetchTeasers', () => {
 	const [firstTeaser] = onoffLiteraryWorkTeasersMock;
 	const [authorOfFirst] = firstTeaser.authors;

@@ -13,9 +13,14 @@ import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import { mapAuthor, mapAuthorTeaser, mapResources, mapTags, urlFor } from '../../_utils/functions';
 import { mapMediaSources, mapMediaTeasers } from '../../_utils/media-sources.functions';
 import { client as sanityClient } from '../../_helpers/sanity-connector';
-import { literaryWorkBySlugQuery, literaryWorkTeasers } from '../../_queries/literary-work.query';
+import {
+	literaryWorkBySlugQuery,
+	literaryWorkIdsBySlugsQuery,
+	literaryWorkTeasers,
+} from '../../_queries/literary-work.query';
 import { MalformedLiteraryWorkError } from './literary-work.errors';
 import type {
+	LiteraryWorkIdentity,
 	LiteraryWorkRepository,
 	LiteraryWorkTeaserFilter,
 	LiteraryWorkTeaserListing,
@@ -37,6 +42,15 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 			return null;
 		}
 		return this.mapLiteraryWork(raw);
+	}
+
+	// Sin ACL: el resultado ya es el modelo. No hay agregado que construir ni invariante que hacer
+	// cumplir sobre un par (_id, slug), y una obra que no existe simplemente no vuelve.
+	public async fetchIdsBySlugs(slugs: readonly string[]): Promise<readonly LiteraryWorkIdentity[]> {
+		if (slugs.length === 0) {
+			return [];
+		}
+		return this.client.fetch(literaryWorkIdsBySlugsQuery, { slugs });
 	}
 
 	// Trae el catálogo de obras que satisfacen el filtro, traducidas a la vista de teaser.

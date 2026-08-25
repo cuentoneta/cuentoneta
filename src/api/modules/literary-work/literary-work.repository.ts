@@ -19,7 +19,16 @@ export interface LiteraryWorkTeaserFilter {
 	readonly author?: string;
 }
 
+// El identificador de una obra, sin la obra. Es lo que necesita quien escribe referencias a obras en
+// vez de renderizarlas: el slug viaja de vuelta para que el llamador pueda reordenar el resultado por
+// el criterio con el que preguntó, que la query no conserva.
+export interface LiteraryWorkIdentity {
+	readonly _id: string;
+	readonly slug: string;
+}
+
 export interface LiteraryWorkRepository {
 	fetchBySlug(slug: string): Promise<LiteraryWork | null>;
 	fetchTeasers(filter: LiteraryWorkTeaserFilter): Promise<LiteraryWorkTeaserListing>;
+	fetchIdsBySlugs(slugs: readonly string[]): Promise<readonly LiteraryWorkIdentity[]>;
 }

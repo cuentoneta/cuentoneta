@@ -30,6 +30,10 @@ class StubLiteraryWorkRepository implements LiteraryWorkRepository {
 	public async fetchTeasers(): Promise<LiteraryWorkTeaserListing> {
 		return this.listing;
 	}
+
+	public async fetchIdsBySlugs(): Promise<never> {
+		throw new Error('No participa de estos casos.');
+	}
 }
 
 describe('getLiteraryWorkTeasers', () => {

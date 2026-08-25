@@ -17,6 +17,7 @@ import {
 } from '@mocks/onoff-raw-literary-works.mock';
 import { createMarkdown } from '@models/markdown.model';
 import { createReadingTime, deriveSectionReadingTime, sumReadingTimes } from '@models/reading-time.model';
+import { literaryWorkIdsBySlugsQuery } from '../../_queries/literary-work.query';
 import { MalformedLiteraryWorkError } from './literary-work.errors';
 import { SanityLiteraryWorkRepository } from './literary-work.repository.sanity';
 
@@ -261,5 +262,32 @@ describe('SanityLiteraryWorkRepository.fetchTeasers', () => {
 
 		expect(literaryWorks).toEqual([]);
 		expect(malformed[0]).toBeInstanceOf(MalformedLiteraryWorkError);
+	});
+});
+
+describe('SanityLiteraryWorkRepository.fetchIdsBySlugs', () => {
+	// El resultado ya es el modelo: no hay ACL que ejercitar, así que lo que el spec cuida es que la
+	// query se pida bien y que el lote vacío no viaje al content lake.
+	it('pide la query de identificadores pasando el lote de slugs', async () => {
+		const fetch = fn(() => Promise.resolve([]));
+		const repository = new SanityLiteraryWorkRepository({ fetch } as unknown as SanityClient);
+
+		await repository.fetchIdsBySlugs(['la-siesta-de-los-relojes']);
+
+		expect(fetch).toHaveBeenCalledWith(literaryWorkIdsBySlugsQuery, { slugs: ['la-siesta-de-los-relojes'] });
+	});
+
+	it('no consulta el content lake con un lote vacío', async () => {
+		const fetch = fn(() => Promise.resolve([]));
+		const repository = new SanityLiteraryWorkRepository({ fetch } as unknown as SanityClient);
+
+		expect(await repository.fetchIdsBySlugs([])).toEqual([]);
+		expect(fetch).not.toHaveBeenCalled();
+	});
+
+	it('devuelve los identificadores tal como los proyecta la query', async () => {
+		const identities = [{ _id: 'literaryWork-1', slug: 'la-siesta-de-los-relojes' }];
+
+		expect(await repoReturning(identities).fetchIdsBySlugs(['la-siesta-de-los-relojes'])).toEqual(identities);
 	});
 });

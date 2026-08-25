@@ -1,5 +1,6 @@
 import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
 import type {
+	LiteraryWorkIdentity,
 	LiteraryWorkRepository,
 	LiteraryWorkTeaserFilter,
 	LiteraryWorkTeaserListing,
@@ -25,5 +26,17 @@ export class InMemoryLiteraryWorkRepository implements LiteraryWorkRepository {
 			? this.teasers.filter(({ authors }) => authors.some((author) => author.slug === filter.author))
 			: this.teasers;
 		return { literaryWorks, malformed: [] };
+	}
+
+	// Resuelve contra las obras y los teasers cargados: un spec que solo pobló una de las dos listas
+	// igual encuentra lo que pidió, y una obra presente en ambas se cuenta una sola vez.
+	public async fetchIdsBySlugs(slugs: readonly string[]): Promise<readonly LiteraryWorkIdentity[]> {
+		const known = new Map<string, string>();
+		for (const { slug, _id } of [...this.literaryWorks, ...this.teasers]) {
+			known.set(slug, _id);
+		}
+		return slugs
+			.map((slug) => ({ slug, _id: known.get(slug) }))
+			.filter((identity): identity is LiteraryWorkIdentity => identity._id !== undefined);
 	}
 }

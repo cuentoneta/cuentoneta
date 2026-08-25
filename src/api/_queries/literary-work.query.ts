@@ -156,6 +156,15 @@ export const readingTimeBackfillCandidatesQuery = defineQuery(`
     'content': coalesce(content[]{ _key, body, readingTime }, [])
 }`);
 
+// Resolución de identificadores por slug, para quien escribe referencias a obras en vez de
+// renderizarlas. No proyecta dominio a propósito: transportar N agregados para armar N `_ref` sería
+// pagar la obra entera por su identificador.
+export const literaryWorkIdsBySlugsQuery = defineQuery(`
+*[_type == 'literaryWork' && !(_id in path('drafts.**')) && slug.current in $slugs]{
+    _id,
+    'slug': slug.current
+}`);
+
 // El catálogo de obras como teasers, filtrable por criterios — hoy solo `author`; la paginación
 // (limit/offset) y el filtrado por tags se sumarán acá mismo. Cada criterio es un parámetro nullable
 // y no una query aparte: una condición acá y un query param en el endpoint, no una sub-ruta ni otra
