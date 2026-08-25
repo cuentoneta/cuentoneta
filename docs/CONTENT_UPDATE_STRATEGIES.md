@@ -122,11 +122,17 @@ Este proceso garantiza que:
   collections: Array<CollectionReference>,           // Colecciones con tarjetas (vigente)
   latestLiteraryWorks: Array<LiteraryWorkReference>, // Obras destacadas (vigente)
   cards: Array<StorylistReference>,                  // Tarjetas de contenido (en baja)
-  latestReads: Array<StoryReference>                 // Historias destacadas (en baja)
+  latestReads: Array<StoryReference>,                // Historias destacadas (en baja)
+  highlightedAuthors: Array<{                        // Hasta 6 autores destacados
+    author: AuthorReference,
+    additionalTags?: Array<TagReference>             // Etiquetas puntuales de esta semana
+  }>
 }
 ```
 
 > **Convivencia de campos.** `collections` y `latestLiteraryWorks` reemplazan a `cards` y `latestReads`, por el mismo motivo que en `rotatingContent`. Los cuatro coexisten hasta que se retiren los dos primeros.
+
+`highlightedAuthors` es el único campo que se edita como objetos y no como referencias planas, porque cada entrada lleva sus propias etiquetas de la semana además del autor. El tope de seis lo impone el Studio sobre la edición, así que no gobierna lo ya guardado.
 
 ### Nomenclatura de Slugs
 
