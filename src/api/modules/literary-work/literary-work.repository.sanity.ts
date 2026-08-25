@@ -39,9 +39,7 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 		return this.mapLiteraryWork(raw);
 	}
 
-	// El mapeo por obra falla rápido y acá no se ablanda: la que no se puede traducir se reporta en
-	// `malformed` en vez de propagarse, porque qué hacer con ella —tolerarla en un bloque accesorio,
-	// tumbar un agregado— lo decide quien conoce el caso de uso, no este adaptador.
+	// Trae el catálogo de obras que satisfacen el filtro, traducidas a la vista de teaser.
 	public async fetchTeasers(filter: LiteraryWorkTeaserFilter): Promise<LiteraryWorkTeaserListing> {
 		const raw = await this.client.fetch(literaryWorkTeasers, { author: filter.author ?? null });
 
@@ -51,8 +49,11 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 			try {
 				literaryWorks.push(this.mapLiteraryWorkTeaser(rawTeaser));
 			} catch (error) {
-				// El slug va en el error porque, sobre el listado entero de un autor, saber que "algo"
-				// está mal no alcanza para arreglarlo.
+				// El mapeo por obra no se ablanda: la intraducible se acumula en vez de propagarse,
+				// porque qué hacer con ella —descartarla de un listado, tumbar el agregado que la
+				// cura— lo decide quien conoce el caso de uso, no este adaptador. El slug viaja en el
+				// error porque, sobre el catálogo entero, saber que "algo" está mal no alcanza para
+				// arreglarlo.
 				malformed.push(
 					error instanceof MalformedLiteraryWorkError
 						? error
@@ -86,18 +87,22 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 		});
 	}
 
-	// No hay derivación que sirva: en una obra de texto el total es la suma de sus secciones, pero en
-	// una obra recitada es la duración del medio. Cualquier cálculo acierta en una y falla en la otra.
+	// El tiempo total de lectura de la obra, tal como lo persiste el CMS.
 	private resolveTotalReadingTime(raw: SanityLiteraryWorkTeaser): ReadingTime {
+		// Ausente, la obra es intraducible: no hay derivación que sirva de reemplazo, porque en una
+		// obra de texto el total es la suma de sus secciones y en una recitada es la duración del
+		// medio. Cualquier cálculo acierta en una y falla en la otra.
 		if (raw.totalReadingTime === null) {
 			throw new MalformedLiteraryWorkError(raw.slug);
 		}
 		return createReadingTime(raw.totalReadingTime);
 	}
 
-	// `body` llega nullable porque el recorte es un `split` indexado y el typegen no puede descartar el
-	// índice fuera de rango. Rellenarlo con vacío dejaría un hueco mudo en la tarjeta.
+	// El extracto que la tarjeta pinta bajo el título: el arranque de la sección de apertura, ya
+	// saneado. El slug es para el error, porque el extracto no lo transporta.
 	private mapExcerpt(slug: string, raw: SanityTeaserExcerpt): LiteraryWorkExcerpt {
+		// Nullable porque el recorte es un `split` indexado y el typegen no puede descartar el índice
+		// fuera de rango. Rellenarlo con vacío dejaría un hueco mudo en la tarjeta.
 		if (raw.body === null) {
 			throw new MalformedLiteraryWorkError(slug);
 		}

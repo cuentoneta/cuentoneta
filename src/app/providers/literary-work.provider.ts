@@ -19,6 +19,7 @@ import {
 	literaryWorkTeaserListDtoSchema,
 	toLiteraryWorkTeaser,
 	type LiteraryWorkDto,
+	type LiteraryWorkTeaserDto,
 	type LiteraryWorkSectionDto,
 } from '@models/literary-work.dto';
 import type { LiteraryWorkTeaser } from '@models/literary-work.model';
@@ -42,13 +43,13 @@ export class HttpLiteraryWorkApi implements LiteraryWorkApi {
 
 	public getBySlug(slug: string): Observable<LiteraryWork> {
 		return this.http
-			.get<unknown>(`${this.url}/${slug}`)
+			.get<LiteraryWorkDto>(`${this.url}/${slug}`)
 			.pipe(map((response) => this.toLiteraryWork(literaryWorkDtoSchema.parse(response))));
 	}
 
 	public getTeasers(filter: LiteraryWorkTeaserFilter = {}): Observable<LiteraryWorkTeaser[]> {
 		return this.http
-			.get<unknown>(this.url, { params: filter.author ? { author: filter.author } : {} })
+			.get<LiteraryWorkTeaserDto[]>(this.url, { params: filter.author ? { author: filter.author } : {} })
 			.pipe(map((response) => literaryWorkTeaserListDtoSchema.parse(response).map(toLiteraryWorkTeaser)));
 	}
 
