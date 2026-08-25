@@ -7,7 +7,7 @@ import { progressiveRxResource } from '@app-utils/ssr-resource';
 import { ReadingSuggestionsListComponent } from './reading-suggestions-list.component';
 import { pickReadingSuggestions } from './pick-reading-suggestions';
 import type { NavigationParams } from '@app-utils/navigation-params';
-import { toReadingSuggestion } from './story-teaser-to-reading-suggestion.adapter';
+import { toReadingSuggestion } from './reading-suggestion.model';
 
 /**
  * Sugerencias de otras obras de la misma colección. Es una de las dos variantes que monta

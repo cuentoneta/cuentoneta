@@ -4,21 +4,14 @@ import { clearAllMocks } from '@test-utils';
 
 import { ReadingSuggestionsListComponent } from './reading-suggestions-list.component';
 import { READING_SUGGESTIONS_COUNT } from './pick-reading-suggestions';
-import type { ReadingSuggestion } from './story-teaser-to-reading-suggestion.adapter';
+import { toReadingSuggestion, type ReadingSuggestion } from './reading-suggestion.model';
 import type { NavigationParams } from '@app-utils/navigation-params';
 import {
 	onoffLiteraryWorkTeasersMock,
 	onoffLiteraryWorkTeasersWithMediaSourcesMock,
 } from '@mocks/onoff-literary-work-teasers.mock';
 
-// El bloque recibe la obra y su extracto por separado. Acá el extracto va vacío: la rama de Portable
-// Text la ejercitan los specs de los wrappers conectados, que son los que producen ese dato.
-const toSuggestion = (literaryWork: (typeof onoffLiteraryWorkTeasersMock)[number]): ReadingSuggestion => ({
-	literaryWork,
-	excerptParagraphs: [],
-});
-
-const teasers = onoffLiteraryWorkTeasersMock.slice(0, 3).map(toSuggestion);
+const teasers = onoffLiteraryWorkTeasersMock.slice(0, 3).map(toReadingSuggestion);
 
 type ReadingSuggestionsInputs = Partial<{
 	heading: string;
@@ -51,7 +44,7 @@ describe('ReadingSuggestionsListComponent', () => {
 		// El separador va entre sugerencias, así que son siempre uno menos que las obras. Cubre a la vez
 		// el intercalado y que no quede uno colgando al final.
 		it.each([1, 2, 3, 5])('should draw one separator less than the %i suggestions', async (count) => {
-			await setup({ teasers: onoffLiteraryWorkTeasersMock.slice(0, count).map(toSuggestion) });
+			await setup({ teasers: onoffLiteraryWorkTeasersMock.slice(0, count).map(toReadingSuggestion) });
 
 			expect(screen.queryAllByTestId('suggestion-separator')).toHaveLength(count - 1);
 		});
@@ -173,7 +166,7 @@ describe('ReadingSuggestionsListComponent', () => {
 	});
 
 	it('should expose the multimedia of each suggestion', async () => {
-		await setup({ teasers: onoffLiteraryWorkTeasersWithMediaSourcesMock.slice(0, 3).map(toSuggestion) });
+		await setup({ teasers: onoffLiteraryWorkTeasersWithMediaSourcesMock.slice(0, 3).map(toReadingSuggestion) });
 
 		expect(screen.getAllByTestId('media')).toHaveLength(3);
 	});
