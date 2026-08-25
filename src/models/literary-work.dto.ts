@@ -1,8 +1,14 @@
 import * as z from 'zod/mini';
 import type { Author, AuthorTeaser } from './author.model';
+import type { LiteraryWorkTeaser } from './literary-work.model';
 import type { Media, MediaTeaser } from './media.model';
 import type { Resource } from './resource.model';
 import type { Tag } from './tag.model';
+import { createLiteraryWorkExcerpt } from './literary-work-excerpt.model';
+import { createReadingTime } from './reading-time.model';
+import { createSanitizedHtml } from './sanitized-html.model';
+import { createSectionTitle } from './section-title.model';
+import { createSlug } from './slug.model';
 
 // Los tipos de dominio anémicos anidados (Author/Tag/Media/Resource) se validan como opacos: se
 // verifica que cada elemento sea un objeto, pero no su estructura interna — su contrato de wire
@@ -63,8 +69,29 @@ export const literaryWorkTeaserDtoSchema = z.object({
 	excerpt: literaryWorkExcerptDtoSchema,
 });
 
+// El listado se valida por su propio schema en vez de encadenar `.array()` sobre el del teaser: mini
+// no expone ese encadenamiento, y declararlo acá mantiene el vocabulario de schemas en el módulo de
+// DTO en lugar de repartirlo entre los providers.
+export const literaryWorkTeaserListDtoSchema = z.array(literaryWorkTeaserDtoSchema);
+
 export type LiteraryWorkEpigraphDto = z.infer<typeof literaryWorkEpigraphDtoSchema>;
 export type LiteraryWorkTeaserDto = z.infer<typeof literaryWorkTeaserDtoSchema>;
 export type LiteraryWorkSectionDto = z.infer<typeof literaryWorkSectionDtoSchema>;
 export type LiteraryWorkExcerptDto = z.infer<typeof literaryWorkExcerptDtoSchema>;
 export type LiteraryWorkDto = z.infer<typeof literaryWorkDtoSchema>;
+
+// La rehidratación del teaser vive junto a su schema y no en un provider: más de uno la necesita
+// —el de colección para las obras del agregado, el de obra para el listado por autor— y dejarla
+// privada en cada uno es dejar que las dos copias diverjan en silencio. Va acá y no en el modelo de
+// dominio porque traduce desde el wire, y el dominio no debe depender de su contrato.
+export function toLiteraryWorkTeaser(dto: LiteraryWorkTeaserDto): LiteraryWorkTeaser {
+	return {
+		...dto,
+		slug: createSlug(dto.slug),
+		totalReadingTime: createReadingTime(dto.totalReadingTime),
+		excerpt: createLiteraryWorkExcerpt({
+			title: dto.excerpt.title ? createSectionTitle(dto.excerpt.title.value) : undefined,
+			bodyHtml: createSanitizedHtml(dto.excerpt.bodyHtml),
+		}),
+	};
+}
