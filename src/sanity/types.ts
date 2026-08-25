@@ -339,64 +339,6 @@ export type BlockContent = Array<
 
 export type ComputedNumber = number;
 
-export type NationalityReference = {
-	_ref: string;
-	_type: 'reference';
-	_weak?: boolean;
-	[internalGroqTypeReferenceTo]?: 'nationality';
-};
-
-export type Author = {
-	_id: string;
-	_type: 'author';
-	_createdAt: string;
-	_updatedAt: string;
-	_rev: string;
-	name: string;
-	slug: Slug;
-	image: {
-		asset?: SanityImageAssetReference;
-		media?: unknown;
-		hotspot?: SanityImageHotspot;
-		crop?: SanityImageCrop;
-		_type: 'image';
-	};
-	nationality: NationalityReference;
-	bornOn?: string;
-	bornOnYear?: ComputedNumber;
-	diedOn?: string;
-	diedOnYear?: ComputedNumber;
-	biography: Markdown;
-	resources?: Array<{
-		title: string;
-		url: string;
-		resourceType: ResourceTypeReference;
-		_type: 'resource';
-		_key: string;
-	}>;
-	tags?: Array<
-		{
-			_key: string;
-		} & TagReference
-	>;
-};
-
-export type Nationality = {
-	_id: string;
-	_type: 'nationality';
-	_createdAt: string;
-	_updatedAt: string;
-	_rev: string;
-	country: string;
-	flag: {
-		asset?: SanityImageAssetReference;
-		media?: unknown;
-		hotspot?: SanityImageHotspot;
-		crop?: SanityImageCrop;
-		_type: 'image';
-	};
-};
-
 export type Collection = {
 	_id: string;
 	_type: 'collection';
@@ -634,6 +576,74 @@ export type LandingPage = {
 			_key: string;
 		} & LiteraryWorkReference
 	>;
+	highlightedAuthors?: Array<{
+		author: AuthorReference;
+		additionalTags?: Array<
+			{
+				_key: string;
+			} & TagReference
+		>;
+		_type: 'highlightedAuthor';
+		_key: string;
+	}>;
+};
+
+export type NationalityReference = {
+	_ref: string;
+	_type: 'reference';
+	_weak?: boolean;
+	[internalGroqTypeReferenceTo]?: 'nationality';
+};
+
+export type Author = {
+	_id: string;
+	_type: 'author';
+	_createdAt: string;
+	_updatedAt: string;
+	_rev: string;
+	name: string;
+	slug: Slug;
+	image: {
+		asset?: SanityImageAssetReference;
+		media?: unknown;
+		hotspot?: SanityImageHotspot;
+		crop?: SanityImageCrop;
+		_type: 'image';
+	};
+	nationality: NationalityReference;
+	bornOn?: string;
+	bornOnYear?: ComputedNumber;
+	diedOn?: string;
+	diedOnYear?: ComputedNumber;
+	biography: Markdown;
+	resources?: Array<{
+		title: string;
+		url: string;
+		resourceType: ResourceTypeReference;
+		_type: 'resource';
+		_key: string;
+	}>;
+	tags?: Array<
+		{
+			_key: string;
+		} & TagReference
+	>;
+};
+
+export type Nationality = {
+	_id: string;
+	_type: 'nationality';
+	_createdAt: string;
+	_updatedAt: string;
+	_rev: string;
+	country: string;
+	flag: {
+		asset?: SanityImageAssetReference;
+		media?: unknown;
+		hotspot?: SanityImageHotspot;
+		crop?: SanityImageCrop;
+		_type: 'image';
+	};
 };
 
 export type Resource = {
@@ -793,9 +803,6 @@ export type AllSanitySchemaTypes =
 	| Story
 	| BlockContent
 	| ComputedNumber
-	| NationalityReference
-	| Author
-	| Nationality
 	| Collection
 	| Storylist
 	| ContentCampaign
@@ -803,6 +810,9 @@ export type AllSanitySchemaTypes =
 	| StorylistReference
 	| CollectionReference
 	| LandingPage
+	| NationalityReference
+	| Author
+	| Nationality
 	| Resource
 	| ResourceType
 	| Contributor
