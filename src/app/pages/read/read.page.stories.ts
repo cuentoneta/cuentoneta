@@ -5,15 +5,12 @@ import { of, throwError, type Observable } from 'rxjs';
 
 import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
 import type { Storylist } from '@models/storylist.model';
-import type { StoryTeaser } from '@models/story.model';
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
 import { onoffCollectionsMock } from '@mocks/onoff-collections.mock';
-import { onoffStoryTeasersMock } from '@mocks/onoff-story-teasers.mock';
 import { storylistMock } from '@mocks/storylist.mock';
 
 import { provideLiteraryWorkApiMock } from '../../providers/literary-work.mock';
-import { provideStoryApiMock, StubStoryApi } from '../../providers/story.mock';
 import { provideStorylistApiMock } from '../../providers/storylist.mock';
 import type { LiteraryWorkApi } from '../../providers/literary-work.provider';
 import type { StorylistApi } from '../../providers/storylist.provider';
@@ -32,14 +29,6 @@ class CorpusLiteraryWorkApi implements LiteraryWorkApi {
 
 	public getByAuthorSlug(slug: string): Observable<LiteraryWorkTeaser[]> {
 		return of(onoffLiteraryWorkTeasersMock.filter(({ authors }) => authors.some((author) => author.slug === slug)));
-	}
-}
-
-// Extiende el doble ya existente y sobrescribe lo único que esta página consume: el resto de la
-// interfaz no interviene y no hay por qué volver a declararla.
-class CorpusStoryApi extends StubStoryApi {
-	public override getByAuthorSlug(): Observable<StoryTeaser[]> {
-		return of(onoffStoryTeasersMock);
 	}
 }
 
@@ -76,7 +65,6 @@ const meta: Meta<ReadPageArgs> = {
 			providers: [
 				provideRouter([]),
 				provideLiteraryWorkApiMock(new CorpusLiteraryWorkApi()),
-				provideStoryApiMock(new CorpusStoryApi()),
 				provideStorylistApiMock(new CorpusStorylistApi()),
 			],
 		}),

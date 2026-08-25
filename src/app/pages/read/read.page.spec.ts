@@ -26,8 +26,8 @@ import {
 } from '@mocks/onoff-literary-works.mock';
 import { provideLiteraryWorkApiMock, StubLiteraryWorkApi } from '../../providers/literary-work.mock';
 import { storylistMock } from '@mocks/storylist.mock';
-import { provideStoryApiMock } from '../../providers/story.mock';
 import { provideStorylistApiMock } from '../../providers/storylist.mock';
+import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
 import { provideRouter } from '@angular/router';
 import type { LiteraryWorkApi } from '../../providers/literary-work.provider';
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
@@ -126,10 +126,7 @@ describe('ReadPage', () => {
 	) => {
 		return await render(ReadPage, {
 			providers: [
-				provideLiteraryWorkApiMock(options.api ?? new StubLiteraryWorkApi(literaryWork)),
-				// La tríada de sugerencias resuelve sus datos por su cuenta; esta página solo le pasa el
-				// contexto. Reapuntarla a los endpoints de LiteraryWork es trabajo de otro issue.
-				provideStoryApiMock(),
+				provideLiteraryWorkApiMock(options.api ?? new StubLiteraryWorkApi(literaryWork, onoffLiteraryWorkTeasersMock)),
 				provideStorylistApiMock(),
 				provideRouter([]),
 				...(options.responseInit ? [{ provide: RESPONSE_INIT, useValue: options.responseInit }] : []),
