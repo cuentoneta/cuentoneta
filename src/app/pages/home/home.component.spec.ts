@@ -8,8 +8,7 @@ import { Component, input } from '@angular/core';
 import { Storylist } from '@models/storylist.model';
 import { map, type Observable } from 'rxjs';
 import type { ContentApi } from '../../providers/content.provider';
-import type { LandingPageContent } from '@models/landing-page-content.model';
-import type { HighlightedAuthor } from '@models/landing-page-content.model';
+import type { HighlightedAuthor, LandingPageContent } from '@models/landing-page-content.model';
 import { onoffHighlightedAuthorsOfLength } from '@mocks/onoff-highlighted-authors.mock';
 
 describe.skip('HomeComponent', () => {
@@ -73,7 +72,7 @@ describe('HomeComponent — autores destacados', () => {
 	it('should link to the authors index from the home', async () => {
 		await renderHome(onoffHighlightedAuthorsOfLength(6));
 
-		expect(screen.getByRole('link', { name: 'Ver todo' })).toHaveAttribute('href', '/authors');
+		expect(screen.getByRole('link', { name: 'Ver todos los autores' })).toHaveAttribute('href', '/authors');
 	});
 
 	it('should render the section even when the week has no highlighted authors', async () => {
