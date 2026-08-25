@@ -1,24 +1,28 @@
 import type { SanityClient } from '@sanity/client';
-import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
-import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
+import type { LiteraryWorkBySlugQueryResult, LiteraryWorksByAuthorSlugQueryResult } from '@sanity-types';
+import { createLiteraryWork, type LiteraryWork, type LiteraryWorkTeaser } from '@models/literary-work.model';
 import { createAttributedText, type AttributedText } from '@models/attributed-text.model';
+import { createLiteraryWorkExcerpt, type LiteraryWorkExcerpt } from '@models/literary-work-excerpt.model';
 import { createLiteraryWorkSection, type LiteraryWorkSection } from '@models/literary-work-section.model';
 import { createSectionTitle } from '@models/section-title.model';
 import { createMarkdown } from '@models/markdown.model';
-import { createReadingTime, deriveSectionReadingTime } from '@models/reading-time.model';
+import { createReadingTime, deriveSectionReadingTime, type ReadingTime } from '@models/reading-time.model';
 import { createSlug } from '@models/slug.model';
 import { createIsoDateTime } from '@utils/date.utils';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
-import { mapAuthor, mapResources, mapTags, urlFor } from '../../_utils/functions';
-import { mapMediaSources } from '../../_utils/media-sources.functions';
+import { mapAuthor, mapAuthorTeaser, mapResources, mapTags, urlFor } from '../../_utils/functions';
+import { mapMediaSources, mapMediaTeasers } from '../../_utils/media-sources.functions';
 import { client as sanityClient } from '../../_helpers/sanity-connector';
-import { literaryWorkBySlugQuery } from '../../_queries/literary-work.query';
-import type { LiteraryWorkRepository } from './literary-work.repository';
+import { literaryWorkBySlugQuery, literaryWorksByAuthorSlugQuery } from '../../_queries/literary-work.query';
+import { MalformedLiteraryWorkError } from './literary-work.errors';
+import type { LiteraryWorkRepository, LiteraryWorkTeaserListing } from './literary-work.repository';
 
 type SanityLiteraryWork = NonNullable<LiteraryWorkBySlugQueryResult>;
 type SanityLiteraryWorkSection = SanityLiteraryWork['content'][number];
 type SanityEpigraph = NonNullable<SanityLiteraryWorkSection['epigraphs']>[number];
 type SanityLiteraryWorkMetadata = Omit<SanityLiteraryWork, 'content'>;
+type SanityLiteraryWorkTeaser = LiteraryWorksByAuthorSlugQueryResult[number];
+type SanityTeaserExcerpt = SanityLiteraryWorkTeaser['excerpt'][number];
 
 export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 	constructor(private readonly client: SanityClient = sanityClient) {}
@@ -29,6 +33,84 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 			return null;
 		}
 		return this.mapLiteraryWork(raw);
+	}
+
+	// El mapeo por obra falla rápido y acá no se ablanda: la que no se puede traducir se reporta en
+	// `malformed` en vez de propagarse, porque qué hacer con ella —tolerarla en un bloque accesorio,
+	// tumbar un agregado— lo decide quien conoce el caso de uso, no este adaptador.
+	public async fetchByAuthorSlug(slug: string): Promise<LiteraryWorkTeaserListing> {
+		const raw = await this.client.fetch(literaryWorksByAuthorSlugQuery, { slug });
+
+		const literaryWorks: LiteraryWorkTeaser[] = [];
+		const malformed: MalformedLiteraryWorkError[] = [];
+		for (const rawTeaser of raw) {
+			try {
+				literaryWorks.push(this.guard(rawTeaser.slug, () => this.mapLiteraryWorkTeaser(rawTeaser)));
+			} catch (error) {
+				if (!(error instanceof MalformedLiteraryWorkError)) {
+					throw error;
+				}
+				malformed.push(error);
+			}
+		}
+		return { literaryWorks, malformed };
+	}
+
+	// El slug va en el error porque, sobre el listado entero de un autor, saber que "algo" está mal no
+	// alcanza para arreglarlo.
+	private guard<T>(slug: string, map: () => T): T {
+		try {
+			return map();
+		} catch (error) {
+			if (error instanceof MalformedLiteraryWorkError) {
+				throw error;
+			}
+			throw new MalformedLiteraryWorkError(slug, { cause: error });
+		}
+	}
+
+	private mapLiteraryWorkTeaser(raw: SanityLiteraryWorkTeaser): LiteraryWorkTeaser {
+		const [rawExcerpt] = raw.excerpt;
+		if (!rawExcerpt) {
+			// Sin sección de apertura el teaser es inconstruible: es la contracara de la invariante
+			// "al menos una sección" que la obra ya hace cumplir.
+			throw new MalformedLiteraryWorkError(raw.slug);
+		}
+		// Se congela como los agregados que lo transportan: el teaser no tiene factory propia, pero eso
+		// no es razón para que sea el único objeto mutable del listado.
+		return Object.freeze({
+			_id: raw._id,
+			slug: createSlug(raw.slug),
+			title: raw.title,
+			coverImage: raw.coverImage ? urlFor(raw.coverImage) : '',
+			totalReadingTime: this.resolveTotalReadingTime(raw),
+			sectionCount: raw.sectionCount,
+			tags: mapTags(raw.tags),
+			mediaSources: mapMediaTeasers(raw.mediaSources),
+			authors: raw.authors.map(mapAuthorTeaser),
+			excerpt: this.mapExcerpt(raw.slug, rawExcerpt),
+		});
+	}
+
+	// No hay derivación que sirva: en una obra de texto el total es la suma de sus secciones, pero en
+	// una obra recitada es la duración del medio. Cualquier cálculo acierta en una y falla en la otra.
+	private resolveTotalReadingTime(raw: SanityLiteraryWorkTeaser): ReadingTime {
+		if (raw.totalReadingTime === null) {
+			throw new MalformedLiteraryWorkError(raw.slug);
+		}
+		return createReadingTime(raw.totalReadingTime);
+	}
+
+	// `body` llega nullable porque el recorte es un `split` indexado y el typegen no puede descartar el
+	// índice fuera de rango. Rellenarlo con vacío dejaría un hueco mudo en la tarjeta.
+	private mapExcerpt(slug: string, raw: SanityTeaserExcerpt): LiteraryWorkExcerpt {
+		if (raw.body === null) {
+			throw new MalformedLiteraryWorkError(slug);
+		}
+		return createLiteraryWorkExcerpt({
+			title: raw.title ? createSectionTitle(raw.title) : undefined,
+			bodyHtml: markdownToSanitizedHtml(createMarkdown(raw.body)),
+		});
 	}
 
 	private mapLiteraryWork(raw: SanityLiteraryWork): LiteraryWork {
