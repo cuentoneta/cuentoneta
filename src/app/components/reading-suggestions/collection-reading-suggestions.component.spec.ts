@@ -9,6 +9,7 @@ import type { Collection } from '@models/collection.model';
 
 import { onoffCollectionsMock } from '@mocks/onoff-collections.mock';
 import { clearAllMocks, fn, restoreAllMocks, spyOn } from '@test-utils';
+import { firstProseWord } from '@testing/corpus-prose';
 
 // La colección se toma del canon: el agregado ya transporta sus obras como teasers, con el extracto
 // del que la tarjeta deriva lo que pinta.
@@ -147,10 +148,7 @@ describe('CollectionReadingSuggestionsComponent', () => {
 
 		expect(excerpts).toHaveLength(READING_SUGGESTIONS_COUNT);
 		for (const [index, excerpt] of excerpts.entries()) {
-			const bodyText = collectionMock.literaryWorks[index].excerpt.bodyHtml.replace(/<[^>]+>/g, ' ');
-			const [word] = bodyText.match(/\p{L}{6,}/gu) ?? [];
-			expect(word).toBeDefined();
-			expect(excerpt.textContent).toContain(word);
+			expect(excerpt.textContent).toContain(firstProseWord(collectionMock.literaryWorks[index].excerpt.bodyHtml));
 		}
 	});
 });

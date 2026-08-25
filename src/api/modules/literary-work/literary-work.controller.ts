@@ -9,8 +9,9 @@ import { getLiteraryWorkBySlug, getLiteraryWorksByAuthorSlug } from './literary-
 export function createLiteraryWorkController(repository?: LiteraryWorkRepository) {
 	const controller = new Hono();
 
-	// Declarada antes de `/:slug`: si no, `author` matchearía como un slug de obra. Sin ramas de error
-	// propias — un autor sin obras es un listado vacío, y la obra mal curada la descarta el service.
+	// La específica va antes de la genérica por convención del repo, no porque Hono lo exija: los paths
+	// difieren en segmentos y no compiten. Sin ramas de error propias — un autor sin obras es un
+	// listado vacío, y la obra mal curada la descarta el service.
 	controller.get('/author/:slug', zValidator('param', slugSchema), async (c) => {
 		const { slug } = c.req.valid('param');
 		const literaryWorks = await getLiteraryWorksByAuthorSlug(slug, repository);

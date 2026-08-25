@@ -45,28 +45,18 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 		const malformed: MalformedLiteraryWorkError[] = [];
 		for (const rawTeaser of raw) {
 			try {
-				literaryWorks.push(this.guard(rawTeaser.slug, () => this.mapLiteraryWorkTeaser(rawTeaser)));
+				literaryWorks.push(this.mapLiteraryWorkTeaser(rawTeaser));
 			} catch (error) {
-				if (!(error instanceof MalformedLiteraryWorkError)) {
-					throw error;
-				}
-				malformed.push(error);
+				// El slug va en el error porque, sobre el listado entero de un autor, saber que "algo"
+				// está mal no alcanza para arreglarlo.
+				malformed.push(
+					error instanceof MalformedLiteraryWorkError
+						? error
+						: new MalformedLiteraryWorkError(rawTeaser.slug, { cause: error }),
+				);
 			}
 		}
 		return { literaryWorks, malformed };
-	}
-
-	// El slug va en el error porque, sobre el listado entero de un autor, saber que "algo" está mal no
-	// alcanza para arreglarlo.
-	private guard<T>(slug: string, map: () => T): T {
-		try {
-			return map();
-		} catch (error) {
-			if (error instanceof MalformedLiteraryWorkError) {
-				throw error;
-			}
-			throw new MalformedLiteraryWorkError(slug, { cause: error });
-		}
 	}
 
 	private mapLiteraryWorkTeaser(raw: SanityLiteraryWorkTeaser): LiteraryWorkTeaser {

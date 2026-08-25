@@ -10,6 +10,7 @@ import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers
 import { authorTeaserMock } from '@mocks/author.mock';
 import { cuentoTagMock } from '@mocks/onoff-tags.mock';
 import { clearAllMocks, fn, restoreAllMocks, spyOn } from '@test-utils';
+import { firstProseWord } from '@testing/corpus-prose';
 
 const setup = async (
 	getByAuthorSlug: (slug: string) => Observable<LiteraryWorkTeaser[]>,
@@ -186,10 +187,7 @@ describe('AuthorReadingSuggestionsComponent', () => {
 
 		expect(excerpts).toHaveLength(READING_SUGGESTIONS_COUNT);
 		for (const [index, excerpt] of excerpts.entries()) {
-			const bodyText = onoffLiteraryWorkTeasersMock[index].excerpt.bodyHtml.replace(/<[^>]+>/g, ' ');
-			const [word] = bodyText.match(/\p{L}{6,}/gu) ?? [];
-			expect(word).toBeDefined();
-			expect(excerpt.textContent).toContain(word);
+			expect(excerpt.textContent).toContain(firstProseWord(onoffLiteraryWorkTeasersMock[index].excerpt.bodyHtml));
 		}
 	});
 

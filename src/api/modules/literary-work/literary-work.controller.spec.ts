@@ -95,8 +95,9 @@ describe('literaryWorkController', () => {
 			expect(await response.json()).toEqual([]);
 		});
 
-		// La ruta va declarada antes que la de obra: si cayera en `/:slug`, `author` se interpretaría
-		// como el slug de una obra y la respuesta sería un objeto (o un 404), no un arreglo.
+		// Los dos paths difieren en segmentos y hoy no compiten en Hono; el orden es convención del
+		// repo. Este caso fija la forma de la respuesta —un arreglo, no la obra— para que un cambio
+		// futuro de rutas que sí los haga competir no pase inadvertido.
 		it('should not fall through to the work-by-slug route', async () => {
 			const response = await controller.request(`/author/${knownAuthor.slug}`);
 
