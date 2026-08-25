@@ -49,7 +49,10 @@ async function openWork(page: Page, route: string): Promise<void> {
 
 test('read — el hero presenta la obra que el API dice que es', async ({ page }) => {
 	// eslint-disable-next-line playwright/no-skipped-test -- la ausencia del fixture ya la reporta la guarda de arriba; repetirla acá sería el mismo fallo dos veces
-	test.skip(status !== 200 || !work, `"${ROUTE}" no responde 200 en el dataset`);
+	test.skip(status !== 200, `"${ROUTE}" no responde 200 en el dataset`);
+	// Separado del anterior: un motivo compuesto reporta siempre el primero, y el diagnóstico se pierde.
+	// eslint-disable-next-line playwright/no-skipped-test -- ídem
+	test.skip(!work, `el API no sirve "${STABLE_SLUGS.literaryWork}"`);
 
 	await openWork(page, ROUTE);
 
@@ -78,14 +81,20 @@ test('read — una obra inexistente ofrece la vuelta al inicio', async ({ page }
 	await expect(page).toHaveURL(/\/home$/);
 });
 
+// El caso del cambio de formato afirma por el tipo del widget montado, así que dos recursos del mismo
+// tipo pasarían un conteo y lo matarían igual: la propiedad que la curaduría debe sostener es de tipos
+// distintos, y este derivador es el que consumen la guarda y los skips dependientes.
+const distinctMediaTypes = (dto: LiteraryWorkDto | undefined): number =>
+	new Set((dto?.mediaSources ?? []).map(({ type }) => type)).size;
+
 // Guarda de curaduría, como caso propio: el cambio de formato sólo se puede afirmar si la obra curada
-// ofrece más de uno, y ninguna otra puede buscarse porque el módulo no expone un listado. Si esto sale
-// rojo, la acción es cargar un segundo recurso multimedia a esa obra en development y staging.
+// ofrece formatos distintos, y ninguna otra puede buscarse porque el módulo no expone un listado. Si
+// esto sale rojo, la acción es curar esa obra en development y staging.
 test('read — la obra con multimedia ofrece más de un formato', () => {
 	expect(mediaWork, `el API no sirve "${STABLE_SLUGS.literaryWorkWithMedia}"`).toBeDefined();
 	expect(
-		mediaWork?.mediaSources.length ?? 0,
-		`"${STABLE_SLUGS.literaryWorkWithMedia}" necesita al menos dos recursos multimedia en el dataset: sin ellos, el cambio de formato no se verifica en ningún lado`,
+		distinctMediaTypes(mediaWork),
+		`"${STABLE_SLUGS.literaryWorkWithMedia}" necesita al menos dos recursos multimedia de tipos distintos en el dataset: sin ellos, el cambio de formato no se verifica en ningún lado`,
 	).toBeGreaterThan(1);
 });
 
@@ -100,7 +109,7 @@ test('read — el bloque multimedia ofrece una opción por recurso', async ({ pa
 	// eslint-disable-next-line playwright/no-skipped-test -- la ausencia del fixture ya la reporta su guarda; repetirla acá sería el mismo fallo dos veces
 	test.skip(!mediaWork, `"${MEDIA_ROUTE}" no está en el dataset`);
 	// eslint-disable-next-line playwright/no-skipped-test -- ídem: la curaduría faltante la reporta su propia guarda
-	test.skip((mediaWork?.mediaSources.length ?? 0) < 2, 'la obra curada no ofrece formatos para elegir');
+	test.skip(distinctMediaTypes(mediaWork) < 2, 'la obra curada no ofrece formatos distintos para elegir');
 
 	await openWork(page, MEDIA_ROUTE);
 	const block = await settleMediaBlock(page);
@@ -116,7 +125,7 @@ test('read — cambiar de formato monta el widget del formato elegido', async ({
 	// eslint-disable-next-line playwright/no-skipped-test -- la ausencia del fixture ya la reporta su guarda; repetirla acá sería el mismo fallo dos veces
 	test.skip(!mediaWork, `"${MEDIA_ROUTE}" no está en el dataset`);
 	// eslint-disable-next-line playwright/no-skipped-test -- ídem: la curaduría faltante la reporta su propia guarda
-	test.skip((mediaWork?.mediaSources.length ?? 0) < 2, 'la obra curada no ofrece formatos para elegir');
+	test.skip(distinctMediaTypes(mediaWork) < 2, 'la obra curada no ofrece formatos distintos para elegir');
 
 	await openWork(page, MEDIA_ROUTE);
 	const block = await settleMediaBlock(page);
@@ -124,7 +133,8 @@ test('read — cambiar de formato monta el widget del formato elegido', async ({
 
 	// Se afirma por el componente de widget montado, no por el contenido del proveedor: YouTube y
 	// Spotify en CI son flaky, y qué widget se monta es exactamente lo que el selector decide. El tag
-	// del elemento delata el formato sin esperar ninguna carga externa.
+	// del elemento delata el formato sin esperar ninguna carga externa. La lista enumera los widgets del
+	// catálogo (`media-widget-registry.ts`): uno nuevo se suma acá para que el caso lo alcance.
 	const widgets = block.locator(
 		'cuentoneta-youtube-video-widget, cuentoneta-spotify-audio-widget, cuentoneta-audio-recording-widget, cuentoneta-space-recording-widget',
 	);
@@ -142,11 +152,15 @@ test('read — cambiar de formato monta el widget del formato elegido', async ({
 	await expect(widgets).toHaveCount(1);
 });
 
-/** Scrollea hasta el pie y espera las sugerencias, que difieren por viewport. */
-async function settleSuggestions(page: Page, headingPattern: RegExp) {
+/**
+ * Scrollea hasta el pie y espera las sugerencias, que difieren por viewport.
+ *
+ * El heading va como string y no como patrón: interpolar un nombre de autor o un título de colección en
+ * una expresión regular reinterpreta su puntuación como sintaxis, y el nombre lo decide la curaduría.
+ */
+async function settleSuggestions(page: Page, heading: string) {
 	await page.locator('cuentoneta-reading-suggestions').scrollIntoViewIfNeeded();
-	const heading = page.getByRole('heading', { name: headingPattern });
-	await expect(heading).toBeVisible();
+	await expect(page.getByRole('heading', { name: heading })).toBeVisible();
 }
 
 // Ancla en la obra curada y no en la estable: el autor de `el-fin` tiene una sola obra publicada, así
@@ -156,15 +170,17 @@ test('read — sin contexto, el pie sugiere más obras del autor', async ({ page
 	test.skip(!mediaWork, `"${MEDIA_ROUTE}" no está en el dataset`);
 
 	await openWork(page, MEDIA_ROUTE);
-	await settleSuggestions(page, new RegExp(`Más obras de ${mediaWork?.authors[0]?.name}`));
+	await settleSuggestions(page, `Más obras de ${mediaWork?.authors[0]?.name}`);
 
 	// Los enlaces de lectura se acotan por prefijo: el bloque ofrece además el acceso a la página del
 	// autor ("ver más"), que es parte del diseño y se afirma aparte.
 	const readingLinks = page.locator('cuentoneta-reading-suggestions').locator('a[href^="/read/"]');
 
-	// Control positivo: sin él, una lista vacía dejaría la exclusión de abajo cumpliéndose en vacío. Si
-	// esto falla, la curaduría pendiente es que el autor de la obra curada tenga otra obra publicada.
-	await expect(readingLinks.first()).toBeVisible();
+	// Control positivo: sin él, una lista vacía dejaría la exclusión de abajo cumpliéndose en vacío.
+	await expect(
+		readingLinks.first(),
+		'no hay sugerencias: la curaduría pendiente es que el autor de la obra curada tenga otra obra publicada',
+	).toBeVisible();
 
 	const destinations = await readingLinks.evaluateAll((links) => links.map((link) => link.getAttribute('href') ?? ''));
 	expect(
@@ -188,8 +204,6 @@ test('read — sin contexto, el pie sugiere más obras del autor', async ({ page
 // y la página los CONSUME. Entrar directo con la URL armada probaría la mitad de consumo, que el spec
 // unitario ya cubre.
 test('read — llegar desde una colección cambia la fuente de las sugerencias', async ({ page }) => {
-	// eslint-disable-next-line playwright/no-skipped-test -- la ausencia del fixture ya la reporta la guarda de arriba; repetirla acá sería el mismo fallo dos veces
-	test.skip(status !== 200 || !work, `"${ROUTE}" no responde 200 en el dataset`);
 	// eslint-disable-next-line playwright/no-skipped-test -- el catálogo sin la colección estable ya lo reportan los e2e de colección
 	test.skip(!stableCollection, `el catálogo no trae "${STABLE_SLUGS.collection}"`);
 
@@ -200,5 +214,5 @@ test('read — llegar desde una colección cambia la fuente de las sugerencias',
 	await page.getByTestId('literary-works').locator('a[href^="/read/"]').first().click();
 
 	await expect(page).toHaveURL(/navigation=collection/);
-	await settleSuggestions(page, new RegExp(`Más obras de ${stableCollection?.title}`));
+	await settleSuggestions(page, `Más obras de ${stableCollection?.title}`);
 });
