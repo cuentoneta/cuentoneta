@@ -65,20 +65,6 @@
 		El esqueleto se pinta con `@if`/`@else` planos y nunca dentro de un `@defer`: el recurso bloquea el
 		render del servidor, así que al serializar la obra ya está y el crawler recibe el cuerpo real.
 	-->
-	<cuentoneta-read-page-skeleton />
+	<cuentoneta-read-page-skeleton data-testid="read-page-skeleton" />
 	}
 </main>
-
-} @else if (notFound()) {
-<section class="mx-auto flex w-full max-w-3xl flex-col items-start gap-4 px-4 py-8">
-	<h1>No encontramos esta obra</h1>
-	<p>La obra que buscás no existe o ya no está disponible.</p>
-	<a [routerLink]="['/']" cuentoneta-button variant="outline">Volver al inicio</a>
-</section>
-} @else {
-<!--
-	El esqueleto se pinta con `@if`/`@else` planos y nunca dentro de un `@defer`: el recurso bloquea el
-	render del servidor, así que al serializar la obra ya está y el crawler recibe el cuerpo real.
--->
-<cuentoneta-read-page-skeleton data-testid="read-page-skeleton" />
-}
