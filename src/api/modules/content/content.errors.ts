@@ -21,3 +21,12 @@ export class RotatingContentNotFoundError extends Error {
 		this.name = 'RotatingContentNotFoundError';
 	}
 }
+
+// El contenido rotativo es otro documento, así que su curaduría rota merece su propio error: envuelto
+// en el de la landing, el mensaje diría que está mal la semana cuando la semana está bien.
+export class MalformedRotatingContentError extends Error {
+	constructor(options?: { cause?: unknown }) {
+		super('Rotating content is malformed', options);
+		this.name = 'MalformedRotatingContentError';
+	}
+}

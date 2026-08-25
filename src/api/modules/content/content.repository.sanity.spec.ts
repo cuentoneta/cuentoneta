@@ -8,7 +8,7 @@ import {
 } from '@mocks/onoff-raw-landing-page.mock';
 import { mapAuthorTeaser } from '../../_utils/functions';
 import { landingPageContentQuery, rotatingContentQuery } from '../../_queries/content.query';
-import { MalformedLandingPageError } from './content.errors';
+import { MalformedLandingPageError, MalformedRotatingContentError } from './content.errors';
 import { SanityContentRepository } from './content.repository.sanity';
 
 const LANDING_SLUG = onoffRawLandingPageMock.slug;
@@ -157,6 +157,32 @@ describe('SanityContentRepository.fetchLandingPageContent', () => {
 			MalformedLandingPageError,
 		);
 	});
+
+	// La proyección devuelve la lista vacía tanto para la obra sin autores como para la que los perdió,
+	// y la tarjeta de la home muestra al primero sin preguntar: sin este rechazo, una obra mal curada
+	// tumba el render de la página entera en vez de fallar donde se puede corregir.
+	it('rejects a highlighted work with no authors', async () => {
+		const [work, ...rest] = onoffRawLandingPageMock.latestLiteraryWorks;
+		const broken = { ...onoffRawLandingPageMock, latestLiteraryWorks: [{ ...work, authors: [] }, ...rest] };
+
+		await expect(repoReturning(broken).fetchLandingPageContent(LANDING_SLUG)).rejects.toThrow(
+			MalformedLandingPageError,
+		);
+	});
+
+	// El guard existe para nombrar la semana culpable; el error de la obra viaja como causa.
+	it('names the week in the error and keeps the offending work as its cause', async () => {
+		const [work, ...rest] = onoffRawLandingPageMock.latestLiteraryWorks;
+		const broken = { ...onoffRawLandingPageMock, latestLiteraryWorks: [{ ...work, authors: [] }, ...rest] };
+
+		const error = await repoReturning(broken)
+			.fetchLandingPageContent(LANDING_SLUG)
+			.then(() => undefined)
+			.catch((caught: MalformedLandingPageError) => caught);
+
+		expect(error?.message).toContain(LANDING_SLUG);
+		expect((error?.cause as Error).message).toContain(work.slug);
+	});
 });
 
 describe('SanityContentRepository highlighted authors', () => {
@@ -219,6 +245,52 @@ describe('SanityContentRepository.fetchRotatingContent', () => {
 
 	it('returns null when the singleton is not installed', async () => {
 		expect(await repoReturning(onoffRawLandingPageMock, null).fetchRotatingContent()).toBeNull();
+	});
+
+	// El documento rotativo no es una landing: envolverlo en el error de la landing diría que está mal
+	// la semana cuando la semana está bien.
+	it('reports a malformed rotating content with its own error', async () => {
+		const [work, ...rest] = onoffRawRotatingContentMock.mostReadLiteraryWorks;
+		const broken = { ...onoffRawRotatingContentMock, mostReadLiteraryWorks: [{ ...work, authors: [] }, ...rest] };
+
+		await expect(repoReturning(onoffRawLandingPageMock, broken).fetchRotatingContent()).rejects.toThrow(
+			MalformedRotatingContentError,
+		);
+	});
+});
+
+describe('SanityContentRepository.fetchLatestLandingPageReferences', () => {
+	const raw = {
+		_id: 'landing-page-1974-24',
+		_type: 'landingPage',
+		slug: '1974-24',
+		config: '1974-24',
+		campaigns: [{ _key: 'campaign-1', _type: 'reference', _ref: 'campaign-1' }],
+		cards: [],
+		latestReads: [],
+		collections: [{ _key: 'collection-1', _type: 'reference', _ref: 'collection-1' }],
+		latestLiteraryWorks: [],
+		highlightedAuthors: [],
+	};
+
+	// La semana nueva es un documento nuevo: si la identidad de la base viajara, el clon la pisaría.
+	it('drops the identity of the week it clones', async () => {
+		const references = await repoReturning(raw).fetchLatestLandingPageReferences('1974-24');
+
+		expect(references).not.toHaveProperty('_id');
+		expect(references).not.toHaveProperty('slug');
+		expect(references).not.toHaveProperty('config');
+	});
+
+	it('carries every reference list the clone needs', async () => {
+		const references = await repoReturning(raw).fetchLatestLandingPageReferences('1974-24');
+
+		expect(references?.campaigns).toEqual(raw.campaigns);
+		expect(references?.collections).toEqual(raw.collections);
+	});
+
+	it('returns null when there is no earlier week to clone', async () => {
+		expect(await repoReturning(null).fetchLatestLandingPageReferences('1974-24')).toBeNull();
 	});
 });
 
