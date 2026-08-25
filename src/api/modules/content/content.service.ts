@@ -58,18 +58,14 @@ export async function addNextWeeksLandingPageContent(
 
 	const notLoadedWeeks = slugs.filter((t) => !existingLandingPagesList.find((r) => r.config === t));
 
-	const landingPageObjects = notLoadedWeeks.map((weekYear) => {
-		const config = { ...latestLandingPageConfig };
-		delete (config as { _id?: string })._id;
-		return {
-			...config,
-			config: weekYear,
-			slug: {
-				_type: 'slug',
-				current: slugify(weekYear),
-			},
-		} as LandingPageCreatePayload;
-	});
+	const landingPageObjects: LandingPageCreatePayload[] = notLoadedWeeks.map((weekYear) => ({
+		...latestLandingPageConfig,
+		config: weekYear,
+		slug: {
+			_type: 'slug',
+			current: slugify(weekYear),
+		},
+	}));
 
 	return await repository.createLandingPages(landingPageObjects);
 }

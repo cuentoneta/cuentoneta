@@ -1,26 +1,24 @@
 import { addWeeks } from 'date-fns';
 import { buildWeekSlug } from '@utils/week-slug.utils';
 import { clearAllMocks, runOnlyPendingTimers, setSystemTime, useFakeTimers, useRealTimers } from '@test-utils';
-import type { LatestLandingPageReferencesQueryResult } from '@sanity-types';
 import type { LandingPageContent } from '@models/landing-page-content.model';
 import { LandingPageNotFoundError, RotatingContentNotFoundError } from './content.errors';
+import type { LandingPageReferences } from './content.repository';
 import { InMemoryContentRepository, type StoredLandingPage } from './content.repository.mock';
 import { addNextWeeksLandingPageContent, getLandingPageContent, getRotatingContent } from './content.service';
 
-// La base a clonar es una fila cruda de referencias, no dominio: el generador de semanas reapunta
-// referencias sin resolverlas.
-const latestReferences = {
-	_id: 'landing-page-current',
+// La base a clonar son las referencias de la última semana curada, sin resolver: el generador no lee
+// contenido, lo reapunta. No lleva identidad — descartarla es responsabilidad del adaptador, que es
+// donde el spec del repository la afirma.
+const latestReferences: LandingPageReferences = {
 	_type: 'landingPage',
-	slug: 'base',
-	config: 'base',
 	campaigns: [{ _key: 'campaign-1', _type: 'reference', _ref: 'campaign-1' }],
 	cards: [{ _key: 'card-1', _type: 'reference', _ref: 'card-1' }],
 	latestReads: [{ _key: 'story-1', _type: 'reference', _ref: 'story-1' }],
 	collections: [{ _key: 'collection-1', _type: 'reference', _ref: 'collection-1' }],
 	latestLiteraryWorks: [{ _key: 'work-1', _type: 'reference', _ref: 'work-1' }],
 	highlightedAuthors: [{ _key: 'highlighted-1', _type: 'reference', _ref: 'author-1' }],
-} as unknown as LatestLandingPageReferencesQueryResult;
+};
 
 function emptyLandingPageContent(config: string): LandingPageContent {
 	return {
@@ -137,16 +135,15 @@ describe('addNextWeeksLandingPageContent', () => {
 		expect(repository.createdLandingPages.map(({ config }) => config)).toContain(buildWeekSlug(new Date(2026, 5, 29)));
 	});
 
-	it('clones the base verbatim, without leaking its _id', async () => {
+	it('clones the base verbatim', async () => {
 		const repository = repositoryWith();
 
 		await addNextWeeksLandingPageContent(2, repository);
 
 		repository.createdLandingPages.forEach((created) => {
-			expect(created.campaigns).toEqual(latestReferences?.campaigns);
-			expect(created.cards).toEqual(latestReferences?.cards);
-			expect(created.latestReads).toEqual(latestReferences?.latestReads);
-			expect(created).not.toHaveProperty('_id');
+			expect(created.campaigns).toEqual(latestReferences.campaigns);
+			expect(created.cards).toEqual(latestReferences.cards);
+			expect(created.latestReads).toEqual(latestReferences.latestReads);
 		});
 	});
 
