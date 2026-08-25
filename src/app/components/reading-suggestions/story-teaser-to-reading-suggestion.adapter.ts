@@ -1,5 +1,5 @@
 import type { StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
-import type { LiteraryWorkNavigationTeaserWithAuthors } from '@models/literary-work.model';
+import type { LiteraryWorkNavigationTeaserWithAuthors, LiteraryWorkTeaser } from '@models/literary-work.model';
 import type { TextBlockContent } from '@models/block-content.model';
 import { createReadingTime } from '@models/reading-time.model';
 import { createSlug } from '@models/slug.model';
@@ -7,15 +7,21 @@ import { createSlug } from '@models/slug.model';
 type StoryTeaserView = StoryTeaser | StoryTeaserWithAuthor;
 
 /**
- * TODO(#2037): view model temporal — se elimina cuando existan los endpoints LiteraryWork nativos.
+ * TODO(#2037): view model temporal — se elimina cuando la tríada consuma `LiteraryWorkTeaser[]` puro.
  *
- * El extracto viaja aparte de la obra porque su forma no es la misma: una `LiteraryWork` lo sirve como
- * `SanitizedHtml` en su `excerpt`, mientras que una `Story` lo tiene en Portable Text. Sumarlo a
- * la proyección de obra la haría mentir sobre lo que transporta.
+ * El extracto viaja aparte de la obra porque su forma no es la misma en las dos fuentes: una
+ * `LiteraryWork` lo sirve como `SanitizedHtml` en su `excerpt`, mientras que una `Story` lo tiene en
+ * Portable Text. Con la fuente nativa los párrafos van vacíos y la tarjeta pinta el extracto propio.
  */
 export interface ReadingSuggestion {
-	readonly literaryWork: LiteraryWorkNavigationTeaserWithAuthors;
+	readonly literaryWork: LiteraryWorkTeaser | LiteraryWorkNavigationTeaserWithAuthors;
 	readonly excerptParagraphs: TextBlockContent[];
+}
+
+// El teaser nativo ya trae su extracto adentro, así que los párrafos sueltos van vacíos: quitar el
+// envoltorio entero es lo que retira el issue que elimina este archivo.
+export function toReadingSuggestion(literaryWork: LiteraryWorkTeaser): ReadingSuggestion {
+	return { literaryWork, excerptParagraphs: [] };
 }
 
 /**
