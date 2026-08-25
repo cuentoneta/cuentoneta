@@ -3,24 +3,19 @@ import { provideRouter } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { NEVER, of, throwError, type Observable } from 'rxjs';
 
-import type { LiteraryWork } from '@models/literary-work.model';
-import type { Storylist } from '@models/storylist.model';
-import type { StoryTeaser } from '@models/story.model';
+import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
 import {
 	onoffLiteraryWorksMock,
 	onoffLiteraryWorksWithMultipleMediaSources,
 	onoffLiteraryWorksWithoutMediaSources,
 	onoffLiteraryWorksWithSingleMediaSource,
 } from '@mocks/onoff-literary-works.mock';
+import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
 import { onoffCollectionsMock } from '@mocks/onoff-collections.mock';
-import { onoffStoryTeasersMock } from '@mocks/onoff-story-teasers.mock';
-import { storylistMock } from '@mocks/storylist.mock';
 
 import { provideLiteraryWorkApiMock } from '../../providers/literary-work.mock';
-import { provideStoryApiMock, StubStoryApi } from '../../providers/story.mock';
-import { provideStorylistApiMock } from '../../providers/storylist.mock';
-import type { LiteraryWorkApi } from '../../providers/literary-work.provider';
-import type { StorylistApi } from '../../providers/storylist.provider';
+import { provideCollectionApiMock, StubCollectionApi } from '../../providers/collection.mock';
+import type { LiteraryWorkApi, LiteraryWorkTeaserFilter } from '../../providers/literary-work.provider';
 import ReadPage from './read.page';
 
 // Los dos estados que no son una obra entran al control como una opción más, así que se alternan con
@@ -42,23 +37,13 @@ class CorpusLiteraryWorkApi implements LiteraryWorkApi {
 			? of(literaryWork)
 			: throwError(() => new HttpErrorResponse({ status: 404, statusText: 'Not Found' }));
 	}
-}
 
-// Extiende el doble ya existente y sobrescribe lo único que esta página consume: el resto de la
-// interfaz no interviene y no hay por qué volver a declararla.
-class CorpusStoryApi extends StubStoryApi {
-	public override getByAuthorSlug(): Observable<StoryTeaser[]> {
-		return of(onoffStoryTeasersMock);
-	}
-}
-
-// El corpus tiene una sola colección con su listado completo, así que la segunda se compone tomándole
-// el título y el slug al canon de colecciones: alcanza para distinguir a cuál se está mirando, que es
-// lo que el encabezado de las sugerencias anuncia.
-class CorpusStorylistApi implements StorylistApi {
-	public get(slug: string): Observable<Storylist> {
-		const collection = onoffCollectionsMock.find((candidate) => candidate.slug === slug);
-		return of({ ...storylistMock, slug, title: collection?.title ?? storylistMock.title });
+	public getTeasers(filter: LiteraryWorkTeaserFilter = {}): Observable<LiteraryWorkTeaser[]> {
+		return of(
+			filter.author
+				? onoffLiteraryWorkTeasersMock.filter(({ authors }) => authors.some(({ slug }) => slug === filter.author))
+				: [...onoffLiteraryWorkTeasersMock],
+		);
 	}
 }
 
@@ -87,8 +72,7 @@ const meta: Meta<ReadPageArgs> = {
 			providers: [
 				provideRouter([]),
 				provideLiteraryWorkApiMock(new CorpusLiteraryWorkApi()),
-				provideStoryApiMock(new CorpusStoryApi()),
-				provideStorylistApiMock(new CorpusStorylistApi()),
+				provideCollectionApiMock(new StubCollectionApi(onoffCollectionsMock)),
 			],
 		}),
 	],

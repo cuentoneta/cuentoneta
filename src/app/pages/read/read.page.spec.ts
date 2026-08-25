@@ -6,10 +6,10 @@ import { renderDeferBlocks } from '@testing/defer-blocks';
 // 3rd party modules
 import { render, screen, within } from '@testing-library/angular';
 import { restoreAllMocks, spyOn } from '@test-utils';
-import { Subject, throwError, type Observable } from 'rxjs';
+import { of, Subject, throwError, type Observable } from 'rxjs';
 
 // Models
-import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
+import { createLiteraryWork, type LiteraryWork, type LiteraryWorkTeaser } from '@models/literary-work.model';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';
 import { createMarkdown } from '@models/markdown.model';
 import { deriveSectionReadingTime } from '@models/reading-time.model';
@@ -25,9 +25,9 @@ import {
 	onoffLiteraryWorksWithSectionTitles,
 } from '@mocks/onoff-literary-works.mock';
 import { provideLiteraryWorkApiMock, StubLiteraryWorkApi } from '../../providers/literary-work.mock';
-import { storylistMock } from '@mocks/storylist.mock';
-import { provideStoryApiMock } from '../../providers/story.mock';
-import { provideStorylistApiMock } from '../../providers/storylist.mock';
+import { onoffCollectionsMock } from '@mocks/onoff-collections.mock';
+import { provideCollectionApiMock, StubCollectionApi } from '../../providers/collection.mock';
+import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
 import { provideRouter } from '@angular/router';
 import type { LiteraryWorkApi } from '../../providers/literary-work.provider';
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
@@ -41,6 +41,10 @@ class StubFailingLiteraryWorkApi implements LiteraryWorkApi {
 	public getBySlug(): Observable<LiteraryWork> {
 		return throwError(() => new HttpErrorResponse({ status: this.status, statusText: 'error' }));
 	}
+
+	public getTeasers(): Observable<LiteraryWorkTeaser[]> {
+		return throwError(() => new HttpErrorResponse({ status: this.status, statusText: 'error' }));
+	}
 }
 
 // Sustituye el timing del entorno, no el dato: el test decide cuándo llega la obra, que es lo único que
@@ -50,6 +54,12 @@ class ControllableLiteraryWorkApi implements LiteraryWorkApi {
 
 	public getBySlug(): Observable<LiteraryWork> {
 		return this.work.asObservable();
+	}
+
+	// El control es sobre la obra que se lee: las sugerencias del pie llegan resueltas del corpus,
+	// para que el estado intermedio que estos casos observan sea el de la obra y no el del bloque.
+	public getTeasers(): Observable<LiteraryWorkTeaser[]> {
+		return of([...onoffLiteraryWorkTeasersMock]);
 	}
 
 	public emit(literaryWork: LiteraryWork): void {
@@ -136,11 +146,8 @@ describe('ReadPage', () => {
 	) => {
 		return await render(ReadPage, {
 			providers: [
-				provideLiteraryWorkApiMock(options.api ?? new StubLiteraryWorkApi(literaryWork)),
-				// La tríada de sugerencias resuelve sus datos por su cuenta; esta página solo le pasa el
-				// contexto. Reapuntarla a los endpoints de LiteraryWork es trabajo de otro issue.
-				provideStoryApiMock(),
-				provideStorylistApiMock(),
+				provideLiteraryWorkApiMock(options.api ?? new StubLiteraryWorkApi(literaryWork, onoffLiteraryWorkTeasersMock)),
+				provideCollectionApiMock(new StubCollectionApi(onoffCollectionsMock)),
 				provideRouter([]),
 				...(options.responseInit ? [{ provide: RESPONSE_INIT, useValue: options.responseInit }] : []),
 			],
@@ -374,11 +381,13 @@ describe('ReadPage', () => {
 		// Las dos variantes encabezan con "Más obras de …", así que lo que distingue a cuál se eligió es
 		// el nombre: el de la colección o el del autor.
 		it('ofrece las de la colección cuando se entró desde una', async () => {
-			const { fixture } = await setup(work, { navigation: 'collection', navigationSlug: storylistMock.slug });
+			const { fixture } = await setup(work, { navigation: 'collection', navigationSlug: onoffCollectionsMock[0].slug });
 
 			await renderDeferBlocks(fixture);
 
-			expect(screen.getByRole('heading', { name: `Más obras de ${storylistMock.title}` })).toBeInTheDocument();
+			expect(
+				screen.getByRole('heading', { name: `Más obras de ${onoffCollectionsMock[0].title}` }),
+			).toBeInTheDocument();
 		});
 
 		it('ofrece las del autor cuando se entró desde su listado', async () => {
