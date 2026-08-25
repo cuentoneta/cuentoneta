@@ -42,6 +42,14 @@ describe('ContentService', () => {
 			campaigns: [{ _id: 'campaign-1' }, { _id: 'campaign-2' }],
 			cards: [{ _id: 'card-1' }],
 			latestReads: [{ _id: 'story-1' }, { _id: 'story-2' }],
+			highlightedAuthors: [
+				{
+					_key: 'highlighted-1',
+					_type: 'highlightedAuthor',
+					author: { _type: 'reference', _ref: 'author-1' },
+					additionalTags: [{ _key: 'tag-1', _type: 'reference', _ref: 'tag-1' }],
+				},
+			],
 		};
 
 		beforeEach(() => {
@@ -152,6 +160,27 @@ describe('ContentService', () => {
 			});
 		});
 
+		// Los destacados son el único contenido de la landing que se edita como objetos y no como
+		// referencias planas; si la rotación los dejara afuera se vaciarían solos cada semana, sin error.
+		it('should carry the highlighted authors over to every cloned week', async () => {
+			const weeksInTheFuture = 3;
+
+			(contentRepository.fetchLandingPagesList as Mock).mockResolvedValue([]);
+			(contentRepository.fetchLatestLandingPageReferences as Mock).mockResolvedValue(mockLandingPage);
+			(contentRepository.createLandingPages as Mock).mockResolvedValue([]);
+
+			await contentService.addNextWeeksLandingPageContent(weeksInTheFuture);
+
+			const createdObjects = (contentRepository.createLandingPages as Mock).mock.calls[0][0] as Array<
+				Record<string, unknown>
+			>;
+
+			expect(createdObjects).toHaveLength(weeksInTheFuture);
+			createdObjects.forEach((obj) => {
+				expect(obj.highlightedAuthors).toEqual(mockLandingPage.highlightedAuthors);
+			});
+		});
+
 		it('should return an empty array when all weeks already exist', async () => {
 			const weeksInTheFuture = 4;
 			const futureWeeks = Array.from({ length: weeksInTheFuture }, (_, index) => ({
@@ -212,6 +241,7 @@ describe('ContentService', () => {
 				expect(obj).toHaveProperty('campaigns');
 				expect(obj).toHaveProperty('cards');
 				expect(obj).toHaveProperty('latestReads');
+				expect(obj).toHaveProperty('highlightedAuthors');
 			});
 		});
 
