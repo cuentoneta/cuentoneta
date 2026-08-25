@@ -32,7 +32,7 @@ export function toAuthorDocument(raw: RawAuthor): Author {
 		// Se declaran acá y no se invierten del raw: todas las proyecciones que embeben un autor fijan
 		// `'tags': []`, así que el crudo no transporta ninguna. La proyección de destacados de la página
 		// de inicio es la primera que sí las dereferencia, y sin ellas esa rama quedaría muda en la
-		// fixture. Un tag literario y uno de género, que es la mezcla que el modelo derivado produce.
+		// fixture. La mezcla que el modelo derivado produce combina tipo literario y género.
 		tags: [tagReference(cuentoRawTag.slug), tagReference(dramaPsicologicoRawTag.slug)],
 	};
 }
