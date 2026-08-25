@@ -6,7 +6,7 @@ import { ButtonComponent } from '@components/button/button.component';
 import { DividerComponent } from '@components/divider/divider.component';
 import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 import { READING_SUGGESTIONS_COUNT } from './pick-reading-suggestions';
-import type { ReadingSuggestion } from './reading-suggestion.model';
+import type { LiteraryWorkTeaser } from '@models/literary-work.model';
 import type { NavigationParams } from '@app-utils/navigation-params';
 
 /**
@@ -43,11 +43,10 @@ import type { NavigationParams } from '@app-utils/navigation-params';
 							<!-- La etiqueta es el tipo literario de la obra. Que sea el primer tag es convención editorial del
 								 catálogo, no algo que el schema garantice: si el orden cambiara, cambiaría la etiqueta. -->
 							<cuentoneta-literary-work-card-teaser
-								[literaryWork]="suggestion?.literaryWork"
+								[literaryWork]="suggestion"
 								[navigationParams]="navigationParams()"
 								[showAuthor]="showAuthor()"
-								[tagLabel]="suggestion?.literaryWork?.tags?.[0]?.title"
-								[excerptParagraphs]="suggestion?.excerptParagraphs ?? []"
+								[tagLabel]="suggestion?.tags?.[0]?.title"
 								[showExcerpt]="true"
 								[excerptLines]="excerptLines()"
 								[showMultimedia]="true"
@@ -75,9 +74,7 @@ import type { NavigationParams } from '@app-utils/navigation-params';
 export class ReadingSuggestionsListComponent {
 	// Inputs
 	public readonly heading = input<string>('');
-	// TODO(#2037): el bloque transporta la obra y su extracto por separado porque el extracto viene de
-	// `Story` en Portable Text. Cuando la tríada consuma obras nativas, vuelve a ser `LiteraryWorkTeaser[]`.
-	public readonly teasers = input<readonly ReadingSuggestion[]>([]);
+	public readonly teasers = input<readonly LiteraryWorkTeaser[]>([]);
 	public readonly loading = input<boolean>(false);
 	public readonly moreLabel = input<string>('');
 	public readonly moreRoute = input<string | readonly string[]>();
@@ -95,7 +92,7 @@ export class ReadingSuggestionsListComponent {
 
 	// Sin obra, la tarjeta renderiza su propio esqueleto: el estado de carga es la misma lista con
 	// los slots vacíos.
-	protected readonly displayedTeasers = computed<readonly (ReadingSuggestion | undefined)[]>(() =>
+	protected readonly displayedTeasers = computed<readonly (LiteraryWorkTeaser | undefined)[]>(() =>
 		this.loading() ? this.loadingPlaceholders : this.teasers(),
 	);
 }

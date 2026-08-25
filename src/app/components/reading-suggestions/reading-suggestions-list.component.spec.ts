@@ -4,18 +4,18 @@ import { clearAllMocks } from '@test-utils';
 
 import { ReadingSuggestionsListComponent } from './reading-suggestions-list.component';
 import { READING_SUGGESTIONS_COUNT } from './pick-reading-suggestions';
-import { toReadingSuggestion, type ReadingSuggestion } from './reading-suggestion.model';
+import type { LiteraryWorkTeaser } from '@models/literary-work.model';
 import type { NavigationParams } from '@app-utils/navigation-params';
 import {
 	onoffLiteraryWorkTeasersMock,
 	onoffLiteraryWorkTeasersWithMediaSourcesMock,
 } from '@mocks/onoff-literary-work-teasers.mock';
 
-const teasers = onoffLiteraryWorkTeasersMock.slice(0, 3).map(toReadingSuggestion);
+const teasers = onoffLiteraryWorkTeasersMock.slice(0, 3);
 
 type ReadingSuggestionsInputs = Partial<{
 	heading: string;
-	teasers: readonly ReadingSuggestion[];
+	teasers: readonly LiteraryWorkTeaser[];
 	loading: boolean;
 	moreLabel: string;
 	moreRoute: string | readonly string[] | undefined;
@@ -44,7 +44,7 @@ describe('ReadingSuggestionsListComponent', () => {
 		// El separador va entre sugerencias, así que son siempre uno menos que las obras. Cubre a la vez
 		// el intercalado y que no quede uno colgando al final.
 		it.each([1, 2, 3, 5])('should draw one separator less than the %i suggestions', async (count) => {
-			await setup({ teasers: onoffLiteraryWorkTeasersMock.slice(0, count).map(toReadingSuggestion) });
+			await setup({ teasers: onoffLiteraryWorkTeasersMock.slice(0, count) });
 
 			expect(screen.queryAllByTestId('suggestion-separator')).toHaveLength(count - 1);
 		});
@@ -75,8 +75,8 @@ describe('ReadingSuggestionsListComponent', () => {
 	it('should render one card per suggestion', async () => {
 		await setup();
 
-		for (const { literaryWork } of teasers) {
-			expect(screen.getByRole('link', { name: literaryWork.title })).toBeInTheDocument();
+		for (const teaser of teasers) {
+			expect(screen.getByRole('link', { name: teaser.title })).toBeInTheDocument();
 		}
 	});
 
@@ -106,7 +106,7 @@ describe('ReadingSuggestionsListComponent', () => {
 		await setup({ loading: true });
 
 		expect(screen.getAllByTestId('skeleton')).toHaveLength(3);
-		expect(screen.queryByRole('link', { name: teasers[0].literaryWork.title })).not.toBeInTheDocument();
+		expect(screen.queryByRole('link', { name: teasers[0].title })).not.toBeInTheDocument();
 	});
 
 	it('should hide the heading and the listing link while loading', async () => {
@@ -160,13 +160,13 @@ describe('ReadingSuggestionsListComponent', () => {
 	it('should label each suggestion with the literary type its corpus entry carries', async () => {
 		await setup();
 
-		for (const { literaryWork } of teasers) {
-			expect(screen.getAllByText(literaryWork.tags[0].title).length).toBeGreaterThan(0);
+		for (const teaser of teasers) {
+			expect(screen.getAllByText(teaser.tags[0].title).length).toBeGreaterThan(0);
 		}
 	});
 
 	it('should expose the multimedia of each suggestion', async () => {
-		await setup({ teasers: onoffLiteraryWorkTeasersWithMediaSourcesMock.slice(0, 3).map(toReadingSuggestion) });
+		await setup({ teasers: onoffLiteraryWorkTeasersWithMediaSourcesMock.slice(0, 3) });
 
 		expect(screen.getAllByTestId('media')).toHaveLength(3);
 	});
