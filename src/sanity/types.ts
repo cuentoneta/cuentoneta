@@ -50,6 +50,13 @@ export type StoryReference = {
 	[internalGroqTypeReferenceTo]?: 'story';
 };
 
+export type LiteraryWorkReference = {
+	_ref: string;
+	_type: 'reference';
+	_weak?: boolean;
+	[internalGroqTypeReferenceTo]?: 'literaryWork';
+};
+
 export type RotatingContent = {
 	_id: string;
 	_type: 'rotatingContent';
@@ -61,6 +68,11 @@ export type RotatingContent = {
 		{
 			_key: string;
 		} & StoryReference
+	>;
+	mostReadLiteraryWorks?: Array<
+		{
+			_key: string;
+		} & LiteraryWorkReference
 	>;
 };
 
@@ -385,13 +397,6 @@ export type Nationality = {
 	};
 };
 
-export type LiteraryWorkReference = {
-	_ref: string;
-	_type: 'reference';
-	_weak?: boolean;
-	[internalGroqTypeReferenceTo]?: 'literaryWork';
-};
-
 export type Collection = {
 	_id: string;
 	_type: 'collection';
@@ -589,6 +594,13 @@ export type StorylistReference = {
 	[internalGroqTypeReferenceTo]?: 'storylist';
 };
 
+export type CollectionReference = {
+	_ref: string;
+	_type: 'reference';
+	_weak?: boolean;
+	[internalGroqTypeReferenceTo]?: 'collection';
+};
+
 export type LandingPage = {
 	_id: string;
 	_type: 'landingPage';
@@ -611,6 +623,16 @@ export type LandingPage = {
 		{
 			_key: string;
 		} & StoryReference
+	>;
+	collections?: Array<
+		{
+			_key: string;
+		} & CollectionReference
+	>;
+	latestLiteraryWorks?: Array<
+		{
+			_key: string;
+		} & LiteraryWorkReference
 	>;
 };
 
@@ -757,6 +779,7 @@ export type AllSanitySchemaTypes =
 	| SanityImageAssetReference
 	| HostAvatar
 	| StoryReference
+	| LiteraryWorkReference
 	| RotatingContent
 	| Tag
 	| Slug
@@ -773,12 +796,12 @@ export type AllSanitySchemaTypes =
 	| NationalityReference
 	| Author
 	| Nationality
-	| LiteraryWorkReference
 	| Collection
 	| Storylist
 	| ContentCampaign
 	| ContentCampaignReference
 	| StorylistReference
+	| CollectionReference
 	| LandingPage
 	| Resource
 	| ResourceType

@@ -2,7 +2,7 @@
 	"extends": "./tsconfig.json",
 	"include": ["src/**/*.ts"],
 	"compilerOptions": {
-		"types": ["jest", "node"]
+		"types": ["vitest/globals", "node"]
 	},
-	"exclude": ["jest.config.ts", "src/**/*.test.ts", "src/**/*.spec.ts", "**/*.stories.ts", "**/*.stories.js"]
+	"exclude": ["src/**/*.test.ts", "src/**/*.spec.ts", "**/*.stories.ts", "**/*.stories.js"]
 }

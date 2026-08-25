@@ -85,6 +85,7 @@ export class HeaderComponent {
 	protected readonly navLinks: InternalLink[] = [
 		{ label: 'Inicio', path: `/${AppRoutes.Home}` },
 		{ label: 'Obras', path: `/${AppRoutes.Story}` },
+		{ label: 'Colecciones', path: `/${AppRoutes.Collection}` },
 		{ label: 'Autores', path: `/${AppRoutes.Authors}` },
 		{ label: 'Nosotros', path: `/${AppRoutes.About}` },
 	];

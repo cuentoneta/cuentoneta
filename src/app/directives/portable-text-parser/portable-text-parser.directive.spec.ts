@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { type ComponentFixture, TestBed } from '@angular/core/testing';
 import { Component, signal } from '@angular/core';
 import { storyMock } from '@mocks/story.mock';
 import { storylistMock } from '@mocks/storylist.mock';
@@ -20,16 +20,16 @@ class TestComponent {
 
 describe('PortableTextDirective', () => {
 	let component: TestComponent;
-	let fixture: ComponentFixture<TestComponent>;
+	const fixture = (): ComponentFixture<TestComponent> => TestBed.getLastFixture<TestComponent>();
 
 	beforeEach(async () => {
 		await TestBed.configureTestingModule({
 			imports: [TestComponent, PortableTextDirective],
 		}).compileComponents();
 
-		fixture = TestBed.createComponent(TestComponent);
-		component = fixture.componentInstance;
-		fixture.detectChanges();
+		TestBed.createComponent(TestComponent);
+		component = fixture().componentInstance;
+		fixture().detectChanges();
 	});
 
 	it('should create', () => {
@@ -39,18 +39,18 @@ describe('PortableTextDirective', () => {
 	describe('story content formatting', () => {
 		it('should format story title in bold and italics', () => {
 			component.content.set(storyMock.summary);
-			fixture.detectChanges();
+			fixture().detectChanges();
 
-			const container = fixture.nativeElement.querySelector('article');
+			const container = fixture().nativeElement.querySelector('article');
 			const boldItalicElement = container.querySelector('b i');
 			expect(boldItalicElement?.textContent).toBe('El espejo del tiempo');
 		});
 
 		it('should format book collection title in italics', () => {
 			component.content.set(storyMock.summary);
-			fixture.detectChanges();
+			fixture().detectChanges();
 
-			const container = fixture.nativeElement.querySelector('article') as HTMLElement;
+			const container = fixture().nativeElement.querySelector('article') as HTMLElement;
 			const italicElements = container.querySelectorAll('i');
 			const collectionTitle = Array.from(italicElements).some((el) => el.textContent === 'Ecos del Silencio');
 			expect(collectionTitle).toBeTruthy();
@@ -77,9 +77,9 @@ describe('PortableTextDirective', () => {
 
 		it('should format links correctly', () => {
 			component.content.set(markedUpBlock);
-			fixture.detectChanges();
+			fixture().detectChanges();
 
-			const container = fixture.nativeElement.querySelector('article');
+			const container = fixture().nativeElement.querySelector('article');
 			const link = container.querySelector('a');
 
 			expect(link).toBeTruthy();
@@ -90,9 +90,9 @@ describe('PortableTextDirective', () => {
 
 		it('should format show title in italics', () => {
 			component.content.set(markedUpBlock);
-			fixture.detectChanges();
+			fixture().detectChanges();
 
-			const container = fixture.nativeElement.querySelector('article') as HTMLElement;
+			const container = fixture().nativeElement.querySelector('article') as HTMLElement;
 			const italicElements = container.querySelectorAll('i');
 			const showTitle = Array.from(italicElements).some((el) => el.textContent === 'Le Ble Chateau');
 			expect(showTitle).toBeTruthy();
@@ -115,9 +115,9 @@ describe('PortableTextDirective', () => {
 					_key: '',
 				},
 			]);
-			fixture.detectChanges();
+			fixture().detectChanges();
 
-			const container = fixture.nativeElement.querySelector('article');
+			const container = fixture().nativeElement.querySelector('article');
 			expect(container.querySelectorAll('br').length).toEqual(2);
 		});
 	});
@@ -140,9 +140,9 @@ describe('PortableTextDirective', () => {
 			};
 			component.content.set([paragraph]);
 			component.classes.set('');
-			fixture.detectChanges();
+			fixture().detectChanges();
 
-			const target = fixture.nativeElement.querySelector('p') as HTMLElement;
+			const target = fixture().nativeElement.querySelector('p') as HTMLElement;
 			expect(target).toHaveClass(expectedClass);
 		});
 
@@ -156,9 +156,9 @@ describe('PortableTextDirective', () => {
 			};
 			component.content.set([paragraph]);
 			component.classes.set('');
-			fixture.detectChanges();
+			fixture().detectChanges();
 
-			const target = fixture.nativeElement.querySelector('p') as HTMLElement;
+			const target = fixture().nativeElement.querySelector('p') as HTMLElement;
 			expect(target.className).toBe('');
 		});
 	});
@@ -166,9 +166,9 @@ describe('PortableTextDirective', () => {
 	describe('class handling', () => {
 		it('should apply custom classes', () => {
 			component.classes.set('custom-class test-class');
-			fixture.detectChanges();
+			fixture().detectChanges();
 
-			const container = fixture.nativeElement.querySelector('article') as HTMLElement;
+			const container = fixture().nativeElement.querySelector('article') as HTMLElement;
 			const classes = container.querySelectorAll('p');
 
 			classes.forEach((el) => {
@@ -179,9 +179,9 @@ describe('PortableTextDirective', () => {
 
 		it('should handle class updates', () => {
 			component.classes.set('initial-class');
-			fixture.detectChanges();
+			fixture().detectChanges();
 
-			const container = fixture.nativeElement.querySelector('article') as HTMLElement;
+			const container = fixture().nativeElement.querySelector('article') as HTMLElement;
 			const classes = container.querySelectorAll('p');
 
 			classes.forEach((el) => {
@@ -189,7 +189,7 @@ describe('PortableTextDirective', () => {
 			});
 
 			component.classes.set('updated-class');
-			fixture.detectChanges();
+			fixture().detectChanges();
 
 			classes.forEach((el) => {
 				expect(el).not.toHaveClass('initial-class');
@@ -201,15 +201,15 @@ describe('PortableTextDirective', () => {
 	describe('content updates', () => {
 		it('should update content when signal changes', () => {
 			component.content.set(storyMock.summary);
-			fixture.detectChanges();
+			fixture().detectChanges();
 
-			let container = fixture.nativeElement.querySelector('article');
+			let container = fixture().nativeElement.querySelector('article');
 			expect(container).toHaveTextContent('El espejo del tiempo');
 
 			component.content.set(storylistMock.description);
-			fixture.detectChanges();
+			fixture().detectChanges();
 
-			container = fixture.nativeElement.querySelector('article');
+			container = fixture().nativeElement.querySelector('article');
 			expect(container).not.toHaveTextContent('El espejo del tiempo');
 		});
 	});

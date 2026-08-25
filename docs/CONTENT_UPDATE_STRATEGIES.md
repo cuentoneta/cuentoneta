@@ -27,7 +27,7 @@ La aplicación implementa un patrón centralizado llamado **`rotatingContent`** 
 
 Actualmente, este documento almacena:
 
-- **Historias más leídas** (`mostRead`) - Ranking actualizado automáticamente de manera diaria.
+- **Lo más leído** - Ranking actualizado automáticamente de manera diaria. Vive hoy en `mostRead`, que referencia historias y está en baja; su reemplazo es `mostReadLiteraryWorks`, ya declarado en el schema y todavía sin escritor.
 
 Las funcionalidades relacionadas a contenido rotativo están y deben de ser implementadas a nivel de servidor, a fin de ejecutar procedimientos en intervalos de tiempo dados, regulares o esporádicos, para garantizar que el contenido mostrado en la plataforma esté actualizado y sea coherente con la hoja de ruta de contenido del proyecto.
 
@@ -39,7 +39,11 @@ Las funcionalidades relacionadas a contenido rotativo están y deben de ser impl
 
 Las **historias más leídas** son un ejemplo de contenido dentro del patrón de **contenido rotativo**. Actualmente, mediante el uso de la [Data Export API de Microsoft Clarity](https://learn.microsoft.com/en-us/clarity/setup-and-installation/clarity-data-export-api), el sistema mantiene un registro de las historias más leídas por los usuarios de La Cuentoneta, tomando una referencia de las historias más leídas en los últimos tres días.
 
-De manera diaria se ejecuta un cron job, definido en `vercel.json` para su ejecución a las 03:30 am (GMT -3), que se encarga, partiendo de esas listas, de alojar en el campo `mostRead` del documento singleton `rotatingContent`, las correspondientes referencias de estas historias, a partir de los documentos `story` de Sanity.
+De manera diaria se ejecuta un cron job, definido en `vercel.json` para su ejecución a las 03:30 am (GMT -3), que se encarga, partiendo de esas listas, de alojar en el documento singleton `rotatingContent` las referencias correspondientes.
+
+Hoy escribe en `mostRead`, con referencias a documentos `story`.
+
+> **Pendiente del cambio de contrato.** El destino pasará a ser `mostReadLiteraryWorks`, con referencias a `literaryWork`, y el conteo de páginas populares tendrá que contemplar los dos prefijos de URL mientras las dos rutas de lectura convivan: leer uno solo dejaría afuera la mitad del tráfico y subestimaría la lista. Nada de eso está implementado todavía.
 
 ### Ubicación en el Código
 
@@ -55,13 +59,16 @@ El documento singleton `rotatingContent` en Sanity almacena la información de c
 {
   _id: "rotatingContent",
   _type: "rotatingContent",
-  mostRead: Array<StoryReference>  // Historias más leídas (actual)
+  mostReadLiteraryWorks: Array<LiteraryWorkReference>,  // Obras más leídas (vigente)
+  mostRead: Array<StoryReference>                       // Historias más leídas (en baja)
 }
 ```
 
+> **Convivencia de campos.** `mostReadLiteraryWorks` reemplaza a `mostRead` y por un tiempo los dos coexisten. El campo nuevo no reusa el nombre del viejo porque el Studio y la aplicación no despliegan a la vez: reusarlo dejaría una ventana en la que un lado lee lo que el otro todavía no escribe. El campo en baja se retira cuando ningún lector lo consulte.
+
 ### Estructura Extensible del Documento
 
-El documento `rotatingContent` está diseñado para ser **extensible**. La estructura actual solo incluye `mostRead`, pero puede extenderse con nuevos campos sin romper la funcionalidad existente.
+El documento `rotatingContent` está diseñado para ser **extensible**. La estructura actual solo incluye lo más leído, pero puede extenderse con nuevos campos sin romper la funcionalidad existente.
 
 **Ejemplos de campos que podrían agregarse en el futuro:**
 
@@ -69,7 +76,7 @@ El documento `rotatingContent` está diseñado para ser **extensible**. La estru
 {
   _id: "rotatingContent",
   _type: "rotatingContent",
-  mostRead: Array<StoryReference>,           // Historias más leídas (actual)
+  mostReadLiteraryWorks: Array<LiteraryWorkReference>,  // Obras más leídas (vigente)
 
   // Potenciales campos futuros:
   // trending: Array<StoryReference>,       // Historias trending
@@ -111,11 +118,15 @@ Este proceso garantiza que:
     _type: "slug",
     current: "2025-46"
   },
-  campaigns: Array<CampaignReference>,     // Campañas a mostrar
-  cards: Array<CardReference>,             // Tarjetas de contenido
-  latestReads: Array<StoryReference>       // Historias destacadas
+  campaigns: Array<CampaignReference>,               // Campañas a mostrar
+  collections: Array<CollectionReference>,           // Colecciones con tarjetas (vigente)
+  latestLiteraryWorks: Array<LiteraryWorkReference>, // Obras destacadas (vigente)
+  cards: Array<StorylistReference>,                  // Tarjetas de contenido (en baja)
+  latestReads: Array<StoryReference>                 // Historias destacadas (en baja)
 }
 ```
+
+> **Convivencia de campos.** `collections` y `latestLiteraryWorks` reemplazan a `cards` y `latestReads`, por el mismo motivo que en `rotatingContent`. Los cuatro coexisten hasta que se retiren los dos primeros.
 
 ### Nomenclatura de Slugs
 

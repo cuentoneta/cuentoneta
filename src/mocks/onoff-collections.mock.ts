@@ -121,3 +121,28 @@ export const inventarioDeLasPasionesCollectionTeaserMock: CollectionTeaser = toT
 );
 
 export const onoffCollectionTeasersMock: CollectionTeaser[] = onoffCollectionsMock.map(toTeaser);
+
+// Los teasers extra se derivan del primero del canon y pasan uno a uno por la factory del teaser:
+// el agregado está congelado, así que armarlos por spread saltearía las invariantes que esa
+// factory existe para hacer cumplir.
+//
+// TODO(#2333): tomar colecciones reales del corpus en vez de repetir una.
+// Al salir todos del mismo canónico comparten portada, prosa, etiqueta y conteo de obras, y sólo se
+// distinguen por un título correlativo. Una grilla así se ve homogénea de un modo que ningún catálogo
+// real es: no muestra portadas dispares, ni descripciones de largo distinto, ni el recorte del título.
+export function onoffCollectionTeasersOfLength(count: number): CollectionTeaser[] {
+	const [base] = onoffCollectionTeasersMock;
+	return Array.from({ length: count }, (_, index) =>
+		createCollectionTeaser({
+			_id: `${base._id}-${index + 1}`,
+			slug: `${base.slug}-${index + 1}`,
+			title: `Colección ${index + 1}`,
+			description: base.description,
+			imagery: base.imagery,
+			tags: base.tags,
+			config: base.config,
+			mediaSources: base.mediaSources,
+			count: base.count,
+		}),
+	);
+}

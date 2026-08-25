@@ -46,6 +46,20 @@ export const descriptionlessRawCollection: RawCollection = {
 	description: '',
 };
 
+// El canon no ejercita el caso: hace falta un escenario cuyo Markdown traiga enlaces para poder
+// afirmar qué hace cada vista con ellos.
+const linkedDescriptionMd = 'Una colección con [un enlace propio](https://www.cuentoneta.ar/about) en la prosa.';
+
+export const linkedDescriptionRawCollection: RawCollection = {
+	...geometriasDelDesveloRawCollection,
+	description: linkedDescriptionMd,
+};
+
+export const linkedDescriptionRawCollectionTeasers: CollectionsQueryResult = generatedTeasers.map((teaser) => ({
+	...teaser,
+	description: linkedDescriptionMd,
+}));
+
 export const sectionlessWorkRawCollection: RawCollection = {
 	...geometriasDelDesveloRawCollection,
 	literaryWorks: geometriasDelDesveloRawCollection.literaryWorks.map((work, index) =>
