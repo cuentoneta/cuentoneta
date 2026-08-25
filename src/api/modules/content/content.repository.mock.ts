@@ -1,6 +1,13 @@
 import type { LandingPageContent, RotatingContent } from '@models/landing-page-content.model';
-import type { LandingPageListQueryResult, LatestLandingPageReferencesQueryResult } from '@sanity-types';
-import type { ContentRepository, KeyedReference, LandingPageCreatePayload } from './content.repository';
+import type { LiteraryWorkNavigationTeaserWithAuthors } from '@models/literary-work.model';
+import { RotatingContentNotFoundError } from './content.errors';
+import type {
+	ContentRepository,
+	KeyedReference,
+	LandingPageCreatePayload,
+	LandingPageReferences,
+	LandingPageSummary,
+} from './content.repository';
 
 // La semana es la clave de búsqueda y no vive dentro del dominio —la landing no transporta su slug—,
 // así que el almacenamiento la lleva al lado.
@@ -12,7 +19,10 @@ export interface StoredLandingPage {
 interface InMemoryContentOptions {
 	readonly landingPages?: readonly StoredLandingPage[];
 	readonly rotatingContent?: RotatingContent | null;
-	readonly latestReferences?: LatestLandingPageReferencesQueryResult;
+	readonly latestReferences?: LandingPageReferences | null;
+	// El catálogo contra el que se resuelven las referencias que se escriben. Sustituye al content lake:
+	// sin él, el doble solo podría reapuntar el slot a obras que ya estaban en el slot.
+	readonly literaryWorks?: readonly LiteraryWorkNavigationTeaserWithAuthors[];
 }
 
 // Fake de almacenamiento: sustituye el content lake por listas en memoria, con la misma semántica de
@@ -20,7 +30,8 @@ interface InMemoryContentOptions {
 // sobre lo escrito en vez de sobre la llamada.
 export class InMemoryContentRepository implements ContentRepository {
 	private readonly landingPages: readonly StoredLandingPage[];
-	private readonly latestReferences: LatestLandingPageReferencesQueryResult;
+	private readonly latestReferences: LandingPageReferences | null;
+	private readonly literaryWorks: readonly LiteraryWorkNavigationTeaserWithAuthors[];
 	private rotatingContent: RotatingContent | null;
 
 	public readonly createdLandingPages: LandingPageCreatePayload[] = [];
@@ -29,6 +40,7 @@ export class InMemoryContentRepository implements ContentRepository {
 		this.landingPages = options.landingPages ?? [];
 		this.rotatingContent = options.rotatingContent ?? null;
 		this.latestReferences = options.latestReferences ?? null;
+		this.literaryWorks = options.literaryWorks ?? [];
 	}
 
 	public async fetchLandingPageContent(slug: string): Promise<LandingPageContent | null> {
@@ -39,13 +51,13 @@ export class InMemoryContentRepository implements ContentRepository {
 		return this.rotatingContent;
 	}
 
-	public async fetchLandingPagesList(slugs: string[]): Promise<LandingPageListQueryResult> {
+	public async fetchLandingPagesList(slugs: string[]): Promise<readonly LandingPageSummary[]> {
 		return this.landingPages
 			.filter((landingPage) => slugs.includes(landingPage.slug))
 			.map(({ slug, content }) => ({ _id: content._id, slug, config: content.config }));
 	}
 
-	public async fetchLatestLandingPageReferences(): Promise<LatestLandingPageReferencesQueryResult> {
+	public async fetchLatestLandingPageReferences(): Promise<LandingPageReferences | null> {
 		return this.latestReferences;
 	}
 
@@ -58,12 +70,17 @@ export class InMemoryContentRepository implements ContentRepository {
 	// lectura vea lo escrito, y eso es lo que el spec tiene que poder afirmar. Las obras se resuelven
 	// contra las que ya conoce el almacenamiento; una referencia a una obra desconocida no vuelve, igual
 	// que una referencia colgada no resuelve en el content lake.
+	//
+	// Sin el singleton **lanza**, igual que el adaptador real: `patch()` sobre un documento inexistente
+	// falla en el content lake, y un doble que retornara en silencio dejaría pasar en verde a un cron
+	// que en producción se cae.
 	public async updateMostReadLiteraryWorks(references: readonly KeyedReference[]): Promise<void> {
 		if (!this.rotatingContent) {
-			return;
+			throw new RotatingContentNotFoundError();
 		}
 		const known = new Map(
 			[
+				...this.literaryWorks,
 				...this.rotatingContent.mostRead,
 				...this.landingPages.flatMap(({ content }) => [...content.mostRead, ...content.latestReads]),
 			].map((work) => [work._id, work] as const),

@@ -30,13 +30,16 @@ export class InMemoryLiteraryWorkRepository implements LiteraryWorkRepository {
 
 	// Resuelve contra las obras y los teasers cargados: un spec que solo pobló una de las dos listas
 	// igual encuentra lo que pidió, y una obra presente en ambas se cuenta una sola vez.
+	//
+	// **Devuelve en orden de almacenamiento, no en el de la consulta**, que es lo que hace la query real:
+	// filtra por pertenencia y entrega en orden de documento. Un doble que respetara el orden pedido
+	// haría pasar en verde a cualquier llamador que dependa de un orden que Sanity no promete.
 	public async fetchIdsBySlugs(slugs: readonly string[]): Promise<readonly LiteraryWorkIdentity[]> {
-		const known = new Map<string, string>();
+		const requested = new Set(slugs);
+		const stored = new Map<string, string>();
 		for (const { slug, _id } of [...this.literaryWorks, ...this.teasers]) {
-			known.set(slug, _id);
+			stored.set(slug, _id);
 		}
-		return slugs
-			.map((slug) => ({ slug, _id: known.get(slug) }))
-			.filter((identity): identity is LiteraryWorkIdentity => identity._id !== undefined);
+		return [...stored].filter(([slug]) => requested.has(slug)).map(([slug, _id]) => ({ _id, slug }));
 	}
 }

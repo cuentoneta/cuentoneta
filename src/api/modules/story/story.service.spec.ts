@@ -10,6 +10,7 @@ import {
 } from '@mocks/onoff-literary-work-teasers.mock';
 import { environment } from '../../_helpers/environment';
 import { fetchClarityData } from '../../_helpers/clarity-connector';
+import { RotatingContentNotFoundError } from '../content/content.errors';
 import { InMemoryContentRepository } from '../content/content.repository.mock';
 import { InMemoryLiteraryWorkRepository } from '../literary-work/literary-work.repository.mock';
 
@@ -77,7 +78,10 @@ describe('updateMostReadStories', () => {
 	}
 
 	function repositories() {
-		const content = new InMemoryContentRepository({ rotatingContent });
+		const content = new InMemoryContentRepository({
+			rotatingContent,
+			literaryWorks: onoffLiteraryWorkNavigationTeasersWithAuthorsMock,
+		});
 		// El doble de obras resuelve por slug: las obras del canon comparten slug entre su vista de
 		// navegación y su agregado, que es exactamente la coincidencia que el cron explota.
 		const literaryWork = new InMemoryLiteraryWorkRepository([], onoffLiteraryWorkTeasersMock);
@@ -128,5 +132,73 @@ describe('updateMostReadStories', () => {
 		const { content, literaryWork } = repositories();
 
 		await expect(storyService.updateMostReadStories(content, literaryWork)).rejects.toThrow('Could not fetch metrics.');
+	});
+
+	// La lista es un ranking: el orden lo define Clarity, y la query que resuelve los identificadores
+	// filtra por pertenencia y devuelve en orden de documento. Se pide al revés del orden de
+	// almacenamiento justamente para que una implementación que no reordene no pueda pasar.
+	it('preserves the ranking order of the metrics, not the storage order', async () => {
+		const ranked = [...onoffLiteraryWorkNavigationTeasersWithAuthorsMock].reverse().slice(0, 3);
+		(fetchClarityData as Mock).mockResolvedValue(
+			popularPages(...ranked.map(({ slug }) => `${environment.basePath}/read/${slug}`)),
+		);
+		const { content, literaryWork } = repositories();
+
+		const result = await storyService.updateMostReadStories(content, literaryWork);
+
+		expect(result.mostRead.map(({ slug }) => slug)).toEqual(ranked.map(({ slug }) => slug));
+	});
+
+	// Clarity reporta la URL visitada, no el slug. Sin normalizar, la obra con tráfico de campaña —la
+	// que más se leyó— es justamente la que desaparece del ranking.
+	it.each([
+		['querystring', (url: string) => `${url}?utm_source=newsletter`],
+		['ancla', (url: string) => `${url}#final`],
+		['barra final', (url: string) => `${url}/`],
+	])('deriva el slug de una URL con %s', async (_label, decorate) => {
+		(fetchClarityData as Mock).mockResolvedValue(popularPages(decorate(`${environment.basePath}/read/${first.slug}`)));
+		const { content, literaryWork } = repositories();
+
+		const result = await storyService.updateMostReadStories(content, literaryWork);
+
+		expect(result.mostRead.map(({ slug }) => slug)).toEqual([first.slug]);
+	});
+
+	it('deduplicates a work reached through decorated and clean URLs alike', async () => {
+		(fetchClarityData as Mock).mockResolvedValue(
+			popularPages(
+				`${environment.basePath}/story/${first.slug}?utm_source=x`,
+				`${environment.basePath}/read/${first.slug}`,
+			),
+		);
+		const { content, literaryWork } = repositories();
+
+		const result = await storyService.updateMostReadStories(content, literaryWork);
+
+		expect(result.mostRead.map(({ slug }) => slug)).toEqual([first.slug]);
+	});
+
+	// La landing dereferencia cada referencia escrita con su proyección completa en cada request, así
+	// que un ranking sin tope se paga en cada visita a la home.
+	it('acota el ranking a lo que la home consume', async () => {
+		const everyWork = onoffLiteraryWorkNavigationTeasersWithAuthorsMock;
+		(fetchClarityData as Mock).mockResolvedValue(
+			popularPages(...everyWork.map(({ slug }) => `${environment.basePath}/read/${slug}`)),
+		);
+		const { content, literaryWork } = repositories();
+
+		const result = await storyService.updateMostReadStories(content, literaryWork);
+
+		expect(everyWork.length).toBeGreaterThan(6);
+		expect(result.mostRead).toHaveLength(6);
+	});
+
+	it('falla cuando el contenido rotativo no está instalado', async () => {
+		(fetchClarityData as Mock).mockResolvedValue(popularPages(`${environment.basePath}/read/${first.slug}`));
+		const literaryWork = new InMemoryLiteraryWorkRepository([], onoffLiteraryWorkTeasersMock);
+
+		await expect(storyService.updateMostReadStories(new InMemoryContentRepository(), literaryWork)).rejects.toThrow(
+			RotatingContentNotFoundError,
+		);
 	});
 });
