@@ -73,6 +73,6 @@ export class AuthorCardTeaserComponent {
 
 	// Inputs
 	public readonly author = input.required<AuthorTeaser>();
-	public readonly tags = input<Tag[]>([]);
+	public readonly tags = input<readonly Tag[]>([]);
 	public readonly storyCount = input<number>();
 }

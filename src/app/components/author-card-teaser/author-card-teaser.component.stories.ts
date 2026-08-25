@@ -33,7 +33,7 @@ const meta: Meta<AuthorCardTeaserComponent> = {
 		tags: {
 			control: { type: 'object' },
 			description: 'Tags asociados al autor',
-			table: { type: { summary: 'Tag[]' }, defaultValue: { summary: '[]' } },
+			table: { type: { summary: 'readonly Tag[]' }, defaultValue: { summary: '[]' } },
 		},
 		storyCount: {
 			control: { type: 'number' },
