@@ -26,6 +26,14 @@
 		<cuentoneta-most-read-stories-card-deck [stories]="mostRead()" class="flex flex-col gap-8" />
 	</section>
 
+	<!--
+        Sin altura fijada, a diferencia de las secciones de arriba: la rama de carga de la sección dibuja
+        un esqueleto por slot en la misma grilla que la rama real, así que el alto ya queda reservado.
+    -->
+	<section class="mb-8">
+		<cuentoneta-highlighted-authors [authors]="highlightedAuthors()" />
+	</section>
+
 	<section class="mb-8">
 		<cuentoneta-storylist-teasers-deck [teasers]="collections()" class="flex flex-col gap-8" />
 	</section>
