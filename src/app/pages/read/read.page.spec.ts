@@ -6,7 +6,7 @@ import { renderDeferBlocks } from '@testing/defer-blocks';
 // 3rd party modules
 import { render, screen, within } from '@testing-library/angular';
 import { restoreAllMocks, spyOn } from '@test-utils';
-import { throwError, type Observable } from 'rxjs';
+import { Subject, throwError, type Observable } from 'rxjs';
 
 // Models
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
@@ -40,6 +40,20 @@ class StubFailingLiteraryWorkApi implements LiteraryWorkApi {
 
 	public getBySlug(): Observable<LiteraryWork> {
 		return throwError(() => new HttpErrorResponse({ status: this.status, statusText: 'error' }));
+	}
+}
+
+// Sustituye el timing del entorno, no el dato: el test decide cuándo llega la obra, que es lo único que
+// permite observar el estado intermedio. Los stubs emiten sincrónico y el skeleton nunca alcanza a verse.
+class ControllableLiteraryWorkApi implements LiteraryWorkApi {
+	private readonly work = new Subject<LiteraryWork>();
+
+	public getBySlug(): Observable<LiteraryWork> {
+		return this.work.asObservable();
+	}
+
+	public emit(literaryWork: LiteraryWork): void {
+		this.work.next(literaryWork);
 	}
 }
 
@@ -139,6 +153,25 @@ describe('ReadPage', () => {
 	};
 
 	afterEach(() => restoreAllMocks());
+
+	// Afirma la promesa del comentario de la plantilla —el esqueleto se pinta con `@if`/`@else` planos—
+	// que hasta acá ningún test sostenía: quitarlo no rompía nada.
+	describe('estado de carga', () => {
+		it('muestra el esqueleto de página hasta que la obra llega, y el contenido después', async () => {
+			const api = new ControllableLiteraryWorkApi();
+			await setup(representativeLiteraryWork, { api });
+
+			// Control positivo doble: el esqueleto está y el contenido todavía no. Sin la segunda mitad, un
+			// esqueleto que conviviera con el contenido pasaría igual.
+			expect(screen.getByTestId('read-page-skeleton')).toBeTruthy();
+			expect(screen.queryByRole('heading', { level: 1 })).toBeNull();
+
+			api.emit(representativeLiteraryWork);
+
+			expect(await screen.findByRole('heading', { level: 1, name: representativeLiteraryWork.title })).toBeTruthy();
+			expect(screen.queryByTestId('read-page-skeleton')).toBeNull();
+		});
+	});
 
 	// Test de aceptación del criterio principal de LiteraryWork: una obra de una sola sección ofrece al lector
 	// las mismas affordances que la página Story (story.component.html) — título como encabezado
