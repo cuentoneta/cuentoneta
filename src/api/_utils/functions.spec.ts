@@ -15,6 +15,7 @@ import {
 import { elOdioRawTeaser, onoffRawNavTeasersMock } from '@mocks/onoff-raw-stories.mock';
 import { rawOnoffAuthor, rawOnoffAuthorTeaser } from '@mocks/onoff-raw-author.mock';
 import {
+	divergentDuplicateRawHighlightedAuthor,
 	onoffRawContentCampaignsMock,
 	onoffRawHighlightedAuthorsMock,
 	onoffRawLandingPageMock,
@@ -280,6 +281,20 @@ describe('mapHighlightedAuthors (ACL)', () => {
 		const slugs = mapHighlightedAuthors([canonical])[0].tags.map(({ slug }) => slug);
 
 		expect(slugs).toEqual([...new Set(slugs)]);
+	});
+
+	// El descarte tiene que quedarse con la etiqueta de la semana, no con la del autor: es la que da
+	// contexto a la tirada, y el epic contempla que las dos difieran en algo más que el slug.
+	it('keeps the tag of the week, not the derived one, when both carry the same slug', () => {
+		const entry = divergentDuplicateRawHighlightedAuthor;
+		const [weekly] = entry.additionalTags;
+		const derived = entry.author.tags.find((tag) => tag.slug === weekly.slug);
+
+		expect(derived?.title).not.toBe(weekly.title);
+
+		const survivor = mapHighlightedAuthors([entry])[0].tags.find((tag) => tag.slug === weekly.slug);
+
+		expect(survivor?.title).toBe(weekly.title);
 	});
 
 	it('keeps the first six entries when the document carries more', () => {

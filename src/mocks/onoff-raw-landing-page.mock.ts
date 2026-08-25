@@ -21,6 +21,21 @@ export const overflowingRawHighlightedAuthors: RawHighlightedAuthor[] = Array.fr
 	return { ...canonical, author: { ...canonical.author, _id: `${canonical.author._id}-${index}` } };
 });
 
+// El canon repite un slug entre las dos fuentes, pero con el mismo contenido, así que no distingue
+// cuál de las dos sobrevive al descarte. Acá la derivada difiere en el título para que sí lo haga.
+export const divergentDuplicateRawHighlightedAuthor: RawHighlightedAuthor = (() => {
+	const canonical = onoffRawHighlightedAuthorsMock[0];
+	const [shared] = canonical.additionalTags;
+
+	return {
+		...canonical,
+		author: {
+			...canonical.author,
+			tags: canonical.author.tags.map((tag) => (tag.slug === shared.slug ? { ...tag, title: 'Título derivado' } : tag)),
+		},
+	};
+})();
+
 export const untaggedRawHighlightedAuthor: RawHighlightedAuthor = {
 	...onoffRawHighlightedAuthorsMock[0],
 	additionalTags: [],

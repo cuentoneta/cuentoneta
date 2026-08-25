@@ -13,7 +13,7 @@ import { createImageUrlBuilder, SanityImageSource } from '@sanity/image-url';
 // Modelos
 import { Author, AuthorProfile, AuthorTeaser } from '@models/author.model';
 import { ContentCampaign, viewportElementSizes } from '@models/content-campaign.model';
-import { HighlightedAuthor, LandingPageContent, RotatingContent } from '@models/landing-page-content.model';
+import type { HighlightedAuthor, LandingPageContent, RotatingContent } from '@models/landing-page-content.model';
 import { StorylistTeaser } from '@models/storylist.model';
 import { Resource } from '@models/resource.model';
 import { Story, StoryNavigationTeaserWithAuthor, StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
@@ -184,7 +184,9 @@ type TagsSubQuery =
 	| NonNullable<StorylistTeasersQueryResult>[0]['tags']
 	| NonNullable<LiteraryWorkBySlugQueryResult>['tags']
 	| NonNullable<CollectionBySlugQueryResult>['tags']
-	| NonNullable<CollectionBySlugQueryResult>['literaryWorks'][number]['tags'];
+	| NonNullable<CollectionBySlugQueryResult>['literaryWorks'][number]['tags']
+	| HighlightedAuthorsSubQuery[number]['additionalTags']
+	| HighlightedAuthorsSubQuery[number]['author']['tags'];
 export function mapTags(tags: TagsSubQuery): Tag[] {
 	return tags.map((tag) => ({
 		title: tag.title,
@@ -298,13 +300,13 @@ export function mapLandingPageContent(
 	};
 }
 
-// El Studio limita la carga a seis entradas, pero esa regla gobierna la edición y no lo ya guardado:
-// una migración o un backfill pueden dejar más. El recorte acá es una salvaguarda, no la regla.
-const HIGHLIGHTED_AUTHORS_LIMIT = 6;
-
 type HighlightedAuthorsSubQuery = NonNullable<LandingPageContentQueryResult>['highlightedAuthors'];
 export function mapHighlightedAuthors(highlightedAuthors: HighlightedAuthorsSubQuery): HighlightedAuthor[] {
-	return highlightedAuthors.slice(0, HIGHLIGHTED_AUTHORS_LIMIT).map((entry) => ({
+	// El Studio limita la carga a seis entradas, pero esa regla gobierna la edición y no lo ya guardado:
+	// una migración o un backfill pueden dejar más. El recorte acá es una salvaguarda, no la regla.
+	const limit = 6;
+
+	return highlightedAuthors.slice(0, limit).map((entry) => ({
 		author: mapAuthorTeaser(entry.author),
 		tags: dedupeTagsBySlug([...mapTags(entry.additionalTags), ...mapTags(entry.author.tags)]),
 		storyCount: entry.storyCount,
@@ -312,8 +314,18 @@ export function mapHighlightedAuthors(highlightedAuthors: HighlightedAuthorsSubQ
 }
 
 // Las puntuales de la semana encabezan la lista, así que ante una repetida gana la primera aparición.
+// Reconstruir con un `Map` no serviría: conservaría esa posición pero con el valor de la última, que
+// es la derivada.
 function dedupeTagsBySlug(tags: Tag[]): Tag[] {
-	return [...new Map(tags.map((tag) => [tag.slug, tag])).values()];
+	const seen = new Set<string>();
+
+	return tags.filter((tag) => {
+		if (seen.has(tag.slug)) {
+			return false;
+		}
+		seen.add(tag.slug);
+		return true;
+	});
 }
 
 type ContentCampaignsSubQuery = NonNullable<LandingPageContentQueryResult>['campaigns'];
