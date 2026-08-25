@@ -6,7 +6,7 @@ import { ButtonComponent } from '@components/button/button.component';
 import { DividerComponent } from '@components/divider/divider.component';
 import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 import { READING_SUGGESTIONS_COUNT } from './pick-reading-suggestions';
-import type { ReadingSuggestion } from './story-teaser-to-reading-suggestion.adapter';
+import type { ReadingSuggestion } from './reading-suggestion.model';
 import type { NavigationParams } from '@app-utils/navigation-params';
 
 /**

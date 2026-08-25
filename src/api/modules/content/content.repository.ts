@@ -39,16 +39,19 @@ export async function fetchRotatingContent(): Promise<RotatingContent> {
 	return { ...result, mostRead: mapStoryNavigationTeaserWithAuthor(result.mostRead) };
 }
 
-export async function createLandingPages(
-	landingPageObjects: Array<{
-		_type: string;
-		config: string;
-		slug: { _type: string; current: string };
-		campaigns: Array<{ _key: string; _type: string; _ref: string }>;
-		cards: Array<{ _key: string; _type: string; _ref: string }>;
-		latestReads: Array<{ _key: string; _type: string; _ref: string }>;
-	}>,
-) {
+type KeyedReference = { _key: string; _type: 'reference'; _ref: string };
+
+type LandingPageCreatePayload = {
+	_type: string;
+	config: string;
+	slug: { _type: string; current: string };
+	campaigns: KeyedReference[];
+	cards: KeyedReference[];
+	latestReads: KeyedReference[];
+	highlightedAuthors: KeyedReference[];
+};
+
+export async function createLandingPages(landingPageObjects: LandingPageCreatePayload[]) {
 	return Promise.all(landingPageObjects.map((object) => client.create(object)));
 }
 

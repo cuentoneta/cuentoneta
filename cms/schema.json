@@ -170,6 +170,36 @@
 		}
 	},
 	{
+		"type": "type",
+		"name": "literaryWork.reference",
+		"value": {
+			"type": "object",
+			"attributes": {
+				"_ref": {
+					"type": "objectAttribute",
+					"value": {
+						"type": "string"
+					}
+				},
+				"_type": {
+					"type": "objectAttribute",
+					"value": {
+						"type": "string",
+						"value": "reference"
+					}
+				},
+				"_weak": {
+					"type": "objectAttribute",
+					"value": {
+						"type": "boolean"
+					},
+					"optional": true
+				}
+			},
+			"dereferencesTo": "literaryWork"
+		}
+	},
+	{
 		"name": "rotatingContent",
 		"type": "document",
 		"attributes": {
@@ -228,6 +258,28 @@
 						"rest": {
 							"type": "inline",
 							"name": "story.reference"
+						}
+					}
+				},
+				"optional": true
+			},
+			"mostReadLiteraryWorks": {
+				"type": "objectAttribute",
+				"value": {
+					"type": "array",
+					"of": {
+						"type": "object",
+						"attributes": {
+							"_key": {
+								"type": "objectAttribute",
+								"value": {
+									"type": "string"
+								}
+							}
+						},
+						"rest": {
+							"type": "inline",
+							"name": "literaryWork.reference"
 						}
 					}
 				},
@@ -2230,36 +2282,6 @@
 		}
 	},
 	{
-		"type": "type",
-		"name": "literaryWork.reference",
-		"value": {
-			"type": "object",
-			"attributes": {
-				"_ref": {
-					"type": "objectAttribute",
-					"value": {
-						"type": "string"
-					}
-				},
-				"_type": {
-					"type": "objectAttribute",
-					"value": {
-						"type": "string",
-						"value": "reference"
-					}
-				},
-				"_weak": {
-					"type": "objectAttribute",
-					"value": {
-						"type": "boolean"
-					},
-					"optional": true
-				}
-			},
-			"dereferencesTo": "literaryWork"
-		}
-	},
-	{
 		"name": "collection",
 		"type": "document",
 		"attributes": {
@@ -3428,6 +3450,36 @@
 		}
 	},
 	{
+		"type": "type",
+		"name": "collection.reference",
+		"value": {
+			"type": "object",
+			"attributes": {
+				"_ref": {
+					"type": "objectAttribute",
+					"value": {
+						"type": "string"
+					}
+				},
+				"_type": {
+					"type": "objectAttribute",
+					"value": {
+						"type": "string",
+						"value": "reference"
+					}
+				},
+				"_weak": {
+					"type": "objectAttribute",
+					"value": {
+						"type": "boolean"
+					},
+					"optional": true
+				}
+			},
+			"dereferencesTo": "collection"
+		}
+	},
+	{
 		"name": "landingPage",
 		"type": "document",
 		"attributes": {
@@ -3538,6 +3590,72 @@
 						"rest": {
 							"type": "inline",
 							"name": "story.reference"
+						}
+					}
+				},
+				"optional": true
+			},
+			"collections": {
+				"type": "objectAttribute",
+				"value": {
+					"type": "array",
+					"of": {
+						"type": "object",
+						"attributes": {
+							"_key": {
+								"type": "objectAttribute",
+								"value": {
+									"type": "string"
+								}
+							}
+						},
+						"rest": {
+							"type": "inline",
+							"name": "collection.reference"
+						}
+					}
+				},
+				"optional": true
+			},
+			"latestLiteraryWorks": {
+				"type": "objectAttribute",
+				"value": {
+					"type": "array",
+					"of": {
+						"type": "object",
+						"attributes": {
+							"_key": {
+								"type": "objectAttribute",
+								"value": {
+									"type": "string"
+								}
+							}
+						},
+						"rest": {
+							"type": "inline",
+							"name": "literaryWork.reference"
+						}
+					}
+				},
+				"optional": true
+			},
+			"highlightedAuthors": {
+				"type": "objectAttribute",
+				"value": {
+					"type": "array",
+					"of": {
+						"type": "object",
+						"attributes": {
+							"_key": {
+								"type": "objectAttribute",
+								"value": {
+									"type": "string"
+								}
+							}
+						},
+						"rest": {
+							"type": "inline",
+							"name": "author.reference"
 						}
 					}
 				},

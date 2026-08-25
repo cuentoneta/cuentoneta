@@ -13,7 +13,7 @@ import { createImageUrlBuilder, SanityImageSource } from '@sanity/image-url';
 // Modelos
 import { Author, AuthorProfile, AuthorTeaser } from '@models/author.model';
 import { ContentCampaign, viewportElementSizes } from '@models/content-campaign.model';
-import { LandingPageContent, RotatingContent } from '@models/landing-page-content.model';
+import type { HighlightedAuthor, LandingPageContent, RotatingContent } from '@models/landing-page-content.model';
 import { StorylistTeaser } from '@models/storylist.model';
 import { Resource } from '@models/resource.model';
 import { Story, StoryNavigationTeaserWithAuthor, StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
@@ -85,8 +85,13 @@ type AuthorTeaserForStoriesSubQuery = NonNullable<StorylistQueryResult>['stories
 type AuthorTeaserForListSubQuery = UnwrapArray<AuthorsQueryResult>;
 type AuthorTeaserForCollectionSubQuery =
 	NonNullable<CollectionBySlugQueryResult>['literaryWorks'][number]['authors'][number];
+type AuthorTeaserForHighlightSubQuery = HighlightedAuthorsSubQuery[number]['author'];
 export function mapAuthorTeaser(
-	rawAuthorData: AuthorTeaserForStoriesSubQuery | AuthorTeaserForListSubQuery | AuthorTeaserForCollectionSubQuery,
+	rawAuthorData:
+		| AuthorTeaserForStoriesSubQuery
+		| AuthorTeaserForListSubQuery
+		| AuthorTeaserForCollectionSubQuery
+		| AuthorTeaserForHighlightSubQuery,
 ): AuthorTeaser {
 	return {
 		_id: rawAuthorData._id,
@@ -179,7 +184,8 @@ type TagsSubQuery =
 	| NonNullable<StorylistTeasersQueryResult>[0]['tags']
 	| NonNullable<LiteraryWorkBySlugQueryResult>['tags']
 	| NonNullable<CollectionBySlugQueryResult>['tags']
-	| NonNullable<CollectionBySlugQueryResult>['literaryWorks'][number]['tags'];
+	| NonNullable<CollectionBySlugQueryResult>['literaryWorks'][number]['tags']
+	| HighlightedAuthorsSubQuery[number]['tags'];
 export function mapTags(tags: TagsSubQuery): Tag[] {
 	return tags.map((tag) => ({
 		title: tag.title,
@@ -289,7 +295,23 @@ export function mapLandingPageContent(
 		campaigns: mapContentCampaigns(result.campaigns),
 		mostRead: result.mostRead,
 		latestReads: mapStoryNavigationTeaserWithAuthor(result.latestReads),
+		highlightedAuthors: mapHighlightedAuthors(result.highlightedAuthors),
 	};
+}
+
+type HighlightedAuthorsSubQuery = NonNullable<LandingPageContentQueryResult>['highlightedAuthors'];
+export function mapHighlightedAuthors(highlightedAuthors: HighlightedAuthorsSubQuery): HighlightedAuthor[] {
+	// El Studio limita la carga a seis entradas, pero esa regla gobierna la edición y no lo ya guardado:
+	// una migración o un backfill pueden dejar más. El recorte acá es una salvaguarda, no la regla.
+	const limit = 6;
+
+	return highlightedAuthors.slice(0, limit).map((entry) => ({
+		author: mapAuthorTeaser(entry.author),
+		// El teaser entrega su lista vacía en toda vista del repositorio, así que las etiquetas del
+		// destacado se mapean acá aunque salgan del mismo autor.
+		tags: mapTags(entry.tags),
+		storyCount: entry.storyCount,
+	}));
 }
 
 type ContentCampaignsSubQuery = NonNullable<LandingPageContentQueryResult>['campaigns'];

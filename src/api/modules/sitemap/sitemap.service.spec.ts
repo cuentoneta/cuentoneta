@@ -75,11 +75,12 @@ describe('SitemapService', () => {
 				storylists: [],
 			});
 
-			const urls = await getSitemapUrls();
-
-			expect(urls).toContainEqual({ loc: 'https://test.cuentoneta.ar' });
-			expect(urls).toContainEqual({ loc: 'https://test.cuentoneta.ar/about' });
-			expect(urls).toContainEqual({ loc: 'https://test.cuentoneta.ar/dmca' });
+			expect(await getSitemapUrls()).toEqual([
+				{ loc: 'https://test.cuentoneta.ar' },
+				{ loc: 'https://test.cuentoneta.ar/about' },
+				{ loc: 'https://test.cuentoneta.ar/dmca' },
+				{ loc: 'https://test.cuentoneta.ar/collection' },
+			]);
 		});
 
 		it('should include story URLs', async () => {
@@ -163,10 +164,12 @@ describe('SitemapService', () => {
 				storylists: entries('coleccion'),
 			});
 
-			const urls = await getSitemapUrls();
+			const locations = (await getSitemapUrls()).map(({ loc }) => loc);
 
-			expect(urls).toHaveLength(3 + 3 * 3);
-			expect(new Set(urls.map(({ loc }) => loc)).size).toBe(urls.length);
+			for (const segment of ['story', 'author', 'storylist']) {
+				expect(locations.filter((location) => location.includes(`/${segment}/`))).toHaveLength(3);
+			}
+			expect(new Set(locations).size).toBe(locations.length);
 		});
 	});
 

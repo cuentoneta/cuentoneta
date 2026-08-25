@@ -73,6 +73,19 @@ describe('CollectionPage', () => {
 			);
 		});
 
+		// Sin los query params, la página de lectura no sabe desde dónde se llegó y cae a sugerir por
+		// autor: el contexto de colección sólo existe si la tarjeta lo emite.
+		it('should link each work carrying the collection as navigation context', async () => {
+			await renderPage(showingAuthors);
+
+			const [firstWork] = showingAuthors.literaryWorks;
+			const link = screen.getByRole('link', { name: firstWork.title });
+
+			expect(link.getAttribute('href')).toBe(
+				`/read/${firstWork.slug}?navigation=collection&navigationSlug=${showingAuthors.slug}`,
+			);
+		});
+
 		it('should render the information panel of the collection', async () => {
 			await renderPage(showingAuthors);
 

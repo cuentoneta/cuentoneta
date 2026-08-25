@@ -1,8 +1,14 @@
 import * as z from 'zod/mini';
 import type { Author, AuthorTeaser } from './author.model';
+import type { LiteraryWorkTeaser } from './literary-work.model';
 import type { Media, MediaTeaser } from './media.model';
 import type { Resource } from './resource.model';
 import type { Tag } from './tag.model';
+import { createLiteraryWorkExcerpt } from './literary-work-excerpt.model';
+import { createReadingTime } from './reading-time.model';
+import { createSanitizedHtml } from './sanitized-html.model';
+import { createSectionTitle } from './section-title.model';
+import { createSlug } from './slug.model';
 
 // Los tipos de dominio anémicos anidados (Author/Tag/Media/Resource) se validan como opacos: se
 // verifica que cada elemento sea un objeto, pero no su estructura interna — su contrato de wire
@@ -63,8 +69,22 @@ export const literaryWorkTeaserDtoSchema = z.object({
 	excerpt: literaryWorkExcerptDtoSchema,
 });
 
+export const literaryWorkTeaserListDtoSchema = z.array(literaryWorkTeaserDtoSchema);
+
 export type LiteraryWorkEpigraphDto = z.infer<typeof literaryWorkEpigraphDtoSchema>;
 export type LiteraryWorkTeaserDto = z.infer<typeof literaryWorkTeaserDtoSchema>;
 export type LiteraryWorkSectionDto = z.infer<typeof literaryWorkSectionDtoSchema>;
 export type LiteraryWorkExcerptDto = z.infer<typeof literaryWorkExcerptDtoSchema>;
 export type LiteraryWorkDto = z.infer<typeof literaryWorkDtoSchema>;
+
+export function toLiteraryWorkTeaser(dto: LiteraryWorkTeaserDto): LiteraryWorkTeaser {
+	return {
+		...dto,
+		slug: createSlug(dto.slug),
+		totalReadingTime: createReadingTime(dto.totalReadingTime),
+		excerpt: createLiteraryWorkExcerpt({
+			title: dto.excerpt.title ? createSectionTitle(dto.excerpt.title.value) : undefined,
+			bodyHtml: createSanitizedHtml(dto.excerpt.bodyHtml),
+		}),
+	};
+}

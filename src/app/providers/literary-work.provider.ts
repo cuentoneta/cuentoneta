@@ -14,11 +14,26 @@ import { createSectionTitle } from '@models/section-title.model';
 import { createReadingTime } from '@models/reading-time.model';
 import { createSanitizedHtml } from '@models/sanitized-html.model';
 import { createIsoDateTime } from '@utils/date.utils';
-import { literaryWorkDtoSchema, type LiteraryWorkDto, type LiteraryWorkSectionDto } from '@models/literary-work.dto';
+import {
+	literaryWorkDtoSchema,
+	literaryWorkTeaserListDtoSchema,
+	toLiteraryWorkTeaser,
+	type LiteraryWorkDto,
+	type LiteraryWorkTeaserDto,
+	type LiteraryWorkSectionDto,
+} from '@models/literary-work.dto';
+import type { LiteraryWorkTeaser } from '@models/literary-work.model';
 import { ApiUrl, Endpoints } from './endpoints';
+
+// Espeja el contrato del endpoint: el filtrado del catálogo va por query params, así que acá es un
+// registro de campos opcionales — un criterio nuevo suma un campo, no un método.
+export interface LiteraryWorkTeaserFilter {
+	readonly author?: string;
+}
 
 export interface LiteraryWorkApi {
 	getBySlug(slug: string): Observable<LiteraryWork>;
+	getTeasers(filter?: LiteraryWorkTeaserFilter): Observable<LiteraryWorkTeaser[]>;
 }
 
 @Service()
@@ -28,8 +43,14 @@ export class HttpLiteraryWorkApi implements LiteraryWorkApi {
 
 	public getBySlug(slug: string): Observable<LiteraryWork> {
 		return this.http
-			.get<unknown>(`${this.url}/${slug}`)
+			.get<LiteraryWorkDto>(`${this.url}/${slug}`)
 			.pipe(map((response) => this.toLiteraryWork(literaryWorkDtoSchema.parse(response))));
+	}
+
+	public getTeasers(filter: LiteraryWorkTeaserFilter = {}): Observable<LiteraryWorkTeaser[]> {
+		return this.http
+			.get<LiteraryWorkTeaserDto[]>(this.url, { params: filter.author ? { author: filter.author } : {} })
+			.pipe(map((response) => literaryWorkTeaserListDtoSchema.parse(response).map(toLiteraryWorkTeaser)));
 	}
 
 	private toSection(dto: LiteraryWorkSectionDto): LiteraryWorkSection {

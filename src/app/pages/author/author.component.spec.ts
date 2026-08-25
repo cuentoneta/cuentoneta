@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { render, screen, within } from '@testing-library/angular';
 import AuthorComponent from './author.component';
@@ -9,16 +9,15 @@ import { withoutUrl } from '@testing/resource-without-url';
 
 describe.skip('AuthorComponent', () => {
 	let component: AuthorComponent;
-	let fixture: ComponentFixture<AuthorComponent>;
 
 	beforeEach(async () => {
 		await TestBed.configureTestingModule({
 			imports: [AuthorComponent],
 		}).compileComponents();
 
-		fixture = TestBed.createComponent(AuthorComponent);
-		component = fixture.componentInstance;
-		fixture.detectChanges();
+		TestBed.createComponent(AuthorComponent);
+		component = TestBed.getLastFixture<AuthorComponent>().componentInstance;
+		TestBed.getLastFixture<AuthorComponent>().detectChanges();
 	});
 
 	it('should create', () => {

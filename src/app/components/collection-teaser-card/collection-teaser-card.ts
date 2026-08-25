@@ -17,45 +17,51 @@ import { CollectionCoverComponent } from '../collection-cover/collection-cover.c
 	imports: [RouterLink, CollectionCoverComponent],
 
 	template: `
-		<article>
+		<article class="relative flex items-start gap-5">
 			@if (collection(); as collection) {
-				<a [routerLink]="['/' + appRoutes.Collection, collection.slug]" class="flex items-start gap-5">
-					<section class="flex h-48 items-end justify-center overflow-hidden rounded-xl bg-neutral-100 px-3 sm:flex-1">
-						<cuentoneta-collection-cover [imagery]="collection.imagery" />
-					</section>
-					<section class="flex flex-1 flex-col gap-1 overflow-hidden">
-						<header
-							class="hover:text-interactive-500 line-clamp-2 cursor-pointer font-inter text-lg leading-6 font-bold"
+				<section class="flex h-48 items-end justify-center overflow-hidden rounded-xl bg-neutral-100 px-3 sm:flex-1">
+					<cuentoneta-collection-cover [imagery]="collection.imagery" />
+				</section>
+				<section class="flex flex-1 flex-col gap-1 overflow-hidden">
+					<!-- TODO(#2271): al montar el deck en la home el nivel deja de ser el
+					  correcto, porque ahí las tarjetas cuelgan del encabezado de sección
+					  propio del deck. -->
+					<h2 class="line-clamp-2 font-inter text-lg leading-6 font-bold text-neutral-900">
+						<a
+							[routerLink]="['/' + appRoutes.Collection, collection.slug]"
+							class="hover:text-interactive-500 after:absolute after:inset-0 after:content-['']"
 						>
 							{{ collection.title }}
-						</header>
-						<div
-							[innerHTML]="safeDescription()"
-							class="line-clamp-4 font-inter text-sm text-ellipsis text-neutral-700"
-							data-testid="description"
-						></div>
-						<footer class="flex flex-col gap-1 font-inter text-xs text-neutral-600 sm:flex-row">
-							@if (collection.tags[0]) {
-								<span class="font-inter text-xs font-bold text-brand-500"> {{ collection.tags[0].title }} </span>
-								<span class="hidden sm:inline">•</span>
-							}
-							<span>{{ collection.count }} {{ collection.count === 1 ? 'obra' : 'obras' }}</span>
-						</footer>
-					</section>
-				</a>
+						</a>
+					</h2>
+					<div
+						[innerHTML]="safeDescription()"
+						class="line-clamp-4 font-inter text-sm text-ellipsis text-neutral-700"
+						data-testid="description"
+					></div>
+					<footer class="flex flex-col gap-1 font-inter text-xs text-neutral-600 sm:flex-row">
+						@if (collection.tags[0]; as tag) {
+							<span class="font-inter text-xs font-bold text-brand-500">
+								{{ tag.title }}
+								@if (collection.tags.length > 1) {
+									+{{ collection.tags.length - 1 }}
+								}
+							</span>
+							<span class="hidden sm:inline">•</span>
+						}
+						<span>{{ collection.count }} {{ collection.count === 1 ? 'obra' : 'obras' }}</span>
+					</footer>
+				</section>
 			}
 		</article>
 	`,
 })
 export class CollectionTeaserCard {
-	public readonly collection = input<CollectionTeaser>();
 	protected readonly appRoutes = AppRoutes;
-
 	private readonly sanitizer = inject(DomSanitizer);
 
-	// El backend entrega la descripción ya saneada por el pipeline compartido, y el brand del tipo es la
-	// prueba de que pasó por ahí. Sin el bypass, el sanitizer de Angular vuelve a recortar una marcación
-	// que ya está acotada a la allow-list, y el énfasis de la prosa se pierde.
+	public readonly collection = input<CollectionTeaser>();
+
 	protected readonly safeDescription = computed(() => {
 		const collection = this.collection();
 		return collection ? this.sanitizer.bypassSecurityTrustHtml(collection.description) : undefined;

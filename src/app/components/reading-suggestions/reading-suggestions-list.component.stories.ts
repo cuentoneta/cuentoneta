@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/angular-vite';
 import { ReadingSuggestionsListComponent } from './reading-suggestions-list.component';
 import { corpusLiteraryWorkTeasers } from '@mocks/onoff-corpus.storybook';
 import type { NavigationContext } from '@app-utils/navigation-params';
-import type { ReadingSuggestion } from './story-teaser-to-reading-suggestion.adapter';
+import type { ReadingSuggestion } from './reading-suggestion.model';
 
 const meta: Meta<ReadingSuggestionsListComponent> = {
 	component: ReadingSuggestionsListComponent,

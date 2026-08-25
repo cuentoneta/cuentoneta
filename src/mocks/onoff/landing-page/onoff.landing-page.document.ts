@@ -1,5 +1,6 @@
 import type { LandingPage } from '@sanity-types';
-import { documentSystemFields, slugField } from '../document/sanity-document.factory';
+import { documentReference, documentSystemFields, slugField } from '../document/sanity-document.factory';
+import { onoffAuthorDocument } from '../author/author.document.projection';
 import { coleccionCompletaContentCampaignDocument } from './coleccion-completa-onoff.content-campaign.document';
 import { palacioNueveFronterasContentCampaignDocument } from './el-palacio-de-las-nueve-fronteras.content-campaign.document';
 
@@ -10,6 +11,7 @@ const week = '1974-24';
 
 // Sin `cards` ni `latestReads` a propósito: referencian agregados que el corpus no modela como documentos,
 // y la guarda del generador aborta ante una referencia colgada. El porqué, en el README del corpus.
+// `highlightedAuthors` sí entra: el autor que referencia existe como documento del dataset.
 export const onoffLandingPageDocument: LandingPage = {
 	...documentSystemFields(`onoff-landing-page-${week}`),
 	_type: 'landingPage',
@@ -27,4 +29,5 @@ export const onoffLandingPageDocument: LandingPage = {
 			_ref: palacioNueveFronterasContentCampaignDocument._id,
 		},
 	],
+	highlightedAuthors: [{ _key: 'francois-onoff', ...documentReference(onoffAuthorDocument._id) }],
 };

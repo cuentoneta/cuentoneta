@@ -9,30 +9,7 @@ import { CollectionTeaserCard } from '@components/collection-teaser-card/collect
 import { CollectionTeaserCardSkeletonComponent } from '@components/collection-teaser-card/collection-teaser-card-skeleton';
 
 // Mocks
-import { onoffCollectionTeasersMock } from '@mocks/onoff-collections.mock';
-
-// Modelos
-import { createCollectionTeaser, type CollectionTeaser } from '@models/collection.model';
-
-// El canon trae dos colecciones y el deck necesita más para ejercitar la grilla y los skeletons. Las
-// adicionales pasan por la factory, no por spread: el agregado está congelado y armarlo a mano
-// saltearía las invariantes que la factory existe para hacer cumplir.
-function teasersOfLength(count: number): CollectionTeaser[] {
-	const [base] = onoffCollectionTeasersMock;
-	return Array.from({ length: count }, (_, index) =>
-		createCollectionTeaser({
-			_id: `${base._id}-${index + 1}`,
-			slug: `${base.slug}-${index + 1}`,
-			title: `Colección ${index + 1}`,
-			description: base.description,
-			imagery: base.imagery,
-			tags: base.tags,
-			config: base.config,
-			mediaSources: base.mediaSources,
-			count: base.count,
-		}),
-	);
-}
+import { onoffCollectionTeasersMock, onoffCollectionTeasersOfLength } from '@mocks/onoff-collections.mock';
 
 describe('CollectionTeasersDeck', () => {
 	const defaultProviders = [provideRouter([])];
@@ -63,7 +40,7 @@ describe('CollectionTeasersDeck', () => {
 	describe('Comportamiento del bloque defer', () => {
 		it('should render one skeleton per grid slot while loading', async () => {
 			const { fixture } = await render(CollectionTeasersDeck, {
-				inputs: { teasers: teasersOfLength(4) },
+				inputs: { teasers: onoffCollectionTeasersOfLength(4) },
 				providers: defaultProviders,
 				componentImports: defaultImports,
 			});
@@ -76,7 +53,7 @@ describe('CollectionTeasersDeck', () => {
 
 		it('should render one card per teaser when data is available', async () => {
 			const { fixture } = await render(CollectionTeasersDeck, {
-				inputs: { teasers: teasersOfLength(3) },
+				inputs: { teasers: onoffCollectionTeasersOfLength(3) },
 				providers: defaultProviders,
 				componentImports: defaultImports,
 			});
@@ -90,7 +67,7 @@ describe('CollectionTeasersDeck', () => {
 		});
 
 		it('should link each card to the collection page', async () => {
-			const [teaser] = teasersOfLength(1);
+			const [teaser] = onoffCollectionTeasersOfLength(1);
 			const { fixture } = await render(CollectionTeasersDeck, {
 				inputs: { teasers: [teaser] },
 				providers: defaultProviders,
@@ -105,7 +82,7 @@ describe('CollectionTeasersDeck', () => {
 
 		it('should transition from loading to complete state', async () => {
 			const { fixture } = await render(CollectionTeasersDeck, {
-				inputs: { teasers: teasersOfLength(4) },
+				inputs: { teasers: onoffCollectionTeasersOfLength(4) },
 				providers: defaultProviders,
 				componentImports: defaultImports,
 			});

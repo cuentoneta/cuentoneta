@@ -271,6 +271,27 @@ export const incompleteLegacyStoryDocument = {
 	author: documentReference(onoffAuthorDocument._id),
 };
 
+// La migración de cuentos a obras no da de baja el cuento de origen: emite la obra al lado, copiándole
+// el slug tal cual. Este documento reproduce esa coexistencia contra una obra que el corpus ya modela,
+// y es la única forma de exhibir un conteo por autor que cuente dos veces la misma obra. Comparte slug
+// a propósito, así que **no** entra a `onoffDatasetMock`: lo suma el spec que lo necesita.
+export const migratedStoryDocument = {
+	...withoutKey(canonLiteraryWork, 'authors'),
+	_id: 'onoff-story-migrada',
+	_type: 'story' as const,
+	author: documentReference(onoffAuthorDocument._id),
+};
+
+// El mismo autor, con una obra que todavía no migró: sin ella, un conteo que devolviera solo las obras
+// literarias pasaría el caso de arriba por el motivo equivocado.
+export const unmigratedStoryDocument = {
+	...withoutKey(canonLiteraryWork, 'authors'),
+	_id: 'onoff-story-sin-migrar',
+	_type: 'story' as const,
+	slug: slugField('story-sin-migrar'),
+	author: documentReference(onoffAuthorDocument._id),
+};
+
 export const legacyStorylistDocument = {
 	...canonCollection,
 	_id: 'onoff-storylist',

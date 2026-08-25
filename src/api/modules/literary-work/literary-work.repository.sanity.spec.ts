@@ -11,9 +11,13 @@ import {
 	onoffRawLiteraryWorksWithTags,
 	unmaterializedRawLiteraryWork,
 } from '@mocks/onoff-raw-literary-works.mock';
-import { onoffRawLiteraryWorksWithoutEditorialNote } from '@mocks/onoff-raw-literary-works.mock';
+import {
+	onoffRawLiteraryWorksWithoutEditorialNote,
+	onoffRawLiteraryWorkTeasersMock,
+} from '@mocks/onoff-raw-literary-works.mock';
 import { createMarkdown } from '@models/markdown.model';
 import { createReadingTime, deriveSectionReadingTime, sumReadingTimes } from '@models/reading-time.model';
+import { MalformedLiteraryWorkError } from './literary-work.errors';
 import { SanityLiteraryWorkRepository } from './literary-work.repository.sanity';
 
 // El repository solo hace `fetch` (sin escritura), así que el spy del client implementa solo eso; se
@@ -214,5 +218,48 @@ describe('SanityLiteraryWorkRepository.fetchBySlug', () => {
 
 	it('devuelve null para un slug desconocido', async () => {
 		expect(await repoReturning(null).fetchBySlug('no-existe')).toBeNull();
+	});
+});
+
+describe('SanityLiteraryWorkRepository.fetchTeasers', () => {
+	it('mapea el listado a teasers congelados con el extracto saneado', async () => {
+		const { literaryWorks, malformed } = await repoReturning(onoffRawLiteraryWorkTeasersMock).fetchTeasers({});
+
+		expect(literaryWorks).toHaveLength(onoffRawLiteraryWorkTeasersMock.length);
+		expect(malformed).toEqual([]);
+		literaryWorks.forEach((teaser) => {
+			expect(Object.isFrozen(teaser)).toBe(true);
+			expect(teaser.excerpt.bodyHtml).not.toContain('**');
+		});
+	});
+
+	it('devuelve un listado vacío para un autor sin obras', async () => {
+		const { literaryWorks, malformed } = await repoReturning([]).fetchTeasers({ author: 'sin-obras' });
+
+		expect(literaryWorks).toEqual([]);
+		expect(malformed).toEqual([]);
+	});
+
+	// El mapeo por obra falla rápido, pero la obra que no se puede traducir se reporta en vez de
+	// propagarse: qué hacer con ella lo decide quien conoce el caso de uso, no este adaptador.
+	it('reporta la obra mal curada sin llevarse puestas a las demás', async () => {
+		const [sane, ...rest] = onoffRawLiteraryWorkTeasersMock;
+		const broken = { ...sane, _id: `${sane._id}-rota`, slug: `${sane.slug}-rota`, totalReadingTime: null };
+
+		const { literaryWorks, malformed } = await repoReturning([broken, ...rest]).fetchTeasers({});
+
+		expect(literaryWorks).toHaveLength(rest.length);
+		expect(malformed).toHaveLength(1);
+		expect(malformed[0].slug).toBe(broken.slug);
+	});
+
+	it('reporta como mal curada a la obra sin sección de apertura', async () => {
+		const [sane] = onoffRawLiteraryWorkTeasersMock;
+		const excerptless = { ...sane, excerpt: [] };
+
+		const { literaryWorks, malformed } = await repoReturning([excerptless]).fetchTeasers({});
+
+		expect(literaryWorks).toEqual([]);
+		expect(malformed[0]).toBeInstanceOf(MalformedLiteraryWorkError);
 	});
 });
