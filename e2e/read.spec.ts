@@ -60,7 +60,7 @@ test('read — el hero presenta la obra que el API dice que es', async ({ page }
 	const author = work?.authors[0];
 	const authorLink = page.getByRole('link', { name: author?.name ?? '' }).first();
 	await expect(authorLink).toBeVisible();
-	expect(await authorLink.getAttribute('href')).toBe(`/author/${author?.slug}`);
+	await expect(authorLink).toHaveAttribute('href', `/author/${author?.slug}`);
 
 	await expect(page.getByText(`${work?.totalReadingTime} minutos de lectura`)).toBeVisible();
 });
