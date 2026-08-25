@@ -25,6 +25,13 @@ export const onoffRawCollectionsWithoutFeaturedImage: RawCollection[] = onoffRaw
 	(collection) => collection.featuredImage === null,
 );
 
+export const onoffRawCollectionTeasersWithFeaturedImage: CollectionsQueryResult = onoffRawCollectionTeasersMock.filter(
+	(teaser) => teaser.featuredImage !== null,
+);
+
+export const onoffRawCollectionTeasersWithoutFeaturedImage: CollectionsQueryResult =
+	onoffRawCollectionTeasersMock.filter((teaser) => teaser.featuredImage === null);
+
 // Las obras embebidas que declaran multimedia, que son las que ejercitan el mapeo de la vista de
 // teaser. Su proyección solo trae el tag, así que el shape difiere del de las obras de nivel documento.
 export const onoffRawCollectionWorksWithMediaSources: RawCollection['literaryWorks'] = onoffRawCollectionsMock
