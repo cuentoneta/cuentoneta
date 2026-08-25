@@ -185,8 +185,7 @@ type TagsSubQuery =
 	| NonNullable<LiteraryWorkBySlugQueryResult>['tags']
 	| NonNullable<CollectionBySlugQueryResult>['tags']
 	| NonNullable<CollectionBySlugQueryResult>['literaryWorks'][number]['tags']
-	| HighlightedAuthorsSubQuery[number]['additionalTags']
-	| HighlightedAuthorsSubQuery[number]['author']['tags'];
+	| HighlightedAuthorsSubQuery[number]['tags'];
 export function mapTags(tags: TagsSubQuery): Tag[] {
 	return tags.map((tag) => ({
 		title: tag.title,
@@ -308,24 +307,11 @@ export function mapHighlightedAuthors(highlightedAuthors: HighlightedAuthorsSubQ
 
 	return highlightedAuthors.slice(0, limit).map((entry) => ({
 		author: mapAuthorTeaser(entry.author),
-		tags: dedupeTagsBySlug([...mapTags(entry.additionalTags), ...mapTags(entry.author.tags)]),
+		// El teaser entrega su lista vacía en toda vista del repositorio, así que las etiquetas del
+		// destacado se mapean acá aunque salgan del mismo autor.
+		tags: mapTags(entry.tags),
 		storyCount: entry.storyCount,
 	}));
-}
-
-// Las puntuales de la semana encabezan la lista, así que ante una repetida gana la primera aparición.
-// Reconstruir con un `Map` no serviría: conservaría esa posición pero con el valor de la última, que
-// es la derivada.
-function dedupeTagsBySlug(tags: Tag[]): Tag[] {
-	const seen = new Set<string>();
-
-	return tags.filter((tag) => {
-		if (seen.has(tag.slug)) {
-			return false;
-		}
-		seen.add(tag.slug);
-		return true;
-	});
 }
 
 type ContentCampaignsSubQuery = NonNullable<LandingPageContentQueryResult>['campaigns'];

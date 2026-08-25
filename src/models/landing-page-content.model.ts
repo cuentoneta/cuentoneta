@@ -4,8 +4,8 @@ import { StoryNavigationTeaserWithAuthor } from '@models/story.model';
 import type { AuthorTeaser } from '@models/author.model';
 import type { Tag } from '@models/tag.model';
 
-// Las etiquetas viven acá y no en el teaser porque son las de esta tirada: las puntuales de la semana
-// primero y después las que el autor ya tiene asignadas. El teaser las entrega vacías en toda vista.
+// Las etiquetas y el conteo viven acá y no en el teaser: el teaser entrega su lista de etiquetas vacía
+// en toda vista del repositorio, y el conteo lo paga solo esta pantalla.
 export interface HighlightedAuthor {
 	readonly author: AuthorTeaser;
 	readonly tags: readonly Tag[];

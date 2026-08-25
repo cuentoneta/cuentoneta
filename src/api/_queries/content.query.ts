@@ -110,8 +110,8 @@ export const landingPageContentQuery = defineQuery(`
             'resources': [],
         }
     },[]),
-    'highlightedAuthors': coalesce(highlightedAuthors[]{
-        'author': author->{
+    'highlightedAuthors': coalesce(highlightedAuthors[]->{
+        'author': {
             _id,
             'slug': slug.current,
             name,
@@ -121,14 +121,9 @@ export const landingPageContentQuery = defineQuery(`
             bornOnYear,
             diedOn,
             diedOnYear,
-            'resources': [],
-            'tags': coalesce(tags[]->{
-                title,
-                'slug': slug.current,
-                description
-            }, [])
+            'resources': []
         },
-        'additionalTags': coalesce(additionalTags[]->{
+        'tags': coalesce(tags[]->{
             title,
             'slug': slug.current,
             description
@@ -136,7 +131,7 @@ export const landingPageContentQuery = defineQuery(`
         'storyCount': count(array::unique(*[
             !(_id in path('drafts.**')) &&
             _type in ['story', 'literaryWork'] &&
-            references(^.author._ref)
+            references(^._id)
         ].slug.current))
     },[]),
 }`);

@@ -1,7 +1,7 @@
 // Este archivo lo escribe `pnpm corpus:generate` evaluando la query GROQ real sobre los documentos del
 // corpus. No se edita a mano: cualquier cambio se pierde en la próxima corrida.
 import type { LandingPageContentQueryResult } from '@sanity-types';
-import { cuentoRawTag, dramaPsicologicoRawTag, metaficcionRawTag } from '../../onoff-raw-tags.mock';
+import { cuentoRawTag, dramaPsicologicoRawTag } from '../../onoff-raw-tags.mock';
 
 export const onoffRawLandingPageMock: NonNullable<LandingPageContentQueryResult> = {
 	_id: 'onoff-landing-page-1974-24',
@@ -72,9 +72,8 @@ export const onoffRawLandingPageMock: NonNullable<LandingPageContentQueryResult>
 				diedOn: '1994-12-31',
 				diedOnYear: 1994,
 				resources: [],
-				tags: [cuentoRawTag, dramaPsicologicoRawTag],
 			},
-			additionalTags: [cuentoRawTag, metaficcionRawTag],
+			tags: [cuentoRawTag, dramaPsicologicoRawTag],
 			storyCount: 8,
 		},
 	],

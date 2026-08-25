@@ -1,8 +1,6 @@
 import type { LandingPage } from '@sanity-types';
 import { documentReference, documentSystemFields, slugField } from '../document/sanity-document.factory';
-import { tagReference } from '../document/support-documents.projection';
 import { onoffAuthorDocument } from '../author/author.document.projection';
-import { cuentoRawTag, metaficcionRawTag } from '../../onoff-raw-tags.mock';
 import { coleccionCompletaContentCampaignDocument } from './coleccion-completa-onoff.content-campaign.document';
 import { palacioNueveFronterasContentCampaignDocument } from './el-palacio-de-las-nueve-fronteras.content-campaign.document';
 
@@ -13,7 +11,7 @@ const week = '1974-24';
 
 // Sin `cards` ni `latestReads` a propósito: referencian agregados que el corpus no modela como documentos,
 // y la guarda del generador aborta ante una referencia colgada. El porqué, en el README del corpus.
-// `highlightedAuthors` sí entra: tanto el autor como las etiquetas existen como documentos del dataset.
+// `highlightedAuthors` sí entra: el autor que referencia existe como documento del dataset.
 export const onoffLandingPageDocument: LandingPage = {
 	...documentSystemFields(`onoff-landing-page-${week}`),
 	_type: 'landingPage',
@@ -31,14 +29,5 @@ export const onoffLandingPageDocument: LandingPage = {
 			_ref: palacioNueveFronterasContentCampaignDocument._id,
 		},
 	],
-	highlightedAuthors: [
-		{
-			_key: 'francois-onoff',
-			_type: 'highlightedAuthor',
-			author: documentReference(onoffAuthorDocument._id),
-			// Una etiqueta que el autor ya tiene y otra que no: la primera fuerza el descarte del duplicado
-			// en la concatenación, la segunda comprueba que las puntuales encabecen la lista.
-			additionalTags: [tagReference(cuentoRawTag.slug), tagReference(metaficcionRawTag.slug)],
-		},
-	],
+	highlightedAuthors: [{ _key: 'francois-onoff', ...documentReference(onoffAuthorDocument._id) }],
 };

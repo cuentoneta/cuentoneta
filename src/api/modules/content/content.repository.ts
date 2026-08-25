@@ -48,13 +48,7 @@ type LandingPageCreatePayload = {
 	campaigns: KeyedReference[];
 	cards: KeyedReference[];
 	latestReads: KeyedReference[];
-	highlightedAuthors: Array<{
-		_key: string;
-		_type: 'highlightedAuthor';
-		// La referencia al autor no lleva `_key`: es un campo del objeto, no un elemento de array.
-		author: { _type: 'reference'; _ref: string };
-		additionalTags?: KeyedReference[];
-	}>;
+	highlightedAuthors: KeyedReference[];
 };
 
 export async function createLandingPages(landingPageObjects: LandingPageCreatePayload[]) {
