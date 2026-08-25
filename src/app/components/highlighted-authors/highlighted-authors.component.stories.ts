@@ -6,7 +6,8 @@ import { onoffHighlightedAuthorsOfLength, onoffUntaggedHighlightedAuthor } from 
 
 // Un solo dataset compartido por todas las stories: los mismos destacados en cada estado hacen que el
 // switch del catálogo compare siempre lo mismo.
-const highlightedAuthors = onoffHighlightedAuthorsOfLength(6);
+const SKELETON_COUNT = 6;
+const highlightedAuthors = onoffHighlightedAuthorsOfLength(SKELETON_COUNT);
 
 // La grilla sin etiquetas, que es el estado con el que la sección sale a producción.
 const untaggedAuthors = highlightedAuthors.map((highlighted) => ({
@@ -77,24 +78,28 @@ export const SinEtiquetas: Story = {
 };
 
 // La rama de carga replica el shell de la sección (encabezado + grilla internos): es lo que se ve
-// mientras corre el @defer, y replicarlo completo mantiene 1:1 el alto contra el estado real.
+// mientras corre el @defer. Los esqueletos son una cantidad fija, igual que en el componente: la grilla
+// en carga dibuja la sección llena aunque todavia no haya llegado ningun destacado.
 // Bindings explícitos (no argsToTemplate) porque loading no es un input del componente, y
 // argsToTemplate generaría [loading]="loading" contra un destino inexistente.
-export const Estados: StoryObj<HighlightedAuthorsComponent & { loading: boolean }> = {
-	argTypes: { loading: { control: 'boolean', name: 'Cargando' } },
+export const Estados: StoryObj<HighlightedAuthorsComponent & { loading: boolean; skeletonCount: number }> = {
+	argTypes: {
+		loading: { control: 'boolean', name: 'Cargando' },
+		skeletonCount: { table: { disable: true } },
+	},
 	render: (args) => ({
 		props: args,
 		template: `
 			@if (loading) {
 				<div class="flex flex-col gap-8">
-					<div class="flex items-start justify-between gap-4">
+					<div class="flex items-center justify-between gap-4">
 						<div class="flex flex-col content-between gap-1">
 							<h2 class="font-inter text-2xl font-bold">Autores/as destacados/as</h2>
 							<div class="font-inter text-sm text-neutral-600">Una selección curada de autores y autoras imprescindibles</div>
 						</div>
 					</div>
 					<section class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-						@for (_ of authors; track $index) {
+						@for (_ of [].constructor(skeletonCount); track $index) {
 							<cuentoneta-author-card-teaser-skeleton class="w-full" data-testid="skeleton" />
 						}
 					</section>
@@ -106,13 +111,14 @@ export const Estados: StoryObj<HighlightedAuthorsComponent & { loading: boolean 
 	}),
 	args: {
 		loading: true,
+		skeletonCount: SKELETON_COUNT,
 		authors: highlightedAuthors,
 	},
 	parameters: {
 		docs: {
 			description: {
 				story:
-					'Activá/desactivá "Cargando" para alternar entre el estado real y el estado de carga de la sección: encabezado fijo más un esqueleto por slot de la grilla —iterando los mismos datos, la paridad con la rama real vale por construcción—. El enlace "Ver todo" no se replica: la rama de carga no navega.<br><br><strong>Usos:</strong> la sección de autores destacados de la página de inicio, mientras resuelve el contenido de la semana.',
+					'Activá/desactivá "Cargando" para alternar entre el estado real y el estado de carga de la sección: encabezado fijo más la grilla llena de esqueletos. La cantidad es fija y no sigue a lo recibido, porque el esqueleto tiene que dibujar la sección completa aunque todavía no haya llegado ningún destacado. El enlace "Ver todo" no se replica: la rama de carga no navega.<br><br><strong>Usos:</strong> la sección de autores destacados de la página de inicio, mientras resuelve el contenido de la semana.',
 			},
 		},
 	},

@@ -57,10 +57,11 @@ describe('HighlightedAuthorsComponent', () => {
 	});
 
 	describe('Comportamiento del bloque defer', () => {
-		// Se afirma sobre el marcador de esqueleto y con una cantidad distinta de seis: la tarjeta real y el
+		// Se afirma sobre el marcador de esqueleto, y con menos destacados que el tope: la tarjeta real y el
 		// esqueleto son ambos `<article>`, así que contar artículos con la grilla llena se cumpliría igual
-		// aunque la rama de carga dibujara una cantidad fija o el bloque hubiera resuelto.
-		it('should render exactly one skeleton per highlighted author while loading', async () => {
+		// aunque el bloque hubiera resuelto. La cantidad no sigue al input a propósito — la grilla en carga
+		// dibuja la sección llena aunque todavía no haya llegado ningún destacado.
+		it('should fill the grid with skeletons while loading, regardless of how many arrived', async () => {
 			const { fixture } = await render(HighlightedAuthorsComponent, {
 				inputs: { authors: onoffHighlightedAuthorsOfLength(3) },
 				providers: defaultProviders,
@@ -70,7 +71,7 @@ describe('HighlightedAuthorsComponent', () => {
 			const [deferBlockFixture] = await fixture.getDeferBlocks();
 			await deferBlockFixture.render(DeferBlockState.Loading);
 
-			expect(screen.getAllByTestId('skeleton')).toHaveLength(3);
+			expect(screen.getAllByTestId('skeleton')).toHaveLength(6);
 		});
 
 		it('should render one card per highlighted author when data is available', async () => {

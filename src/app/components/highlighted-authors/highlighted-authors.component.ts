@@ -48,9 +48,10 @@ import { AuthorCardTeaserSkeletonComponent } from '@components/author-card-tease
 					/>
 				}
 			} @loading (minimum 500ms) {
-				<!-- Un esqueleto por destacado recibido, y no una cantidad fija: es lo que hace que el alto de
-				     la grilla en carga coincida con el real por construcción, sin fijarlo desde afuera. -->
-				@for (_ of authors(); track $index) {
+				<!-- Cantidad fija y no la de lo recibido: el esqueleto tiene que dibujar la grilla completa
+				     aunque todavía no haya llegado ningún destacado, que es cuando se lo necesita. Iterar el
+				     input lo ataría a que el disparador siga siendo "hay al menos uno". -->
+				@for (_ of [].constructor(SKELETON_COUNT); track $index) {
 					<cuentoneta-author-card-teaser-skeleton class="w-full" data-testid="skeleton" />
 				}
 			}
@@ -61,6 +62,8 @@ import { AuthorCardTeaserSkeletonComponent } from '@components/author-card-tease
 	},
 })
 export class HighlightedAuthorsComponent {
+	// El mismo tope que el backend aplica a la curaduría: la grilla en carga dibuja la sección llena.
+	protected readonly SKELETON_COUNT = 6;
 	protected readonly appRoutes = AppRoutes;
 
 	public readonly authors = input<readonly HighlightedAuthor[]>([]);
