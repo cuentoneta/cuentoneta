@@ -541,6 +541,13 @@ interface LandingPageContent {
 	campaigns: ContentCampaign[]; // Campañas de marketing
 	mostRead: StoryNavigationTeaserWithAuthor[]; // Top 10 historias más leídas
 	latestReads: StoryNavigationTeaserWithAuthor[]; // Últimas historias publicadas
+	highlightedAuthors: readonly HighlightedAuthor[]; // Hasta 6 autores destacados de la semana
+}
+
+interface HighlightedAuthor {
+	author: AuthorTeaser;
+	tags: readonly Tag[]; // Etiquetas de la semana primero, después las del autor, sin repetir
+	storyCount: number; // Obras del autor, contadas sobre los dos tipos de documento
 }
 ```
 
@@ -548,6 +555,10 @@ interface LandingPageContent {
 
 - Agregar contenido de múltiples contextos para presentación en página inicio
 - Mantener datos de lectura y estadísticas
+
+`HighlightedAuthor` es una proyección de curación de este contexto, no una vista del agregado `Author`: sus etiquetas son las de la tirada y su conteo es un dato que solo esta pantalla paga. Por eso ninguno de los dos vive en `AuthorTeaser`, que entrega su propia lista de etiquetas vacía.
+
+El tope de seis rige la edición en el Studio y no lo ya persistido, así que el mapeo lo vuelve a aplicar como salvaguarda.
 
 > **Nota:** Para comprender la implementación práctica de este agregado, incluyendo la generación automática de configuraciones y actualización de contenido, consulta la documentación sobre [Estrategias de Actualización de Contenido](./CONTENT_UPDATE_STRATEGIES.md).
 

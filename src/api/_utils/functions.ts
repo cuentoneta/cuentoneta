@@ -13,7 +13,7 @@ import { createImageUrlBuilder, SanityImageSource } from '@sanity/image-url';
 // Modelos
 import { Author, AuthorProfile, AuthorTeaser } from '@models/author.model';
 import { ContentCampaign, viewportElementSizes } from '@models/content-campaign.model';
-import { LandingPageContent, RotatingContent } from '@models/landing-page-content.model';
+import { HighlightedAuthor, LandingPageContent, RotatingContent } from '@models/landing-page-content.model';
 import { StorylistTeaser } from '@models/storylist.model';
 import { Resource } from '@models/resource.model';
 import { Story, StoryNavigationTeaserWithAuthor, StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
@@ -85,8 +85,13 @@ type AuthorTeaserForStoriesSubQuery = NonNullable<StorylistQueryResult>['stories
 type AuthorTeaserForListSubQuery = UnwrapArray<AuthorsQueryResult>;
 type AuthorTeaserForCollectionSubQuery =
 	NonNullable<CollectionBySlugQueryResult>['literaryWorks'][number]['authors'][number];
+type AuthorTeaserForHighlightSubQuery = HighlightedAuthorsSubQuery[number]['author'];
 export function mapAuthorTeaser(
-	rawAuthorData: AuthorTeaserForStoriesSubQuery | AuthorTeaserForListSubQuery | AuthorTeaserForCollectionSubQuery,
+	rawAuthorData:
+		| AuthorTeaserForStoriesSubQuery
+		| AuthorTeaserForListSubQuery
+		| AuthorTeaserForCollectionSubQuery
+		| AuthorTeaserForHighlightSubQuery,
 ): AuthorTeaser {
 	return {
 		_id: rawAuthorData._id,
@@ -289,7 +294,26 @@ export function mapLandingPageContent(
 		campaigns: mapContentCampaigns(result.campaigns),
 		mostRead: result.mostRead,
 		latestReads: mapStoryNavigationTeaserWithAuthor(result.latestReads),
+		highlightedAuthors: mapHighlightedAuthors(result.highlightedAuthors),
 	};
+}
+
+// El Studio limita la carga a seis entradas, pero esa regla gobierna la edición y no lo ya guardado:
+// una migración o un backfill pueden dejar más. El recorte acá es una salvaguarda, no la regla.
+const HIGHLIGHTED_AUTHORS_LIMIT = 6;
+
+type HighlightedAuthorsSubQuery = NonNullable<LandingPageContentQueryResult>['highlightedAuthors'];
+export function mapHighlightedAuthors(highlightedAuthors: HighlightedAuthorsSubQuery): HighlightedAuthor[] {
+	return highlightedAuthors.slice(0, HIGHLIGHTED_AUTHORS_LIMIT).map((entry) => ({
+		author: mapAuthorTeaser(entry.author),
+		tags: dedupeTagsBySlug([...mapTags(entry.additionalTags), ...mapTags(entry.author.tags)]),
+		storyCount: entry.storyCount,
+	}));
+}
+
+// Las puntuales de la semana encabezan la lista, así que ante una repetida gana la primera aparición.
+function dedupeTagsBySlug(tags: Tag[]): Tag[] {
+	return [...new Map(tags.map((tag) => [tag.slug, tag])).values()];
 }
 
 type ContentCampaignsSubQuery = NonNullable<LandingPageContentQueryResult>['campaigns'];
