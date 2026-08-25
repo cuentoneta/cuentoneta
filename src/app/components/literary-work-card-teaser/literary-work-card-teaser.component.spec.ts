@@ -2,6 +2,7 @@ import { LiteraryWorkCardTeaserComponent } from './literary-work-card-teaser.com
 import { DefaultUrlSerializer, UrlTree } from '@angular/router';
 import { render, screen, within } from '@testing-library/angular';
 import {
+	onoffLiteraryWorkNavigationTeasersMock,
 	onoffLiteraryWorkTeasersMock,
 	palacioNueveFronterasLiteraryWorkTeaserMock,
 } from '@mocks/onoff-literary-work-teasers.mock';
@@ -206,6 +207,20 @@ describe('LiteraryWorkCardTeaserComponent', () => {
 				inputs: { literaryWork: literaryWorkWithExcerpt, showExcerpt: true, excerptLines: 99 },
 			});
 			expect(screen.getByTestId('description')).toHaveClass('line-clamp-10');
+		});
+
+		// La vista de navegación no transporta extracto, así que pedirlo no puede producir un hueco ni
+		// romper la tarjeta: es el borde que la precedencia del input de Portable Text tapaba.
+		it('should omit the description for a navigation teaser that carries no excerpt', async () => {
+			const [navigationTeaser] = onoffLiteraryWorkNavigationTeasersMock;
+
+			await render(LiteraryWorkCardTeaserComponent, {
+				inputs: { literaryWork: navigationTeaser, showExcerpt: true },
+			});
+
+			expect(screen.queryByTestId('description')).not.toBeInTheDocument();
+			// Control positivo: la tarjeta sí se dibujó, así que la ausencia es del extracto y no del render.
+			expect(screen.getByRole('link', { name: navigationTeaser.title })).toBeInTheDocument();
 		});
 	});
 
