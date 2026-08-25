@@ -1,4 +1,4 @@
-import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
+import type { LiteraryWorkBySlugQueryResult, LiteraryWorksByAuthorSlugQueryResult } from '@sanity-types';
 import { palacioNueveFronterasSectionTitle } from './onoff/literary-work/el-palacio-de-las-nueve-fronteras.epigraph';
 import {
 	palacioFirstSectionReadingTime,
@@ -15,6 +15,7 @@ import { lasEscalerasRawLiteraryWork } from './onoff/literary-work/las-escaleras
 import { losPeldanosRawLiteraryWork } from './onoff/literary-work/los-peldanos.literary-work.raw.mock';
 import { neronRawLiteraryWork } from './onoff/literary-work/neron.literary-work.raw.mock';
 import { palacioNueveFronterasRawLiteraryWork } from './onoff/literary-work/el-palacio-de-las-nueve-fronteras.literary-work.raw.mock';
+import { onoffRawCollectionsMock } from './onoff-raw-collections.mock';
 
 // Corpus raw (shape crudo de Sanity, `NonNullable<LiteraryWorkBySlugQueryResult>`) de las obras
 // (ficticias) de François Onoff — contraparte cruda de `onoffLiteraryWorksMock`, en el mismo orden.
@@ -122,3 +123,13 @@ export const mixedMaterializationRawLiteraryWork: NonNullable<LiteraryWorkBySlug
 		{ ...multiSectionRawLiteraryWork.content[1], readingTime: null },
 	],
 };
+
+// Los teasers crudos de obra, con el shape de la consulta por autor. Se derivan de la fixture
+// generada de las colecciones —que proyecta sus obras con exactamente la misma vista— en vez de
+// generarse aparte: si las dos proyecciones divergen, esta asignación deja de tipar, y esa es la
+// señal de realinearlas. Se deduplica por _id porque una obra puede estar curada en ambas colecciones.
+export const onoffRawLiteraryWorkTeasersMock: LiteraryWorksByAuthorSlugQueryResult = [
+	...new Map(
+		onoffRawCollectionsMock.flatMap(({ literaryWorks }) => literaryWorks).map((teaser) => [teaser._id, teaser]),
+	).values(),
+];
