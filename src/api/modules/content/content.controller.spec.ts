@@ -7,7 +7,10 @@ import { MalformedLandingPageError } from './content.errors';
 import { InMemoryContentRepository } from './content.repository.mock';
 import type { ContentRepository } from './content.repository';
 
-const CURRENT_DATE = new Date(2025, 10, 14);
+// La semana sale de la fecha real y no de una literal: a estos casos no les importa cuál es, sino que
+// la que el service pide sea la que está curada. El reloj se congela igual en ese instante, para que un
+// caso que corra justo en el cruce de semana no cambie de respuesta a mitad de camino.
+const CURRENT_DATE = new Date();
 const CURRENT_SLUG = buildWeekSlug(CURRENT_DATE);
 
 function appWith(repository: ContentRepository): Hono {

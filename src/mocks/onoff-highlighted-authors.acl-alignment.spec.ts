@@ -1,5 +1,4 @@
-import type { SanityClient } from '@sanity/client';
-import { fn } from '@test-utils';
+import { stubSanityClient } from '@testing/sanity-client.stub';
 import { SanityContentRepository } from '../api/modules/content/content.repository.sanity';
 import { rotatingContentQuery } from '../api/_queries/content.query';
 import { onoffHighlightedAuthorsMock } from './onoff-highlighted-authors.mock';
@@ -12,19 +11,16 @@ vi.mock('@sanity/image-url', async () => {
 });
 /* eslint-enable no-restricted-syntax */
 
-// El mapeo de los destacados es privado del repository de la página de inicio, así que el cruce entra
-// por su superficie pública en vez de por el mapper: es la misma cadena, ejercitada por donde el
-// consumidor real la recorre. El contenido rotativo no participa de este cruce, así que se responde
-// vacío.
+// El mapeo de los destacados es privado del repository, así que el cruce entra por su superficie
+// pública: es la misma cadena, ejercitada por donde la recorre el consumidor real.
 function repository(): SanityContentRepository {
-	const fetch = fn((query: unknown) =>
-		Promise.resolve(
-			query === rotatingContentQuery
-				? { _id: 'rotatingContent', name: 'Lo más leído', mostRead: [] }
-				: onoffRawLandingPageMock,
-		),
+	// El contenido rotativo no participa de este cruce, pero la lectura lo pide igual, así que se
+	// responde vacío en vez de dejarlo sin respuesta.
+	const { client } = stubSanityClient(
+		[[rotatingContentQuery, { _id: 'rotatingContent', name: 'Lo más leído', mostRead: [] }]],
+		onoffRawLandingPageMock,
 	);
-	return new SanityContentRepository({ fetch } as unknown as SanityClient);
+	return new SanityContentRepository(client);
 }
 
 // Cierra la cadena entera del corpus de destacados: el documento alimenta la query, la query genera el raw

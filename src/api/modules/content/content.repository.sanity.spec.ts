@@ -1,5 +1,6 @@
 import type { SanityClient } from '@sanity/client';
 import { fn } from '@test-utils';
+import { stubSanityClient } from '@testing/sanity-client.stub';
 import {
 	onoffRawHighlightedAuthorsMock,
 	onoffRawLandingPageMock,
@@ -22,13 +23,9 @@ const rawRotatingContent = {
 	mostRead: onoffRawNavTeasersMock.slice(0, 2),
 };
 
-// El repository consulta dos queries en la misma llamada, así que el doble del client despacha por la
-// query recibida en vez de devolver un canned único: con un solo valor, el contenido rotativo llegaría
-// con la forma de la landing y ninguna aserción sobre el resultado lo notaría.
 function repoWith(landingPage: unknown, rotatingContent: unknown = rawRotatingContent) {
-	const fetch = fn((query: unknown) => Promise.resolve(query === rotatingContentQuery ? rotatingContent : landingPage));
-	const repository = new SanityContentRepository({ fetch } as unknown as SanityClient);
-	return { repository, fetch };
+	const { client, fetch } = stubSanityClient([[rotatingContentQuery, rotatingContent]], landingPage);
+	return { repository: new SanityContentRepository(client), fetch };
 }
 
 function repoReturning(landingPage: unknown, rotatingContent?: unknown): SanityContentRepository {
@@ -136,12 +133,13 @@ describe('SanityContentRepository highlighted authors', () => {
 		expect((await highlightedAuthorsOf([canonical]))[0].tags.map(({ slug }) => slug)).toEqual(expected);
 	});
 
-	it('keeps the first six entries when the document carries more', async () => {
+	// El adaptador no recorta: cuántos destacados se muestran lo decide la pantalla, y cuántos se pueden
+	// cargar lo hace cumplir el Studio sobre un campo que nació con esa regla.
+	it('maps every entry the document carries, without capping the list', async () => {
 		const result = await highlightedAuthorsOf(overflowingRawHighlightedAuthors);
 
-		expect(overflowingRawHighlightedAuthors.length).toBeGreaterThan(6);
 		expect(result.map(({ author }) => author._id)).toEqual(
-			overflowingRawHighlightedAuthors.slice(0, 6).map(({ author }) => author._id),
+			overflowingRawHighlightedAuthors.map(({ author }) => author._id),
 		);
 	});
 

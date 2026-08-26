@@ -43,9 +43,10 @@ const ROTATING_CONTENT_ID = 'rotatingContent';
 export class SanityContentRepository implements ContentRepository {
 	constructor(private readonly client: SanityClient = sanityClient) {}
 
-	// La landing se arma con dos documentos: el de la semana y el rotativo, que aporta lo más leído y es
-	// independiente de ella.
+	/** Entrega el contenido curado de una semana, con su bloque de lo más leído ya resuelto. */
 	public async fetchLandingPageContent(slug: string): Promise<LandingPageContent | null> {
+		// Son dos documentos independientes, así que se piden en paralelo: el rotativo no depende de qué
+		// semana se esté sirviendo.
 		const [raw, rotating] = await Promise.all([
 			this.client.fetch(landingPageContentQuery, { slug }),
 			this.fetchRotatingContent(),
@@ -54,18 +55,19 @@ export class SanityContentRepository implements ContentRepository {
 			return null;
 		}
 		if (!rotating) {
-			// La landing se sigue sirviendo con el slot vacío, pero la degradación tiene que dejar rastro:
-			// sin esto, el bloque de lo más leído desaparece de la home con un 200 y nadie se entera.
+			// Se degrada a slot vacío en vez de fallar, pero deja rastro: sin esto, el bloque de lo más
+			// leído desaparece de la home con un 200 y nadie se entera.
 			console.warn('SanityContentRepository: el contenido rotativo no existe; la home queda sin lo más leído');
 		}
 		return this.guard(slug, () => this.mapLandingPageContent(raw, rotating?.mostRead ?? []));
 	}
 
-	// Su ausencia no es una curaduría incompleta sino una instalación incompleta, y el llamador decide
-	// qué hacer con eso: la landing se sigue sirviendo con el slot vacío.
+	/** Entrega la rotación de lo más leído, o `null` si el documento no está instalado. */
 	public async fetchRotatingContent(): Promise<RotatingContent | null> {
 		const raw = await this.client.fetch(rotatingContentQuery);
 		if (!raw) {
+			// Su ausencia no es una curaduría incompleta sino una instalación incompleta, así que qué hacer
+			// con ella la decide el llamador y no este adaptador.
 			return null;
 		}
 		try {
@@ -75,18 +77,20 @@ export class SanityContentRepository implements ContentRepository {
 		}
 	}
 
+	/** Dice cuáles de las semanas pedidas ya están cargadas. */
 	public async fetchLandingPagesList(slugs: string[]): Promise<readonly LandingPageSummary[]> {
 		const raw = await this.client.fetch(landingPageListQuery, { slugs });
 		return raw.map(({ _id, slug, config }) => ({ _id, slug, config }));
 	}
 
-	// El `_id` se descarta acá y no en el service: la semana nueva es un documento nuevo, y arrastrarlo
-	// haría que el clon pisara al original.
+	/** Entrega las referencias de la última semana curada, que son la base de las semanas que se generen. */
 	public async fetchLatestLandingPageReferences(currentSlug: string): Promise<LandingPageReferences | null> {
 		const raw = await this.client.fetch(latestLandingPageReferencesQuery, { currentSlug });
 		if (!raw) {
 			return null;
 		}
+		// El `_id` no se copia: quien clone esto crea un documento nuevo, y arrastrarlo haría que el clon
+		// pisara al original.
 		return {
 			_type: raw._type,
 			campaigns: raw.campaigns,
@@ -104,9 +108,7 @@ export class SanityContentRepository implements ContentRepository {
 		await this.client.patch(ROTATING_CONTENT_ID, { set: { mostRead: [...references] } }).commit();
 	}
 
-	// Una landing mal curada tumba la llamada entera en vez de servirse a medias: un dato roto en la
-	// página de inicio es un bug que hay que ver, no esconder. El slug va en el error porque, sobre una
-	// landing por semana, saber que "alguna" está mal no alcanza para arreglarlo.
+	/** Traduce cualquier fallo de construcción del dominio a un error que nombra la semana culpable. */
 	private guard<T>(slug: string, map: () => T): T {
 		try {
 			return map();
@@ -114,6 +116,10 @@ export class SanityContentRepository implements ContentRepository {
 			if (error instanceof MalformedLandingPageError) {
 				throw error;
 			}
+			// Envolver y no filtrar: una landing mal curada tumba la llamada entera en vez de servirse a
+			// medias, porque un dato roto en la página de inicio es un bug que hay que ver, no esconder. El
+			// slug viaja en el error porque, sobre una landing por semana, saber que "alguna" está mal no
+			// alcanza para arreglarlo.
 			throw new MalformedLandingPageError(slug, { cause: error });
 		}
 	}
@@ -149,8 +155,12 @@ export class SanityContentRepository implements ContentRepository {
 		});
 	}
 
-	// La misma vista la proyectan la landing y el contenido rotativo: el mapeo se tipa contra la unión
-	// para que ninguna de las dos pueda divergir sin que el typecheck lo denuncie.
+	/**
+	 * Traduce la vista de navegación que comparten los dos slots de destacados.
+	 *
+	 * El tipo de entrada es la unión de las dos proyecciones que la producen —la de la landing y la del
+	 * contenido rotativo— para que ninguna pueda divergir sin que el typecheck lo denuncie.
+	 */
 	private mapNavigationTeasers(
 		result: SanityLandingPage['latestReads'] | SanityRotatingContent['mostRead'],
 	): StoryNavigationTeaserWithAuthor[] {
@@ -168,14 +178,11 @@ export class SanityContentRepository implements ContentRepository {
 		});
 	}
 
+	/** Traduce los autores que la semana destaca, con las etiquetas y el conteo que solo esta pantalla usa. */
 	private mapHighlightedAuthors(raw: SanityLandingPage['highlightedAuthors']): HighlightedAuthor[] {
-		// El Studio limita la carga a seis entradas, pero esa regla gobierna la edición y no lo ya guardado:
-		// una migración o un backfill pueden dejar más. El recorte acá es una salvaguarda, no la regla.
-		const limit = 6;
-
-		return raw.slice(0, limit).map((entry) => ({
+		return raw.map((entry) => ({
 			author: mapAuthorTeaser(entry.author),
-			// El teaser entrega su lista vacía en toda vista del repositorio, así que las etiquetas del
+			// El teaser entrega su lista de etiquetas vacía en toda vista del repositorio, así que las del
 			// destacado se mapean acá aunque salgan del mismo autor.
 			tags: mapTags(entry.tags),
 			storyCount: entry.storyCount,

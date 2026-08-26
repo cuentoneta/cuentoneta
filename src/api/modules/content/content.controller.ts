@@ -6,10 +6,7 @@ import { LandingPageNotFoundError, MalformedLandingPageError } from './content.e
 import type { ContentRepository } from './content.repository';
 import { addNextWeeksLandingPageContent, getLandingPageContent } from './content.service';
 
-// El error de curaduría responde con un código y no con su mensaje: ese mensaje nombra el documento
-// culpable, que es información de la redacción y no del cliente. Por eso mismo se loguea antes de
-// traducirlo: la causa —qué dato, qué invariante— muere acá si nadie la registra, y sin ella el 500 no
-// dice qué hay que corregir en el Studio.
+/** Traduce los errores del módulo al status que le corresponde a cada uno. */
 async function respond<T>(c: Context, produce: () => Promise<T>) {
 	try {
 		return c.json(await produce());
@@ -18,10 +15,14 @@ async function respond<T>(c: Context, produce: () => Promise<T>) {
 			return c.json({ error: error.message }, 404);
 		}
 		if (error instanceof MalformedLandingPageError) {
+			// Se loguea antes de traducir porque la respuesta no lleva la causa: sin este registro, qué dato
+			// y qué invariante lo produjeron mueren acá y el 500 no dice qué corregir en el Studio.
 			console.error('content.controller: la página de inicio no se pudo construir', {
 				message: error.message,
 				cause: error.cause,
 			});
+			// Responde un código y no el mensaje: ese mensaje nombra el documento culpable, que es
+			// información de la redacción y no del cliente.
 			return c.json({ error: 'landing_page_malformed' }, 500);
 		}
 		throw error;

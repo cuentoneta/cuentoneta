@@ -11,9 +11,12 @@ export interface LandingPageSummary {
 	readonly config: string;
 }
 
-// La carga de una semana futura se arma copiando las referencias de la última semana curada, sin
-// resolverlas: el generador no lee contenido, lo reapunta. Por eso habla de referencias crudas y no de
-// dominio — pero la forma la declara el puerto, no la query.
+/**
+ * El contenido de una landing expresado como referencias sin resolver.
+ *
+ * Habla de referencias y no de dominio porque su consumidor las reapunta en vez de leerlas; la forma la
+ * declara el puerto y no la query, para que el service no dependa de los tipos del typegen.
+ */
 export interface LandingPageReferences {
 	readonly _type: string;
 	readonly campaigns: readonly KeyedReference[];

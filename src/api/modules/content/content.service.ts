@@ -6,8 +6,6 @@ import { LandingPageNotFoundError, RotatingContentNotFoundError } from './conten
 import type { ContentRepository, LandingPageCreatePayload } from './content.repository';
 import { SanityContentRepository } from './content.repository.sanity';
 
-// El repository es stateless, así que instanciarlo por llamada (default) no comparte estado.
-
 export async function getLandingPageContent(
 	repository: ContentRepository = new SanityContentRepository(),
 ): Promise<LandingPageContent> {

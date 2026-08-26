@@ -1,3 +1,4 @@
+/** La semana pedida no está cargada en el content lake. */
 export class LandingPageNotFoundError extends Error {
 	constructor(slug: string) {
 		super(`Landing page with slug "${slug}" not found`);
@@ -5,9 +6,12 @@ export class LandingPageNotFoundError extends Error {
 	}
 }
 
-// Se distingue de "la semana no existe" porque son dos problemas distintos: acá la landing está en el
-// content lake pero su contenido curado no permite construir el dominio, así que merece un status
-// propio en vez de confundirse con un 404.
+/**
+ * La semana existe, pero su contenido curado no permite construir el dominio.
+ *
+ * Es un problema distinto del anterior y por eso merece un status propio: uno se corrige cargando la
+ * semana y el otro corrigiendo lo que ya se cargó.
+ */
 export class MalformedLandingPageError extends Error {
 	constructor(slug: string, options?: { cause?: unknown }) {
 		super(`Landing page with slug "${slug}" is malformed`, options);
@@ -15,6 +19,7 @@ export class MalformedLandingPageError extends Error {
 	}
 }
 
+/** El documento de contenido rotativo no está instalado. */
 export class RotatingContentNotFoundError extends Error {
 	constructor() {
 		super('Rotating content not found');
@@ -22,8 +27,12 @@ export class RotatingContentNotFoundError extends Error {
 	}
 }
 
-// El contenido rotativo es otro documento, así que su curaduría rota merece su propio error: envuelto
-// en el de la landing, el mensaje diría que está mal la semana cuando la semana está bien.
+/**
+ * El contenido rotativo existe, pero su contenido curado no permite construir el dominio.
+ *
+ * Lleva error propio y no el de la landing porque es otro documento: envuelto en aquél, el mensaje
+ * culparía a una semana que está bien.
+ */
 export class MalformedRotatingContentError extends Error {
 	constructor(options?: { cause?: unknown }) {
 		super('Rotating content is malformed', options);
