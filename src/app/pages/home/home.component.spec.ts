@@ -10,6 +10,8 @@ import { ControllableLayoutService } from '../../providers/layout.mock';
 import type { LandingPageContent } from '@models/landing-page-content.model';
 import { onoffHighlightedAuthorsOfLength } from '@mocks/onoff-highlighted-authors.mock';
 import { onoffStoryNavigationTeasersWithAuthorMock } from '@mocks/onoff-story-teasers.mock';
+import { storylistTeaserRepresentativeMock } from '@mocks/storylist.mock';
+import { contentCampaignMock } from '@mocks/content-campaign.mock';
 import { renderDeferBlocks } from '@testing/defer-blocks';
 import { clearAllMocks } from '@test-utils';
 
@@ -93,6 +95,40 @@ describe('HomeComponent', () => {
 		});
 	});
 
+	describe('colecciones', () => {
+		// El corpus todavía no deriva teasers de `Storylist` (la landing cruda trae `cards: []`), así que
+		// las variantes salen del mismo mock heredado que usa el spec del mazo.
+		const cards = ['Geometrías del desvelo', 'El palacio de las nueve fronteras'].map((title, index) => ({
+			...storylistTeaserRepresentativeMock,
+			_id: `storylist-mock-${index + 1}`,
+			title,
+			slug: `coleccion-${index + 1}`,
+		}));
+
+		it('should hand every collection card to the collections deck', async () => {
+			const { fixture } = await renderHome({ cards });
+
+			await renderDeferBlocks(fixture);
+
+			cards.forEach(({ title }) => {
+				expect(screen.getByText(title)).toBeInTheDocument();
+			});
+		});
+	});
+
+	describe('campañas', () => {
+		it('should hand the campaigns of the week to the carousel', async () => {
+			const [firstCampaign] = contentCampaignMock;
+			const { fixture } = await renderHome({ campaigns: contentCampaignMock });
+
+			await renderDeferBlocks(fixture);
+
+			expect(screen.getByRole('region', { name: 'Content campaigns' })).toBeInTheDocument();
+			// El carrusel dibuja solo la diapositiva activa, así que la campaña observable es la primera.
+			expect(screen.getByAltText(`Imagen de la campaña de contenido ${firstCampaign.title}`)).toBeInTheDocument();
+		});
+	});
+
 	describe('autores destacados', () => {
 		it('should render the highlighted authors section header', async () => {
 			await renderHome({ highlightedAuthors: onoffHighlightedAuthorsOfLength(6) });
@@ -108,6 +144,16 @@ describe('HomeComponent', () => {
 			expect(screen.getByRole('link', { name: 'Ver todos los autores' })).toHaveAttribute('href', '/authors');
 		});
 
+		it('should hand every highlighted author to the grid', async () => {
+			const highlightedAuthors = onoffHighlightedAuthorsOfLength(6);
+			const { fixture } = await renderHome({ highlightedAuthors });
+
+			await renderDeferBlocks(fixture);
+
+			highlightedAuthors.forEach(({ author }) => {
+				expect(screen.getByText(author.name)).toBeInTheDocument();
+			});
+		});
 		it('should render the section even when the week has no highlighted authors', async () => {
 			await renderHome({ highlightedAuthors: [] });
 
