@@ -26,11 +26,6 @@
 		<cuentoneta-most-read-stories-card-deck [stories]="mostRead()" class="flex flex-col gap-8" />
 	</section>
 
-	<!--
-        Sin altura fijada, a diferencia de las secciones de arriba: la grilla en carga dibuja la sección
-        llena, así que reserva el alto de una semana completa. Una semana con menos destacados encoge al
-        resolver; si ese salto se vuelve perceptible, corresponde fijar el alto por breakpoint.
-    -->
 	<section class="mb-8">
 		<cuentoneta-highlighted-authors [authors]="highlightedAuthors()" />
 	</section>

@@ -48,7 +48,5 @@ export default class HomeComponent {
 	protected readonly campaigns = computed(() => this.landingPageContent()?.campaigns || []);
 	protected readonly mostRead = computed(() => this.landingPageContent()?.mostRead.slice(0, 6) || []);
 	protected readonly latestReads = computed(() => this.landingPageContent()?.latestReads.slice(0, 6) || []);
-	// Sin recorte propio: el tope de destacados lo aplica el ACL, y duplicarlo acá dejaría dos que pueden
-	// divergir sin que nada lo note.
 	protected readonly highlightedAuthors = computed(() => this.landingPageContent()?.highlightedAuthors ?? []);
 }
