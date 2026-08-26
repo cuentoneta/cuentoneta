@@ -1,24 +1,22 @@
 import type { SanityClient } from '@sanity/client';
-import type { CollectionBySlugQueryResult, CollectionsQueryResult } from '@sanity-types';
-import {
-	createCollection,
-	createCollectionTeaser,
-	type Collection,
-	type CollectionImagery,
-	type CollectionTeaser,
-} from '@models/collection.model';
+import type { CollectionBySlugQueryResult } from '@sanity-types';
+import { createCollection, type Collection, type CollectionTeaser } from '@models/collection.model';
 import { createLiteraryWorkExcerpt, type LiteraryWorkExcerpt } from '@models/literary-work-excerpt.model';
 import type { LiteraryWorkTeaser } from '@models/literary-work.model';
-import { createMarkdown, type Markdown } from '@models/markdown.model';
+import { createMarkdown } from '@models/markdown.model';
 import { createReadingTime, type ReadingTime } from '@models/reading-time.model';
 import { createSectionTitle } from '@models/section-title.model';
 import { createSlug } from '@models/slug.model';
-import type { SanitizedHtml } from '@models/sanitized-html.model';
-import { markdownToLinklessSanitizedHtml, markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
+import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import { mapAuthorTeaser, mapTags, urlFor } from '../../_utils/functions';
-import { mapMediaSources, mapMediaTeasers } from '../../_utils/media-sources.functions';
+import { mapMediaTeasers } from '../../_utils/media-sources.functions';
 import { client as sanityClient } from '../../_helpers/sanity-connector';
 import { collectionBySlugQuery, collectionsQuery } from '../../_queries/collection.query';
+import {
+	mapSanityCollectionTeaser,
+	mapSharedCollectionFields,
+	resolveCollectionImagery,
+} from './collection-teaser.acl';
 import { MalformedCollectionError } from './collection.errors';
 import type { CollectionRepository } from './collection.repository';
 
@@ -27,8 +25,6 @@ import type { CollectionRepository } from './collection.repository';
 type SanityCollection = NonNullable<CollectionBySlugQueryResult>;
 type SanityCollectionWork = SanityCollection['literaryWorks'][number];
 type SanityExcerpt = SanityCollectionWork['excerpt'][number];
-type SanityCollectionTeaser = CollectionsQueryResult[number];
-type SanityFeaturedImage = SanityCollection['featuredImage'];
 
 export class SanityCollectionRepository implements CollectionRepository {
 	constructor(private readonly client: SanityClient = sanityClient) {}
@@ -43,7 +39,7 @@ export class SanityCollectionRepository implements CollectionRepository {
 
 	public async fetchAll(): Promise<CollectionTeaser[]> {
 		const raw = await this.client.fetch(collectionsQuery);
-		return raw.map((teaser) => this.guard(teaser.slug, () => this.mapCollectionTeaser(teaser)));
+		return raw.map((teaser) => this.guard(teaser.slug, () => mapSanityCollectionTeaser(teaser)));
 	}
 
 	// Una colección mal curada tumba la llamada entera en vez de filtrarse: un listado que esconde
@@ -67,61 +63,14 @@ export class SanityCollectionRepository implements CollectionRepository {
 		const sampleCoverCount = 3;
 		const literaryWorks = raw.literaryWorks.map((work) => this.mapLiteraryWorkTeaser(work));
 		return createCollection({
-			...this.mapShared(raw, markdownToSanitizedHtml),
-			imagery: this.resolveImagery(
+			...mapSharedCollectionFields(raw, markdownToSanitizedHtml),
+			imagery: resolveCollectionImagery(
 				raw.slug,
 				raw.featuredImage,
 				literaryWorks.slice(0, sampleCoverCount).map((work) => work.coverImage),
 			),
 			literaryWorks,
 		});
-	}
-
-	// Cada vista elige su pipeline: el teaser sin enlaces, la vista completa con ellos. Ahí la prosa no
-	// se pinta dentro de nada, así que el enlace es legítimo.
-	private mapCollectionTeaser(raw: SanityCollectionTeaser): CollectionTeaser {
-		return createCollectionTeaser({
-			...this.mapShared(raw, markdownToLinklessSanitizedHtml),
-			imagery: this.resolveImagery(
-				raw.slug,
-				raw.featuredImage,
-				raw.literaryWorkCoverImages.map((cover) => (cover ? urlFor(cover) : '')),
-			),
-			// Cero cuando la colección no tiene obras, que es el caso que la factory rechaza.
-			count: raw.count,
-		});
-	}
-
-	// Lo que las dos vistas mapean igual. La descripción va sin default: el vacío tiene que lanzar y
-	// quedar envuelto, no colarse como una colección sin prosa.
-	private mapShared(
-		raw: SanityCollection | SanityCollectionTeaser,
-		toSanitizedHtml: (markdown: Markdown) => SanitizedHtml,
-	) {
-		return {
-			_id: raw._id,
-			slug: raw.slug,
-			title: raw.title,
-			description: toSanitizedHtml(createMarkdown(raw.description)),
-			tags: mapTags(raw.tags),
-			config: { showAuthors: raw.config.showAuthors },
-			mediaSources: mapMediaSources(raw.mediaSources),
-		};
-	}
-
-	// Las dos vistas le pasan las portadas de las **mismas tres** obras, para que una colección no pueda
-	// construirse por un camino y fallar por el otro. Un abanico incompleto lanza en vez de rellenarse:
-	// una portada vacía llega a la interfaz como una imagen rota.
-	private resolveImagery(slug: string, featuredImage: SanityFeaturedImage, coverUrls: string[]): CollectionImagery {
-		const image = featuredImage ? urlFor(featuredImage) : '';
-		if (image !== '') {
-			return { kind: 'representative', image };
-		}
-		const [first, second, third] = coverUrls.filter((url) => url !== '');
-		if (first === undefined || second === undefined || third === undefined) {
-			throw new MalformedCollectionError(slug);
-		}
-		return { kind: 'sample', images: [first, second, third] };
 	}
 
 	private mapLiteraryWorkTeaser(raw: SanityCollectionWork): LiteraryWorkTeaser {
