@@ -4,27 +4,22 @@ import { Observable, of } from 'rxjs';
 
 // Models
 import { LandingPageContent } from '@models/landing-page-content.model';
-import { contentCampaignMock } from '@mocks/content-campaign.mock';
-import { onoffCollectionTeasersMock } from '@mocks/onoff-collections.mock';
-import { onoffLiteraryWorkNavigationTeasersWithAuthorsMock } from '@mocks/onoff-literary-work-teasers.mock';
 import { ContentApi } from './content.provider';
 
-// Los slots se pueblan desde el canon y no con listas vacías: un doble que devuelve nada hace que toda
-// story y todo spec que lo use rendericen el estado de carga y no afirmen nada. Los destacados se
-// reparten entre los dos slots para que un cruce entre ellos sea observable.
+// Entrega la landing vacía: cada caso superpone solo las secciones que ejercita, y así lo que no
+// declara queda demostrablemente en cero.
 export class StubContentApi implements ContentApi {
 	public getLandingPageContent(): Observable<LandingPageContent> {
-		const half = Math.ceil(onoffLiteraryWorkNavigationTeasersWithAuthorsMock.length / 2);
 		const landingPageContent: LandingPageContent = {
-			_id: 'landing-page-stub',
-			config: '1974-24',
+			_id: '',
+			config: '',
 			cards: [],
-			collections: onoffCollectionTeasersMock,
-			campaigns: contentCampaignMock,
+			collections: [],
+			campaigns: [],
 			mostRead: [],
-			mostReadLiteraryWorks: onoffLiteraryWorkNavigationTeasersWithAuthorsMock.slice(0, half),
+			mostReadLiteraryWorks: [],
 			latestReads: [],
-			latestLiteraryWorks: onoffLiteraryWorkNavigationTeasersWithAuthorsMock.slice(half),
+			latestLiteraryWorks: [],
 			highlightedAuthors: [],
 		};
 		return of(landingPageContent);
