@@ -1,5 +1,5 @@
 import HomeComponent from './home.component';
-import { render, screen } from '@testing-library/angular';
+import { render, screen, within } from '@testing-library/angular';
 import { provideRouter } from '@angular/router';
 import { map, type Observable } from 'rxjs';
 
@@ -9,6 +9,8 @@ import { LayoutService } from '../../providers/layout.interface';
 import { ControllableLayoutService } from '../../providers/layout.mock';
 import type { LandingPageContent } from '@models/landing-page-content.model';
 import { onoffHighlightedAuthorsOfLength } from '@mocks/onoff-highlighted-authors.mock';
+import { onoffStoryNavigationTeasersWithAuthorMock } from '@mocks/onoff-story-teasers.mock';
+import { renderDeferBlocks } from '@testing/defer-blocks';
 import { clearAllMocks } from '@test-utils';
 
 // El doble canned del provider entrega la landing vacía; cada caso le superpone solo las secciones
@@ -35,6 +37,36 @@ const renderHome = (content: Partial<LandingPageContent> = {}) =>
 describe('HomeComponent', () => {
 	beforeEach(() => {
 		clearAllMocks();
+	});
+
+	describe('mazos de historias', () => {
+		// Rebanadas disjuntas del corpus: es lo que permite afirmar cuál de los dos listados llegó a cada
+		// mazo, y no solo cuántas tarjetas hay en total.
+		const latestReads = onoffStoryNavigationTeasersWithAuthorMock.slice(0, 3);
+		const mostRead = onoffStoryNavigationTeasersWithAuthorMock.slice(3, 6);
+
+		// Los dos mazos marcan sus tarjetas con el mismo `card`, así que el discriminante es el orden de
+		// documento: el de novedades precede al de más leídas en la plantilla, que es el orden de lectura.
+		it('should hand each listing to its own deck', async () => {
+			const { fixture } = await renderHome({ latestReads, mostRead });
+
+			await renderDeferBlocks(fixture);
+
+			const cards = screen.getAllByTestId('card');
+			expect(cards).toHaveLength(latestReads.length + mostRead.length);
+			[...latestReads, ...mostRead].forEach((story, index) => {
+				expect(within(cards[index]).getByText(story.title)).toBeInTheDocument();
+			});
+		});
+
+		// Las cabeceras quedan fuera de los bloques diferidos: son lo que la página lleva servido aunque
+		// las tarjetas todavía no se hayan resuelto.
+		it('should render both deck headings from the very first render', async () => {
+			await renderHome({ latestReads, mostRead });
+
+			expect(screen.getByRole('heading', { level: 2, name: 'Últimas novedades' })).toBeInTheDocument();
+			expect(screen.getByRole('heading', { level: 2, name: 'Historias más leídas' })).toBeInTheDocument();
+		});
 	});
 
 	describe('autores destacados', () => {
