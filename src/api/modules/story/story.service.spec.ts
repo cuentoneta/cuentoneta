@@ -2,8 +2,7 @@ import { clearAllMocks, type Mock } from '@test-utils';
 import * as storyRepository from './story.repository';
 import * as storyService from './story.service';
 import type { StoriesByAuthorSlugQueryResult } from '@sanity-types';
-import { onoffRawStoriesMock } from '@mocks/onoff-raw-stories.mock';
-import { elOdioRawTeaser } from '@mocks/onoff-raw-stories.mock';
+import { onoffRawStoriesMock, onoffRawTeasersMock } from '@mocks/onoff-raw-stories.mock';
 import { onoffLiteraryWorkNavigationTeasersWithAuthorsMock } from '@mocks/onoff-literary-work-teasers.mock';
 import { environment } from '../../_helpers/environment';
 import { fetchClarityData } from '../../_helpers/clarity-connector';
@@ -27,8 +26,12 @@ vi.mock('@sanity/image-url', () => ({
 vi.mock('../../_helpers/clarity-connector', () => ({ fetchClarityData: vi.fn() }));
 /* eslint-enable no-restricted-syntax */
 
+// El teaser base sale de la colección del canon y no de un export por obra: el caso necesita "un teaser
+// crudo cualquiera" al que ponerle una portada, no uno puntual.
+const [rawTeaser] = onoffRawTeasersMock;
+
 const rawTeaserWithCover: StoriesByAuthorSlugQueryResult[0] = {
-	...elOdioRawTeaser,
+	...rawTeaser,
 	coverImage: { _type: 'image', asset: { _type: 'reference', _ref: 'image-abc-100x100-jpg' } },
 };
 
