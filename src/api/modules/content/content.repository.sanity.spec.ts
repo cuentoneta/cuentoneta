@@ -4,22 +4,23 @@ import { stubSanityClient } from '@testing/sanity-client.stub';
 import {
 	onoffRawHighlightedAuthorsMock,
 	onoffRawLandingPageMock,
+	onoffRawRotatingContentMock,
 	overflowingRawHighlightedAuthors,
 	untaggedRawHighlightedAuthor,
 } from '@mocks/onoff-raw-landing-page.mock';
 import { onoffRawNavTeasersMock } from '@mocks/onoff-raw-stories.mock';
 import { mapAuthorTeaser } from '../../_utils/functions';
 import { landingPageContentQuery, rotatingContentQuery } from '../../_queries/content.query';
+import { MalformedLandingPageError } from './content.errors';
 import { SanityContentRepository } from './content.repository.sanity';
 
 const LANDING_SLUG = onoffRawLandingPageMock.slug;
 
-// El corpus no modela un documento de contenido rotativo, así que la rotación se arma acá con los
-// teasers de navegación del canon: son la misma proyección que la landing usa para sus últimas
-// novedades.
+// El slot de obras sale del corpus; el de historias se arma acá con los teasers de navegación del
+// canon, porque el documento del corpus ya no declara el campo en baja y este spec necesita las dos
+// listas pobladas para poder distinguirlas.
 const rawRotatingContent = {
-	_id: 'rotatingContent',
-	name: 'Lo más leído',
+	...onoffRawRotatingContentMock,
 	mostRead: onoffRawNavTeasersMock.slice(0, 2),
 };
 
@@ -58,10 +59,13 @@ describe('SanityContentRepository.fetchLandingPageContent', () => {
 			'_id',
 			'campaigns',
 			'cards',
+			'collections',
 			'config',
 			'highlightedAuthors',
+			'latestLiteraryWorks',
 			'latestReads',
 			'mostRead',
+			'mostReadLiteraryWorks',
 		]);
 	});
 
@@ -113,6 +117,83 @@ describe('SanityContentRepository.fetchLandingPageContent', () => {
 		const result = await repoReturning(onoffRawLandingPageMock).fetchLandingPageContent(LANDING_SLUG);
 
 		result?.latestReads.forEach((story) => expect(story.tags).toEqual([]));
+	});
+
+	it('maps every collection the query returned, in order', async () => {
+		const expected = onoffRawLandingPageMock.collections.map(({ slug }) => slug);
+
+		const result = await repoReturning(onoffRawLandingPageMock).fetchLandingPageContent(LANDING_SLUG);
+
+		expect(expected.length).toBeGreaterThan(0);
+		expect(result?.collections.map(({ slug }) => slug)).toEqual(expected);
+	});
+
+	// La vista de navegación de obra no declara extracto, y el teaser sí: si alguna vez volviera a
+	// mapearse como teaser, el slot cargaría el cuerpo de cada obra destacada sin que nadie lo pinte.
+	it('serves the navigation view of each highlighted work, without an excerpt', async () => {
+		const result = await repoReturning(onoffRawLandingPageMock).fetchLandingPageContent(LANDING_SLUG);
+
+		const [work] = result?.latestLiteraryWorks ?? [];
+		expect(work).not.toHaveProperty('excerpt');
+		expect(Object.keys(work).sort()).toEqual([
+			'_id',
+			'authors',
+			'coverImage',
+			'mediaSources',
+			'sectionCount',
+			'slug',
+			'tags',
+			'title',
+			'totalReadingTime',
+		]);
+	});
+
+	it('wraps a malformed collection instead of letting the factory error escape', async () => {
+		const [collection, ...rest] = onoffRawLandingPageMock.collections;
+		const broken = { ...onoffRawLandingPageMock, collections: [{ ...collection, description: '' }, ...rest] };
+
+		await expect(repoReturning(broken).fetchLandingPageContent(LANDING_SLUG)).rejects.toThrow(
+			MalformedLandingPageError,
+		);
+	});
+
+	// Sin el total no hay nada que mostrar en la tarjeta: es una obra que el backfill todavía no tocó.
+	it('rejects a highlighted work with no total reading time', async () => {
+		const [work, ...rest] = onoffRawLandingPageMock.latestLiteraryWorks;
+		const broken = {
+			...onoffRawLandingPageMock,
+			latestLiteraryWorks: [{ ...work, totalReadingTime: null }, ...rest],
+		};
+
+		await expect(repoReturning(broken).fetchLandingPageContent(LANDING_SLUG)).rejects.toThrow(
+			MalformedLandingPageError,
+		);
+	});
+
+	// La proyección devuelve la lista vacía tanto para la obra sin autores como para la que los perdió, y
+	// la tarjeta de la home muestra al primero sin preguntar: sin este rechazo, una obra mal curada tumba
+	// el render de la página entera en vez de fallar donde se puede corregir.
+	it('rejects a highlighted work with no authors', async () => {
+		const [work, ...rest] = onoffRawLandingPageMock.latestLiteraryWorks;
+		const broken = { ...onoffRawLandingPageMock, latestLiteraryWorks: [{ ...work, authors: [] }, ...rest] };
+
+		await expect(repoReturning(broken).fetchLandingPageContent(LANDING_SLUG)).rejects.toThrow(
+			MalformedLandingPageError,
+		);
+	});
+
+	// El guard existe para nombrar la semana culpable; el error de la obra viaja como causa.
+	it('names the week in the error and keeps the offending work as its cause', async () => {
+		const [work, ...rest] = onoffRawLandingPageMock.latestLiteraryWorks;
+		const broken = { ...onoffRawLandingPageMock, latestLiteraryWorks: [{ ...work, authors: [] }, ...rest] };
+
+		const error = await repoReturning(broken)
+			.fetchLandingPageContent(LANDING_SLUG)
+			.then(() => undefined)
+			.catch((caught: MalformedLandingPageError) => caught);
+
+		expect(error?.message).toContain(LANDING_SLUG);
+		expect((error?.cause as Error).message).toContain(work.slug);
 	});
 });
 

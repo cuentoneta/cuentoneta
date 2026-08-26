@@ -59,6 +59,42 @@ export interface LiteraryWorkNavigationTeaserWithAuthors extends LiteraryWorkBas
 	readonly mediaSources: readonly MediaTeaser[];
 }
 
+interface CreateLiteraryWorkNavigationTeaserOptions {
+	_id: string;
+	slug: string;
+	title: string;
+	coverImage: string;
+	totalReadingTime: ReadingTime;
+	sectionCount: number;
+	tags: readonly Tag[];
+	mediaSources: readonly MediaTeaser[];
+	authors: readonly AuthorTeaser[];
+}
+
+/**
+ * Construye la vista de navegación con autores haciendo cumplir las invariantes que sí puede sostener:
+ * título no vacío y al menos un autor.
+ *
+ * La de autores no es defensiva — es la misma que `createLiteraryWork` hace cumplir para el agregado
+ * completo, traducida a esta vista. La proyección la deja pasar (`coalesce(authors[]->…, [])` devuelve
+ * la lista vacía tanto para la obra sin autores como para la que los perdió al despublicarse), y las
+ * tarjetas que pintan esta vista muestran al primero sin preguntar. Sin la factory, una obra mal curada
+ * no rompe donde se puede corregir sino al renderizarse.
+ */
+export function createLiteraryWorkNavigationTeaser(
+	options: CreateLiteraryWorkNavigationTeaserOptions,
+): LiteraryWorkNavigationTeaserWithAuthors {
+	if (options.title.trim() === '') {
+		throw new Error(`LiteraryWorkNavigationTeaser inválido: título vacío (slug "${options.slug}")`);
+	}
+	if (options.authors.length === 0) {
+		throw new Error(
+			`LiteraryWorkNavigationTeaser inválido: sin autores (slug "${options.slug}") — la obra anónima referencia al author "Anónimo"`,
+		);
+	}
+	return Object.freeze({ ...options, slug: createSlug(options.slug) });
+}
+
 // "Anónimo" es un author real del catálogo: la obra anónima lo referencia explícitamente
 // en todas las capas (sin normalización en el ACL) — ver docs/LITERARY_WORK_DESIGN.md §10.
 // Se compara por slug (clave de negocio), nunca por _id (infraestructura).

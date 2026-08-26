@@ -17,7 +17,7 @@ function repository(): SanityContentRepository {
 	// El contenido rotativo no participa de este cruce, pero la lectura lo pide igual, así que se
 	// responde vacío en vez de dejarlo sin respuesta.
 	const { client } = stubSanityClient(
-		[[rotatingContentQuery, { _id: 'rotatingContent', name: 'Lo más leído', mostRead: [] }]],
+		[[rotatingContentQuery, { _id: 'rotatingContent', name: 'Lo más leído', mostRead: [], mostReadLiteraryWorks: [] }]],
 		onoffRawLandingPageMock,
 	);
 	return new SanityContentRepository(client);

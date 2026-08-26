@@ -23,9 +23,12 @@ const curatedLandingPage: LandingPageContent = {
 	_id: `landing-page-${CURRENT_SLUG}`,
 	config: CURRENT_SLUG,
 	cards: [],
+	collections: [],
 	campaigns: [],
 	mostRead: [],
+	mostReadLiteraryWorks: [],
 	latestReads: [],
+	latestLiteraryWorks: [],
 	highlightedAuthors: [],
 };
 

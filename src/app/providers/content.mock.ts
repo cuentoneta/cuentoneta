@@ -12,9 +12,12 @@ export class StubContentApi implements ContentApi {
 			_id: '',
 			config: '',
 			cards: [],
+			collections: [],
 			campaigns: [],
 			mostRead: [],
+			mostReadLiteraryWorks: [],
 			latestReads: [],
+			latestLiteraryWorks: [],
 			highlightedAuthors: [],
 		};
 		return of(landingPageContent);

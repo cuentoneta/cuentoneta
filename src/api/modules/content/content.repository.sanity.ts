@@ -8,6 +8,11 @@ import type { HighlightedAuthor, LandingPageContent, RotatingContent } from '@mo
 import type { StorylistTeaser } from '@models/storylist.model';
 import type { StoryNavigationTeaserWithAuthor } from '@models/story.model';
 import {
+	createLiteraryWorkNavigationTeaser,
+	type LiteraryWorkNavigationTeaserWithAuthors,
+} from '@models/literary-work.model';
+import { createReadingTime } from '@models/reading-time.model';
+import {
 	mapAuthorTeaser,
 	mapBlockContentToTextParagraphs,
 	mapContentCampaigns,
@@ -15,8 +20,9 @@ import {
 	mapTags,
 	urlFor,
 } from '../../_utils/functions';
-import { mapMediaSources } from '../../_utils/media-sources.functions';
+import { mapMediaSources, mapMediaTeasers } from '../../_utils/media-sources.functions';
 import { mapImagery } from '../../_utils/storylist-imagery.functions';
+import { mapSanityCollectionTeaser } from '../collection/collection-teaser.acl';
 import { client as sanityClient } from '../../_helpers/sanity-connector';
 import {
 	landingPageContentQuery,
@@ -59,7 +65,7 @@ export class SanityContentRepository implements ContentRepository {
 			// leído desaparece de la home con un 200 y nadie se entera.
 			console.warn('SanityContentRepository: el contenido rotativo no existe; la home queda sin lo más leído');
 		}
-		return this.guard(slug, () => this.mapLandingPageContent(raw, rotating?.mostRead ?? []));
+		return this.guard(slug, () => this.mapLandingPageContent(raw, rotating));
 	}
 
 	/** Entrega la rotación de lo más leído, o `null` si el documento no está instalado. */
@@ -71,7 +77,12 @@ export class SanityContentRepository implements ContentRepository {
 			return null;
 		}
 		try {
-			return { _id: raw._id, name: raw.name, mostRead: this.mapNavigationTeasers(raw.mostRead) };
+			return {
+				_id: raw._id,
+				name: raw.name,
+				mostRead: this.mapNavigationTeasers(raw.mostRead),
+				mostReadLiteraryWorks: raw.mostReadLiteraryWorks.map((work) => this.mapLiteraryWorkNavigationTeaser(work)),
+			};
 		} catch (error) {
 			throw new MalformedRotatingContentError({ cause: error });
 		}
@@ -96,6 +107,8 @@ export class SanityContentRepository implements ContentRepository {
 			campaigns: raw.campaigns,
 			cards: raw.cards,
 			latestReads: raw.latestReads,
+			collections: raw.collections,
+			latestLiteraryWorks: raw.latestLiteraryWorks,
 			highlightedAuthors: raw.highlightedAuthors,
 		};
 	}
@@ -124,19 +137,46 @@ export class SanityContentRepository implements ContentRepository {
 		}
 	}
 
-	private mapLandingPageContent(
-		raw: SanityLandingPage,
-		mostRead: StoryNavigationTeaserWithAuthor[],
-	): LandingPageContent {
+	private mapLandingPageContent(raw: SanityLandingPage, rotating: RotatingContent | null): LandingPageContent {
 		return {
 			_id: raw._id,
 			config: raw.config,
 			cards: this.mapStorylistTeasers(raw.cards),
+			collections: raw.collections.map(mapSanityCollectionTeaser),
 			campaigns: mapContentCampaigns(raw.campaigns),
-			mostRead,
+			mostRead: rotating?.mostRead ?? [],
+			mostReadLiteraryWorks: rotating?.mostReadLiteraryWorks ?? [],
 			latestReads: this.mapNavigationTeasers(raw.latestReads),
+			latestLiteraryWorks: raw.latestLiteraryWorks.map((work) => this.mapLiteraryWorkNavigationTeaser(work)),
 			highlightedAuthors: this.mapHighlightedAuthors(raw.highlightedAuthors),
 		};
+	}
+
+	// El repository de la página de inicio es el primer y único productor backend de la vista de
+	// navegación de obra: la pintan sus tarjetas, que no muestran cuerpo y por eso no piden extracto.
+	//
+	// El error que sale de acá nombra la **obra**, y es el guard el que lo envuelve nombrando la semana:
+	// sin esa distinción, el mensaje culparía a la landing por una obra mal curada que puede estar en
+	// cualquiera de las dos listas, o en el documento rotativo, que ni siquiera es una landing.
+	private mapLiteraryWorkNavigationTeaser(
+		raw: SanityLandingPage['latestLiteraryWorks'][number] | SanityRotatingContent['mostReadLiteraryWorks'][number],
+	): LiteraryWorkNavigationTeaserWithAuthors {
+		if (raw.totalReadingTime === null) {
+			// Sin el total no hay nada que mostrar en la tarjeta: es una obra a la que el backfill todavía no
+			// le calculó su tiempo de lectura.
+			throw new Error(`LiteraryWorkNavigationTeaser inválido: sin tiempo de lectura (slug "${raw.slug}")`);
+		}
+		return createLiteraryWorkNavigationTeaser({
+			_id: raw._id,
+			slug: raw.slug,
+			title: raw.title,
+			coverImage: raw.coverImage ? urlFor(raw.coverImage) : '',
+			totalReadingTime: createReadingTime(raw.totalReadingTime),
+			sectionCount: raw.sectionCount,
+			tags: mapTags(raw.tags),
+			mediaSources: mapMediaTeasers(raw.mediaSources),
+			authors: raw.authors.map(mapAuthorTeaser),
+		});
 	}
 
 	private mapStorylistTeasers(result: StorylistTeasersQueryResult): StorylistTeaser[] {
