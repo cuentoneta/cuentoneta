@@ -23,7 +23,8 @@ import { getLandingPageContent, getRotatingContent } from '../content/content.se
 import { fetchClarityData } from '../../_helpers/clarity-connector';
 
 // Repository
-import { updateRotatingContentMostRead } from '../content/content.repository';
+import type { ContentRepository } from '../content/content.repository';
+import { SanityContentRepository } from '../content/content.repository.sanity';
 
 // Funciones de mapeo
 import { mapMediaSources } from '../../_utils/media-sources.functions';
@@ -66,7 +67,9 @@ export async function getMostReadStoryNavigationTeasers(
 	return result.mostRead.slice(offset, offset + limit);
 }
 
-export async function updateMostReadStories(): Promise<RotatingContent> {
+export async function updateMostReadStories(
+	contentRepository: ContentRepository = new SanityContentRepository(),
+): Promise<RotatingContent> {
 	const popularPagesMetrics = (await fetchClarityData()).find((metric) => metric.metricName === 'PopularPages');
 	if (!popularPagesMetrics) {
 		throw new Error('Could not fetch metrics.');
@@ -80,10 +83,10 @@ export async function updateMostReadStories(): Promise<RotatingContent> {
 	const stories = await getStoriesBySlug(mostReadStoriesSlugs);
 
 	// Actualiza landing page referencias a las historias marcadas como "más leídas" actuales
-	const mostReadStories = stories.map((s) => ({ _key: s._id, _type: 'story', _ref: s._id }));
-	await updateRotatingContentMostRead(mostReadStories);
+	const mostReadStories = stories.map((s) => ({ _key: s._id, _type: 'reference' as const, _ref: s._id }));
+	await contentRepository.updateMostReadStories(mostReadStories);
 
-	return await getRotatingContent();
+	return await getRotatingContent(contentRepository);
 }
 
 export async function getStories(limit: number = 100, offset: number = 0): Promise<StoryTeaserWithAuthor[]> {

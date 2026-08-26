@@ -3,7 +3,6 @@ import { client } from '../_helpers/sanity-connector';
 
 // Funciones
 import { mapMediaSources } from './media-sources.functions';
-import { mapImagery } from './storylist-imagery.functions';
 
 // Tipos de Sanity
 
@@ -13,10 +12,8 @@ import { createImageUrlBuilder, SanityImageSource } from '@sanity/image-url';
 // Modelos
 import { Author, AuthorProfile, AuthorTeaser } from '@models/author.model';
 import { ContentCampaign, viewportElementSizes } from '@models/content-campaign.model';
-import type { HighlightedAuthor, LandingPageContent, RotatingContent } from '@models/landing-page-content.model';
-import { StorylistTeaser } from '@models/storylist.model';
 import { Resource } from '@models/resource.model';
-import { Story, StoryNavigationTeaserWithAuthor, StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
+import { Story, StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
 import { Tag } from '@models/tag.model';
 import { TextBlockContent } from '@models/block-content.model';
 import { createMarkdown } from '@models/markdown.model';
@@ -30,7 +27,6 @@ import {
 	CollectionBySlugQueryResult,
 	LandingPageContentQueryResult,
 	LiteraryWorkBySlugQueryResult,
-	RotatingContentQueryResult,
 	StoriesByAuthorSlugQueryResult,
 	StoriesBySlugsQueryResult,
 	StoryBySlugQueryResult,
@@ -194,22 +190,6 @@ export function mapTags(tags: TagsSubQuery): Tag[] {
 	}));
 }
 
-function mapStorylistTeasers(result: StorylistTeasersQueryResult): StorylistTeaser[] {
-	return result.map((item) => {
-		const { featuredImage, storyCoverImages, mediaSources, ...rest } = item;
-		return {
-			...rest,
-			config: { ...item.config, showAuthors: item.config?.showAuthors ?? false },
-			description: mapBlockContentToTextParagraphs(item.description),
-			tags: mapTags(item.tags),
-			stories: [],
-			tabs: [],
-			media: mapMediaSources(mediaSources),
-			imagery: mapImagery({ featuredImage, storyCoverImages }),
-		};
-	});
-}
-
 // TODO: Agregar soporte a futuro para mapear imágenes dentro del cuerpo de una story
 export function mapBlockContentToTextParagraphs(content: BlockContent): TextBlockContent[] {
 	return content.filter((element) => element._type === 'block') as TextBlockContent[];
@@ -262,58 +242,7 @@ export function mapStoryTeaser(result: StoryTeasersQueryResult): StoryTeaser[] {
 	return stories;
 }
 
-type MostReadStoriesSubQuery = NonNullable<RotatingContentQueryResult>['mostRead'];
-export function mapStoryNavigationTeaserWithAuthor(
-	result: NonNullable<MostReadStoriesSubQuery>,
-): StoryNavigationTeaserWithAuthor[] {
-	const stories = [];
-
-	for (const item of result) {
-		const { mediaSources, resources, coverImage, ...properties } = item;
-
-		stories.push({
-			...properties,
-			author: mapAuthorTeaser(item.author),
-			coverImage: urlFor(coverImage),
-			media: mapMediaSources(mediaSources),
-			resources: mapResources(resources),
-			paragraphs: [],
-			tags: [],
-		});
-	}
-
-	return stories;
-}
-
-export function mapLandingPageContent(
-	result: NonNullable<LandingPageContentQueryResult> & RotatingContent,
-): LandingPageContent {
-	return {
-		_id: result._id,
-		config: result.config,
-		cards: mapStorylistTeasers(result.cards),
-		campaigns: mapContentCampaigns(result.campaigns),
-		mostRead: result.mostRead,
-		latestReads: mapStoryNavigationTeaserWithAuthor(result.latestReads),
-		highlightedAuthors: mapHighlightedAuthors(result.highlightedAuthors),
-	};
-}
-
 type HighlightedAuthorsSubQuery = NonNullable<LandingPageContentQueryResult>['highlightedAuthors'];
-export function mapHighlightedAuthors(highlightedAuthors: HighlightedAuthorsSubQuery): HighlightedAuthor[] {
-	// El Studio limita la carga a seis entradas, pero esa regla gobierna la edición y no lo ya guardado:
-	// una migración o un backfill pueden dejar más. El recorte acá es una salvaguarda, no la regla.
-	const limit = 6;
-
-	return highlightedAuthors.slice(0, limit).map((entry) => ({
-		author: mapAuthorTeaser(entry.author),
-		// El teaser entrega su lista vacía en toda vista del repositorio, así que las etiquetas del
-		// destacado se mapean acá aunque salgan del mismo autor.
-		tags: mapTags(entry.tags),
-		storyCount: entry.storyCount,
-	}));
-}
-
 type ContentCampaignsSubQuery = NonNullable<LandingPageContentQueryResult>['campaigns'];
 export function mapContentCampaigns(campaigns: ContentCampaignsSubQuery): ContentCampaign[] {
 	return campaigns.map((campaign) => {

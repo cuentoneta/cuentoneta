@@ -1,35 +1,44 @@
-// Repository
-import {
-	createLandingPages,
-	fetchAndMapLandingPageContent,
-	fetchLandingPagesList,
-	fetchLatestLandingPageReferences,
-	fetchRotatingContent,
-} from './content.repository';
-
-// Modelos
-import { LandingPageContent, RotatingContent } from '@models/landing-page-content.model';
-
-// Utils
+import type { LandingPageContent, RotatingContent } from '@models/landing-page-content.model';
 import { addWeeks } from 'date-fns';
 import slugify from 'slugify';
 import { buildWeekSlug } from '@utils/week-slug.utils';
+import { LandingPageNotFoundError, RotatingContentNotFoundError } from './content.errors';
+import type { ContentRepository, LandingPageCreatePayload } from './content.repository';
+import { SanityContentRepository } from './content.repository.sanity';
 
-export async function getLandingPageContent(): Promise<LandingPageContent> {
-	return fetchAndMapLandingPageContent(buildWeekSlug(new Date()));
+// El repository es stateless, así que instanciarlo por llamada (default) no comparte estado.
+
+export async function getLandingPageContent(
+	repository: ContentRepository = new SanityContentRepository(),
+): Promise<LandingPageContent> {
+	const slug = buildWeekSlug(new Date());
+	const landingPageContent = await repository.fetchLandingPageContent(slug);
+	if (!landingPageContent) {
+		throw new LandingPageNotFoundError(slug);
+	}
+	return landingPageContent;
 }
 
-export async function getRotatingContent(): Promise<RotatingContent> {
-	return await fetchRotatingContent();
+export async function getRotatingContent(
+	repository: ContentRepository = new SanityContentRepository(),
+): Promise<RotatingContent> {
+	const rotatingContent = await repository.fetchRotatingContent();
+	if (!rotatingContent) {
+		throw new RotatingContentNotFoundError();
+	}
+	return rotatingContent;
 }
 
-export async function addNextWeeksLandingPageContent(weeksInTheFuture: number = 4) {
+export async function addNextWeeksLandingPageContent(
+	weeksInTheFuture: number = 4,
+	repository: ContentRepository = new SanityContentRepository(),
+) {
 	const currentDate = new Date();
 	const currentLandingPageSlug = buildWeekSlug(currentDate);
 
 	const slugs = Array.from({ length: weeksInTheFuture }, (_, index) => buildWeekSlug(addWeeks(currentDate, index + 1)));
 
-	const existingLandingPagesList = await fetchLandingPagesList(slugs);
+	const existingLandingPagesList = await repository.fetchLandingPagesList(slugs);
 
 	if (!existingLandingPagesList) {
 		throw new Error(`Could not retrieve the landing page configs for the [${slugs.join(', ')}] slugs not found.`);
@@ -41,7 +50,7 @@ export async function addNextWeeksLandingPageContent(weeksInTheFuture: number = 
 		return [];
 	}
 
-	const latestLandingPageConfig = await fetchLatestLandingPageReferences(currentLandingPageSlug);
+	const latestLandingPageConfig = await repository.fetchLatestLandingPageReferences(currentLandingPageSlug);
 
 	if (!latestLandingPageConfig) {
 		throw new Error(`Latest landing page for the '${currentLandingPageSlug}' slug content not found`);
@@ -49,18 +58,14 @@ export async function addNextWeeksLandingPageContent(weeksInTheFuture: number = 
 
 	const notLoadedWeeks = slugs.filter((t) => !existingLandingPagesList.find((r) => r.config === t));
 
-	const landingPageObjects = notLoadedWeeks.map((weekYear) => {
-		const config = { ...latestLandingPageConfig };
-		delete (config as { _id?: string })._id;
-		return {
-			...config,
-			config: weekYear,
-			slug: {
-				_type: 'slug',
-				current: slugify(weekYear),
-			},
-		};
-	});
+	const landingPageObjects: LandingPageCreatePayload[] = notLoadedWeeks.map((weekYear) => ({
+		...latestLandingPageConfig,
+		config: weekYear,
+		slug: {
+			_type: 'slug',
+			current: slugify(weekYear),
+		},
+	}));
 
-	return await createLandingPages(landingPageObjects);
+	return await repository.createLandingPages(landingPageObjects);
 }

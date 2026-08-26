@@ -4,24 +4,14 @@ import {
 	mapAuthorTeaser,
 	mapBlockContentToTextParagraphs,
 	mapContentCampaigns,
-	mapHighlightedAuthors,
-	mapLandingPageContent,
 	mapResources,
-	mapStoryNavigationTeaserWithAuthor,
 	mapStoryTeaser,
 	mapTags,
 	urlFor,
 } from './functions';
-import { elOdioRawTeaser, onoffRawNavTeasersMock } from '@mocks/onoff-raw-stories.mock';
+import { elOdioRawTeaser } from '@mocks/onoff-raw-stories.mock';
 import { rawOnoffAuthor, rawOnoffAuthorTeaser } from '@mocks/onoff-raw-author.mock';
-import {
-	onoffRawContentCampaignsMock,
-	onoffRawHighlightedAuthorsMock,
-	onoffRawLandingPageMock,
-	overflowingRawHighlightedAuthors,
-	untaggedRawHighlightedAuthor,
-} from '@mocks/onoff-raw-landing-page.mock';
-import type { RotatingContent } from '@models/landing-page-content.model';
+import { onoffRawContentCampaignsMock } from '@mocks/onoff-raw-landing-page.mock';
 import { onoffRawTagsMock } from '@mocks/onoff-raw-tags.mock';
 import { withoutUrl } from '@testing/resource-without-url';
 import { viewportElementSizes } from '@models/content-campaign.model';
@@ -99,14 +89,6 @@ describe('mapAuthorTeaser (ACL)', () => {
 describe('mapStoryTeaser (ACL)', () => {
 	it('sets tags to [] from the mapper, not from the raw spread', () => {
 		const result = mapStoryTeaser([elOdioRawTeaser]);
-
-		expect(result[0].tags).toEqual([]);
-	});
-});
-
-describe('mapStoryNavigationTeaserWithAuthor (ACL)', () => {
-	it('sets tags to [] from the mapper, not from the raw spread', () => {
-		const result = mapStoryNavigationTeaserWithAuthor([onoffRawNavTeasersMock[0]]);
 
 		expect(result[0].tags).toEqual([]);
 	});
@@ -206,94 +188,6 @@ describe('mapContentCampaigns (ACL)', () => {
 		} as unknown as (typeof onoffRawContentCampaignsMock)[number];
 
 		expect(() => mapContentCampaigns([withoutXs])).toThrow('Campaign content not found');
-	});
-});
-
-describe('mapLandingPageContent (ACL)', () => {
-	// El repository invoca al mapper con el spread de dos queries, y la rotación va segunda: aporta lo
-	// que la landing no proyecta y, al hacerlo, también pisa su `_id`. El caso reproduce ese orden con
-	// una identidad propia para que la aserción distinga cuál de las dos sobrevive.
-	const rotatingContent: RotatingContent = { _id: 'rotating-content-onoff', name: 'Rotación de Onoff', mostRead: [] };
-	const raw = { ...onoffRawLandingPageMock, ...rotatingContent };
-
-	it('exposes exactly the domain contract, dropping the raw slug and name', () => {
-		const result = mapLandingPageContent(raw);
-
-		expect(Object.keys(result).sort()).toEqual([
-			'_id',
-			'campaigns',
-			'cards',
-			'config',
-			'highlightedAuthors',
-			'latestReads',
-			'mostRead',
-		]);
-	});
-
-	it('takes its identity from the rotating content that overrides the landing page', () => {
-		const result = mapLandingPageContent(raw);
-
-		expect(result._id).toBe(rotatingContent._id);
-		expect(result._id).not.toBe(onoffRawLandingPageMock._id);
-	});
-
-	it('preserves the config the query returned', () => {
-		expect(mapLandingPageContent(raw).config).toEqual(onoffRawLandingPageMock.config);
-	});
-
-	it('maps every campaign the query returned, in order', () => {
-		const expectedSlugs = onoffRawLandingPageMock.campaigns.map(({ slug }) => slug);
-
-		expect(expectedSlugs.length).toBeGreaterThan(0);
-		expect(mapLandingPageContent(raw).campaigns.map(({ slug }) => slug)).toEqual(expectedSlugs);
-	});
-
-	it('maps every highlighted author the query returned, in order', () => {
-		const expectedIds = onoffRawLandingPageMock.highlightedAuthors.map(({ author }) => author._id);
-
-		expect(expectedIds.length).toBeGreaterThan(0);
-		expect(mapLandingPageContent(raw).highlightedAuthors.map(({ author }) => author._id)).toEqual(expectedIds);
-	});
-});
-
-describe('mapHighlightedAuthors (ACL)', () => {
-	const [canonical] = onoffRawHighlightedAuthorsMock;
-
-	it('maps every tag the author carries, in order', () => {
-		const expected = canonical.tags.map(({ slug }) => slug);
-
-		expect(expected.length).toBeGreaterThan(0);
-		expect(mapHighlightedAuthors([canonical])[0].tags.map(({ slug }) => slug)).toEqual(expected);
-	});
-
-	it('keeps the first six entries when the document carries more', () => {
-		const result = mapHighlightedAuthors(overflowingRawHighlightedAuthors);
-
-		expect(overflowingRawHighlightedAuthors.length).toBeGreaterThan(6);
-		expect(result.map(({ author }) => author._id)).toEqual(
-			overflowingRawHighlightedAuthors.slice(0, 6).map(({ author }) => author._id),
-		);
-	});
-
-	it('produces an empty tag list for an author with no tags', () => {
-		expect(mapHighlightedAuthors([untaggedRawHighlightedAuthor])[0].tags).toEqual([]);
-	});
-
-	it('carries the count the query computed', () => {
-		expect(mapHighlightedAuthors([canonical])[0].storyCount).toBe(canonical.storyCount);
-	});
-
-	// El teaser entrega su lista de etiquetas vacía en toda vista del repositorio, así que las del
-	// destacado viajan en el wrapper aunque salgan del mismo autor.
-	it('maps the author as a teaser, whose own tag list stays empty', () => {
-		const [result] = mapHighlightedAuthors([canonical]);
-
-		expect(result.author).toEqual(mapAuthorTeaser(canonical.author));
-		expect(result.author.tags).toEqual([]);
-	});
-
-	it('returns an empty array when the document has no highlighted authors', () => {
-		expect(mapHighlightedAuthors([])).toEqual([]);
 	});
 });
 
