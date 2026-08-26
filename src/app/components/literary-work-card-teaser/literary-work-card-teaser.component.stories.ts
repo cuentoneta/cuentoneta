@@ -4,6 +4,7 @@ import { LiteraryWorkCardTeaserComponent } from './literary-work-card-teaser.com
 import {
 	elOdioLiteraryWorkTeaserMock,
 	geometriaLiteraryWorkTeaserMock,
+	onoffLiteraryWorkNavigationTeasersMock,
 	palacioNueveFronterasLiteraryWorkTeaserMock,
 	withMediaSources,
 } from '@mocks/onoff-literary-work-teasers.mock';
@@ -309,5 +310,25 @@ export const Estados: StoryObj<LiteraryWorkCardTeaserComponent & { loading: bool
 	},
 	parameters: {
 		docs: { description: { story: 'Activá/desactivá "Cargando" para alternar entre el estado real y el skeleton.' } },
+	},
+};
+
+export const SinExtracto: Story = {
+	args: {
+		literaryWork: onoffLiteraryWorkNavigationTeasersMock[0],
+		variant: 'on-white',
+		tagLabel: 'Cuento',
+		showAuthor: false,
+		showExcerpt: true,
+		showMultimedia: false,
+		excerptLines: 2,
+	},
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'La vista de navegación de una obra no transporta extracto, así que la tarjeta lo omite aunque se lo pidan con <code>showExcerpt</code>. Es la única bifurcación del bloque de descripción: se cataloga para que la degradación sea algo que se mira, y no una ausencia que se descubre.',
+			},
+		},
 	},
 };

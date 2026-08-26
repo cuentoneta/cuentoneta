@@ -5,6 +5,7 @@ import { clearAllMocks } from '@test-utils';
 import { ReadingSuggestionsListComponent } from './reading-suggestions-list.component';
 import { READING_SUGGESTIONS_COUNT } from './pick-reading-suggestions';
 import type { LiteraryWorkTeaser } from '@models/literary-work.model';
+import { firstProseWord } from '@testing/corpus-prose';
 import type { NavigationParams } from '@app-utils/navigation-params';
 import {
 	onoffLiteraryWorkTeasersMock,
@@ -134,10 +135,17 @@ describe('ReadingSuggestionsListComponent', () => {
 		expect(screen.queryAllByTestId('author')).toHaveLength(0);
 	});
 
+	// Retirado el puente de Portable Text, ésta es la única prueba de que el extracto sale del propio
+	// teaser: por eso afirma el texto de cada obra y no solo que haya tantos huecos como sugerencias.
 	it('should show the excerpt of each suggestion', async () => {
 		await setup();
 
-		expect(screen.getAllByTestId('description')).toHaveLength(teasers.length);
+		const excerpts = screen.getAllByTestId('description');
+
+		expect(excerpts).toHaveLength(teasers.length);
+		for (const [index, excerpt] of excerpts.entries()) {
+			expect(excerpt.textContent).toContain(firstProseWord(teasers[index].excerpt.bodyHtml));
+		}
 	});
 
 	// Sin el autor, la tarjeta libera esa franja vertical y el extracto gana una línea.
