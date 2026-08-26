@@ -3,7 +3,6 @@ import type { LiteraryWorkNavigationTeaserWithAuthors } from '@models/literary-w
 import { RotatingContentNotFoundError } from './content.errors';
 import type {
 	ContentRepository,
-	KeyedReference,
 	LandingPageCreatePayload,
 	LandingPageReferences,
 	LandingPageSummary,
@@ -74,11 +73,11 @@ export class InMemoryContentRepository implements ContentRepository {
 	// Sin el singleton **lanza**, igual que el adaptador real: `patch()` sobre un documento inexistente
 	// falla en el content lake, y un doble que retornara en silencio dejaría pasar en verde a un cron que
 	// en producción se cae.
-	public async updateMostReadLiteraryWorks(references: readonly KeyedReference[]): Promise<void> {
+	public async updateMostReadLiteraryWorks(slugs: readonly string[]): Promise<void> {
 		if (!this.rotatingContent) {
 			throw new RotatingContentNotFoundError();
 		}
-		const known = new Map(
+		const bySlug = new Map(
 			[
 				...this.literaryWorks,
 				...this.rotatingContent.mostReadLiteraryWorks,
@@ -86,11 +85,11 @@ export class InMemoryContentRepository implements ContentRepository {
 					...content.mostReadLiteraryWorks,
 					...content.latestLiteraryWorks,
 				]),
-			].map((work) => [work._id, work] as const),
+			].map((work) => [String(work.slug), work] as const),
 		);
 		this.rotatingContent = {
 			...this.rotatingContent,
-			mostReadLiteraryWorks: references.flatMap((reference) => known.get(reference._ref) ?? []),
+			mostReadLiteraryWorks: slugs.flatMap((slug) => bySlug.get(slug) ?? []),
 		};
 	}
 }

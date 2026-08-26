@@ -4,15 +4,11 @@ import * as storyService from './story.service';
 import type { StoriesByAuthorSlugQueryResult } from '@sanity-types';
 import { onoffRawStoriesMock } from '@mocks/onoff-raw-stories.mock';
 import { elOdioRawTeaser } from '@mocks/onoff-raw-stories.mock';
-import {
-	onoffLiteraryWorkNavigationTeasersWithAuthorsMock,
-	onoffLiteraryWorkTeasersMock,
-} from '@mocks/onoff-literary-work-teasers.mock';
+import { onoffLiteraryWorkNavigationTeasersWithAuthorsMock } from '@mocks/onoff-literary-work-teasers.mock';
 import { environment } from '../../_helpers/environment';
 import { fetchClarityData } from '../../_helpers/clarity-connector';
 import { RotatingContentNotFoundError } from '../content/content.errors';
 import { InMemoryContentRepository } from '../content/content.repository.mock';
-import { InMemoryLiteraryWorkRepository } from '../literary-work/literary-work.repository.mock';
 
 /* eslint-disable no-restricted-syntax -- vi.mock/vi.fn: mock de módulo del repository y del builder de imágenes; se migra a inyección de dependencias en #1503 */
 vi.mock('./story.repository', () => ({
@@ -82,15 +78,13 @@ describe('updateMostReadStories', () => {
 		];
 	}
 
+	// El caso de uso ya no cruza dos repositories: le pasa los slugs al que escribe, y ése los resuelve
+	// contra el catálogo que conoce.
 	function repositories() {
-		const content = new InMemoryContentRepository({
+		return new InMemoryContentRepository({
 			rotatingContent,
 			literaryWorks: onoffLiteraryWorkNavigationTeasersWithAuthorsMock,
 		});
-		// El doble de obras resuelve por slug: las obras del canon comparten slug entre su vista de
-		// navegación y su agregado, que es exactamente la coincidencia que el cron explota.
-		const literaryWork = new InMemoryLiteraryWorkRepository([], onoffLiteraryWorkTeasersMock);
-		return { content, literaryWork };
 	}
 
 	beforeEach(() => clearAllMocks());
@@ -101,9 +95,9 @@ describe('updateMostReadStories', () => {
 		(fetchClarityData as Mock).mockResolvedValue(
 			popularPages(`${environment.basePath}/story/${first.slug}`, `${environment.basePath}/read/${second.slug}`),
 		);
-		const { content, literaryWork } = repositories();
+		const content = repositories();
 
-		const result = await storyService.updateMostReadStories(content, literaryWork);
+		const result = await storyService.updateMostReadStories(content);
 
 		expect(result.mostReadLiteraryWorks.map(({ slug }) => slug)).toEqual([first.slug, second.slug]);
 	});
@@ -114,9 +108,9 @@ describe('updateMostReadStories', () => {
 		(fetchClarityData as Mock).mockResolvedValue(
 			popularPages(`${environment.basePath}/story/${first.slug}`, `${environment.basePath}/read/${first.slug}`),
 		);
-		const { content, literaryWork } = repositories();
+		const content = repositories();
 
-		const result = await storyService.updateMostReadStories(content, literaryWork);
+		const result = await storyService.updateMostReadStories(content);
 
 		expect(result.mostReadLiteraryWorks.map(({ slug }) => slug)).toEqual([first.slug]);
 	});
@@ -125,18 +119,18 @@ describe('updateMostReadStories', () => {
 		(fetchClarityData as Mock).mockResolvedValue(
 			popularPages(`${environment.basePath}/about`, `${environment.basePath}/read/${first.slug}`),
 		);
-		const { content, literaryWork } = repositories();
+		const content = repositories();
 
-		const result = await storyService.updateMostReadStories(content, literaryWork);
+		const result = await storyService.updateMostReadStories(content);
 
 		expect(result.mostReadLiteraryWorks.map(({ slug }) => slug)).toEqual([first.slug]);
 	});
 
 	it('throws when the metrics service returns no popular pages', async () => {
 		(fetchClarityData as Mock).mockResolvedValue([]);
-		const { content, literaryWork } = repositories();
+		const content = repositories();
 
-		await expect(storyService.updateMostReadStories(content, literaryWork)).rejects.toThrow('Could not fetch metrics.');
+		await expect(storyService.updateMostReadStories(content)).rejects.toThrow('Could not fetch metrics.');
 	});
 
 	// La lista es un ranking: el orden lo define Clarity, y la query que resuelve los identificadores
@@ -147,9 +141,9 @@ describe('updateMostReadStories', () => {
 		(fetchClarityData as Mock).mockResolvedValue(
 			popularPages(...ranked.map(({ slug }) => `${environment.basePath}/read/${slug}`)),
 		);
-		const { content, literaryWork } = repositories();
+		const content = repositories();
 
-		const result = await storyService.updateMostReadStories(content, literaryWork);
+		const result = await storyService.updateMostReadStories(content);
 
 		expect(result.mostReadLiteraryWorks.map(({ slug }) => slug)).toEqual(ranked.map(({ slug }) => slug));
 	});
@@ -162,9 +156,9 @@ describe('updateMostReadStories', () => {
 		['barra final', (url: string) => `${url}/`],
 	])('deriva el slug de una URL con %s', async (_label, decorate) => {
 		(fetchClarityData as Mock).mockResolvedValue(popularPages(decorate(`${environment.basePath}/read/${first.slug}`)));
-		const { content, literaryWork } = repositories();
+		const content = repositories();
 
-		const result = await storyService.updateMostReadStories(content, literaryWork);
+		const result = await storyService.updateMostReadStories(content);
 
 		expect(result.mostReadLiteraryWorks.map(({ slug }) => slug)).toEqual([first.slug]);
 	});
@@ -176,9 +170,9 @@ describe('updateMostReadStories', () => {
 				`${environment.basePath}/read/${first.slug}`,
 			),
 		);
-		const { content, literaryWork } = repositories();
+		const content = repositories();
 
-		const result = await storyService.updateMostReadStories(content, literaryWork);
+		const result = await storyService.updateMostReadStories(content);
 
 		expect(result.mostReadLiteraryWorks.map(({ slug }) => slug)).toEqual([first.slug]);
 	});
@@ -190,9 +184,9 @@ describe('updateMostReadStories', () => {
 		(fetchClarityData as Mock).mockResolvedValue(
 			popularPages(...everyWork.map(({ slug }) => `${environment.basePath}/read/${slug}`)),
 		);
-		const { content, literaryWork } = repositories();
+		const content = repositories();
 
-		const result = await storyService.updateMostReadStories(content, literaryWork);
+		const result = await storyService.updateMostReadStories(content);
 
 		expect(everyWork.length).toBeGreaterThan(6);
 		expect(result.mostReadLiteraryWorks).toHaveLength(6);
@@ -200,9 +194,8 @@ describe('updateMostReadStories', () => {
 
 	it('falla cuando el contenido rotativo no está instalado', async () => {
 		(fetchClarityData as Mock).mockResolvedValue(popularPages(`${environment.basePath}/read/${first.slug}`));
-		const literaryWork = new InMemoryLiteraryWorkRepository([], onoffLiteraryWorkTeasersMock);
 
-		await expect(storyService.updateMostReadStories(new InMemoryContentRepository(), literaryWork)).rejects.toThrow(
+		await expect(storyService.updateMostReadStories(new InMemoryContentRepository())).rejects.toThrow(
 			RotatingContentNotFoundError,
 		);
 	});

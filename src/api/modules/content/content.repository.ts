@@ -38,7 +38,19 @@ export interface ContentRepository {
 	fetchLandingPagesList(slugs: string[]): Promise<readonly LandingPageSummary[]>;
 	fetchLatestLandingPageReferences(currentSlug: string): Promise<LandingPageReferences | null>;
 	createLandingPages(landingPageObjects: LandingPageCreatePayload[]): Promise<unknown[]>;
-	// Escribe el slot de obras. El de historias no tiene método propio: desde que el cron escribe obras,
-	// ningún productor lo alimenta, y el campo sobrevive solo hasta que se retire del schema.
-	updateMostReadLiteraryWorks(references: readonly KeyedReference[]): Promise<void>;
+	/**
+	 * Reapunta el slot de obras más leídas a las obras de estos slugs, **en este orden**.
+	 *
+	 * Recibe slugs y no referencias porque quien lo llama no tiene de dónde sacar un identificador: los
+	 * slugs salen de una métrica externa. Resolverlos es parte de la escritura y vive con ella, en vez
+	 * de obligar al caso de uso a pedirle identificadores a otro repository para después devolvérselos
+	 * a éste.
+	 *
+	 * El orden es el ranking, así que el que se recibe es el que se escribe. Un slug que no resuelve se
+	 * descarta en silencio: la obra no existe, y no hay referencia que escribir.
+	 *
+	 * El slot de historias no tiene método propio: desde que el cron escribe obras, ningún productor lo
+	 * alimenta, y el campo sobrevive solo hasta que se retire del schema.
+	 */
+	updateMostReadLiteraryWorks(slugs: readonly string[]): Promise<void>;
 }

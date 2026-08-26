@@ -28,12 +28,12 @@ import {
 	landingPageContentQuery,
 	landingPageListQuery,
 	latestLandingPageReferencesQuery,
+	literaryWorkIdsBySlugsQuery,
 	rotatingContentQuery,
 } from '../../_queries/content.query';
 import { MalformedLandingPageError, MalformedRotatingContentError } from './content.errors';
 import type {
 	ContentRepository,
-	KeyedReference,
 	LandingPageCreatePayload,
 	LandingPageReferences,
 	LandingPageSummary,
@@ -117,8 +117,21 @@ export class SanityContentRepository implements ContentRepository {
 		return Promise.all(landingPageObjects.map((object) => this.client.create(object)));
 	}
 
-	public async updateMostReadLiteraryWorks(references: readonly KeyedReference[]): Promise<void> {
-		await this.client.patch(ROTATING_CONTENT_ID, { set: { mostReadLiteraryWorks: [...references] } }).commit();
+	// La query filtra por pertenencia y devuelve en orden de documento, que no tiene nada que ver con el
+	// ranking: por eso el resultado se reordena por el orden en que llegaron los slugs antes de
+	// escribirlo. El lote vacío no consulta ni escribe.
+	public async updateMostReadLiteraryWorks(slugs: readonly string[]): Promise<void> {
+		if (slugs.length === 0) {
+			return;
+		}
+		const found = await this.client.fetch(literaryWorkIdsBySlugsQuery, { slugs: [...slugs] });
+		const idBySlug = new Map(found.map(({ slug, _id }) => [slug, _id] as const));
+		const references = slugs.flatMap((slug) => {
+			const _id = idBySlug.get(slug);
+			return _id ? [{ _key: _id, _type: 'reference' as const, _ref: _id }] : [];
+		});
+
+		await this.client.patch(ROTATING_CONTENT_ID, { set: { mostReadLiteraryWorks: references } }).commit();
 	}
 
 	/** Traduce cualquier fallo de construcción del dominio a un error que nombra la semana culpable. */

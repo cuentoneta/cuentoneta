@@ -10,7 +10,11 @@ import {
 } from '@mocks/onoff-raw-landing-page.mock';
 import { onoffRawNavTeasersMock } from '@mocks/onoff-raw-stories.mock';
 import { mapAuthorTeaser } from '../../_utils/functions';
-import { landingPageContentQuery, rotatingContentQuery } from '../../_queries/content.query';
+import {
+	landingPageContentQuery,
+	literaryWorkIdsBySlugsQuery,
+	rotatingContentQuery,
+} from '../../_queries/content.query';
 import { MalformedLandingPageError } from './content.errors';
 import { SanityContentRepository } from './content.repository.sanity';
 
@@ -280,15 +284,62 @@ describe('SanityContentRepository.fetchLatestLandingPageReferences', () => {
 });
 
 describe('SanityContentRepository.updateMostReadLiteraryWorks', () => {
-	it('patches the rotating content singleton with the given references', async () => {
+	// El content lake devuelve en orden de documento, así que el doble responde al revés del orden
+	// pedido: una implementación que escribiera lo que la query devolvió no podría pasar.
+	const storedOutOfOrder = [
+		{ _id: 'work-tercera', slug: 'tercera' },
+		{ _id: 'work-primera', slug: 'primera' },
+	];
+
+	function writerWith(found: unknown) {
 		const commit = fn(() => Promise.resolve(undefined));
 		const patch = fn(() => ({ commit }));
-		const repository = new SanityContentRepository({ patch } as unknown as SanityClient);
-		const references = [{ _key: 'work-1', _type: 'reference' as const, _ref: 'work-1' }];
+		const fetch = fn(() => Promise.resolve(found));
+		const repository = new SanityContentRepository({ fetch, patch } as unknown as SanityClient);
+		return { repository, fetch, patch, commit };
+	}
 
-		await repository.updateMostReadLiteraryWorks(references);
+	it('resolves the slugs and writes them in the order it received them', async () => {
+		const { repository, patch, commit } = writerWith(storedOutOfOrder);
 
-		expect(patch).toHaveBeenCalledWith('rotatingContent', { set: { mostReadLiteraryWorks: references } });
+		await repository.updateMostReadLiteraryWorks(['primera', 'tercera']);
+
+		expect(patch).toHaveBeenCalledWith('rotatingContent', {
+			set: {
+				mostReadLiteraryWorks: [
+					{ _key: 'work-primera', _type: 'reference', _ref: 'work-primera' },
+					{ _key: 'work-tercera', _type: 'reference', _ref: 'work-tercera' },
+				],
+			},
+		});
 		expect(commit).toHaveBeenCalled();
+	});
+
+	it('asks the content lake for the slugs it received', async () => {
+		const { repository, fetch } = writerWith(storedOutOfOrder);
+
+		await repository.updateMostReadLiteraryWorks(['primera', 'tercera']);
+
+		expect(fetch).toHaveBeenCalledWith(literaryWorkIdsBySlugsQuery, { slugs: ['primera', 'tercera'] });
+	});
+
+	// Una obra que no existe no tiene referencia que escribir: se descarta y las demás se conservan.
+	it('drops a slug that does not resolve', async () => {
+		const { repository, patch } = writerWith([{ _id: 'work-primera', slug: 'primera' }]);
+
+		await repository.updateMostReadLiteraryWorks(['primera', 'inexistente']);
+
+		expect(patch).toHaveBeenCalledWith('rotatingContent', {
+			set: { mostReadLiteraryWorks: [{ _key: 'work-primera', _type: 'reference', _ref: 'work-primera' }] },
+		});
+	});
+
+	it('does not touch the content lake with an empty batch', async () => {
+		const { repository, fetch, patch } = writerWith([]);
+
+		await repository.updateMostReadLiteraryWorks([]);
+
+		expect(fetch).not.toHaveBeenCalled();
+		expect(patch).not.toHaveBeenCalled();
 	});
 });
