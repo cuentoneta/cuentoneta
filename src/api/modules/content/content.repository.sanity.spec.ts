@@ -2,30 +2,20 @@ import type { SanityClient } from '@sanity/client';
 import { fn } from '@test-utils';
 import { stubSanityClient } from '@testing/sanity-client.stub';
 import {
-	onoffRawHighlightedAuthorsMock,
 	onoffRawLandingPageMock,
 	onoffRawRotatingContentMock,
 	overflowingRawHighlightedAuthors,
 	untaggedRawHighlightedAuthor,
 } from '@mocks/onoff-raw-landing-page.mock';
-import { onoffRawNavTeasersMock } from '@mocks/onoff-raw-stories.mock';
 import { mapAuthorTeaser } from '../../_utils/functions';
 import { landingPageContentQuery, rotatingContentQuery } from '../../_queries/content.query';
 import { literaryWorkTeasers } from '../../_queries/literary-work.query';
-import { MalformedLandingPageError } from './content.errors';
+import { MalformedLandingPageError, MalformedRotatingContentError } from './content.errors';
 import { SanityContentRepository } from './content.repository.sanity';
 
 const LANDING_SLUG = onoffRawLandingPageMock.slug;
 
-// El slot de obras sale del corpus; el de historias se arma acá con los teasers de navegación del
-// canon, porque el documento del corpus ya no declara el campo en baja y este spec necesita las dos
-// listas pobladas para poder distinguirlas.
-const rawRotatingContent = {
-	...onoffRawRotatingContentMock,
-	mostRead: onoffRawNavTeasersMock.slice(0, 2),
-};
-
-function repoWith(landingPage: unknown, rotatingContent: unknown = rawRotatingContent) {
+function repoWith(landingPage: unknown, rotatingContent: unknown = onoffRawRotatingContentMock) {
 	const { client, fetch } = stubSanityClient([[rotatingContentQuery, rotatingContent]], landingPage);
 	return { repository: new SanityContentRepository(client), fetch };
 }
@@ -59,14 +49,11 @@ describe('SanityContentRepository.fetchLandingPageContent', () => {
 		expect(Object.keys(result ?? {}).sort()).toEqual([
 			'_id',
 			'campaigns',
-			'cards',
 			'collections',
 			'config',
 			'highlightedAuthors',
-			'latestLiteraryWorks',
 			'latestReads',
 			'mostRead',
-			'mostReadLiteraryWorks',
 		]);
 	});
 
@@ -74,13 +61,22 @@ describe('SanityContentRepository.fetchLandingPageContent', () => {
 		const result = await repoReturning(onoffRawLandingPageMock).fetchLandingPageContent(LANDING_SLUG);
 
 		expect(result?._id).toBe(onoffRawLandingPageMock._id);
-		expect(result?._id).not.toBe(rawRotatingContent._id);
+		expect(result?._id).not.toBe(onoffRawRotatingContentMock._id);
 	});
 
 	it('preserves the config the query returned', async () => {
 		const result = await repoReturning(onoffRawLandingPageMock).fetchLandingPageContent(LANDING_SLUG);
 
 		expect(result?.config).toBe(onoffRawLandingPageMock.config);
+	});
+
+	it('maps every collection the query returned, in order', async () => {
+		const expected = onoffRawLandingPageMock.collections.map(({ slug }) => slug);
+
+		const result = await repoReturning(onoffRawLandingPageMock).fetchLandingPageContent(LANDING_SLUG);
+
+		expect(expected.length).toBeGreaterThan(0);
+		expect(result?.collections.map(({ slug }) => slug)).toEqual(expected);
 	});
 
 	it('maps every campaign the query returned, in order', async () => {
@@ -94,47 +90,23 @@ describe('SanityContentRepository.fetchLandingPageContent', () => {
 
 	// Los dos slots salen de documentos distintos: cruzarlos es el defecto que ninguna aserción sobre un
 	// solo slot detectaría.
-	it('feeds the most read slot from the rotating content, not from the landing page', async () => {
+	it('feeds the latest reads from the landing page and the most read from the rotating content', async () => {
 		const result = await repoReturning(onoffRawLandingPageMock).fetchLandingPageContent(LANDING_SLUG);
 
-		expect(result?.mostRead.map(({ slug }) => slug)).toEqual(rawRotatingContent.mostRead.map(({ slug }) => slug));
+		expect(result?.latestReads.map(({ slug }) => slug)).toEqual(
+			onoffRawLandingPageMock.latestLiteraryWorks.map(({ slug }) => slug),
+		);
+		expect(result?.mostRead.map(({ slug }) => slug)).toEqual(
+			onoffRawRotatingContentMock.mostReadLiteraryWorks.map(({ slug }) => slug),
+		);
 	});
 
-	// La rotación es un documento aparte y puede faltar sin que la landing deje de servirse: lo que se
-	// vacía es el slot, no la página.
-	it('serves an empty most read slot when the rotating content is missing', async () => {
-		const result = await repoReturning(onoffRawLandingPageMock, null).fetchLandingPageContent(LANDING_SLUG);
-
-		expect(result?.mostRead).toEqual([]);
-	});
-
-	it('returns null when the week has no landing page', async () => {
-		expect(await repoReturning(null).fetchLandingPageContent(LANDING_SLUG)).toBeNull();
-	});
-
-	// El mapeo del teaser de navegación es la única fuente de la lista vacía de etiquetas: el crudo no la
-	// trae.
-	it('sets tags to [] from the mapper, not from the raw spread', async () => {
-		const result = await repoReturning(onoffRawLandingPageMock).fetchLandingPageContent(LANDING_SLUG);
-
-		result?.latestReads.forEach((story) => expect(story.tags).toEqual([]));
-	});
-
-	it('maps every collection the query returned, in order', async () => {
-		const expected = onoffRawLandingPageMock.collections.map(({ slug }) => slug);
-
-		const result = await repoReturning(onoffRawLandingPageMock).fetchLandingPageContent(LANDING_SLUG);
-
-		expect(expected.length).toBeGreaterThan(0);
-		expect(result?.collections.map(({ slug }) => slug)).toEqual(expected);
-	});
-
-	// La vista de navegación de obra no declara extracto, y el teaser sí: si alguna vez volviera a
+	// La vista de navegación no declara extracto, y el teaser de obra sí: si alguna vez volviera a
 	// mapearse como teaser, el slot cargaría el cuerpo de cada obra destacada sin que nadie lo pinte.
 	it('serves the navigation view of each highlighted work, without an excerpt', async () => {
 		const result = await repoReturning(onoffRawLandingPageMock).fetchLandingPageContent(LANDING_SLUG);
 
-		const [work] = result?.latestLiteraryWorks ?? [];
+		const [work] = result?.latestReads ?? [];
 		expect(work).not.toHaveProperty('excerpt');
 		expect(Object.keys(work).sort()).toEqual([
 			'_id',
@@ -149,7 +121,20 @@ describe('SanityContentRepository.fetchLandingPageContent', () => {
 		]);
 	});
 
-	it('wraps a malformed collection instead of letting the factory error escape', async () => {
+	it('returns null when the week has no landing page', async () => {
+		expect(await repoReturning(null).fetchLandingPageContent(LANDING_SLUG)).toBeNull();
+	});
+
+	// La rotación es un documento aparte y puede faltar sin que la landing deje de servirse: lo que se
+	// vacía es el slot, no la página.
+	it('serves an empty most read slot when the rotating content is missing', async () => {
+		const result = await repoReturning(onoffRawLandingPageMock, null).fetchLandingPageContent(LANDING_SLUG);
+
+		expect(result?.mostRead).toEqual([]);
+		expect(result?.latestReads.length).toBeGreaterThan(0);
+	});
+
+	it('wraps a malformed landing page instead of letting the factory error escape', async () => {
 		const [collection, ...rest] = onoffRawLandingPageMock.collections;
 		const broken = { ...onoffRawLandingPageMock, collections: [{ ...collection, description: '' }, ...rest] };
 
@@ -171,9 +156,9 @@ describe('SanityContentRepository.fetchLandingPageContent', () => {
 		);
 	});
 
-	// La proyección devuelve la lista vacía tanto para la obra sin autores como para la que los perdió, y
-	// la tarjeta de la home muestra al primero sin preguntar: sin este rechazo, una obra mal curada tumba
-	// el render de la página entera en vez de fallar donde se puede corregir.
+	// La proyección devuelve la lista vacía tanto para la obra sin autores como para la que los perdió,
+	// y la tarjeta de la home muestra al primero sin preguntar: sin este rechazo, una obra mal curada
+	// tumba el render de la página entera en vez de fallar donde se puede corregir.
 	it('rejects a highlighted work with no authors', async () => {
 		const [work, ...rest] = onoffRawLandingPageMock.latestLiteraryWorks;
 		const broken = { ...onoffRawLandingPageMock, latestLiteraryWorks: [{ ...work, authors: [] }, ...rest] };
@@ -199,9 +184,9 @@ describe('SanityContentRepository.fetchLandingPageContent', () => {
 });
 
 describe('SanityContentRepository highlighted authors', () => {
-	const [canonical] = onoffRawHighlightedAuthorsMock;
+	const [canonical] = onoffRawLandingPageMock.highlightedAuthors;
 
-	async function highlightedAuthorsOf(highlightedAuthors: typeof onoffRawHighlightedAuthorsMock) {
+	async function highlightedAuthorsOf(highlightedAuthors: typeof onoffRawLandingPageMock.highlightedAuthors) {
 		const result = await repoReturning({ ...onoffRawLandingPageMock, highlightedAuthors }).fetchLandingPageContent(
 			LANDING_SLUG,
 		);
@@ -247,6 +232,32 @@ describe('SanityContentRepository highlighted authors', () => {
 	});
 });
 
+describe('SanityContentRepository.fetchRotatingContent', () => {
+	it('maps the rotating content to the navigation view of its works', async () => {
+		const result = await repoReturning(onoffRawLandingPageMock).fetchRotatingContent();
+
+		expect(result?.name).toBe(onoffRawRotatingContentMock.name);
+		expect(result?.mostRead.map(({ slug }) => slug)).toEqual(
+			onoffRawRotatingContentMock.mostReadLiteraryWorks.map(({ slug }) => slug),
+		);
+	});
+
+	it('returns null when the singleton is not installed', async () => {
+		expect(await repoReturning(onoffRawLandingPageMock, null).fetchRotatingContent()).toBeNull();
+	});
+
+	// El documento rotativo no es una landing: envolverlo en el error de la landing diría que está mal
+	// la semana cuando la semana está bien.
+	it('reports a malformed rotating content with its own error', async () => {
+		const [work, ...rest] = onoffRawRotatingContentMock.mostReadLiteraryWorks;
+		const broken = { ...onoffRawRotatingContentMock, mostReadLiteraryWorks: [{ ...work, authors: [] }, ...rest] };
+
+		await expect(repoReturning(onoffRawLandingPageMock, broken).fetchRotatingContent()).rejects.toThrow(
+			MalformedRotatingContentError,
+		);
+	});
+});
+
 describe('SanityContentRepository.fetchLatestLandingPageReferences', () => {
 	const raw = {
 		_id: 'landing-page-1974-24',
@@ -254,8 +265,10 @@ describe('SanityContentRepository.fetchLatestLandingPageReferences', () => {
 		slug: '1974-24',
 		config: '1974-24',
 		campaigns: [{ _key: 'campaign-1', _type: 'reference', _ref: 'campaign-1' }],
-		cards: [{ _key: 'card-1', _type: 'reference', _ref: 'card-1' }],
+		cards: [],
 		latestReads: [],
+		collections: [{ _key: 'collection-1', _type: 'reference', _ref: 'collection-1' }],
+		latestLiteraryWorks: [],
 		highlightedAuthors: [],
 	};
 
@@ -272,7 +285,7 @@ describe('SanityContentRepository.fetchLatestLandingPageReferences', () => {
 		const references = await repoReturning(raw).fetchLatestLandingPageReferences('1974-24');
 
 		expect(references?.campaigns).toEqual(raw.campaigns);
-		expect(references?.cards).toEqual(raw.cards);
+		expect(references?.collections).toEqual(raw.collections);
 	});
 
 	it('returns null when there is no earlier week to clone', async () => {

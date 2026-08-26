@@ -72,14 +72,14 @@ interface CreateLiteraryWorkNavigationTeaserOptions {
 }
 
 /**
- * Construye la vista de navegación con autores haciendo cumplir las invariantes que sí puede sostener:
- * título no vacío y al menos un autor.
+ * Construye la vista de navegación con autores haciendo cumplir las invariantes que sí puede
+ * sostener: título no vacío y al menos un autor.
  *
  * La de autores no es defensiva — es la misma que `createLiteraryWork` hace cumplir para el agregado
  * completo, traducida a esta vista. La proyección la deja pasar (`coalesce(authors[]->…, [])` devuelve
  * la lista vacía tanto para la obra sin autores como para la que los perdió al despublicarse), y las
- * tarjetas que pintan esta vista muestran al primero sin preguntar. Sin la factory, una obra mal curada
- * no rompe donde se puede corregir sino al renderizarse.
+ * tarjetas que pintan esta vista muestran al primero sin preguntar. Sin la factory, una obra mal
+ * curada no rompe donde se puede corregir sino al renderizarse.
  */
 export function createLiteraryWorkNavigationTeaser(
 	options: CreateLiteraryWorkNavigationTeaserOptions,

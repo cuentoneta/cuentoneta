@@ -24,13 +24,10 @@ function emptyLandingPageContent(config: string): LandingPageContent {
 	return {
 		_id: `landing-page-${config}`,
 		config,
-		cards: [],
 		collections: [],
 		campaigns: [],
 		mostRead: [],
-		mostReadLiteraryWorks: [],
 		latestReads: [],
-		latestLiteraryWorks: [],
 		highlightedAuthors: [],
 	};
 }
@@ -69,7 +66,7 @@ describe('getLandingPageContent', () => {
 
 describe('getRotatingContent', () => {
 	it('serves the stored rotating content', async () => {
-		const rotatingContent = { _id: 'rotatingContent', name: 'Rotación', mostRead: [], mostReadLiteraryWorks: [] };
+		const rotatingContent = { _id: 'rotatingContent', name: 'Rotación', mostRead: [] };
 		const repository = new InMemoryContentRepository({ rotatingContent });
 
 		expect(await getRotatingContent(repository)).toEqual(rotatingContent);
@@ -88,10 +85,6 @@ describe('addNextWeeksLandingPageContent', () => {
 
 	function repositoryWith(existingSlugs: readonly string[] = []) {
 		return new InMemoryContentRepository({ landingPages: storedWeeks(existingSlugs), latestReferences });
-	}
-
-	function weekAhead(weeks: number): string {
-		return buildWeekSlug(addWeeks(currentDate, weeks));
 	}
 
 	it('creates one landing page per missing week', async () => {
@@ -154,16 +147,18 @@ describe('addNextWeeksLandingPageContent', () => {
 		});
 	});
 
-	// El clonado enumera los campos que copia, así que un campo nuevo que quede afuera no rompe nada: el
-	// slot se vaciaría solo cada semana, sin emitir ningún error.
-	it('carries the highlighted authors over to every cloned week', async () => {
+	// El clonado enumera los campos que copia, así que un campo nuevo que quede afuera no rompe nada:
+	// el slot se vaciaría solo cada semana, sin emitir ningún error.
+	it('carries the collections, the highlighted works and the highlighted authors over to every cloned week', async () => {
 		const repository = repositoryWith();
 
 		await addNextWeeksLandingPageContent(3, repository);
 
 		expect(repository.createdLandingPages).toHaveLength(3);
 		repository.createdLandingPages.forEach((created) => {
-			expect(created.highlightedAuthors).toEqual(latestReferences.highlightedAuthors);
+			expect(created.collections).toEqual(latestReferences?.collections);
+			expect(created.latestLiteraryWorks).toEqual(latestReferences?.latestLiteraryWorks);
+			expect(created.highlightedAuthors).toEqual(latestReferences?.highlightedAuthors);
 		});
 	});
 
@@ -198,4 +193,8 @@ describe('addNextWeeksLandingPageContent', () => {
 			`Latest landing page for the '${currentSlug}' slug content not found`,
 		);
 	});
+
+	function weekAhead(weeks: number): string {
+		return buildWeekSlug(addWeeks(currentDate, weeks));
+	}
 });

@@ -56,7 +56,7 @@ export async function getMostReadStoryNavigationTeasers(
 		throw new Error(`Could not fetch most read stories.`);
 	}
 
-	return result.mostReadLiteraryWorks.slice(offset, offset + limit);
+	return result.mostRead.slice(offset, offset + limit);
 }
 
 export async function getStories(limit: number = 100, offset: number = 0): Promise<StoryTeaserWithAuthor[]> {

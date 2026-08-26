@@ -1,12 +1,6 @@
 import { evaluate, parse } from 'groq-js';
-import {
-	incompleteLegacyStoryDocument,
-	landingPageWithIncompleteStoryDocument,
-	rotatingContentWithIncompleteStoryDocument,
-	storylistWithIncompleteStoryDocument,
-} from '@mocks/onoff-documents.mock';
+import { incompleteLegacyStoryDocument, storylistWithIncompleteStoryDocument } from '@mocks/onoff-documents.mock';
 
-import { rotatingContentQuery, landingPageContentQuery } from './content.query';
 import { storyBySlugQuery, storiesBySlugsQuery } from './story.query';
 import { storylistQuery } from './storylist.query';
 
@@ -67,23 +61,6 @@ describe('storylist.query defaults', () => {
 	});
 });
 
-describe('content.query defaults', () => {
-	it('rotatingContentQuery defaults the three fields for a dereferenced story missing them', async () => {
-		const result = (await run(rotatingContentQuery, [
-			rotatingContentWithIncompleteStoryDocument,
-			incompleteLegacyStoryDocument,
-		])) as { mostRead: DefaultedFields[] };
-
-		expectDefaultedFields(result.mostRead[0]);
-	});
-
-	it('landingPageContentQuery defaults the three fields for a dereferenced story missing them', async () => {
-		const result = (await run(
-			landingPageContentQuery,
-			[landingPageWithIncompleteStoryDocument, incompleteLegacyStoryDocument],
-			{ slug: landingPageWithIncompleteStoryDocument.slug.current },
-		)) as { latestReads: DefaultedFields[] };
-
-		expectDefaultedFields(result.latestReads[0]);
-	});
-});
+// Las queries de la página de inicio ya no dereferencian cuentos: sus slots resuelven obras, cuyo
+// tiempo de lectura no se rellena con un default sino que lo rechaza el repository. Lo que queda de
+// esta invariante vive en las dos proyecciones de arriba, que son las que siguen leyendo `story`.

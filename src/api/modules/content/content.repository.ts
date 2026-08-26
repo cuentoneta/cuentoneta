@@ -48,9 +48,6 @@ export interface ContentRepository {
 	 *
 	 * El orden es el ranking, así que el que se recibe es el que se escribe. Un slug que no resuelve se
 	 * descarta en silencio: la obra no existe, y no hay referencia que escribir.
-	 *
-	 * El slot de historias no tiene método propio: desde que el cron escribe obras, ningún productor lo
-	 * alimenta, y el campo sobrevive solo hasta que se retire del schema.
 	 */
 	updateMostReadLiteraryWorks(slugs: readonly string[]): Promise<void>;
 }
