@@ -10,7 +10,7 @@ import { ControllableLayoutService } from '../../providers/layout.mock';
 import type { LandingPageContent } from '@models/landing-page-content.model';
 import { onoffHighlightedAuthorsOfLength } from '@mocks/onoff-highlighted-authors.mock';
 import { onoffStoryNavigationTeasersWithAuthorMock } from '@mocks/onoff-story-teasers.mock';
-import { storylistTeaserRepresentativeMock } from '@mocks/storylist.mock';
+import { storylistTeaserRepresentativeMock, storylistTeaserSampleMock } from '@mocks/storylist.mock';
 import { contentCampaignMock } from '@mocks/content-campaign.mock';
 import { renderDeferBlocks } from '@testing/defer-blocks';
 import { clearAllMocks } from '@test-utils';
@@ -18,10 +18,12 @@ import { clearAllMocks } from '@test-utils';
 // El doble canned del provider entrega la landing vacía; cada caso le superpone solo las secciones
 // que ejercita, para que lo que no declara quede demostrablemente en cero.
 class StubLandingPageContentApi implements ContentApi {
+	private readonly canned = new StubContentApi();
+
 	constructor(private readonly content: Partial<LandingPageContent>) {}
 
 	public getLandingPageContent(): Observable<LandingPageContent> {
-		return new StubContentApi().getLandingPageContent().pipe(map((canned) => ({ ...canned, ...this.content })));
+		return this.canned.getLandingPageContent().pipe(map((canned) => ({ ...canned, ...this.content })));
 	}
 }
 
@@ -70,42 +72,29 @@ describe('HomeComponent', () => {
 			expect(screen.getByRole('heading', { level: 2, name: 'Historias más leídas' })).toBeInTheDocument();
 		});
 
-		// El corpus trae ocho obras, así que el recorte deja fuera dos identificables: sin afirmar cuáles,
-		// el caso pasaría igual si la página recortara por otro criterio.
-		it('should cap the latest reads at six, however many the week brings', async () => {
-			const { fixture } = await renderHome({ latestReads: [...onoffStoryNavigationTeasersWithAuthorMock] });
+		// Afirmar cuáles obras quedaron afuera —y no solo cuántas tarjetas hay— es lo que distingue el
+		// recorte de cualquier otro criterio que devolviera seis. De ahí que el caso empiece exigiendo que
+		// el corpus supere el tope: con uno más corto no habría descarte que observar.
+		describe.each(['latestReads', 'mostRead'] as const)('recorte de %s', (section) => {
+			it('should cap the listing at six, however many the week brings', async () => {
+				expect(onoffStoryNavigationTeasersWithAuthorMock.length).toBeGreaterThan(6);
 
-			await renderDeferBlocks(fixture);
+				const { fixture } = await renderHome({ [section]: [...onoffStoryNavigationTeasersWithAuthorMock] });
 
-			expect(screen.getAllByTestId('card')).toHaveLength(6);
-			onoffStoryNavigationTeasersWithAuthorMock.slice(6).forEach(({ title }) => {
-				expect(screen.queryByText(title)).not.toBeInTheDocument();
-			});
-		});
+				await renderDeferBlocks(fixture);
 
-		it('should cap the most read at six, however many the week brings', async () => {
-			const { fixture } = await renderHome({ mostRead: [...onoffStoryNavigationTeasersWithAuthorMock] });
-
-			await renderDeferBlocks(fixture);
-
-			expect(screen.getAllByTestId('card')).toHaveLength(6);
-			onoffStoryNavigationTeasersWithAuthorMock.slice(6).forEach(({ title }) => {
-				expect(screen.queryByText(title)).not.toBeInTheDocument();
+				expect(screen.getAllByTestId('card')).toHaveLength(6);
+				onoffStoryNavigationTeasersWithAuthorMock.slice(6).forEach(({ title }) => {
+					expect(screen.queryByText(title)).not.toBeInTheDocument();
+				});
 			});
 		});
 	});
 
 	describe('colecciones', () => {
-		// El corpus todavía no deriva teasers de `Storylist` (la landing cruda trae `cards: []`), así que
-		// las variantes salen del mismo mock heredado que usa el spec del mazo.
-		const cards = ['Geometrías del desvelo', 'El palacio de las nueve fronteras'].map((title, index) => ({
-			...storylistTeaserRepresentativeMock,
-			_id: `storylist-mock-${index + 1}`,
-			title,
-			slug: `coleccion-${index + 1}`,
-		}));
+		const cards = [storylistTeaserRepresentativeMock, storylistTeaserSampleMock];
 
-		it('should hand every collection card to the collections deck', async () => {
+		it('should render every collection of the week', async () => {
 			const { fixture } = await renderHome({ cards });
 
 			await renderDeferBlocks(fixture);
@@ -154,6 +143,7 @@ describe('HomeComponent', () => {
 				expect(screen.getByText(author.name)).toBeInTheDocument();
 			});
 		});
+
 		it('should render the section even when the week has no highlighted authors', async () => {
 			await renderHome({ highlightedAuthors: [] });
 
@@ -162,7 +152,9 @@ describe('HomeComponent', () => {
 	});
 
 	// La landing sale vacía mientras la edición no cargó la semana, y es un estado que se sirve: la
-	// página tiene que sostener su estructura sin dibujar contenedores a medio llenar.
+	// página tiene que sostener su estructura sin dibujar contenedores a medio llenar. Los diferidos no
+	// se fuerzan acá a propósito: lo que se afirma es que sus disparadores no disparan sin contenido, y
+	// forzarlos montaría un carrusel de cero diapositivas, un estado que la aplicación no alcanza.
 	describe('semana sin contenido', () => {
 		it('should keep every section heading when the week brings nothing', async () => {
 			await renderHome();
@@ -172,12 +164,12 @@ describe('HomeComponent', () => {
 			});
 		});
 
+		// Las tres clases de tarjeta —historia, colección y autor— se dibujan como `article`, así que la
+		// ausencia de ese rol cubre a las tres a la vez.
 		it('should render neither cards nor a carousel when the week brings nothing', async () => {
-			const { fixture } = await renderHome();
+			await renderHome();
 
-			await renderDeferBlocks(fixture);
-
-			expect(screen.queryAllByTestId('card')).toHaveLength(0);
+			expect(screen.queryAllByRole('article')).toHaveLength(0);
 			expect(screen.queryByRole('region', { name: 'Content campaigns' })).not.toBeInTheDocument();
 		});
 	});
