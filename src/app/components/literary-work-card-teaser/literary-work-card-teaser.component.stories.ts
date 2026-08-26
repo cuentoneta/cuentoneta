@@ -4,11 +4,11 @@ import { LiteraryWorkCardTeaserComponent } from './literary-work-card-teaser.com
 import {
 	elOdioLiteraryWorkTeaserMock,
 	geometriaLiteraryWorkTeaserMock,
+	onoffLiteraryWorkNavigationTeasersMock,
 	palacioNueveFronterasLiteraryWorkTeaserMock,
 	withMediaSources,
 } from '@mocks/onoff-literary-work-teasers.mock';
 import { corpusLiteraryWorkTeasers, literaryWorkSelectArgType } from '@mocks/onoff-corpus.storybook';
-import { onoffStoryTeasersMock } from '@mocks/onoff-story-teasers.mock';
 
 const meta: Meta<LiteraryWorkCardTeaserComponent> = {
 	component: LiteraryWorkCardTeaserComponent,
@@ -18,7 +18,7 @@ const meta: Meta<LiteraryWorkCardTeaserComponent> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>Utilizado para representar una vista previa de una obra dentro de listados o secciones de exploración. Resume la información principal del contenido, incluyendo autor, título, texto truncado, categoría, tiempo estimado de lectura, imagen asociada y accesos a archivos multimediales como video, X o Spotify.</p><p>Su objetivo es facilitar una lectura rápida del contenido disponible y ayudar al usuario a decidir si quiere profundizar en la obra. Puede adaptarse a distintas estructuras visuales según el contexto de uso, manteniendo consistencia en la jerarquía de información y en las acciones disponibles.</p><p>Se implementa en tres variantes seleccionables mediante el input <code>variant</code>:</p><ul><li><strong>OnWhite</strong> (<code>on-white</code>): layout horizontal con imagen a la izquierda, para fondos blancos.</li><li><strong>OnGray</strong> (<code>on-gray</code>): igual a OnWhite con selectores de multimedia en blanco, para fondos grises.</li><li><strong>Highlighted</strong> (<code>highlighted</code>): tarjeta destacada con borde, fondo e imagen a la derecha.</li></ul><p>Cada variante admite mostrar opcionalmente autor, descripción, numeración, etiqueta y selectores de multimedia.</p><p>Se compone de <a href="./?path=/docs/componentes-v3-coverimage--docs" target="_top"><strong>CoverImage</strong></a> (portada), <a href="./?path=/docs/componentes-v3-imageprofile--docs" target="_top"><strong>ImageProfile</strong></a> (avatar del autor) y <a href="./?path=/docs/componentes-v3-mediaselectors--docs" target="_top"><strong>MediaSelectors</strong></a> (accesos multimedia); el extracto se renderiza desde el HTML saneado del arranque de la obra, recortado en la query, o desde el Portable Text que llegue por <code>excerptParagraphs</code>, que tiene precedencia.</p></div>`,
+				component: `<div><p>Utilizado para representar una vista previa de una obra dentro de listados o secciones de exploración. Resume la información principal del contenido, incluyendo autor, título, texto truncado, categoría, tiempo estimado de lectura, imagen asociada y accesos a archivos multimediales como video, X o Spotify.</p><p>Su objetivo es facilitar una lectura rápida del contenido disponible y ayudar al usuario a decidir si quiere profundizar en la obra. Puede adaptarse a distintas estructuras visuales según el contexto de uso, manteniendo consistencia en la jerarquía de información y en las acciones disponibles.</p><p>Se implementa en tres variantes seleccionables mediante el input <code>variant</code>:</p><ul><li><strong>OnWhite</strong> (<code>on-white</code>): layout horizontal con imagen a la izquierda, para fondos blancos.</li><li><strong>OnGray</strong> (<code>on-gray</code>): igual a OnWhite con selectores de multimedia en blanco, para fondos grises.</li><li><strong>Highlighted</strong> (<code>highlighted</code>): tarjeta destacada con borde, fondo e imagen a la derecha.</li></ul><p>Cada variante admite mostrar opcionalmente autor, descripción, numeración, etiqueta y selectores de multimedia.</p><p>Se compone de <a href="./?path=/docs/componentes-v3-coverimage--docs" target="_top"><strong>CoverImage</strong></a> (portada), <a href="./?path=/docs/componentes-v3-imageprofile--docs" target="_top"><strong>ImageProfile</strong></a> (avatar del autor) y <a href="./?path=/docs/componentes-v3-mediaselectors--docs" target="_top"><strong>MediaSelectors</strong></a> (accesos multimedia); el extracto se renderiza desde el HTML saneado del arranque de la obra, recortado en la query.</p></div>`,
 			},
 		},
 		layout: 'padded',
@@ -62,12 +62,6 @@ const meta: Meta<LiteraryWorkCardTeaserComponent> = {
 			control: { type: 'range', min: 1, max: 6, step: 1 },
 			description: 'Cantidad de líneas a mostrar en la descripción',
 			table: { type: { summary: 'number' }, defaultValue: { summary: '2' } },
-		},
-		excerptParagraphs: {
-			control: { type: 'object' },
-			description:
-				'Extracto en Portable Text. Tiene precedencia sobre el extracto de la propia obra, y existe para las sugerencias de lectura, que hoy se alimentan de Story',
-			table: { type: { summary: 'TextBlockContent[]' }, defaultValue: { summary: '[]' } },
 		},
 		navigationParams: {
 			control: { type: 'object' },
@@ -319,22 +313,21 @@ export const Estados: StoryObj<LiteraryWorkCardTeaserComponent & { loading: bool
 	},
 };
 
-export const ExtractoEnPortableText: Story = {
+export const SinExtracto: Story = {
 	args: {
-		literaryWork: palacioNueveFronterasLiteraryWorkTeaserMock,
-		excerptParagraphs: onoffStoryTeasersMock[0].paragraphs,
+		literaryWork: onoffLiteraryWorkNavigationTeasersMock[0],
 		variant: 'on-white',
 		tagLabel: 'Cuento',
-		showAuthor: true,
+		showAuthor: false,
 		showExcerpt: true,
 		showMultimedia: false,
-		excerptLines: 3,
+		excerptLines: 2,
 	},
 	parameters: {
 		docs: {
 			description: {
 				story:
-					'Extracto proveniente de una <code>Story</code>, cuyo cuerpo nunca migró a Markdown y por lo tanto llega en Portable Text. Es la fuente que alimenta hoy a las sugerencias de lectura al pie de una obra. Cuando <code>excerptParagraphs</code> llega no vacío tiene precedencia sobre el extracto de la propia obra, que se sirve como HTML ya saneado.',
+					'La vista de navegación de una obra no transporta extracto, así que la tarjeta lo omite aunque se lo pidan con <code>showExcerpt</code>. Es la única bifurcación del bloque de descripción: se cataloga para que la degradación sea algo que se mira, y no una ausencia que se descubre.',
 			},
 		},
 	},
