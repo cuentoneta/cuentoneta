@@ -22,6 +22,8 @@ export interface LandingPageReferences {
 	readonly campaigns: readonly KeyedReference[];
 	readonly cards: readonly KeyedReference[];
 	readonly latestReads: readonly KeyedReference[];
+	readonly collections: readonly KeyedReference[];
+	readonly latestLiteraryWorks: readonly KeyedReference[];
 	readonly highlightedAuthors: readonly KeyedReference[];
 }
 

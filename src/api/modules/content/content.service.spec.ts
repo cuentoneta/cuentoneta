@@ -15,6 +15,8 @@ const latestReferences: LandingPageReferences = {
 	campaigns: [{ _key: 'campaign-1', _type: 'reference', _ref: 'campaign-1' }],
 	cards: [{ _key: 'card-1', _type: 'reference', _ref: 'card-1' }],
 	latestReads: [{ _key: 'story-1', _type: 'reference', _ref: 'story-1' }],
+	collections: [{ _key: 'collection-1', _type: 'reference', _ref: 'collection-1' }],
+	latestLiteraryWorks: [{ _key: 'work-1', _type: 'reference', _ref: 'work-1' }],
 	highlightedAuthors: [{ _key: 'highlighted-1', _type: 'reference', _ref: 'author-1' }],
 };
 
@@ -23,9 +25,12 @@ function emptyLandingPageContent(config: string): LandingPageContent {
 		_id: `landing-page-${config}`,
 		config,
 		cards: [],
+		collections: [],
 		campaigns: [],
 		mostRead: [],
+		mostReadLiteraryWorks: [],
 		latestReads: [],
+		latestLiteraryWorks: [],
 		highlightedAuthors: [],
 	};
 }
@@ -64,7 +69,7 @@ describe('getLandingPageContent', () => {
 
 describe('getRotatingContent', () => {
 	it('serves the stored rotating content', async () => {
-		const rotatingContent = { _id: 'rotatingContent', name: 'Rotación', mostRead: [] };
+		const rotatingContent = { _id: 'rotatingContent', name: 'Rotación', mostRead: [], mostReadLiteraryWorks: [] };
 		const repository = new InMemoryContentRepository({ rotatingContent });
 
 		expect(await getRotatingContent(repository)).toEqual(rotatingContent);

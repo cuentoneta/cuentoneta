@@ -128,6 +128,13 @@ function targetsFor(queries: Record<string, string>, landingPageSlug: string): T
 			query: queryNamed(queries, 'collectionsQuery'),
 		},
 		landingPageTarget(queries, landingPageSlug),
+		{
+			file: join('src/mocks/onoff/landing-page', 'rotating-content.raw.mock.ts'),
+			exportName: 'onoffRawRotatingContentMock',
+			typeImport: 'RotatingContentQueryResult',
+			typeAnnotation: 'NonNullable<RotatingContentQueryResult>',
+			query: queryNamed(queries, 'rotatingContentQuery'),
+		},
 	];
 }
 

@@ -1,7 +1,12 @@
-import type { LandingPageContentQueryResult } from '@sanity-types';
+import type { LandingPageContentQueryResult, RotatingContentQueryResult } from '@sanity-types';
 import { onoffRawLandingPageMock as generatedLandingPage } from './onoff/landing-page/landing-page.raw.mock';
+import { onoffRawRotatingContentMock as generatedRotatingContent } from './onoff/landing-page/rotating-content.raw.mock';
 
 export const onoffRawLandingPageMock: NonNullable<LandingPageContentQueryResult> = generatedLandingPage;
+
+// El contenido rotativo tiene agregador propio y no sub-proyección de la landing: es otro documento y
+// otra query, aunque las dos alimenten la misma pantalla.
+export const onoffRawRotatingContentMock: NonNullable<RotatingContentQueryResult> = generatedRotatingContent;
 
 // La campaña no tiene agregador propio porque no tiene query propia: es sub-proyección de la de landing, y
 // separarlas dejaría un módulo cuyo valor sale entero de este.
