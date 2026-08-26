@@ -3,7 +3,6 @@ import { Meta, StoryObj } from '@storybook/angular-vite';
 import { ReadingSuggestionsListComponent } from './reading-suggestions-list.component';
 import { corpusLiteraryWorkTeasers } from '@mocks/onoff-corpus.storybook';
 import type { NavigationContext } from '@app-utils/navigation-params';
-import type { ReadingSuggestion } from './reading-suggestion.model';
 
 const meta: Meta<ReadingSuggestionsListComponent> = {
 	component: ReadingSuggestionsListComponent,
@@ -45,8 +44,8 @@ const meta: Meta<ReadingSuggestionsListComponent> = {
 		teasers: {
 			control: false,
 			description:
-				'Sugerencias ya resueltas: cada una lleva la obra y su extracto por separado. El bloque no se renderiza si llega vacío. En el catálogo las deriva el control de cantidad',
-			table: { type: { summary: 'readonly ReadingSuggestion[]' }, defaultValue: { summary: '[]' } },
+				'Obras ya resueltas, en su vista de teaser. El bloque no se renderiza si llega vacío. En el catálogo las deriva el control de cantidad',
+			table: { type: { summary: 'readonly LiteraryWorkTeaser[]' }, defaultValue: { summary: '[]' } },
 		},
 		moreRoute: {
 			control: { type: 'object' },
@@ -97,20 +96,12 @@ const suggestionCountArgType = {
 	},
 };
 
-// El bloque recibe la obra y su extracto por separado. Estas stories muestran obras del canon, cuyo
-// extracto ya viene en `excerpt`, así que la lista de párrafos va vacía: la rama de Portable Text
-// es la que alimenta el puente temporal desde `Story`.
-const allSuggestions: ReadingSuggestion[] = corpusLiteraryWorkTeasers.map((literaryWork) => ({
-	literaryWork,
-	excerptParagraphs: [],
-}));
-
 // La cantidad se controla en vez de fijarse por entrada: lo que el diseño enumera como variantes del
 // bloque es cuántas sugerencias trae, y el separador intercalado depende de eso.
 const renderWithNavigation: Story['render'] = ({ navigation, navigationSlug, suggestionCount, ...args }) => ({
 	props: {
 		...args,
-		teasers: allSuggestions.slice(0, suggestionCount),
+		teasers: corpusLiteraryWorkTeasers.slice(0, suggestionCount),
 		navigationParams: { navigation, navigationSlug },
 	},
 	template: `

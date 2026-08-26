@@ -7,7 +7,6 @@ import { progressiveRxResource } from '@app-utils/ssr-resource';
 import { ReadingSuggestionsListComponent } from './reading-suggestions-list.component';
 import { pickReadingSuggestions } from './pick-reading-suggestions';
 import type { NavigationParams } from '@app-utils/navigation-params';
-import { toReadingSuggestion } from './reading-suggestion.model';
 
 /**
  * Sugerencias de otras obras del mismo autor. Es una de las dos variantes que monta
@@ -53,7 +52,7 @@ export class AuthorReadingSuggestionsComponent {
 		stream: ({ params }) =>
 			this.literaryWorkService
 				.getTeasers({ author: params.slug })
-				.pipe(map((works) => pickReadingSuggestions(works, params.currentWorkSlug).map(toReadingSuggestion))),
+				.pipe(map((works) => pickReadingSuggestions(works, params.currentWorkSlug))),
 		defaultValue: [],
 	});
 
