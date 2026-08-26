@@ -17,6 +17,7 @@ import { MostReadStoriesCardDeckComponent } from '@components/most-read-stories-
 import { LatestStoriesCardDeck } from '@components/latest-stories-card-deck/latest-stories-card-deck';
 import { CarouselSkeletonComponent } from '@components/carousel/carousel-skeleton.component';
 import { StorylistTeasersDeck } from '@components/storylist-teasers-deck/storylist-teasers-deck';
+import { HighlightedAuthorsComponent } from '@components/highlighted-authors/highlighted-authors.component';
 
 @Component({
 	selector: 'cuentoneta-home',
@@ -27,6 +28,7 @@ import { StorylistTeasersDeck } from '@components/storylist-teasers-deck/storyli
 		LatestStoriesCardDeck,
 		CarouselSkeletonComponent,
 		StorylistTeasersDeck,
+		HighlightedAuthorsComponent,
 	],
 	hostDirectives: [HomeMetaTagsDirective, HomeStructuredDataDirective],
 })
@@ -46,4 +48,5 @@ export default class HomeComponent {
 	protected readonly campaigns = computed(() => this.landingPageContent()?.campaigns || []);
 	protected readonly mostRead = computed(() => this.landingPageContent()?.mostRead.slice(0, 6) || []);
 	protected readonly latestReads = computed(() => this.landingPageContent()?.latestReads.slice(0, 6) || []);
+	protected readonly highlightedAuthors = computed(() => this.landingPageContent()?.highlightedAuthors ?? []);
 }
