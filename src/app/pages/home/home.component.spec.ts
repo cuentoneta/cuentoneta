@@ -67,6 +67,30 @@ describe('HomeComponent', () => {
 			expect(screen.getByRole('heading', { level: 2, name: 'Últimas novedades' })).toBeInTheDocument();
 			expect(screen.getByRole('heading', { level: 2, name: 'Historias más leídas' })).toBeInTheDocument();
 		});
+
+		// El corpus trae ocho obras, así que el recorte deja fuera dos identificables: sin afirmar cuáles,
+		// el caso pasaría igual si la página recortara por otro criterio.
+		it('should cap the latest reads at six, however many the week brings', async () => {
+			const { fixture } = await renderHome({ latestReads: [...onoffStoryNavigationTeasersWithAuthorMock] });
+
+			await renderDeferBlocks(fixture);
+
+			expect(screen.getAllByTestId('card')).toHaveLength(6);
+			onoffStoryNavigationTeasersWithAuthorMock.slice(6).forEach(({ title }) => {
+				expect(screen.queryByText(title)).not.toBeInTheDocument();
+			});
+		});
+
+		it('should cap the most read at six, however many the week brings', async () => {
+			const { fixture } = await renderHome({ mostRead: [...onoffStoryNavigationTeasersWithAuthorMock] });
+
+			await renderDeferBlocks(fixture);
+
+			expect(screen.getAllByTestId('card')).toHaveLength(6);
+			onoffStoryNavigationTeasersWithAuthorMock.slice(6).forEach(({ title }) => {
+				expect(screen.queryByText(title)).not.toBeInTheDocument();
+			});
+		});
 	});
 
 	describe('autores destacados', () => {
