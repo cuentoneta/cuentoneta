@@ -210,7 +210,7 @@ describe('LiteraryWorkCardTeaserComponent', () => {
 		});
 
 		// La vista de navegación no transporta extracto, así que pedirlo no puede producir un hueco ni
-		// romper la tarjeta: es el borde que la precedencia del input de Portable Text tapaba.
+		// romper la tarjeta.
 		it('should omit the description for a navigation teaser that carries no excerpt', async () => {
 			const [navigationTeaser] = onoffLiteraryWorkNavigationTeasersMock;
 

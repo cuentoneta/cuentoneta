@@ -46,7 +46,7 @@ import type { NavigationParams } from '@app-utils/navigation-params';
 								[literaryWork]="suggestion"
 								[navigationParams]="navigationParams()"
 								[showAuthor]="showAuthor()"
-								[tagLabel]="suggestion?.tags?.[0]?.title"
+								[tagLabel]="suggestion?.tags[0]?.title"
 								[showExcerpt]="true"
 								[excerptLines]="excerptLines()"
 								[showMultimedia]="true"

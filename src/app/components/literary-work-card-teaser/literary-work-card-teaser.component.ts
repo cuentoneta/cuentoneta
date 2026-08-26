@@ -65,18 +65,13 @@ export type LiteraryWorkCardTeaserContent =
 								}
 								<span>{{ literaryWork.title }}</span>
 							</p>
-							@if (showExcerpt()) {
-								<!-- La guarda va anidada y no fusionada con la condición de arriba: es lo que estrecha
-									 el tipo para leer el extracto, que la vista de navegación no transporta. -->
-
-								@if ('excerpt' in literaryWork) {
-									<div
-										[innerHTML]="literaryWork.excerpt.bodyHtml"
-										[class]="'line-clamp-' + excerptLines()"
-										data-testid="description"
-										class="overflow-hidden font-inter text-sm font-medium text-ellipsis text-neutral-600"
-									></div>
-								}
+							@if (showExcerpt() && 'excerpt' in literaryWork) {
+								<div
+									[innerHTML]="literaryWork.excerpt.bodyHtml"
+									[class]="'line-clamp-' + excerptLines()"
+									data-testid="description"
+									class="overflow-hidden font-inter text-sm font-medium text-ellipsis text-neutral-600"
+								></div>
 							}
 						</a>
 						<ng-container [ngTemplateOutlet]="readingTime" [ngTemplateOutletContext]="{ $implicit: literaryWork }" />
