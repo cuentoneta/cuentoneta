@@ -1,46 +1,45 @@
 import { LatestStoriesCardDeck } from './latest-stories-card-deck';
 import { render, screen } from '@testing-library/angular';
-import { storyNavigationTeaserWithAuthorMock } from '@mocks/story.mock';
+import { onoffLiteraryWorkNavigationTeasersWithAuthorsMock } from '@mocks/onoff-literary-work-teasers.mock';
 import { DeferBlockState } from '@angular/core/testing';
+
+// Las obras salen del canon y las aserciones se derivan del fixture: un título clavado en prosa dejaría
+// de valer en cuanto el corpus se enriquezca.
+const literaryWorks = onoffLiteraryWorkNavigationTeasersWithAuthorsMock.slice(0, 6);
 
 describe('LatestStoriesCardDeck', () => {
 	it('should render the component', async () => {
 		const { container } = await render(LatestStoriesCardDeck, {
-			inputs: {
-				stories: [storyNavigationTeaserWithAuthorMock],
-			},
+			inputs: { literaryWorks: literaryWorks.slice(0, 1) },
 		});
 		expect(container).toBeTruthy();
 	});
 
 	it('should render skeletons and then the cards', async () => {
-		const { fixture } = await render(LatestStoriesCardDeck, {
-			inputs: {
-				stories: [
-					storyNavigationTeaserWithAuthorMock,
-					{ ...storyNavigationTeaserWithAuthorMock, title: 'Las arenas de la eternidad' },
-					{ ...storyNavigationTeaserWithAuthorMock, title: 'El instante antes del fin' },
-					{ ...storyNavigationTeaserWithAuthorMock, title: '3010: La frontera final' },
-					{ ...storyNavigationTeaserWithAuthorMock, title: 'La carta perdida de Lucy Westenra' },
-					{ ...storyNavigationTeaserWithAuthorMock, title: 'Rocky VII: La venganza de Adrian' },
-				],
-			},
-		});
+		const { fixture } = await render(LatestStoriesCardDeck, { inputs: { literaryWorks } });
 		const deferBlockFixture = (await fixture.getDeferBlocks())[0];
 
 		await deferBlockFixture.render(DeferBlockState.Loading);
-		const skeletons = screen.getAllByTestId('skeleton');
-		expect(skeletons.length).toEqual(6);
+		expect(screen.getAllByTestId('skeleton')).toHaveLength(6);
 
 		await deferBlockFixture.render(DeferBlockState.Complete);
-		const card1Title = screen.getByText(storyNavigationTeaserWithAuthorMock.title);
-		const card2Title = screen.getByText('Las arenas de la eternidad');
-		const card3Title = screen.getByText('El instante antes del fin');
-		expect(card1Title).toBeInTheDocument();
-		expect(card2Title).toBeInTheDocument();
-		expect(card3Title).toBeInTheDocument();
+		literaryWorks.forEach(({ title }) => {
+			expect(screen.getByText(title)).toBeInTheDocument();
+		});
+		expect(screen.getAllByTestId('card')).toHaveLength(literaryWorks.length);
+	});
 
-		const cards = screen.getAllByTestId('card');
-		expect(cards.length).toEqual(6);
+	// La tarjeta enlaza a la ruta de lectura: es el único camino que la home ofrece hacia una obra desde
+	// este bloque, y de él depende que la página emita enlaces internos.
+	it('links every card to the reading route', async () => {
+		const { fixture } = await render(LatestStoriesCardDeck, { inputs: { literaryWorks } });
+		const deferBlockFixture = (await fixture.getDeferBlocks())[0];
+
+		await deferBlockFixture.render(DeferBlockState.Complete);
+
+		const hrefs = screen.getAllByRole('link').map((link) => link.getAttribute('href'));
+		literaryWorks.forEach(({ slug }) => {
+			expect(hrefs.some((href) => href?.startsWith(`/read/${slug}`))).toBe(true);
+		});
 	});
 });
