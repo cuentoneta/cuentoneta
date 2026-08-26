@@ -1,261 +1,196 @@
 import { addWeeks } from 'date-fns';
 import { buildWeekSlug } from '@utils/week-slug.utils';
-import {
-	clearAllMocks,
-	runOnlyPendingTimers,
-	setSystemTime,
-	useFakeTimers,
-	useRealTimers,
-	type Mock,
-} from '@test-utils';
-import * as contentRepository from './content.repository';
-import * as contentService from './content.service';
-import { LandingPageContentQueryResult } from '@sanity-types';
+import { clearAllMocks, runOnlyPendingTimers, setSystemTime, useFakeTimers, useRealTimers } from '@test-utils';
+import type { LandingPageContent } from '@models/landing-page-content.model';
+import { LandingPageNotFoundError, RotatingContentNotFoundError } from './content.errors';
+import type { LandingPageReferences } from './content.repository';
+import { InMemoryContentRepository, type StoredLandingPage } from './content.repository.mock';
+import { addNextWeeksLandingPageContent, getLandingPageContent, getRotatingContent } from './content.service';
 
-/* eslint-disable no-restricted-syntax -- vi.mock/vi.fn: mock de módulo del repository; se migra a inyección de dependencias en #1503 */
-vi.mock('./content.repository', () => ({
-	fetchLandingPagesList: vi.fn(),
-	fetchLandingPageContent: vi.fn(),
-	createLandingPages: vi.fn(),
-	fetchLatestLandingPageReferences: vi.fn(),
-	fetchRotatingContent: vi.fn(),
-}));
-/* eslint-enable no-restricted-syntax */
+// La base a clonar son las referencias de la última semana curada, sin resolver: el generador no lee
+// contenido, lo reapunta. No lleva identidad — descartarla es responsabilidad del adaptador, que es
+// donde el spec del repository la afirma.
+const latestReferences: LandingPageReferences = {
+	_type: 'landingPage',
+	campaigns: [{ _key: 'campaign-1', _type: 'reference', _ref: 'campaign-1' }],
+	cards: [{ _key: 'card-1', _type: 'reference', _ref: 'card-1' }],
+	latestReads: [{ _key: 'story-1', _type: 'reference', _ref: 'story-1' }],
+	highlightedAuthors: [{ _key: 'highlighted-1', _type: 'reference', _ref: 'author-1' }],
+};
 
-describe('ContentService', () => {
-	beforeEach(() => {
-		clearAllMocks();
-		useFakeTimers();
+function emptyLandingPageContent(config: string): LandingPageContent {
+	return {
+		_id: `landing-page-${config}`,
+		config,
+		cards: [],
+		campaigns: [],
+		mostRead: [],
+		latestReads: [],
+		highlightedAuthors: [],
+	};
+}
+
+function storedWeeks(slugs: readonly string[]): StoredLandingPage[] {
+	return slugs.map((slug) => ({ slug, content: emptyLandingPageContent(slug) }));
+}
+
+beforeEach(() => {
+	clearAllMocks();
+	useFakeTimers();
+});
+
+afterEach(() => {
+	runOnlyPendingTimers();
+	useRealTimers();
+});
+
+describe('getLandingPageContent', () => {
+	const currentDate = new Date(2025, 10, 14);
+	const currentSlug = buildWeekSlug(currentDate);
+
+	beforeEach(() => setSystemTime(currentDate));
+
+	it('serves the landing page of the current ISO week', async () => {
+		const repository = new InMemoryContentRepository({ landingPages: storedWeeks([currentSlug]) });
+
+		expect((await getLandingPageContent(repository)).config).toBe(currentSlug);
 	});
 
-	afterEach(() => {
-		runOnlyPendingTimers();
-		useRealTimers();
+	// La semana sin curar es un 404 y no un 500: el documento todavía no existe, no está roto.
+	it('throws LandingPageNotFoundError when the week has not been curated', async () => {
+		await expect(getLandingPageContent(new InMemoryContentRepository())).rejects.toThrow(LandingPageNotFoundError);
+	});
+});
+
+describe('getRotatingContent', () => {
+	it('serves the stored rotating content', async () => {
+		const rotatingContent = { _id: 'rotatingContent', name: 'Rotación', mostRead: [] };
+		const repository = new InMemoryContentRepository({ rotatingContent });
+
+		expect(await getRotatingContent(repository)).toEqual(rotatingContent);
 	});
 
-	describe('addNextWeeksLandingPageContent', () => {
-		const currentDate = new Date(2025, 10, 14);
-		const currentSlug = buildWeekSlug(currentDate);
+	it('throws RotatingContentNotFoundError when the singleton is not installed', async () => {
+		await expect(getRotatingContent(new InMemoryContentRepository())).rejects.toThrow(RotatingContentNotFoundError);
+	});
+});
 
-		const mockLandingPage = {
-			_id: 'landing-page-current',
-			campaigns: [{ _id: 'campaign-1' }, { _id: 'campaign-2' }],
-			cards: [{ _id: 'card-1' }],
-			latestReads: [{ _id: 'story-1' }, { _id: 'story-2' }],
-			highlightedAuthors: [{ _key: 'highlighted-1', _type: 'reference', _ref: 'author-1' }],
-		};
+describe('addNextWeeksLandingPageContent', () => {
+	const currentDate = new Date(2025, 10, 14);
+	const currentSlug = buildWeekSlug(currentDate);
 
-		beforeEach(() => {
-			setSystemTime(currentDate);
+	beforeEach(() => setSystemTime(currentDate));
+
+	function repositoryWith(existingSlugs: readonly string[] = []) {
+		return new InMemoryContentRepository({ landingPages: storedWeeks(existingSlugs), latestReferences });
+	}
+
+	function weekAhead(weeks: number): string {
+		return buildWeekSlug(addWeeks(currentDate, weeks));
+	}
+
+	it('creates one landing page per missing week', async () => {
+		const repository = repositoryWith();
+
+		const result = await addNextWeeksLandingPageContent(4, repository);
+
+		expect(result).toHaveLength(4);
+		expect(repository.createdLandingPages.map(({ config }) => config)).toEqual([1, 2, 3, 4].map(weekAhead));
+	});
+
+	it('labels the week with its ISO week-year, not the calendar year, across the Dec/Jan boundary', async () => {
+		// 2025-12-29 (lunes) es la semana ISO 01 de 2026: se etiqueta 2026, no 2025, preservando el orden
+		// lexicográfico = cronológico en el cruce dic/ene.
+		setSystemTime(new Date(2025, 11, 29));
+		const repository = repositoryWith();
+
+		await addNextWeeksLandingPageContent(4, repository);
+
+		expect(repository.createdLandingPages[0].config).toBe('2026-02');
+	});
+
+	it('uses ISO-8601 week numbering (Monday-start), not the locale default', async () => {
+		// 2026-07-05 es domingo: en ISO (lunes = día 1) pertenece a la semana 27; el default locale de
+		// date-fns (domingo = día 1) lo pondría en la 28.
+		setSystemTime(new Date(2026, 6, 5));
+		const repository = repositoryWith();
+
+		await addNextWeeksLandingPageContent(4, repository);
+
+		expect(repository.createdLandingPages[0].config).toBe('2026-28');
+	});
+
+	it('generates contiguous ISO weeks with no gap when the cron runs on a Sunday', async () => {
+		// Bajo ISO el domingo es el último día de su semana, así que la home pide esa misma semana ese
+		// domingo y la siguiente de lunes a sábado: las dos tienen que quedar cubiertas.
+		setSystemTime(new Date(2026, 5, 28)); // domingo, semana ISO 2026-26
+		const repository = repositoryWith();
+
+		await addNextWeeksLandingPageContent(4, repository);
+
+		expect(repository.createdLandingPages.map(({ config }) => config)).toEqual([
+			'2026-27',
+			'2026-28',
+			'2026-29',
+			'2026-30',
+		]);
+		expect(repository.createdLandingPages.map(({ config }) => config)).toContain(buildWeekSlug(new Date(2026, 5, 29)));
+	});
+
+	it('clones the base verbatim', async () => {
+		const repository = repositoryWith();
+
+		await addNextWeeksLandingPageContent(2, repository);
+
+		repository.createdLandingPages.forEach((created) => {
+			expect(created.campaigns).toEqual(latestReferences.campaigns);
+			expect(created.cards).toEqual(latestReferences.cards);
+			expect(created.latestReads).toEqual(latestReferences.latestReads);
 		});
+	});
 
-		it('should create missing weeks landing pages when they do not exist', async () => {
-			const weeksInTheFuture = 4;
+	// El clonado enumera los campos que copia, así que un campo nuevo que quede afuera no rompe nada: el
+	// slot se vaciaría solo cada semana, sin emitir ningún error.
+	it('carries the highlighted authors over to every cloned week', async () => {
+		const repository = repositoryWith();
 
-			(contentRepository.fetchLandingPagesList as Mock).mockResolvedValue([]);
-			(contentRepository.fetchLatestLandingPageReferences as Mock).mockResolvedValue(mockLandingPage);
-			(contentRepository.createLandingPages as Mock).mockResolvedValue([
-				{ _id: 'created-1' },
-				{ _id: 'created-2' },
-				{ _id: 'created-3' },
-				{ _id: 'created-4' },
-			]);
+		await addNextWeeksLandingPageContent(3, repository);
 
-			const result = await contentService.addNextWeeksLandingPageContent(weeksInTheFuture);
-
-			expect(result).toHaveLength(4);
-			expect(contentRepository.fetchLandingPagesList).toHaveBeenCalledWith(
-				expect.arrayContaining([
-					expect.stringMatching(/^2025-\d{2}$/),
-					expect.stringMatching(/^2025-\d{2}$/),
-					expect.stringMatching(/^2025-\d{2}$/),
-					expect.stringMatching(/^2025-\d{2}$/),
-				]),
-			);
-			// Regresión: la base a clonar debe pedirse acotada a la semana actual. Pedirla sin argumentos
-			// termina clonando el último stub futuro autogenerado en vez de la última semana válida.
-			expect(contentRepository.fetchLatestLandingPageReferences).toHaveBeenCalledWith(currentSlug);
+		expect(repository.createdLandingPages).toHaveLength(3);
+		repository.createdLandingPages.forEach((created) => {
+			expect(created.highlightedAuthors).toEqual(latestReferences.highlightedAuthors);
 		});
+	});
 
-		it('should label the week with its ISO week-year, not the calendar year, across the Dec/Jan boundary', async () => {
-			// 2025-12-29 (lunes) es la semana ISO 01 de 2026: getISOWeekYear la etiqueta 2026, no 2025,
-			// preservando el orden lexicográfico = cronológico en el cruce dic/ene.
-			setSystemTime(new Date(2025, 11, 29));
+	it('names each cloned week by its own slug', async () => {
+		const repository = repositoryWith();
 
-			(contentRepository.fetchLandingPagesList as Mock).mockResolvedValue([]);
-			(contentRepository.fetchLatestLandingPageReferences as Mock).mockResolvedValue(mockLandingPage);
-			(contentRepository.createLandingPages as Mock).mockResolvedValue([]);
+		await addNextWeeksLandingPageContent(2, repository);
 
-			await contentService.addNextWeeksLandingPageContent(4);
+		expect(repository.createdLandingPages.map(({ slug }) => slug.current)).toEqual([1, 2].map(weekAhead));
+	});
 
-			expect(contentRepository.fetchLatestLandingPageReferences).toHaveBeenCalledWith('2026-01');
-		});
+	it('creates nothing when every week already exists', async () => {
+		const repository = repositoryWith([1, 2, 3, 4].map(weekAhead));
 
-		it('should use ISO-8601 week numbering (Monday-start), not the locale default — decision pinned in #1751', async () => {
-			// 2026-07-05 es domingo: en ISO (lunes = día 1) pertenece a la semana 27; el default locale
-			// de date-fns (domingo = día 1) lo pondría en la 28. Fija ISO para que un refactor no lo revierta.
-			setSystemTime(new Date(2026, 6, 5));
+		expect(await addNextWeeksLandingPageContent(4, repository)).toEqual([]);
+		expect(repository.createdLandingPages).toEqual([]);
+	});
 
-			(contentRepository.fetchLandingPagesList as Mock).mockResolvedValue([]);
-			(contentRepository.fetchLatestLandingPageReferences as Mock).mockResolvedValue(mockLandingPage);
-			(contentRepository.createLandingPages as Mock).mockResolvedValue([]);
+	it('creates only the missing weeks when some already exist', async () => {
+		const repository = repositoryWith([1, 2].map(weekAhead));
 
-			await contentService.addNextWeeksLandingPageContent(4);
+		const result = await addNextWeeksLandingPageContent(4, repository);
 
-			expect(contentRepository.fetchLatestLandingPageReferences).toHaveBeenCalledWith('2026-27');
-		});
+		expect(result).toHaveLength(2);
+		expect(repository.createdLandingPages.map(({ config }) => config)).toEqual([3, 4].map(weekAhead));
+	});
 
-		it('generates contiguous ISO weeks with no gap when the cron runs on a Sunday', async () => {
-			// El cron corre en domingo. Bajo ISO el domingo es el último día de su
-			// semana, así que la home la pide ese domingo y pide la SIGUIENTE de lunes a sábado. Este test
-			// fija que ambas quedan cubiertas: la base se pide para la semana del domingo (2026-26) y se
-			// generan las 4 siguientes contiguas (2026-27..2026-30), incluida la que la home leerá el lunes.
-			setSystemTime(new Date(2026, 5, 28)); // domingo, semana ISO 2026-26
-			(contentRepository.fetchLandingPagesList as Mock).mockResolvedValue([]);
-			(contentRepository.fetchLatestLandingPageReferences as Mock).mockResolvedValue(mockLandingPage);
-			(contentRepository.createLandingPages as Mock).mockResolvedValue([]);
+	it('throws when there is no base week to clone', async () => {
+		const repository = new InMemoryContentRepository({ latestReferences: null });
 
-			await contentService.addNextWeeksLandingPageContent(4);
-
-			expect(contentRepository.fetchLatestLandingPageReferences).toHaveBeenCalledWith('2026-26');
-			expect(contentRepository.fetchLandingPagesList).toHaveBeenCalledWith([
-				'2026-27',
-				'2026-28',
-				'2026-29',
-				'2026-30',
-			]);
-			// La semana que la home leerá de lunes a sábado (lunes 29/jun → 2026-27) está entre las generadas.
-			const generatedSlugs = (contentRepository.fetchLandingPagesList as Mock).mock.calls[0][0];
-			expect(generatedSlugs).toContain(buildWeekSlug(new Date(2026, 5, 29)));
-		});
-
-		it('should clone the base returned by the repository verbatim, without leaking its _id', async () => {
-			const weeksInTheFuture = 2;
-
-			(contentRepository.fetchLandingPagesList as Mock).mockResolvedValue([]);
-			(contentRepository.fetchLatestLandingPageReferences as Mock).mockResolvedValue(mockLandingPage);
-			(contentRepository.createLandingPages as Mock).mockResolvedValue([{ _id: 'created-1' }, { _id: 'created-2' }]);
-
-			await contentService.addNextWeeksLandingPageContent(weeksInTheFuture);
-
-			// El filtrado de "última semana no futura" vive en la query GROQ (config <= $currentSlug); el
-			// service solo pasa la semana actual y clona la base tal cual la recibe, sin selección propia.
-			expect(contentRepository.fetchLatestLandingPageReferences).toHaveBeenCalledWith(currentSlug);
-
-			const createdObjects = (contentRepository.createLandingPages as Mock).mock.calls[0][0] as Array<
-				Record<string, unknown>
-			>;
-			createdObjects.forEach((obj) => {
-				expect(obj.campaigns).toEqual(mockLandingPage.campaigns);
-				expect(obj.cards).toEqual(mockLandingPage.cards);
-				expect(obj.latestReads).toEqual(mockLandingPage.latestReads);
-				expect(obj).not.toHaveProperty('_id');
-			});
-		});
-
-		// El clonado enumera los campos que copia, así que un campo nuevo que quede afuera no rompe nada:
-		// los destacados se vaciarían solos cada semana, sin emitir ningún error.
-		it('should carry the highlighted authors over to every cloned week', async () => {
-			const weeksInTheFuture = 3;
-
-			(contentRepository.fetchLandingPagesList as Mock).mockResolvedValue([]);
-			(contentRepository.fetchLatestLandingPageReferences as Mock).mockResolvedValue(mockLandingPage);
-			(contentRepository.createLandingPages as Mock).mockResolvedValue([]);
-
-			await contentService.addNextWeeksLandingPageContent(weeksInTheFuture);
-
-			const createdObjects = (contentRepository.createLandingPages as Mock).mock.calls[0][0] as Array<
-				Record<string, unknown>
-			>;
-
-			expect(createdObjects).toHaveLength(weeksInTheFuture);
-			createdObjects.forEach((obj) => {
-				expect(obj.highlightedAuthors).toEqual(mockLandingPage.highlightedAuthors);
-			});
-		});
-
-		it('should return an empty array when all weeks already exist', async () => {
-			const weeksInTheFuture = 4;
-			const futureWeeks = Array.from({ length: weeksInTheFuture }, (_, index) => ({
-				_id: `landing-page-${index}`,
-				config: buildWeekSlug(addWeeks(currentDate, index + 1)),
-			}));
-
-			(contentRepository.fetchLandingPagesList as Mock).mockResolvedValue(futureWeeks);
-
-			const result = await contentService.addNextWeeksLandingPageContent(weeksInTheFuture);
-
-			expect(result).toEqual([]);
-			expect(contentRepository.createLandingPages).not.toHaveBeenCalled();
-		});
-
-		it('should throw an error when current landing page is not found', async () => {
-			const weeksInTheFuture = 4;
-
-			(contentRepository.fetchLandingPagesList as Mock).mockResolvedValue([]);
-			(contentRepository.fetchLatestLandingPageReferences as Mock).mockResolvedValue(null);
-
-			await expect(contentService.addNextWeeksLandingPageContent(weeksInTheFuture)).rejects.toThrow(
-				`Latest landing page for the '${currentSlug}' slug content not found`,
-			);
-		});
-
-		it('should throw an error when landing page list query fails', async () => {
-			const weeksInTheFuture = 4;
-
-			(contentRepository.fetchLandingPagesList as Mock).mockResolvedValue(null);
-
-			await expect(contentService.addNextWeeksLandingPageContent(weeksInTheFuture)).rejects.toThrow(
-				'Could not retrieve the landing page configs',
-			);
-		});
-
-		it('should create only missing weeks when some already exist', async () => {
-			const weeksInTheFuture = 4;
-			const existingWeek = Array.from({ length: 2 }, (_, index) => ({
-				_id: `landing-page-${index}`,
-				config: buildWeekSlug(addWeeks(currentDate, index + 1)),
-			}));
-
-			(contentRepository.fetchLandingPagesList as Mock).mockResolvedValue(existingWeek);
-			(contentRepository.fetchLatestLandingPageReferences as Mock).mockResolvedValue(mockLandingPage);
-			(contentRepository.createLandingPages as Mock).mockResolvedValue([{ _id: 'created-3' }, { _id: 'created-4' }]);
-
-			const result = await contentService.addNextWeeksLandingPageContent(weeksInTheFuture);
-
-			expect(result).toHaveLength(2);
-			expect(contentRepository.createLandingPages).toHaveBeenCalled();
-
-			const callArgs = (contentRepository.createLandingPages as Mock).mock.calls[0][0];
-			expect(callArgs).toHaveLength(2);
-			callArgs.forEach((obj: LandingPageContentQueryResult) => {
-				expect(obj).toHaveProperty('config');
-				expect(obj).toHaveProperty('slug');
-				expect(obj).toHaveProperty('campaigns');
-				expect(obj).toHaveProperty('cards');
-				expect(obj).toHaveProperty('latestReads');
-				expect(obj).toHaveProperty('highlightedAuthors');
-			});
-		});
-
-		it('should call createLandingPages with Promise.all for parallel execution', async () => {
-			const weeksInTheFuture = 3;
-
-			(contentRepository.fetchLandingPagesList as Mock).mockResolvedValue([]);
-			(contentRepository.fetchLatestLandingPageReferences as Mock).mockResolvedValue(mockLandingPage);
-			(contentRepository.createLandingPages as Mock).mockResolvedValue([
-				{ _id: 'created-1' },
-				{ _id: 'created-2' },
-				{ _id: 'created-3' },
-			]);
-
-			await contentService.addNextWeeksLandingPageContent(weeksInTheFuture);
-
-			// Verify that createLandingPages was called (which internally uses Promise.all)
-			expect(contentRepository.createLandingPages).toHaveBeenCalled();
-			const passedObjects = (contentRepository.createLandingPages as Mock).mock.calls[0][0];
-			expect(Array.isArray(passedObjects)).toBe(true);
-			expect(passedObjects.length).toBe(weeksInTheFuture);
-		});
+		await expect(addNextWeeksLandingPageContent(4, repository)).rejects.toThrow(
+			`Latest landing page for the '${currentSlug}' slug content not found`,
+		);
 	});
 });

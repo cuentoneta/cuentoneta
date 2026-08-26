@@ -1,29 +1,50 @@
-// Hono: Imports y configuración
-import { Hono } from 'hono';
+import { Hono, type Context } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 
-// Esquemas de zod
 import { addWeeksSchema } from './content.schema';
-
-// Funciones de service
+import { LandingPageNotFoundError, MalformedLandingPageError } from './content.errors';
+import type { ContentRepository } from './content.repository';
 import { addNextWeeksLandingPageContent, getLandingPageContent } from './content.service';
 
-const contentController = new Hono();
+/** Traduce los errores del módulo al status que le corresponde a cada uno. */
+async function respond<T>(c: Context, produce: () => Promise<T>) {
+	try {
+		return c.json(await produce());
+	} catch (error) {
+		if (error instanceof LandingPageNotFoundError) {
+			return c.json({ error: error.message }, 404);
+		}
+		if (error instanceof MalformedLandingPageError) {
+			// Se loguea antes de traducir porque la respuesta no lleva la causa: sin este registro, qué dato
+			// y qué invariante lo produjeron mueren acá y el 500 no dice qué corregir en el Studio.
+			console.error('content.controller: la página de inicio no se pudo construir', {
+				message: error.message,
+				cause: error.cause,
+			});
+			// Responde un código y no el mensaje: ese mensaje nombra el documento culpable, que es
+			// información de la redacción y no del cliente.
+			return c.json({ error: 'landing_page_malformed' }, 500);
+		}
+		throw error;
+	}
+}
 
-contentController.get('/landing-page', async (c) => {
-	const result = await getLandingPageContent();
-	return c.json(result);
-});
+export function createContentController(repository?: ContentRepository) {
+	const controller = new Hono();
 
-/**
- * Endpoint encargado de agregar instancias de documentos landingPage para las próximas semanas, a fin de generar automáticamente
- * los documentos que luego son modificados manualmente para actualizar el contenido de la landing page desde Sanity Studio
- */
+	controller.get('/landing-page', async (c) => respond(c, () => getLandingPageContent(repository)));
 
-contentController.get('/add-next-weeks-landing-page-content', zValidator('query', addWeeksSchema), async (c) => {
-	const { weeksInTheFuture } = c.req.valid('query');
-	const result = await addNextWeeksLandingPageContent(weeksInTheFuture);
-	return c.json(result);
-});
+	/**
+	 * Endpoint encargado de agregar instancias de documentos landingPage para las próximas semanas, a fin de generar automáticamente
+	 * los documentos que luego son modificados manualmente para actualizar el contenido de la landing page desde Sanity Studio
+	 */
+	controller.get('/add-next-weeks-landing-page-content', zValidator('query', addWeeksSchema), async (c) => {
+		const { weeksInTheFuture } = c.req.valid('query');
+		return respond(c, () => addNextWeeksLandingPageContent(weeksInTheFuture, repository));
+	});
 
+	return controller;
+}
+
+const contentController = createContentController();
 export default contentController;
