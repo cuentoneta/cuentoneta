@@ -19,11 +19,11 @@
 	</section>
 
 	<section class="mb-8 h-[684px] md:h-[304px]">
-		<cuentoneta-latest-stories-card-deck [stories]="latestReads()" class="flex flex-col gap-8" />
+		<cuentoneta-latest-stories-card-deck [literaryWorks]="latestReads()" class="flex flex-col gap-8" />
 	</section>
 
 	<section class="mb-8 h-[684px] md:h-[304px]">
-		<cuentoneta-most-read-stories-card-deck [stories]="mostRead()" class="flex flex-col gap-8" />
+		<cuentoneta-most-read-stories-card-deck [literaryWorks]="mostRead()" class="flex flex-col gap-8" />
 	</section>
 
 	<section class="mb-8">
@@ -31,7 +31,7 @@
 	</section>
 
 	<section class="mb-8">
-		<cuentoneta-storylist-teasers-deck [teasers]="collections()" class="flex flex-col gap-8" />
+		<cuentoneta-collection-teasers-deck [teasers]="collections()" class="flex flex-col gap-8" />
 	</section>
 
 	<!--

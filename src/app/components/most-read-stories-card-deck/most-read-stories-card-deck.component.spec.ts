@@ -1,43 +1,43 @@
 import { MostReadStoriesCardDeckComponent } from './most-read-stories-card-deck.component';
 import { render, screen } from '@testing-library/angular';
-import { storyNavigationTeaserWithAuthorMock } from '@mocks/story.mock';
+import { onoffLiteraryWorkNavigationTeasersWithAuthorsMock } from '@mocks/onoff-literary-work-teasers.mock';
 import { DeferBlockState } from '@angular/core/testing';
+
+// Las obras salen del canon y las aserciones se derivan del fixture: un título clavado en prosa dejaría
+// de valer en cuanto el corpus se enriquezca.
+const literaryWorks = onoffLiteraryWorkNavigationTeasersWithAuthorsMock.slice(0, 3);
 
 describe('MostReadStoriesCardDeckComponent', () => {
 	it('should render the component', async () => {
 		const { container } = await render(MostReadStoriesCardDeckComponent, {
-			componentInputs: {
-				stories: [storyNavigationTeaserWithAuthorMock],
-			},
+			inputs: { literaryWorks: literaryWorks.slice(0, 1) },
 		});
 		expect(container).toBeTruthy();
 	});
 
 	it('should render skeletons and then the cards', async () => {
-		const { fixture } = await render(MostReadStoriesCardDeckComponent, {
-			componentInputs: {
-				stories: [
-					storyNavigationTeaserWithAuthorMock,
-					{ ...storyNavigationTeaserWithAuthorMock, title: 'Las arenas de la eternidad' },
-					{ ...storyNavigationTeaserWithAuthorMock, title: 'El instante antes del fin' },
-				],
-			},
-		});
+		const { fixture } = await render(MostReadStoriesCardDeckComponent, { inputs: { literaryWorks } });
 		const deferBlockFixture = (await fixture.getDeferBlocks())[0];
 
 		await deferBlockFixture.render(DeferBlockState.Loading);
-		const skeletons = screen.getAllByTestId('skeleton');
-		expect(skeletons.length).toEqual(6);
+		expect(screen.getAllByTestId('skeleton')).toHaveLength(6);
 
 		await deferBlockFixture.render(DeferBlockState.Complete);
-		const card1Title = screen.getByText(storyNavigationTeaserWithAuthorMock.title);
-		const card2Title = screen.getByText('Las arenas de la eternidad');
-		const card3Title = screen.getByText('El instante antes del fin');
-		expect(card1Title).toBeInTheDocument();
-		expect(card2Title).toBeInTheDocument();
-		expect(card3Title).toBeInTheDocument();
+		literaryWorks.forEach(({ title }) => {
+			expect(screen.getByText(title)).toBeInTheDocument();
+		});
+		expect(screen.getAllByTestId('card')).toHaveLength(literaryWorks.length);
+	});
 
-		const cards = screen.getAllByTestId('card');
-		expect(cards.length).toEqual(3);
+	it('links every card to the reading route', async () => {
+		const { fixture } = await render(MostReadStoriesCardDeckComponent, { inputs: { literaryWorks } });
+		const deferBlockFixture = (await fixture.getDeferBlocks())[0];
+
+		await deferBlockFixture.render(DeferBlockState.Complete);
+
+		const hrefs = screen.getAllByRole('link').map((link) => link.getAttribute('href'));
+		literaryWorks.forEach(({ slug }) => {
+			expect(hrefs.some((href) => href?.startsWith(`/read/${slug}`))).toBe(true);
+		});
 	});
 });
