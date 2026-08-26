@@ -160,4 +160,25 @@ describe('HomeComponent', () => {
 			expect(screen.getByRole('heading', { name: 'Autores/as destacados/as', level: 2 })).toBeInTheDocument();
 		});
 	});
+
+	// La landing sale vacía mientras la edición no cargó la semana, y es un estado que se sirve: la
+	// página tiene que sostener su estructura sin dibujar contenedores a medio llenar.
+	describe('semana sin contenido', () => {
+		it('should keep every section heading when the week brings nothing', async () => {
+			await renderHome();
+
+			['Últimas novedades', 'Historias más leídas', 'Colecciones', 'Autores/as destacados/as'].forEach((name) => {
+				expect(screen.getByRole('heading', { level: 2, name })).toBeInTheDocument();
+			});
+		});
+
+		it('should render neither cards nor a carousel when the week brings nothing', async () => {
+			const { fixture } = await renderHome();
+
+			await renderDeferBlocks(fixture);
+
+			expect(screen.queryAllByTestId('card')).toHaveLength(0);
+			expect(screen.queryByRole('region', { name: 'Content campaigns' })).not.toBeInTheDocument();
+		});
+	});
 });
