@@ -33,7 +33,7 @@ const meta: Meta<AuthorCardTeaserComponent> = {
 		tags: {
 			control: { type: 'object' },
 			description: 'Tags asociados al autor',
-			table: { type: { summary: 'Tag[]' }, defaultValue: { summary: '[]' } },
+			table: { type: { summary: 'readonly Tag[]' }, defaultValue: { summary: '[]' } },
 		},
 		storyCount: {
 			control: { type: 'number' },
@@ -53,7 +53,7 @@ export const Default: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Teaser completo del autor: avatar, fila de tags, nombre con bandera de nacionalidad y cantidad de historias. Toda la tarjeta es clickeable y navega al perfil del autor.</p><p><strong>Usos:</strong> Author List (listado de autores).</p>`,
+				story: `<p>Teaser completo del autor: avatar, fila de tags, nombre con bandera de nacionalidad y cantidad de historias. Toda la tarjeta es clickeable y navega al perfil del autor.</p><p><strong>Usos:</strong> la sección <a href="./?path=/docs/componentes-v3-highlightedauthors--docs" target="_top"><strong>HighlightedAuthors</strong></a> de la página de inicio, y el listado de autores.</p>`,
 			},
 		},
 	},
