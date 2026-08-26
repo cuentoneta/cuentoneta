@@ -279,16 +279,16 @@ describe('SanityContentRepository.fetchLatestLandingPageReferences', () => {
 	});
 });
 
-describe('SanityContentRepository.updateMostReadStories', () => {
+describe('SanityContentRepository.updateMostReadLiteraryWorks', () => {
 	it('patches the rotating content singleton with the given references', async () => {
 		const commit = fn(() => Promise.resolve(undefined));
 		const patch = fn(() => ({ commit }));
 		const repository = new SanityContentRepository({ patch } as unknown as SanityClient);
-		const references = [{ _key: 'story-1', _type: 'reference' as const, _ref: 'story-1' }];
+		const references = [{ _key: 'work-1', _type: 'reference' as const, _ref: 'work-1' }];
 
-		await repository.updateMostReadStories(references);
+		await repository.updateMostReadLiteraryWorks(references);
 
-		expect(patch).toHaveBeenCalledWith('rotatingContent', { set: { mostRead: references } });
+		expect(patch).toHaveBeenCalledWith('rotatingContent', { set: { mostReadLiteraryWorks: references } });
 		expect(commit).toHaveBeenCalled();
 	});
 });

@@ -12,7 +12,8 @@ import {
 } from '../../_utils/functions';
 
 // Modelos
-import { Story, StoryNavigationTeaser, StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
+import { Story, StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
+import type { LiteraryWorkNavigationTeaserWithAuthors } from '@models/literary-work.model';
 
 // Interfaces
 import { RotatingContent } from '@models/landing-page-content.model';
@@ -22,9 +23,11 @@ import { StoriesByAuthorSlugArgs } from '../../interfaces/queryArgs';
 import { getLandingPageContent, getRotatingContent } from '../content/content.service';
 import { fetchClarityData } from '../../_helpers/clarity-connector';
 
-// Repository
+// Repositories
 import type { ContentRepository } from '../content/content.repository';
 import { SanityContentRepository } from '../content/content.repository.sanity';
+import type { LiteraryWorkIdentity, LiteraryWorkRepository } from '../literary-work/literary-work.repository';
+import { SanityLiteraryWorkRepository } from '../literary-work/literary-work.repository.sanity';
 
 // Funciones de mapeo
 import { mapMediaSources } from '../../_utils/media-sources.functions';
@@ -57,34 +60,72 @@ export async function getStoriesBySlug(slugs: string[]): Promise<StoryTeaser[]> 
 export async function getMostReadStoryNavigationTeasers(
 	limit: number = 6,
 	offset: number = 0,
-): Promise<StoryNavigationTeaser[]> {
+): Promise<readonly LiteraryWorkNavigationTeaserWithAuthors[]> {
 	const result = await getLandingPageContent();
 
 	if (!result) {
 		throw new Error(`Could not fetch most read stories.`);
 	}
 
-	return result.mostRead.slice(offset, offset + limit);
+	return result.mostReadLiteraryWorks.slice(offset, offset + limit);
 }
 
+// Cuántas obras se destacan. El lote se acota acá y no en la query porque el límite es editorial: la
+// landing dereferencia cada referencia escrita con su proyección completa en cada request, así que un
+// ranking largo se paga en cada visita a la home.
+const MOST_READ_LIMIT = 6;
+
+// La lista es un **ranking**, así que Clarity define el orden y la resolución de identificadores no
+// puede alterarlo: la query filtra por pertenencia (`slug.current in $slugs`) y devuelve en orden de
+// documento, que no tiene nada que ver con cuánto se leyó cada obra.
+function rankByRequestedOrder(
+	slugs: readonly string[],
+	identities: readonly LiteraryWorkIdentity[],
+): readonly LiteraryWorkIdentity[] {
+	const bySlug = new Map(identities.map((identity) => [identity.slug, identity] as const));
+	return slugs.flatMap((slug) => bySlug.get(slug) ?? []);
+}
+
+// Clarity reporta la URL visitada, no el slug: puede traer querystring de campaña, un ancla a una
+// sección o una barra final, y ninguna de las tres formas resuelve contra `slug.current`. Sin
+// normalizar, la obra más leída desaparece del ranking justo cuando llega tráfico de campaña.
+function slugFromReadingUrl(url: string, prefixes: readonly string[]): string | undefined {
+	const prefix = prefixes.find((candidate) => url.startsWith(candidate));
+	if (prefix === undefined) {
+		return undefined;
+	}
+	const [path] = url.slice(prefix.length).split(/[?#]/);
+	const slug = path.replace(/\/+$/, '');
+	return slug === '' ? undefined : slug;
+}
+
+// Las dos rutas de lectura conviven mientras dure la migración y el tráfico está repartido entre
+// ellas, así que se leen ambos prefijos: quedarse con uno solo vaciaría la lista a medida que los
+// lectores se corren a la otra. La obra migrada conserva el slug de su historia de origen, y por eso
+// el mismo slug puede llegar por los dos caminos y se deduplica antes de resolverlo.
 export async function updateMostReadStories(
 	contentRepository: ContentRepository = new SanityContentRepository(),
+	literaryWorkRepository: LiteraryWorkRepository = new SanityLiteraryWorkRepository(),
 ): Promise<RotatingContent> {
 	const popularPagesMetrics = (await fetchClarityData()).find((metric) => metric.metricName === 'PopularPages');
 	if (!popularPagesMetrics) {
 		throw new Error('Could not fetch metrics.');
 	}
 
-	const prefix = `${environment.basePath}/story/`;
-	const mostReadStoriesSlugs = popularPagesMetrics.information
-		.filter((entry) => entry.url.startsWith(prefix))
-		.map((entry) => entry.url.split(prefix).pop() as string);
+	const readingPathPrefixes = [`${environment.basePath}/story/`, `${environment.basePath}/read/`];
+	// El `Set` conserva el orden de inserción, que es el de Clarity: la deduplicación no reordena.
+	const rankedSlugs = [
+		...new Set(
+			popularPagesMetrics.information.flatMap((entry) => slugFromReadingUrl(entry.url, readingPathPrefixes) ?? []),
+		),
+	];
 
-	const stories = await getStoriesBySlug(mostReadStoriesSlugs);
+	const identities = await literaryWorkRepository.fetchIdsBySlugs(rankedSlugs);
+	const ranked = rankByRequestedOrder(rankedSlugs, identities).slice(0, MOST_READ_LIMIT);
 
-	// Actualiza landing page referencias a las historias marcadas como "más leídas" actuales
-	const mostReadStories = stories.map((s) => ({ _key: s._id, _type: 'reference' as const, _ref: s._id }));
-	await contentRepository.updateMostReadStories(mostReadStories);
+	await contentRepository.updateMostReadLiteraryWorks(
+		ranked.map(({ _id }) => ({ _key: _id, _type: 'reference' as const, _ref: _id })),
+	);
 
 	return await getRotatingContent(contentRepository);
 }

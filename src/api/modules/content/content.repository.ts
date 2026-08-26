@@ -38,5 +38,7 @@ export interface ContentRepository {
 	fetchLandingPagesList(slugs: string[]): Promise<readonly LandingPageSummary[]>;
 	fetchLatestLandingPageReferences(currentSlug: string): Promise<LandingPageReferences | null>;
 	createLandingPages(landingPageObjects: LandingPageCreatePayload[]): Promise<unknown[]>;
-	updateMostReadStories(references: readonly KeyedReference[]): Promise<void>;
+	// Escribe el slot de obras. El de historias no tiene método propio: desde que el cron escribe obras,
+	// ningún productor lo alimenta, y el campo sobrevive solo hasta que se retire del schema.
+	updateMostReadLiteraryWorks(references: readonly KeyedReference[]): Promise<void>;
 }

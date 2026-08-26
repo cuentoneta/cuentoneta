@@ -117,8 +117,8 @@ export class SanityContentRepository implements ContentRepository {
 		return Promise.all(landingPageObjects.map((object) => this.client.create(object)));
 	}
 
-	public async updateMostReadStories(references: readonly KeyedReference[]): Promise<void> {
-		await this.client.patch(ROTATING_CONTENT_ID, { set: { mostRead: [...references] } }).commit();
+	public async updateMostReadLiteraryWorks(references: readonly KeyedReference[]): Promise<void> {
+		await this.client.patch(ROTATING_CONTENT_ID, { set: { mostReadLiteraryWorks: [...references] } }).commit();
 	}
 
 	/** Traduce cualquier fallo de construcción del dominio a un error que nombra la semana culpable. */

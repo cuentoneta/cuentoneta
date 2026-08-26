@@ -1,5 +1,5 @@
 import type { LandingPageContent, RotatingContent } from '@models/landing-page-content.model';
-import type { StoryNavigationTeaserWithAuthor } from '@models/story.model';
+import type { LiteraryWorkNavigationTeaserWithAuthors } from '@models/literary-work.model';
 import { RotatingContentNotFoundError } from './content.errors';
 import type {
 	ContentRepository,
@@ -22,7 +22,7 @@ interface InMemoryContentOptions {
 	readonly latestReferences?: LandingPageReferences | null;
 	// El catálogo contra el que se resuelven las referencias que se escriben. Sustituye al content lake:
 	// sin él, el doble solo podría reapuntar el slot a lo que ya estaba en el slot.
-	readonly stories?: readonly StoryNavigationTeaserWithAuthor[];
+	readonly literaryWorks?: readonly LiteraryWorkNavigationTeaserWithAuthors[];
 }
 
 // Fake de almacenamiento: sustituye el content lake por listas en memoria, con la misma semántica de
@@ -31,7 +31,7 @@ interface InMemoryContentOptions {
 export class InMemoryContentRepository implements ContentRepository {
 	private readonly landingPages: readonly StoredLandingPage[];
 	private readonly latestReferences: LandingPageReferences | null;
-	private readonly stories: readonly StoryNavigationTeaserWithAuthor[];
+	private readonly literaryWorks: readonly LiteraryWorkNavigationTeaserWithAuthors[];
 	private rotatingContent: RotatingContent | null;
 
 	public readonly createdLandingPages: LandingPageCreatePayload[] = [];
@@ -40,7 +40,7 @@ export class InMemoryContentRepository implements ContentRepository {
 		this.landingPages = options.landingPages ?? [];
 		this.rotatingContent = options.rotatingContent ?? null;
 		this.latestReferences = options.latestReferences ?? null;
-		this.stories = options.stories ?? [];
+		this.literaryWorks = options.literaryWorks ?? [];
 	}
 
 	public async fetchLandingPageContent(slug: string): Promise<LandingPageContent | null> {
@@ -74,20 +74,23 @@ export class InMemoryContentRepository implements ContentRepository {
 	// Sin el singleton **lanza**, igual que el adaptador real: `patch()` sobre un documento inexistente
 	// falla en el content lake, y un doble que retornara en silencio dejaría pasar en verde a un cron que
 	// en producción se cae.
-	public async updateMostReadStories(references: readonly KeyedReference[]): Promise<void> {
+	public async updateMostReadLiteraryWorks(references: readonly KeyedReference[]): Promise<void> {
 		if (!this.rotatingContent) {
 			throw new RotatingContentNotFoundError();
 		}
 		const known = new Map(
 			[
-				...this.stories,
-				...this.rotatingContent.mostRead,
-				...this.landingPages.flatMap(({ content }) => [...content.mostRead, ...content.latestReads]),
-			].map((story) => [story._id, story] as const),
+				...this.literaryWorks,
+				...this.rotatingContent.mostReadLiteraryWorks,
+				...this.landingPages.flatMap(({ content }) => [
+					...content.mostReadLiteraryWorks,
+					...content.latestLiteraryWorks,
+				]),
+			].map((work) => [work._id, work] as const),
 		);
 		this.rotatingContent = {
 			...this.rotatingContent,
-			mostRead: references.flatMap((reference) => known.get(reference._ref) ?? []),
+			mostReadLiteraryWorks: references.flatMap((reference) => known.get(reference._ref) ?? []),
 		};
 	}
 }
