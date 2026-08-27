@@ -61,7 +61,7 @@ describe('CollectionsStructuredDataDirective', () => {
 		TestBed.tick();
 
 		const head = TestBed.inject(DOCUMENT).head;
-		expect(head.querySelector('script[data-schema-id="collection-page"]')).toBeNull();
+		expect(head.querySelector('script[data-schema-id="collection"]')).toBeNull();
 		expect(head.querySelector('script[data-schema-id="breadcrumb-collection"]')).toBeNull();
 	});
 

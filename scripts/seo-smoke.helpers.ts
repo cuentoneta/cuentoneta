@@ -105,7 +105,7 @@ const EXPECTATIONS_FACTORIES: Readonly<Record<string, ExpectationsFactory>> = {
 		({
 			path,
 			canonicalContains: path,
-			requiredJsonLdIds: [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.collectionPage, SCHEMA_IDS.breadcrumbCollection],
+			requiredJsonLdIds: [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.collection, SCHEMA_IDS.breadcrumbCollection],
 			requiredInternalLinkPrefix: '/read/',
 		}),
 };

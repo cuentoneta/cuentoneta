@@ -26,14 +26,14 @@ describe('HomeStructuredDataDirective', () => {
 
 	it('should remove the blocks left by a previous collection route', () => {
 		const schemaOrg = TestBed.inject(SchemaOrgService);
-		schemaOrg.setPageScopedJsonLd('collection-page', { '@context': CONTEXT, '@type': 'CollectionPage' });
+		schemaOrg.setPageScopedJsonLd('collection', { '@context': CONTEXT, '@type': 'CollectionPage' });
 		schemaOrg.setPageScopedJsonLd('breadcrumb-collection', { '@context': CONTEXT, '@type': 'BreadcrumbList' });
 
 		instantiate();
 		TestBed.tick();
 
 		const head = TestBed.inject(DOCUMENT).head;
-		expect(head.querySelector('script[data-schema-id="collection-page"]')).toBeNull();
+		expect(head.querySelector('script[data-schema-id="collection"]')).toBeNull();
 		expect(head.querySelector('script[data-schema-id="breadcrumb-collection"]')).toBeNull();
 	});
 

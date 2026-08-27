@@ -20,12 +20,8 @@ export const SCHEMA_IDS = Object.freeze({
 	breadcrumbStory: 'breadcrumb-story',
 	profilePage: 'profile-page',
 	breadcrumbAuthor: 'breadcrumb-author',
-	// TODO(#2269): al retirarse la página de storylist, `collection` pasa a nombrar el bloque de
-	// `CollectionPage` —el dueño del término en el dominio— y `breadcrumbStorylist` desaparece.
-	collection: 'collection',
 	breadcrumbRead: 'breadcrumb-read',
-	// TODO(#2269): `collection-page` es un nombre prestado hasta que se libere `collection`.
-	collectionPage: 'collection-page',
+	collection: 'collection',
 	breadcrumbCollection: 'breadcrumb-collection',
 	collectionCatalog: 'collection-catalog',
 	breadcrumbCollectionCatalog: 'breadcrumb-collection-catalog',

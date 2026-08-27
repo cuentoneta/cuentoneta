@@ -144,7 +144,7 @@ describe('expectationsFor', () => {
 	it('collection: sin titlePattern (título editorial) + CollectionPage', () => {
 		const expectations = expectationsFor('/collection/verano-2022');
 		expect(expectations?.titlePattern).toBeUndefined();
-		expect(expectations?.requiredJsonLdIds).toContain('collection-page');
+		expect(expectations?.requiredJsonLdIds).toContain('collection');
 	});
 
 	it('devuelve null para un path no indexable por tipo', () => {
