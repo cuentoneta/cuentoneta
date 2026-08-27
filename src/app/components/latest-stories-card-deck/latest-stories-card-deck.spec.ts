@@ -3,8 +3,6 @@ import { render, screen } from '@testing-library/angular';
 import { onoffLiteraryWorkNavigationTeasersWithAuthorsMock } from '@mocks/onoff-literary-work-teasers.mock';
 import { DeferBlockState } from '@angular/core/testing';
 
-// Las obras salen del canon y las aserciones se derivan del fixture: un título clavado en prosa dejaría
-// de valer en cuanto el corpus se enriquezca.
 const literaryWorks = onoffLiteraryWorkNavigationTeasersWithAuthorsMock.slice(0, 6);
 
 describe('LatestStoriesCardDeck', () => {

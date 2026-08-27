@@ -46,8 +46,6 @@ export default class HomeComponent {
 	private readonly landingPageContent = computed(() => this.landingPageResource.value());
 	protected readonly collections = computed(() => this.landingPageContent()?.collections || []);
 	protected readonly campaigns = computed(() => this.landingPageContent()?.campaigns || []);
-	// Los dos slots leen los campos de obra, que llevan el sufijo de entidad solo mientras conviven con
-	// los de historia. Vuelven a llamarse `mostRead` y `latestReads` cuando los viejos se retiren.
 	protected readonly mostRead = computed(() => this.landingPageContent()?.mostReadLiteraryWorks.slice(0, 6) || []);
 	protected readonly latestReads = computed(() => this.landingPageContent()?.latestLiteraryWorks.slice(0, 6) || []);
 	protected readonly highlightedAuthors = computed(() => this.landingPageContent()?.highlightedAuthors ?? []);
