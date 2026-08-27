@@ -6,11 +6,11 @@
  *       link canonical, robots indexable y keywords.
  *  - B+C. Datos estructurados sitewide: bloques JSON-LD Organization y WebSite (la home no
  *         tiene una entidad propia, solo los sitewide del app initializer).
- *  - E. Enlaces a los hubs del catálogo (/story y /authors), que son la vía por la que el
- *       crawler alcanza el corpus.
+ *  - E. Enlaces a los hubs del catálogo (/literary-work y /authors), que son la vía por la que
+ *       el crawler alcanza el corpus.
  *
  * Sobre el DOM hidratado, vía navegación in-app (router):
- *  - D. Al navegar de la home a una story, los bloques sitewide persisten y aparece el Article;
+ *  - D. Al navegar de la home a una obra, los bloques sitewide persisten y aparece el Article;
  *       sin duplicar canonical ni <title>.
  */
 import { test, expect } from '@playwright/test';
@@ -61,13 +61,14 @@ test('home — B/C: bloques JSON-LD sitewide Organization y WebSite', async () =
 
 // Los hubs concentran los enlaces a todo el corpus, y hasta este cambio ninguna página los
 // enlazaba: el crawler solo los conocía por el sitemap. Se afirma sobre el HTML crudo porque lo
-// que importa es que estén sin ejecutar JS. Igualdad exacta del href: /story/<slug> no cuenta.
+// que importa es que estén sin ejecutar JS. Igualdad exacta del href: el enlace a una obra puntual
+// no cuenta como enlace al hub.
 test('home — E: enlaza los hubs del catálogo en el HTML server-rendered', async () => {
 	const hrefs = parseHtml(html)
 		.querySelectorAll('a')
 		.map((anchor) => anchor.getAttribute('href'));
 
-	expect(hrefs).toContain('/story');
+	expect(hrefs).toContain('/literary-work');
 	expect(hrefs).toContain('/authors');
 });
 
