@@ -1,4 +1,5 @@
 import { Component, computed, effect, inject, RESPONSE_INIT } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 import { ssrBlockingRxResource } from '@app-utils/ssr-resource';
 import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
@@ -6,7 +7,7 @@ import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 import { AppRoutes } from '../../app.routes';
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 import { LiteraryWorkApi } from '../../providers/literary-work.provider';
-import { LiteraryWorkCardTeaserComponent } from '@components/literary-work-card-teaser/literary-work-card-teaser.component';
+import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 
 @Component({
 	selector: 'cuentoneta-literary-works',
@@ -14,33 +15,64 @@ import { LiteraryWorkCardTeaserComponent } from '@components/literary-work-card-
 		<main class="mx-auto mt-header-height flex w-full max-w-310 flex-col gap-12 px-4 pt-8 pb-16">
 			<h1 class="font-inter text-2xl leading-8 font-bold text-neutral-900">{{ headline() }}</h1>
 
-			@if (loading()) {
-				<section class="flex flex-col gap-8" aria-busy="true" aria-label="Cargando obras">
-					@for (placeholder of [1, 2, 3, 4]; track placeholder) {
-						<cuentoneta-literary-work-card-teaser
-							[showAuthor]="true"
-							[showExcerpt]="true"
-							[showMultimedia]="true"
-							class="w-full"
-						/>
-					}
-				</section>
-			} @else if (failed()) {
+			@if (failed()) {
 				<p class="font-inter text-base text-neutral-700" role="alert" data-testid="catalog-error">
 					No pudimos cargar las obras. Probá de nuevo en un rato.
 				</p>
-			} @else if (literaryWorks().length > 0) {
-				<section class="flex flex-col gap-8" data-testid="literary-works">
-					@for (literaryWork of literaryWorks(); track literaryWork.slug) {
-						<cuentoneta-literary-work-card-teaser
-							[literaryWork]="literaryWork"
-							[showAuthor]="true"
-							[showExcerpt]="true"
-							[showMultimedia]="true"
-							class="w-full"
-						/>
-					}
-				</section>
+			} @else if (loading() || literaryWorks().length > 0) {
+				<div class="overflow-x-auto rounded-lg border border-neutral-200">
+					<table class="w-full border-collapse">
+						<thead class="bg-neutral-50">
+							<tr class="border-b border-neutral-200">
+								<th class="px-6 py-4 text-left text-sm font-semibold text-neutral-900">Título</th>
+								<th class="px-6 py-4 text-left text-sm font-semibold text-neutral-900">Autor</th>
+								<th class="px-6 py-4 text-left text-sm font-semibold text-neutral-900">Tiempo de lectura</th>
+							</tr>
+						</thead>
+						@if (loading()) {
+							<tbody class="divide-y divide-neutral-200" aria-busy="true" aria-label="Cargando obras">
+								@for (placeholder of [1, 2, 3, 4]; track placeholder) {
+									<tr data-testid="skeleton">
+										@for (cell of [1, 2, 3]; track cell) {
+											<td class="px-6 py-4">
+												<cuentoneta-skeleton appearance="line" class="h-5 w-full max-w-48 bg-neutral-300" />
+											</td>
+										}
+									</tr>
+								}
+							</tbody>
+						} @else {
+							<tbody class="divide-y divide-neutral-200" data-testid="literary-works">
+								@for (literaryWork of literaryWorks(); track literaryWork.slug) {
+									<tr class="transition-colors hover:bg-neutral-50">
+										<td class="px-6 py-4">
+											<a
+												[routerLink]="['/', appRoutes.Read, literaryWork.slug]"
+												class="text-blue-600 hover:text-blue-800 hover:underline"
+											>
+												{{ literaryWork.title }}
+											</a>
+										</td>
+										<td class="px-6 py-4 text-neutral-700">
+											@for (author of literaryWork.authors; track author.slug) {
+												<a
+													[routerLink]="['/', appRoutes.Author, author.slug]"
+													class="text-blue-600 hover:text-blue-800 hover:underline"
+												>
+													{{ author.name }}
+												</a>
+												@if (!$last) {
+													<span>, </span>
+												}
+											}
+										</td>
+										<td class="px-6 py-4 text-neutral-700">{{ literaryWork.totalReadingTime }} min</td>
+									</tr>
+								}
+							</tbody>
+						}
+					</table>
+				</div>
 			} @else {
 				<p class="font-inter text-base text-neutral-700" data-testid="catalog-empty">
 					Todavía no hay obras publicadas.
@@ -49,9 +81,11 @@ import { LiteraryWorkCardTeaserComponent } from '@components/literary-work-card-
 		</main>
 	`,
 	hostDirectives: [HeadMetadataDirective],
-	imports: [LiteraryWorkCardTeaserComponent],
+	imports: [RouterLink, SkeletonComponent],
 })
 export default class LiteraryWorksPage {
+	protected readonly appRoutes = AppRoutes;
+
 	private readonly headMetadata = inject(HeadMetadataDirective);
 	private readonly literaryWorkApi = inject(LiteraryWorkApi);
 	private readonly responseInit = inject(RESPONSE_INIT, { optional: true });

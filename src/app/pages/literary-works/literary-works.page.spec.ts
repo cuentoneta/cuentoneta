@@ -116,19 +116,13 @@ describe('LiteraryWorksPage', () => {
 		expect(screen.queryByTestId('catalog-error')).not.toBeInTheDocument();
 	});
 
-	// El esqueleto decide su estructura por los mismos flags de presentación que la tarjeta: la fila de
-	// autoría, las líneas del extracto y los selectores de multimedia son ramas condicionales suyas. Si el
-	// listado no se los pasa en la rama de carga, el esqueleto queda tres bloques más corto que la tarjeta
-	// que reemplaza y la lista salta de alto al resolver. Cada aserción marca uno de los tres bloques por
-	// la forma que sólo él dibuja, en vez de contra un total que caducaría al cambiar el diseño.
-	it('should give the placeholder the same blocks the resolved card carries', async () => {
+	// La fila de carga y la fila resuelta comparten la tabla, así que tienen que declarar las mismas
+	// celdas: una fila corta desalinea las columnas y mueve el encabezado al resolver.
+	it('should give the placeholder row the same cells a resolved row carries', async () => {
 		await renderPage(new PendingLiteraryWorkApi());
 
 		const [placeholder] = screen.getAllByTestId('skeleton');
-		const bars = within(placeholder).getAllByRole('status');
-		expect(bars.filter((bar) => bar.classList.contains('rounded-full'))).not.toHaveLength(0);
-		expect(bars.filter((bar) => bar.classList.contains('w-3/4'))).not.toHaveLength(0);
-		expect(bars.filter((bar) => bar.classList.contains('rounded-lg'))).not.toHaveLength(0);
+		expect(within(placeholder).getAllByRole('cell')).toHaveLength(3);
 	});
 
 	// Anunciar un conteo mientras carga o tras un fallo afirmaría que no hay obras.
@@ -136,6 +130,37 @@ describe('LiteraryWorksPage', () => {
 		await renderPage(new PendingLiteraryWorkApi());
 
 		expect(screen.getByRole('heading', { level: 1, name: 'Obras' })).toBeInTheDocument();
+	});
+
+	// La tabla es el andamio de las dos ramas, así que su encabezado se sirve desde el primer render.
+	it('should keep the column headers while the catalogue loads', async () => {
+		await renderPage(new PendingLiteraryWorkApi());
+
+		['Título', 'Autor', 'Tiempo de lectura'].forEach((name) => {
+			expect(screen.getByRole('columnheader', { name })).toBeInTheDocument();
+		});
+	});
+
+	it('should send every author of the catalogue to their profile', async () => {
+		await renderPage();
+
+		const hrefs = within(screen.getByTestId('literary-works'))
+			.getAllByRole('link')
+			.map((link) => link.getAttribute('href'));
+		onoffLiteraryWorkTeasersMock.forEach(({ authors }) => {
+			authors.forEach(({ slug }) => {
+				expect(hrefs).toContain(`/author/${slug}`);
+			});
+		});
+	});
+
+	it('should list the reading time of every work', async () => {
+		await renderPage();
+
+		const listing = within(screen.getByTestId('literary-works'));
+		onoffLiteraryWorkTeasersMock.forEach(({ totalReadingTime }) => {
+			expect(listing.getAllByText(`${totalReadingTime} min`).length).toBeGreaterThan(0);
+		});
 	});
 
 	it('should tell the reader when the catalogue fails to load', async () => {

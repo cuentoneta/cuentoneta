@@ -62,7 +62,7 @@ const meta: Meta<LiteraryWorksPageArgs> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>El catálogo de obras, <strong>LiteraryWorksPage</strong>, montado sobre el corpus de Onoff. Como el resto de las entradas bajo <strong>Páginas</strong>, no cataloga un componente sino el ensamblado completo: el encabezado con el conteo y la lista de tarjetas que llevan a la lectura.</p><p>El único control elige el escenario del catálogo, que es lo único que mueve la página desde afuera: no recibe parámetros de ruta ni tiene estado propio.</p><p>Se compone de una sola pieza: <a href="./?path=/docs/componentes-v3-literaryworkcardteaser--docs" target="_top"><strong>LiteraryWorkCardTeaser</strong></a>, la misma tarjeta que enlaza a <a href="./?path=/docs/páginas-readpage--docs" target="_top"><strong>ReadPage</strong></a>. El esqueleto no lo monta el listado sino la propia tarjeta, cuando no recibe obra; por eso la rama de carga le pasa los mismos flags de presentación que la rama real, que es lo que hace que las dos ocupen el mismo alto.</p><p>El orden no es el que entrega el backend: se resuelve en la página con colación en español, porque la base compara por punto de código y mandaría al final del catálogo todo título que empiece con acento o eñe.</p><p>El encabezado fijo de la aplicación no se monta en el catálogo, así que el margen superior de la página se ve como espacio en blanco.</p></div>`,
+				component: `<div><p>El catálogo de obras, <strong>LiteraryWorksPage</strong>, montado sobre el corpus de Onoff. Como el resto de las entradas bajo <strong>Páginas</strong>, no cataloga un componente sino el ensamblado completo: el encabezado con el conteo y la tabla de obras, con su título enlazado a la lectura, su autoría enlazada al perfil y su tiempo de lectura.</p><p>El único control elige el escenario del catálogo, que es lo único que mueve la página desde afuera: no recibe parámetros de ruta ni tiene estado propio.</p><p>La tabla es la misma que sirve hoy el listado que este catálogo reemplaza: se conserva a propósito, porque el rediseño de esta pantalla todavía no existe. Los títulos enlazan a <a href="./?path=/docs/páginas-readpage--docs" target="_top"><strong>ReadPage</strong></a>. La única pieza del sistema de diseño que monta es <a href="./?path=/docs/componentes-v3-skeleton--docs" target="_top"><strong>Skeleton</strong></a>, en las filas de carga.</p><p>El orden no es el que entrega el backend: se resuelve en la página con colación en español, porque la base compara por punto de código y mandaría al final del catálogo todo título que empiece con acento o eñe.</p><p>El encabezado fijo de la aplicación no se monta en el catálogo, así que el margen superior de la página se ve como espacio en blanco.</p></div>`,
 			},
 		},
 	},
@@ -84,7 +84,7 @@ export const Playground: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>El catálogo con el control vivo. Cambiá <strong>Catálogo</strong> para recorrer los cinco estados, y en particular para alternar entre <strong>corpus</strong> y <strong>loading</strong>: la lista real y la de esqueletos ocupan el mismo lugar, así que la alineación entre las dos se puede evaluar de un vistazo.</p>`,
+				story: `<p>El catálogo con el control vivo. Cambiá <strong>Catálogo</strong> para recorrer los cuatro estados, y en particular para alternar entre <strong>corpus</strong> y <strong>loading</strong>: las filas de carga ocupan la misma tabla que las resueltas, así que la alineación de las columnas entre las dos se puede evaluar de un vistazo.</p>`,
 			},
 		},
 	},
@@ -95,18 +95,7 @@ export const CatalogoDelCorpus: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>El corpus completo, tal como lo sirve el backend.</p><p><strong>Usos:</strong> mirar la tarjeta con datos reales —portada, autoría, extracto y tiempo de lectura— y verificar el orden alfabético con plegado de acentos.</p>`,
-			},
-		},
-	},
-};
-
-export const CatalogoConMultimedia: Story = {
-	args: { scenario: 'multimedia' },
-	parameters: {
-		docs: {
-			description: {
-				story: `<p>El mismo catálogo, con recursos multimedia agregados a cada obra. Es la única entrada donde los selectores de formato de las tarjetas tienen algo que dibujar: ninguna obra del corpus declara multimedia.</p><p><strong>Usos:</strong> evaluar cuánto alto suma la fila de selectores y cómo convive con el extracto recortado.</p>`,
+				story: `<p>El corpus completo, tal como lo sirve el backend.</p><p><strong>Usos:</strong> mirar la tabla con datos reales y verificar el orden alfabético con plegado de acentos.</p>`,
 			},
 		},
 	},
@@ -117,7 +106,7 @@ export const CatalogoCargando: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>El catálogo mientras carga: la lista de esqueletos, en el mismo lugar y con la misma geometría que la lista real. Alternar con <strong>corpus</strong> desde el control de <strong>Playground</strong> es lo que permite verificar que una no salte respecto de la otra.</p><p>En la aplicación servida este estado no llega al HTML: el recurso bloquea el render del servidor. Se ve al navegar dentro de la aplicación.</p>`,
+				story: `<p>El catálogo mientras carga: filas de esqueleto dentro de la misma tabla, con el encabezado de columnas ya servido. Alternar con <strong>corpus</strong> desde el control de <strong>Playground</strong> es lo que permite verificar que las columnas no se corran al resolver.</p><p>En la aplicación servida este estado no llega al HTML: el recurso bloquea el render del servidor. Se ve al navegar dentro de la aplicación.</p>`,
 			},
 		},
 	},
@@ -128,7 +117,7 @@ export const CatalogoVacio: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Un catálogo que resolvió sin obras. Lo dice con todas las letras en vez de quedarse con los esqueletos puestos: un catálogo vacío y un catálogo cargando significan cosas opuestas y no pueden verse igual.</p>`,
+				story: `<p>Un catálogo que resolvió sin obras. Lo dice con todas las letras en vez de dejar la tabla vacía: un catálogo vacío y un catálogo cargando significan cosas opuestas y no pueden verse igual.</p>`,
 			},
 		},
 	},
