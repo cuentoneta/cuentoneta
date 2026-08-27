@@ -17,6 +17,7 @@ export interface LiteraryWorkTeaserListing {
 // no una firma ni una sub-ruta.
 export interface LiteraryWorkTeaserFilter {
 	readonly author?: string;
+	readonly slugs?: readonly string[];
 }
 
 export interface LiteraryWorkRepository {

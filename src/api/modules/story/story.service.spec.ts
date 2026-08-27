@@ -2,8 +2,7 @@ import { clearAllMocks, type Mock } from '@test-utils';
 import * as storyRepository from './story.repository';
 import * as storyService from './story.service';
 import type { StoriesByAuthorSlugQueryResult } from '@sanity-types';
-import { onoffRawStoriesMock } from '@mocks/onoff-raw-stories.mock';
-import { elOdioRawTeaser } from '@mocks/onoff-raw-stories.mock';
+import { onoffRawStoriesMock, onoffRawTeasersMock } from '@mocks/onoff-raw-stories.mock';
 
 /* eslint-disable no-restricted-syntax -- vi.mock/vi.fn: mock de módulo del repository y del builder de imágenes; se migra a inyección de dependencias en #1503 */
 vi.mock('./story.repository', () => ({
@@ -19,8 +18,12 @@ vi.mock('@sanity/image-url', () => ({
 }));
 /* eslint-enable no-restricted-syntax */
 
+// El teaser base sale de la colección del canon y no de un export por obra: el caso necesita "un teaser
+// crudo cualquiera" al que ponerle una portada, no uno puntual.
+const [rawTeaser] = onoffRawTeasersMock;
+
 const rawTeaserWithCover: StoriesByAuthorSlugQueryResult[0] = {
-	...elOdioRawTeaser,
+	...rawTeaser,
 	coverImage: { _type: 'image', asset: { _type: 'reference', _ref: 'image-abc-100x100-jpg' } },
 };
 

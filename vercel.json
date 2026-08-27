@@ -11,7 +11,7 @@
 	},
 	"crons": [
 		{
-			"path": "/api/story/update-most-read",
+			"path": "/api/literary-work/update-most-read",
 			"schedule": "15 3 * * *"
 		}
 	]

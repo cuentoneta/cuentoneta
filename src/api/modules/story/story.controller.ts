@@ -7,13 +7,7 @@ import { mostReadStorySchema, storyControllerSchema } from './story.schema';
 import { slugSchema } from '@schemas/common.schemas';
 
 import { StoriesByAuthorSlugArgs } from '../../interfaces/queryArgs';
-import {
-	getMostReadStoryNavigationTeasers,
-	getStories,
-	getStoriesByAuthorSlug,
-	getStoryBySlug,
-	updateMostReadStories,
-} from './story.service';
+import { getMostReadStoryNavigationTeasers, getStories, getStoriesByAuthorSlug, getStoryBySlug } from './story.service';
 
 const storyController = new Hono();
 
@@ -21,11 +15,6 @@ const storyController = new Hono();
 storyController.get('/most-read', zValidator('query', mostReadStorySchema), async (c) => {
 	const { limit, offset } = c.req.valid('query');
 	const result = await getMostReadStoryNavigationTeasers(limit, offset);
-	return c.json(result);
-});
-
-storyController.get('/update-most-read', async (c) => {
-	const result = await updateMostReadStories();
 	return c.json(result);
 });
 

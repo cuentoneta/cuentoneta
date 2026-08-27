@@ -41,7 +41,10 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 
 	// Trae el catálogo de obras que satisfacen el filtro, traducidas a la vista de teaser.
 	public async fetchTeasers(filter: LiteraryWorkTeaserFilter): Promise<LiteraryWorkTeaserListing> {
-		const raw = await this.client.fetch(literaryWorkTeasers, { author: filter.author ?? null });
+		const raw = await this.client.fetch(literaryWorkTeasers, {
+			author: filter.author ?? null,
+			slugs: filter.slugs ? [...filter.slugs] : null,
+		});
 
 		const literaryWorks: LiteraryWorkTeaser[] = [];
 		const malformed: MalformedLiteraryWorkError[] = [];
