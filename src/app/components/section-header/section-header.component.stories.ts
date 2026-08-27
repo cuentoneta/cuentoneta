@@ -16,8 +16,8 @@ const meta: Meta<SectionHeaderComponent> = {
 	argTypes: {
 		heading: {
 			control: { type: 'text' },
-			description: 'Título de la sección, renderizado como encabezado de nivel 2',
-			table: { type: { summary: 'string' } },
+			description: 'Título de la sección, renderizado como encabezado de nivel 2; vacío lo omite',
+			table: { type: { summary: 'string' }, defaultValue: { summary: "''" } },
 		},
 		subtitle: {
 			control: { type: 'text' },

@@ -80,6 +80,28 @@ describe('LiteraryWorksCardDeck', () => {
 			);
 		});
 
+		// El deck se puede montar en una página que ya anuncia la sección por su cuenta: ahí no debe
+		// imponer un encabezado propio ni una región sin nombre.
+		it('should render no header when it receives neither heading nor subtitle', async () => {
+			await render(LiteraryWorksCardDeck, {
+				inputs: { literaryWorks },
+				providers: defaultProviders,
+			});
+
+			expect(screen.queryAllByRole('heading')).toHaveLength(0);
+			expect(screen.queryAllByRole('region')).toHaveLength(0);
+		});
+
+		it('should render the header when it only receives a subtitle', async () => {
+			await render(LiteraryWorksCardDeck, {
+				inputs: { literaryWorks, subtitle: 'Explorá los textos más populares entre los lectores' },
+				providers: defaultProviders,
+			});
+
+			expect(screen.getByText('Explorá los textos más populares entre los lectores')).toBeInTheDocument();
+			expect(screen.queryAllByRole('heading')).toHaveLength(0);
+		});
+
 		it('should name its region after the heading', async () => {
 			await render(LiteraryWorksCardDeck, {
 				inputs: { ...defaultInputs, heading: 'Obras más leídas' },

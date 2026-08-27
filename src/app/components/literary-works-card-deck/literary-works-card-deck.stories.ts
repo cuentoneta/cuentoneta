@@ -21,7 +21,7 @@ const meta: Meta<LiteraryWorksCardDeck> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>El <strong>LiteraryWorksCardDeck</strong> es la grilla de obras destacadas de la página de inicio en el Design System v3: un <a href="./?path=/docs/componentes-v3-sectionheader--docs" target="_top"><strong>SectionHeader</strong></a> parametrizado sobre una grilla responsiva de una columna en mobile y tres desde <code>md</code>, con una vista previa por obra resuelta por <a href="./?path=/docs/componentes-v3-literaryworkhomecardteaser--docs" target="_top"><strong>LiteraryWorkHomeCardTeaser</strong></a>.</p><p>La página monta dos instancias de este mismo componente —"Últimas novedades" y "Obras más leídas"— que solo difieren en su copy: el encabezado llega por input justamente para que no vuelvan a ser dos componentes gemelos. El host se expone como región con el nombre del encabezado, que es lo que permite localizar cada instancia sin depender de su posición. Mientras difiere la carga dibuja los skeletons dentro de su bloque <code>@defer</code>, y sin obras queda solo el encabezado.</p></div>`,
+				component: `<div><p>El <strong>LiteraryWorksCardDeck</strong> es la grilla de una tirada de obras en el Design System v3: un <a href="./?path=/docs/componentes-v3-sectionheader--docs" target="_top"><strong>SectionHeader</strong></a> opcional sobre una grilla responsiva de una columna en mobile y tres desde <code>md</code>, con una vista previa por obra resuelta por <a href="./?path=/docs/componentes-v3-literaryworkhomecardteaser--docs" target="_top"><strong>LiteraryWorkHomeCardTeaser</strong></a>.</p><p>Todo lo que distingue a una tirada de otra —su título, su bajada y a dónde lleva su acción— entra por input, así que una misma página puede montar varias y cualquier otra puede reusarlo. Con título, el host se expone como región con ese nombre, que es lo que permite localizar cada instancia sin depender de su posición; sin título ni bajada queda la grilla sola y el host no se anuncia como región. Mientras difiere la carga dibuja los skeletons dentro de su bloque <code>@defer</code>, y sin obras queda solo el encabezado.</p></div>`,
 			},
 		},
 	},
@@ -36,8 +36,8 @@ const meta: Meta<LiteraryWorksCardDeck> = {
 		},
 		heading: {
 			control: { type: 'text' },
-			description: 'Título de la sección',
-			table: { type: { summary: 'string' } },
+			description: 'Título de la sección; vacío deja la grilla sin encabezado',
+			table: { type: { summary: 'string' }, defaultValue: { summary: "''" } },
 		},
 		subtitle: {
 			control: { type: 'text' },
@@ -90,6 +90,22 @@ export const MasLeidas: Story = {
 		docs: {
 			description: {
 				story: `<p>El mismo componente con el otro copy de la página de inicio, que es lo que demuestra la unificación: entre esta story y la anterior no cambia una sola línea de plantilla.</p><p><strong>Usos:</strong> la sección de obras más leídas de la página de inicio.</p>`,
+			},
+		},
+	},
+};
+
+export const SinEncabezado: Story = {
+	name: 'Sin encabezado',
+	render: (args) => ({
+		props: args,
+		template: `<cuentoneta-literary-works-card-deck ${argsToTemplate(args)} />`,
+	}),
+	args: { literaryWorks },
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>Sin título ni bajada queda la grilla sola, y el host deja de anunciarse como región: una región sin nombre estorba más de lo que ayuda. Es la forma que sirve a una página que ya presenta la sección por su cuenta.</p><p><strong>Usos:</strong> montar la tirada dentro de una sección que ya tiene su propio encabezado.</p>`,
 			},
 		},
 	},
