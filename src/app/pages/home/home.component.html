@@ -11,11 +11,7 @@
 	</cuentoneta-home-hero>
 
 	<div class="content horizontal-layout-spacing mt-16">
-		<!--
-            Los altos fijos de las dos secciones de obras evitan el rebote vertical de la carga
-            inicial, mientras esas grillas sigan resolviéndose en un bloque diferido.
-        -->
-		<section class="mb-8 h-[684px] md:h-[304px]">
+		<section class="mb-8">
 			<cuentoneta-literary-works-card-deck
 				[literaryWorks]="latestReads()"
 				[action]="literaryWorksAction"
@@ -24,7 +20,7 @@
 			/>
 		</section>
 
-		<section class="mb-8 h-[684px] md:h-[304px]">
+		<section class="mb-8">
 			<cuentoneta-literary-works-card-deck
 				[literaryWorks]="mostRead()"
 				[action]="literaryWorksAction"
