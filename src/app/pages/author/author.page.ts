@@ -14,20 +14,26 @@ import { AuthorMetaTagsDirective } from './author-meta-tags.directive';
 import { AuthorStructuredDataDirective } from './author-structured-data.directive';
 
 // Components
+import { AuthorInfoPanelComponent } from '@components/author-info-panel/author-info-panel.component';
+import { DividerComponent } from '@components/divider/divider.component';
 import { LiteraryWorkCardTeaserComponent } from '@components/literary-work-card-teaser/literary-work-card-teaser.component';
+import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 
 @Component({
 	selector: 'cuentoneta-author',
 	templateUrl: './author.page.html',
 	providers: [{ provide: AUTHOR_HOST, useExisting: forwardRef(() => AuthorPage) }],
 	hostDirectives: [AuthorMetaTagsDirective, AuthorStructuredDataDirective],
-	imports: [LiteraryWorkCardTeaserComponent],
+	imports: [AuthorInfoPanelComponent, DividerComponent, LiteraryWorkCardTeaserComponent, SkeletonComponent],
 })
 export default class AuthorPage implements AuthorHost {
 	public readonly slug = input.required<string>();
 
 	private readonly authorApi = inject(AuthorApi);
 	private readonly literaryWorkApi = inject(LiteraryWorkApi);
+
+	// Los 160 px que el diseño reserva para la biografía en la columna, sobre un interlineado de 20.
+	protected readonly sidebarBiographyLines = 8;
 
 	// Los dos recursos bloquean el render del servidor: el nombre, la biografía y los enlaces a las obras
 	// son las invariantes que la página tiene que servir indexadas, y con un recurso progresivo el HTML se
@@ -52,4 +58,9 @@ export default class AuthorPage implements AuthorHost {
 	protected readonly literaryWorks = computed(() =>
 		this.literaryWorksResource.hasValue() ? this.literaryWorksResource.value() : [],
 	);
+
+	protected readonly literaryWorksHeading = computed(() => {
+		const total = this.literaryWorks().length;
+		return `${total} ${total === 1 ? 'obra' : 'obras'}`;
+	});
 }
