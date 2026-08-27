@@ -26,8 +26,7 @@ describe('LiteraryWorksPage', () => {
 		expect(canonicalSpy).toHaveBeenCalledWith(buildCanonicalUrl(AppRoutes.LiteraryWork));
 	});
 
-	// El opt-out es transitorio y dura lo que dure el listado sin obras: ofrecer al indexado una página
-	// que todavía no lista nada gasta rastreo en una URL sin contenido.
+	// Ofrecer al indexado una página que todavía no lista nada gasta rastreo en una URL sin contenido.
 	it('should opt out of indexing while it lists no work', async () => {
 		const robotsSpy = spyOn(HeadMetadataDirective.prototype, 'setRobots');
 
