@@ -1,8 +1,8 @@
 import { render, screen, within } from '@testing-library/angular';
 import { provideRouter } from '@angular/router';
 import { RESPONSE_INIT } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
-import { restoreAllMocks, spyOn } from '@test-utils';
+import { NEVER, Observable, throwError } from 'rxjs';
+import { clearAllMocks, restoreAllMocks, spyOn } from '@test-utils';
 
 import LiteraryWorksPage from './literary-works.page';
 import { AppRoutes } from '../../app.routes';
@@ -25,6 +25,18 @@ class FailingLiteraryWorkApi implements LiteraryWorkApi {
 	}
 }
 
+// Retener la emisión es la única forma de sostener el estado de carga a la vista: el recurso queda
+// pendiente y la página no llega a resolver ninguna de las otras tres ramas.
+class PendingLiteraryWorkApi implements LiteraryWorkApi {
+	public getBySlug(): Observable<LiteraryWork> {
+		return NEVER;
+	}
+
+	public getTeasers(): Observable<LiteraryWorkTeaser[]> {
+		return NEVER;
+	}
+}
+
 const [canonicalWork] = onoffLiteraryWorksMock;
 const [canonicalTeaser] = onoffLiteraryWorkTeasersMock;
 
@@ -44,6 +56,8 @@ const readingHrefs = () =>
 		.filter((href) => href?.startsWith('/read/'));
 
 describe('LiteraryWorksPage', () => {
+	beforeEach(() => clearAllMocks());
+
 	afterEach(() => restoreAllMocks());
 
 	const renderPage = (api: LiteraryWorkApi = stubbing(onoffLiteraryWorkTeasersMock)) =>
@@ -87,11 +101,41 @@ describe('LiteraryWorksPage', () => {
 	});
 
 	it('should say the catalogue is empty instead of showing placeholders', async () => {
-		const { container } = await renderPage(stubbing([]));
+		await renderPage(stubbing([]));
 
 		expect(screen.getByTestId('catalog-empty')).toBeInTheDocument();
-		// eslint-disable-next-line testing-library/no-container, testing-library/no-node-access -- el esqueleto no expone rol ni texto: la ausencia solo se afirma por selector
-		expect(container.querySelector('cuentoneta-literary-work-card-teaser-skeleton')).toBeNull();
+		expect(screen.queryByTestId('skeleton')).not.toBeInTheDocument();
+	});
+
+	it('should stand in for the catalogue while it loads, and for nothing else', async () => {
+		await renderPage(new PendingLiteraryWorkApi());
+
+		expect(screen.getAllByTestId('skeleton')).toHaveLength(4);
+		expect(screen.queryByTestId('literary-works')).not.toBeInTheDocument();
+		expect(screen.queryByTestId('catalog-empty')).not.toBeInTheDocument();
+		expect(screen.queryByTestId('catalog-error')).not.toBeInTheDocument();
+	});
+
+	// El esqueleto decide su estructura por los mismos flags de presentación que la tarjeta: la fila de
+	// autoría, las líneas del extracto y los selectores de multimedia son ramas condicionales suyas. Si el
+	// listado no se los pasa en la rama de carga, el esqueleto queda tres bloques más corto que la tarjeta
+	// que reemplaza y la lista salta de alto al resolver. Cada aserción marca uno de los tres bloques por
+	// la forma que sólo él dibuja, en vez de contra un total que caducaría al cambiar el diseño.
+	it('should give the placeholder the same blocks the resolved card carries', async () => {
+		await renderPage(new PendingLiteraryWorkApi());
+
+		const [placeholder] = screen.getAllByTestId('skeleton');
+		const bars = within(placeholder).getAllByRole('status');
+		expect(bars.filter((bar) => bar.classList.contains('rounded-full'))).not.toHaveLength(0);
+		expect(bars.filter((bar) => bar.classList.contains('w-3/4'))).not.toHaveLength(0);
+		expect(bars.filter((bar) => bar.classList.contains('rounded-lg'))).not.toHaveLength(0);
+	});
+
+	// Anunciar un conteo mientras carga o tras un fallo afirmaría que no hay obras.
+	it('should withhold the count until the catalogue resolves', async () => {
+		await renderPage(new PendingLiteraryWorkApi());
+
+		expect(screen.getByRole('heading', { level: 1, name: 'Obras' })).toBeInTheDocument();
 	});
 
 	it('should tell the reader when the catalogue fails to load', async () => {
@@ -99,6 +143,7 @@ describe('LiteraryWorksPage', () => {
 
 		expect(screen.getByTestId('catalog-error')).toBeInTheDocument();
 		expect(screen.queryByTestId('literary-works')).not.toBeInTheDocument();
+		expect(screen.getByRole('heading', { level: 1, name: 'Obras' })).toBeInTheDocument();
 	});
 
 	it('should point the canonical URL at its own route', async () => {

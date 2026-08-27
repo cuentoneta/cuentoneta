@@ -12,18 +12,21 @@ import { LiteraryWorkCardTeaserComponent } from '@components/literary-work-card-
 	selector: 'cuentoneta-literary-works',
 	template: `
 		<main class="mx-auto mt-header-height flex w-full max-w-310 flex-col gap-12 px-4 pt-8 pb-16">
-			<h1 class="font-inter text-2xl leading-8 font-bold text-neutral-900">
-				{{ literaryWorks().length }} {{ literaryWorks().length === 1 ? 'Obra' : 'Obras' }}
-			</h1>
+			<h1 class="font-inter text-2xl leading-8 font-bold text-neutral-900">{{ headline() }}</h1>
 
 			@if (loading()) {
-				<section class="flex flex-col gap-8" aria-busy="true">
+				<section class="flex flex-col gap-8" aria-busy="true" aria-label="Cargando obras">
 					@for (placeholder of [1, 2, 3, 4]; track placeholder) {
-						<cuentoneta-literary-work-card-teaser class="w-full" />
+						<cuentoneta-literary-work-card-teaser
+							[showAuthor]="true"
+							[showExcerpt]="true"
+							[showMultimedia]="true"
+							class="w-full"
+						/>
 					}
 				</section>
 			} @else if (failed()) {
-				<p class="font-inter text-base text-neutral-700" data-testid="catalog-error">
+				<p class="font-inter text-base text-neutral-700" role="alert" data-testid="catalog-error">
 					No pudimos cargar las obras. Probá de nuevo en un rato.
 				</p>
 			} @else if (literaryWorks().length > 0) {
@@ -62,7 +65,7 @@ export default class LiteraryWorksPage {
 	// acento o eñe inicial, y Sanity no expone colación con plegado.
 	private readonly collator = new Intl.Collator('es');
 
-	public readonly literaryWorks = computed(() => {
+	protected readonly literaryWorks = computed(() => {
 		const catalog = this.catalogResource.hasValue() ? this.catalogResource.value() : [];
 		return [...catalog].sort((first, second) => this.collator.compare(first.title, second.title));
 	});
@@ -70,6 +73,16 @@ export default class LiteraryWorksPage {
 	protected readonly failed = computed(() => this.catalogResource.status() === 'error');
 
 	protected readonly loading = computed(() => this.catalogResource.isLoading());
+
+	// El conteo solo se enuncia cuando hay catálogo resuelto detrás: anunciarlo mientras carga o tras un
+	// fallo afirmaría que no hay obras, que es justo lo que la rama de error existe para desmentir.
+	protected readonly headline = computed(() => {
+		if (this.loading() || this.failed()) {
+			return 'Obras';
+		}
+		const total = this.literaryWorks().length;
+		return `${total} ${total === 1 ? 'Obra' : 'Obras'}`;
+	});
 
 	// Un fallo transitorio no puede salir 200: el borde lo cachearía como si fuera la página. No hay
 	// rama 404 — un catálogo no deja de existir.

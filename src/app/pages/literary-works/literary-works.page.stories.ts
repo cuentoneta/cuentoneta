@@ -62,7 +62,7 @@ const meta: Meta<LiteraryWorksPageArgs> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>El catálogo de obras, <strong>LiteraryWorksPage</strong>, montado sobre el corpus de Onoff. Como el resto de las entradas bajo <strong>Páginas</strong>, no cataloga un componente sino el ensamblado completo: el encabezado con el conteo y la lista de tarjetas que llevan a la lectura.</p><p>El único control elige el escenario del catálogo, que es lo único que mueve la página desde afuera: no recibe parámetros de ruta ni tiene estado propio.</p><p>Se compone de <a href="./?path=/docs/componentes-v3-literaryworkcardteaser--docs" target="_top"><strong>LiteraryWorkCardTeaser</strong></a>, la misma tarjeta que enlaza a <a href="./?path=/docs/páginas-readpage--docs" target="_top"><strong>ReadPage</strong></a>, y de su esqueleto.</p><p>El orden no es el que entrega el backend: se resuelve en la página con colación en español, porque la base compara por punto de código y mandaría al final del catálogo todo título que empiece con acento o eñe.</p><p>El encabezado fijo de la aplicación no se monta en el catálogo, así que el margen superior de la página se ve como espacio en blanco.</p></div>`,
+				component: `<div><p>El catálogo de obras, <strong>LiteraryWorksPage</strong>, montado sobre el corpus de Onoff. Como el resto de las entradas bajo <strong>Páginas</strong>, no cataloga un componente sino el ensamblado completo: el encabezado con el conteo y la lista de tarjetas que llevan a la lectura.</p><p>El único control elige el escenario del catálogo, que es lo único que mueve la página desde afuera: no recibe parámetros de ruta ni tiene estado propio.</p><p>Se compone de una sola pieza: <a href="./?path=/docs/componentes-v3-literaryworkcardteaser--docs" target="_top"><strong>LiteraryWorkCardTeaser</strong></a>, la misma tarjeta que enlaza a <a href="./?path=/docs/páginas-readpage--docs" target="_top"><strong>ReadPage</strong></a>. El esqueleto no lo monta el listado sino la propia tarjeta, cuando no recibe obra; por eso la rama de carga le pasa los mismos flags de presentación que la rama real, que es lo que hace que las dos ocupen el mismo alto.</p><p>El orden no es el que entrega el backend: se resuelve en la página con colación en español, porque la base compara por punto de código y mandaría al final del catálogo todo título que empiece con acento o eñe.</p><p>El encabezado fijo de la aplicación no se monta en el catálogo, así que el margen superior de la página se ve como espacio en blanco.</p></div>`,
 			},
 		},
 	},
@@ -95,7 +95,7 @@ export const CatalogoDelCorpus: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Las ocho obras del corpus, tal como las sirve el backend.</p><p><strong>Usos:</strong> mirar la tarjeta con datos reales —portada, autoría, extracto y tiempo de lectura— y verificar el orden alfabético con plegado de acentos.</p>`,
+				story: `<p>El corpus completo, tal como lo sirve el backend.</p><p><strong>Usos:</strong> mirar la tarjeta con datos reales —portada, autoría, extracto y tiempo de lectura— y verificar el orden alfabético con plegado de acentos.</p>`,
 			},
 		},
 	},
