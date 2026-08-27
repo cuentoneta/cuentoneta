@@ -140,6 +140,10 @@ describe('HomeComponent', () => {
 		const collections = onoffCollectionTeasersMock;
 
 		it('should render every collection of the week', async () => {
+			// El caso mide que la página no descarte nada por su cuenta, así que solo vale mientras el
+			// corpus quepa bajo el tope; si crece, lo que hay que revisar es el caso, no la página.
+			expect(collections.length).toBeLessThanOrEqual(4);
+
 			await renderHome({ collections });
 
 			collections.forEach(({ title }) => {
@@ -181,12 +185,17 @@ describe('HomeComponent', () => {
 		it('should lay the sections out in the order of the design', async () => {
 			await renderHome();
 
-			const headings = screen
-				.getAllByRole('heading', { level: 2 })
-				.map((heading) => heading.textContent?.trim())
-				.filter((title) => title !== 'Sobre La Cuentoneta');
+			const headings = screen.getAllByRole('heading', { level: 2 }).map((heading) => heading.textContent?.trim());
 
-			expect(headings).toEqual(['Últimas novedades', 'Autores/as destacados/as', 'Obras más leídas', 'Colecciones']);
+			// «Sobre La Cuentoneta» cierra la página y entra a la aserción en vez de filtrarse: si se moviera
+			// entre las secciones de contenido, filtrarlo dejaría pasar el cambio.
+			expect(headings).toEqual([
+				'Últimas novedades',
+				'Autores/as destacados/as',
+				'Obras más leídas',
+				'Colecciones',
+				'Sobre La Cuentoneta',
+			]);
 		});
 	});
 

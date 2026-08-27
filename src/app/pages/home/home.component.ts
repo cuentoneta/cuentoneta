@@ -66,7 +66,8 @@ export default class HomeComponent {
 	// distinguir el fallo, la página afirmaría que no hay obras esta semana cuando lo que pasó es que no
 	// se pudo averiguar.
 	protected readonly failed = computed(() => this.landingPageResource.status() === 'error');
-	// Los topes de cada sección los aplica la página y no el backend, que sirve la tirada completa.
+	// El tope es el de la grilla del diseño, no del contrato: el backend sirve la tirada completa. La
+	// curaduría de autores destacados es la excepción — ese tope lo aplica el backend.
 	protected readonly collections = computed(() => this.landingPageContent()?.collections.slice(0, 4) || []);
 	protected readonly campaigns = computed(() => this.landingPageContent()?.campaigns || []);
 	protected readonly mostRead = computed(() => this.landingPageContent()?.mostRead.slice(0, 6) || []);

@@ -50,7 +50,12 @@ const meta: Meta<LiteraryWorksCardDeck> = {
 		emptyMessage: {
 			control: { type: 'text' },
 			description: 'Qué decir cuando la tirada viene vacía',
-			table: { type: { summary: 'string' }, defaultValue: { summary: "'Todavía no hay obras para mostrar acá.'" } },
+			table: { type: { summary: 'string' } },
+		},
+		numbered: {
+			control: { type: 'boolean' },
+			description: 'Numera las tarjetas por posición; es un ranking, así que solo aplica si la tirada ordena',
+			table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' } },
 		},
 	},
 };
@@ -88,11 +93,12 @@ export const MasLeidas: Story = {
 		heading: 'Obras más leídas',
 		subtitle: 'Explorá los textos más populares entre los lectores',
 		action: { link: ['/', 'literary-work'], accessibleSuffix: 'el catálogo de obras' },
+		numbered: true,
 	},
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>El mismo componente con el otro copy de la página de inicio, que es lo que demuestra la unificación: entre esta story y la anterior no cambia una sola línea de plantilla.</p><p><strong>Usos:</strong> la sección de obras más leídas de la página de inicio.</p>`,
+				story: `<p>El mismo componente con el otro copy de la página de inicio, que es lo que demuestra la unificación: entre esta story y la anterior no cambia una sola línea de plantilla, solo los argumentos.</p><p>Es además la única de las dos que numera sus tarjetas: el número es un ranking, así que la página lo activa donde la tirada ordena por algo y lo deja apagado en novedades.</p><p><strong>Usos:</strong> la sección de obras más leídas de la página de inicio.</p>`,
 			},
 		},
 	},
