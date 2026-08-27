@@ -45,11 +45,12 @@ Escribe en `mostReadLiteraryWorks`, con referencias a documentos `literaryWork`.
 
 ### Ubicación en el Código
 
-- **Consultas GROQ**: `src/api/_queries/content.query.ts` - `rotatingContentQuery` (lectura del documento singleton) y `literaryWorkIdsBySlugsQuery` (resolución de slugs a `_id`, paso interno de la escritura)
+- **Consultas GROQ**: `src/api/_queries/content.query.ts` - `rotatingContentQuery` (lectura del documento singleton) y `src/api/_queries/literary-work.query.ts` - `literaryWorkTeasers`, cuyo filtro opcional por slugs resuelve el lote del ranking
 - **Repositorio de acceso a datos**: `src/api/modules/content/content.repository.sanity.ts` - `SanityContentRepository.fetchRotatingContent()` y `updateMostReadLiteraryWorks(slugs)`, que resuelve los slugs y repone el orden del ranking antes de parchear
-- **Servicio**: `src/api/modules/story/story.service.ts` - `updateMostReadStories()`, que deriva los slugs de Clarity y se los pasa al repositorio
+- **Servicio**: `src/api/modules/literary-work/literary-work.service.ts` - `updateMostReadLiteraryWorks()`, que deriva los slugs de Clarity y se los pasa al repositorio
+- **Ruta**: `src/api/modules/literary-work/literary-work.controller.ts` - `GET /update-most-read`, declarada `no-store` porque el módulo sirve sus lecturas con caché de borde y una escritura servida desde el borde devolvería un 200 sin haber corrido
 
-La resolución de slugs a identificadores vive **dentro de la escritura** y no en el puerto de obras: los slugs salen de una métrica externa, así que quien orquesta no tiene de dónde sacar un identificador, y pedírselo a otro repositorio para devolvérselo a éste haría que el caso de uso cruzara dos repositorios para escribir en uno.
+La resolución de slugs a identificadores vive **dentro de la escritura** y no en el puerto de obras: los slugs salen de una métrica externa, así que quien orquesta no tiene de dónde sacar un identificador, y pedírselo a otro repositorio para devolvérselo a éste haría que el caso de uso cruzara dos repositorios para escribir en uno. Los resuelve el listado de obras y no una consulta dedicada: el registro de filtro de ese listado declara que cada criterio nuevo entra como campo opcional, y una consulta que solo tradujera slugs a identificadores sería una segunda forma de preguntar lo mismo.
 
 ### Configuración en Sanity Studio
 
