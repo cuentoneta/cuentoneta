@@ -43,6 +43,41 @@ describe('HomeComponent', () => {
 		clearAllMocks();
 	});
 
+	describe('encabezado de la página', () => {
+		// El H1 de la página lo aporta el hero. La suite de indexado exige un H1 con texto real dentro de
+		// <main>, así que la banda no puede quedar fuera del contenido primario.
+		it('should carry a visible level 1 heading', async () => {
+			await renderHome();
+
+			expect(
+				screen.getByRole('heading', { level: 1, name: 'Un espacio para explorar y descubrir nuevas historias' }),
+			).toBeInTheDocument();
+		});
+
+		it('should carry exactly one level 1 heading', async () => {
+			await renderHome();
+
+			expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
+		});
+
+		// La imagen editorial de la colección: las que solo tienen portadas prestadas de sus obras no
+		// suben a la banda, porque esas mismas portadas ya se ven más abajo en la propia página.
+		it('should illustrate the hero with the covers of the featured collections', async () => {
+			const collections = onoffCollectionTeasersMock;
+			const editorialCovers = collections.flatMap((collection) =>
+				collection.imagery.kind === 'representative' ? [collection.imagery.image] : [],
+			);
+			expect(editorialCovers.length).toBeGreaterThan(0);
+
+			await renderHome({ collections });
+
+			const hero = within(screen.getByTestId('hero-covers'));
+			expect(hero.getAllByTestId('cover-image').map((cover) => cover.getAttribute('src'))).toEqual(
+				editorialCovers.slice(0, 3),
+			);
+		});
+	});
+
 	describe('mazos de obras', () => {
 		// Rebanadas disjuntas del corpus: es lo que permite afirmar cuál de los dos listados llegó a cada
 		// mazo, y no solo cuántas tarjetas hay en total.
