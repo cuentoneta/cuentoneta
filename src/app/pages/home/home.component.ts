@@ -14,6 +14,7 @@ import { HomeStructuredDataDirective } from './home-structured-data.directive';
 
 // Componentes
 import { CarouselComponent } from '@components/carousel/carousel.component';
+import { HomeHeroComponent } from '@components/home-hero/home-hero.component';
 import { LiteraryWorksCardDeck } from '@components/literary-works-card-deck/literary-works-card-deck';
 import { CarouselSkeletonComponent } from '@components/carousel/carousel-skeleton.component';
 import { CollectionTeasersDeck } from '@components/collection-teasers-deck/collection-teasers-deck';
@@ -25,6 +26,7 @@ import { SectionHeaderComponent, type SectionHeaderAction } from '@components/se
 	templateUrl: './home.component.html',
 	imports: [
 		CarouselComponent,
+		HomeHeroComponent,
 		LiteraryWorksCardDeck,
 		CarouselSkeletonComponent,
 		CollectionTeasersDeck,
@@ -57,4 +59,12 @@ export default class HomeComponent {
 	protected readonly mostRead = computed(() => this.landingPageContent()?.mostRead.slice(0, 6) || []);
 	protected readonly latestReads = computed(() => this.landingPageContent()?.latestReads.slice(0, 6) || []);
 	protected readonly highlightedAuthors = computed(() => this.landingPageContent()?.highlightedAuthors ?? []);
+
+	// Solo las colecciones con portada editorial propia: las que caen en `sample` prestan las portadas de
+	// sus obras, y esas ya se ven más abajo en la página. Sin ninguna, la banda va sin portadas.
+	protected readonly heroCovers = computed(() =>
+		this.collections()
+			.flatMap((collection) => (collection.imagery.kind === 'representative' ? [collection.imagery.image] : []))
+			.slice(0, 3),
+	);
 }
