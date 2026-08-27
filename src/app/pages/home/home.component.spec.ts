@@ -1,7 +1,8 @@
 import HomeComponent from './home.component';
 import { render, screen, within } from '@testing-library/angular';
 import { provideRouter } from '@angular/router';
-import { map, type Observable } from 'rxjs';
+import { map, NEVER, throwError, type Observable } from 'rxjs';
+import { RESPONSE_INIT, type Provider } from '@angular/core';
 
 import { provideContentApiMock, StubContentApi } from '../../providers/content.mock';
 import type { ContentApi } from '../../providers/content.provider';
@@ -27,16 +28,35 @@ class StubLandingPageContentApi implements ContentApi {
 	}
 }
 
-const renderHome = (content: Partial<LandingPageContent> = {}) =>
+// El contrato de la landing no tiene forma de expresar "no se pudo averiguar": el recurso libera el
+// bloqueo del SSR también cuando el stream falla, así que el fallo hay que producirlo desde el stream.
+class FailingContentApi implements ContentApi {
+	public getLandingPageContent(): Observable<LandingPageContent> {
+		return throwError(() => new Error('sin contenido de la semana'));
+	}
+}
+
+// El stream nunca emite, así que el recurso queda en carga: es el estado que el SSR ya resolvió, pero
+// que el cliente sí atraviesa al navegar hacia la página.
+class PendingContentApi implements ContentApi {
+	public getLandingPageContent(): Observable<LandingPageContent> {
+		return NEVER;
+	}
+}
+
+const renderWithApi = (api: ContentApi, providers: Provider[] = []) =>
 	render(HomeComponent, {
 		providers: [
 			provideRouter([]),
-			provideContentApiMock(new StubLandingPageContentApi(content)),
+			provideContentApiMock(api),
 			// El carrusel deriva el viewport del layout, y su token no tiene factory: sin el doble, montarlo
 			// deja el render en un fallo de inyección.
 			{ provide: LayoutService, useClass: ControllableLayoutService },
+			...providers,
 		],
 	});
+
+const renderHome = (content: Partial<LandingPageContent> = {}) => renderWithApi(new StubLandingPageContentApi(content));
 
 describe('HomeComponent', () => {
 	beforeEach(() => {
@@ -265,6 +285,61 @@ describe('HomeComponent', () => {
 			await renderHome();
 
 			expect(screen.queryAllByTestId('skeleton')).toHaveLength(0);
+		});
+	});
+
+	// El estado de carga lo decide la página y lo consumen los cuatro decks: sin este bloque, desconectar
+	// ese cableado de cualquiera de ellos no rompería nada.
+	describe('contenido en vuelo', () => {
+		it('should fill every deck with skeletons while the resource is loading', async () => {
+			await renderWithApi(new PendingContentApi());
+
+			// Seis por cada deck de obras y por el de autores, cuatro por el de colecciones.
+			expect(screen.getAllByTestId('skeleton')).toHaveLength(22);
+			expect(screen.queryAllByTestId('empty-state')).toHaveLength(0);
+		});
+
+		it('should claim nothing is missing while it is still loading', async () => {
+			await renderWithApi(new PendingContentApi());
+
+			expect(screen.queryByText('Todavía no hay obras nuevas esta semana.')).not.toBeInTheDocument();
+		});
+	});
+
+	// Un fallo del recurso llega con el contenido vacío, igual que una semana sin cargar. Distinguirlos es
+	// lo que evita que la página afirme que no hay obras cuando lo que pasó es que no se pudo averiguar.
+	describe('el contenido no se pudo cargar', () => {
+		it('should say that it could not load instead of claiming the week is empty', async () => {
+			await renderWithApi(new FailingContentApi());
+
+			expect(screen.getByTestId('landing-error')).toBeInTheDocument();
+			expect(screen.queryByText('Todavía no hay obras nuevas esta semana.')).not.toBeInTheDocument();
+			expect(screen.queryAllByTestId('empty-state')).toHaveLength(0);
+		});
+
+		// Un fallo transitorio no puede salir 200: el borde lo cachearía como si fuera la página.
+		it('should answer with a server error status', async () => {
+			const responseInit: { status?: number } = {};
+
+			await renderWithApi(new FailingContentApi(), [{ provide: RESPONSE_INIT, useValue: responseInit }]);
+
+			expect(responseInit.status).toBe(503);
+		});
+
+		it('should leave the status untouched when the content loads', async () => {
+			const responseInit: { status?: number } = {};
+
+			await renderWithApi(new StubLandingPageContentApi({}), [{ provide: RESPONSE_INIT, useValue: responseInit }]);
+
+			expect(responseInit.status).toBeUndefined();
+		});
+
+		// El texto introductorio no depende del contenido de la semana, así que la página sigue teniendo
+		// cuerpo indexable aunque el backend falle.
+		it('should keep the introductory content', async () => {
+			await renderWithApi(new FailingContentApi());
+
+			expect(screen.getByRole('heading', { name: 'Sobre La Cuentoneta', level: 2 })).toBeInTheDocument();
 		});
 	});
 });

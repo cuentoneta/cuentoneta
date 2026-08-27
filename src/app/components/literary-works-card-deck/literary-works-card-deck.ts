@@ -27,24 +27,26 @@ import type { LiteraryWorkNavigationTeaserWithAuthors } from '@models/literary-w
 			<cuentoneta-section-header [heading]="heading()" [subtitle]="subtitle()" [action]="action()" />
 		}
 
-		@if (loading()) {
+		<!-- La grilla se declara una sola vez para las dos ramas: que el esqueleto caiga exactamente en la
+		misma caja que la tarjeta es lo que evita el salto al terminar de cargar. -->
+		@if (loading() || literaryWorks().length > 0) {
 			<section class="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-8">
-				@for (_ of [].constructor(skeletonCount); track $index) {
-					<cuentoneta-literary-work-home-card-teaser-skeleton data-testid="skeleton" />
-				}
-			</section>
-		} @else if (literaryWorks().length > 0) {
-			<section class="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-8">
-				@for (literaryWork of literaryWorks(); track literaryWork.slug) {
-					<cuentoneta-literary-work-home-card-teaser
-						[literaryWork]="literaryWork"
-						[order]="$index + 1"
-						[navigationParams]="{
-							navigation: 'author',
-							navigationSlug: literaryWork.authors[0].slug,
-						}"
-						data-testid="card"
-					/>
+				@if (loading()) {
+					@for (_ of [].constructor(skeletonCount); track $index) {
+						<cuentoneta-literary-work-home-card-teaser-skeleton />
+					}
+				} @else {
+					@for (literaryWork of literaryWorks(); track literaryWork.slug) {
+						<cuentoneta-literary-work-home-card-teaser
+							[literaryWork]="literaryWork"
+							[order]="$index + 1"
+							[navigationParams]="{
+								navigation: 'author',
+								navigationSlug: literaryWork.authors[0].slug,
+							}"
+							data-testid="card"
+						/>
+					}
 				}
 			</section>
 		} @else {
@@ -52,7 +54,7 @@ import type { LiteraryWorkNavigationTeaserWithAuthors } from '@models/literary-w
 		}
 	`,
 	host: {
-		class: 'mb-8 flex flex-col gap-8',
+		class: 'flex flex-col gap-8',
 		// El nombre de región es lo que deja localizar cada instancia sin depender de su posición en la
 		// página, cuando hay varias. Sin encabezado no hay nombre, y una región anónima estorba más de lo
 		// que ayuda: quien no declara título es porque anuncia la sección por su cuenta.
@@ -69,5 +71,6 @@ export class LiteraryWorksCardDeck {
 	public readonly action = input<SectionHeaderAction | undefined>(undefined);
 	/** El dueño del recurso es la página, así que el estado de carga entra por input. */
 	public readonly loading = input(false);
-	public readonly emptyMessage = input<string>('Todavía no hay obras para mostrar acá.');
+	/** Requerido: qué falta depende de la tirada, y un mensaje genérico no lo dice. */
+	public readonly emptyMessage = input.required<string>();
 }

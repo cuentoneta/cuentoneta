@@ -24,21 +24,23 @@ import { AuthorCardTeaserSkeletonComponent } from '@components/author-card-tease
 			subtitle="Una selección curada de autores y autoras imprescindibles"
 		/>
 
-		@if (loading()) {
+		<!-- La grilla se declara una sola vez para las dos ramas: que el esqueleto caiga exactamente en la
+		misma caja que la tarjeta es lo que evita el salto al terminar de cargar. -->
+		@if (loading() || authors().length > 0) {
 			<section class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-				@for (_ of [].constructor(skeletonCount); track $index) {
-					<cuentoneta-author-card-teaser-skeleton class="w-full" data-testid="skeleton" />
-				}
-			</section>
-		} @else if (authors().length > 0) {
-			<section class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-				@for (highlighted of authors(); track highlighted.author._id) {
-					<cuentoneta-author-card-teaser
-						[author]="highlighted.author"
-						[tags]="highlighted.tags"
-						[storyCount]="highlighted.storyCount"
-						class="w-full"
-					/>
+				@if (loading()) {
+					@for (_ of [].constructor(skeletonCount); track $index) {
+						<cuentoneta-author-card-teaser-skeleton class="w-full" />
+					}
+				} @else {
+					@for (highlighted of authors(); track highlighted.author._id) {
+						<cuentoneta-author-card-teaser
+							[author]="highlighted.author"
+							[tags]="highlighted.tags"
+							[storyCount]="highlighted.storyCount"
+							class="w-full"
+						/>
+					}
 				}
 			</section>
 		} @else {

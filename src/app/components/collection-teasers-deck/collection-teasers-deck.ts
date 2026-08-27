@@ -16,20 +16,22 @@ import { CollectionTeaserCardSkeletonComponent } from '@components/collection-te
 			subtitle="Obras agrupadas por temas, estilos y universos en común"
 		/>
 
-		@if (loading()) {
-			<section class="mb-8 grid grid-cols-1 justify-items-center gap-8 sm:grid-cols-2">
-				@for (_ of [].constructor(skeletonCount); track $index) {
-					<cuentoneta-collection-teaser-card-skeleton class="card w-full" />
-				}
-			</section>
-		} @else if (teasers().length > 0) {
-			<section class="mb-8 grid grid-cols-1 justify-items-center gap-8 sm:grid-cols-2">
-				@for (collection of teasers(); track collection.slug) {
-					<cuentoneta-collection-teaser-card [collection]="collection" class="card w-full" />
+		<!-- La grilla se declara una sola vez para las dos ramas: que el esqueleto caiga exactamente en la
+		misma caja que la tarjeta es lo que evita el salto al terminar de cargar. -->
+		@if (loading() || teasers().length > 0) {
+			<section class="grid grid-cols-1 justify-items-center gap-8 sm:grid-cols-2">
+				@if (loading()) {
+					@for (_ of [].constructor(skeletonCount); track $index) {
+						<cuentoneta-collection-teaser-card-skeleton class="card w-full" />
+					}
+				} @else {
+					@for (collection of teasers(); track collection.slug) {
+						<cuentoneta-collection-teaser-card [collection]="collection" class="card w-full" />
+					}
 				}
 			</section>
 		} @else {
-			<cuentoneta-empty-state message="Todavía no hay colecciones para mostrar esta semana." class="mb-8" />
+			<cuentoneta-empty-state message="Todavía no hay colecciones para mostrar esta semana." />
 		}
 	`,
 	host: {
