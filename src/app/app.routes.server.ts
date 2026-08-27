@@ -52,7 +52,7 @@ export const serverRoutes: Array<ServerRoute> = [
 	},
 	{
 		path: AppRoutes.LiteraryWork,
-		renderMode: RenderMode.Server,
+		renderMode: RenderMode.Prerender,
 	},
 	{
 		path: '**',
