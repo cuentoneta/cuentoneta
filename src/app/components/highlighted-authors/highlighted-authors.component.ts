@@ -3,6 +3,7 @@ import { Component, input } from '@angular/core';
 import type { HighlightedAuthor } from '@models/landing-page-content.model';
 import { AppRoutes } from '../../app.routes';
 import { SectionHeaderComponent, type SectionHeaderAction } from '@components/section-header/section-header.component';
+import { EmptyStateComponent } from '@components/empty-state/empty-state.component';
 import { AuthorCardTeaserComponent } from '@components/author-card-teaser/author-card-teaser.component';
 import { AuthorCardTeaserSkeletonComponent } from '@components/author-card-teaser/author-card-teaser-skeleton.component';
 
@@ -15,7 +16,7 @@ import { AuthorCardTeaserSkeletonComponent } from '@components/author-card-tease
  */
 @Component({
 	selector: 'cuentoneta-highlighted-authors',
-	imports: [SectionHeaderComponent, AuthorCardTeaserComponent, AuthorCardTeaserSkeletonComponent],
+	imports: [SectionHeaderComponent, EmptyStateComponent, AuthorCardTeaserComponent, AuthorCardTeaserSkeletonComponent],
 	template: `
 		<cuentoneta-section-header
 			[heading]="sectionHeading"
@@ -23,22 +24,28 @@ import { AuthorCardTeaserSkeletonComponent } from '@components/author-card-tease
 			subtitle="Una selección curada de autores y autoras imprescindibles"
 		/>
 
-		<section class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-			@defer (when authors().length > 0) {
-				@for (highlighted of authors(); track highlighted.author._id) {
-					<cuentoneta-author-card-teaser
-						[author]="highlighted.author"
-						[tags]="highlighted.tags"
-						[storyCount]="highlighted.storyCount"
-						class="w-full"
-					/>
+		<!-- La grilla se declara una sola vez para las dos ramas: que el esqueleto caiga exactamente en la
+		misma caja que la tarjeta es lo que evita el salto al terminar de cargar. -->
+		@if (loading() || authors().length > 0) {
+			<section class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+				@if (loading()) {
+					@for (_ of [].constructor(skeletonCount); track $index) {
+						<cuentoneta-author-card-teaser-skeleton class="w-full" />
+					}
+				} @else {
+					@for (highlighted of authors(); track highlighted.author._id) {
+						<cuentoneta-author-card-teaser
+							[author]="highlighted.author"
+							[tags]="highlighted.tags"
+							[storyCount]="highlighted.storyCount"
+							class="w-full"
+						/>
+					}
 				}
-			} @loading (minimum 500ms) {
-				@for (_ of [].constructor(skeletonCount); track $index) {
-					<cuentoneta-author-card-teaser-skeleton class="w-full" data-testid="skeleton" />
-				}
-			}
-		</section>
+			</section>
+		} @else {
+			<cuentoneta-empty-state message="Todavía no hay autores destacados esta semana." />
+		}
 	`,
 	host: {
 		class: 'flex flex-col gap-8',
@@ -57,4 +64,6 @@ export class HighlightedAuthorsComponent {
 	};
 
 	public readonly authors = input<readonly HighlightedAuthor[]>([]);
+	/** El dueño del recurso es la página, así que el estado de carga entra por input. */
+	public readonly loading = input(false);
 }

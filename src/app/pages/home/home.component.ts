@@ -1,5 +1,5 @@
 // Core
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, effect, inject, RESPONSE_INIT } from '@angular/core';
 
 // Services
 import { ContentApi } from '../../providers/content.provider';
@@ -38,6 +38,7 @@ import { SectionHeaderComponent, type SectionHeaderAction } from '@components/se
 export default class HomeComponent {
 	// Services
 	private readonly contentService = inject(ContentApi);
+	private readonly responseInit = inject(RESPONSE_INIT, { optional: true });
 
 	// Las dos secciones de obras comparten destino porque comparten hub: no hay una vista filtrada de
 	// novedades ni de más leídas a la que llevar.
@@ -53,7 +54,18 @@ export default class HomeComponent {
 	});
 
 	// Propiedades
-	private readonly landingPageContent = computed(() => this.landingPageResource.value());
+	// `value()` lanza cuando el recurso quedó en error, así que se lee solo cuando hay valor: sin esta
+	// guarda, el fallo del backend rompe el render en vez de mostrar su mensaje.
+	private readonly landingPageContent = computed(() =>
+		this.landingPageResource.hasValue() ? this.landingPageResource.value() : undefined,
+	);
+	// El recurso bloquea el SSR, así que en el HTML servido esto ya es falso: los decks salen con su
+	// contenido y no con esqueletos. En el cliente cubre la navegación entrante.
+	protected readonly isLoading = computed(() => this.landingPageResource.isLoading());
+	// El bloqueo del SSR se libera también cuando el stream falla, y ahí el contenido llega vacío. Sin
+	// distinguir el fallo, la página afirmaría que no hay obras esta semana cuando lo que pasó es que no
+	// se pudo averiguar.
+	protected readonly failed = computed(() => this.landingPageResource.status() === 'error');
 	protected readonly collections = computed(() => this.landingPageContent()?.collections || []);
 	protected readonly campaigns = computed(() => this.landingPageContent()?.campaigns || []);
 	protected readonly mostRead = computed(() => this.landingPageContent()?.mostRead.slice(0, 6) || []);
@@ -67,4 +79,13 @@ export default class HomeComponent {
 			.flatMap((collection) => (collection.imagery.kind === 'representative' ? [collection.imagery.image] : []))
 			.slice(0, 3),
 	);
+
+	// Un fallo transitorio no puede salir 200: el borde lo cachearía como si fuera la página, y la página
+	// de inicio es la más rastreada del sitio.
+	private readonly respondErrorStatusEffect = effect(() => {
+		if (!this.landingPageResource.error() || !this.responseInit) {
+			return;
+		}
+		this.responseInit.status = 503;
+	});
 }

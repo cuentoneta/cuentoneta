@@ -1,47 +1,60 @@
 <main>
 	<cuentoneta-home-hero [covers]="heroCovers()">
-		<!-- La caja se reserva por proporción para que resolver el diferido no empuje lo que sigue. -->
+		<!-- La caja se reserva por proporción para que la resolución del recurso no empuje lo que sigue. -->
 		<section class="aspect-[540/220] w-full sm:aspect-[1240/360]">
-			@defer (when campaigns().length > 0) {
-				<cuentoneta-carousel [slides]="campaigns()" />
-			} @loading (minimum 500ms) {
+			@if (isLoading()) {
 				<cuentoneta-carousel-skeleton />
+			} @else if (campaigns().length > 0) {
+				<cuentoneta-carousel [slides]="campaigns()" />
 			}
+			<!-- Sin campañas no se monta nada: un carrusel de cero diapositivas no es un estado que exista. -->
 		</section>
 	</cuentoneta-home-hero>
 
-	<div class="content horizontal-layout-spacing mt-16">
-		<section class="mb-8">
-			<cuentoneta-literary-works-card-deck
-				[literaryWorks]="latestReads()"
-				[action]="literaryWorksAction"
-				heading="Últimas novedades"
-				subtitle="Descubrí las obras que se sumaron recientemente a La Cuentoneta"
-			/>
-		</section>
+	<!-- El ritmo vertical entre secciones lo fija la página, no cada deck: es lo que el diseño mide. -->
+	<div class="content horizontal-layout-spacing mt-16 flex flex-col gap-24 pb-20">
+		@if (failed()) {
+			<p class="font-inter text-base text-neutral-700" data-testid="landing-error">
+				No pudimos cargar el contenido de esta semana. Probá de nuevo en un rato.
+			</p>
+		} @else {
+			<section>
+				<cuentoneta-literary-works-card-deck
+					[literaryWorks]="latestReads()"
+					[action]="literaryWorksAction"
+					[loading]="isLoading()"
+					heading="Últimas novedades"
+					subtitle="Descubrí las obras que se sumaron recientemente a La Cuentoneta"
+					emptyMessage="Todavía no hay obras nuevas esta semana."
+				/>
+			</section>
 
-		<section class="mb-8">
-			<cuentoneta-literary-works-card-deck
-				[literaryWorks]="mostRead()"
-				[action]="literaryWorksAction"
-				heading="Obras más leídas"
-				subtitle="Explorá los textos más populares entre los lectores"
-			/>
-		</section>
+			<section>
+				<cuentoneta-literary-works-card-deck
+					[literaryWorks]="mostRead()"
+					[action]="literaryWorksAction"
+					[loading]="isLoading()"
+					heading="Obras más leídas"
+					subtitle="Explorá los textos más populares entre los lectores"
+					emptyMessage="Todavía no hay obras más leídas para mostrar."
+				/>
+			</section>
 
-		<section class="mb-8">
-			<cuentoneta-highlighted-authors [authors]="highlightedAuthors()" />
-		</section>
+			<section>
+				<cuentoneta-highlighted-authors [authors]="highlightedAuthors()" [loading]="isLoading()" />
+			</section>
 
-		<section class="mb-8">
-			<cuentoneta-collection-teasers-deck [teasers]="collections()" class="flex flex-col gap-8" />
-		</section>
+			<section>
+				<cuentoneta-collection-teasers-deck [teasers]="collections()" [loading]="isLoading()" />
+			</section>
+		}
 
 		<!--
-            Intro descriptiva con texto sustantivo y citable, server-rendered (sin @defer), para que
-            buscadores y answer engines tengan contenido indexable más allá de las imágenes del hero.
+            Intro descriptiva con texto sustantivo y citable: es lo que le da a buscadores y answer
+            engines contenido indexable más allá de las imágenes del hero. Queda fuera de la rama de
+            error porque no depende del contenido de la semana.
         -->
-		<section class="mb-8 flex flex-col gap-8">
+		<section class="flex flex-col gap-8">
 			<cuentoneta-section-header heading="Sobre La Cuentoneta" />
 
 			<div class="flex flex-col gap-4">

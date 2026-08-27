@@ -25,6 +25,7 @@ import {
 	checkPrimaryHeading,
 	checkPrimaryContentLength,
 	checkNoSkeletonMarkers,
+	checkInternalLink,
 	checkJsonLdBlocks,
 } from '../_utils/seo-invariants';
 import { SCHEMA_IDS, SITEWIDE_SCHEMA_IDS } from '../_utils/seo-fixtures';
@@ -80,15 +81,15 @@ test('home — invariantes de indexado para crawlers (ssr, h1 real, contenido pr
 		checkRobotsIndexable(html),
 		checkPrimaryHeading(html),
 		checkPrimaryContentLength(html),
+		// Que no haya esqueletos dice que los decks no difieren; que haya un enlace a una obra dice que
+		// además trajeron contenido. Sin esto, una página que sirviera los decks vacíos pasaría igual.
+		checkInternalLink(html, '/read/'),
 		...(await checkJsonLdBlocks(html, SITEWIDE_SCHEMA_IDS)),
 	].filter((violation): violation is SeoInvariantViolation => violation !== null);
 	expect(violations).toEqual([]);
 });
 
-// Bloqueado: los decks most-read/latest/collection-teasers usan @defer, así que el SSR sirve
-// <cuentoneta-*-skeleton data-testid="skeleton"> dentro de <main>. Activar cuando esos decks se
-// server-rendericen sin diferir.
-test.fixme('home — sin markers de skeleton en <main>', () => {
+test('home — sin markers de skeleton en <main>', () => {
 	expect(checkNoSkeletonMarkers(html)).toBeNull();
 });
 
