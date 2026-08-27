@@ -50,6 +50,7 @@ test('sitemap — B: cubre las páginas estáticas y los tres tipos de contenido
 	expect(locs).toContain(`${origin}/about`);
 	expect(locs).toContain(`${origin}/dmca`);
 	expect(locs).toContain(`${origin}/collection`);
+	expect(locs).toContain(`${origin}/literary-work`);
 	expect(locs.some((loc) => loc.includes('/story/'))).toBe(true);
 	expect(locs.some((loc) => loc.includes('/author/'))).toBe(true);
 	expect(locs.some((loc) => loc.includes('/storylist/'))).toBe(true);
