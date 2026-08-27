@@ -1,4 +1,5 @@
 // Librería de pruebas
+import { RESPONSE_INIT } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 import userEvent from '@testing-library/user-event';
@@ -18,7 +19,8 @@ import { withoutUrl } from '@testing/resource-without-url';
 import { installResizeObserverStub, setMeasuredSize, triggerResize } from '@testing/resize-observer.stub';
 
 // Modelos
-import type { AuthorProfile } from '@models/author.model';
+import type { AuthorProfile, AuthorTeaser } from '@models/author.model';
+import type { AuthorApi } from '../../providers/author.provider';
 import type { LiteraryWorkApi } from '../../providers/literary-work.provider';
 import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
 
@@ -41,6 +43,20 @@ function renderPage(author: AuthorProfile = authorMock, literaryWorkApi?: Litera
 			),
 		],
 	});
+}
+
+// Los `Stub*` nunca fallan: sin un doble que lance, un caso de error montado sobre ellos daría verde sin
+// ejercitar nada.
+class StubFailingAuthorApi implements AuthorApi {
+	constructor(private readonly status: number) {}
+
+	public getAll(): Observable<AuthorTeaser[]> {
+		return throwError(() => new HttpErrorResponse({ status: this.status, statusText: 'error' }));
+	}
+
+	public getBySlug(): Observable<AuthorProfile> {
+		return throwError(() => new HttpErrorResponse({ status: this.status, statusText: 'error' }));
+	}
 }
 
 // El catálogo puede fallar con el autor resolviendo bien: es la combinación que un doble que devuelve
@@ -181,5 +197,35 @@ describe('AuthorPage', () => {
 		expect(link.getAttribute('href')).toBe(
 			`/read/${firstWork.slug}?navigation=author&navigationSlug=${authorMock.slug}`,
 		);
+	});
+
+	describe('estados de error', () => {
+		const renderFailing = (status: number, responseInit: ResponseInit) =>
+			render(AuthorPage, {
+				inputs: { slug: authorMock.slug },
+				providers: [
+					provideRouter([]),
+					provideAuthorApiMock(new StubFailingAuthorApi(status)),
+					provideLiteraryWorkApiMock(new StubLiteraryWorkApi(literaryWorkMock, onoffLiteraryWorkTeasersMock)),
+					{ provide: RESPONSE_INIT, useValue: responseInit },
+				],
+			});
+
+		it('should render the not-found state and mark the SSR response as 404', async () => {
+			const responseInit: ResponseInit = {};
+			await renderFailing(404, responseInit);
+
+			expect(await screen.findByText(/no encontramos este autor/i)).toBeTruthy();
+			expect(responseInit.status).toBe(404);
+		});
+
+		// Un 200 acá lo cachearía el borde como si fuera la ficha, sin purga que lo desaloje.
+		it('should mark the SSR response as 503 when the failure is not a 404', async () => {
+			const responseInit: ResponseInit = {};
+			await renderFailing(500, responseInit);
+
+			expect(await screen.findByText(/no encontramos este autor/i)).toBeTruthy();
+			expect(responseInit.status).toBe(503);
+		});
 	});
 });

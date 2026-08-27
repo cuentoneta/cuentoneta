@@ -1,5 +1,6 @@
 // Core
-import { Component, computed, forwardRef, inject, input, signal } from '@angular/core';
+import { Component, computed, effect, forwardRef, inject, input, RESPONSE_INIT, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { NgTemplateOutlet } from '@angular/common';
 
 // Utils
@@ -42,6 +43,7 @@ export default class AuthorPage implements AuthorHost {
 
 	private readonly authorApi = inject(AuthorApi);
 	private readonly literaryWorkApi = inject(LiteraryWorkApi);
+	private readonly responseInit = inject(RESPONSE_INIT, { optional: true });
 
 	// Gatea la creación del contenido del panel deslizable: sin esto, la biografía entera y los enlaces
 	// a los recursos viajarían en el HTML del servidor, duplicando lo que la columna ya muestra.
@@ -72,6 +74,18 @@ export default class AuthorPage implements AuthorHost {
 	protected readonly literaryWorks = computed(() =>
 		this.literaryWorksResource.hasValue() ? this.literaryWorksResource.value() : [],
 	);
+	protected readonly notFound = computed(() => this.authorResource.status() === 'error');
+
+	// Un fallo transitorio no puede salir 200: el borde cachearía una página vacía como si fuera la ficha
+	// del autor. Solo la ausencia real del autor es un 404.
+	private readonly respondErrorStatusEffect = effect(() => {
+		const error = this.authorResource.error();
+		if (!error || !this.responseInit) {
+			return;
+		}
+		this.responseInit.status = error instanceof HttpErrorResponse && error.status === 404 ? 404 : 503;
+	});
+
 	protected readonly literaryWorksHeading = computed(() => {
 		const total = this.literaryWorks().length;
 		return `${total} ${total === 1 ? 'obra' : 'obras'}`;

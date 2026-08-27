@@ -4,8 +4,13 @@
 	@if (author(); as author) {
 	<!-- Primero en el DOM y último en la fila de escritorio: el perfil es el contenido propio de la página,
 	     así que encabeza la lectura y su `h1` precede al `h2` del listado. A diferencia de la página de
-	     colección, esta columna tampoco se oculta en mobile — acá no es accesoria. -->
-	<aside class="flex w-full shrink-0 flex-col gap-6 lg:order-last lg:w-91 lg:pt-8" data-testid="author-info">
+	     colección, esta columna tampoco se oculta en mobile — acá no es accesoria.
+	     El `self-start` no es opcional: dentro de un flex con `align-items: stretch` la columna iguala el
+	     alto del contenedor y el sticky nunca llega a pegarse. -->
+	<aside
+		class="flex w-full shrink-0 flex-col gap-6 lg:sticky lg:top-header-height lg:order-last lg:w-91 lg:self-start lg:pt-8"
+		data-testid="author-info"
+	>
 		<cuentoneta-author-info-panel
 			(readMore)="openBiographyDrawer(biographyDrawer)"
 			[author]="author"
@@ -54,7 +59,6 @@
 		}
 	</cuentoneta-drawer>
 
-	<!-- El único contenido que la columna y el panel deslizable comparten. -->
 	<ng-template #webResourcesBlock>
 		@if (author.resources.length > 0) {
 		<section class="flex flex-col gap-4" data-testid="web-resources">
@@ -67,8 +71,16 @@
 		</section>
 		}
 	</ng-template>
+	} @else if (notFound()) {
+	<section class="flex w-full flex-col gap-4">
+		<h1>No encontramos este autor</h1>
+		<p>El autor que buscás no existe o ya no está disponible.</p>
+	</section>
 	} @else {
-	<aside class="flex w-full shrink-0 flex-col gap-6 lg:order-last lg:w-91 lg:pt-8" aria-busy="true">
+	<aside
+		class="flex w-full shrink-0 flex-col gap-6 lg:sticky lg:top-header-height lg:order-last lg:w-91 lg:self-start lg:pt-8"
+		aria-busy="true"
+	>
 		<cuentoneta-author-info-panel [biographyLines]="sidebarBiographyLines" />
 	</aside>
 

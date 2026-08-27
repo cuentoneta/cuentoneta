@@ -13,7 +13,8 @@ import { expect, test, type Page } from '@playwright/test';
 import type { LiteraryWorkDto } from '@models/literary-work.dto';
 
 import { fetchLiteraryWork } from './_utils/read-fixtures';
-import { DESKTOP_VIEWPORT, fetchCollectionCatalog, type CollectionCatalogEntry } from './_utils/collection-fixtures';
+import { fetchCollectionCatalog, type CollectionCatalogEntry } from './_utils/collection-fixtures';
+import { DESKTOP_VIEWPORT } from './_utils/viewports';
 import { STABLE_SLUGS } from './_utils/seo-fixtures';
 
 const ROUTE = `/read/${STABLE_SLUGS.literaryWork}`;
