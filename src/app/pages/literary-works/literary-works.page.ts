@@ -1,12 +1,13 @@
-import { Component, computed, effect, inject, RESPONSE_INIT } from '@angular/core';
+import { Component, computed, effect, forwardRef, inject, RESPONSE_INIT } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { ssrBlockingRxResource } from '@app-utils/ssr-resource';
-import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 
 import { AppRoutes } from '../../app.routes';
-import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 import { LiteraryWorkApi } from '../../providers/literary-work.provider';
+import { LITERARY_WORKS_HOST, type LiteraryWorksHost } from './literary-works-host';
+import { LiteraryWorksMetaTagsDirective } from './literary-works-meta-tags.directive';
+import { LiteraryWorksStructuredDataDirective } from './literary-works-structured-data.directive';
 import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 
 @Component({
@@ -80,13 +81,13 @@ import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 			}
 		</main>
 	`,
-	hostDirectives: [HeadMetadataDirective],
+	providers: [{ provide: LITERARY_WORKS_HOST, useExisting: forwardRef(() => LiteraryWorksPage) }],
+	hostDirectives: [LiteraryWorksMetaTagsDirective, LiteraryWorksStructuredDataDirective],
 	imports: [RouterLink, SkeletonComponent],
 })
-export default class LiteraryWorksPage {
+export default class LiteraryWorksPage implements LiteraryWorksHost {
 	protected readonly appRoutes = AppRoutes;
 
-	private readonly headMetadata = inject(HeadMetadataDirective);
 	private readonly literaryWorkApi = inject(LiteraryWorkApi);
 	private readonly responseInit = inject(RESPONSE_INIT, { optional: true });
 
@@ -99,7 +100,7 @@ export default class LiteraryWorksPage {
 	// acento o eñe inicial, y Sanity no expone colación con plegado.
 	private readonly collator = new Intl.Collator('es');
 
-	protected readonly literaryWorks = computed(() => {
+	public readonly literaryWorks = computed(() => {
 		const catalog = this.catalogResource.hasValue() ? this.catalogResource.value() : [];
 		return [...catalog].sort((first, second) => this.collator.compare(first.title, second.title));
 	});
@@ -126,13 +127,4 @@ export default class LiteraryWorksPage {
 		}
 		this.responseInit.status = 503;
 	});
-
-	constructor() {
-		this.headMetadata.setTitle('Obras');
-		this.headMetadata.setDescription(
-			'Explorá todas las obras publicadas en La Cuentoneta: cuentos, poemas y relatos breves para leer en línea.',
-		);
-		this.headMetadata.setCanonicalUrl(buildCanonicalUrl(AppRoutes.LiteraryWork));
-		this.headMetadata.setRobots('noindex, follow');
-	}
 }
