@@ -32,7 +32,7 @@ describe('HeaderComponent', () => {
 
 	it('should link the catalog pages from the navbar', async () => {
 		await renderHeader();
-		expect(screen.getByText(/Obras/)).toHaveProperty('href', expect.stringMatching(/\/story$/));
+		expect(screen.getByText(/Obras/)).toHaveProperty('href', expect.stringMatching(/\/literary-work$/));
 		expect(screen.getByText(/Colecciones/)).toHaveProperty('href', expect.stringMatching(/\/collection$/));
 		expect(screen.getByText(/Autores/)).toHaveProperty('href', expect.stringMatching(/\/authors$/));
 	});
