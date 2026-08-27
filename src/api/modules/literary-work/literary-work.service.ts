@@ -1,7 +1,13 @@
 import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
+import type { RotatingContent } from '@models/landing-page-content.model';
 import { LiteraryWorkNotFoundError } from './literary-work.errors';
 import type { LiteraryWorkRepository, LiteraryWorkTeaserFilter } from './literary-work.repository';
 import { SanityLiteraryWorkRepository } from './literary-work.repository.sanity';
+import type { ContentRepository } from '../content/content.repository';
+import { SanityContentRepository } from '../content/content.repository.sanity';
+import { getRotatingContent } from '../content/content.service';
+import { fetchClarityData } from '../../_helpers/clarity-connector';
+import { environment } from '../../_helpers/environment';
 
 // El repository es stateless, así que instanciarlo por llamada (default) no comparte estado.
 export async function getLiteraryWorkBySlug(
@@ -28,4 +34,43 @@ export async function getLiteraryWorkTeasers(
 		console.warn(`[LiteraryWork] Obra descartada del listado de teasers: "${error.slug}"`, error.cause);
 	}
 	return literaryWorks;
+}
+
+// Clarity reporta la URL visitada, no el slug: puede traer querystring de campaña, un ancla a una
+// sección o una barra final, y ninguna de las tres formas resuelve contra `slug.current`. Sin
+// normalizar, la obra más leída desaparece del ranking justo cuando llega tráfico de campaña.
+function slugFromReadingUrl(url: string, prefixes: readonly string[]): string | undefined {
+	const prefix = prefixes.find((candidate) => url.startsWith(candidate));
+	if (prefix === undefined) {
+		return undefined;
+	}
+	const [path] = url.slice(prefix.length).split(/[?#]/);
+	const slug = path.replace(/\/+$/, '');
+	return slug === '' ? undefined : slug;
+}
+
+// Las dos rutas de lectura conviven mientras dure la migración y el tráfico está repartido entre
+// ellas, así que se leen ambos prefijos: quedarse con uno solo vaciaría la lista a medida que los
+// lectores se corren a la otra. La obra migrada conserva el slug de su historia de origen, y por eso
+// el mismo slug puede llegar por los dos caminos y se deduplica antes de resolverlo.
+export async function updateMostReadLiteraryWorks(
+	contentRepository: ContentRepository = new SanityContentRepository(),
+): Promise<RotatingContent> {
+	const popularPagesMetrics = (await fetchClarityData()).find((metric) => metric.metricName === 'PopularPages');
+	if (!popularPagesMetrics) {
+		throw new Error('Could not fetch metrics.');
+	}
+
+	const readingPathPrefixes = [`${environment.basePath}/story/`, `${environment.basePath}/read/`];
+	// El `Set` conserva el orden de inserción, que es el de Clarity: la deduplicación no reordena, y el
+	// orden **es** el ranking.
+	const rankedSlugs = [
+		...new Set(
+			popularPagesMetrics.information.flatMap((entry) => slugFromReadingUrl(entry.url, readingPathPrefixes) ?? []),
+		),
+	];
+
+	await contentRepository.updateMostReadLiteraryWorks(rankedSlugs);
+
+	return await getRotatingContent(contentRepository);
 }
