@@ -9,8 +9,8 @@ import { LayoutService } from '../../providers/layout.interface';
 import { ControllableLayoutService } from '../../providers/layout.mock';
 import type { LandingPageContent } from '@models/landing-page-content.model';
 import { onoffHighlightedAuthorsOfLength } from '@mocks/onoff-highlighted-authors.mock';
-import { onoffStoryNavigationTeasersWithAuthorMock } from '@mocks/onoff-story-teasers.mock';
-import { storylistTeaserRepresentativeMock, storylistTeaserSampleMock } from '@mocks/storylist.mock';
+import { onoffLiteraryWorkNavigationTeasersWithAuthorsMock } from '@mocks/onoff-literary-work-teasers.mock';
+import { onoffCollectionTeasersMock } from '@mocks/onoff-collections.mock';
 import { contentCampaignMock } from '@mocks/content-campaign.mock';
 import { renderDeferBlocks } from '@testing/defer-blocks';
 import { clearAllMocks } from '@test-utils';
@@ -43,30 +43,30 @@ describe('HomeComponent', () => {
 		clearAllMocks();
 	});
 
-	describe('mazos de historias', () => {
+	describe('mazos de obras', () => {
 		// Rebanadas disjuntas del corpus: es lo que permite afirmar cuál de los dos listados llegó a cada
 		// mazo, y no solo cuántas tarjetas hay en total.
-		const latestReads = onoffStoryNavigationTeasersWithAuthorMock.slice(0, 3);
-		const mostRead = onoffStoryNavigationTeasersWithAuthorMock.slice(3, 6);
+		const latestLiteraryWorks = onoffLiteraryWorkNavigationTeasersWithAuthorsMock.slice(0, 3);
+		const mostReadLiteraryWorks = onoffLiteraryWorkNavigationTeasersWithAuthorsMock.slice(3, 6);
 
 		// Los dos mazos marcan sus tarjetas con el mismo `card`, así que el discriminante es el orden de
 		// documento: el de novedades precede al de más leídas en la plantilla, que es el orden de lectura.
 		it('should hand each listing to its own deck', async () => {
-			const { fixture } = await renderHome({ latestReads, mostRead });
+			const { fixture } = await renderHome({ latestLiteraryWorks, mostReadLiteraryWorks });
 
 			await renderDeferBlocks(fixture);
 
 			const cards = screen.getAllByTestId('card');
-			expect(cards).toHaveLength(latestReads.length + mostRead.length);
-			[...latestReads, ...mostRead].forEach((story, index) => {
-				expect(within(cards[index]).getByText(story.title)).toBeInTheDocument();
+			expect(cards).toHaveLength(latestLiteraryWorks.length + mostReadLiteraryWorks.length);
+			[...latestLiteraryWorks, ...mostReadLiteraryWorks].forEach((literaryWork, index) => {
+				expect(within(cards[index]).getByText(literaryWork.title)).toBeInTheDocument();
 			});
 		});
 
 		// Las cabeceras quedan fuera de los bloques diferidos: son lo que la página lleva servido aunque
 		// las tarjetas todavía no se hayan resuelto.
 		it('should render both deck headings from the very first render', async () => {
-			await renderHome({ latestReads, mostRead });
+			await renderHome({ latestLiteraryWorks, mostReadLiteraryWorks });
 
 			expect(screen.getByRole('heading', { level: 2, name: 'Últimas novedades' })).toBeInTheDocument();
 			expect(screen.getByRole('heading', { level: 2, name: 'Historias más leídas' })).toBeInTheDocument();
@@ -75,16 +75,18 @@ describe('HomeComponent', () => {
 		// Afirmar cuáles obras quedaron afuera —y no solo cuántas tarjetas hay— es lo que distingue el
 		// recorte de cualquier otro criterio que devolviera seis. De ahí que el caso empiece exigiendo que
 		// el corpus supere el tope: con uno más corto no habría descarte que observar.
-		describe.each(['latestReads', 'mostRead'] as const)('recorte de %s', (section) => {
+		describe.each(['latestLiteraryWorks', 'mostReadLiteraryWorks'] as const)('recorte de %s', (section) => {
 			it('should cap the listing at six, however many the week brings', async () => {
-				expect(onoffStoryNavigationTeasersWithAuthorMock.length).toBeGreaterThan(6);
+				expect(onoffLiteraryWorkNavigationTeasersWithAuthorsMock.length).toBeGreaterThan(6);
 
-				const { fixture } = await renderHome({ [section]: [...onoffStoryNavigationTeasersWithAuthorMock] });
+				const { fixture } = await renderHome({
+					[section]: [...onoffLiteraryWorkNavigationTeasersWithAuthorsMock],
+				});
 
 				await renderDeferBlocks(fixture);
 
 				expect(screen.getAllByTestId('card')).toHaveLength(6);
-				onoffStoryNavigationTeasersWithAuthorMock.slice(6).forEach(({ title }) => {
+				onoffLiteraryWorkNavigationTeasersWithAuthorsMock.slice(6).forEach(({ title }) => {
 					expect(screen.queryByText(title)).not.toBeInTheDocument();
 				});
 			});
@@ -92,14 +94,14 @@ describe('HomeComponent', () => {
 	});
 
 	describe('colecciones', () => {
-		const cards = [storylistTeaserRepresentativeMock, storylistTeaserSampleMock];
+		const collections = onoffCollectionTeasersMock;
 
 		it('should render every collection of the week', async () => {
-			const { fixture } = await renderHome({ cards });
+			const { fixture } = await renderHome({ collections });
 
 			await renderDeferBlocks(fixture);
 
-			cards.forEach(({ title }) => {
+			collections.forEach(({ title }) => {
 				expect(screen.getByText(title)).toBeInTheDocument();
 			});
 		});

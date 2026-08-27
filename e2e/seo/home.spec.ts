@@ -91,12 +91,12 @@ test.fixme('home — sin markers de skeleton en <main>', () => {
 	expect(checkNoSkeletonMarkers(html)).toBeNull();
 });
 
-test('home — D: al navegar a una story aparece el Article y el sitewide persiste', async ({ page }) => {
+test('home — D: al navegar a una obra aparece el Article y el sitewide persiste', async ({ page }) => {
 	await page.goto('/home');
 	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.organization}"]`)).toHaveCount(1);
 
-	await page.locator('a[href^="/story/"]').filter({ visible: true }).first().click();
-	await expect(page).toHaveURL(/\/story\//);
+	await page.locator('a[href^="/read/"]').filter({ visible: true }).first().click();
+	await expect(page).toHaveURL(/\/read\//);
 	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.article}"]`)).toHaveCount(1);
 
 	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.organization}"]`)).toHaveCount(1);

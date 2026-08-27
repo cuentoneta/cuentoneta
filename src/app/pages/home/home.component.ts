@@ -13,10 +13,10 @@ import { HomeStructuredDataDirective } from './home-structured-data.directive';
 
 // Componentes
 import { CarouselComponent } from '@components/carousel/carousel.component';
-import { MostReadStoriesCardDeckComponent } from '@components/most-read-stories-card-deck/most-read-stories-card-deck.component';
-import { LatestStoriesCardDeck } from '@components/latest-stories-card-deck/latest-stories-card-deck';
+import { MostReadLiteraryWorksCardDeck } from '@components/most-read-literary-works-card-deck/most-read-literary-works-card-deck';
+import { LatestLiteraryWorksCardDeck } from '@components/latest-literary-works-card-deck/latest-literary-works-card-deck';
 import { CarouselSkeletonComponent } from '@components/carousel/carousel-skeleton.component';
-import { StorylistTeasersDeck } from '@components/storylist-teasers-deck/storylist-teasers-deck';
+import { CollectionTeasersDeck } from '@components/collection-teasers-deck/collection-teasers-deck';
 import { HighlightedAuthorsComponent } from '@components/highlighted-authors/highlighted-authors.component';
 
 @Component({
@@ -24,10 +24,10 @@ import { HighlightedAuthorsComponent } from '@components/highlighted-authors/hig
 	templateUrl: './home.component.html',
 	imports: [
 		CarouselComponent,
-		MostReadStoriesCardDeckComponent,
-		LatestStoriesCardDeck,
+		MostReadLiteraryWorksCardDeck,
+		LatestLiteraryWorksCardDeck,
 		CarouselSkeletonComponent,
-		StorylistTeasersDeck,
+		CollectionTeasersDeck,
 		HighlightedAuthorsComponent,
 	],
 	hostDirectives: [HomeMetaTagsDirective, HomeStructuredDataDirective],
@@ -44,9 +44,9 @@ export default class HomeComponent {
 
 	// Propiedades
 	private readonly landingPageContent = computed(() => this.landingPageResource.value());
-	protected readonly collections = computed(() => this.landingPageContent()?.cards || []);
+	protected readonly collections = computed(() => this.landingPageContent()?.collections || []);
 	protected readonly campaigns = computed(() => this.landingPageContent()?.campaigns || []);
-	protected readonly mostRead = computed(() => this.landingPageContent()?.mostRead.slice(0, 6) || []);
-	protected readonly latestReads = computed(() => this.landingPageContent()?.latestReads.slice(0, 6) || []);
+	protected readonly mostRead = computed(() => this.landingPageContent()?.mostReadLiteraryWorks.slice(0, 6) || []);
+	protected readonly latestReads = computed(() => this.landingPageContent()?.latestLiteraryWorks.slice(0, 6) || []);
 	protected readonly highlightedAuthors = computed(() => this.landingPageContent()?.highlightedAuthors ?? []);
 }
