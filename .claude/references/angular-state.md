@@ -165,7 +165,7 @@ Cuándo **bloquear**: rutas cuyo HTML server-rendered debe traer contenido/meta 
 
 Cada componente de página compone su SEO en el campo **`hostDirectives`** del decorador `@Component` (distinto de `host`, ver [`angular-components.md`](angular-components.md#host-element)). Hay exactamente **dos formas**, elegidas según si la ruta es indexable:
 
-- **Página indexable** (`RenderMode.Server`/`Prerender` sin `noindex`): `hostDirectives: [<Page>MetaTagsDirective, <Page>StructuredDataDirective]`. Ambas extienden `AbstractMetaTagsDirective`/`AbstractStructuredDataDirective`; la `<Page>MetaTagsDirective` emite `setRobots('index, follow')` y la `<Page>StructuredDataDirective` inyecta el JSON-LD. Ejemplos: `home`, `author`, `story`, `storylist`, `collection`.
+- **Página indexable** (`RenderMode.Server`/`Prerender` sin `noindex`): `hostDirectives: [<Page>MetaTagsDirective, <Page>StructuredDataDirective]`. Ambas extienden `AbstractMetaTagsDirective`/`AbstractStructuredDataDirective`; la `<Page>MetaTagsDirective` emite `setRobots('index, follow')` y la `<Page>StructuredDataDirective` inyecta el JSON-LD. Ejemplos: `home`, `author`, `story`, `collection`.
 - **Página no indexable** (`noindex`): `hostDirectives: [HeadMetadataDirective]` (la directiva genérica, sin structured data) y el componente llama `setRobots('noindex, ...')` en su constructor. Ejemplos: `about`, `authors`, `stories`, `dmca`. La ausencia de structured data acá es intencional, no un hueco.
 
 Una página indexable **nunca** debe usar la forma no indexable: quedaría sin structured data y sin `setRobots('index...')` de forma silenciosa.
