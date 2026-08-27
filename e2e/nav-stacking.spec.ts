@@ -24,8 +24,9 @@ const ROUTES = Object.freeze([
 	// La ficha de autor sirve su `h1` vacío y lo completa en el cliente, así que no discrimina: se espera a
 	// las pestañas, que solo existen con el contenido de la página.
 	{ name: 'author', path: `/author/${STABLE_SLUGS.author}`, ready: 'cuentoneta-tabs' },
-	// La colección no declara `h1`; su título es un componente propio.
-	{ name: 'storylist', path: `/storylist/${STABLE_SLUGS.storylist}`, ready: 'cuentoneta-storylist-title' },
+	// El esqueleto de la colección no declara `h1`, así que esperarlo discrimina la página servida de su
+	// estado de carga.
+	{ name: 'collection', path: `/collection/${STABLE_SLUGS.collection}`, ready: 'h1' },
 ] as const);
 
 const statuses = new Map<string, number>();
