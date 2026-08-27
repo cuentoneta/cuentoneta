@@ -32,8 +32,8 @@ const renderHome = (content: Partial<LandingPageContent> = {}) =>
 		providers: [
 			provideRouter([]),
 			provideContentApiMock(new StubLandingPageContentApi(content)),
-			// El carrusel deriva el viewport del layout, y su token no tiene factory: sin el doble,
-			// resolver el diferido de campañas deja el render en un fallo de inyección.
+			// El carrusel deriva el viewport del layout, y su token no tiene factory: sin el doble, montarlo
+			// deja el render en un fallo de inyección.
 			{ provide: LayoutService, useClass: ControllableLayoutService },
 		],
 	});
@@ -120,8 +120,8 @@ describe('HomeComponent', () => {
 			});
 		});
 
-		// Las cabeceras quedan fuera de los bloques diferidos: son lo que la página lleva servido aunque
-		// las tarjetas todavía no se hayan resuelto.
+		// Las cabeceras quedan fuera de la rama de carga: son lo que la página lleva servido aunque las
+		// tarjetas todavía no se hayan resuelto.
 		it('should render both deck headings from the very first render', async () => {
 			await renderHome({ latestReads, mostRead });
 
@@ -178,7 +178,7 @@ describe('HomeComponent', () => {
 			expect(screen.getByRole('heading', { name: 'Autores/as destacados/as', level: 2 })).toBeInTheDocument();
 		});
 
-		// La cabecera y su enlace quedan fuera del bloque diferido, así que se renderizan en el HTML servido:
+		// La cabecera y su enlace quedan fuera de la rama de carga, así que se renderizan en el HTML servido:
 		// es lo que hace que la home enlace al índice de autores sin depender de que el cliente hidrate.
 		it('should link to the authors index from the home', async () => {
 			await renderHome({ highlightedAuthors: onoffHighlightedAuthorsOfLength(6) });

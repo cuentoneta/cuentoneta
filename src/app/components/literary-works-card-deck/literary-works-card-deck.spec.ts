@@ -82,7 +82,7 @@ describe('LiteraryWorksCardDeck', () => {
 	});
 
 	describe('Encabezado parametrizado', () => {
-		// Desde el primer render, sin esperar al bloque diferido: el encabezado es lo que da contexto a la
+		// Desde el primer render, sin esperar al contenido: el encabezado es lo que da contexto a la
 		// grilla mientras carga.
 		it('should display the heading it receives', async () => {
 			await render(LiteraryWorksCardDeck, {
