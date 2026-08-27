@@ -39,7 +39,7 @@ import type { LiteraryWorkNavigationTeaserWithAuthors } from '@models/literary-w
 					@for (literaryWork of literaryWorks(); track literaryWork.slug) {
 						<cuentoneta-literary-work-home-card-teaser
 							[literaryWork]="literaryWork"
-							[order]="$index + 1"
+							[order]="numbered() ? $index + 1 : undefined"
 							[navigationParams]="{
 								navigation: 'author',
 								navigationSlug: literaryWork.authors[0].slug,
@@ -71,6 +71,8 @@ export class LiteraryWorksCardDeck {
 	public readonly action = input<SectionHeaderAction | undefined>(undefined);
 	/** El dueño del recurso es la página, así que el estado de carga entra por input. */
 	public readonly loading = input(false);
+	/** Numera las tarjetas por su posición. Es un ranking, así que solo tiene sentido si la tirada ordena. */
+	public readonly numbered = input(false);
 	/** Requerido: qué falta depende de la tirada, y un mensaje genérico no lo dice. */
 	public readonly emptyMessage = input.required<string>();
 }

@@ -66,19 +66,22 @@ export default class HomeComponent {
 	// distinguir el fallo, la página afirmaría que no hay obras esta semana cuando lo que pasó es que no
 	// se pudo averiguar.
 	protected readonly failed = computed(() => this.landingPageResource.status() === 'error');
-	protected readonly collections = computed(() => this.landingPageContent()?.collections || []);
+	// El tope es el de la grilla del diseño, no del contrato: el backend sirve la tirada completa. La
+	// curaduría de autores destacados es la excepción — ese tope lo aplica el backend.
+	protected readonly collections = computed(() => this.landingPageContent()?.collections.slice(0, 4) || []);
 	protected readonly campaigns = computed(() => this.landingPageContent()?.campaigns || []);
 	protected readonly mostRead = computed(() => this.landingPageContent()?.mostRead.slice(0, 6) || []);
 	protected readonly latestReads = computed(() => this.landingPageContent()?.latestReads.slice(0, 6) || []);
 	protected readonly highlightedAuthors = computed(() => this.landingPageContent()?.highlightedAuthors ?? []);
 
+	// TODO(#2414): vuelve junto con la muestra de portadas del hero.
 	// Solo las colecciones con portada editorial propia: las que caen en `sample` prestan las portadas de
 	// sus obras, y esas ya se ven más abajo en la página. Sin ninguna, la banda va sin portadas.
-	protected readonly heroCovers = computed(() =>
-		this.collections()
-			.flatMap((collection) => (collection.imagery.kind === 'representative' ? [collection.imagery.image] : []))
-			.slice(0, 3),
-	);
+	// protected readonly heroCovers = computed(() =>
+	// 	this.collections()
+	// 		.flatMap((collection) => (collection.imagery.kind === 'representative' ? [collection.imagery.image] : []))
+	// 		.slice(0, 3),
+	// );
 
 	// Un fallo transitorio no puede salir 200: el borde lo cachearía como si fuera la página, y la página
 	// de inicio es la más rastreada del sitio.

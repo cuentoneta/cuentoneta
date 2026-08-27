@@ -1,5 +1,5 @@
 <main>
-	<cuentoneta-home-hero [covers]="heroCovers()">
+	<cuentoneta-home-hero>
 		<!-- La caja se reserva por proporción para que la resolución del recurso no empuje lo que sigue. -->
 		<section class="aspect-[540/220] w-full sm:aspect-[1240/360]">
 			@if (isLoading()) {
@@ -30,18 +30,19 @@
 			</section>
 
 			<section>
+				<cuentoneta-highlighted-authors [authors]="highlightedAuthors()" [loading]="isLoading()" />
+			</section>
+
+			<section>
 				<cuentoneta-literary-works-card-deck
 					[literaryWorks]="mostRead()"
 					[action]="literaryWorksAction"
 					[loading]="isLoading()"
+					[numbered]="true"
 					heading="Obras más leídas"
 					subtitle="Explorá los textos más populares entre los lectores"
 					emptyMessage="Todavía no hay obras más leídas para mostrar."
 				/>
-			</section>
-
-			<section>
-				<cuentoneta-highlighted-authors [authors]="highlightedAuthors()" [loading]="isLoading()" />
 			</section>
 
 			<section>

@@ -1,21 +1,16 @@
-import { Component, input } from '@angular/core';
+import { Component } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
-
-import { CoverImageComponent } from '@components/cover-image/cover-image.component';
 
 /**
  * Encabezado de la página de inicio del Design System v3: la banda que abre la página —con su trazo de
- * fondo, el título, la bajada y una muestra de portadas— y el carrusel de campañas proyectado debajo.
+ * fondo, el título y la bajada— y el carrusel de campañas proyectado debajo.
  *
  * El fondo es full-bleed y el contenido va enmarcado adentro, así que el host no puede vivir dentro
  * del contenedor angosto de la página.
- *
- * Las portadas son ilustrativas: no enlazan a ningún lado y su `alt` queda vacío, porque el título y
- * la bajada ya dicen todo lo que la banda comunica.
  */
 @Component({
 	selector: 'cuentoneta-home-hero',
-	imports: [NgOptimizedImage, CoverImageComponent],
+	imports: [NgOptimizedImage],
 	template: `
 		<!--
 			El trazo del diseño viaja como imagen y no como marcado: la curva no tiene semántica y su
@@ -37,17 +32,18 @@ import { CoverImageComponent } from '@components/cover-image/cover-image.compone
 					</p>
 				</div>
 
+				<!-- TODO(#2414): restituir la muestra de portadas con el tratamiento visual del diseño.
+				Se retira hasta entonces: tres portadas planas en fila quedaban lejos del mock, que las
+				dibuja inclinadas, con lomo y sombra sobre una caja más ancha y más alta.
+
 				@if (covers().length > 0) {
-					<!--
-						La tira mide 386px rígidos y no encoge, así que solo aparece donde el hero es de dos columnas:
-						en el diseño es el adorno de esa fila, y en una columna desbordaría el ancho del teléfono.
-					-->
 					<div class="hidden shrink-0 gap-4 md:flex" data-testid="hero-covers">
 						@for (cover of covers(); track $index) {
 							<cuentoneta-cover-image [src]="cover" [priority]="$first" />
 						}
 					</div>
 				}
+				-->
 			</div>
 
 			<ng-content />
@@ -60,6 +56,6 @@ import { CoverImageComponent } from '@components/cover-image/cover-image.compone
 	},
 })
 export class HomeHeroComponent {
-	/** Portadas ilustrativas de la banda; vacío deja el hero solo con su texto. */
-	public readonly covers = input<readonly string[]>([]);
+	// TODO(#2414): vuelve junto con la muestra de portadas.
+	// public readonly covers = input<readonly string[]>([]);
 }
