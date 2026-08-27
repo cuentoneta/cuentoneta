@@ -11,6 +11,16 @@ import noApplyInHostStyles from './tools/eslint/no-apply-in-host-styles.js';
 import componentConfigInClass from './tools/eslint/component-config-in-class.js';
 import zIndexScale from './tools/eslint/z-index-scale.js';
 import noFullZodInBrowser from './tools/eslint/no-full-zod-in-browser.js';
+import noTsExtensionImports from './tools/eslint/no-ts-extension-imports.js';
+
+// Las reglas propias comparten un único objeto de plugin: ESLint rechaza redefinir un namespace
+// entre bloques cuyos scopes se solapan, aunque las reglas sean distintas.
+const cuentonetaPlugin = {
+	rules: {
+		'no-full-zod-in-browser': noFullZodInBrowser,
+		'no-ts-extension-imports': noTsExtensionImports,
+	},
+};
 
 // Restricciones de sintaxis comunes: CommonJS, enums, lifecycle hooks y propiedades estáticas.
 const lifecycleHooks = [
@@ -311,10 +321,24 @@ export default [
 		name: 'no-full-zod-in-browser',
 		files: ['src/models/**/*.ts', 'src/app/**/*.ts'],
 		plugins: {
-			cuentoneta: { rules: { 'no-full-zod-in-browser': noFullZodInBrowser } },
+			cuentoneta: cuentonetaPlugin,
 		},
 		rules: {
 			'cuentoneta/no-full-zod-in-browser': 'error',
+		},
+	},
+	{
+		// El scope es todo el árbol: `allowImportingTsExtensions` alcanza a todo lo que incluyen los dos
+		// tsconfig que lo declaran, así que la forma queda disponible mucho más allá de los dos archivos
+		// que la necesitan. La excepción vive por ruta dentro de la regla y no como `ignores` acá, para
+		// que sumar un archivo a la cadena del hook sea una decisión visible en el diff.
+		name: 'no-ts-extension-imports',
+		files: ['**/*.{ts,tsx,js,mjs}'],
+		plugins: {
+			cuentoneta: cuentonetaPlugin,
+		},
+		rules: {
+			'cuentoneta/no-ts-extension-imports': 'error',
 		},
 	},
 	{

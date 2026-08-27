@@ -1,4 +1,12 @@
-import { checkIssueRefs, findIssueRefProblems, GOVERNANCE_ISSUE_REFS } from './check-issue-refs';
+import { existsSync } from 'node:fs';
+import { resolve } from 'node:path';
+
+import {
+	checkIssueRefs,
+	FINDING_CONVENTION_DOCS,
+	findIssueRefProblems,
+	GOVERNANCE_ISSUE_REFS,
+} from './check-issue-refs';
 
 describe('findIssueRefProblems', () => {
 	it('no marca una mención a un puntero de gobernanza declarado', () => {
@@ -99,5 +107,13 @@ describe('GOVERNANCE_ISSUE_REFS', () => {
 			expect(Number(number)).toBeGreaterThan(99);
 			expect(reason.trim().length).toBeGreaterThan(0);
 		}
+	});
+});
+
+describe('la allowlist de documentos que definen la convención de prefijos', () => {
+	// Ver la nota del caso equivalente en `block-issue-refs-in-comments.helpers.spec.ts`: lo que no ve
+	// nadie es la entrada huérfana, y aparece al reorganizar archivos.
+	it.each([...FINDING_CONVENTION_DOCS])('apunta a un archivo que existe: %s', (ruta) => {
+		expect(existsSync(resolve(process.cwd(), ruta))).toBe(true);
 	});
 });

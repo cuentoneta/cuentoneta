@@ -46,11 +46,12 @@ export const GOVERNANCE_ISSUE_REFS: Readonly<Record<number, string>> = Object.fr
  * `.md` de `.claude/` que cite un identificador lo está usando como referencia, que es lo que se busca
  * evitar. Se declaran por ruta y no por patrón: sumar uno debe ser una decisión visible en el diff.
  */
-const FINDING_CONVENTION_DOCS: ReadonlySet<string> = new Set([
+export const FINDING_CONVENTION_DOCS: ReadonlySet<string> = new Set([
 	'.claude/agents/code-reviewer.md',
 	'.claude/agents/security-auditor.md',
 	'.claude/references/coding-agent-policies.md',
-	'.claude/skills/issue-workflow/SKILL.md',
+	'.claude/skills/issue-workflow/references/fase-4-review.md',
+	'.claude/skills/issue-workflow/references/fase-5-fix.md',
 ]);
 
 /**

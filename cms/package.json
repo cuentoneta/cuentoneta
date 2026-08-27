@@ -7,7 +7,7 @@
 	"author": "Ramiro Olivencia <ramiro@olivencia.com.ar>",
 	"license": "CC BY-NC-SA 4.0",
 	"engines": {
-		"node": "^24.15.0"
+		"node": "^24.18.0"
 	},
 	"scripts": {
 		"postinstall": "pnpm run config",
