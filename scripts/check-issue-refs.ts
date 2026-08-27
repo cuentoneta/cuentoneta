@@ -50,7 +50,8 @@ const FINDING_CONVENTION_DOCS: ReadonlySet<string> = new Set([
 	'.claude/agents/code-reviewer.md',
 	'.claude/agents/security-auditor.md',
 	'.claude/references/coding-agent-policies.md',
-	'.claude/skills/issue-workflow/SKILL.md',
+	'.claude/skills/issue-workflow/references/fase-4-review.md',
+	'.claude/skills/issue-workflow/references/fase-5-fix.md',
 ]);
 
 /**
