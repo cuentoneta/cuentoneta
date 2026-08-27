@@ -1,6 +1,7 @@
 import { argsToTemplate, Meta, moduleMetadata, StoryObj } from '@storybook/angular-vite';
 
 import { HighlightedAuthorsComponent } from './highlighted-authors.component';
+import { SectionHeaderComponent } from '@components/section-header/section-header.component';
 import { AuthorCardTeaserSkeletonComponent } from '@components/author-card-teaser/author-card-teaser-skeleton.component';
 import { onoffHighlightedAuthorsOfLength, onoffUntaggedHighlightedAuthor } from '@mocks/onoff-highlighted-authors.mock';
 
@@ -20,14 +21,14 @@ const meta: Meta<HighlightedAuthorsComponent> = {
 	title: 'Componentes V3/HighlightedAuthors',
 	decorators: [
 		moduleMetadata({
-			imports: [AuthorCardTeaserSkeletonComponent],
+			imports: [SectionHeaderComponent, AuthorCardTeaserSkeletonComponent],
 		}),
 	],
 	parameters: {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>El <strong>HighlightedAuthors</strong> es la sección de autores destacados de la página de inicio en el Design System v3: encabezado "Autores/as destacados/as" con subtítulo y enlace al índice de autores, más una grilla responsiva de una columna en mobile, dos desde <code>sm</code> y tres desde <code>lg</code>, con una vista previa por autor resuelta por <a href="./?path=/docs/componentes-v3-authorcardteaser--docs" target="_top"><strong>AuthorCardTeaser</strong></a>.</p><p>Está tipado contra <strong>HighlightedAuthor</strong>, la proyección de curación semanal del contenido de la página de inicio, que compone el teaser del autor con las etiquetas de la tirada y su cantidad de obras. La curaduría y el tope de seis los decide el backend: el componente presenta lo que recibe, sin recortar ni ordenar. Mientras difiere la carga dibuja los skeletons de <strong>AuthorCardTeaserSkeleton</strong> dentro de su bloque <code>@defer</code>, y sin destacados queda solo el encabezado.</p></div>`,
+				component: `<div><p>El <strong>HighlightedAuthors</strong> es la sección de autores destacados de la página de inicio en el Design System v3: un <a href="./?path=/docs/componentes-v3-sectionheader--docs" target="_top"><strong>SectionHeader</strong></a> con el título "Autores/as destacados/as", su bajada y el enlace al índice de autores, más una grilla responsiva de una columna en mobile, dos desde <code>sm</code> y tres desde <code>lg</code>, con una vista previa por autor resuelta por <a href="./?path=/docs/componentes-v3-authorcardteaser--docs" target="_top"><strong>AuthorCardTeaser</strong></a>.</p><p>Está tipado contra <strong>HighlightedAuthor</strong>, la proyección de curación semanal del contenido de la página de inicio, que compone el teaser del autor con las etiquetas de la tirada y su cantidad de obras. La curaduría y el tope de seis los decide el backend: el componente presenta lo que recibe, sin recortar ni ordenar. Mientras difiere la carga dibuja los skeletons de <strong>AuthorCardTeaserSkeleton</strong> dentro de su bloque <code>@defer</code>, y sin destacados queda solo el encabezado.</p></div>`,
 			},
 		},
 	},
@@ -92,12 +93,11 @@ export const Estados: StoryObj<HighlightedAuthorsComponent & { loading: boolean;
 		template: `
 			@if (loading) {
 				<div class="flex flex-col gap-8">
-					<div class="flex items-center justify-between gap-4">
-						<div class="flex flex-col content-between gap-1">
-							<h2 class="font-inter text-2xl font-bold">Autores/as destacados/as</h2>
-							<div class="font-inter text-sm text-neutral-600">Una selección curada de autores y autoras imprescindibles</div>
-						</div>
-					</div>
+					<cuentoneta-section-header
+						heading="Autores/as destacados/as"
+						subtitle="Una selección curada de autores y autoras imprescindibles"
+						[action]="{ link: ['/', 'authors'], accessibleSuffix: 'el índice de autores' }"
+					/>
 					<section class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
 						@for (_ of [].constructor(skeletonCount); track $index) {
 							<cuentoneta-author-card-teaser-skeleton class="w-full" data-testid="skeleton" />

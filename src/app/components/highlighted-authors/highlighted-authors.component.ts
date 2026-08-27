@@ -1,9 +1,8 @@
 import { Component, input } from '@angular/core';
-import { RouterLink } from '@angular/router';
 
 import type { HighlightedAuthor } from '@models/landing-page-content.model';
 import { AppRoutes } from '../../app.routes';
-import { ButtonComponent } from '@components/button/button.component';
+import { SectionHeaderComponent, type SectionHeaderAction } from '@components/section-header/section-header.component';
 import { AuthorCardTeaserComponent } from '@components/author-card-teaser/author-card-teaser.component';
 import { AuthorCardTeaserSkeletonComponent } from '@components/author-card-teaser/author-card-teaser-skeleton.component';
 
@@ -16,24 +15,13 @@ import { AuthorCardTeaserSkeletonComponent } from '@components/author-card-tease
  */
 @Component({
 	selector: 'cuentoneta-highlighted-authors',
-	imports: [RouterLink, ButtonComponent, AuthorCardTeaserComponent, AuthorCardTeaserSkeletonComponent],
+	imports: [SectionHeaderComponent, AuthorCardTeaserComponent, AuthorCardTeaserSkeletonComponent],
 	template: `
-		<div class="flex items-center justify-between gap-4">
-			<div class="flex flex-col content-between gap-1">
-				<h2 class="font-inter text-2xl font-bold">Autores/as destacados/as</h2>
-				<div class="font-inter text-sm text-neutral-600">Una selección curada de autores y autoras imprescindibles</div>
-			</div>
-			<a
-				[routerLink]="['/', appRoutes.Authors]"
-				cuentoneta-button
-				variant="outline"
-				size="sm"
-				class="shrink-0"
-				aria-label="Ver todos los autores"
-			>
-				Ver todo
-			</a>
-		</div>
+		<cuentoneta-section-header
+			[heading]="sectionHeading"
+			[action]="action"
+			subtitle="Una selección curada de autores y autoras imprescindibles"
+		/>
 
 		<section class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
 			@defer (when authors().length > 0) {
@@ -46,7 +34,7 @@ import { AuthorCardTeaserSkeletonComponent } from '@components/author-card-tease
 					/>
 				}
 			} @loading (minimum 500ms) {
-				@for (_ of [].constructor(SKELETON_COUNT); track $index) {
+				@for (_ of [].constructor(skeletonCount); track $index) {
 					<cuentoneta-author-card-teaser-skeleton class="w-full" data-testid="skeleton" />
 				}
 			}
@@ -54,12 +42,19 @@ import { AuthorCardTeaserSkeletonComponent } from '@components/author-card-tease
 	`,
 	host: {
 		class: 'flex flex-col gap-8',
+		role: 'region',
+		'[attr.aria-label]': 'sectionHeading',
 	},
 })
 export class HighlightedAuthorsComponent {
 	// El mismo tope que el backend aplica a la curaduría: la grilla en carga dibuja la sección llena.
-	protected readonly SKELETON_COUNT = 6;
-	protected readonly appRoutes = AppRoutes;
+	protected readonly skeletonCount = 6;
+	// Una sola declaración para el <h2> y para el nombre de la región: dos literales se desincronizan.
+	protected readonly sectionHeading = 'Autores/as destacados/as';
+	protected readonly action: SectionHeaderAction = {
+		link: ['/', AppRoutes.Authors],
+		accessibleSuffix: 'el índice de autores',
+	};
 
 	public readonly authors = input<readonly HighlightedAuthor[]>([]);
 }

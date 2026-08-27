@@ -5,6 +5,7 @@ import { provideRouter } from '@angular/router';
 
 // Componentes
 import { CollectionTeasersDeck } from './collection-teasers-deck';
+import { SectionHeaderComponent } from '@components/section-header/section-header.component';
 import { CollectionTeaserCard } from '@components/collection-teaser-card/collection-teaser-card';
 import { CollectionTeaserCardSkeletonComponent } from '@components/collection-teaser-card/collection-teaser-card-skeleton';
 
@@ -13,7 +14,19 @@ import { onoffCollectionTeasersMock, onoffCollectionTeasersOfLength } from '@moc
 
 describe('CollectionTeasersDeck', () => {
 	const defaultProviders = [provideRouter([])];
-	const defaultImports = [CollectionTeasersDeck, CollectionTeaserCard, CollectionTeaserCardSkeletonComponent];
+	// `componentImports` reemplaza los imports del componente bajo prueba, no los suma. Sin
+	// `SectionHeaderComponent` el encabezado se renderiza como un elemento desconocido y la sección
+	// pierde título, bajada y enlace.
+	const defaultImports = [
+		CollectionTeasersDeck,
+		SectionHeaderComponent,
+		CollectionTeaserCard,
+		CollectionTeaserCardSkeletonComponent,
+	];
+	// Se seleccionan por su destino —una colección concreta, no el índice—, no por descarte del enlace
+	// del encabezado: un segundo enlace que no sea tarjeta no debe contarse como una.
+	const cardLinks = () =>
+		screen.getAllByRole('link').filter((link) => link.getAttribute('href')?.startsWith('/collection/'));
 
 	describe('Renderizado del componente', () => {
 		it('should display the section title', async () => {
@@ -34,6 +47,21 @@ describe('CollectionTeasersDeck', () => {
 			});
 
 			expect(screen.getByText('Obras agrupadas por temas, estilos y universos en común')).toBeInTheDocument();
+		});
+
+		// Con la lista vacía a propósito, igual que en autores destacados: es donde un enlace condicionado
+		// al dato desaparecería sin que nada más lo note.
+		it('should link to the collections index even with nothing to show', async () => {
+			await render(CollectionTeasersDeck, {
+				inputs: { teasers: [] },
+				providers: defaultProviders,
+				componentImports: defaultImports,
+			});
+
+			expect(screen.getByRole('link', { name: 'Ver todo el índice de colecciones' })).toHaveAttribute(
+				'href',
+				'/collection',
+			);
 		});
 	});
 
@@ -61,7 +89,7 @@ describe('CollectionTeasersDeck', () => {
 			const [deferBlockFixture] = await fixture.getDeferBlocks();
 			await deferBlockFixture.render(DeferBlockState.Complete);
 
-			expect(screen.getAllByRole('link')).toHaveLength(3);
+			expect(cardLinks()).toHaveLength(3);
 			expect(screen.getByText('Colección 1')).toBeInTheDocument();
 			expect(screen.getByText('Colección 3')).toBeInTheDocument();
 		});
@@ -77,7 +105,7 @@ describe('CollectionTeasersDeck', () => {
 			const [deferBlockFixture] = await fixture.getDeferBlocks();
 			await deferBlockFixture.render(DeferBlockState.Complete);
 
-			expect(screen.getByRole('link')).toHaveAttribute('href', `/collection/${teaser.slug}`);
+			expect(cardLinks()[0]).toHaveAttribute('href', `/collection/${teaser.slug}`);
 		});
 
 		it('should transition from loading to complete state', async () => {
@@ -93,7 +121,7 @@ describe('CollectionTeasersDeck', () => {
 			expect(screen.getAllByRole('article')).toHaveLength(4);
 
 			await deferBlockFixture.render(DeferBlockState.Complete);
-			expect(screen.getAllByRole('link')).toHaveLength(4);
+			expect(cardLinks()).toHaveLength(4);
 		});
 	});
 

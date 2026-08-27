@@ -1,6 +1,7 @@
 import { argsToTemplate, Meta, moduleMetadata, StoryObj } from '@storybook/angular-vite';
 
 import { CollectionTeasersDeck } from './collection-teasers-deck';
+import { SectionHeaderComponent } from '@components/section-header/section-header.component';
 import { CollectionTeaserCardSkeletonComponent } from '@components/collection-teaser-card/collection-teaser-card-skeleton';
 import { onoffCollectionTeasersOfLength } from '@mocks/onoff-collections.mock';
 
@@ -11,17 +12,16 @@ const deckTeasers = onoffCollectionTeasersOfLength(4);
 const meta: Meta<CollectionTeasersDeck> = {
 	component: CollectionTeasersDeck,
 	title: 'Componentes V3/CollectionTeasersDeck',
-	tags: ['autodocs'],
 	decorators: [
 		moduleMetadata({
-			imports: [CollectionTeaserCardSkeletonComponent],
+			imports: [SectionHeaderComponent, CollectionTeaserCardSkeletonComponent],
 		}),
 	],
 	parameters: {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>El <strong>CollectionTeasersDeck</strong> es el bloque de sección que agrupa colecciones en el Design System v3: encabezado "Colecciones" con subtítulo y grilla responsiva de una columna en mobile y dos desde <code>sm</code>, con una tarjeta por colección resuelta por <a href="./?path=/docs/componentes-v3-collectionteasercard--docs" target="_top"><strong>CollectionTeaserCard</strong></a>.</p><p>Está tipado contra el modelo de dominio <strong>Collection</strong> vía su proyección <code>CollectionTeaser</code>; mientras difiere la carga dibuja los skeletons de <strong>CollectionTeaserCardSkeleton</strong> dentro de su bloque <code>@defer</code>, y sin colecciones queda solo el encabezado.</p></div>`,
+				component: `<div><p>El <strong>CollectionTeasersDeck</strong> es el bloque de sección que agrupa colecciones en el Design System v3: un <a href="./?path=/docs/componentes-v3-sectionheader--docs" target="_top"><strong>SectionHeader</strong></a> con el título "Colecciones", su bajada y el enlace al índice de colecciones, sobre una grilla responsiva de una columna en mobile y dos desde <code>sm</code>, con una tarjeta por colección resuelta por <a href="./?path=/docs/componentes-v3-collectionteasercard--docs" target="_top"><strong>CollectionTeaserCard</strong></a>.</p><p>Está tipado contra el modelo de dominio <strong>Collection</strong> vía su proyección <code>CollectionTeaser</code>; mientras difiere la carga dibuja los skeletons de <strong>CollectionTeaserCardSkeleton</strong> dentro de su bloque <code>@defer</code>, y sin colecciones queda solo el encabezado.</p></div>`,
 			},
 		},
 	},
@@ -64,12 +64,11 @@ export const Estados: StoryObj<CollectionTeasersDeck & { loading: boolean }> = {
 		template: `
 			@if (loading) {
 				<div class="flex flex-col gap-8">
-					<div class="flex items-center justify-between">
-						<div class="flex flex-col content-between gap-1">
-							<h2 class="font-inter text-2xl font-bold">Colecciones</h2>
-							<div class="font-inter text-sm text-neutral-600">Obras agrupadas por temas, estilos y universos en común</div>
-						</div>
-					</div>
+					<cuentoneta-section-header
+						heading="Colecciones"
+						subtitle="Obras agrupadas por temas, estilos y universos en común"
+						[action]="{ link: ['/', 'collection'], accessibleSuffix: 'el índice de colecciones' }"
+					/>
 					<section class="mb-8 grid grid-cols-1 justify-items-center gap-8 sm:grid-cols-2">
 						@for (_ of teasers; track $index) {
 							<cuentoneta-collection-teaser-card-skeleton class="card w-full" />
