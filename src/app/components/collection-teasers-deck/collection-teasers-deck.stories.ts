@@ -67,8 +67,7 @@ export const Estados: StoryObj<CollectionTeasersDeck & { loading: boolean }> = {
 					<cuentoneta-section-header
 						heading="Colecciones"
 						subtitle="Obras agrupadas por temas, estilos y universos en común"
-						[actionLink]="['/', 'collection']"
-						actionAriaLabel="Ver todas las colecciones"
+						[action]="{ link: ['/', 'collection'], accessibleSuffix: 'el índice de colecciones' }"
 					/>
 					<section class="mb-8 grid grid-cols-1 justify-items-center gap-8 sm:grid-cols-2">
 						@for (_ of teasers; track $index) {

@@ -96,8 +96,7 @@ export const Estados: StoryObj<HighlightedAuthorsComponent & { loading: boolean;
 					<cuentoneta-section-header
 						heading="Autores/as destacados/as"
 						subtitle="Una selección curada de autores y autoras imprescindibles"
-						[actionLink]="['/', 'authors']"
-						actionAriaLabel="Ver todos los autores"
+						[action]="{ link: ['/', 'authors'], accessibleSuffix: 'el índice de autores' }"
 					/>
 					<section class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
 						@for (_ of [].constructor(skeletonCount); track $index) {

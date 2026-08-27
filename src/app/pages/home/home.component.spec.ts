@@ -142,7 +142,7 @@ describe('HomeComponent', () => {
 		it('should link to the authors index from the home', async () => {
 			await renderHome({ highlightedAuthors: onoffHighlightedAuthorsOfLength(6) });
 
-			expect(screen.getByRole('link', { name: 'Ver todos los autores' })).toHaveAttribute('href', '/authors');
+			expect(screen.getByRole('link', { name: 'Ver todo el índice de autores' })).toHaveAttribute('href', '/authors');
 		});
 
 		it('should hand every highlighted author to the grid', async () => {
@@ -183,16 +183,16 @@ describe('HomeComponent', () => {
 
 			(
 				[
-					['Ver todas las obras', '/literary-work'],
-					['Ver todos los autores', '/authors'],
-					['Ver todas las colecciones', '/collection'],
+					['Ver todo el catálogo de obras', '/literary-work'],
+					['Ver todo el índice de autores', '/authors'],
+					['Ver todo el índice de colecciones', '/collection'],
 				] as const
 			).forEach(([name, href]) => {
 				screen.getAllByRole('link', { name }).forEach((link) => expect(link).toHaveAttribute('href', href));
 			});
 
 			// Las dos secciones de obras comparten hub, así que comparten nombre accesible.
-			expect(screen.getAllByRole('link', { name: 'Ver todas las obras' })).toHaveLength(2);
+			expect(screen.getAllByRole('link', { name: 'Ver todo el catálogo de obras' })).toHaveLength(2);
 		});
 
 		// Las tres clases de tarjeta —historia, colección y autor— se dibujan como `article`, así que la

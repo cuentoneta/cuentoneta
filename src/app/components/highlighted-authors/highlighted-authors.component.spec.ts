@@ -51,7 +51,7 @@ describe('HighlightedAuthorsComponent', () => {
 				componentImports: defaultImports,
 			});
 
-			expect(screen.getByRole('link', { name: 'Ver todos los autores' })).toHaveAttribute('href', '/authors');
+			expect(screen.getByRole('link', { name: 'Ver todo el índice de autores' })).toHaveAttribute('href', '/authors');
 		});
 	});
 

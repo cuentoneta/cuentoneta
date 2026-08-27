@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core';
 
-import { SectionHeaderComponent } from '@components/section-header/section-header.component';
+import { SectionHeaderComponent, type SectionHeaderAction } from '@components/section-header/section-header.component';
 import { LiteraryWorkHomeCardTeaserComponent } from '../literary-work-home-card-teaser/literary-work-home-card-teaser.component';
 import { LiteraryWorkHomeCardTeaserSkeletonComponent } from '../literary-work-home-card-teaser/literary-work-home-card-teaser-skeleton.component';
 import type { LiteraryWorkNavigationTeaserWithAuthors } from '@models/literary-work.model';
@@ -9,18 +9,13 @@ import type { LiteraryWorkNavigationTeaserWithAuthors } from '@models/literary-w
  * Grilla de obras destacadas de la página de inicio, según el Design System v3.
  *
  * El encabezado llega por input porque la página monta dos instancias —novedades y más leídas— que solo
- * difieren en su copy y su destino: eran dos componentes idénticos que ya habían empezado a divergir.
+ * difieren en su copy y su destino.
  */
 @Component({
 	selector: 'cuentoneta-literary-works-card-deck',
 	imports: [SectionHeaderComponent, LiteraryWorkHomeCardTeaserComponent, LiteraryWorkHomeCardTeaserSkeletonComponent],
 	template: `
-		<cuentoneta-section-header
-			[heading]="heading()"
-			[subtitle]="subtitle()"
-			[actionLink]="actionLink()"
-			[actionAriaLabel]="actionAriaLabel()"
-		/>
+		<cuentoneta-section-header [heading]="heading()" [subtitle]="subtitle()" [action]="action()" />
 
 		<section class="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-8">
 			@defer (when literaryWorks().length > 0) {
@@ -56,6 +51,5 @@ export class LiteraryWorksCardDeck {
 	public readonly literaryWorks = input<readonly LiteraryWorkNavigationTeaserWithAuthors[]>([]);
 	public readonly heading = input.required<string>();
 	public readonly subtitle = input<string>('');
-	public readonly actionLink = input<readonly string[]>([]);
-	public readonly actionAriaLabel = input<string>('');
+	public readonly action = input<SectionHeaderAction | undefined>(undefined);
 }

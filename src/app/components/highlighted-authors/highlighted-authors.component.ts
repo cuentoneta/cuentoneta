@@ -2,7 +2,7 @@ import { Component, input } from '@angular/core';
 
 import type { HighlightedAuthor } from '@models/landing-page-content.model';
 import { AppRoutes } from '../../app.routes';
-import { SectionHeaderComponent } from '@components/section-header/section-header.component';
+import { SectionHeaderComponent, type SectionHeaderAction } from '@components/section-header/section-header.component';
 import { AuthorCardTeaserComponent } from '@components/author-card-teaser/author-card-teaser.component';
 import { AuthorCardTeaserSkeletonComponent } from '@components/author-card-teaser/author-card-teaser-skeleton.component';
 
@@ -18,10 +18,9 @@ import { AuthorCardTeaserSkeletonComponent } from '@components/author-card-tease
 	imports: [SectionHeaderComponent, AuthorCardTeaserComponent, AuthorCardTeaserSkeletonComponent],
 	template: `
 		<cuentoneta-section-header
-			[actionLink]="authorsLink"
-			heading="Autores/as destacados/as"
+			[heading]="sectionHeading"
+			[action]="action"
 			subtitle="Una selección curada de autores y autoras imprescindibles"
-			actionAriaLabel="Ver todos los autores"
 		/>
 
 		<section class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
@@ -35,7 +34,7 @@ import { AuthorCardTeaserSkeletonComponent } from '@components/author-card-tease
 					/>
 				}
 			} @loading (minimum 500ms) {
-				@for (_ of [].constructor(SKELETON_COUNT); track $index) {
+				@for (_ of [].constructor(skeletonCount); track $index) {
 					<cuentoneta-author-card-teaser-skeleton class="w-full" data-testid="skeleton" />
 				}
 			}
@@ -43,15 +42,19 @@ import { AuthorCardTeaserSkeletonComponent } from '@components/author-card-tease
 	`,
 	host: {
 		class: 'flex flex-col gap-8',
-		// El nombre de región es lo que deja localizar la sección sin depender de su posición en la página.
 		role: 'region',
-		'aria-label': 'Autores/as destacados/as',
+		'[attr.aria-label]': 'sectionHeading',
 	},
 })
 export class HighlightedAuthorsComponent {
 	// El mismo tope que el backend aplica a la curaduría: la grilla en carga dibuja la sección llena.
-	protected readonly SKELETON_COUNT = 6;
-	protected readonly authorsLink = ['/', AppRoutes.Authors];
+	protected readonly skeletonCount = 6;
+	// Una sola declaración para el <h2> y para el nombre de la región: dos literales se desincronizan.
+	protected readonly sectionHeading = 'Autores/as destacados/as';
+	protected readonly action: SectionHeaderAction = {
+		link: ['/', AppRoutes.Authors],
+		accessibleSuffix: 'el índice de autores',
+	};
 
 	public readonly authors = input<readonly HighlightedAuthor[]>([]);
 }

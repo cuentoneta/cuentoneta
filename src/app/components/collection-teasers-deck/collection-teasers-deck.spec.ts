@@ -23,6 +23,10 @@ describe('CollectionTeasersDeck', () => {
 		CollectionTeaserCard,
 		CollectionTeaserCardSkeletonComponent,
 	];
+	// Se seleccionan por su destino —una colección concreta, no el índice—, no por descarte del enlace
+	// del encabezado: un segundo enlace que no sea tarjeta no debe contarse como una.
+	const cardLinks = () =>
+		screen.getAllByRole('link').filter((link) => link.getAttribute('href')?.startsWith('/collection/'));
 
 	describe('Renderizado del componente', () => {
 		it('should display the section title', async () => {
@@ -54,13 +58,12 @@ describe('CollectionTeasersDeck', () => {
 				componentImports: defaultImports,
 			});
 
-			expect(screen.getByRole('link', { name: 'Ver todas las colecciones' })).toHaveAttribute('href', '/collection');
+			expect(screen.getByRole('link', { name: 'Ver todo el índice de colecciones' })).toHaveAttribute(
+				'href',
+				'/collection',
+			);
 		});
 	});
-
-	// Los enlaces de tarjeta apuntan a una colección concreta; el del encabezado, al índice. Contarlos
-	// por separado evita que sumar una acción a la cabecera se lea como una tarjeta de más.
-	const cardLinks = () => screen.getAllByRole('link').filter((link) => link.getAttribute('href') !== '/collection');
 
 	describe('Comportamiento del bloque defer', () => {
 		it('should render one skeleton per grid slot while loading', async () => {

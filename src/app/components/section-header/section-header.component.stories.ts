@@ -24,15 +24,10 @@ const meta: Meta<SectionHeaderComponent> = {
 			description: 'Bajada de la sección; vacía omite el renglón',
 			table: { type: { summary: 'string' }, defaultValue: { summary: "''" } },
 		},
-		actionLink: {
+		action: {
 			control: { type: 'object' },
-			description: 'Destino del enlace "Ver todo"; vacío omite la acción',
-			table: { type: { summary: 'readonly string[]' }, defaultValue: { summary: '[]' } },
-		},
-		actionAriaLabel: {
-			control: { type: 'text' },
-			description: 'Nombre accesible del enlace, que sí distingue el destino',
-			table: { type: { summary: 'string' }, defaultValue: { summary: "''" } },
+			description: 'Destino del enlace "Ver todo" y el sufijo que nombra ese destino; omitirlo quita la acción',
+			table: { type: { summary: 'SectionHeaderAction | undefined' }, defaultValue: { summary: 'undefined' } },
 		},
 	},
 };
@@ -47,8 +42,7 @@ export const Primary: Story = {
 	args: {
 		heading: 'Últimas novedades',
 		subtitle: 'Descubrí las obras que se sumaron recientemente a La Cuentoneta',
-		actionLink: ['/', 'literary-work'],
-		actionAriaLabel: 'Ver todas las obras',
+		action: { link: ['/', 'literary-work'], accessibleSuffix: 'el catálogo de obras' },
 	},
 	parameters: {
 		docs: {
@@ -84,8 +78,7 @@ export const SinBajada: Story = {
 	}),
 	args: {
 		heading: 'Colecciones',
-		actionLink: ['/', 'collection'],
-		actionAriaLabel: 'Ver todas las colecciones',
+		action: { link: ['/', 'collection'], accessibleSuffix: 'el índice de colecciones' },
 	},
 	parameters: {
 		docs: {
@@ -98,32 +91,39 @@ export const SinBajada: Story = {
 
 export const Showcase: Story = {
 	render: () => ({
+		props: {
+			sections: [
+				{
+					heading: 'Últimas novedades',
+					subtitle: 'Descubrí las obras que se sumaron recientemente a La Cuentoneta',
+					action: { link: ['/', 'literary-work'], accessibleSuffix: 'el catálogo de obras' },
+				},
+				{
+					heading: 'Autores/as destacados/as',
+					subtitle: 'Una selección curada de autores y autoras imprescindibles',
+					action: { link: ['/', 'authors'], accessibleSuffix: 'el índice de autores' },
+				},
+				{
+					heading: 'Obras más leídas',
+					subtitle: 'Explorá los textos más populares entre los lectores',
+					action: { link: ['/', 'literary-work'], accessibleSuffix: 'el catálogo de obras' },
+				},
+				{
+					heading: 'Colecciones',
+					subtitle: 'Obras agrupadas por temas, estilos y universos en común',
+					action: { link: ['/', 'collection'], accessibleSuffix: 'el índice de colecciones' },
+				},
+			],
+		},
 		template: `
 			<div class="flex flex-col gap-8">
-				<cuentoneta-section-header
-					heading="Últimas novedades"
-					subtitle="Descubrí las obras que se sumaron recientemente a La Cuentoneta"
-					[actionLink]="['/', 'literary-work']"
-					actionAriaLabel="Ver todas las obras"
-				/>
-				<cuentoneta-section-header
-					heading="Autores/as destacados/as"
-					subtitle="Una selección curada de autores y autoras imprescindibles"
-					[actionLink]="['/', 'authors']"
-					actionAriaLabel="Ver todos los autores"
-				/>
-				<cuentoneta-section-header
-					heading="Obras más leídas"
-					subtitle="Explorá los textos más populares entre los lectores"
-					[actionLink]="['/', 'literary-work']"
-					actionAriaLabel="Ver todas las obras"
-				/>
-				<cuentoneta-section-header
-					heading="Colecciones"
-					subtitle="Obras agrupadas por temas, estilos y universos en común"
-					[actionLink]="['/', 'collection']"
-					actionAriaLabel="Ver todas las colecciones"
-				/>
+				@for (section of sections; track section.heading) {
+					<cuentoneta-section-header
+						[heading]="section.heading"
+						[subtitle]="section.subtitle"
+						[action]="section.action"
+					/>
+				}
 			</div>
 		`,
 	}),

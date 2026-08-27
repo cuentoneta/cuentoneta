@@ -31,47 +31,55 @@ describe('SectionHeaderComponent', () => {
 			expect(screen.getByText('Obras agrupadas por temas, estilos y universos en común')).toBeInTheDocument();
 		});
 
+		// Se parte de la bajada presente para que la ausencia signifique algo: afirmar que un texto que
+		// nunca se pasó no está sería verde por construcción.
 		it('should omit the subtitle when it is empty', async () => {
-			const { container } = await render(SectionHeaderComponent, {
-				inputs: { heading: 'Sobre La Cuentoneta' },
+			const subtitle = 'Obras agrupadas por temas, estilos y universos en común';
+			const { rerender } = await render(SectionHeaderComponent, {
+				inputs: { heading: 'Colecciones', subtitle },
 				providers: defaultProviders,
 				componentImports: defaultImports,
 			});
+			expect(screen.getByText(subtitle)).toBeInTheDocument();
 
-			expect(container.textContent?.trim()).toBe('Sobre La Cuentoneta');
+			await rerender({ inputs: { heading: 'Colecciones', subtitle: '' } });
+
+			expect(screen.queryByText(subtitle)).not.toBeInTheDocument();
 		});
 	});
 
 	describe('Acción hacia el índice de la sección', () => {
-		it('should expose the accessible name and destination of the action', async () => {
+		const action = { link: ['/', 'collection'], accessibleSuffix: 'el índice de colecciones' };
+
+		it('should point the action at the destination it receives', async () => {
 			await render(SectionHeaderComponent, {
-				inputs: {
-					heading: 'Colecciones',
-					actionLink: ['/', 'collection'],
-					actionAriaLabel: 'Ver todas las colecciones',
-				},
+				inputs: { heading: 'Colecciones', action },
 				providers: defaultProviders,
 				componentImports: defaultImports,
 			});
 
-			expect(screen.getByRole('link', { name: 'Ver todas las colecciones' })).toHaveAttribute('href', '/collection');
+			expect(screen.getByRole('link', { name: 'Ver todo el índice de colecciones' })).toHaveAttribute(
+				'href',
+				'/collection',
+			);
 		});
 
-		it('should keep the visible label fixed regardless of the accessible name', async () => {
+		// WCAG 2.5.3: el nombre accesible tiene que contener el texto visible, porque quien usa control por
+		// voz dice lo que ve. El sufijo extiende ese texto en vez de reemplazarlo.
+		it('should extend the visible label instead of replacing it', async () => {
 			await render(SectionHeaderComponent, {
-				inputs: {
-					heading: 'Colecciones',
-					actionLink: ['/', 'collection'],
-					actionAriaLabel: 'Ver todas las colecciones',
-				},
+				inputs: { heading: 'Colecciones', action },
 				providers: defaultProviders,
 				componentImports: defaultImports,
 			});
 
-			expect(screen.getByRole('link', { name: 'Ver todas las colecciones' })).toHaveTextContent('Ver todo');
+			const link = screen.getByRole('link', { name: 'Ver todo el índice de colecciones' });
+
+			expect(link).toHaveAccessibleName(expect.stringContaining('Ver todo'));
+			expect(link).toHaveTextContent('Ver todo');
 		});
 
-		it('should render no link when no destination is provided', async () => {
+		it('should render no link when no action is provided', async () => {
 			await render(SectionHeaderComponent, {
 				inputs: { heading: 'Sobre La Cuentoneta' },
 				providers: defaultProviders,

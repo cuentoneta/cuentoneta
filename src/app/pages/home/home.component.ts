@@ -18,7 +18,7 @@ import { LiteraryWorksCardDeck } from '@components/literary-works-card-deck/lite
 import { CarouselSkeletonComponent } from '@components/carousel/carousel-skeleton.component';
 import { CollectionTeasersDeck } from '@components/collection-teasers-deck/collection-teasers-deck';
 import { HighlightedAuthorsComponent } from '@components/highlighted-authors/highlighted-authors.component';
-import { SectionHeaderComponent } from '@components/section-header/section-header.component';
+import { SectionHeaderComponent, type SectionHeaderAction } from '@components/section-header/section-header.component';
 
 @Component({
 	selector: 'cuentoneta-home',
@@ -39,7 +39,10 @@ export default class HomeComponent {
 
 	// Las dos secciones de obras comparten destino porque comparten hub: no hay una vista filtrada de
 	// novedades ni de más leídas a la que llevar.
-	protected readonly literaryWorksLink = ['/', AppRoutes.LiteraryWork];
+	protected readonly literaryWorksAction: SectionHeaderAction = {
+		link: ['/', AppRoutes.LiteraryWork],
+		accessibleSuffix: 'el catálogo de obras',
+	};
 
 	// Recursos
 	private readonly landingPageResource = ssrBlockingRxResource({

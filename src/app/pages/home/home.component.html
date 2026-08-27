@@ -21,22 +21,18 @@
 	<section class="mb-8 h-[684px] md:h-[304px]">
 		<cuentoneta-literary-works-card-deck
 			[literaryWorks]="latestReads()"
-			[actionLink]="literaryWorksLink"
+			[action]="literaryWorksAction"
 			heading="Últimas novedades"
 			subtitle="Descubrí las obras que se sumaron recientemente a La Cuentoneta"
-			actionAriaLabel="Ver todas las obras"
-			class="flex flex-col gap-8"
 		/>
 	</section>
 
 	<section class="mb-8 h-[684px] md:h-[304px]">
 		<cuentoneta-literary-works-card-deck
 			[literaryWorks]="mostRead()"
-			[actionLink]="literaryWorksLink"
+			[action]="literaryWorksAction"
 			heading="Obras más leídas"
 			subtitle="Explorá los textos más populares entre los lectores"
-			actionAriaLabel="Ver todas las obras"
-			class="flex flex-col gap-8"
 		/>
 	</section>
 

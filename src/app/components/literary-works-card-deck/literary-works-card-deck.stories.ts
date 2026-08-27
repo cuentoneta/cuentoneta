@@ -44,15 +44,10 @@ const meta: Meta<LiteraryWorksCardDeck> = {
 			description: 'Bajada de la sección',
 			table: { type: { summary: 'string' }, defaultValue: { summary: "''" } },
 		},
-		actionLink: {
+		action: {
 			control: { type: 'object' },
-			description: 'Destino del enlace "Ver todo"',
-			table: { type: { summary: 'readonly string[]' }, defaultValue: { summary: '[]' } },
-		},
-		actionAriaLabel: {
-			control: { type: 'text' },
-			description: 'Nombre accesible del enlace',
-			table: { type: { summary: 'string' }, defaultValue: { summary: "''" } },
+			description: 'Destino del enlace "Ver todo" y el sufijo que nombra ese destino',
+			table: { type: { summary: 'SectionHeaderAction | undefined' }, defaultValue: { summary: 'undefined' } },
 		},
 	},
 };
@@ -68,8 +63,7 @@ export const Primary: Story = {
 		literaryWorks,
 		heading: 'Últimas novedades',
 		subtitle: 'Descubrí las obras que se sumaron recientemente a La Cuentoneta',
-		actionLink: ['/', 'literary-work'],
-		actionAriaLabel: 'Ver todas las obras',
+		action: { link: ['/', 'literary-work'], accessibleSuffix: 'el catálogo de obras' },
 	},
 	parameters: {
 		docs: {
@@ -90,8 +84,7 @@ export const MasLeidas: Story = {
 		literaryWorks,
 		heading: 'Obras más leídas',
 		subtitle: 'Explorá los textos más populares entre los lectores',
-		actionLink: ['/', 'literary-work'],
-		actionAriaLabel: 'Ver todas las obras',
+		action: { link: ['/', 'literary-work'], accessibleSuffix: 'el catálogo de obras' },
 	},
 	parameters: {
 		docs: {
@@ -105,18 +98,14 @@ export const MasLeidas: Story = {
 export const Estados: StoryObj<LiteraryWorksCardDeck & { loading: boolean }> = {
 	argTypes: { loading: { control: 'boolean', name: 'Cargando' } },
 	render: (args) => ({
-		props: args,
+		// El mismo tope que el componente: la rama de carga no depende de cuántas obras traiga el control.
+		props: { ...args, skeletonCount: 6 },
 		template: `
 			@if (loading) {
 				<div class="mb-8 flex flex-col gap-8">
-					<cuentoneta-section-header
-						[heading]="heading"
-						[subtitle]="subtitle"
-						[actionLink]="actionLink"
-						[actionAriaLabel]="actionAriaLabel"
-					/>
+					<cuentoneta-section-header [heading]="heading" [subtitle]="subtitle" [action]="action" />
 					<section class="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-8">
-						@for (_ of literaryWorks; track $index) {
+						@for (_ of [].constructor(skeletonCount); track $index) {
 							<cuentoneta-literary-work-home-card-teaser-skeleton />
 						}
 					</section>
@@ -126,8 +115,7 @@ export const Estados: StoryObj<LiteraryWorksCardDeck & { loading: boolean }> = {
 					[literaryWorks]="literaryWorks"
 					[heading]="heading"
 					[subtitle]="subtitle"
-					[actionLink]="actionLink"
-					[actionAriaLabel]="actionAriaLabel"
+					[action]="action"
 				/>
 			}
 		`,
@@ -137,13 +125,12 @@ export const Estados: StoryObj<LiteraryWorksCardDeck & { loading: boolean }> = {
 		literaryWorks,
 		heading: 'Últimas novedades',
 		subtitle: 'Descubrí las obras que se sumaron recientemente a La Cuentoneta',
-		actionLink: ['/', 'literary-work'],
-		actionAriaLabel: 'Ver todas las obras',
+		action: { link: ['/', 'literary-work'], accessibleSuffix: 'el catálogo de obras' },
 	},
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Activá/desactivá "Cargando" para alternar entre el estado real y el estado de carga del deck: el encabezado se sostiene y la grilla dibuja un esqueleto por slot, iterando los mismos datos para que la paridad con la rama real valga por construcción.</p><p><strong>Usos:</strong> verificar que el encabezado no salte entre los dos estados.</p>`,
+				story: `<p>Activá/desactivá "Cargando" para alternar entre el estado real y el estado de carga del deck: el encabezado se sostiene y la grilla dibuja los seis esqueletos que dibuja el componente, sin depender de cuántas obras traiga el control.</p><p><strong>Usos:</strong> verificar que el encabezado no salte entre los dos estados.</p>`,
 			},
 		},
 	},
@@ -158,8 +145,7 @@ export const Vacia: Story = {
 		literaryWorks: [],
 		heading: 'Últimas novedades',
 		subtitle: 'Descubrí las obras que se sumaron recientemente a La Cuentoneta',
-		actionLink: ['/', 'literary-work'],
-		actionAriaLabel: 'Ver todas las obras',
+		action: { link: ['/', 'literary-work'], accessibleSuffix: 'el catálogo de obras' },
 	},
 	parameters: {
 		docs: {

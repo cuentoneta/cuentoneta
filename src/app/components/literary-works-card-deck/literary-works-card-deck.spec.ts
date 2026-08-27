@@ -69,16 +69,17 @@ describe('LiteraryWorksCardDeck', () => {
 			await render(LiteraryWorksCardDeck, {
 				inputs: {
 					...defaultInputs,
-					actionLink: ['/', 'literary-work'],
-					actionAriaLabel: 'Ver todas las obras',
+					action: { link: ['/', 'literary-work'], accessibleSuffix: 'el catálogo de obras' },
 				},
 				providers: defaultProviders,
 			});
 
-			expect(screen.getByRole('link', { name: 'Ver todas las obras' })).toHaveAttribute('href', '/literary-work');
+			expect(screen.getByRole('link', { name: 'Ver todo el catálogo de obras' })).toHaveAttribute(
+				'href',
+				'/literary-work',
+			);
 		});
 
-		// Es lo que deja localizar cada instancia por su encabezado en vez de por su posición en la página.
 		it('should name its region after the heading', async () => {
 			await render(LiteraryWorksCardDeck, {
 				inputs: { ...defaultInputs, heading: 'Obras más leídas' },
