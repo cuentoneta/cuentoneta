@@ -49,17 +49,27 @@ describe('HomeComponent', () => {
 		const latestReads = onoffLiteraryWorkNavigationTeasersWithAuthorsMock.slice(0, 3);
 		const mostRead = onoffLiteraryWorkNavigationTeasersWithAuthorsMock.slice(3, 6);
 
-		// Los dos mazos marcan sus tarjetas con el mismo `card`, así que el discriminante es el orden de
-		// documento: el de novedades precede al de más leídas en la plantilla, que es el orden de lectura.
+		// Los dos mazos marcan sus tarjetas con el mismo `card`, así que el discriminante es el nombre de
+		// región de cada uno: por orden de documento, el caso dejaría de valer al reordenar las secciones.
 		it('should hand each listing to its own deck', async () => {
 			const { fixture } = await renderHome({ latestReads, mostRead });
 
 			await renderDeferBlocks(fixture);
 
-			const cards = screen.getAllByTestId('card');
-			expect(cards).toHaveLength(latestReads.length + mostRead.length);
-			[...latestReads, ...mostRead].forEach((literaryWork, index) => {
-				expect(within(cards[index]).getByText(literaryWork.title)).toBeInTheDocument();
+			expect(screen.getAllByTestId('card')).toHaveLength(latestReads.length + mostRead.length);
+			(
+				[
+					['Últimas novedades', latestReads],
+					['Obras más leídas', mostRead],
+				] as const
+			).forEach(([sectionName, listing]) => {
+				const deck = within(screen.getByRole('region', { name: sectionName }));
+				const cards = deck.getAllByTestId('card');
+
+				expect(cards).toHaveLength(listing.length);
+				listing.forEach((literaryWork, index) => {
+					expect(within(cards[index]).getByText(literaryWork.title)).toBeInTheDocument();
+				});
 			});
 		});
 
@@ -69,7 +79,7 @@ describe('HomeComponent', () => {
 			await renderHome({ latestReads, mostRead });
 
 			expect(screen.getByRole('heading', { level: 2, name: 'Últimas novedades' })).toBeInTheDocument();
-			expect(screen.getByRole('heading', { level: 2, name: 'Historias más leídas' })).toBeInTheDocument();
+			expect(screen.getByRole('heading', { level: 2, name: 'Obras más leídas' })).toBeInTheDocument();
 		});
 
 		// Afirmar cuáles obras quedaron afuera —y no solo cuántas tarjetas hay— es lo que distingue el
@@ -161,9 +171,28 @@ describe('HomeComponent', () => {
 		it('should keep every section heading when the week brings nothing', async () => {
 			await renderHome();
 
-			['Últimas novedades', 'Historias más leídas', 'Colecciones', 'Autores/as destacados/as'].forEach((name) => {
+			['Últimas novedades', 'Obras más leídas', 'Colecciones', 'Autores/as destacados/as'].forEach((name) => {
 				expect(screen.getByRole('heading', { level: 2, name })).toBeInTheDocument();
 			});
+		});
+
+		// Las cuatro acciones se afirman con la semana vacía porque es el caso en que un enlace
+		// condicionado al dato desaparecería sin que ningún otro caso lo note.
+		it('should offer every section its way out to the full index', async () => {
+			await renderHome();
+
+			(
+				[
+					['Ver todas las obras', '/literary-work'],
+					['Ver todos los autores', '/authors'],
+					['Ver todas las colecciones', '/collection'],
+				] as const
+			).forEach(([name, href]) => {
+				screen.getAllByRole('link', { name }).forEach((link) => expect(link).toHaveAttribute('href', href));
+			});
+
+			// Las dos secciones de obras comparten hub, así que comparten nombre accesible.
+			expect(screen.getAllByRole('link', { name: 'Ver todas las obras' })).toHaveLength(2);
 		});
 
 		// Las tres clases de tarjeta —historia, colección y autor— se dibujan como `article`, así que la
