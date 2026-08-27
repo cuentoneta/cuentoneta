@@ -59,3 +59,5 @@ La licencia y sus tres condiciones viven en [`coding-agent-policies.md`](../../.
 - Saltear tests ante un cambio de comportamiento en runtime.
 - Crear barrels (`index.ts` re-export).
 - Dejar código comentado.
+
+> **Al terminar esta fase:** abrir [`fase-4-review.md`](fase-4-review.md).

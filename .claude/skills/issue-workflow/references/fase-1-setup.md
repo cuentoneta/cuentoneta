@@ -12,3 +12,5 @@
    - `git checkout -b feat/<number>-<kebab>`. Si la Fase 0 detectó la rama existente y el usuario eligió **rehacer**, confirmar la reutilización y usar `git checkout feat/<number>-<kebab>` (sin `-b`).
 4. **Modo worktree:** seguir [Modo worktree](modo-worktree.md) → "Mecánica de creación" (`git fetch origin`, `git worktree add`, `EnterWorktree`, `pnpm install` + `pnpm run config`).
 5. Reportar al usuario: número, título, **milestone**, **parent epic** (o "sin epic"), nombre de rama, la **base** cuando `<rama-base> ≠ develop` (checkout apilado) y, en modo worktree, la ruta del worktree.
+
+> **Al terminar esta fase:** abrir [`fase-2-plan.md`](fase-2-plan.md).

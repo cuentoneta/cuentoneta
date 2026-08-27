@@ -41,3 +41,5 @@
 
    - `Commits` cuenta solo los de la rama (`git rev-list --count <base>..HEAD`, con `<base>` = `<rama-base>` en modo raíz y `origin/<rama-base>` en modo worktree; default `develop`). Cuando `<rama-base> ≠ develop`, sumar el dato de base apilada bajo la tabla con el aviso de orden de merge (sin alterar la tabla en el caso `develop`).
    - `CI` reporta las **dos puntas**: el tier local corrido en la sesión y el estado de los checks del borrador, con su URL.
+
+> **Al terminar esta fase:** el flujo termina acá; no hay fase siguiente.

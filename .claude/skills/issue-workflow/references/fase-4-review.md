@@ -41,3 +41,5 @@ Antes de armar las `options`, revisar la columna **Estado** de los Críticos en 
   - **Sin Críticos, o todos con disposición:** **Proceder** — ir a la Fase 5 y abordar los hallazgos por prioridad; **Ship** — no hay nada bloqueante: saltar la Fase 5 e ir directo a la Fase 6.
   - **Algún Crítico sin disposición:** **Proceder** — ir a la Fase 5 y abordarlos; **Disponer y ship** — resolver la disposición de cada Crítico abierto ahí mismo (Diferir —proponiendo el issue y esperando confirmación—, Descartar o No se corrige, actualizando su Estado) y recién entonces saltar a la Fase 6. **"Ship" a secas no se ofrece en esta rama.**
 - La opción **"Other"** (automática) cubre instrucciones libres — p. ej. abordar solo un subconjunto de hallazgos, descartar las sugerencias o diferir alguno: el orquestador ejecuta la Fase 5 según lo indicado, respetando igualmente la precondición de disposición para shipear.
+
+> **Al terminar esta fase:** según la respuesta de la pausa, abrir [`fase-5-fix.md`](fase-5-fix.md) o —si ningún Crítico quedó sin disposición— [`fase-6-ship.md`](fase-6-ship.md).

@@ -13,3 +13,5 @@
 6. Las **Sugerencias** son opcionales: presentarlas y dejar que el usuario decida.
 7. Si un hallazgo es específicamente un **gap de cobertura de tests**, el orquestador **puede** delegar en **`test-generator`** el scaffolding de los specs faltantes (en modo worktree, adjuntar la nota de delegación de [Modo worktree](modo-worktree.md) → "Ajustes transversales"). Es un aid opcional, **no** un gate: los tests igual deben existir y pasar; el agente es solo una vía para producirlos.
 8. **Pushear al borrador**, como último paso de la fase. Va al final para que también viaje lo que produzcan los pasos 6 y 7: refresca la señal de los gates delegados sobre el commit final, que es la que la Fase 6 verifica antes de marcar listo.
+
+> **Al terminar esta fase:** abrir [`fase-6-ship.md`](fase-6-ship.md).

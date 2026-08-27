@@ -33,3 +33,5 @@ Ramificación tras la respuesta:
 - **Other** (feedback) → reenviar el texto recibido **a la misma Task del `plan-writer`** delegada en el paso 3 — conserva toda la exploración en contexto — para que revise `workspace/<number>/PLAN.md` en función del feedback y reescriba el plan en el mismo archivo. Los advisors del paso 2 **no** se re-corren: su aporte ya está incorporado al plan. Nunca editar `PLAN.md` a mano desde el orquestador ni relanzar un `plan-writer` de cero mientras la Task siga disponible. Repetir la pausa tras cada revisión, iterando hasta un "Aprobar". Si la Task original ya no está disponible (p. ej. reanudación vía Fase 0 en una sesión nueva), delegar en un `plan-writer` nuevo pasándole el `PLAN.md` existente más el feedback — revisa sobre lo escrito, no re-explora de cero.
 
 No avanzar a la Fase 3 sin una respuesta "Aprobar".
+
+> **Al terminar esta fase:** con el plan aprobado, abrir [`fase-3-implement.md`](fase-3-implement.md). Sin un "Aprobar" no se avanza.
