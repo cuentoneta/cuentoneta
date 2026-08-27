@@ -68,11 +68,6 @@ export async function getMostReadStoryNavigationTeasers(
 	return result.mostReadLiteraryWorks.slice(offset, offset + limit);
 }
 
-// Cuántas obras se destacan. El límite es editorial y por eso vive en el caso de uso: la landing
-// dereferencia cada referencia escrita con su proyección completa en cada request, así que un ranking
-// largo se paga en cada visita a la home.
-const MOST_READ_LIMIT = 6;
-
 // Clarity reporta la URL visitada, no el slug: puede traer querystring de campaña, un ancla a una
 // sección o una barra final, y ninguna de las tres formas resuelve contra `slug.current`. Sin
 // normalizar, la obra más leída desaparece del ranking justo cuando llega tráfico de campaña.
@@ -105,7 +100,7 @@ export async function updateMostReadStories(
 		...new Set(
 			popularPagesMetrics.information.flatMap((entry) => slugFromReadingUrl(entry.url, readingPathPrefixes) ?? []),
 		),
-	].slice(0, MOST_READ_LIMIT);
+	];
 
 	await contentRepository.updateMostReadLiteraryWorks(rankedSlugs);
 

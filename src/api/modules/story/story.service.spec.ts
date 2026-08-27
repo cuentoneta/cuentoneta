@@ -180,9 +180,9 @@ describe('updateMostReadStories', () => {
 		expect(result.mostReadLiteraryWorks.map(({ slug }) => slug)).toEqual([first.slug]);
 	});
 
-	// La landing dereferencia cada referencia escrita con su proyección completa en cada request, así
-	// que un ranking sin tope se paga en cada visita a la home.
-	it('acota el ranking a lo que la home consume', async () => {
+	// Cuántas obras se destacan lo decide la curaduría, no el cron: el caso de uso escribe todo el
+	// ranking que las métricas traen.
+	it('writes every ranked work, however many the metrics bring', async () => {
 		const everyWork = onoffLiteraryWorkNavigationTeasersWithAuthorsMock;
 		(fetchClarityData as Mock).mockResolvedValue(
 			popularPages(...everyWork.map(({ slug }) => `${environment.basePath}/read/${slug}`)),
@@ -191,8 +191,7 @@ describe('updateMostReadStories', () => {
 
 		const result = await storyService.updateMostReadStories(content);
 
-		expect(everyWork.length).toBeGreaterThan(6);
-		expect(result.mostReadLiteraryWorks).toHaveLength(6);
+		expect(result.mostReadLiteraryWorks.map(({ slug }) => slug)).toEqual(everyWork.map(({ slug }) => slug));
 	});
 
 	it('falla cuando el contenido rotativo no está instalado', async () => {
