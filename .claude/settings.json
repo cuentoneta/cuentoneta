@@ -12,7 +12,7 @@
 				"hooks": [
 					{
 						"type": "command",
-						"command": "pnpm exec tsx \"$CLAUDE_PROJECT_DIR/scripts/block-issue-refs-in-comments.ts\""
+						"command": "node \"$CLAUDE_PROJECT_DIR/scripts/block-issue-refs-in-comments.ts\""
 					}
 				]
 			}
