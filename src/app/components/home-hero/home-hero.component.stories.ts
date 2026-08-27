@@ -1,18 +1,23 @@
 import { argsToTemplate, Meta, StoryObj } from '@storybook/angular-vite';
 
 import { HomeHeroComponent } from './home-hero.component';
-import { onoffCollectionTeasersOfLength } from '@mocks/onoff-collections.mock';
+import { onoffImageAssets } from '@mocks/onoff-image-assets.mock';
 
-// Las portadas salen del canon de Onoff, del mismo modo que las deriva la página: solo las colecciones
-// con imagen editorial propia, y a lo sumo tres.
-const covers = onoffCollectionTeasersOfLength(6)
-	.flatMap((collection) => (collection.imagery.kind === 'representative' ? [collection.imagery.image] : []))
-	.slice(0, 3);
+// Tres portadas distintas del canon de Onoff. No se derivan del agregador de colecciones porque hoy
+// tiene una sola colección con imagen editorial propia, y la banda quedaría mostrando la misma imagen
+// tres veces: un estado que ninguna semana real produce.
+const covers = [
+	onoffImageAssets.geometriasDelDesveloCover.path,
+	onoffImageAssets.neronCover.path,
+	onoffImageAssets.lasEscalerasCover.path,
+];
 
 const meta: Meta<HomeHeroComponent> = {
 	component: HomeHeroComponent,
 	title: 'Componentes V3/HomeHero',
 	parameters: {
+		// Sin esto el canvas enmarca la banda con su padding y esconde justo lo que la define.
+		layout: 'fullscreen',
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {

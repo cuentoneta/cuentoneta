@@ -8,7 +8,7 @@ describe('HomeHeroComponent', () => {
 			await render(HomeHeroComponent);
 
 			expect(
-				screen.getByRole('heading', { level: 1, name: 'Un espacio para explorar y descubrir nuevas historias' }),
+				screen.getByRole('heading', { level: 1, name: 'Un espacio para explorar y descubrir nuevas obras' }),
 			).toBeInTheDocument();
 		});
 

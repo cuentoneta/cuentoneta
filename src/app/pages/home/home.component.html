@@ -1,9 +1,6 @@
 <main>
 	<cuentoneta-home-hero [covers]="heroCovers()">
-		<!--
-            Las alturas fijadas para los elementos hijos de <main> tienen la finalidad de evitar
-            el rebote vertical que puede observarse en el momento de la carga inicial de la página
-        -->
+		<!-- La caja se reserva por proporción para que resolver el diferido no empuje lo que sigue. -->
 		<section class="aspect-[540/220] w-full sm:aspect-[1240/360]">
 			@defer (when campaigns().length > 0) {
 				<cuentoneta-carousel [slides]="campaigns()" />
@@ -14,6 +11,10 @@
 	</cuentoneta-home-hero>
 
 	<div class="content horizontal-layout-spacing mt-16">
+		<!--
+            Los altos fijos de las dos secciones de obras evitan el rebote vertical de la carga
+            inicial, mientras esas grillas sigan resolviéndose en un bloque diferido.
+        -->
 		<section class="mb-8 h-[684px] md:h-[304px]">
 			<cuentoneta-literary-works-card-deck
 				[literaryWorks]="latestReads()"

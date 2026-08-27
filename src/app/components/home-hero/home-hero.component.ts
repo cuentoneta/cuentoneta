@@ -16,11 +16,11 @@ import { CoverImageComponent } from '@components/cover-image/cover-image.compone
 	selector: 'cuentoneta-home-hero',
 	imports: [CoverImageComponent],
 	template: `
-		<div class="content horizontal-layout-spacing flex flex-col items-center gap-20 pt-44 pb-16">
-			<div class="flex w-full flex-col items-center justify-between gap-10 md:flex-row md:gap-8">
+		<div class="mx-auto flex w-full max-w-screen-lg flex-col items-center gap-20 px-5 pt-44 pb-16">
+			<div class="flex w-full flex-col items-center justify-between gap-10 lg:flex-row lg:gap-8">
 				<div class="flex flex-col gap-4">
-					<h1 class="font-source-serif text-4xl font-semibold text-neutral-900 md:text-6xl">
-						Un espacio para explorar y descubrir nuevas historias
+					<h1 class="font-source-serif text-4xl font-semibold text-neutral-900 lg:text-6xl">
+						Un espacio para explorar y descubrir nuevas obras
 					</h1>
 					<p class="font-inter text-xl font-medium text-neutral-600">
 						Leé, descubrí y compartí relatos organizados en colecciones creadas para acercar la lectura digital a más
@@ -29,8 +29,12 @@ import { CoverImageComponent } from '@components/cover-image/cover-image.compone
 				</div>
 
 				@if (covers().length > 0) {
-					<div class="flex shrink-0 gap-4" data-testid="hero-covers">
-						@for (cover of covers(); track cover) {
+					<!--
+						La tira mide 386px rígidos y no encoge, así que solo aparece donde el hero es de dos columnas:
+						en el diseño es el adorno de esa fila, y en una columna desbordaría el ancho del teléfono.
+					-->
+					<div class="hidden shrink-0 gap-4 md:flex" data-testid="hero-covers">
+						@for (cover of covers(); track $index) {
 							<cuentoneta-cover-image [src]="cover" [priority]="$first" />
 						}
 					</div>

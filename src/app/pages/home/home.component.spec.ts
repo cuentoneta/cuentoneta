@@ -11,6 +11,7 @@ import type { LandingPageContent } from '@models/landing-page-content.model';
 import { onoffHighlightedAuthorsOfLength } from '@mocks/onoff-highlighted-authors.mock';
 import { onoffLiteraryWorkNavigationTeasersWithAuthorsMock } from '@mocks/onoff-literary-work-teasers.mock';
 import { onoffCollectionTeasersMock } from '@mocks/onoff-collections.mock';
+import type { CollectionTeaser } from '@models/collection.model';
 import { contentCampaignMock } from '@mocks/content-campaign.mock';
 import { renderDeferBlocks } from '@testing/defer-blocks';
 import { clearAllMocks } from '@test-utils';
@@ -50,7 +51,7 @@ describe('HomeComponent', () => {
 			await renderHome();
 
 			expect(
-				screen.getByRole('heading', { level: 1, name: 'Un espacio para explorar y descubrir nuevas historias' }),
+				screen.getByRole('heading', { level: 1, name: 'Un espacio para explorar y descubrir nuevas obras' }),
 			).toBeInTheDocument();
 		});
 
@@ -75,6 +76,20 @@ describe('HomeComponent', () => {
 			expect(hero.getAllByTestId('cover-image').map((cover) => cover.getAttribute('src'))).toEqual(
 				editorialCovers.slice(0, 3),
 			);
+		});
+
+		// El corpus tiene una sola colección con imagen editorial, así que el tope hay que ejercitarlo con
+		// una semana construida: con el corpus tal cual, el recorte nunca llega a descartar nada.
+		it('should cap the hero at three covers, however many collections bring one', async () => {
+			const withEditorialCover = onoffCollectionTeasersMock.find(
+				(collection) => collection.imagery.kind === 'representative',
+			);
+			expect(withEditorialCover).toBeDefined();
+			const collections = Array.from({ length: 5 }, () => withEditorialCover as CollectionTeaser);
+
+			await renderHome({ collections });
+
+			expect(within(screen.getByTestId('hero-covers')).getAllByTestId('cover-image')).toHaveLength(3);
 		});
 	});
 
