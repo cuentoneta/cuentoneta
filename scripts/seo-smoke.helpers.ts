@@ -68,8 +68,8 @@ export function selectByType(paths: readonly string[], prefix: string, size: num
 
 type ExpectationsFactory = (path: string) => IndexableHtmlExpectations;
 
-// Prefijos disjuntos: el `/` de cola cierra el segmento (`/collection/` no matchea `/collections`), así que
-// el orden de la tabla no afecta el resultado.
+// Prefijos disjuntos: el `/` de cola cierra el segmento (`/collection/` no matchea `/collection`, el
+// catálogo, que el sitemap también emite), así que el orden de la tabla no afecta el resultado.
 const EXPECTATIONS_FACTORIES: Readonly<Record<string, ExpectationsFactory>> = {
 	'/story/': (path) => {
 		const pattern = slugToTitlePattern(slugOf(path));

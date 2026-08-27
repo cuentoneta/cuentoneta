@@ -25,7 +25,8 @@ const ROUTES = Object.freeze([
 	// las pestañas, que solo existen con el contenido de la página.
 	{ name: 'author', path: `/author/${STABLE_SLUGS.author}`, ready: 'cuentoneta-tabs' },
 	// El esqueleto de la colección no declara `h1`, así que esperarlo discrimina la página servida de su
-	// estado de carga.
+	// estado de carga. El estado de error sí declara uno, y a ese lo descarta la guarda de status: la
+	// colección inexistente responde 404, no 200.
 	{ name: 'collection', path: `/collection/${STABLE_SLUGS.collection}`, ready: 'h1' },
 ] as const);
 
