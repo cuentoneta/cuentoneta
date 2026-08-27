@@ -20,7 +20,7 @@ interface InMemoryContentOptions {
 	readonly rotatingContent?: RotatingContent | null;
 	readonly latestReferences?: LandingPageReferences | null;
 	// El catálogo contra el que se resuelven las referencias que se escriben. Sustituye al content lake:
-	// sin él, el doble solo podría reapuntar el slot a lo que ya estaba en el slot.
+	// sin él, el doble solo podría reapuntar el slot a obras que ya estaban en el slot.
 	readonly literaryWorks?: readonly LiteraryWorkNavigationTeaserWithAuthors[];
 }
 
@@ -66,13 +66,13 @@ export class InMemoryContentRepository implements ContentRepository {
 	}
 
 	// Muta la lista en vez de registrar la llamada: lo que el caso de uso promete es que la próxima
-	// lectura vea lo escrito, y eso es lo que el spec tiene que poder afirmar. Una referencia a algo que
-	// el almacenamiento no conoce no vuelve, igual que una referencia colgada no resuelve en el content
-	// lake.
+	// lectura vea lo escrito, y eso es lo que el spec tiene que poder afirmar. Las obras se resuelven
+	// contra las que ya conoce el almacenamiento; una referencia a una obra desconocida no vuelve, igual
+	// que una referencia colgada no resuelve en el content lake.
 	//
 	// Sin el singleton **lanza**, igual que el adaptador real: `patch()` sobre un documento inexistente
-	// falla en el content lake, y un doble que retornara en silencio dejaría pasar en verde a un cron que
-	// en producción se cae.
+	// falla en el content lake, y un doble que retornara en silencio dejaría pasar en verde a un cron
+	// que en producción se cae.
 	public async updateMostReadLiteraryWorks(slugs: readonly string[]): Promise<void> {
 		if (!this.rotatingContent) {
 			throw new RotatingContentNotFoundError();
@@ -80,16 +80,13 @@ export class InMemoryContentRepository implements ContentRepository {
 		const bySlug = new Map(
 			[
 				...this.literaryWorks,
-				...this.rotatingContent.mostReadLiteraryWorks,
-				...this.landingPages.flatMap(({ content }) => [
-					...content.mostReadLiteraryWorks,
-					...content.latestLiteraryWorks,
-				]),
+				...this.rotatingContent.mostRead,
+				...this.landingPages.flatMap(({ content }) => [...content.mostRead, ...content.latestReads]),
 			].map((work) => [String(work.slug), work] as const),
 		);
 		this.rotatingContent = {
 			...this.rotatingContent,
-			mostReadLiteraryWorks: slugs.flatMap((slug) => bySlug.get(slug) ?? []),
+			mostRead: slugs.flatMap((slug) => bySlug.get(slug) ?? []),
 		};
 	}
 }

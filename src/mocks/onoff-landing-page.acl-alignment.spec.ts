@@ -63,9 +63,7 @@ describe('el corpus de dominio de la página de inicio coincide con el mapeo del
 		const landingPage = await repository().fetchLandingPageContent(onoffRawLandingPageMock.slug);
 
 		expect(slugs.length).toBeGreaterThan(0);
-		expect(landingPage?.latestLiteraryWorks).toEqual(
-			expectedBySlug(onoffLiteraryWorkNavigationTeasersWithAuthorsMock, slugs),
-		);
+		expect(landingPage?.latestReads).toEqual(expectedBySlug(onoffLiteraryWorkNavigationTeasersWithAuthorsMock, slugs));
 	});
 
 	it('maps the raw most read works into their domain navigation teasers', async () => {
@@ -74,8 +72,6 @@ describe('el corpus de dominio de la página de inicio coincide con el mapeo del
 		const rotatingContent = await repository().fetchRotatingContent();
 
 		expect(slugs.length).toBeGreaterThan(0);
-		expect(rotatingContent?.mostReadLiteraryWorks).toEqual(
-			expectedBySlug(onoffLiteraryWorkNavigationTeasersWithAuthorsMock, slugs),
-		);
+		expect(rotatingContent?.mostRead).toEqual(expectedBySlug(onoffLiteraryWorkNavigationTeasersWithAuthorsMock, slugs));
 	});
 });

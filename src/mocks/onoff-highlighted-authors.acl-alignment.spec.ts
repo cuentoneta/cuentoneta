@@ -2,7 +2,7 @@ import { stubSanityClient } from '@testing/sanity-client.stub';
 import { SanityContentRepository } from '../api/modules/content/content.repository.sanity';
 import { rotatingContentQuery } from '../api/_queries/content.query';
 import { onoffHighlightedAuthorsMock } from './onoff-highlighted-authors.mock';
-import { onoffRawLandingPageMock } from './onoff-raw-landing-page.mock';
+import { onoffRawLandingPageMock, onoffRawRotatingContentMock } from './onoff-raw-landing-page.mock';
 
 /* eslint-disable no-restricted-syntax -- vi.mock: el builder de imágenes de Sanity no tiene punto de inyección */
 vi.mock('@sanity/image-url', async () => {
@@ -14,12 +14,7 @@ vi.mock('@sanity/image-url', async () => {
 // El mapeo de los destacados es privado del repository, así que el cruce entra por su superficie
 // pública: es la misma cadena, ejercitada por donde la recorre el consumidor real.
 function repository(): SanityContentRepository {
-	// El contenido rotativo no participa de este cruce, pero la lectura lo pide igual, así que se
-	// responde vacío en vez de dejarlo sin respuesta.
-	const { client } = stubSanityClient(
-		[[rotatingContentQuery, { _id: 'rotatingContent', name: 'Lo más leído', mostRead: [], mostReadLiteraryWorks: [] }]],
-		onoffRawLandingPageMock,
-	);
+	const { client } = stubSanityClient([[rotatingContentQuery, onoffRawRotatingContentMock]], onoffRawLandingPageMock);
 	return new SanityContentRepository(client);
 }
 

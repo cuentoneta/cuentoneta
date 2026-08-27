@@ -46,19 +46,19 @@ describe('HomeComponent', () => {
 	describe('mazos de obras', () => {
 		// Rebanadas disjuntas del corpus: es lo que permite afirmar cuál de los dos listados llegó a cada
 		// mazo, y no solo cuántas tarjetas hay en total.
-		const latestLiteraryWorks = onoffLiteraryWorkNavigationTeasersWithAuthorsMock.slice(0, 3);
-		const mostReadLiteraryWorks = onoffLiteraryWorkNavigationTeasersWithAuthorsMock.slice(3, 6);
+		const latestReads = onoffLiteraryWorkNavigationTeasersWithAuthorsMock.slice(0, 3);
+		const mostRead = onoffLiteraryWorkNavigationTeasersWithAuthorsMock.slice(3, 6);
 
 		// Los dos mazos marcan sus tarjetas con el mismo `card`, así que el discriminante es el orden de
 		// documento: el de novedades precede al de más leídas en la plantilla, que es el orden de lectura.
 		it('should hand each listing to its own deck', async () => {
-			const { fixture } = await renderHome({ latestLiteraryWorks, mostReadLiteraryWorks });
+			const { fixture } = await renderHome({ latestReads, mostRead });
 
 			await renderDeferBlocks(fixture);
 
 			const cards = screen.getAllByTestId('card');
-			expect(cards).toHaveLength(latestLiteraryWorks.length + mostReadLiteraryWorks.length);
-			[...latestLiteraryWorks, ...mostReadLiteraryWorks].forEach((literaryWork, index) => {
+			expect(cards).toHaveLength(latestReads.length + mostRead.length);
+			[...latestReads, ...mostRead].forEach((literaryWork, index) => {
 				expect(within(cards[index]).getByText(literaryWork.title)).toBeInTheDocument();
 			});
 		});
@@ -66,7 +66,7 @@ describe('HomeComponent', () => {
 		// Las cabeceras quedan fuera de los bloques diferidos: son lo que la página lleva servido aunque
 		// las tarjetas todavía no se hayan resuelto.
 		it('should render both deck headings from the very first render', async () => {
-			await renderHome({ latestLiteraryWorks, mostReadLiteraryWorks });
+			await renderHome({ latestReads, mostRead });
 
 			expect(screen.getByRole('heading', { level: 2, name: 'Últimas novedades' })).toBeInTheDocument();
 			expect(screen.getByRole('heading', { level: 2, name: 'Historias más leídas' })).toBeInTheDocument();
@@ -75,7 +75,7 @@ describe('HomeComponent', () => {
 		// Afirmar cuáles obras quedaron afuera —y no solo cuántas tarjetas hay— es lo que distingue el
 		// recorte de cualquier otro criterio que devolviera seis. De ahí que el caso empiece exigiendo que
 		// el corpus supere el tope: con uno más corto no habría descarte que observar.
-		describe.each(['latestLiteraryWorks', 'mostReadLiteraryWorks'] as const)('recorte de %s', (section) => {
+		describe.each(['latestReads', 'mostRead'] as const)('recorte de %s', (section) => {
 			it('should cap the listing at six, however many the week brings', async () => {
 				expect(onoffLiteraryWorkNavigationTeasersWithAuthorsMock.length).toBeGreaterThan(6);
 

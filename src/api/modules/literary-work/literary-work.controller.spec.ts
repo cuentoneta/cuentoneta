@@ -19,7 +19,7 @@ describe('literaryWorkController', () => {
 	const controller = createLiteraryWorkController(
 		new InMemoryLiteraryWorkRepository(onoffLiteraryWorksMock, onoffLiteraryWorkTeasersMock),
 		new InMemoryContentRepository({
-			rotatingContent: { _id: 'rotatingContent', name: 'Lo más leído', mostRead: [], mostReadLiteraryWorks: [] },
+			rotatingContent: { _id: 'rotatingContent', name: 'Lo más leído', mostRead: [] },
 			literaryWorks: onoffLiteraryWorkNavigationTeasersWithAuthorsMock,
 		}),
 	);

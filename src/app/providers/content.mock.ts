@@ -13,13 +13,10 @@ export class StubContentApi implements ContentApi {
 		const landingPageContent: LandingPageContent = {
 			_id: '',
 			config: '',
-			cards: [],
 			collections: [],
 			campaigns: [],
 			mostRead: [],
-			mostReadLiteraryWorks: [],
 			latestReads: [],
-			latestLiteraryWorks: [],
 			highlightedAuthors: [],
 		};
 		return of(landingPageContent);

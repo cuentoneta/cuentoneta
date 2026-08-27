@@ -311,10 +311,9 @@ export const legacyStorylistDocument = {
 	slug: slugField('storylist'),
 };
 
-// Las tres proyecciones de abajo dereferencian el cuento en vez de proyectarlo directo (`stories[]->`,
-// `mostRead[]->`, `latestReads[]->`), así que necesitan un documento contenedor propio apuntando por
-// `_ref` a `incompleteLegacyStoryDocument`. Cada uno es un escenario de un solo caso, sin otro
-// consumidor, y por eso no se suma a `onoffDatasetMock`.
+// La proyección de abajo dereferencia el cuento en vez de proyectarlo directo (`stories[]->`), así que
+// necesita un documento contenedor propio apuntando por `_ref` a `incompleteLegacyStoryDocument`. Es un
+// escenario de un solo caso, sin otro consumidor, y por eso no se suma a `onoffDatasetMock`.
 
 export const storylistWithIncompleteStoryDocument = {
 	...documentSystemFields('onoff-storylist-campos-incumplidos'),
@@ -322,20 +321,4 @@ export const storylistWithIncompleteStoryDocument = {
 	slug: slugField('storylist-campos-incumplidos'),
 	title: 'Storylist de prueba',
 	stories: [documentReference(incompleteLegacyStoryDocument._id, 'story-incompleto')],
-};
-
-// El id es literal porque `rotatingContentQuery` filtra por `_id == 'rotatingContent'`: es un singleton.
-export const rotatingContentWithIncompleteStoryDocument = {
-	...documentSystemFields('rotatingContent'),
-	_type: 'rotatingContent' as const,
-	name: 'Contenido rotativo de prueba',
-	mostRead: [documentReference(incompleteLegacyStoryDocument._id, 'story-incompleto')],
-};
-
-export const landingPageWithIncompleteStoryDocument = {
-	...documentSystemFields('onoff-landing-page-campos-incumplidos'),
-	_type: 'landingPage' as const,
-	slug: slugField('landing-page-campos-incumplidos'),
-	config: '1974-24',
-	latestReads: [documentReference(incompleteLegacyStoryDocument._id, 'story-incompleto')],
 };

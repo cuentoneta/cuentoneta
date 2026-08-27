@@ -94,14 +94,15 @@ El **archivo** sigue siendo `<dominio>.mock.ts` y la **factory** `provide<X>ApiM
 
 ### Backend
 
-| Rol                            | Interfaz (nombre limpio)   | Implementación real              | Doble de test                      |
-| ------------------------------ | -------------------------- | -------------------------------- | ---------------------------------- |
-| Repository de stories          | `StoryRepository`          | `SanityStoryRepository`          | `InMemoryStoryRepository`          |
-| Repository de autores          | `AuthorRepository`         | `SanityAuthorRepository`         | `InMemoryAuthorRepository`         |
-| Repository de storylists       | `StorylistRepository`      | `SanityStorylistRepository`      | `InMemoryStorylistRepository`      |
-| Repository de obras literarias | `LiteraryWorkRepository`\* | `SanityLiteraryWorkRepository`\* | `InMemoryLiteraryWorkRepository`\* |
-| Repository de colecciones      | `CollectionRepository`†    | `SanityCollectionRepository`†    | `InMemoryCollectionRepository`†    |
-| Service (impl. única)          | `StoryService`             | `StoryService` (mismo nombre)    | `InMemoryStoryService`             |
+| Rol                             | Interfaz (nombre limpio)   | Implementación real              | Doble de test                      |
+| ------------------------------- | -------------------------- | -------------------------------- | ---------------------------------- |
+| Repository de stories           | `StoryRepository`          | `SanityStoryRepository`          | `InMemoryStoryRepository`          |
+| Repository de autores           | `AuthorRepository`         | `SanityAuthorRepository`         | `InMemoryAuthorRepository`         |
+| Repository de storylists        | `StorylistRepository`      | `SanityStorylistRepository`      | `InMemoryStorylistRepository`      |
+| Repository de obras literarias  | `LiteraryWorkRepository`\* | `SanityLiteraryWorkRepository`\* | `InMemoryLiteraryWorkRepository`\* |
+| Repository de colecciones       | `CollectionRepository`†    | `SanityCollectionRepository`†    | `InMemoryCollectionRepository`†    |
+| Repository de contenido de home | `ContentRepository`‡       | `SanityContentRepository`‡       | `InMemoryContentRepository`‡       |
+| Service (impl. única)           | `StoryService`             | `StoryService` (mismo nombre)    | `InMemoryStoryService`             |
 
 - Prefijo **`Sanity*`** para implementaciones de repository respaldadas por Sanity/GROQ.
 - El doble se nombra por su comportamiento (`Stub*` / `Fake*` — `InMemory*` para almacenamiento — / `Spy*`), **jamás `Mock*`**. Un repository de test con datos cargados en memoria sí es un `InMemory*Repository` (un fake de almacenamiento); uno que devuelve una lista fija es un `Stub*Repository`.
@@ -124,6 +125,14 @@ El **archivo** sigue siendo `<dominio>.mock.ts` y la **factory** `provide<X>ApiM
 > documento de diseño de `LiteraryWork`. El adaptador expone dos lecturas —la colección por slug, que
 > transporta sus obras, y el catálogo, que devuelve teasers— y levanta un error propio ante datos que
 > no permiten construir el agregado, distinto del de "no encontrado".
+>
+> ‡ Mismo patrón otra vez, aplicado a `content` (la landing page y el contenido rotativo). Se
+> distingue con su propia marca porque, además de tener la ACL en privados, es el único de los tres
+> que **reutiliza** la ACL de otro repository: para el teaser de colección de la landing llama a
+> `mapSanityCollectionTeaser` (`collection/collection-teaser.acl.ts`) en vez de reensamblarlo — ver
+> [`sanity-acl.md`](sanity-acl.md#por-qué-existe-el-acl). El controller adoptó además el helper
+> `respond()` con errores tipados en `content.errors.ts` (`LandingPageNotFoundError`,
+> `MalformedLandingPageError`, `RotatingContentNotFoundError`), en vez de un `try/catch` ad hoc por ruta.
 
 ### Frontend
 

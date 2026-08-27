@@ -4,8 +4,6 @@ import { client } from '../_helpers/sanity-connector';
 // Funciones
 import { mapMediaSources } from './media-sources.functions';
 
-// Tipos de Sanity
-
 // Sanity utils
 import { createImageUrlBuilder, SanityImageSource } from '@sanity/image-url';
 

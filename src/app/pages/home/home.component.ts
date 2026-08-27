@@ -46,7 +46,7 @@ export default class HomeComponent {
 	private readonly landingPageContent = computed(() => this.landingPageResource.value());
 	protected readonly collections = computed(() => this.landingPageContent()?.collections || []);
 	protected readonly campaigns = computed(() => this.landingPageContent()?.campaigns || []);
-	protected readonly mostRead = computed(() => this.landingPageContent()?.mostReadLiteraryWorks.slice(0, 6) || []);
-	protected readonly latestReads = computed(() => this.landingPageContent()?.latestLiteraryWorks.slice(0, 6) || []);
+	protected readonly mostRead = computed(() => this.landingPageContent()?.mostRead.slice(0, 6) || []);
+	protected readonly latestReads = computed(() => this.landingPageContent()?.latestReads.slice(0, 6) || []);
 	protected readonly highlightedAuthors = computed(() => this.landingPageContent()?.highlightedAuthors ?? []);
 }

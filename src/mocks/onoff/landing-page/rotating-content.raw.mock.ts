@@ -70,5 +70,4 @@ export const onoffRawRotatingContentMock: NonNullable<RotatingContentQueryResult
 			],
 		},
 	],
-	mostRead: [],
 };

@@ -1,4 +1,4 @@
-import type { RotatingContentQueryResult, StoriesByAuthorSlugQueryResult, StoryBySlugQueryResult } from '@sanity-types';
+import type { StoriesByAuthorSlugQueryResult, StoryBySlugQueryResult, StorylistQueryResult } from '@sanity-types';
 import { rawOnoffAuthorTeaser } from './onoff-raw-author.mock';
 import { elOdioRawStory } from './onoff/story/el-odio.story.raw.mock';
 import { elPalacioRawStory } from './onoff/story/el-palacio-de-las-nueve-fronteras.story.raw.mock';
@@ -52,9 +52,7 @@ function toRawTeaser(raw: NonNullable<StoryBySlugQueryResult>): StoriesByAuthorS
 	};
 }
 
-function toRawNavTeaser(
-	raw: NonNullable<StoryBySlugQueryResult>,
-): NonNullable<RotatingContentQueryResult>['mostRead'][0] {
+function toRawNavTeaser(raw: NonNullable<StoryBySlugQueryResult>): NonNullable<StorylistQueryResult>['stories'][0] {
 	return {
 		_id: raw._id,
 		slug: raw.slug,
@@ -90,7 +88,7 @@ export const onoffRawTeasersMock: StoriesByAuthorSlugQueryResult = [
 	neronRawTeaser,
 ];
 
-export const onoffRawNavTeasersMock: NonNullable<RotatingContentQueryResult>['mostRead'] = [
+export const onoffRawNavTeasersMock: NonNullable<StorylistQueryResult>['stories'] = [
 	toRawNavTeaser(elPalacioRawStory),
 	toRawNavTeaser(geometriaRawStory),
 	toRawNavTeaser(losPeldanosRawStory),

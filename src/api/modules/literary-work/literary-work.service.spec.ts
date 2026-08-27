@@ -103,8 +103,7 @@ describe('updateMostReadLiteraryWorks', () => {
 	const rotatingContent = {
 		_id: 'rotatingContent',
 		name: 'Lo más leído',
-		mostRead: [],
-		mostReadLiteraryWorks: [first, second],
+		mostRead: [first, second],
 	};
 
 	function popularPages(...urls: string[]) {
@@ -137,7 +136,7 @@ describe('updateMostReadLiteraryWorks', () => {
 
 		const result = await literaryWorkService.updateMostReadLiteraryWorks(content);
 
-		expect(result.mostReadLiteraryWorks.map(({ slug }) => slug)).toEqual([first.slug, second.slug]);
+		expect(result.mostRead.map(({ slug }) => slug)).toEqual([first.slug, second.slug]);
 	});
 
 	// La obra migrada conserva el slug de su historia de origen, así que el mismo slug llega por los dos
@@ -150,7 +149,7 @@ describe('updateMostReadLiteraryWorks', () => {
 
 		const result = await literaryWorkService.updateMostReadLiteraryWorks(content);
 
-		expect(result.mostReadLiteraryWorks.map(({ slug }) => slug)).toEqual([first.slug]);
+		expect(result.mostRead.map(({ slug }) => slug)).toEqual([first.slug]);
 	});
 
 	it('ignores popular pages outside the reading routes', async () => {
@@ -161,7 +160,7 @@ describe('updateMostReadLiteraryWorks', () => {
 
 		const result = await literaryWorkService.updateMostReadLiteraryWorks(content);
 
-		expect(result.mostReadLiteraryWorks.map(({ slug }) => slug)).toEqual([first.slug]);
+		expect(result.mostRead.map(({ slug }) => slug)).toEqual([first.slug]);
 	});
 
 	it('throws when the metrics service returns no popular pages', async () => {
@@ -183,7 +182,7 @@ describe('updateMostReadLiteraryWorks', () => {
 
 		const result = await literaryWorkService.updateMostReadLiteraryWorks(content);
 
-		expect(result.mostReadLiteraryWorks.map(({ slug }) => slug)).toEqual(ranked.map(({ slug }) => slug));
+		expect(result.mostRead.map(({ slug }) => slug)).toEqual(ranked.map(({ slug }) => slug));
 	});
 
 	// Clarity reporta la URL visitada, no el slug. Sin normalizar, la obra con tráfico de campaña —la
@@ -198,7 +197,7 @@ describe('updateMostReadLiteraryWorks', () => {
 
 		const result = await literaryWorkService.updateMostReadLiteraryWorks(content);
 
-		expect(result.mostReadLiteraryWorks.map(({ slug }) => slug)).toEqual([first.slug]);
+		expect(result.mostRead.map(({ slug }) => slug)).toEqual([first.slug]);
 	});
 
 	it('deduplicates a work reached through decorated and clean URLs alike', async () => {
@@ -212,7 +211,7 @@ describe('updateMostReadLiteraryWorks', () => {
 
 		const result = await literaryWorkService.updateMostReadLiteraryWorks(content);
 
-		expect(result.mostReadLiteraryWorks.map(({ slug }) => slug)).toEqual([first.slug]);
+		expect(result.mostRead.map(({ slug }) => slug)).toEqual([first.slug]);
 	});
 
 	// Cuántas obras se destacan lo decide la curaduría, no el cron: el caso de uso escribe todo el
@@ -226,7 +225,7 @@ describe('updateMostReadLiteraryWorks', () => {
 
 		const result = await literaryWorkService.updateMostReadLiteraryWorks(content);
 
-		expect(result.mostReadLiteraryWorks.map(({ slug }) => slug)).toEqual(everyWork.map(({ slug }) => slug));
+		expect(result.mostRead.map(({ slug }) => slug)).toEqual(everyWork.map(({ slug }) => slug));
 	});
 
 	it('falla cuando el contenido rotativo no está instalado', async () => {
