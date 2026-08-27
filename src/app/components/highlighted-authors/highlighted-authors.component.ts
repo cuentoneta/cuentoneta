@@ -1,9 +1,8 @@
 import { Component, input } from '@angular/core';
-import { RouterLink } from '@angular/router';
 
 import type { HighlightedAuthor } from '@models/landing-page-content.model';
 import { AppRoutes } from '../../app.routes';
-import { ButtonComponent } from '@components/button/button.component';
+import { SectionHeaderComponent } from '@components/section-header/section-header.component';
 import { AuthorCardTeaserComponent } from '@components/author-card-teaser/author-card-teaser.component';
 import { AuthorCardTeaserSkeletonComponent } from '@components/author-card-teaser/author-card-teaser-skeleton.component';
 
@@ -16,24 +15,14 @@ import { AuthorCardTeaserSkeletonComponent } from '@components/author-card-tease
  */
 @Component({
 	selector: 'cuentoneta-highlighted-authors',
-	imports: [RouterLink, ButtonComponent, AuthorCardTeaserComponent, AuthorCardTeaserSkeletonComponent],
+	imports: [SectionHeaderComponent, AuthorCardTeaserComponent, AuthorCardTeaserSkeletonComponent],
 	template: `
-		<div class="flex items-center justify-between gap-4">
-			<div class="flex flex-col content-between gap-1">
-				<h2 class="font-inter text-2xl font-bold">Autores/as destacados/as</h2>
-				<div class="font-inter text-sm text-neutral-600">Una selección curada de autores y autoras imprescindibles</div>
-			</div>
-			<a
-				[routerLink]="['/', appRoutes.Authors]"
-				cuentoneta-button
-				variant="outline"
-				size="sm"
-				class="shrink-0"
-				aria-label="Ver todos los autores"
-			>
-				Ver todo
-			</a>
-		</div>
+		<cuentoneta-section-header
+			[actionLink]="authorsLink"
+			heading="Autores/as destacados/as"
+			subtitle="Una selección curada de autores y autoras imprescindibles"
+			actionAriaLabel="Ver todos los autores"
+		/>
 
 		<section class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
 			@defer (when authors().length > 0) {
@@ -54,12 +43,15 @@ import { AuthorCardTeaserSkeletonComponent } from '@components/author-card-tease
 	`,
 	host: {
 		class: 'flex flex-col gap-8',
+		// El nombre de región es lo que deja localizar la sección sin depender de su posición en la página.
+		role: 'region',
+		'aria-label': 'Autores/as destacados/as',
 	},
 })
 export class HighlightedAuthorsComponent {
 	// El mismo tope que el backend aplica a la curaduría: la grilla en carga dibuja la sección llena.
 	protected readonly SKELETON_COUNT = 6;
-	protected readonly appRoutes = AppRoutes;
+	protected readonly authorsLink = ['/', AppRoutes.Authors];
 
 	public readonly authors = input<readonly HighlightedAuthor[]>([]);
 }

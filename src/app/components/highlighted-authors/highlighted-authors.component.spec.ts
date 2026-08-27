@@ -1,9 +1,9 @@
 import { render, screen } from '@testing-library/angular';
 import { DeferBlockState } from '@angular/core/testing';
-import { provideRouter, RouterLink } from '@angular/router';
+import { provideRouter } from '@angular/router';
 
 import { HighlightedAuthorsComponent } from './highlighted-authors.component';
-import { ButtonComponent } from '@components/button/button.component';
+import { SectionHeaderComponent } from '@components/section-header/section-header.component';
 import { AuthorCardTeaserComponent } from '@components/author-card-teaser/author-card-teaser.component';
 import { AuthorCardTeaserSkeletonComponent } from '@components/author-card-teaser/author-card-teaser-skeleton.component';
 
@@ -11,13 +11,12 @@ import { onoffHighlightedAuthorsOfLength, onoffUntaggedHighlightedAuthor } from 
 
 describe('HighlightedAuthorsComponent', () => {
 	const defaultProviders = [provideRouter([])];
-	// `componentImports` reemplaza los imports del componente bajo prueba, no los suma. Sin `RouterLink` el
-	// enlace del encabezado se renderiza como un `<a>` sin `href` y deja de tener rol de link; el botón va
-	// por consistencia con lo que el componente declara, aunque solo aporte clases.
+	// `componentImports` reemplaza los imports del componente bajo prueba, no los suma. Sin
+	// `SectionHeaderComponent` el encabezado se renderiza como un elemento desconocido y la sección
+	// pierde título, bajada y enlace.
 	const defaultImports = [
 		HighlightedAuthorsComponent,
-		RouterLink,
-		ButtonComponent,
+		SectionHeaderComponent,
 		AuthorCardTeaserComponent,
 		AuthorCardTeaserSkeletonComponent,
 	];
