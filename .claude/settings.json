@@ -50,6 +50,7 @@
 			"Bash(pnpm build:*)",
 			"Bash(pnpm run build:*)",
 			"Bash(pnpm storybook:build:*)",
+			"Bash(pnpm comments:inventory:*)",
 			"Bash(git status:*)",
 			"Bash(git diff:*)",
 			"Bash(git log:*)",
