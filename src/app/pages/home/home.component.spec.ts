@@ -11,7 +11,7 @@ import { ControllableLayoutService } from '../../providers/layout.mock';
 import type { LandingPageContent } from '@models/landing-page-content.model';
 import { onoffHighlightedAuthorsOfLength } from '@mocks/onoff-highlighted-authors.mock';
 import { onoffLiteraryWorkNavigationTeasersWithAuthorsMock } from '@mocks/onoff-literary-work-teasers.mock';
-import { onoffCollectionTeasersMock } from '@mocks/onoff-collections.mock';
+import { onoffCollectionTeasersMock, onoffCollectionTeasersOfLength } from '@mocks/onoff-collections.mock';
 import { contentCampaignMock } from '@mocks/content-campaign.mock';
 import { clearAllMocks } from '@test-utils';
 
@@ -145,6 +145,32 @@ describe('HomeComponent', () => {
 			collections.forEach(({ title }) => {
 				expect(screen.getByText(title)).toBeInTheDocument();
 			});
+		});
+
+		// Mismo criterio que el recorte a seis de las obras: se afirma cuáles quedaron afuera, porque
+		// contar cuatro se cumpliría igual con cualquier otro criterio que devolviera cuatro.
+		it('should cap the grid at four, however many the week brings', async () => {
+			const manyCollections = onoffCollectionTeasersOfLength(6);
+
+			await renderHome({ collections: manyCollections });
+
+			manyCollections.slice(0, 4).forEach(({ title }) => expect(screen.getByText(title)).toBeInTheDocument());
+			manyCollections.slice(4).forEach(({ title }) => expect(screen.queryByText(title)).not.toBeInTheDocument());
+		});
+	});
+
+	// El orden lo fija el diseño, y el spec lo afirma sobre el documento porque es lo único que lo
+	// distingue: las cuatro secciones se ven iguales si solo se cuentan sus encabezados.
+	describe('orden de las secciones', () => {
+		it('should lay the sections out in the order of the design', async () => {
+			await renderHome();
+
+			const headings = screen
+				.getAllByRole('heading', { level: 2 })
+				.map((heading) => heading.textContent?.trim())
+				.filter((title) => title !== 'Sobre La Cuentoneta');
+
+			expect(headings).toEqual(['Últimas novedades', 'Autores/as destacados/as', 'Obras más leídas', 'Colecciones']);
 		});
 	});
 

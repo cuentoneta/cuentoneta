@@ -67,6 +67,35 @@ describe('LiteraryWorksCardDeck', () => {
 		});
 	});
 
+	// El número es un ranking, así que solo tiene sentido donde la tirada ordena por algo. El diseño lo
+	// muestra en más leídas y no en novedades.
+	describe('Numeración de las tarjetas', () => {
+		it('should number the cards by position when asked to', async () => {
+			await render(LiteraryWorksCardDeck, {
+				inputs: { ...defaultInputs, numbered: true },
+				providers: defaultProviders,
+			});
+
+			expect(screen.getAllByTestId('order').map((order) => order.textContent?.trim())).toEqual([
+				'1',
+				'2',
+				'3',
+				'4',
+				'5',
+				'6',
+			]);
+		});
+
+		it('should number nothing by default', async () => {
+			await render(LiteraryWorksCardDeck, {
+				inputs: defaultInputs,
+				providers: defaultProviders,
+			});
+
+			expect(screen.queryAllByTestId('order')).toHaveLength(0);
+		});
+	});
+
 	// La tarjeta enlaza a la ruta de lectura: es el único camino que la home ofrece hacia una obra desde
 	// este bloque, y de él depende que la página emita enlaces internos.
 	it('links every card to the reading route', async () => {

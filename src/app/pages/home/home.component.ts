@@ -66,7 +66,8 @@ export default class HomeComponent {
 	// distinguir el fallo, la página afirmaría que no hay obras esta semana cuando lo que pasó es que no
 	// se pudo averiguar.
 	protected readonly failed = computed(() => this.landingPageResource.status() === 'error');
-	protected readonly collections = computed(() => this.landingPageContent()?.collections || []);
+	// Los topes de cada sección los aplica la página y no el backend, que sirve la tirada completa.
+	protected readonly collections = computed(() => this.landingPageContent()?.collections.slice(0, 4) || []);
 	protected readonly campaigns = computed(() => this.landingPageContent()?.campaigns || []);
 	protected readonly mostRead = computed(() => this.landingPageContent()?.mostRead.slice(0, 6) || []);
 	protected readonly latestReads = computed(() => this.landingPageContent()?.latestReads.slice(0, 6) || []);

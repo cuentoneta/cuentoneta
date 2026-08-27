@@ -30,18 +30,19 @@
 			</section>
 
 			<section>
+				<cuentoneta-highlighted-authors [authors]="highlightedAuthors()" [loading]="isLoading()" />
+			</section>
+
+			<section>
 				<cuentoneta-literary-works-card-deck
 					[literaryWorks]="mostRead()"
 					[action]="literaryWorksAction"
 					[loading]="isLoading()"
+					[numbered]="true"
 					heading="Obras más leídas"
 					subtitle="Explorá los textos más populares entre los lectores"
 					emptyMessage="Todavía no hay obras más leídas para mostrar."
 				/>
-			</section>
-
-			<section>
-				<cuentoneta-highlighted-authors [authors]="highlightedAuthors()" [loading]="isLoading()" />
 			</section>
 
 			<section>
