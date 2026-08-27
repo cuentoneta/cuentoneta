@@ -18,6 +18,9 @@ import { iconMappers } from '@models/icon.model';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { NgComponentOutlet } from '@angular/common';
 
+/** Tamaños del enlace (Design System v3): md=48px, sm=40px. */
+export type ResourceSize = 'md' | 'sm';
+
 @Component({
 	selector: 'cuentoneta-resource',
 	hostDirectives: [TooltipDirective],
@@ -26,11 +29,14 @@ import { NgComponentOutlet } from '@angular/common';
 		<a
 			[href]="resource().url"
 			[attr.title]="resource().title"
+			[class]="linkClasses()"
 			target="_blank"
-			class="flex h-12 w-12 items-center justify-center rounded-full border-1 border-solid border-neutral-200 bg-neutral-100 hover:bg-neutral-200"
+			rel="noopener noreferrer"
 		>
 			@if (icon(); as icon) {
-				<ng-container *ngComponentOutlet="NgIcon; inputs: { name: icon.name, size: '22px' }; injector: icon.injector" />
+				<ng-container
+					*ngComponentOutlet="NgIcon; inputs: { name: icon.name, size: iconSize() }; injector: icon.injector"
+				/>
 			}
 		</a>
 	`,
@@ -40,6 +46,21 @@ import { NgComponentOutlet } from '@angular/common';
 })
 export class ResourceComponent {
 	public readonly resource = input.required<Resource>();
+
+	public readonly size = input<ResourceSize>('md');
+
+	private readonly sizeMap: Record<ResourceSize, { circle: string; icon: string }> = {
+		md: { circle: 'h-12 w-12', icon: '22px' },
+		sm: { circle: 'h-10 w-10', icon: '18px' },
+	};
+
+	protected readonly iconSize = computed(() => this.sizeMap[this.size()].icon);
+
+	protected readonly linkClasses = computed(
+		() =>
+			`flex ${this.sizeMap[this.size()].circle} items-center justify-center rounded-full border-1 border-solid border-neutral-200 bg-neutral-100 hover:bg-neutral-200`,
+	);
+
 	protected readonly icon = computed(() => {
 		if (!this.resource()?.resourceType?.slug) {
 			return null;

@@ -41,6 +41,28 @@ describe('ResourceComponent', () => {
 		expect(linkResourceElement).toHaveAttribute('href', url);
 	});
 
+	// El destino es una URL del CMS que se abre en otra pestaña: sin el `rel`, esa pestaña conserva una
+	// referencia a la nuestra y puede reescribir su ubicación.
+	it('should deny the opened tab a reference back', async () => {
+		await setup();
+
+		expect(screen.getByRole('link')).toHaveAttribute('rel', 'noopener noreferrer');
+	});
+
+	// El tamaño es un eje del primitivo, no una variante de quien lo monta: la columna de perfil de la
+	// página de autor reserva 40 px y el resto del sitio usa los 48 del default.
+	it('should render at the default size', async () => {
+		await setup();
+
+		expect(screen.getByRole('link')).toHaveClass('h-12', 'w-12');
+	});
+
+	it('should render at the reduced size when asked for it', async () => {
+		await render(ResourceComponent, { inputs: { resource: resourceMock, size: 'sm' } });
+
+		expect(screen.getByRole('link')).toHaveClass('h-10', 'w-10');
+	});
+
 	// El slug `recurso-original` mapea a `faSolidMedal` en iconMappers. Que el SVG del DOM sea exactamente
 	// ese ícono es lo que prueba de qué lado sale, e impide reconectar el componente a un campo del CMS.
 	// Se consulta con `hidden: true` porque el ícono es decorativo (`aria-hidden`).

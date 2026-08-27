@@ -1,5 +1,6 @@
 // Core
-import { Component, computed, forwardRef, inject, input } from '@angular/core';
+import { Component, computed, forwardRef, inject, input, signal } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 
 // Utils
 import { ssrBlockingRxResource } from '@app-utils/ssr-resource';
@@ -16,7 +17,9 @@ import { AuthorStructuredDataDirective } from './author-structured-data.directiv
 // Components
 import { AuthorInfoPanelComponent } from '@components/author-info-panel/author-info-panel.component';
 import { DividerComponent } from '@components/divider/divider.component';
+import { DrawerComponent } from '@components/drawer/drawer.component';
 import { LiteraryWorkCardTeaserComponent } from '@components/literary-work-card-teaser/literary-work-card-teaser.component';
+import { ResourceComponent } from '@components/resource/resource.component';
 import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 
 @Component({
@@ -24,13 +27,25 @@ import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 	templateUrl: './author.page.html',
 	providers: [{ provide: AUTHOR_HOST, useExisting: forwardRef(() => AuthorPage) }],
 	hostDirectives: [AuthorMetaTagsDirective, AuthorStructuredDataDirective],
-	imports: [AuthorInfoPanelComponent, DividerComponent, LiteraryWorkCardTeaserComponent, SkeletonComponent],
+	imports: [
+		AuthorInfoPanelComponent,
+		DividerComponent,
+		DrawerComponent,
+		LiteraryWorkCardTeaserComponent,
+		NgTemplateOutlet,
+		ResourceComponent,
+		SkeletonComponent,
+	],
 })
 export default class AuthorPage implements AuthorHost {
 	public readonly slug = input.required<string>();
 
 	private readonly authorApi = inject(AuthorApi);
 	private readonly literaryWorkApi = inject(LiteraryWorkApi);
+
+	// Gatea la creación del contenido del panel deslizable: sin esto, la biografía entera y los enlaces
+	// a los recursos viajarían en el HTML del servidor, duplicando lo que la columna ya muestra.
+	protected readonly isBiographyDrawerOpen = signal(false);
 
 	// Los 160 px que el diseño reserva para la biografía en la columna, sobre un interlineado de 20.
 	protected readonly sidebarBiographyLines = 8;
@@ -51,16 +66,19 @@ export default class AuthorPage implements AuthorHost {
 	});
 
 	public readonly author = computed(() => (this.authorResource.hasValue() ? this.authorResource.value() : undefined));
-
 	// El guard no es ceremonia: leer el valor de un recurso en error relanza la falla, y acá el throw
-	// saldría dentro del listado, derribando el render del servidor de una página indexable. Un catálogo
-	// que falla con el autor resuelto deja la ficha sin obras, no sin página.
+	// saldría dentro del encabezado y del listado, derribando el render del servidor de una página
+	// indexable. Un catálogo que falla con el autor resuelto deja la ficha sin obras, no sin página.
 	protected readonly literaryWorks = computed(() =>
 		this.literaryWorksResource.hasValue() ? this.literaryWorksResource.value() : [],
 	);
-
 	protected readonly literaryWorksHeading = computed(() => {
 		const total = this.literaryWorks().length;
 		return `${total} ${total === 1 ? 'obra' : 'obras'}`;
 	});
+
+	protected openBiographyDrawer(drawer: DrawerComponent): void {
+		this.isBiographyDrawerOpen.set(true);
+		drawer.open();
+	}
 }

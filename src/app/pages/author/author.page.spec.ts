@@ -1,6 +1,7 @@
 // Librería de pruebas
 import { HttpErrorResponse } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
+import userEvent from '@testing-library/user-event';
 import { Observable, throwError } from 'rxjs';
 import { render, screen, within } from '@testing-library/angular';
 
@@ -14,11 +15,12 @@ import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 import { provideAuthorApiMock, StubAuthorApi } from '../../providers/author.mock';
 import { provideLiteraryWorkApiMock, StubLiteraryWorkApi } from '../../providers/literary-work.mock';
 import { withoutUrl } from '@testing/resource-without-url';
+import { installResizeObserverStub, setMeasuredSize, triggerResize } from '@testing/resize-observer.stub';
 
 // Modelos
 import type { AuthorProfile } from '@models/author.model';
-import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
 import type { LiteraryWorkApi } from '../../providers/literary-work.provider';
+import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
 
 const [literaryWorkMock] = onoffLiteraryWorksMock;
 
@@ -54,6 +56,8 @@ class StubFailingLiteraryWorkApi implements LiteraryWorkApi {
 }
 
 describe('AuthorPage', () => {
+	beforeEach(() => installResizeObserverStub());
+
 	// Reproduce el modo de falla del SSR: las directivas de SEO son hostDirectives de la página, así que
 	// un throw en su effect derriba el render entero y la ficha sale sin cuerpo. El ErrorHandler de
 	// test-setup relanza, con lo cual acá se manifiesta igual que en el servidor.
@@ -104,6 +108,58 @@ describe('AuthorPage', () => {
 		expect(screen.getByRole('heading', { level: 2, name: '1 obra' })).toBeInTheDocument();
 	});
 
+	// Leer el valor de un recurso en error relanza la falla. Con el listado bloqueando el SSR, ese throw
+	// derriba el render del servidor de una página indexable; el autor resuelto tiene que bastar para
+	// servir la ficha.
+	it('should still serve the profile when the works catalogue fails', async () => {
+		await renderPage(authorMock, new StubFailingLiteraryWorkApi());
+
+		expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(authorMock.name);
+		expect(screen.getByRole('heading', { level: 2, name: '0 obras' })).toBeInTheDocument();
+	});
+
+	// El contenido del panel se crea recién al abrirlo: serializarlo en el HTML del servidor duplicaría la
+	// biografía entera y los enlaces que la columna ya muestra.
+	it('should not create the drawer content before it opens', async () => {
+		await renderPage();
+
+		expect(screen.getAllByTestId('biography')).toHaveLength(1);
+	});
+
+	it('should show the full biography when the drawer opens', async () => {
+		const { detectChanges } = await renderPage();
+
+		setMeasuredSize(screen.getByTestId('biography'), { scrollHeight: 400, clientHeight: 160 });
+		triggerResize();
+		detectChanges();
+		await userEvent.click(screen.getByRole('button', { name: 'Leer más' }));
+		detectChanges();
+
+		// El segundo bloque es el del panel, y a diferencia del de la columna no lleva recorte.
+		const [, drawerBiography] = screen.getAllByTestId('biography');
+		expect(drawerBiography.className).not.toMatch(/line-clamp-/);
+
+		// El panel monta el mismo bloque de perfil que la columna: sin apagarle el nombre, la página
+		// quedaría con dos encabezados de primer nivel diciendo lo mismo.
+		expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
+	});
+
+	it('should list the web resources of the author', async () => {
+		await renderPage();
+
+		const [resource] = authorMock.resources;
+		const resources = screen.getByTestId('web-resources');
+
+		expect(within(resources).getByRole('link')).toHaveAttribute('href', resource.url);
+	});
+
+	// El escenario que el diseño rotula "Few stories and info": sin recursos, el bloque no se dibuja.
+	it('should omit the web resources block when the author has none', async () => {
+		await renderPage({ ...authorMock, resources: [] });
+
+		expect(screen.queryByTestId('web-resources')).not.toBeInTheDocument();
+	});
+
 	// El destino de lectura es /read: la página salió del mundo Story y sus enlaces también.
 	it('should link each listed work to its reading page', async () => {
 		await renderPage();
@@ -125,15 +181,5 @@ describe('AuthorPage', () => {
 		expect(link.getAttribute('href')).toBe(
 			`/read/${firstWork.slug}?navigation=author&navigationSlug=${authorMock.slug}`,
 		);
-	});
-
-	// Leer el valor de un recurso en error relanza la falla. Con el listado bloqueando el SSR, ese throw
-	// derriba el render del servidor de una página indexable; el autor resuelto tiene que bastar para
-	// servir la ficha.
-	it('should still serve the profile when the works catalogue fails', async () => {
-		await renderPage(authorMock, new StubFailingLiteraryWorkApi());
-
-		expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(authorMock.name);
-		expect(screen.getByRole('heading', { level: 2, name: '0 obras' })).toBeInTheDocument();
 	});
 });
