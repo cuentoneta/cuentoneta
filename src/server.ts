@@ -11,6 +11,7 @@ import sitemapController from './api/modules/sitemap/sitemap.controller';
 import { getAllowedHosts } from './api/_helpers/environment';
 import { noindexNonProduction } from './api/_middleware/noindex.middleware';
 import { ssrCacheControl } from './api/_middleware/ssr-cache-control.middleware';
+import { legacyStoryListingRedirect } from './api/_middleware/legacy-story-listing-redirect.middleware';
 
 /**
  * Inicializa Hono y exporta la instancia de la aplicación
@@ -34,6 +35,12 @@ app.route('/api', apiRoutes);
 // Acotado a GET: solo esas respuestas son cacheables por el borde, y un POST que devolviera 200
 // con el marcador no debe recibir headers de caché.
 app.on('GET', '/read/*', ssrCacheControl);
+
+// El listado de obras se mudó. Va antes de `serveStatic` y del catch-all SSR porque los dos son
+// `use('*')`: la ruta vieja está prerenderizada, así que el build deja un `index.html` que el
+// estático serviría, y si llegara al catch-all se renderizaría — en cualquiera de los dos casos el
+// 301 no se emite nunca.
+app.on('GET', '/story', legacyStoryListingRedirect);
 
 /**
  * Sirve los archivos estáticos desde el directorio /browser
