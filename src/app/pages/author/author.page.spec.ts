@@ -81,6 +81,29 @@ describe('AuthorPage', () => {
 		worksByAuthor.forEach((work) => expect(within(listing).getByText(work.title)).toBeInTheDocument());
 	});
 
+	// El perfil va primero en el DOM y último en la fila de escritorio. Sin eso, en mobile el lector
+	// aterriza en el listado y encuentra al autor recién al final, y el esquema de encabezados abre con el
+	// h2 en las dos anchuras.
+	it('should lead with the author profile in document order', async () => {
+		await renderPage();
+
+		const [first, second] = screen.getAllByRole('heading');
+		expect(first.tagName).toBe('H1');
+		expect(second.tagName).toBe('H2');
+	});
+
+	it('should introduce the listing with the count of works', async () => {
+		await renderPage();
+
+		expect(screen.getByRole('heading', { level: 2, name: `${worksByAuthor.length} obras` })).toBeInTheDocument();
+	});
+
+	it('should name the count in singular when the author has one work', async () => {
+		await renderPage(authorMock, new StubLiteraryWorkApi(literaryWorkMock, worksByAuthor.slice(0, 1)));
+
+		expect(screen.getByRole('heading', { level: 2, name: '1 obra' })).toBeInTheDocument();
+	});
+
 	// El destino de lectura es /read: la página salió del mundo Story y sus enlaces también.
 	it('should link each listed work to its reading page', async () => {
 		await renderPage();
@@ -111,6 +134,6 @@ describe('AuthorPage', () => {
 		await renderPage(authorMock, new StubFailingLiteraryWorkApi());
 
 		expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(authorMock.name);
-		expect(screen.getByTestId('literary-works')).toBeEmptyDOMElement();
+		expect(screen.getByRole('heading', { level: 2, name: '0 obras' })).toBeInTheDocument();
 	});
 });
