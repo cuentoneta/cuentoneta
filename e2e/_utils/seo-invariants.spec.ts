@@ -42,10 +42,17 @@ describe('checkNgServerContext', () => {
 		expect(checkNgServerContext(GOOD_HTML)).toBeNull();
 	});
 
-	it('viola con el deopt a CSR (ssg) e informa el valor encontrado', () => {
-		const violation = checkNgServerContext(GOOD_HTML.replace('"ssr"', '"ssg"'));
+	// Una ruta prerenderizada sirve el HTML completo igual que una renderizada por request: lo que la
+	// regla persigue es el deopt a cliente, no el modo de render.
+	it('pasa con ng-server-context="ssg" de una ruta prerenderizada', () => {
+		expect(checkNgServerContext(GOOD_HTML.replace('"ssr"', '"ssg"'))).toBeNull();
+	});
+
+	// El deopt a cliente deja el atributo puesto pero vacío, que es distinto de que falte.
+	it('viola con el deopt a CSR e informa el valor encontrado', () => {
+		const violation = checkNgServerContext(GOOD_HTML.replace('ng-server-context="ssr"', 'ng-server-context=""'));
 		expect(violation?.rule).toBe('server-render-context');
-		expect(violation?.message).toContain('ssg');
+		expect(violation?.message).toContain('se encontró ""');
 	});
 
 	it('viola cuando el atributo está ausente', () => {
@@ -231,7 +238,7 @@ describe('collectIndexableHtmlViolations', () => {
 
 	it('acumula todas las violaciones simultáneas (no fail-fast)', async () => {
 		const broken =
-			'<html ng-server-context="ssg"><head><title></title></head><body><main><div data-testid="skeleton"></div></main></body></html>';
+			'<html><head><title></title></head><body><main><div data-testid="skeleton"></div></main></body></html>';
 		const rules = (await collectIndexableHtmlViolations(broken, GOOD_EXPECTATIONS)).map((violation) => violation.rule);
 		expect(rules).toEqual(
 			expect.arrayContaining([

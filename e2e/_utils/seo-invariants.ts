@@ -34,14 +34,19 @@ function normalizedText(element: HTMLElement | null): string {
 	return (element?.text ?? '').replace(/\s+/g, ' ').trim();
 }
 
+// Angular emite `ssr` al renderizar por request y `ssg` al prerenderizar; las dos sirven el HTML
+// completo, que es lo que el crawler necesita. Lo que esta regla existe para atrapar es el deopt a
+// renderizado en el cliente, que deja el contexto vacío o ausente y la página sin cuerpo.
+const SERVER_RENDERED_CONTEXTS = ['ssr', 'ssg'];
+
 function ngServerContext(root: HTMLElement): SeoInvariantViolation | null {
 	const actual = root.querySelector('cuentoneta-root')?.getAttribute('ng-server-context');
-	if (actual === 'ssr') {
+	if (actual && SERVER_RENDERED_CONTEXTS.includes(actual)) {
 		return null;
 	}
 	return {
 		rule: 'server-render-context',
-		message: `Se esperaba ng-server-context="ssr" en <cuentoneta-root>; se encontró "${actual ?? '(ausente)'}" (deopt a CSR).`,
+		message: `Se esperaba ng-server-context "ssr" o "ssg" en <cuentoneta-root>; se encontró "${actual ?? '(ausente)'}" (deopt a CSR).`,
 	};
 }
 
