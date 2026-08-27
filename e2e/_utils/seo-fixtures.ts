@@ -34,4 +34,6 @@ export const SCHEMA_IDS = Object.freeze({
 	breadcrumbCollection: 'breadcrumb-collection',
 	collectionCatalog: 'collection-catalog',
 	breadcrumbCollectionCatalog: 'breadcrumb-collection-catalog',
+	literaryWorkCatalog: 'literary-work-catalog',
+	breadcrumbLiteraryWorkCatalog: 'breadcrumb-literary-work-catalog',
 } as const);

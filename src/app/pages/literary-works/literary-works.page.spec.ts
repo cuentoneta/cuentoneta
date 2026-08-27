@@ -2,12 +2,10 @@ import { render, screen, within } from '@testing-library/angular';
 import { provideRouter } from '@angular/router';
 import { RESPONSE_INIT } from '@angular/core';
 import { NEVER, Observable, throwError } from 'rxjs';
-import { clearAllMocks, restoreAllMocks, spyOn } from '@test-utils';
+import { clearAllMocks, restoreAllMocks } from '@test-utils';
 
 import LiteraryWorksPage from './literary-works.page';
-import { AppRoutes } from '../../app.routes';
-import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
-import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
+import { LITERARY_WORKS_HOST } from './literary-works-host';
 import type { LiteraryWorkApi } from '../../providers/literary-work.provider';
 import { provideLiteraryWorkApiMock, StubLiteraryWorkApi } from '../../providers/literary-work.mock';
 import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
@@ -171,21 +169,13 @@ describe('LiteraryWorksPage', () => {
 		expect(screen.getByRole('heading', { level: 1, name: 'Obras' })).toBeInTheDocument();
 	});
 
-	it('should point the canonical URL at its own route', async () => {
-		const canonicalSpy = spyOn(HeadMetadataDirective.prototype, 'setCanonicalUrl');
+	// La directiva de datos estructurados lee el catálogo por este token: es el contrato que le permite
+	// emitir el ItemList sin volver a resolverlo.
+	it('should expose the catalogue it lists through its host token', async () => {
+		const { fixture } = await renderPage();
 
-		await renderPage();
-
-		expect(canonicalSpy).toHaveBeenCalledWith(buildCanonicalUrl(AppRoutes.LiteraryWork));
-	});
-
-	// Ofrecer al indexado una página que todavía no lista nada gasta rastreo en una URL sin contenido.
-	it('should opt out of indexing while it lists no work', async () => {
-		const robotsSpy = spyOn(HeadMetadataDirective.prototype, 'setRobots');
-
-		await renderPage();
-
-		expect(robotsSpy).toHaveBeenCalledWith('noindex, follow');
+		const host = fixture.debugElement.injector.get(LITERARY_WORKS_HOST);
+		expect(host.literaryWorks().map(({ slug }) => `/read/${slug}`)).toEqual(readingHrefs());
 	});
 
 	describe('código de respuesta', () => {
