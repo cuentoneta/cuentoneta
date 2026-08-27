@@ -72,13 +72,14 @@ export default class HomeComponent {
 	protected readonly latestReads = computed(() => this.landingPageContent()?.latestReads.slice(0, 6) || []);
 	protected readonly highlightedAuthors = computed(() => this.landingPageContent()?.highlightedAuthors ?? []);
 
+	// TODO(#2414): vuelve junto con la muestra de portadas del hero.
 	// Solo las colecciones con portada editorial propia: las que caen en `sample` prestan las portadas de
 	// sus obras, y esas ya se ven más abajo en la página. Sin ninguna, la banda va sin portadas.
-	protected readonly heroCovers = computed(() =>
-		this.collections()
-			.flatMap((collection) => (collection.imagery.kind === 'representative' ? [collection.imagery.image] : []))
-			.slice(0, 3),
-	);
+	// protected readonly heroCovers = computed(() =>
+	// 	this.collections()
+	// 		.flatMap((collection) => (collection.imagery.kind === 'representative' ? [collection.imagery.image] : []))
+	// 		.slice(0, 3),
+	// );
 
 	// Un fallo transitorio no puede salir 200: el borde lo cachearía como si fuera la página, y la página
 	// de inicio es la más rastreada del sitio.
