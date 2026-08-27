@@ -54,6 +54,21 @@ describe('LiteraryWorksStructuredDataDirective', () => {
 		).toMatchObject({ '@type': 'BreadcrumbList' });
 	});
 
+	// El catálogo llega después de la instanciación al navegar dentro de la aplicación. Si la lectura
+	// del host quedara dentro del `untracked()`, el efecto no volvería a correr y la página se serviría
+	// sin JSON-LD, con el resto de los casos igual de verdes.
+	it('should emit once the catalogue resolves after it was instantiated', () => {
+		instantiate();
+		TestBed.tick();
+		const head = TestBed.inject(DOCUMENT).head;
+		expect(head.querySelector('script[data-schema-id="literary-work-catalog"]')).toBeNull();
+
+		literaryWorksSignal.set(onoffLiteraryWorkTeasersMock);
+		TestBed.tick();
+
+		expect(head.querySelector('script[data-schema-id="literary-work-catalog"]')).not.toBeNull();
+	});
+
 	it('should not emit under the schema ids the collection catalogue uses', () => {
 		literaryWorksSignal.set(onoffLiteraryWorkTeasersMock);
 

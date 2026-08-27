@@ -36,22 +36,32 @@ describe('buildLiteraryWorkCatalogSchema', () => {
 		});
 	});
 
-	it('should not emit double slashes when the website URL ends in one', () => {
-		const schema = buildLiteraryWorkCatalogSchema(onoffLiteraryWorkTeasersMock, websiteUrl);
+	// La base llega con y sin barra final según el entorno; las dos tienen que producir la misma URL.
+	it('should normalize the website URL whether or not it ends in a slash', () => {
+		const withSlash = buildLiteraryWorkCatalogSchema(onoffLiteraryWorkTeasersMock, websiteUrl);
+		const withoutSlash = buildLiteraryWorkCatalogSchema(onoffLiteraryWorkTeasersMock, 'https://www.cuentoneta.ar');
 
-		expect(schema.url).not.toContain('//literary-work');
+		expect(withSlash.url).toBe(withoutSlash.url);
+		expect(withSlash.url).toBe('https://www.cuentoneta.ar/literary-work');
 	});
 });
 
 describe('buildLiteraryWorkCatalogBreadcrumb', () => {
-	it('should build the trail Inicio to Obras', async () => {
+	it('should build the trail from the home to the catalogue', () => {
 		const breadcrumb = buildLiteraryWorkCatalogBreadcrumb(websiteUrl);
 
-		await expect(assertValidJsonLd(breadcrumb)).resolves.toBeUndefined();
-		expect(breadcrumb.itemListElement).toHaveLength(2);
-		expect(breadcrumb.itemListElement).toMatchObject([
-			{ position: 1, name: 'Inicio' },
-			{ position: 2, name: 'Obras' },
+		expect(breadcrumb['itemListElement']).toEqual([
+			{ '@type': 'ListItem', position: 1, name: 'Inicio', item: { '@id': 'https://www.cuentoneta.ar/home' } },
+			{
+				'@type': 'ListItem',
+				position: 2,
+				name: 'Obras',
+				item: { '@id': 'https://www.cuentoneta.ar/literary-work' },
+			},
 		]);
+	});
+
+	it('should build a schema.org-valid BreadcrumbList', async () => {
+		await expect(assertValidJsonLd(buildLiteraryWorkCatalogBreadcrumb(websiteUrl))).resolves.toBeUndefined();
 	});
 });
