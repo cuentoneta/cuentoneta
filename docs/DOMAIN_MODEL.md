@@ -70,7 +70,7 @@ GET /api/story/most-read           # Obtener historias más leídas
 **Agregados Raíz:**
 
 - `Storylist` - Colecciones de historias
-- `Collection` - Colecciones de obras literarias, la **forma objetivo** que va a reemplazar a `Storylist`. Sirve su catálogo y su detalle, pero el reemplazo todavía no está consumado: las dos conviven, y solo `Storylist` se lista por slug en el sitemap. Ver [el agregado](#agregado-collection-colección-de-obras-literarias)
+- `Collection` - Colecciones de obras literarias, la **forma objetivo** que reemplaza a `Storylist`. Es la única de las dos con página propia: sirve su catálogo y su detalle. El reemplazo todavía no está consumado, porque de `Storylist` sobreviven el endpoint, el document type y su entrada en el sitemap, que sigue siendo la única de las dos que se lista por slug. Ver [el agregado](#agregado-collection-colección-de-obras-literarias)
 
 **Responsabilidades:**
 
@@ -402,7 +402,7 @@ Las historias se referencian directamente en el array `stories`. Cada entrada es
 
 **Raíz de Agregado:** `Collection`
 
-> `Collection` es la forma **destinada a reemplazar** a `Storylist`: agrupa `LiteraryWork` en vez de `Story`. Nació como entidad paralela e independiente y hoy sirve su catálogo y su detalle, pero el reemplazo no está consumado: `Storylist` sigue vigente, sirviendo su propia página, y es la única de las dos que el sitemap lista por slug. La baja de su document type y las redirecciones permanentes de sus URLs son trabajos aparte, cada uno con su propio issue. Es la **segunda** raíz de agregado con **invariantes hechas cumplir en código** (factory `createCollection` + el value object `Slug`, en `src/models/collection.model.ts`), después de `LiteraryWork`: `Storylist` y `Author` siguen teniendo las suyas descritas más abajo, pero no exigidas por un constructor. Esa es la dirección del proyecto, no una excepción puntual — cada entidad nueva del catálogo suma sus invariantes al código en vez de solo documentarlas.
+> `Collection` es la forma que **reemplaza** a `Storylist`: agrupa `LiteraryWork` en vez de `Story`. Nació como entidad paralela e independiente y hoy es la única de las dos con página propia, sirviendo su catálogo y su detalle. El reemplazo todavía no está consumado: de `Storylist` sobreviven el endpoint, el document type y su entrada en el sitemap, que es la única de las dos que se lista por slug. La baja del document type, la purga de sus documentos y las redirecciones permanentes de sus URLs son trabajos aparte, cada uno con su propio issue. Es la **segunda** raíz de agregado con **invariantes hechas cumplir en código** (factory `createCollection` + el value object `Slug`, en `src/models/collection.model.ts`), después de `LiteraryWork`: `Storylist` y `Author` siguen teniendo las suyas descritas más abajo, pero no exigidas por un constructor. Esa es la dirección del proyecto, no una excepción puntual — cada entidad nueva del catálogo suma sus invariantes al código en vez de solo documentarlas.
 
 ```typescript
 interface Collection {

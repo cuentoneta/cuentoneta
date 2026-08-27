@@ -140,7 +140,6 @@ El **archivo** sigue siendo `<dominio>.mock.ts` y la **factory** `provide<X>ApiM
 | ----------------------- | -------------------------------- | ----------------------- | --------------------------- |
 | API de stories          | `StoryApi`                       | `HttpStoryApi`          | `StubStoryApi`              |
 | API de autores          | `AuthorApi`                      | `HttpAuthorApi`         | `StubAuthorApi`             |
-| API de storylists       | `StorylistApi`                   | `HttpStorylistApi`      | `StubStorylistApi`          |
 | API de obras literarias | `LiteraryWorkApi`\*              | `HttpLiteraryWorkApi`\* | `StubLiteraryWorkApi`\*     |
 | API de colecciones      | `CollectionApi`*                 | `HttpCollectionApi`*    | `StubCollectionApi`*        |
 | Service (impl. única)   | `LayoutService` (token homónimo) | `WindowLayoutService`   | `ControllableLayoutService` |

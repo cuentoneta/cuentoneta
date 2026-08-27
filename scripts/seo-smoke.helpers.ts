@@ -68,8 +68,8 @@ export function selectByType(paths: readonly string[], prefix: string, size: num
 
 type ExpectationsFactory = (path: string) => IndexableHtmlExpectations;
 
-// Prefijos disjuntos: el `/` de cola cierra el segmento (`/storylist/` no matchea `/story/`), así que
-// el orden de la tabla no afecta el resultado.
+// Prefijos disjuntos: el `/` de cola cierra el segmento (`/collection/` no matchea `/collection`, el
+// catálogo, que el sitemap también emite), así que el orden de la tabla no afecta el resultado.
 const EXPECTATIONS_FACTORIES: Readonly<Record<string, ExpectationsFactory>> = {
 	'/story/': (path) => {
 		const pattern = slugToTitlePattern(slugOf(path));
@@ -100,13 +100,13 @@ const EXPECTATIONS_FACTORIES: Readonly<Record<string, ExpectationsFactory>> = {
 		requiredJsonLdIds: [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.profilePage, SCHEMA_IDS.breadcrumbAuthor],
 		requiredInternalLinkPrefix: '/story/',
 	}),
-	'/storylist/': (path) =>
-		// El título de la storylist es editorial (no deriva del slug); sin titlePattern/h1Pattern.
+	'/collection/': (path) =>
+		// El título de la colección es editorial (no deriva del slug); sin titlePattern/h1Pattern.
 		({
 			path,
 			canonicalContains: path,
-			requiredJsonLdIds: [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.collection, SCHEMA_IDS.breadcrumbStorylist],
-			requiredInternalLinkPrefix: '/story/',
+			requiredJsonLdIds: [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.collection, SCHEMA_IDS.breadcrumbCollection],
+			requiredInternalLinkPrefix: '/read/',
 		}),
 };
 

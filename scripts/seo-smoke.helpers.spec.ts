@@ -99,7 +99,7 @@ describe('sample', () => {
 });
 
 describe('selectByType', () => {
-	const paths = ['/story/a', '/story/b', '/author/c', '/storylist/d'];
+	const paths = ['/story/a', '/story/b', '/author/c', '/collection/d'];
 
 	it('filtra por prefijo de tipo', () => {
 		expect(selectByType(paths, '/author/', 5, true)).toEqual(['/author/c']);
@@ -141,8 +141,8 @@ describe('expectationsFor', () => {
 		expect(expectations?.requiredJsonLdIds).toContain('profile-page');
 	});
 
-	it('storylist: sin titlePattern (título editorial) + CollectionPage', () => {
-		const expectations = expectationsFor('/storylist/verano-2022');
+	it('collection: sin titlePattern (título editorial) + CollectionPage', () => {
+		const expectations = expectationsFor('/collection/verano-2022');
 		expect(expectations?.titlePattern).toBeUndefined();
 		expect(expectations?.requiredJsonLdIds).toContain('collection');
 	});

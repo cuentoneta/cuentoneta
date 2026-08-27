@@ -21,8 +21,8 @@ describe('buildCanonicalUrl', () => {
 	});
 
 	it('should collapse multiple trailing/leading slashes into a single separator', () => {
-		expect(buildCanonicalUrl('//storylist/terror', 'https://www.cuentoneta.ar//')).toBe(
-			'https://www.cuentoneta.ar/storylist/terror',
+		expect(buildCanonicalUrl('//collection/terror', 'https://www.cuentoneta.ar//')).toBe(
+			'https://www.cuentoneta.ar/collection/terror',
 		);
 	});
 

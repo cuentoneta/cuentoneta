@@ -10,8 +10,8 @@
  *  - D. Bloques sitewide Organization y WebSite.
  *  - E. La tanda completa de invariantes de una página indexable.
  *
- * A diferencia de la página de storylist, acá la tanda completa corre sin `fixme`: el encabezado y el
- * listado de obras se server-renderizan sin diferir, así que el HTML trae H1 real y enlaces a `/read/`.
+ * La tanda completa corre sin `fixme`: el encabezado y el listado de obras se server-renderizan sin
+ * diferir, así que el HTML trae H1 real y enlaces a `/read/`.
  */
 import { test, expect } from '@playwright/test';
 
@@ -21,7 +21,7 @@ import { collectIndexableHtmlViolations } from '../_utils/seo-invariants';
 import { STABLE_SLUGS, SCHEMA_IDS, SITEWIDE_SCHEMA_IDS } from '../_utils/seo-fixtures';
 
 const collectionPath = `/collection/${STABLE_SLUGS.collection}`;
-const requiredJsonLdIds = [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.collectionPage, SCHEMA_IDS.breadcrumbCollection];
+const requiredJsonLdIds = [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.collection, SCHEMA_IDS.breadcrumbCollection];
 
 test('collection — A: una colección inexistente responde 404 real en SSR', async ({ request }) => {
 	const response = await request.get('/collection/coleccion-inexistente-e2e');
@@ -54,7 +54,7 @@ test.describe('collection — HTML server-rendered de una colección existente',
 	});
 
 	test('C: JSON-LD CollectionPage con el listado ordenado de sus obras', async () => {
-		const collection = parseJsonLdBlocks(html).get(SCHEMA_IDS.collectionPage);
+		const collection = parseJsonLdBlocks(html).get(SCHEMA_IDS.collection);
 		await assertValidJsonLd(collection);
 
 		const mainEntity = collection?.['mainEntity'] as Record<string, unknown>;

@@ -11,11 +11,7 @@ import { buildCollectionBreadcrumb, buildCollectionPageSchema } from './collecti
 export class CollectionStructuredDataDirective extends AbstractStructuredDataDirective {
 	private readonly host = inject(COLLECTION_HOST);
 
-	// `collection` es el nombre que le corresponde a este bloque por el modelo de dominio, pero lo
-	// ocupa la página de storylist, que es la deprecada. Hasta que se retire, un id compartido haría
-	// ambiguo qué bloque se está mirando, así que se toma uno prestado.
-	// TODO(#2269): al retirarse esa página, renombrar este id a `collection`.
-	private readonly pageSchemaId = 'collection-page';
+	private readonly pageSchemaId = 'collection';
 	private readonly breadcrumbSchemaId = 'breadcrumb-collection';
 
 	protected applyStructuredData(): void {

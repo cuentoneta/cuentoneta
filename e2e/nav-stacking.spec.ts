@@ -22,8 +22,10 @@ const ROUTES = Object.freeze([
 	{ name: 'home', path: '/home', ready: 'h1' },
 	{ name: 'story', path: `/story/${STABLE_SLUGS.story}`, ready: 'h1' },
 	{ name: 'author', path: `/author/${STABLE_SLUGS.author}`, ready: 'h1' },
-	// La colección no declara `h1`; su título es un componente propio.
-	{ name: 'storylist', path: `/storylist/${STABLE_SLUGS.storylist}`, ready: 'cuentoneta-storylist-title' },
+	// El esqueleto de la colección no declara `h1`, así que esperarlo discrimina la página servida de su
+	// estado de carga. El estado de error sí declara uno, y a ese lo descarta la guarda de status: la
+	// colección inexistente responde 404, no 200.
+	{ name: 'collection', path: `/collection/${STABLE_SLUGS.collection}`, ready: 'h1' },
 ] as const);
 
 const statuses = new Map<string, number>();

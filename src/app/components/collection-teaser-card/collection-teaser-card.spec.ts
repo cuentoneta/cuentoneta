@@ -66,7 +66,7 @@ describe('CollectionTeaserCard', () => {
 	});
 
 	describe('Enlace de navegación', () => {
-		it('should link to the collection page, not to the storylist one', async () => {
+		it('should link to the collection page', async () => {
 			await render(CollectionTeaserCard, {
 				inputs: { collection: representativeMock },
 				providers: defaultProviders,

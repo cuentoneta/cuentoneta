@@ -164,7 +164,7 @@ describe('CollectionPage', () => {
 			await renderPage(showingAuthors);
 
 			/* eslint-disable testing-library/no-node-access -- el <head> no tiene rol accesible: se consulta por selector */
-			expect(document.head.querySelector('script[data-schema-id="collection-page"]')).not.toBeNull();
+			expect(document.head.querySelector('script[data-schema-id="collection"]')).not.toBeNull();
 			expect(document.head.querySelector('script[data-schema-id="breadcrumb-collection"]')).not.toBeNull();
 			/* eslint-enable testing-library/no-node-access */
 		});

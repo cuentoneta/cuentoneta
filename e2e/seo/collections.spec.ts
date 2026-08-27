@@ -1,8 +1,8 @@
 /**
  * Tests e2e de SEO para el catálogo de colecciones (`/collection`).
  *
- * A diferencia del de storylist, la tanda completa de invariantes corre sin `fixme`: esta página no
- * difiere nada, así que el HTML trae encabezado real y los enlaces a cada colección.
+ * La tanda completa de invariantes corre sin `fixme`: esta página no difiere nada, así que el HTML
+ * trae encabezado real y los enlaces a cada colección.
  */
 import { test, expect } from '@playwright/test';
 
