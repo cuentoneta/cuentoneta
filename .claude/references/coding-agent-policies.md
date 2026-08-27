@@ -177,6 +177,8 @@ La **doctrina** de qué comentar y qué no —cuándo el comentario aporta, a qu
 
 La regla que gobierna a las dos: los comentarios explican el **porqué no obvio**, nunca el **qué**, y el **rationale de un cambio** (por qué se hizo, qué reemplaza, contexto histórico) va al **mensaje de commit / descripción del PR**, no inline. Un comentario que solo agrega ruido es bloqueante para la review.
 
+**La redundancia no tiene un hook detrás, y no puede tenerlo.** El hook `PreToolUse` que ya existe (`scripts/block-issue-refs-in-comments.ts`) puede lo que puede porque su predicado es **léxico**: un número de issue en un comentario se reconoce mirando el texto. Que un comentario reformule el código exige compararlo contra el código adyacente y contra la doctrina, y ninguna regla sintáctica decide eso — un hook que lo intentara bloquearía comentarios legítimos, o no bloquearía nada. Lo que sí la cubre son dos puntos del flujo, ninguno de ellos un gate: la [Fase 3](../skills/issue-workflow/references/fase-3-implement.md) del skill `issue-workflow`, que carga la doctrina **antes** de escribir, y el [`code-reviewer`](../agents/code-reviewer.md), que audita contra ella los comentarios que el diff agrega o modifica. La disciplina de comentarios se sostiene por esos dos, no por enforcement automático.
+
 ### Menciones a issues en comentarios de código
 
 Un comentario de código **no cita un issue**. La procedencia y el rationale de un cambio viven en el commit, en el PR y en el historial de git. Un número inline envejece en silencio: nada lo revisa cuando el issue se cierra.
