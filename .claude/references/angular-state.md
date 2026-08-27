@@ -141,20 +141,31 @@ Preferir un estado de error **por operación** a un único `string | null` compa
 
 En **componentes de página** (`src/app/pages/**`), los recursos que alimentan contenido indexable o meta tags por página se declaran con **`ssrBlockingRxResource`** (de [`@app-utils/ssr-resource`](../../src/app/utils/ssr-resource.ts)), no con `rxResource` crudo. El helper pipea el stream por `pendingUntilEvent`: registra una `PendingTask` que hace esperar la serialización del SSR (`ApplicationRef.whenStable()`) hasta que el fetch emite, completa o falla. Sin él, el server emite el skeleton con meta genérico y Google indexa una página vacía. En el browser no afecta el render, solo retrasa `isStable`, así que la carga progresiva in-app se conserva.
 
-Para **datos secundarios o no indexables** que deben seguir cargando progresivamente (p. ej. el listado de cuentos de un autor, o los frames de navegación), usar **`progressiveRxResource`** — un alias explícito de `rxResource` que documenta que el no-bloqueo es una decisión, no un olvido.
+Para **datos accesorios o no indexables** que deben seguir cargando progresivamente (p. ej. las colecciones sugeridas al pie de una colección, o los frames de navegación), usar **`progressiveRxResource`** — un alias explícito de `rxResource` que documenta que el no-bloqueo es una decisión, no un olvido.
+
+El criterio no es «principal vs. secundario» sino **si el dato tiene que estar en el HTML que ve el crawler**. El listado de obras de un autor lo tiene: son los enlaces internos de la página, así que bloquea igual que el perfil.
 
 ```typescript
-// ✅ Página: el perfil bloquea el SSR; el listado secundario carga progresivamente (author.component.ts)
-readonly authorResource = ssrBlockingRxResource({
+// ✅ Página: la colección bloquea el SSR; el catálogo del que salen las sugeridas es accesorio y
+// carga progresivamente — si falla, el bloque queda vacío y la página se sirve igual (collection.page.ts)
+private readonly collectionResource = ssrBlockingRxResource({
 	params: this.slug,
-	stream: ({ params }) => this.authorService.getBySlug(params),
+	stream: ({ params }) => this.collectionApi.getBySlug(params),
 	defaultValue: undefined,
 });
-readonly storiesResource = progressiveRxResource({
-	params: this.slug,
-	stream: ({ params }) => this.stories$(params),
+private readonly catalogResource = progressiveRxResource({
+	stream: () => this.collectionApi.getAll(),
 	defaultValue: [],
 });
+```
+
+**Leer el valor siempre guardado por `hasValue()`.** Un recurso en estado de error relanza la falla al leer `value()`, y `defaultValue` no protege: solo rige mientras el stream no emitió. En un recurso que bloquea el SSR ese throw ocurre dentro del template y derriba el render del servidor de una página indexable.
+
+```typescript
+// ✅ El guard decide explícitamente qué se muestra cuando el recurso falló
+protected readonly literaryWorks = computed(() =>
+	this.literaryWorksResource.hasValue() ? this.literaryWorksResource.value() : [],
+);
 ```
 
 Cuándo **bloquear**: rutas cuyo HTML server-rendered debe traer contenido/meta reales — `RenderMode.Server` indexables y `Prerender` con contenido (el prerender de build gana contenido real en vez de skeleton). Cuándo **no**: rutas `noindex` servidas por request con meta estáticos (bloquear solo agrega latencia sin ganar indexación → `progressiveRxResource`), y datos secundarios.
