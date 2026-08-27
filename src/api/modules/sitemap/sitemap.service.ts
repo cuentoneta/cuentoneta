@@ -20,6 +20,7 @@ export async function getSitemapUrls(): Promise<SitemapUrl[]> {
 		{ loc: `${BASE_URL}/about` },
 		{ loc: `${BASE_URL}/dmca` },
 		{ loc: `${BASE_URL}/collection` },
+		{ loc: `${BASE_URL}/literary-work` },
 
 		// Páginas de cuentos
 		...stories.map((s) => ({ loc: `${BASE_URL}/story/${s.slug}`, lastmod: s.lastmod })),
