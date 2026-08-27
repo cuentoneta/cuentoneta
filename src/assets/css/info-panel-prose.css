@@ -1,0 +1,25 @@
+/*
+  Ritmo vertical de la prosa que muestran los paneles de información: la descripción de una colección y
+  la biografía de un autor.
+
+  Los párrafos los emite el pipeline de Markdown y no llevan clases, así que ninguna utilidad de Tailwind
+  puede alcanzarlos: es el caso de aplicación de regla global que declara styles.css. Va anclada a los
+  selectores de los componentes que poseen ese HTML, y no a las páginas, porque cada panel se monta en dos
+  lugares —la columna y el panel deslizable— y en el segundo el texto se lee entero.
+
+  Sin esta regla, el `margin: 0` del reset deja los párrafos pegados: en la columna no se nota porque el
+  recorte los corta, pero en el deslizable el texto se sirve como un bloque continuo.
+
+  El ritmo lo da un separador entre hermanos y no un margen por elemento: no deja margen colgando al final
+  del bloque, que es lo que descuadraría la medición del recorte. `1lh` es la línea en blanco que el
+  diseño dibuja entre párrafos, expresada contra la propia interlínea del texto.
+
+  El valor en `rem` va primero como reserva: donde `lh` no existe (Safari anterior a 16.4) el navegador
+  descarta esa declaración entera y los párrafos volverían a quedar pegados. Es el mismo 20 px, escrito
+  contra la interlínea de los dos textos, que comparten tamaño.
+*/
+cuentoneta-collection-info-panel [data-description] > * + *,
+cuentoneta-author-info-panel [data-biography] > * + * {
+	margin-block-start: 1.25rem;
+	margin-block-start: 1lh;
+}

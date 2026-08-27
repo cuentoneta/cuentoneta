@@ -101,7 +101,7 @@ export const Drawer: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>El montaje del panel deslizable: sin nombre —su etiqueta accesible ya anuncia al autor, y un segundo <code>h1</code> con el mismo texto lo repetiría— y sin recorte, porque ahí la biografía se lee entera.</p><p><strong>Usos:</strong> contenido del panel que se abre al pedir "Leer más".</p>`,
+				story: `<p>El montaje del panel deslizable: sin nombre —su etiqueta accesible ya anuncia al autor, y un segundo <code>h1</code> con el mismo texto lo repetiría— y sin recorte, porque ahí la biografía se lee entera.</p><p>Es la única superficie donde se ve el ritmo vertical de la prosa: en la columna el recorte corta los párrafos antes de que la separación se note. La separación es una línea en blanco, la misma que dibuja el diseño. El HTML lo emite el pipeline de Markdown sin clases, así que la regla vive en una hoja global anclada al componente.</p><p><strong>Usos:</strong> contenido del panel que se abre al pedir "Leer más".</p>`,
 			},
 		},
 	},
