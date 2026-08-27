@@ -126,7 +126,7 @@ en el canal **[#🚐 | la-cuentoneta][dc-channel]** en Discord.
 
 ### Requerimientos
 
-- Tener instalada una versión de [Node](https://nodejs.org/es/) **24** (Active LTS "Krypton") igual o superior a `v24.18.0`,
+- Tener instalada una versión de [Node](https://nodejs.org/es/) **24** (Active LTS "Krypton") igual o superior a `v24.18.0` (el `.npmrc` declara `engine-strict`, así que una versión menor **falla la instalación** en vez de solo advertir),
   idealmente la última versión LTS. El proyecto ya no soporta Node 22 ni versiones anteriores.
 - Instalar `pnpm`, un gestor de paquetes alternativo para Node: `npm install -g pnpm`. Se recomienda la versión `10.12.0` o superior.
 - Instalar `nx`, un CLI para desarrollo de monorepos: `pnpm install -g nx`. Se recomienda la versión `23.0.0` o
