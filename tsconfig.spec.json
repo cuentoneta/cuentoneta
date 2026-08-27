@@ -2,6 +2,11 @@
 	"extends": "./tsconfig.json",
 	"compilerOptions": {
 		"outDir": "./dist/out-tsc",
+		// La cadena del hook de edición importa con extensión `.ts` porque corre con `node` puro, y TS5096
+		// exige acompañar el flag con una de tres opciones. Acá va `rewriteRelativeImportExtensions` y no
+		// `noEmit`, que es la obvia: con `noEmit`, el plugin de Angular deja de contar `src/test-setup.ts`
+		// como parte del programa y falla la carga de toda la suite. Nadie emite desde este proyecto, así
+		// que reescribir extensiones no tiene efecto observable.
 		"allowImportingTsExtensions": true,
 		"rewriteRelativeImportExtensions": true,
 		"module": "preserve",
