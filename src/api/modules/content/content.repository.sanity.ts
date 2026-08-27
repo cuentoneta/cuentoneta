@@ -28,9 +28,9 @@ import {
 	landingPageContentQuery,
 	landingPageListQuery,
 	latestLandingPageReferencesQuery,
-	literaryWorkIdsBySlugsQuery,
 	rotatingContentQuery,
 } from '../../_queries/content.query';
+import { literaryWorkTeasers } from '../../_queries/literary-work.query';
 import { MalformedLandingPageError, MalformedRotatingContentError } from './content.errors';
 import type {
 	ContentRepository,
@@ -117,14 +117,17 @@ export class SanityContentRepository implements ContentRepository {
 		return Promise.all(landingPageObjects.map((object) => this.client.create(object)));
 	}
 
-	// La query filtra por pertenencia y devuelve en orden de documento, que no tiene nada que ver con el
-	// ranking: por eso el resultado se reordena por el orden en que llegaron los slugs antes de
-	// escribirlo. El lote vacío no consulta ni escribe.
+	// Resuelve los slugs con el listado de obras, que ya filtra por pertenencia: transporta el teaser
+	// entero para quedarse con el identificador, y a cambio no hay una query que exista solo para esto.
+	//
+	// Ese filtro devuelve en orden de documento, que no tiene nada que ver con el ranking, así que el
+	// resultado se reordena por el orden en que llegaron los slugs antes de escribirlo. El lote vacío no
+	// consulta ni escribe.
 	public async updateMostReadLiteraryWorks(slugs: readonly string[]): Promise<void> {
 		if (slugs.length === 0) {
 			return;
 		}
-		const found = await this.client.fetch(literaryWorkIdsBySlugsQuery, { slugs: [...slugs] });
+		const found = await this.client.fetch(literaryWorkTeasers, { author: null, slugs: [...slugs] });
 		const idBySlug = new Map(found.map(({ slug, _id }) => [slug, _id] as const));
 		const references = slugs.flatMap((slug) => {
 			const _id = idBySlug.get(slug);

@@ -21,9 +21,14 @@ export class InMemoryLiteraryWorkRepository implements LiteraryWorkRepository {
 	// Nada que traducir significa nada que reportar: el doble trabaja sobre teasers ya construidos,
 	// así que `malformed` es siempre vacío.
 	public async fetchTeasers(filter: LiteraryWorkTeaserFilter): Promise<LiteraryWorkTeaserListing> {
-		const literaryWorks = filter.author
+		// Los dos criterios se acumulan, y ninguno reordena: la query filtra por pertenencia y entrega en
+		// orden de documento, así que el doble entrega en orden de almacenamiento. Respetar el orden en
+		// que vinieran los slugs taparía a un consumidor que dependa de un orden que Sanity no da.
+		const byAuthor = filter.author
 			? this.teasers.filter(({ authors }) => authors.some((author) => author.slug === filter.author))
 			: this.teasers;
+		const slugs = filter.slugs;
+		const literaryWorks = slugs ? byAuthor.filter(({ slug }) => slugs.includes(slug)) : byAuthor;
 		return { literaryWorks, malformed: [] };
 	}
 }

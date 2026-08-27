@@ -163,7 +163,8 @@ export const readingTimeBackfillCandidatesQuery = defineQuery(`
 //
 // `$author == null` cubre el listado sin filtro; con filtro se recorre `authors[]` porque una obra
 // admite varios: a diferencia de una story, que declara un autor único, acá la pertenencia es de
-// conjunto.
+// conjunto. `$slugs` sigue la misma forma, y filtra por pertenencia: devuelve en orden de documento,
+// así que un consumidor que pase un lote ordenado repone el orden por su cuenta.
 //
 // La proyección repite literal la que `collectionBySlugQuery` usa para las obras de una colección
 // —`defineQuery` exige literales para que el typegen las lea, así que no se puede extraer—, incluido
@@ -172,7 +173,7 @@ export const readingTimeBackfillCandidatesQuery = defineQuery(`
 //
 // No se acota: quién elige las tres que se muestran, y con qué criterio, es del consumidor.
 export const literaryWorkTeasers = defineQuery(`
-*[_type == 'literaryWork' && !(_id in path('drafts.**')) && ($author == null || $author in authors[]->slug.current)]
+*[_type == 'literaryWork' && !(_id in path('drafts.**')) && ($author == null || $author in authors[]->slug.current) && ($slugs == null || slug.current in $slugs)]
 {
     _id,
     'slug': slug.current,

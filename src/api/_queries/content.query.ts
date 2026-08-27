@@ -63,19 +63,6 @@ export const rotatingContentQuery = defineQuery(`
     },[])
 }`);
 
-// Resuelve un lote de slugs a identificadores, para poder escribir referencias a obras en el contenido
-// rotativo. Vive con las queries de contenido y no con las de obra porque no sirve a ninguna lectura de
-// obras: es el paso interno de una escritura de esta pantalla, y no proyecta dominio a propósito —
-// transportar N agregados para armar N `_ref` sería pagar la obra entera por su identificador.
-//
-// Filtra por pertenencia, así que devuelve en orden de documento: el orden del ranking lo repone quien
-// la consume.
-export const literaryWorkIdsBySlugsQuery = defineQuery(`
-*[_type == 'literaryWork' && !(_id in path('drafts.**')) && slug.current in $slugs]{
-    _id,
-    'slug': slug.current
-}`);
-
 export const landingPageListQuery = defineQuery(`
 *[_type == 'landingPage' && !(_id in path('drafts.**')) && slug.current in $slugs]{
 		_id,

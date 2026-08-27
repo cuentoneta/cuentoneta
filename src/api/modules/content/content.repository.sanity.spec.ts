@@ -10,11 +10,8 @@ import {
 } from '@mocks/onoff-raw-landing-page.mock';
 import { onoffRawNavTeasersMock } from '@mocks/onoff-raw-stories.mock';
 import { mapAuthorTeaser } from '../../_utils/functions';
-import {
-	landingPageContentQuery,
-	literaryWorkIdsBySlugsQuery,
-	rotatingContentQuery,
-} from '../../_queries/content.query';
+import { landingPageContentQuery, rotatingContentQuery } from '../../_queries/content.query';
+import { literaryWorkTeasers } from '../../_queries/literary-work.query';
 import { MalformedLandingPageError } from './content.errors';
 import { SanityContentRepository } from './content.repository.sanity';
 
@@ -320,7 +317,7 @@ describe('SanityContentRepository.updateMostReadLiteraryWorks', () => {
 
 		await repository.updateMostReadLiteraryWorks(['primera', 'tercera']);
 
-		expect(fetch).toHaveBeenCalledWith(literaryWorkIdsBySlugsQuery, { slugs: ['primera', 'tercera'] });
+		expect(fetch).toHaveBeenCalledWith(literaryWorkTeasers, { author: null, slugs: ['primera', 'tercera'] });
 	});
 
 	// Una obra que no existe no tiene referencia que escribir: se descarta y las demás se conservan.
