@@ -1,0 +1,55 @@
+// Core
+import { Component, computed, forwardRef, inject, input } from '@angular/core';
+
+// Utils
+import { ssrBlockingRxResource } from '@app-utils/ssr-resource';
+
+// Services
+import { AuthorApi } from '../../providers/author.provider';
+import { LiteraryWorkApi } from '../../providers/literary-work.provider';
+
+// SEO
+import { AUTHOR_HOST, type AuthorHost } from './author-host';
+import { AuthorMetaTagsDirective } from './author-meta-tags.directive';
+import { AuthorStructuredDataDirective } from './author-structured-data.directive';
+
+// Components
+import { LiteraryWorkCardTeaserComponent } from '@components/literary-work-card-teaser/literary-work-card-teaser.component';
+
+@Component({
+	selector: 'cuentoneta-author',
+	templateUrl: './author.page.html',
+	providers: [{ provide: AUTHOR_HOST, useExisting: forwardRef(() => AuthorPage) }],
+	hostDirectives: [AuthorMetaTagsDirective, AuthorStructuredDataDirective],
+	imports: [LiteraryWorkCardTeaserComponent],
+})
+export default class AuthorPage implements AuthorHost {
+	public readonly slug = input.required<string>();
+
+	private readonly authorApi = inject(AuthorApi);
+	private readonly literaryWorkApi = inject(LiteraryWorkApi);
+
+	// Los dos recursos bloquean el render del servidor: el nombre, la biografía y los enlaces a las obras
+	// son las invariantes que la página tiene que servir indexadas, y con un recurso progresivo el HTML se
+	// serializa antes de la respuesta.
+	private readonly authorResource = ssrBlockingRxResource({
+		params: this.slug,
+		stream: ({ params }) => this.authorApi.getBySlug(params),
+		defaultValue: undefined,
+	});
+
+	private readonly literaryWorksResource = ssrBlockingRxResource({
+		params: this.slug,
+		stream: ({ params }) => this.literaryWorkApi.getTeasers({ author: params }),
+		defaultValue: [],
+	});
+
+	public readonly author = computed(() => (this.authorResource.hasValue() ? this.authorResource.value() : undefined));
+
+	// El guard no es ceremonia: leer el valor de un recurso en error relanza la falla, y acá el throw
+	// saldría dentro del listado, derribando el render del servidor de una página indexable. Un catálogo
+	// que falla con el autor resuelto deja la ficha sin obras, no sin página.
+	protected readonly literaryWorks = computed(() =>
+		this.literaryWorksResource.hasValue() ? this.literaryWorksResource.value() : [],
+	);
+}

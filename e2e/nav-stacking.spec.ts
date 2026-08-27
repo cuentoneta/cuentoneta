@@ -21,9 +21,7 @@ import { STABLE_SLUGS } from './_utils/seo-fixtures';
 const ROUTES = Object.freeze([
 	{ name: 'home', path: '/home', ready: 'h1' },
 	{ name: 'story', path: `/story/${STABLE_SLUGS.story}`, ready: 'h1' },
-	// La ficha de autor sirve su `h1` vacío y lo completa en el cliente, así que no discrimina: se espera a
-	// las pestañas, que solo existen con el contenido de la página.
-	{ name: 'author', path: `/author/${STABLE_SLUGS.author}`, ready: 'cuentoneta-tabs' },
+	{ name: 'author', path: `/author/${STABLE_SLUGS.author}`, ready: 'h1' },
 	// La colección no declara `h1`; su título es un componente propio.
 	{ name: 'storylist', path: `/storylist/${STABLE_SLUGS.storylist}`, ready: 'cuentoneta-storylist-title' },
 ] as const);
