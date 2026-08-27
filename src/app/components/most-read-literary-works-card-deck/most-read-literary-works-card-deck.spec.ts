@@ -1,20 +1,20 @@
-import { LatestStoriesCardDeck } from './latest-stories-card-deck';
+import { MostReadLiteraryWorksCardDeck } from './most-read-literary-works-card-deck';
 import { render, screen } from '@testing-library/angular';
 import { onoffLiteraryWorkNavigationTeasersWithAuthorsMock } from '@mocks/onoff-literary-work-teasers.mock';
 import { DeferBlockState } from '@angular/core/testing';
 
-const literaryWorks = onoffLiteraryWorkNavigationTeasersWithAuthorsMock.slice(0, 6);
+const literaryWorks = onoffLiteraryWorkNavigationTeasersWithAuthorsMock.slice(0, 3);
 
-describe('LatestStoriesCardDeck', () => {
+describe('MostReadLiteraryWorksCardDeck', () => {
 	it('should render the component', async () => {
-		const { container } = await render(LatestStoriesCardDeck, {
+		const { container } = await render(MostReadLiteraryWorksCardDeck, {
 			inputs: { literaryWorks: literaryWorks.slice(0, 1) },
 		});
 		expect(container).toBeTruthy();
 	});
 
 	it('should render skeletons and then the cards', async () => {
-		const { fixture } = await render(LatestStoriesCardDeck, { inputs: { literaryWorks } });
+		const { fixture } = await render(MostReadLiteraryWorksCardDeck, { inputs: { literaryWorks } });
 		const deferBlockFixture = (await fixture.getDeferBlocks())[0];
 
 		await deferBlockFixture.render(DeferBlockState.Loading);
@@ -27,10 +27,8 @@ describe('LatestStoriesCardDeck', () => {
 		expect(screen.getAllByTestId('card')).toHaveLength(literaryWorks.length);
 	});
 
-	// La tarjeta enlaza a la ruta de lectura: es el único camino que la home ofrece hacia una obra desde
-	// este bloque, y de él depende que la página emita enlaces internos.
 	it('links every card to the reading route', async () => {
-		const { fixture } = await render(LatestStoriesCardDeck, { inputs: { literaryWorks } });
+		const { fixture } = await render(MostReadLiteraryWorksCardDeck, { inputs: { literaryWorks } });
 		const deferBlockFixture = (await fixture.getDeferBlocks())[0];
 
 		await deferBlockFixture.render(DeferBlockState.Complete);

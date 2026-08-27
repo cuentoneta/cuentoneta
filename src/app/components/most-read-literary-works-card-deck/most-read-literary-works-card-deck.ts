@@ -5,11 +5,11 @@ import { LiteraryWorkHomeCardTeaserSkeletonComponent } from '../literary-work-ho
 import type { LiteraryWorkNavigationTeaserWithAuthors } from '@models/literary-work.model';
 
 @Component({
-	selector: 'cuentoneta-latest-stories-card-deck',
+	selector: 'cuentoneta-most-read-literary-works-card-deck',
 	imports: [LiteraryWorkHomeCardTeaserComponent, LiteraryWorkHomeCardTeaserSkeletonComponent],
 	template: ` <div class="flex content-between items-center gap-4 text-neutral-500">
 			<hr class="w-6" />
-			<h2 class="h3 text-center font-source-serif italic">Últimas novedades</h2>
+			<h2 class="h3 text-center font-source-serif italic">Historias más leídas</h2>
 			<hr class="flex-grow" />
 		</div>
 
@@ -36,7 +36,7 @@ import type { LiteraryWorkNavigationTeaserWithAuthors } from '@models/literary-w
 		class: 'mb-8 flex flex-col gap-8',
 	},
 })
-export class LatestStoriesCardDeck {
+export class MostReadLiteraryWorksCardDeck {
 	protected readonly skeletonCount = 6;
 	public readonly literaryWorks = input<readonly LiteraryWorkNavigationTeaserWithAuthors[]>([]);
 }

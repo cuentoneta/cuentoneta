@@ -13,8 +13,8 @@ import { HomeStructuredDataDirective } from './home-structured-data.directive';
 
 // Componentes
 import { CarouselComponent } from '@components/carousel/carousel.component';
-import { MostReadStoriesCardDeckComponent } from '@components/most-read-stories-card-deck/most-read-stories-card-deck.component';
-import { LatestStoriesCardDeck } from '@components/latest-stories-card-deck/latest-stories-card-deck';
+import { MostReadLiteraryWorksCardDeck } from '@components/most-read-literary-works-card-deck/most-read-literary-works-card-deck';
+import { LatestLiteraryWorksCardDeck } from '@components/latest-literary-works-card-deck/latest-literary-works-card-deck';
 import { CarouselSkeletonComponent } from '@components/carousel/carousel-skeleton.component';
 import { CollectionTeasersDeck } from '@components/collection-teasers-deck/collection-teasers-deck';
 import { HighlightedAuthorsComponent } from '@components/highlighted-authors/highlighted-authors.component';
@@ -24,8 +24,8 @@ import { HighlightedAuthorsComponent } from '@components/highlighted-authors/hig
 	templateUrl: './home.component.html',
 	imports: [
 		CarouselComponent,
-		MostReadStoriesCardDeckComponent,
-		LatestStoriesCardDeck,
+		MostReadLiteraryWorksCardDeck,
+		LatestLiteraryWorksCardDeck,
 		CarouselSkeletonComponent,
 		CollectionTeasersDeck,
 		HighlightedAuthorsComponent,
