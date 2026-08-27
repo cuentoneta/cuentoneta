@@ -28,7 +28,9 @@ export type SectionHeaderAction = {
 	imports: [RouterLink, ButtonComponent],
 	template: `
 		<div class="flex flex-col content-between gap-1">
-			<h2 class="font-inter text-2xl font-bold">{{ heading() }}</h2>
+			@if (heading()) {
+				<h2 class="font-inter text-2xl font-bold">{{ heading() }}</h2>
+			}
 			@if (subtitle()) {
 				<p class="font-inter text-sm text-neutral-600">{{ subtitle() }}</p>
 			}
@@ -45,7 +47,7 @@ export type SectionHeaderAction = {
 	},
 })
 export class SectionHeaderComponent {
-	public readonly heading = input.required<string>();
+	public readonly heading = input<string>('');
 	public readonly subtitle = input<string>('');
 	public readonly action = input<SectionHeaderAction | undefined>(undefined);
 }
