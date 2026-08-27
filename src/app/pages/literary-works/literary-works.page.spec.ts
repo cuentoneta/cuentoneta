@@ -11,6 +11,7 @@ import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 import type { LiteraryWorkApi } from '../../providers/literary-work.provider';
 import { provideLiteraryWorkApiMock, StubLiteraryWorkApi } from '../../providers/literary-work.mock';
 import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
+import { createSlug } from '@models/slug.model';
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
 
@@ -29,7 +30,11 @@ const [canonicalTeaser] = onoffLiteraryWorkTeasersMock;
 
 const stubbing = (teasers: readonly LiteraryWorkTeaser[]) => new StubLiteraryWorkApi(canonicalWork, teasers);
 
-const withTitle = (title: string, slug: string): LiteraryWorkTeaser => ({ ...canonicalTeaser, title, slug });
+const withTitle = (title: string, slug: string): LiteraryWorkTeaser => ({
+	...canonicalTeaser,
+	title,
+	slug: createSlug(slug),
+});
 
 // Cada tarjeta enlaza dos destinos —la obra y su autoría—; el del listado es el que lleva a la lectura.
 const readingHrefs = () =>
