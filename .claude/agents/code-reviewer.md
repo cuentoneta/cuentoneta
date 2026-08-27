@@ -30,8 +30,19 @@ Antes de revisar, leé **todas** las referencias del catálogo para tener el con
 
 1. **Identificar cambios** — Usá `git diff develop...HEAD` para ver todos los cambios de la rama.
 2. **Revisar contra CLAUDE.md y las referencias** y sus lineamientos.
-3. **Verificar cobertura de tests** — Confirmá que hay tests para el código nuevo (Vitest + Angular Testing Library + `@test-utils`).
-4. **Verificar los gates de CI** — Los que deben quedar verdes en cada PR son los definidos en la sección [Comandos comunes](../../CLAUDE.md#comandos-comunes) de `CLAUDE.md` (párrafo **Gates de CI**).
+3. **Auditar los comentarios del diff** — El criterio son los chequeos de la skill [`aposd-comment-audit`](../skills/aposd-comment-audit/SKILL.md), en su **modo acotado por diff** (la sección homónima de su `SKILL.md`); la doctrina de fondo vive en [`aposd-comments-style`](../skills/aposd-comments-style/SKILL.md). No tenés la herramienta `Skill`: esas skills se **leen** —`SKILL.md` y `references/checks.md`—, no se invocan.
+
+   El procedimiento, en cuatro pasos:
+
+   1. Listar los archivos que el diff toca: `git diff --name-only <base>...HEAD`.
+   2. Inventariar sus comentarios: `pnpm comments:inventory <archivos> --out <tu directorio de salida>/comment-inventory.json`, que vuelca archivo, línea, tipo y texto de cada uno. Solo cubre las extensiones que este repo contiene; lo que quede afuera se lee a mano.
+   3. **Recortar al diff:** `git diff -U0 <base>...HEAD` da las líneas agregadas o modificadas. Un comentario del inventario cuya línea no cae en ese conjunto **no es un hallazgo**. El archivo entero no está en revisión, y atribuirle al PR deuda que no contrajo convierte la señal en ruido.
+   4. Clasificar lo que queda con los veredictos de la skill (`UPDATE`, `DELETE`, `REWRITE`, `RELOCATE`, `ADD`) y volcarlo a las tablas de abajo con su identificador `R`, nombrando el veredicto dentro de la celda «Problema». Un comentario obsoleto (`UPDATE`) o que solo agrega ruido (`DELETE`) es **bloqueante** — lo declara [`coding-agent-policies.md`](../references/coding-agent-policies.md) Sección 3—, así que va a Críticos; `REWRITE`, `RELOCATE` y `ADD` van a Advertencias.
+
+   Un diff que no agrega ni modifica comentarios de código —o que es solo-doc— saltea el paso, y el resumen lo dice en vez de omitirlo en silencio.
+
+4. **Verificar cobertura de tests** — Confirmá que hay tests para el código nuevo (Vitest + Angular Testing Library + `@test-utils`).
+5. **Verificar los gates de CI** — Los que deben quedar verdes en cada PR son los definidos en la sección [Comandos comunes](../../CLAUDE.md#comandos-comunes) de `CLAUDE.md` (párrafo **Gates de CI**).
 
 - **Corré solo los que aplican al diff.** `e2e` y `studio-build` son costosos: `e2e` solo si el cambio toca flujos E2E, `studio-build` solo si toca `cms/`. Es la misma condición que aplica la Fase 4 del skill [`issue-workflow`](../skills/issue-workflow/SKILL.md); correrlos sobre un diff que no los toca no verifica nada.
 - **Si quien te invoca ya te pasa el resultado observado, no los repitas.** La Fase 4 corre en la sesión solo el **tier local** (`typecheck`, `lint`, `stylelint`, `test`, `check-agents`); los otros —`build`, `storybook`, `studio-build`, `e2e`— los corre la integración continua sobre el PR en borrador, y su resultado te llega igual. Que un gate no se haya corrido en la sesión **no** es motivo para correrlo vos: volver a ejecutarlos es la parte más cara de la review y no agrega información.
@@ -62,6 +73,7 @@ Estos patrones son intencionales y correctos. NO los reportes como problemas:
 - [ ] Sin `any` sin un comentario `// REASON:`
 - [ ] Sin `// @ts-ignore` sin issue enlazado
 - [ ] Sin números de issue en comentarios de código — salvo un `TODO` que cite en su misma línea el issue abierto que lo destraba, o la justificación enlazada de una supresión de lint/TS
+- [ ] Los comentarios que el diff agrega o modifica explican el porqué no obvio — sin reformular el código, sin narrar, sin changelog inline, y sin quedar obsoletos respecto de lo que el diff dejó (paso 3 del proceso de revisión)
 - [ ] Sin `console.log` (quitar antes de commitear)
 - [ ] Sin uso directo de `vi.fn()` / `vi.mock()` / `vi.*` ni de timers — usar los wrappers de `@test-utils`
 - [ ] Sin `enum` de TypeScript — usar `Object.freeze({...} as const)`
@@ -209,7 +221,7 @@ Los del `security-auditor` (si corrió) llevan su propio prefijo `S` (S1, S2, �
 
 ### Resultados de verificación
 
-Una fila por gate **aplicable al diff** (ver el paso 4 del proceso de revisión), declarando quién observó el resultado:
+Una fila por gate **aplicable al diff** (ver el paso 5 del proceso de revisión), declarando quién observó el resultado:
 
 | Comando          | Resultado | Corrido por  |
 | ---------------- | --------- | ------------ |
