@@ -159,6 +159,22 @@ describe('HomeComponent', () => {
 		});
 	});
 
+	// El número es un ranking: en el diseño lo lleva más leídas y no novedades. La página es la única que
+	// puede afirmar la distinción, porque es quien decide cuál de los dos mazos ordena por algo.
+	describe('numeración de las tarjetas', () => {
+		it('should number the most read works and leave the newest ones unnumbered', async () => {
+			const literaryWorks = onoffLiteraryWorkNavigationTeasersWithAuthorsMock.slice(0, 6);
+
+			await renderHome({ latestReads: literaryWorks, mostRead: literaryWorks });
+
+			const novedades = within(screen.getByRole('region', { name: 'Últimas novedades' }));
+			const masLeidas = within(screen.getByRole('region', { name: 'Obras más leídas' }));
+
+			expect(novedades.queryAllByTestId('order')).toHaveLength(0);
+			expect(masLeidas.getAllByTestId('order')).toHaveLength(6);
+		});
+	});
+
 	// El orden lo fija el diseño, y el spec lo afirma sobre el documento porque es lo único que lo
 	// distingue: las cuatro secciones se ven iguales si solo se cuentan sus encabezados.
 	describe('orden de las secciones', () => {
