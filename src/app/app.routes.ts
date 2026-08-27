@@ -9,6 +9,7 @@ export const AppRoutes = Object.freeze({
 	About: 'about',
 	Dmca: 'dmca',
 	Collection: 'collection',
+	LiteraryWork: 'literary-work',
 	Read: 'read',
 } as const);
 export type AppRoutes = (typeof AppRoutes)[keyof typeof AppRoutes];
@@ -53,6 +54,10 @@ export const appRoutes: Routes = [
 	{
 		path: AppRoutes.Collection,
 		loadComponent: () => import('./pages/collections/collections.page'),
+	},
+	{
+		path: AppRoutes.LiteraryWork,
+		loadComponent: () => import('./pages/literary-works/literary-works.page'),
 	},
 	{
 		path: AppRoutes.About,
