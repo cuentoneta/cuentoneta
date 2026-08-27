@@ -6,7 +6,13 @@
 	     así que encabeza la lectura y su `h1` precede al `h2` del listado. A diferencia de la página de
 	     colección, esta columna tampoco se oculta en mobile — acá no es accesoria. -->
 	<aside class="flex w-full shrink-0 flex-col gap-6 lg:order-last lg:w-91 lg:pt-8" data-testid="author-info">
-		<cuentoneta-author-info-panel [author]="author" [biographyLines]="sidebarBiographyLines" />
+		<cuentoneta-author-info-panel
+			(readMore)="openBiographyDrawer(biographyDrawer)"
+			[author]="author"
+			[biographyLines]="sidebarBiographyLines"
+			[showReadMore]="true"
+		/>
+		<ng-container [ngTemplateOutlet]="webResourcesBlock" />
 	</aside>
 
 	<cuentoneta-divider orientation="vertical" class="hidden lg:order-last lg:block" />
@@ -33,6 +39,34 @@
 			}
 		</div>
 	</div>
+
+	<!-- Fuera del aside a propósito: un ancestro en display:none impediría que el <dialog> se muestre. -->
+	<cuentoneta-drawer
+		(afterClosed)="isBiographyDrawerOpen.set(false)"
+		[ariaLabel]="'Biografía de ' + author.name"
+		#biographyDrawer
+		direction="right"
+	>
+		@if (isBiographyDrawerOpen()) {
+		<cuentoneta-author-info-panel [author]="author" [showName]="false" />
+		<cuentoneta-divider class="my-5" />
+		<ng-container [ngTemplateOutlet]="webResourcesBlock" />
+		}
+	</cuentoneta-drawer>
+
+	<!-- El único contenido que la columna y el panel deslizable comparten. -->
+	<ng-template #webResourcesBlock>
+		@if (author.resources.length > 0) {
+		<section class="flex flex-col gap-4" data-testid="web-resources">
+			<h2 class="font-inter text-lg font-bold text-neutral-900">Recursos web sobre el autor</h2>
+			<div class="flex flex-wrap items-center gap-3">
+				@for (resource of author.resources; track resource.url) {
+				<cuentoneta-resource [resource]="resource" size="sm" />
+				}
+			</div>
+		</section>
+		}
+	</ng-template>
 	} @else {
 	<aside class="flex w-full shrink-0 flex-col gap-6 lg:order-last lg:w-91 lg:pt-8" aria-busy="true">
 		<cuentoneta-author-info-panel [biographyLines]="sidebarBiographyLines" />

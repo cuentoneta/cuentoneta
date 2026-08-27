@@ -144,11 +144,25 @@ type ResourcesSubQuery = (
 )['resources'];
 type RawResource = NonNullable<ResourcesSubQuery>[number];
 
+// Los recursos se pintan como `href` de un enlace, así que el esquema decide si la URL navega o
+// ejecuta. El tipo `url` del Studio ya acota los esquemas en el punto de edición, pero valida la
+// edición y no lo almacenado — el mismo motivo por el que la ausencia de URL se filtra acá abajo.
+const NAVIGABLE_URL_SCHEMES = Object.freeze(['http:', 'https:', 'mailto:']);
+
 // El typegen deriva `url: string` del `Rule.required()` del schema, pero esa regla valida la edición
 // en el Studio, no lo ya almacenado: hay documentos persistidos sin URL. El tipo miente, y sin este
 // guard la ausencia cruza la frontera y revienta al primer consumidor que la lea como string.
 function hasUrl(resource: RawResource): boolean {
-	return typeof resource.url === 'string' && resource.url.length > 0;
+	if (typeof resource.url !== 'string' || resource.url.length === 0) {
+		return false;
+	}
+
+	try {
+		return NAVIGABLE_URL_SCHEMES.includes(new URL(resource.url).protocol);
+	} catch {
+		// Una URL que el parser rechaza no tiene esquema del cual decidir: se descarta con las demás.
+		return false;
+	}
 }
 
 export function mapResources(resources: ResourcesSubQuery): Resource[] {
