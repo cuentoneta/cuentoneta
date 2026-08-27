@@ -2,6 +2,8 @@
 	"extends": "./tsconfig.json",
 	"compilerOptions": {
 		"outDir": "./dist/out-tsc",
+		"allowImportingTsExtensions": true,
+		"rewriteRelativeImportExtensions": true,
 		"module": "preserve",
 		"target": "es2022",
 		"types": ["vitest/globals", "node"],

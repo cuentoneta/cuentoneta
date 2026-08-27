@@ -6,7 +6,7 @@
  * Es una ayuda local, no un gate: solo ve el texto que la herramienta agrega. Lo ya commiteado, o lo
  * escrito por Bash o por otro editor, queda fuera de su alcance.
  */
-import { findIssueRefsInComments } from './block-issue-refs-in-comments.helpers';
+import { findIssueRefsInComments } from './block-issue-refs-in-comments.helpers.ts';
 
 const BLOCK_EXIT_CODE = 2;
 
