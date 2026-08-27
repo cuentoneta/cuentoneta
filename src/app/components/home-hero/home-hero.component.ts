@@ -1,10 +1,11 @@
 import { Component, input } from '@angular/core';
+import { NgOptimizedImage } from '@angular/common';
 
 import { CoverImageComponent } from '@components/cover-image/cover-image.component';
 
 /**
- * Encabezado de la página de inicio del Design System v3: la banda de fondo que abre la página, con
- * el título, la bajada y una muestra de portadas, y el carrusel de campañas proyectado debajo.
+ * Encabezado de la página de inicio del Design System v3: la banda que abre la página —con su trazo de
+ * fondo, el título, la bajada y una muestra de portadas— y el carrusel de campañas proyectado debajo.
  *
  * El fondo es full-bleed y el contenido va enmarcado adentro, así que el host no puede vivir dentro
  * del contenedor angosto de la página.
@@ -14,9 +15,17 @@ import { CoverImageComponent } from '@components/cover-image/cover-image.compone
  */
 @Component({
 	selector: 'cuentoneta-home-hero',
-	imports: [CoverImageComponent],
+	imports: [NgOptimizedImage, CoverImageComponent],
 	template: `
-		<div class="mx-auto flex w-full max-w-screen-lg flex-col items-center gap-20 px-5 pt-44 pb-16">
+		<!--
+			El trazo del diseño viaja como imagen y no como marcado: la curva no tiene semántica y su
+			geometría es del diseño, así que exportarla evita reproducirla a mano y que se desvíe del mock.
+			Se estira con la banda —igual que en el diseño, que la declara sin conservar proporción—, porque
+			el alto de la banda lo fija su contenido y no una relación de aspecto.
+		-->
+		<img ngSrc="./assets/svg/home-hero-weave.svg" fill priority alt="" class="object-fill" data-testid="hero-weave" />
+
+		<div class="relative z-content mx-auto flex w-full max-w-screen-lg flex-col items-center gap-20 px-5 pt-44 pb-16">
 			<div class="flex w-full flex-col items-center justify-between gap-10 lg:flex-row lg:gap-8">
 				<div class="flex flex-col gap-4">
 					<h1 class="font-source-serif text-4xl font-semibold text-neutral-900 lg:text-6xl">
@@ -45,7 +54,9 @@ import { CoverImageComponent } from '@components/cover-image/cover-image.compone
 		</div>
 	`,
 	host: {
-		class: 'block bg-brand-200',
+		// El color de fondo se conserva bajo la imagen: cubre la banda mientras el trazo no cargó, y evita
+		// un destello blanco en la primera pantalla.
+		class: 'relative isolate block overflow-hidden bg-brand-200',
 	},
 })
 export class HomeHeroComponent {
