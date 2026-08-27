@@ -1,6 +1,7 @@
 import { Component, input } from '@angular/core';
 
 import { SectionHeaderComponent, type SectionHeaderAction } from '@components/section-header/section-header.component';
+import { EmptyStateComponent } from '@components/empty-state/empty-state.component';
 import { LiteraryWorkHomeCardTeaserComponent } from '../literary-work-home-card-teaser/literary-work-home-card-teaser.component';
 import { LiteraryWorkHomeCardTeaserSkeletonComponent } from '../literary-work-home-card-teaser/literary-work-home-card-teaser-skeleton.component';
 import type { LiteraryWorkNavigationTeaserWithAuthors } from '@models/literary-work.model';
@@ -15,14 +16,25 @@ import type { LiteraryWorkNavigationTeaserWithAuthors } from '@models/literary-w
  */
 @Component({
 	selector: 'cuentoneta-literary-works-card-deck',
-	imports: [SectionHeaderComponent, LiteraryWorkHomeCardTeaserComponent, LiteraryWorkHomeCardTeaserSkeletonComponent],
+	imports: [
+		SectionHeaderComponent,
+		EmptyStateComponent,
+		LiteraryWorkHomeCardTeaserComponent,
+		LiteraryWorkHomeCardTeaserSkeletonComponent,
+	],
 	template: `
 		@if (heading() || subtitle()) {
 			<cuentoneta-section-header [heading]="heading()" [subtitle]="subtitle()" [action]="action()" />
 		}
 
-		<section class="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-8">
-			@defer (when literaryWorks().length > 0) {
+		@if (loading()) {
+			<section class="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-8">
+				@for (_ of [].constructor(skeletonCount); track $index) {
+					<cuentoneta-literary-work-home-card-teaser-skeleton data-testid="skeleton" />
+				}
+			</section>
+		} @else if (literaryWorks().length > 0) {
+			<section class="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-8">
 				@for (literaryWork of literaryWorks(); track literaryWork.slug) {
 					<cuentoneta-literary-work-home-card-teaser
 						[literaryWork]="literaryWork"
@@ -34,12 +46,10 @@ import type { LiteraryWorkNavigationTeaserWithAuthors } from '@models/literary-w
 						data-testid="card"
 					/>
 				}
-			} @loading (minimum 500ms) {
-				@for (_ of [].constructor(skeletonCount); track $index) {
-					<cuentoneta-literary-work-home-card-teaser-skeleton data-testid="skeleton" />
-				}
-			}
-		</section>
+			</section>
+		} @else {
+			<cuentoneta-empty-state [message]="emptyMessage()" />
+		}
 	`,
 	host: {
 		class: 'mb-8 flex flex-col gap-8',
@@ -57,4 +67,7 @@ export class LiteraryWorksCardDeck {
 	public readonly heading = input<string>('');
 	public readonly subtitle = input<string>('');
 	public readonly action = input<SectionHeaderAction | undefined>(undefined);
+	/** El dueño del recurso es la página, así que el estado de carga entra por input. */
+	public readonly loading = input(false);
+	public readonly emptyMessage = input<string>('Todavía no hay obras para mostrar acá.');
 }

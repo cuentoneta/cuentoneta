@@ -54,6 +54,9 @@ export default class HomeComponent {
 
 	// Propiedades
 	private readonly landingPageContent = computed(() => this.landingPageResource.value());
+	// El recurso bloquea el SSR, así que en el HTML servido esto ya es falso: los decks salen con su
+	// contenido y no con esqueletos. En el cliente cubre la navegación entrante.
+	protected readonly isLoading = computed(() => this.landingPageResource.isLoading());
 	protected readonly collections = computed(() => this.landingPageContent()?.collections || []);
 	protected readonly campaigns = computed(() => this.landingPageContent()?.campaigns || []);
 	protected readonly mostRead = computed(() => this.landingPageContent()?.mostRead.slice(0, 6) || []);

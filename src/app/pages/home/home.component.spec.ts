@@ -13,7 +13,6 @@ import { onoffLiteraryWorkNavigationTeasersWithAuthorsMock } from '@mocks/onoff-
 import { onoffCollectionTeasersMock } from '@mocks/onoff-collections.mock';
 import type { CollectionTeaser } from '@models/collection.model';
 import { contentCampaignMock } from '@mocks/content-campaign.mock';
-import { renderDeferBlocks } from '@testing/defer-blocks';
 import { clearAllMocks } from '@test-utils';
 
 // El doble canned del provider entrega la landing vacía; cada caso le superpone solo las secciones
@@ -102,9 +101,7 @@ describe('HomeComponent', () => {
 		// Los dos mazos marcan sus tarjetas con el mismo `card`, así que el discriminante es el nombre de
 		// región de cada uno: por orden de documento, el caso dejaría de valer al reordenar las secciones.
 		it('should hand each listing to its own deck', async () => {
-			const { fixture } = await renderHome({ latestReads, mostRead });
-
-			await renderDeferBlocks(fixture);
+			await renderHome({ latestReads, mostRead });
 
 			expect(screen.getAllByTestId('card')).toHaveLength(latestReads.length + mostRead.length);
 			(
@@ -139,11 +136,9 @@ describe('HomeComponent', () => {
 			it('should cap the listing at six, however many the week brings', async () => {
 				expect(onoffLiteraryWorkNavigationTeasersWithAuthorsMock.length).toBeGreaterThan(6);
 
-				const { fixture } = await renderHome({
+				await renderHome({
 					[section]: [...onoffLiteraryWorkNavigationTeasersWithAuthorsMock],
 				});
-
-				await renderDeferBlocks(fixture);
 
 				expect(screen.getAllByTestId('card')).toHaveLength(6);
 				onoffLiteraryWorkNavigationTeasersWithAuthorsMock.slice(6).forEach(({ title }) => {
@@ -157,9 +152,7 @@ describe('HomeComponent', () => {
 		const collections = onoffCollectionTeasersMock;
 
 		it('should render every collection of the week', async () => {
-			const { fixture } = await renderHome({ collections });
-
-			await renderDeferBlocks(fixture);
+			await renderHome({ collections });
 
 			collections.forEach(({ title }) => {
 				expect(screen.getByText(title)).toBeInTheDocument();
@@ -170,9 +163,7 @@ describe('HomeComponent', () => {
 	describe('campañas', () => {
 		it('should hand the campaigns of the week to the carousel', async () => {
 			const [firstCampaign] = contentCampaignMock;
-			const { fixture } = await renderHome({ campaigns: contentCampaignMock });
-
-			await renderDeferBlocks(fixture);
+			await renderHome({ campaigns: contentCampaignMock });
 
 			expect(screen.getByRole('region', { name: 'Content campaigns' })).toBeInTheDocument();
 			// El carrusel dibuja solo la diapositiva activa, así que la campaña observable es la primera.
@@ -197,9 +188,7 @@ describe('HomeComponent', () => {
 
 		it('should hand every highlighted author to the grid', async () => {
 			const highlightedAuthors = onoffHighlightedAuthorsOfLength(6);
-			const { fixture } = await renderHome({ highlightedAuthors });
-
-			await renderDeferBlocks(fixture);
+			await renderHome({ highlightedAuthors });
 
 			highlightedAuthors.forEach(({ author }) => {
 				expect(screen.getByText(author.name)).toBeInTheDocument();
@@ -213,10 +202,9 @@ describe('HomeComponent', () => {
 		});
 	});
 
-	// La landing sale vacía mientras la edición no cargó la semana, y es un estado que se sirve: la
-	// página tiene que sostener su estructura sin dibujar contenedores a medio llenar. Los diferidos no
-	// se fuerzan acá a propósito: lo que se afirma es que sus disparadores no disparan sin contenido, y
-	// forzarlos montaría un carrusel de cero diapositivas, un estado que la aplicación no alcanza.
+	// La landing sale vacía mientras la edición no cargó la semana, y es un estado que se sirve: la página
+	// tiene que sostener su estructura y decir qué falta, en vez de dejar huecos que se leen como carga
+	// que nunca terminó.
 	describe('semana sin contenido', () => {
 		it('should keep every section heading when the week brings nothing', async () => {
 			await renderHome();
@@ -245,13 +233,38 @@ describe('HomeComponent', () => {
 			expect(screen.getAllByRole('link', { name: 'Ver todo el catálogo de obras' })).toHaveLength(2);
 		});
 
-		// Las tres clases de tarjeta —historia, colección y autor— se dibujan como `article`, así que la
-		// ausencia de ese rol cubre a las tres a la vez.
+		// Las tres clases de tarjeta —obra, colección y autor— se dibujan como `article`, así que la
+		// ausencia de ese rol cubre a las tres a la vez. El carrusel es el único bloque que sin contenido
+		// no se monta: un carrusel de cero diapositivas no es un estado que exista.
 		it('should render neither cards nor a carousel when the week brings nothing', async () => {
 			await renderHome();
 
 			expect(screen.queryAllByRole('article')).toHaveLength(0);
 			expect(screen.queryByRole('region', { name: 'Content campaigns' })).not.toBeInTheDocument();
+		});
+
+		// Cada deck dice lo suyo: un único mensaje compartido no distinguiría qué sección quedó sin
+		// contenido, que es justamente lo que la página tiene que comunicar.
+		it('should explain what is missing in each deck', async () => {
+			await renderHome();
+
+			[
+				'Todavía no hay obras nuevas esta semana.',
+				'Todavía no hay obras más leídas para mostrar.',
+				'Todavía no hay autores destacados esta semana.',
+				'Todavía no hay colecciones para mostrar esta semana.',
+			].forEach((message) => {
+				expect(screen.getByText(message)).toBeInTheDocument();
+			});
+		});
+
+		// El HTML servido no debe llevar marcadores de esqueleto: el recurso bloquea el SSR, así que para
+		// cuando la página se serializa el estado de carga ya terminó. Es el invariante que la suite de
+		// indexado afirma sobre la página real.
+		it('should render no skeleton markers once the resource settled', async () => {
+			await renderHome();
+
+			expect(screen.queryAllByTestId('skeleton')).toHaveLength(0);
 		});
 	});
 });

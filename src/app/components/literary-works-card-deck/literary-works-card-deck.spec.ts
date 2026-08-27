@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/angular';
-import { DeferBlockState } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
 import { LiteraryWorksCardDeck } from './literary-works-card-deck';
@@ -19,33 +18,62 @@ describe('LiteraryWorksCardDeck', () => {
 		expect(container).toBeTruthy();
 	});
 
-	it('should render skeletons and then the cards', async () => {
-		const { fixture } = await render(LiteraryWorksCardDeck, {
-			inputs: defaultInputs,
-			providers: defaultProviders,
-		});
-		const deferBlockFixture = (await fixture.getDeferBlocks())[0];
+	describe('Estados del listado', () => {
+		it('should fill the grid with skeletons while loading', async () => {
+			await render(LiteraryWorksCardDeck, {
+				inputs: { ...defaultInputs, loading: true },
+				providers: defaultProviders,
+			});
 
-		await deferBlockFixture.render(DeferBlockState.Loading);
-		expect(screen.getAllByTestId('skeleton')).toHaveLength(6);
-
-		await deferBlockFixture.render(DeferBlockState.Complete);
-		literaryWorks.forEach(({ title }) => {
-			expect(screen.getByText(title)).toBeInTheDocument();
+			expect(screen.getAllByTestId('skeleton')).toHaveLength(6);
+			expect(screen.queryAllByTestId('card')).toHaveLength(0);
 		});
-		expect(screen.getAllByTestId('card')).toHaveLength(literaryWorks.length);
+
+		// Cargar gana sobre tener datos: mientras el recurso está en vuelo, lo que hay en pantalla es del
+		// listado anterior y mostrarlo como definitivo haría parpadear contenido que va a cambiar.
+		it('should show skeletons while loading even if it already holds works', async () => {
+			await render(LiteraryWorksCardDeck, {
+				inputs: { ...defaultInputs, loading: true, literaryWorks },
+				providers: defaultProviders,
+			});
+
+			expect(screen.queryAllByTestId('card')).toHaveLength(0);
+		});
+
+		it('should render one card per work once it is loaded', async () => {
+			await render(LiteraryWorksCardDeck, {
+				inputs: defaultInputs,
+				providers: defaultProviders,
+			});
+
+			literaryWorks.forEach(({ title }) => {
+				expect(screen.getByText(title)).toBeInTheDocument();
+			});
+			expect(screen.getAllByTestId('card')).toHaveLength(literaryWorks.length);
+			expect(screen.queryAllByTestId('skeleton')).toHaveLength(0);
+		});
+
+		// Sin obras y sin carga la sección no queda en blanco: si lo hiciera, se leería como contenido que
+		// nunca terminó de llegar.
+		it('should explain the emptiness when there is nothing to show', async () => {
+			await render(LiteraryWorksCardDeck, {
+				inputs: { ...defaultInputs, literaryWorks: [], emptyMessage: 'Todavía no hay obras nuevas esta semana.' },
+				providers: defaultProviders,
+			});
+
+			expect(screen.getByText('Todavía no hay obras nuevas esta semana.')).toBeInTheDocument();
+			expect(screen.queryAllByTestId('card')).toHaveLength(0);
+			expect(screen.queryAllByTestId('skeleton')).toHaveLength(0);
+		});
 	});
 
 	// La tarjeta enlaza a la ruta de lectura: es el único camino que la home ofrece hacia una obra desde
 	// este bloque, y de él depende que la página emita enlaces internos.
 	it('links every card to the reading route', async () => {
-		const { fixture } = await render(LiteraryWorksCardDeck, {
+		await render(LiteraryWorksCardDeck, {
 			inputs: defaultInputs,
 			providers: defaultProviders,
 		});
-		const deferBlockFixture = (await fixture.getDeferBlocks())[0];
-
-		await deferBlockFixture.render(DeferBlockState.Complete);
 
 		const hrefs = screen.getAllByRole('link').map((link) => link.getAttribute('href'));
 		literaryWorks.forEach(({ slug }) => {

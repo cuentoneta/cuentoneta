@@ -1,8 +1,6 @@
-import { argsToTemplate, Meta, moduleMetadata, StoryObj } from '@storybook/angular-vite';
+import { argsToTemplate, Meta, StoryObj } from '@storybook/angular-vite';
 
 import { LiteraryWorksCardDeck } from './literary-works-card-deck';
-import { SectionHeaderComponent } from '@components/section-header/section-header.component';
-import { LiteraryWorkHomeCardTeaserSkeletonComponent } from '@components/literary-work-home-card-teaser/literary-work-home-card-teaser-skeleton.component';
 import { onoffLiteraryWorkNavigationTeasersWithAuthorsMock } from '@mocks/onoff-literary-work-teasers.mock';
 
 // Un solo dataset compartido por todas las stories: las mismas obras en cada estado hacen que el switch
@@ -12,16 +10,11 @@ const literaryWorks = onoffLiteraryWorkNavigationTeasersWithAuthorsMock.slice(0,
 const meta: Meta<LiteraryWorksCardDeck> = {
 	component: LiteraryWorksCardDeck,
 	title: 'Componentes V3/LiteraryWorksCardDeck',
-	decorators: [
-		moduleMetadata({
-			imports: [SectionHeaderComponent, LiteraryWorkHomeCardTeaserSkeletonComponent],
-		}),
-	],
 	parameters: {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>El <strong>LiteraryWorksCardDeck</strong> es la grilla de una tirada de obras en el Design System v3: un <a href="./?path=/docs/componentes-v3-sectionheader--docs" target="_top"><strong>SectionHeader</strong></a> opcional sobre una grilla responsiva de una columna en mobile y tres desde <code>md</code>, con una vista previa por obra resuelta por <a href="./?path=/docs/componentes-v3-literaryworkhomecardteaser--docs" target="_top"><strong>LiteraryWorkHomeCardTeaser</strong></a>.</p><p>Todo lo que distingue a una tirada de otra —su título, su bajada y a dónde lleva su acción— entra por input, así que una misma página puede montar varias y cualquier otra puede reusarlo. Con título, el host se expone como región con ese nombre, que es lo que permite localizar cada instancia sin depender de su posición; sin título ni bajada queda la grilla sola y el host no se anuncia como región. Mientras difiere la carga dibuja los skeletons dentro de su bloque <code>@defer</code>, y sin obras queda solo el encabezado.</p></div>`,
+				component: `<div><p>El <strong>LiteraryWorksCardDeck</strong> es la grilla de una tirada de obras en el Design System v3: un <a href="./?path=/docs/componentes-v3-sectionheader--docs" target="_top"><strong>SectionHeader</strong></a> opcional sobre una grilla responsiva de una columna en mobile y tres desde <code>md</code>, con una vista previa por obra resuelta por <a href="./?path=/docs/componentes-v3-literaryworkhomecardteaser--docs" target="_top"><strong>LiteraryWorkHomeCardTeaser</strong></a>.</p><p>Todo lo que distingue a una tirada de otra —su título, su bajada y a dónde lleva su acción— entra por input, así que una misma página puede montar varias y cualquier otra puede reusarlo. Con título, el host se expone como región con ese nombre, que es lo que permite localizar cada instancia sin depender de su posición; sin título ni bajada queda la grilla sola y el host no se anuncia como región. El estado de carga entra por input, porque el dueño del recurso es la página: cargando dibuja esqueletos, con obras la grilla, y sin obras el aviso de <a href="./?path=/docs/componentes-v3-emptystate--docs" target="_top"><strong>EmptyState</strong></a>.</p></div>`,
 			},
 		},
 	},
@@ -48,6 +41,16 @@ const meta: Meta<LiteraryWorksCardDeck> = {
 			control: { type: 'object' },
 			description: 'Destino del enlace "Ver todo" y el sufijo que nombra ese destino',
 			table: { type: { summary: 'SectionHeaderAction | undefined' }, defaultValue: { summary: 'undefined' } },
+		},
+		loading: {
+			control: { type: 'boolean' },
+			description: 'Estado de carga del recurso que alimenta la tirada; lo decide la página',
+			table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' } },
+		},
+		emptyMessage: {
+			control: { type: 'text' },
+			description: 'Qué decir cuando la tirada viene vacía',
+			table: { type: { summary: 'string' }, defaultValue: { summary: "'Todavía no hay obras para mostrar acá.'" } },
 		},
 	},
 };
@@ -111,30 +114,13 @@ export const SinEncabezado: Story = {
 	},
 };
 
-export const Estados: StoryObj<LiteraryWorksCardDeck & { loading: boolean }> = {
+// El switch mueve el input real del componente, así que alcanza con una sola instancia: no hay markup
+// duplicado que pueda divergir de lo que el componente dibuja.
+export const Estados: Story = {
 	argTypes: { loading: { control: 'boolean', name: 'Cargando' } },
 	render: (args) => ({
-		// El mismo tope que el componente: la rama de carga no depende de cuántas obras traiga el control.
-		props: { ...args, skeletonCount: 6 },
-		template: `
-			@if (loading) {
-				<div class="mb-8 flex flex-col gap-8">
-					<cuentoneta-section-header [heading]="heading" [subtitle]="subtitle" [action]="action" />
-					<section class="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-8">
-						@for (_ of [].constructor(skeletonCount); track $index) {
-							<cuentoneta-literary-work-home-card-teaser-skeleton />
-						}
-					</section>
-				</div>
-			} @else {
-				<cuentoneta-literary-works-card-deck
-					[literaryWorks]="literaryWorks"
-					[heading]="heading"
-					[subtitle]="subtitle"
-					[action]="action"
-				/>
-			}
-		`,
+		props: args,
+		template: `<cuentoneta-literary-works-card-deck ${argsToTemplate(args)} />`,
 	}),
 	args: {
 		loading: true,
@@ -146,7 +132,7 @@ export const Estados: StoryObj<LiteraryWorksCardDeck & { loading: boolean }> = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Activá/desactivá "Cargando" para alternar entre el estado real y el estado de carga del deck: el encabezado se sostiene y la grilla dibuja los seis esqueletos que dibuja el componente, sin depender de cuántas obras traiga el control.</p><p><strong>Usos:</strong> verificar que el encabezado no salte entre los dos estados.</p>`,
+				story: `<p>Activá/desactivá "Cargando" para alternar entre el estado real y el de carga: el encabezado se sostiene y la grilla dibuja los seis esqueletos del componente, sin depender de cuántas obras traiga el control. Vaciando además la lista de obras aparece el tercer estado, el del aviso de vacío.</p><p><strong>Usos:</strong> verificar que el encabezado no salte entre estados.</p>`,
 			},
 		},
 	},
@@ -166,7 +152,7 @@ export const Vacia: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Sin obras el <code>@defer</code> no dispara: queda el encabezado, sin tarjetas ni esqueletos. Es el valor default del input <code>literaryWorks</code>, y el estado que la página sirve una semana sin contenido nuevo.</p><p><strong>Usos:</strong> revisar qué ve alguien que llega en una semana vacía.</p>`,
+				story: `<p>Sin obras queda el encabezado y, en lugar de la grilla, el aviso de que no hay nada que mostrar: un hueco en blanco se leería como contenido que no terminó de cargar. Es el valor default del input <code>literaryWorks</code>, y el estado que la página sirve una semana sin contenido nuevo.</p><p><strong>Usos:</strong> revisar qué ve alguien que llega en una semana vacía.</p>`,
 			},
 		},
 	},
