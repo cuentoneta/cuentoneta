@@ -24,7 +24,7 @@ export const appRoutes: Routes = [
 	},
 	{
 		path: `${AppRoutes.Author}/:slug`,
-		loadComponent: () => import('./pages/author/author.component'),
+		loadComponent: () => import('./pages/author/author.page'),
 	},
 	{
 		path: AppRoutes.Story,

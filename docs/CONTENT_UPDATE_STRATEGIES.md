@@ -61,7 +61,7 @@ El documento singleton `rotatingContent` en Sanity almacena la información de c
   _id: "rotatingContent",
   _type: "rotatingContent",
   mostReadLiteraryWorks: Array<LiteraryWorkReference>,  // Obras más leídas (vigente)
-  mostRead: Array<StoryReference>                       // Historias más leídas (en baja)
+  mostRead: Array<StoryReference>                       // Obras más leídas (en baja)
 }
 ```
 

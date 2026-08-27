@@ -7,12 +7,11 @@ import type { Observable } from 'rxjs';
 import { environment } from '../environments/environment';
 
 // Models
-import type { Story, StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
+import type { Story, StoryTeaserWithAuthor } from '@models/story.model';
 import { Endpoints, type ApiUrl } from './endpoints';
 
 export interface StoryApi {
 	getBySlug(slug: string): Observable<Story>;
-	getByAuthorSlug(slug: string, offset?: number, limit?: number): Observable<StoryTeaser[]>;
 	get(offset?: number, limit?: number): Observable<StoryTeaserWithAuthor[]>;
 }
 
@@ -23,11 +22,6 @@ export class HttpStoryApi implements StoryApi {
 
 	public getBySlug(slug: string): Observable<Story> {
 		return this.http.get<Story>(`${this.url}/${slug}`);
-	}
-
-	public getByAuthorSlug(slug: string, offset: number = 0, limit: number = 100): Observable<StoryTeaser[]> {
-		const params = new HttpParams().set('offset', offset).append('limit', limit);
-		return this.http.get<StoryTeaser[]>(`${this.url}/author/${slug}`, { params });
 	}
 
 	public get(offset: number = 0, limit: number = 100): Observable<StoryTeaserWithAuthor[]> {

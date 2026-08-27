@@ -1,6 +1,6 @@
 ---
 name: aposd-comment-audit
-description: Auditá los comentarios de un codebase completo, un directorio o un conjunto de archivos contra "A Philosophy of Software Design" de John Ousterhout (2.ª ed.) y producí un informe de hallazgos con remediación opcional. Usala siempre que el usuario pida auditar, revisar, limpiar, evaluar o "arreglar los comentarios" de código existente, se queje de la calidad o el ruido de los comentarios en un repo, o quiera encontrar interfaces públicas sin documentar. Es un workflow explícito — no la dispares solo porque se esté escribiendo código (para eso está la skill aposd-comments-style).
+description: Auditá los comentarios de un codebase completo, un directorio o un conjunto de archivos contra "A Philosophy of Software Design" de John Ousterhout (2.ª ed.) y producí un informe de hallazgos con remediación opcional. Usala siempre que el usuario pida auditar, revisar, limpiar, evaluar o "arreglar los comentarios" de código existente, se queje de la calidad o el ruido de los comentarios en un repo, o quiera encontrar interfaces públicas sin documentar. Es un workflow explícito — no la dispares solo porque se esté escribiendo código (para eso está la skill aposd-comments-style). Auditar los comentarios que un diff agrega o modifica, durante una review, sí es un uso previsto.
 ---
 
 # Auditoría de comentarios
@@ -8,6 +8,17 @@ description: Auditá los comentarios de un codebase completo, un directorio o un
 Evaluá sistemáticamente los comentarios existentes en un codebase — tanto los comentarios que no deberían existir como los que faltan — y luego informá los hallazgos y, opcionalmente, remediá.
 
 La doctrina (reglas y ejemplos de cada chequeo) vive en `references/checks.md`. Leela antes de clasificar hallazgos.
+
+## Modo acotado por diff (desde una review)
+
+El [`code-reviewer`](../../agents/code-reviewer.md) aplica estos chequeos sobre **los comentarios que un diff agrega o modifica**. Es un uso previsto, y no contradice la advertencia del `description` de esta skill: lo que ahí se prohíbe es dispararla **mientras se escribe** código —para eso está [`aposd-comments-style`](../aposd-comments-style/SKILL.md), que la Fase 3 del skill [`issue-workflow`](../issue-workflow/SKILL.md) carga explícitamente—, no auditar un diff ya escrito. Auditar es justamente lo que esta skill hace; lo que cambia es el alcance, no el criterio.
+
+Los ajustes al workflow de abajo, y solo estos cuatro:
+
+- **El alcance no se confirma con el usuario** (paso 1): lo fija el diff. Entran los archivos que el diff toca y **solo las líneas que agrega o modifica** — un comentario preexistente que el diff no tocó no es un hallazgo, aunque incumpla. Auditar el archivo entero convierte la señal en ruido y le atribuye al PR deuda que no contrajo.
+- **El inventario se acota a esos archivos** (paso 2): `pnpm comments:inventory` recibe la lista de archivos cambiados, no un directorio, y sin las rutas borradas —valida todas las que recibe y sale sin producir nada si alguna falta—. Como devuelve todo comentario del archivo, el recorte por líneas se hace después, contra el diff, por **solapamiento** del rango `line`–`endLine` de cada registro: un bloque cuyo cuerpo cambió sin tocarse su encabezado también está modificado. Las estadísticas de base (comentarios por KLOC, cobertura de docs) no aplican — miden un codebase, no un cambio.
+- **`ADD` no sale del inventario** (paso 3): un comentario faltante no tiene entrada ahí. Sobre un diff se detecta leyendo lo que el cambio **introduce** — un símbolo exportado nuevo sin comentario de interfaz, un bloque no obvio sin explicación. Un símbolo preexistente sin documentar queda fuera, como todo lo preexistente.
+- **No hay informe propio** (paso 4): los hallazgos van a las tablas de la review, con el identificador que ésta les asigna. El veredicto se nombra dentro de la descripción del problema. La remediación (paso 5) tampoco es de esta skill acá: la aplica la Fase 5 del flujo, junto con el resto de los hallazgos.
 
 ## Workflow
 

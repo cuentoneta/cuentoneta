@@ -12,7 +12,7 @@
 
 /* Reglas globales sobre el cuerpo de una obra que el pipeline de Markdown inyecta — ver la sección al pie. */
 @import './assets/css/literary-work-section-body.css' layer(components);
-@import './assets/css/collection-description.css' layer(components);
+@import './assets/css/info-panel-prose.css' layer(components);
 
 /* Genera las utilidades `line-clamp-*` que se construyen dinámicamente en las plantillas y que el escaneo estático de clases no detecta. */
 @source inline('line-clamp-{1,2,3,4,5,6,7,8,9,10}');

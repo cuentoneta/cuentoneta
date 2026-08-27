@@ -21,9 +21,7 @@ import { STABLE_SLUGS } from './_utils/seo-fixtures';
 const ROUTES = Object.freeze([
 	{ name: 'home', path: '/home', ready: 'h1' },
 	{ name: 'story', path: `/story/${STABLE_SLUGS.story}`, ready: 'h1' },
-	// La ficha de autor sirve su `h1` vacío y lo completa en el cliente, así que no discrimina: se espera a
-	// las pestañas, que solo existen con el contenido de la página.
-	{ name: 'author', path: `/author/${STABLE_SLUGS.author}`, ready: 'cuentoneta-tabs' },
+	{ name: 'author', path: `/author/${STABLE_SLUGS.author}`, ready: 'h1' },
 	// El esqueleto de la colección no declara `h1`, así que esperarlo discrimina la página servida de su
 	// estado de carga. El estado de error sí declara uno, y a ese lo descarta la guarda de status: la
 	// colección inexistente responde 404, no 200.

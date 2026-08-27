@@ -11,11 +11,11 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
 
 import {
-	DESKTOP_VIEWPORT,
 	fetchCollectionCatalog,
 	pickMostDescriptiveCollection,
 	type CollectionCatalogEntry,
 } from './_utils/collection-fixtures';
+import { DESKTOP_VIEWPORT } from './_utils/viewports';
 
 const READ_MORE = 'Leer más';
 

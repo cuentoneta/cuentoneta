@@ -140,6 +140,30 @@ describe('mapResources (ACL)', () => {
 		expect(result[0].url).toBe(rawResource.url);
 	});
 
+	// El recurso se pinta como `href` de un enlace: un esquema ejecutable convierte el clic en código.
+	// El Studio ya los acota al editar, pero valida la edición y no lo almacenado.
+	it.each(['javascript:alert(1)', 'data:text/html,<script>alert(1)</script>', 'vbscript:msgbox(1)'])(
+		'drops a resource whose url carries the non-navigable scheme of "%s"',
+		(url) => {
+			const [rawResource] = rawOnoffAuthor.resources;
+
+			expect(mapResources([{ ...rawResource, url }])).toEqual([]);
+		},
+	);
+
+	it('drops a resource whose url the parser cannot read', () => {
+		const [rawResource] = rawOnoffAuthor.resources;
+
+		expect(mapResources([{ ...rawResource, url: 'no es una url' }])).toEqual([]);
+	});
+
+	it('keeps a resource addressed by email, which the domain admits', () => {
+		const [rawResource] = rawOnoffAuthor.resources;
+		const url = 'mailto:contacto@onoff.example';
+
+		expect(mapResources([{ ...rawResource, url }])[0].url).toBe(url);
+	});
+
 	it('drops a resource whose url is null, the shape the dataset actually holds', () => {
 		const [rawResource] = rawOnoffAuthor.resources;
 
