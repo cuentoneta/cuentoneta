@@ -50,10 +50,10 @@ function slugFromReadingUrl(url: string, prefixes: readonly string[]): string | 
 }
 
 // La métrica registra la URL que el lector visitó, así que una redirección no recupera lo que se
-// midió antes de instalarla: se leen los tres prefijos que la obra tuvo. El más viejo domina la
-// ventana los primeros días —es el que sigue indexado al desplegar— y se drena solo a medida que las
-// visitas llegan por el nuevo. La obra conserva el slug en cada mudanza, y por eso el mismo puede
-// llegar por más de un camino y se deduplica antes de resolverlo.
+// midió antes de instalarla: se leen todos los prefijos bajo los que la obra haya respondido. Un
+// prefijo retirado sigue aportando mientras queden visitas suyas dentro de la ventana, y se drena
+// solo. La obra conserva el slug en cada mudanza, y por eso el mismo puede llegar por más de un
+// camino y se deduplica antes de resolverlo.
 export async function updateMostReadLiteraryWorks(
 	contentRepository: ContentRepository = new SanityContentRepository(),
 ): Promise<RotatingContent> {

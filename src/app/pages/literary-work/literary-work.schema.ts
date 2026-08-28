@@ -5,7 +5,7 @@ import { type LiteraryWork } from '@models/literary-work.model';
 import { buildBreadcrumbSchema, buildPersonSchema } from '@utils/schema-org.builders';
 
 /**
- * Construye el JSON-LD `Article` (+ un `Person` por autor) de una obra en `/read`.
+ * Construye el JSON-LD `Article` (+ un `Person` por autor) de una obra.
  *
  * Multi-autor: `LiteraryWork` modela 1..N autores, así que `author` es un arreglo de `Person`.
  * Omite `dateModified`: a diferencia de `Story`, `LiteraryWork` no expone `updatedAt`. Sin `image`
@@ -32,7 +32,9 @@ export function buildLiteraryWorkArticleSchema(literaryWork: LiteraryWork, websi
 	};
 }
 
-/** Construye el `BreadcrumbList` de una obra en `/read`: Inicio → obra (no hay ruta índice `/read`). */
+// El rastro es plano —Inicio → obra— y no incluye el catálogo: la página no declara pertenecer a él,
+// igual que el resto de las páginas del sitio.
+
 export function buildLiteraryWorkBreadcrumb(
 	literaryWork: LiteraryWork,
 	websiteUrl: string,

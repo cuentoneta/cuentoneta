@@ -119,7 +119,12 @@ describe('ssrCacheControl', () => {
 	// aplicarse—, así que se afirma leyendo la fuente, como hace el guardrail de directivas SEO.
 	it('should stay mounted on the route it caches', () => {
 		const source = readFileSync(join(process.cwd(), 'src/server.ts'), 'utf-8');
+		// La línea, no el archivo: buscar la cadena en el texto entero daría verde con el montaje
+		// comentado, que es justo la forma en que la caché se apagaría sin que nada más lo note.
+		const mount = source
+			.split('\n')
+			.find((line) => line.includes('ssrCacheControl)') && !line.trimStart().startsWith('//'));
 
-		expect(source).toContain(`app.on('GET', '/${AppRoutes.LiteraryWork}/*', ssrCacheControl)`);
+		expect(mount).toContain(`'/${AppRoutes.LiteraryWork}/*'`);
 	});
 });
