@@ -35,10 +35,21 @@ async function collectCdnAssets(page: Page, route: string): Promise<ServedAsset[
 	await page.setViewportSize(DESKTOP_VIEWPORT);
 	await page.goto(route);
 	await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-	// Se espera quietud de red y no a `load` —que ya disparó antes del scroll, así que devolvería de
-	// inmediato— ni a que todas las imágenes estén completas: las diferidas que nunca entran al viewport
-	// no empiezan a cargar nunca, y esa espera no termina.
-	await page.waitForLoadState('networkidle');
+	// La llegada se afirma por quietud —dos muestras seguidas con la misma cuenta— y no esperando a
+	// `load`, que ya disparó antes del scroll y devolvería de inmediato, ni a que todas las imágenes
+	// estén completas: las diferidas que nunca entran al viewport no empiezan a cargar, y esa espera no
+	// termina. La cuenta se exige además no nula, para no dar por quieto lo que todavía no empezó.
+	let previous = -1;
+	await expect
+		.poll(
+			() => {
+				const isStill = served.length > 0 && served.length === previous;
+				previous = served.length;
+				return isStill;
+			},
+			{ message: 'no llegó ninguna respuesta del CDN, o siguieron llegando sin estabilizarse' },
+		)
+		.toBe(true);
 
 	// El listener se desengancha antes de resolver los cuerpos: una imagen diferida que llegue durante
 	// las aserciones dejaría un `body()` pendiente que al terminar el caso rechaza, y el spec fallaría
