@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import {
+	legacyReadDetailRedirect,
 	legacyStoryDetailRedirect,
 	legacyStoryListingRedirect,
 	legacyStorylistDetailRedirect,
@@ -16,6 +17,7 @@ describe('legacy route redirects', () => {
 		app.on('GET', '/story/:slug', legacyStoryDetailRedirect);
 		app.on('GET', '/storylist', legacyStorylistListingRedirect);
 		app.on('GET', '/storylist/:slug', legacyStorylistDetailRedirect);
+		app.on('GET', '/read/:slug', legacyReadDetailRedirect);
 		return app;
 	}
 
@@ -34,6 +36,7 @@ describe('legacy route redirects', () => {
 	it.each([
 		['/story/el-palacio-de-las-nueve-fronteras', '/literary-work/el-palacio-de-las-nueve-fronteras'],
 		['/storylist/verano-2022', '/collection/verano-2022'],
+		['/read/el-fin', '/literary-work/el-fin'],
 	])('should carry the slug of %s over to its new section', async (path, destination) => {
 		const response = await appUnderTest().request(path);
 

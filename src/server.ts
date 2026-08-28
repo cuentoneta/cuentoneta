@@ -12,6 +12,7 @@ import { getAllowedHosts } from './api/_helpers/environment';
 import { noindexNonProduction } from './api/_middleware/noindex.middleware';
 import { ssrCacheControl } from './api/_middleware/ssr-cache-control.middleware';
 import {
+	legacyReadDetailRedirect,
 	legacyStoryDetailRedirect,
 	legacyStoryListingRedirect,
 	legacyStorylistDetailRedirect,
@@ -50,6 +51,7 @@ app.on('GET', '/story', legacyStoryListingRedirect);
 app.on('GET', '/story/:slug', legacyStoryDetailRedirect);
 app.on('GET', '/storylist', legacyStorylistListingRedirect);
 app.on('GET', '/storylist/:slug', legacyStorylistDetailRedirect);
+app.on('GET', '/read/:slug', legacyReadDetailRedirect);
 
 /**
  * Sirve los archivos estáticos desde el directorio /browser
