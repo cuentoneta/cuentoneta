@@ -16,7 +16,7 @@ import { STABLE_SLUGS } from './_utils/seo-fixtures';
 const VIEWPORT_WIDTH = STACKING_VIEWPORTS[0].width;
 
 // Una obra y no la home, para que un clic que active el enlace de marca sea distinguible del estado previo.
-const ROUTE = `/story/${STABLE_SLUGS.story}`;
+const ROUTE = `/read/${STABLE_SLUGS.literaryWork}`;
 
 const NAV_SELECTOR = 'cuentoneta-header';
 // La franja que colapsa, que es la que se mide: lo inerte es el componente entero, un nivel más arriba.

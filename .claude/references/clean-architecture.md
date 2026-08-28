@@ -82,7 +82,7 @@ La interfaz lleva el **nombre limpio** (la responsabilidad), y la **implementaci
 
 El **doble de test** se nombra por lo que **es**, no con el término vago `Mock*`:
 
-- **`Stub*`** — devuelve valores fijos e ignora la entrada. Es el caso de los API providers del front: `StubStoryApi.getBySlug()` devuelve siempre el mismo `storyMock`, sin mirar el slug. No hay nada "en memoria" que consultar, así que llamarlo `InMemory*` prometería una implementación que no existe.
+- **`Stub*`** — devuelve valores fijos e ignora la entrada. Es el caso de los API providers del front: `StubLiteraryWorkApi.getBySlug()` devuelve siempre la misma obra fijada por constructor, sin mirar el slug. No hay nada "en memoria" que consultar, así que llamarlo `InMemory*` prometería una implementación que no existe.
 - **`Fake*`** — la **categoría**: una implementación real con un atajo (sí ejecuta lógica de verdad, pero se salta la dependencia costosa o externa). Se califica por lo que sustituye:
   - **`InMemory*`** — sustituye **almacenamiento**: un repository/DB real reemplazado por una lista en memoria. `InMemoryStoryRepository` guarda datos reales y los consulta con lógica real, solo que sin Sanity de por medio.
   - **`Controllable*`** (o `Static*`, según el mecanismo) — sustituye un **entorno** cuyo input el test necesita fijar (viewport, reloj, random, geolocalización). `ControllableLayoutService` es el ejemplo: no reemplaza un almacén de datos, fija el viewport que el real (`WindowLayoutService`) leería de `window`. "En memoria" no distingue nada acá — todo objeto guarda su estado en memoria; lo que importa es que el input lo fija el test, no el entorno real.
@@ -138,7 +138,6 @@ El **archivo** sigue siendo `<dominio>.mock.ts` y la **factory** `provide<X>ApiM
 
 | Rol                     | Interfaz + token (tree-shakable) | Implementación          | Doble de test               |
 | ----------------------- | -------------------------------- | ----------------------- | --------------------------- |
-| API de stories          | `StoryApi`                       | `HttpStoryApi`          | `StubStoryApi`              |
 | API de autores          | `AuthorApi`                      | `HttpAuthorApi`         | `StubAuthorApi`             |
 | API de obras literarias | `LiteraryWorkApi`\*              | `HttpLiteraryWorkApi`\* | `StubLiteraryWorkApi`\*     |
 | API de colecciones      | `CollectionApi`*                 | `HttpCollectionApi`*    | `StubCollectionApi`*        |

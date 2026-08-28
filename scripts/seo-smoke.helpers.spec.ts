@@ -99,31 +99,22 @@ describe('sample', () => {
 });
 
 describe('selectByType', () => {
-	const paths = ['/story/a', '/story/b', '/author/c', '/collection/d'];
+	const paths = ['/read/a', '/read/b', '/author/c', '/collection/d'];
 
 	it('filtra por prefijo de tipo', () => {
 		expect(selectByType(paths, '/author/', 5, true)).toEqual(['/author/c']);
 	});
 
 	it('con full=true devuelve todos los del tipo', () => {
-		expect(selectByType(paths, '/story/', 1, true).sort()).toEqual(['/story/a', '/story/b']);
+		expect(selectByType(paths, '/read/', 1, true).sort()).toEqual(['/read/a', '/read/b']);
 	});
 
 	it('con full=false muestrea hasta size', () => {
-		expect(selectByType(paths, '/story/', 1, false)).toHaveLength(1);
+		expect(selectByType(paths, '/read/', 1, false)).toHaveLength(1);
 	});
 });
 
 describe('expectationsFor', () => {
-	it('story: patrón por slug + JSON-LD Article + enlace a autor', () => {
-		const expectations = expectationsFor('/story/el-aleph');
-		expect(expectations?.titlePattern?.test('El Aleph')).toBe(true);
-		expect(expectations?.h1Pattern?.test('El Aleph')).toBe(true);
-		expect(expectations?.canonicalContains).toBe('/story/el-aleph');
-		expect(expectations?.requiredInternalLinkPrefix).toBe('/author/');
-		expect(expectations?.requiredJsonLdIds).toContain('article');
-	});
-
 	it('read: patrón por slug + JSON-LD Article y breadcrumb-read + enlace a autor', () => {
 		const expectations = expectationsFor('/read/el-fin');
 		expect(expectations?.titlePattern?.test('El fin')).toBe(true);
@@ -134,10 +125,10 @@ describe('expectationsFor', () => {
 		expect(expectations?.requiredJsonLdIds).toContain('breadcrumb-read');
 	});
 
-	it('author: patrón por slug + ProfilePage + enlace a cuento', () => {
+	it('author: patrón por slug + ProfilePage + enlace a obra', () => {
 		const expectations = expectationsFor('/author/jorge-luis-borges');
 		expect(expectations?.titlePattern?.test('Jorge Luis Borges')).toBe(true);
-		expect(expectations?.requiredInternalLinkPrefix).toBe('/story/');
+		expect(expectations?.requiredInternalLinkPrefix).toBe('/read/');
 		expect(expectations?.requiredJsonLdIds).toContain('profile-page');
 	});
 

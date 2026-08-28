@@ -20,7 +20,6 @@ import { STABLE_SLUGS } from './_utils/seo-fixtures';
 // nombra al hero como sospechoso. Sumarla también acá duplicaría su costo en el gate más frágil del repo.
 const ROUTES = Object.freeze([
 	{ name: 'home', path: '/home', ready: 'h1' },
-	{ name: 'story', path: `/story/${STABLE_SLUGS.story}`, ready: 'h1' },
 	{ name: 'author', path: `/author/${STABLE_SLUGS.author}`, ready: 'h1' },
 	// El esqueleto de la colección no declara `h1`, así que esperarlo discrimina la página servida de su
 	// estado de carga. El estado de error sí declara uno, y a ese lo descarta la guarda de status: la

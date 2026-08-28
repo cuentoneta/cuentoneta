@@ -157,20 +157,25 @@ expect(heading).toBeInTheDocument();
 
 ### Servicios inyectados (mock con `fn()`)
 
-> Ejemplo con `StoryApi`/`StoryComponent`. Cuando el doble no necesita registrar llamadas, se provee la clase `Stub*` del propio provider en vez de `fn()` — es lo que hace `read.page.spec.ts` con `StubLiteraryWorkApi` + `provideLiteraryWorkApiMock()`.
+> Cuando el doble no necesita registrar llamadas, se provee la clase `Stub*` del propio provider en vez de `fn()` — es lo que hace `read.page.spec.ts` con `StubLiteraryWorkApi` + `provideLiteraryWorkApiMock()`. `fn()` sigue siendo la herramienta cuando el test necesita **inspeccionar** la llamada (con qué slug se invocó, cuántas veces).
 
 ```typescript
 import { fn } from '@test-utils';
 import { of, type Observable } from 'rxjs';
+import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
+import type { LiteraryWork } from '@models/literary-work.model';
 
-const getBySlug = fn<[string], Observable<Story>>();
-getBySlug.mockReturnValue(of(storyMock));
+const [literaryWorkMock] = onoffLiteraryWorksMock;
+const getBySlug = fn<[string], Observable<LiteraryWork>>();
+getBySlug.mockReturnValue(of(literaryWorkMock));
 
-await render(StoryComponent, {
-	providers: [{ provide: StoryApi, useValue: { getBySlug } }],
+// El objeto parcial alcanza mientras el test no ejercite el resto de la interfaz. Cuando la ejercite,
+// la forma es una clase completa: así lo hace `read.page.spec.ts`.
+await render(ReadPage, {
+	providers: [{ provide: LiteraryWorkApi, useValue: { getBySlug } }],
 });
 
-expect(await screen.findByText(storyMock.title)).toBeInTheDocument();
+expect(await screen.findByText(literaryWorkMock.title)).toBeInTheDocument();
 ```
 
 ---
@@ -424,7 +429,7 @@ Todo componente nuevo en **`src/app/components/`** lleva su `*.stories.ts` (docu
 - `title` en español bajo `Componentes V3/...` (p. ej. `'Componentes V3/Tag'`).
 - **autodocs es global.** `.storybook/preview.js` exporta `tags = ['autodocs']`, así que **no** hace falta repetir `tags: ['autodocs']` por archivo (es redundante).
 - `parameters.docs.description.component` con descripción en español (HTML, ver reglas abajo).
-- `argTypes` para **cada `input()` público**, con `control`, `options`/`type` y `table` (`type` + `defaultValue`). Aplica también a inputs de tipo objeto complejo (p. ej. `story`, `collection`): aunque no se editen cómodamente en el panel, usar `control: { type: 'object' }` y documentar `table.type`/`table.defaultValue`.
+- `argTypes` para **cada `input()` público**, con `control`, `options`/`type` y `table` (`type` + `defaultValue`). Aplica también a inputs de tipo objeto complejo (p. ej. `literaryWork`, `collection`): aunque no se editen cómodamente en el panel, usar `control: { type: 'object' }` y documentar `table.type`/`table.defaultValue`.
 - Una **story por estado/variante** (`Soft`, `Filled`, `Gray`, …) y opcionalmente un `Showcase` con todas las variantes en simultáneo. Cada story lleva su `docs.description.story` con el **comportamiento** y una línea **`<strong>Usos:</strong>`** que indica en qué páginas/componentes se usa la variante.
 - Render con `argsToTemplate(args)` y el selector real del componente (`cuentoneta-...`).
 

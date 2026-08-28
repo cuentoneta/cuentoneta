@@ -1,5 +1,4 @@
 export const STABLE_SLUGS = Object.freeze({
-	story: 'el-aleph',
 	author: 'jorge-luis-borges',
 	// Cada slug de acá tiene que existir en los dos datasets que sirven a los e2e (development en local,
 	// staging en CI): el que exista solo en uno deja sus casos salteados justo donde tenían que correr.
@@ -17,7 +16,6 @@ export const SCHEMA_IDS = Object.freeze({
 	organization: 'organization',
 	website: 'website',
 	article: 'article',
-	breadcrumbStory: 'breadcrumb-story',
 	profilePage: 'profile-page',
 	breadcrumbAuthor: 'breadcrumb-author',
 	breadcrumbRead: 'breadcrumb-read',

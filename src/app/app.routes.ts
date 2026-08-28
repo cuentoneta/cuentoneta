@@ -2,7 +2,6 @@ import { Routes } from '@angular/router';
 
 export const AppRoutes = Object.freeze({
 	Home: 'home',
-	Story: 'story',
 	Author: 'author',
 	Authors: 'authors',
 	About: 'about',
@@ -25,14 +24,6 @@ export const appRoutes: Routes = [
 	{
 		path: `${AppRoutes.Author}/:slug`,
 		loadComponent: () => import('./pages/author/author.page'),
-	},
-	{
-		path: AppRoutes.Story,
-		loadComponent: () => import('./pages/stories/stories.component'),
-	},
-	{
-		path: `${AppRoutes.Story}/:slug`,
-		loadComponent: () => import('./pages/story/story.component'),
 	},
 	{
 		path: `${AppRoutes.Read}/:slug`,

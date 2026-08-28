@@ -14,7 +14,7 @@ Cuentoneta **no usa NgRx**. El estado vive en **servicios**, se expone como **si
 
 Dónde viven los servicios de estado:
 
-- **`@Service()`** para estado/acceso a datos de aplicación (singleton). Es el default de todo servicio del frontend, salvo indicación explícita en contrario. Ej.: `LayoutService`, `SchemaOrgService` y las implementaciones de API (`HttpStoryApi`, `HttpAuthorApi`, …) en [`src/app/providers/`](../../src/app/providers/). Los consumidores inyectan el **token** `*Api` (`StoryApi`, `AuthorApi`, …), no la clase concreta — ver [`clean-architecture.md`](clean-architecture.md).
+- **`@Service()`** para estado/acceso a datos de aplicación (singleton). Es el default de todo servicio del frontend, salvo indicación explícita en contrario. Ej.: `LayoutService`, `SchemaOrgService` y las implementaciones de API (`HttpLiteraryWorkApi`, `HttpAuthorApi`, …) en [`src/app/providers/`](../../src/app/providers/). Los consumidores inyectan el **token** `*Api` (`LiteraryWorkApi`, `AuthorApi`, …), no la clase concreta — ver [`clean-architecture.md`](clean-architecture.md).
 - **`@Service({ autoProvided: false })` provisto en un componente** cuando el estado es local a un subárbol y debe morir con él. Ej.: `CarouselStateService`, provisto en el `providers` del componente de carousel.
 
 > Los servicios de acceso a datos del frontend viven en `src/app/providers/`, con el patrón `provideX()` / `*.provider.ts`.
@@ -28,24 +28,26 @@ Dónde viven los servicios de estado:
 **Prohibido** `firstValueFrom`, `lastValueFrom`, `toPromise` y `async/await` sobre observables en el frontend (restricción dura de `CLAUDE.md`). Se compone con **operadores RxJS** y se cruza a signals con `rxResource` / `toSignal`.
 
 ```typescript
-// ✅ Correcto — el HTTP queda como Observable y se consume vía un rxResource (story.component.ts).
+// ✅ Correcto — el HTTP queda como Observable y se consume vía un rxResource (read.page.ts).
 // En componentes de página se usa el wrapper `ssrBlockingRxResource` (ver §7), no `rxResource` crudo.
-readonly storyResource = ssrBlockingRxResource({
+private readonly literaryWorkResource = ssrBlockingRxResource({
 	params: this.slug,
-	stream: ({ params }) => this.storyService.getBySlug(params),
+	stream: ({ params }) => this.literaryWorkApi.getBySlug(params),
 	defaultValue: undefined,
 });
 
 // ❌ Incorrecto — convierte el observable en promesa
-const story = await firstValueFrom(this.storyService.getBySlug(slug));
+const literaryWork = await firstValueFrom(this.literaryWorkApi.getBySlug(slug));
 ```
 
 El servicio de datos devuelve **siempre `Observable<T>`**, nunca `Promise<T>`:
 
 ```typescript
-// story.service.ts
-public getBySlug(slug: string): Observable<Story> {
-	return this.http.get<Story>(`${this.url}/${slug}`);
+// literary-work.provider.ts
+public getBySlug(slug: string): Observable<LiteraryWork> {
+	return this.http
+		.get<unknown>(`${this.url}/${slug}`)
+		.pipe(map((response) => this.toLiteraryWork(literaryWorkDtoSchema.parse(response)))); // el DTO se valida acá
 }
 ```
 
@@ -54,16 +56,20 @@ public getBySlug(slug: string): Observable<Story> {
 Los valores derivados son **`computed`** (o `toSignal` para fuentes observables), **jamás** estado guardado que haya que sincronizar a mano.
 
 ```typescript
-// ✅ Correcto — todo lo derivado cuelga de un único origen (story.component.ts)
-public readonly story = computed(() => this.storyResource.value()); // `public`: lo exige la interfaz StoryHost
-protected readonly sharingRoute = computed(() => `${AppRoutes.Story}/${this.story()?.slug}`);
-protected readonly shareMessage = computed(
-	() => `Leí "${this.story()?.title}" de ${this.story()?.author.name} en La Cuentoneta ...`,
+// ✅ Correcto — todo lo derivado cuelga de un único origen (read.page.ts)
+public readonly literaryWork = computed(() =>
+	this.literaryWorkResource.hasValue() ? this.literaryWorkResource.value() : undefined,
+); // `public`: lo exige la interfaz ReadHost
+protected readonly byline = computed(
+	() =>
+		this.literaryWork()
+			?.authors.map((author) => author.name)
+			.join(', ') ?? '',
 );
 
 // ❌ Incorrecto — segundo signal que hay que mantener en sync a mano
-protected readonly sharingRoute = signal('');
-// ...y luego un effect/set por cada cambio de story → estado duplicado
+protected readonly byline = signal('');
+// ...y luego un effect/set por cada cambio de literaryWork → estado duplicado
 ```
 
 > **Leer el valor = invocar el signal**, también en condiciones y expresiones: `resources().length`, no `resources.length` (esto último lee `Function.length`, un bug silencioso). En **código TS** lo enforcea `@angular-eslint/no-uncalled-signals` (typed-linting, sobre `src/**/*.ts`). **No** cubre plantillas — ese punto ciego se documenta en [`angular-components.md`](./angular-components.md).
@@ -99,10 +105,10 @@ Para encadenar una emisión (un input, un cambio de ruta) a un request, el **ope
 
 ```typescript
 // ✅ Correcto — switchMap cancela el fetch anterior cuando cambia el slug
-slug$.pipe(switchMap((slug) => this.storyService.getBySlug(slug)));
+slug$.pipe(switchMap((slug) => this.literaryWorkApi.getBySlug(slug)));
 
 // ❌ Incorrecto — mergeMap deja correr todos: una respuesta vieja puede ganar la carrera
-slug$.pipe(mergeMap((slug) => this.storyService.getBySlug(slug)));
+slug$.pipe(mergeMap((slug) => this.literaryWorkApi.getBySlug(slug)));
 ```
 
 Usar `concatMap` / `exhaustMap` solo cuando la semántica lo exija (preservar orden, ignorar mientras hay uno en curso) y dejarlo justificado. Ver la disciplina de operadores en [`guiding-principles.md`](guiding-principles.md).
@@ -176,8 +182,8 @@ Cuándo **bloquear**: rutas cuyo HTML server-rendered debe traer contenido/meta 
 
 Cada componente de página compone su SEO en el campo **`hostDirectives`** del decorador `@Component` (distinto de `host`, ver [`angular-components.md`](angular-components.md#host-element)). Hay exactamente **dos formas**, elegidas según si la ruta es indexable:
 
-- **Página indexable** (`RenderMode.Server`/`Prerender` sin `noindex`): `hostDirectives: [<Page>MetaTagsDirective, <Page>StructuredDataDirective]`. Ambas extienden `AbstractMetaTagsDirective`/`AbstractStructuredDataDirective`; la `<Page>MetaTagsDirective` emite `setRobots('index, follow')` y la `<Page>StructuredDataDirective` inyecta el JSON-LD. Ejemplos: `home`, `author`, `story`, `collection`.
-- **Página no indexable** (`noindex`): `hostDirectives: [HeadMetadataDirective]` (la directiva genérica, sin structured data) y el componente llama `setRobots('noindex, ...')` en su constructor. Ejemplos: `about`, `authors`, `stories`, `dmca`. La ausencia de structured data acá es intencional, no un hueco.
+- **Página indexable** (`RenderMode.Server`/`Prerender` sin `noindex`): `hostDirectives: [<Page>MetaTagsDirective, <Page>StructuredDataDirective]`. Ambas extienden `AbstractMetaTagsDirective`/`AbstractStructuredDataDirective`; la `<Page>MetaTagsDirective` emite `setRobots('index, follow')` y la `<Page>StructuredDataDirective` inyecta el JSON-LD. Ejemplos: `home`, `author`, `read`, `collection`.
+- **Página no indexable** (`noindex`): `hostDirectives: [HeadMetadataDirective]` (la directiva genérica, sin structured data) y el componente llama `setRobots('noindex, ...')` en su constructor. Ejemplos: `about`, `authors`, `dmca`. La ausencia de structured data acá es intencional, no un hueco.
 
 Una página indexable **nunca** debe usar la forma no indexable: quedaría sin structured data y sin `setRobots('index...')` de forma silenciosa.
 

@@ -41,7 +41,7 @@ Las **historias más leídas** son un ejemplo de contenido dentro del patrón de
 
 De manera diaria se ejecuta un cron job, definido en `vercel.json` para su ejecución a las 03:30 am (GMT -3), que se encarga, partiendo de esas listas, de alojar en el documento singleton `rotatingContent` las referencias correspondientes.
 
-Escribe en `mostReadLiteraryWorks`, con referencias a documentos `literaryWork`. Como las dos rutas de lectura (`/story/:slug` y `/read/:slug`) conviven mientras dure la migración, el conteo de páginas populares de Clarity lee **los dos prefijos de URL**: quedarse con uno solo dejaría afuera la mitad del tráfico y subestimaría el ranking. Los slugs resultantes se deduplican —la obra migrada conserva el slug de su historia de origen, así que el mismo slug puede llegar por los dos caminos— y se resuelven a `_id` de `literaryWork` antes de escribir las referencias.
+Escribe en `mostReadLiteraryWorks`, con referencias a documentos `literaryWork`. La ruta servida hoy es una sola, `/read/:slug`, pero el conteo de páginas populares de Clarity lee **los dos prefijos de URL**: la ventana que se consulta alcanza días en los que `/story/:slug` todavía respondía, y quedarse con uno solo subestimaría el ranking mientras ese tráfico histórico siga dentro de la ventana. Los slugs resultantes se deduplican —la obra migrada conserva el slug de su historia de origen, así que el mismo slug puede llegar por los dos caminos— y se resuelven a `_id` de `literaryWork` antes de escribir las referencias.
 
 ### Ubicación en el Código
 
