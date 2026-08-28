@@ -243,7 +243,7 @@ export const configlessCollectionDocument = {
 // publicadas sin `badLanguage`, sin `originalPublication` y sin tiempo de lectura. Este documento
 // reproduce los tres huecos a la vez, para ejercitar qué rellena la proyección y qué deja ausente.
 export const incompleteLiteraryWorkDocument = {
-	...withoutKey(withoutKey(withoutKey(canonLiteraryWork, 'badLanguage'), 'originalPublication'), 'totalReadingTime'),
+	...withoutKey(canonLiteraryWork, 'badLanguage', 'originalPublication', 'totalReadingTime'),
 	_id: 'onoff-obra-campos-requeridos-incumplidos',
 	slug: slugField('obra-campos-requeridos-incumplidos'),
 };

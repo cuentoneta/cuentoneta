@@ -90,8 +90,8 @@ export class SanityContentRepository implements ContentRepository {
 			return null;
 		}
 		// El `_id` no se copia: quien clone esto crea un documento nuevo, y arrastrarlo haría que el clon
-		// pisara al original. Enumerar qué se copia es también lo que deja atrás los slots retirados, que
-		// las semanas ya cargadas siguen declarando en el content lake.
+		// pisara al original. Enumerar qué se copia sostiene además la invariante de los slots retirados
+		// si alguna vez se los volviera a proyectar: las semanas ya cargadas los siguen declarando.
 		return {
 			_type: raw._type,
 			campaigns: raw.campaigns,

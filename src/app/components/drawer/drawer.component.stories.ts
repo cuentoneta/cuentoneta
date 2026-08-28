@@ -148,7 +148,7 @@ export const ComposicionCollectionPage: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Réplica del contenido real del drawer de la CollectionPage: <strong><a href="/?path=/docs/componentes-v3-collectioninfopanel--docs" target="_top">CollectionInfoPanel</a></strong> con la descripción completa, <strong><a href="/?path=/docs/componentes-v3-divider--docs" target="_top">Divider</a></strong> y las <strong><a href="/?path=/docs/componentes-v3-navigablecollectionteaser--docs" target="_top">NavigableCollectionTeaser</a></strong> sugeridas — todo por <code>ng-content</code> plano.</p><p><strong>Usos:</strong> el "Leer más" de la descripción de una colección.</p>`,
+				story: `<p>Réplica del contenido real del drawer de la CollectionPage: <strong><a href="./?path=/docs/componentes-v3-collectioninfopanel--docs" target="_top">CollectionInfoPanel</a></strong> con la descripción completa, <strong><a href="./?path=/docs/componentes-v3-divider--docs" target="_top">Divider</a></strong> y las <strong><a href="./?path=/docs/componentes-v3-navigablecollectionteaser--docs" target="_top">NavigableCollectionTeaser</a></strong> sugeridas — todo por <code>ng-content</code> plano.</p><p><strong>Usos:</strong> el "Leer más" de la descripción de una colección.</p>`,
 			},
 		},
 	},

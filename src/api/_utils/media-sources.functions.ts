@@ -27,10 +27,10 @@ type CollectionWorkMediaSources = NonNullable<CollectionBySlugQueryResult>['lite
 
 type MediaSource = (LiteraryWorkMediaSources | CollectionMediaSources)[number];
 
-type AudioRecordingSource = Extract<LiteraryWorkMediaSources[number], { _type: 'audioRecording' }>;
+type AudioRecordingSource = Extract<MediaSource, { _type: 'audioRecording' }>;
 type SpaceRecordingSource = Extract<MediaSource, { _type: 'spaceRecording' }>;
-type SpotifyPodcastEpisodeSource = Extract<LiteraryWorkMediaSources[number], { _type: 'spotifyPodcastEpisode' }>;
-type YouTubeVideoSource = Extract<LiteraryWorkMediaSources[number], { _type: 'youTubeVideo' }>;
+type SpotifyPodcastEpisodeSource = Extract<MediaSource, { _type: 'spotifyPodcastEpisode' }>;
+type YouTubeVideoSource = Extract<MediaSource, { _type: 'youTubeVideo' }>;
 
 export function mapMediaSources(mediaSources: LiteraryWorkMediaSources | CollectionMediaSources): Media[] {
 	if (!mediaSources) return [];

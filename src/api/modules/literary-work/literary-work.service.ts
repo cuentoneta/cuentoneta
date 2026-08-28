@@ -39,9 +39,8 @@ export async function getLiteraryWorkTeasers(
 // Clarity reporta la URL visitada, no el slug: puede traer querystring de campaña, un ancla a una
 // sección o una barra final, y ninguna de las tres formas resuelve contra `slug.current`. Sin
 // normalizar, la obra más leída desaparece del ranking justo cuando llega tráfico de campaña.
-function slugFromReadingUrl(url: string, prefixes: readonly string[]): string | undefined {
-	const prefix = prefixes.find((candidate) => url.startsWith(candidate));
-	if (prefix === undefined) {
+function slugFromReadingUrl(url: string, prefix: string): string | undefined {
+	if (!url.startsWith(prefix)) {
 		return undefined;
 	}
 	const [path] = url.slice(prefix.length).split(/[?#]/);
@@ -61,12 +60,12 @@ export async function updateMostReadLiteraryWorks(
 		throw new Error('Could not fetch metrics.');
 	}
 
-	const readingPathPrefixes = [`${environment.basePath}/literary-work/`];
+	const readingPathPrefix = `${environment.basePath}/literary-work/`;
 	// El `Set` conserva el orden de inserción, que es el de Clarity: la deduplicación no reordena, y el
 	// orden **es** el ranking.
 	const rankedSlugs = [
 		...new Set(
-			popularPagesMetrics.information.flatMap((entry) => slugFromReadingUrl(entry.url, readingPathPrefixes) ?? []),
+			popularPagesMetrics.information.flatMap((entry) => slugFromReadingUrl(entry.url, readingPathPrefix) ?? []),
 		),
 	];
 

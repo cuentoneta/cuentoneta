@@ -79,6 +79,18 @@ describe('mapMediaSources sobre la proyección de colección', () => {
 		expect(video.data.videoId).toBe(sourceOfType(rawCollection.mediaSources, 'youTubeVideo').videoId);
 		expect(podcast.description).toMatch(/^<p>/);
 	});
+
+	// El único campo que la proyección deriva en vez de transportar. Se afirma sobre la colección
+	// además de sobre la obra porque el mapeo lo lee sin distinguir de cuál de las dos viene: si una
+	// de ellas dejara de resolverlo, acá se ve.
+	it('resuelve la url del audio del space recording de la colección', () => {
+		const [spaceRecording] = mapMediaSources(rawCollection.mediaSources).filter(isSpaceRecording);
+		const source = sourceOfType(rawCollection.mediaSources, 'spaceRecording');
+
+		expect(spaceRecording.data.url).toBe(source.audioUrl);
+		expect(spaceRecording.data.duration).toBe(source.duration);
+		expect(spaceRecording.data.hostName).toBe(source.hostName);
+	});
 });
 
 describe('la descripción cruza el pipeline de Markdown', () => {
