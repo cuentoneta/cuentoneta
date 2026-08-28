@@ -131,15 +131,15 @@ describe('SitemapService', () => {
 		process.env['BASE_URL'] = 'https://test.cuentoneta.ar';
 	});
 
-	it('should include story URLs', async () => {
+	it('should include literary work URLs', async () => {
 		(sitemapRepository.fetchSitemapSlugs as Mock).mockResolvedValue({
-			stories: [{ slug: 'el-aleph', lastmod: '2025-01-01' }],
+			literaryWorks: [{ slug: 'el-fin', lastmod: '2025-01-01' }],
 			authors: [],
-			storylists: [],
+			collections: [],
 		});
 
 		const urls = await getSitemapUrls();
-		expect(urls).toContainEqual(expect.objectContaining({ loc: 'https://test.cuentoneta.ar/story/el-aleph' }));
+		expect(urls).toContainEqual(expect.objectContaining({ loc: 'https://test.cuentoneta.ar/read/el-fin' }));
 	});
 });
 ```
