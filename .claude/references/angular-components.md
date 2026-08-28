@@ -270,6 +270,7 @@ export function provideFooInitializer() {
 - `@for` **requiere `track`**.
 - **Self-closing tags** para elementos sin contenido proyectado (`<cuentoneta-tag ... />`).
 - **`ngSrc`** (de `NgOptimizedImage`) para imágenes, no `src` crudo; declarar `width`/`height`.
+- **La transformación de una imagen de Sanity no se escribe en el componente.** La resuelve el `IMAGE_LOADER` que `app.config.ts` registra (`src/app/providers/sanity-image-loader.ts`): envolver la URL a mano duplica los parámetros, porque el loader corre igual. Lo que el componente sí controla es de dónde sale el ancho que el loader recibe — `width`/`height` declarados, o `fill` **con `sizes`**. Un `fill` sin `sizes` no le da ningún ancho y el CDN termina sirviendo el original.
 - Manejar el elemento anfitrión (clases, bindings, eventos) vía la propiedad `host` del decorador, nunca con `@HostBinding`/`@HostListener` ni con `:host { @apply ... }` en `styles` (ver [Host element](#host-element)).
 
 ```html

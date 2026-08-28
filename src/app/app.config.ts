@@ -10,6 +10,9 @@ import { DatePipe, registerLocaleData } from '@angular/common';
 // Layout
 import { provideLayout } from './providers/layout.provider';
 
+// Imágenes
+import { provideSanityImageLoader } from './providers/sanity-image-loader';
+
 // SEO providers
 import { provideSchemaOrgInitializer } from './providers/schema-org.initializer';
 
@@ -31,6 +34,9 @@ export const appConfig: ApplicationConfig = {
 
 		// Layout
 		provideLayout(),
+
+		// Imágenes
+		provideSanityImageLoader(),
 
 		// SEO providers
 		provideSchemaOrgInitializer(),

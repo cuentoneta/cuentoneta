@@ -4,6 +4,7 @@ import type { LiteraryWork } from '@models/literary-work.model';
 import { LiteraryWorkHeroHeaderComponent } from './literary-work-hero-header.component';
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 import { onoffTagsMock } from '@mocks/onoff-tags.mock';
+import { provideSanityImageLoader } from '../../providers/sanity-image-loader';
 
 describe('LiteraryWorkHeroHeaderComponent', () => {
 	const tags = onoffTagsMock.slice(0, 2);
@@ -22,9 +23,30 @@ describe('LiteraryWorkHeroHeaderComponent', () => {
 		expect(link).toHaveAttribute('href', expect.stringContaining(`/author/${author.slug}`));
 	});
 
-	it('should render the blurred background from the cover requested at 1920px width', async () => {
-		await render(LiteraryWorkHeroHeaderComponent, { inputs: { literaryWork } });
-		expect(screen.getByTestId('hero-background')).toHaveAttribute('src', expect.stringContaining('w=1920'));
+	// El fondo va con `fill` + `sizes="100vw"`, así que el loader recibe un ancho por breakpoint en vez de
+	// uno fijo. Se afirma sobre el `srcset` porque es de donde el navegador elige; el `src` queda como
+	// fallback sin ancho.
+	it('should render the blurred background offering a width per breakpoint', async () => {
+		const coverImage = 'https://cdn.sanity.io/images/x/cover-1024x1536.png';
+		await render(LiteraryWorkHeroHeaderComponent, {
+			inputs: { literaryWork: { ...literaryWork, coverImage } },
+			providers: [provideSanityImageLoader()],
+		});
+
+		const srcset = screen.getByTestId('hero-background').getAttribute('srcset');
+		expect(srcset).toContain(`${coverImage}?w=640&auto=format&q=75 640w`);
+		expect(srcset).toContain(`${coverImage}?w=1920&auto=format&q=75 1920w`);
+	});
+
+	// El canon guarda sus portadas como assets propios del repo, así que este caso es además el que
+	// ejercita el guard de origen del loader: una URL que no es del CDN tiene que llegar intacta.
+	it('should leave a cover that does not come from the CDN untouched', async () => {
+		await render(LiteraryWorkHeroHeaderComponent, {
+			inputs: { literaryWork },
+			providers: [provideSanityImageLoader()],
+		});
+
+		expect(screen.getByTestId('hero-background').getAttribute('srcset')).not.toContain('auto=format');
 	});
 
 	it('should not render the background when the literary work has no cover', async () => {

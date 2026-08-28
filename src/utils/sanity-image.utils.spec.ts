@@ -17,6 +17,10 @@ describe('withSanityImageParams', () => {
 		expect(withSanityImageParams(base, { h: 60, w: 60, auto: 'format' })).toBe(`${base}?h=60&w=60&auto=format`);
 	});
 
+	it('should include the recompression quality when requested', () => {
+		expect(withSanityImageParams(base, { w: 400, auto: 'format', q: 75 })).toBe(`${base}?w=400&auto=format&q=75`);
+	});
+
 	it('should omit params whose value is undefined', () => {
 		expect(withSanityImageParams(base, { w: 32 })).toBe(`${base}?w=32`);
 	});

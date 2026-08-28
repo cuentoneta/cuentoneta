@@ -105,6 +105,13 @@ export function mapAuthorTeaser(
 	};
 }
 
+/**
+ * URL canónica del asset, sin parámetros de transformación.
+ *
+ * Los de tamaño, formato y calidad los agrega el `IMAGE_LOADER` del frontend, que es quien conoce la
+ * caja donde la imagen se pinta. Agregar acá alguno de ellos lo duplica en la URL final, porque el
+ * loader corre igual sobre lo que emite este mapper.
+ */
 export function urlFor(source: SanityImageSource): string {
 	if (!source) {
 		console.warn('urlFor: Se recibió source vacío o nulo');
@@ -114,22 +121,6 @@ export function urlFor(source: SanityImageSource): string {
 		return createImageUrlBuilder(client).image(source).url();
 	} catch (error) {
 		console.error('urlFor: Error al construir URL de imagen', { error, source: JSON.stringify(source) });
-		return '';
-	}
-}
-
-export function urlForWithAutoFormat(source: SanityImageSource): string {
-	if (!source) {
-		console.warn('urlForWithAutoFormat: Se recibió source vacío o nulo');
-		return '';
-	}
-	try {
-		return createImageUrlBuilder(client).image(source).auto('format').url();
-	} catch (error) {
-		console.error('urlForWithAutoFormat: Error al construir URL de imagen', {
-			error,
-			source: JSON.stringify(source),
-		});
 		return '';
 	}
 }
@@ -270,12 +261,12 @@ export function mapContentCampaigns(campaigns: ContentCampaignsSubQuery): Conten
 			url: campaign.url,
 			contents: {
 				xs: {
-					imageUrl: xs.image ? urlForWithAutoFormat(xs.image) : '',
+					imageUrl: xs.image ? urlFor(xs.image) : '',
 					imageWidth: viewportElementSizes.xs.imageWidth,
 					imageHeight: viewportElementSizes.xs.imageHeight,
 				},
 				md: {
-					imageUrl: md.image ? urlForWithAutoFormat(md.image) : '',
+					imageUrl: md.image ? urlFor(md.image) : '',
 					imageWidth: viewportElementSizes.md.imageWidth,
 					imageHeight: viewportElementSizes.md.imageHeight,
 				},

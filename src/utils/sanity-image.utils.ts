@@ -3,6 +3,8 @@ export type SanityImageParams = {
 	w?: number;
 	h?: number;
 	auto?: 'format';
+	/** Calidad de recompresión, 0–100. Sin él, el CDN aplica la suya. */
+	q?: number;
 };
 
 /**
