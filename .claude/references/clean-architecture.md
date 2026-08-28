@@ -138,7 +138,6 @@ El **archivo** sigue siendo `<dominio>.mock.ts` y la **factory** `provide<X>ApiM
 
 | Rol                     | Interfaz + token (tree-shakable) | Implementación          | Doble de test               |
 | ----------------------- | -------------------------------- | ----------------------- | --------------------------- |
-| API de stories          | `StoryApi`                       | `HttpStoryApi`          | `StubStoryApi`              |
 | API de autores          | `AuthorApi`                      | `HttpAuthorApi`         | `StubAuthorApi`             |
 | API de obras literarias | `LiteraryWorkApi`\*              | `HttpLiteraryWorkApi`\* | `StubLiteraryWorkApi`\*     |
 | API de colecciones      | `CollectionApi`*                 | `HttpCollectionApi`*    | `StubCollectionApi`*        |
