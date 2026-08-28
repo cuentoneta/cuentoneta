@@ -1,3 +1,4 @@
+import { onoffImageAssets } from '../../onoff-image-assets.mock';
 import { embeddedAuthorMock } from '../../author.mock';
 import { lasDosAntorchasRawLiteraryWork } from './las-dos-antorchas.literary-work.raw.mock';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
@@ -9,16 +10,15 @@ import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import lasDosAntorchasMdBody from './las-dos-antorchas.md?raw';
 import lasDosAntorchasEditorialNoteMd from './las-dos-antorchas.editorial-note.md?raw';
 import { toDomainTags } from '../../onoff-tags.mock';
-import { lasDosAntorchasStoryMock } from '../story/las-dos-antorchas.story.mock';
 
 const lasDosAntorchasBody = createMarkdown(lasDosAntorchasMdBody);
 
 export const lasDosAntorchasLiteraryWorkMock: LiteraryWork = createLiteraryWork({
 	_id: 'onoff-literary-work-las-dos-antorchas',
-	slug: lasDosAntorchasStoryMock.slug,
-	title: lasDosAntorchasStoryMock.title,
+	slug: lasDosAntorchasRawLiteraryWork.slug,
+	title: lasDosAntorchasRawLiteraryWork.title,
 	authors: [embeddedAuthorMock],
-	coverImage: lasDosAntorchasStoryMock.coverImage,
+	coverImage: onoffImageAssets.lasDosAntorchasCover.path,
 	content: [
 		createLiteraryWorkSection({
 			position: 0,
@@ -28,10 +28,10 @@ export const lasDosAntorchasLiteraryWorkMock: LiteraryWork = createLiteraryWork(
 		}),
 	],
 	mediaSources: [],
-	resources: lasDosAntorchasStoryMock.resources,
-	badLanguage: lasDosAntorchasStoryMock.badLanguage,
+	resources: [],
+	badLanguage: lasDosAntorchasRawLiteraryWork.badLanguage,
 	tags: toDomainTags(lasDosAntorchasRawLiteraryWork.tags),
-	originalPublication: lasDosAntorchasStoryMock.originalPublication,
+	originalPublication: lasDosAntorchasRawLiteraryWork.originalPublication,
 	editorialNote: markdownToSanitizedHtml(createMarkdown(lasDosAntorchasEditorialNoteMd)),
-	publishedAt: createIsoDateTime(lasDosAntorchasStoryMock.publishedAt),
+	publishedAt: createIsoDateTime(lasDosAntorchasRawLiteraryWork.publishedAt),
 });
