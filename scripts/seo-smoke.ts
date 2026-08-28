@@ -14,7 +14,7 @@
  * Uso:
  *   BASE_URL=https://www.cuentoneta.ar pnpm seo:smoke
  *   SEO_SMOKE_SAMPLE=5 pnpm seo:smoke                            # N aleatorios por tipo (default 3)
- *   SEO_SMOKE_SLUGS=/story/el-aleph,/author/... pnpm seo:smoke   # reproduce paths puntuales (sin muestra)
+ *   SEO_SMOKE_SLUGS=/read/el-fin,/author/... pnpm seo:smoke      # reproduce paths puntuales (sin muestra)
  *   pnpm seo:smoke --full   (o SEO_SMOKE_FULL=true)              # recorre TODO el sitemap (lento)
  *   SIMULATE_PROXY_HEADERS=true pnpm seo:smoke                   # reproduce el x-forwarded-for de Vercel
  *

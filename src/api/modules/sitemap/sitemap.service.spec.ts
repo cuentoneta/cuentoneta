@@ -70,9 +70,9 @@ describe('SitemapService', () => {
 	describe('getSitemapUrls', () => {
 		it('should return static pages', async () => {
 			(sitemapRepository.fetchSitemapSlugs as Mock).mockResolvedValue({
-				stories: [],
+				literaryWorks: [],
 				authors: [],
-				storylists: [],
+				collections: [],
 			});
 
 			expect(await getSitemapUrls()).toEqual([
@@ -84,23 +84,23 @@ describe('SitemapService', () => {
 			]);
 		});
 
-		it('should include story URLs', async () => {
+		it('should include literary work URLs', async () => {
 			(sitemapRepository.fetchSitemapSlugs as Mock).mockResolvedValue({
-				stories: [{ slug: 'el-aleph', lastmod: '2025-01-01' }],
+				literaryWorks: [{ slug: 'el-fin', lastmod: '2025-01-01' }],
 				authors: [],
-				storylists: [],
+				collections: [],
 			});
 
 			const urls = await getSitemapUrls();
 
-			expect(urls).toContainEqual({ loc: 'https://test.cuentoneta.ar/story/el-aleph', lastmod: '2025-01-01' });
+			expect(urls).toContainEqual({ loc: 'https://test.cuentoneta.ar/read/el-fin', lastmod: '2025-01-01' });
 		});
 
 		it('should include author URLs', async () => {
 			(sitemapRepository.fetchSitemapSlugs as Mock).mockResolvedValue({
-				stories: [],
+				literaryWorks: [],
 				authors: [{ slug: 'jorge-luis-borges', lastmod: '2025-01-02' }],
-				storylists: [],
+				collections: [],
 			});
 
 			const urls = await getSitemapUrls();
@@ -111,41 +111,41 @@ describe('SitemapService', () => {
 			});
 		});
 
-		it('should include storylist URLs', async () => {
+		it('should include collection URLs', async () => {
 			(sitemapRepository.fetchSitemapSlugs as Mock).mockResolvedValue({
-				stories: [],
+				literaryWorks: [],
 				authors: [],
-				storylists: [{ slug: 'cuentos-de-terror', lastmod: '2025-01-03' }],
+				collections: [{ slug: 'cuentos-de-terror', lastmod: '2025-01-03' }],
 			});
 
 			const urls = await getSitemapUrls();
 
 			expect(urls).toContainEqual({
-				loc: 'https://test.cuentoneta.ar/storylist/cuentos-de-terror',
+				loc: 'https://test.cuentoneta.ar/collection/cuentos-de-terror',
 				lastmod: '2025-01-03',
 			});
 		});
 
 		it('should handle missing lastmod gracefully', async () => {
 			(sitemapRepository.fetchSitemapSlugs as Mock).mockResolvedValue({
-				stories: [{ slug: 'no-lastmod-story', lastmod: undefined }],
+				literaryWorks: [{ slug: 'sin-lastmod', lastmod: undefined }],
 				authors: [],
-				storylists: [],
+				collections: [],
 			});
 
 			const urls = await getSitemapUrls();
 
-			const storyUrl = urls.find((u) => u.loc.includes('/story/no-lastmod-story'));
-			expect(storyUrl?.lastmod).toBeUndefined();
+			const literaryWorkUrl = urls.find((u) => u.loc.includes('/read/sin-lastmod'));
+			expect(literaryWorkUrl?.lastmod).toBeUndefined();
 		});
 
 		it('should use default BASE_URL when env variable is not set', async () => {
 			delete process.env['BASE_URL'];
 
 			(sitemapRepository.fetchSitemapSlugs as Mock).mockResolvedValue({
-				stories: [],
+				literaryWorks: [],
 				authors: [],
-				storylists: [],
+				collections: [],
 			});
 
 			const urls = await getSitemapUrls();
@@ -160,17 +160,37 @@ describe('SitemapService', () => {
 				['uno', 'dos', 'tres'].map((suffix) => ({ slug: `${prefix}-${suffix}`, lastmod: '2025-01-01' }));
 
 			(sitemapRepository.fetchSitemapSlugs as Mock).mockResolvedValue({
-				stories: entries('cuento'),
+				literaryWorks: entries('obra'),
 				authors: entries('autor'),
-				storylists: entries('coleccion'),
+				collections: entries('coleccion'),
 			});
 
 			const locations = (await getSitemapUrls()).map(({ loc }) => loc);
 
-			for (const segment of ['story', 'author', 'storylist']) {
+			for (const segment of ['read', 'author', 'collection']) {
 				expect(locations.filter((location) => location.includes(`/${segment}/`))).toHaveLength(3);
 			}
 			expect(new Set(locations).size).toBe(locations.length);
+		});
+
+		// El dataset no impide que dos documentos publicados compartan slug, y entonces resuelven a la
+		// misma ruta. El sitemap la anuncia una vez.
+		it('should emit a single entry for two documents that resolve to the same location', async () => {
+			(sitemapRepository.fetchSitemapSlugs as Mock).mockResolvedValue({
+				// La primera trae la fecha más vieja a propósito: si el caso las pusiera al revés, pasaría
+				// igual conservando la primera que conservando la más reciente, y no distinguiría la política.
+				literaryWorks: [
+					{ slug: 'el-taco-de-ebano', lastmod: '2024-10-30' },
+					{ slug: 'el-taco-de-ebano', lastmod: '2026-07-31' },
+				],
+				authors: [],
+				collections: [],
+			});
+
+			const urls = await getSitemapUrls();
+			const repeated = urls.filter(({ loc }) => loc.endsWith('/read/el-taco-de-ebano'));
+
+			expect(repeated).toEqual([{ loc: 'https://test.cuentoneta.ar/read/el-taco-de-ebano', lastmod: '2024-10-30' }]);
 		});
 	});
 
@@ -286,15 +306,15 @@ describe('SitemapService', () => {
 	describe('generateSitemap', () => {
 		it('should combine getSitemapUrls and generateSitemapXml', async () => {
 			(sitemapRepository.fetchSitemapSlugs as Mock).mockResolvedValue({
-				stories: [{ slug: 'test-story', lastmod: '2025-01-01' }],
+				literaryWorks: [{ slug: 'obra-de-prueba', lastmod: '2025-01-01' }],
 				authors: [],
-				storylists: [],
+				collections: [],
 			});
 
 			const xml = await generateSitemap();
 
 			expect(xml).toContain('<?xml version="1.0" encoding="UTF-8"?>');
-			expect(xml).toContain('<loc>https://test.cuentoneta.ar/story/test-story</loc>');
+			expect(xml).toContain('<loc>https://test.cuentoneta.ar/read/obra-de-prueba</loc>');
 			expect(xml).toContain('<lastmod>2025-01-01</lastmod>');
 		});
 	});
