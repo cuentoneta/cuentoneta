@@ -14,14 +14,20 @@ import type { BlankEnv } from 'hono/types';
  */
 
 /**
- * Arma el handler de detalle de una sección, preservando el segmento de slug.
+ * Arma el handler de detalle de una sección, preservando el slug y la query string.
  *
  * El slug vuelve a codificarse antes de componer el destino: llega ya decodificado desde el router,
- * así que uno que contenga un carácter reservado produciría un `Location` con una ruta distinta de
- * la pedida.
+ * así que uno que contenga un carácter reservado produciría un `Location` con una ruta distinta de la
+ * pedida —y, en el peor caso, con otro host.
+ *
+ * La query string viaja porque es donde vienen los parámetros de campaña: perderlos en el traslado
+ * rompe la atribución de cada enlace ya publicado hacia afuera.
  */
 function legacyDetailRedirect(sectionPath: string): Handler<BlankEnv, '/:slug'> {
-	return (c) => c.redirect(`${sectionPath}/${encodeURIComponent(c.req.param('slug'))}`, 301);
+	return (c) => {
+		const { search } = new URL(c.req.url);
+		return c.redirect(`${sectionPath}/${encodeURIComponent(c.req.param('slug'))}${search}`, 301);
+	};
 }
 
 export const legacyStoryListingRedirect: Handler = (c) => c.redirect('/literary-work', 301);

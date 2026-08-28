@@ -35,12 +35,14 @@ for (const { from, to } of LISTINGS) {
 // La instancia real declara `strict: false`, así que la barra final entra por la ruta sin slug. Se
 // afirma acá y no solo en el spec del handler, que reconstruye su propio Hono: si alguien pasara la
 // instancia a `strict: true`, esta variante caería en el detalle y aquel spec seguiría verde.
-test('legacy-redirects — el listado viejo con barra final no cae en el detalle', async ({ request }) => {
-	const response = await request.get('/story/', { maxRedirects: 0 });
+for (const { from, to } of LISTINGS) {
+	test(`legacy-redirects — ${from} con barra final no cae en el detalle`, async ({ request }) => {
+		const response = await request.get(`${from}/`, { maxRedirects: 0 });
 
-	expect(response.status()).toBe(301);
-	expect(response.headers()['location']).toBe('/literary-work');
-});
+		expect(response.status()).toBe(301);
+		expect(response.headers()['location']).toBe(to);
+	});
+}
 
 for (const { from, to } of DETAILS) {
 	test(`legacy-redirects — el detalle viejo ${from} responde 301 permanente a ${to}`, async ({ request }) => {

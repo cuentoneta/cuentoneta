@@ -63,4 +63,21 @@ describe('legacy route redirects', () => {
 
 		expect(response.headers.get('Location')).toBe('/read/historia-de-story');
 	});
+
+	// Los parámetros de campaña vienen en la query string: perderlos en el traslado rompe la atribución
+	// de cada enlace ya publicado hacia afuera.
+	it('should carry the query string over', async () => {
+		const response = await appUnderTest().request('/story/el-fin?utm_source=boletin&page=2');
+
+		expect(response.headers.get('Location')).toBe('/read/el-fin?utm_source=boletin&page=2');
+	});
+
+	// El detalle captura cualquier segmento bajo el prefijo, no solo un slug. Hoy no hay nada más ahí, y
+	// este caso es lo que lo deja afirmado antes de que alguien agregue algo.
+	it('should redirect any segment under the retired prefix, not only a slug', async () => {
+		const response = await appUnderTest().request('/story/index.html');
+
+		expect(response.status).toBe(301);
+		expect(response.headers.get('Location')).toBe('/read/index.html');
+	});
 });
