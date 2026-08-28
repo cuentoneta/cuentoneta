@@ -10,10 +10,18 @@ name: Sync datasets (production → staging + development)
 
 on:
   schedule:
-    # 03:17 UTC (~00:17 ART), horario valle; minuto ≠ 0 para evitar el pico de carga de las :00.
+    # Domingos 03:17 UTC (~00:17 ART), horario valle; minuto ≠ 0 para evitar el pico de carga de las :00.
+    #
+    # Semanal y no diario porque el export baja el dataset con sus assets, y eso es ancho de banda
+    # facturado de Sanity en cada corrida: el peso del dataset lo dominan las grabaciones de audio y
+    # video, muy por encima de las imágenes. El egress es el *export*, que ocurre una sola vez por
+    # corrida sin importar cuántos targets se sincronicen: acotar `TARGETS` no ahorra nada. Los dos
+    # únicos ejes de reducción son esta frecuencia y la inclusión de assets (ver el step de export).
+    # Para una sincronización a demanda está `workflow_dispatch`.
+    #
     # GitHub desactiva los schedules tras 60 días sin actividad en el repo (avisa por email); si el
     # cron deja de correr, reactivarlo desde la pestaña Actions o con un push a la rama default.
-    - cron: '17 3 * * *'
+    - cron: '17 3 * * 0'
   workflow_dispatch:
     inputs:
       targets:
@@ -75,6 +83,11 @@ jobs:
         working-directory: cms
         run: pnpm install --frozen-lockfile --ignore-scripts
 
+      # El export conserva los assets, que son el grueso del egress. `--no-assets` no es una versión
+      # parcial de esto: no trae los binarios, así que los documentos de asset importados quedan
+      # apuntando al path del dataset `production`, que es privado — con lo que los targets perderían
+      # también las imágenes. Sacar las grabaciones de audio y video del CMS es el trabajo que
+      # realmente achica el tarball, y es otro cambio.
       - name: Export production dataset
         working-directory: cms
         run: |
