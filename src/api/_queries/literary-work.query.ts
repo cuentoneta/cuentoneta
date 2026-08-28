@@ -3,6 +3,9 @@ import { defineQuery } from 'groq';
 // Proyección de metadata compartida por la query full y la de sección: todo salvo el array `content`.
 // Se repite en ambas (defineQuery necesita literales para el typegen), no se concatena.
 //
+// Las dos ordenan por identificador antes de tomar el primero: dos documentos publicados pueden
+// compartir slug, y sin un orden declarado cuál de los dos sirve la página lo decide el dataset.
+//
 // `editorialNote` va sin `coalesce` a diferencia del resto: su destino en el dominio es un
 // `SanitizedHtml`, cuya factory rechaza el contenido vacío, así que un default de string vacío haría
 // lanzar el mapeo de toda obra sin nota. La ausencia se representa como `null` y el repository la
@@ -70,7 +73,8 @@ export const literaryWorkBySlugQuery = defineQuery(`
         body,
         readingTime
     }, [])
-}[0]`);
+}
+| order(_id asc) [0]`);
 
 // Obtención parcial: metadata total (incluido totalReadingTime y sectionCount) + el body de una sola
 // sección vía el slice `content[$section...$sectionEnd]` (0-based, fin exclusivo — `$sectionEnd` va
@@ -138,7 +142,8 @@ export const literaryWorkSectionBySlugQuery = defineQuery(`
         body,
         readingTime
     }
-}[0]`);
+}
+| order(_id asc) [0]`);
 
 // Candidatas del backfill de reading time: obras a las que les falta el total o el reading time de
 // alguna sección. La proyección trae **todas** las secciones, no solo las incompletas, porque el

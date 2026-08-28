@@ -12,15 +12,27 @@ interface SitemapUrl {
  *
  * Dos documentos publicados pueden compartir slug —el dataset no lo impide—, y entonces resuelven a
  * la misma ruta. Anunciar esa URL dos veces no agrega nada y le pide al buscador que decida cuál de
- * las dos fechas vale; la ambigüedad de qué documento sirve la página es un problema del contenido,
- * no algo que el sitemap pueda arbitrar.
+ * las dos fechas vale; qué documento sirve la página es un problema del contenido, no algo que el
+ * sitemap pueda arbitrar.
+ *
+ * «La primera» es contractual y no accidental: las queries ordenan por identificador, que es el mismo
+ * criterio con el que la página elige cuál servir. El descarte se registra porque es la única señal
+ * de que el dataset tiene dos documentos disputando una URL.
  */
 function deduplicateByLocation(urls: SitemapUrl[]): SitemapUrl[] {
 	const byLocation = new Map<string, SitemapUrl>();
+	const discarded: string[] = [];
 	for (const url of urls) {
-		if (!byLocation.has(url.loc)) {
-			byLocation.set(url.loc, url);
+		if (byLocation.has(url.loc)) {
+			discarded.push(url.loc);
+			continue;
 		}
+		byLocation.set(url.loc, url);
+	}
+	if (discarded.length > 0) {
+		console.warn('[Sitemap] se descartan ubicaciones repetidas: dos documentos publicados comparten slug', {
+			locations: discarded,
+		});
 	}
 	return [...byLocation.values()];
 }

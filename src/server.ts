@@ -41,10 +41,8 @@ app.route('/api', apiRoutes);
 // con el marcador no debe recibir headers de caché.
 app.on('GET', '/read/*', ssrCacheControl);
 
-// Las rutas viejas de obra y de colección se mudaron. Van antes de `serveStatic` y del catch-all SSR
-// porque los dos son `use('*')`: alguna de esas rutas quedó prerenderizada, así que el build deja un
-// `index.html` que el estático serviría, y si llegara al catch-all se renderizaría — en cualquiera de
-// los dos casos el 301 no se emite nunca.
+// Las rutas viejas de obra y de colección se mudaron. Van antes del catch-all SSR, que es un
+// `use('*')`: si la request llegara hasta él se renderizaría una página y el 301 no se emitiría nunca.
 //
 // El listado se registra antes que su detalle: con `strict: false`, `/story/` entra por la ruta sin
 // slug, y ese es el destino que le corresponde.

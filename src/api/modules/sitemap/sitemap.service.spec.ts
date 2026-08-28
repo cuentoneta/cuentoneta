@@ -177,9 +177,11 @@ describe('SitemapService', () => {
 		// misma ruta. El sitemap la anuncia una vez.
 		it('should emit a single entry for two documents that resolve to the same location', async () => {
 			(sitemapRepository.fetchSitemapSlugs as Mock).mockResolvedValue({
+				// La primera trae la fecha más vieja a propósito: si el caso las pusiera al revés, pasaría
+				// igual conservando la primera que conservando la más reciente, y no distinguiría la política.
 				literaryWorks: [
-					{ slug: 'el-taco-de-ebano', lastmod: '2026-07-31' },
 					{ slug: 'el-taco-de-ebano', lastmod: '2024-10-30' },
+					{ slug: 'el-taco-de-ebano', lastmod: '2026-07-31' },
 				],
 				authors: [],
 				collections: [],
@@ -188,7 +190,7 @@ describe('SitemapService', () => {
 			const urls = await getSitemapUrls();
 			const repeated = urls.filter(({ loc }) => loc.endsWith('/read/el-taco-de-ebano'));
 
-			expect(repeated).toEqual([{ loc: 'https://test.cuentoneta.ar/read/el-taco-de-ebano', lastmod: '2026-07-31' }]);
+			expect(repeated).toEqual([{ loc: 'https://test.cuentoneta.ar/read/el-taco-de-ebano', lastmod: '2024-10-30' }]);
 		});
 	});
 
