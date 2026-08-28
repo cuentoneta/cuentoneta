@@ -1,3 +1,6 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 import { RenderMode } from '@angular/ssr';
 import { Hono } from 'hono';
 import { AppRoutes } from '../../app/app.routes';
@@ -107,5 +110,14 @@ describe('ssrCacheControl', () => {
 		const readRoute = serverRoutes.find((route) => route.path === `${AppRoutes.Read}/:slug`);
 
 		expect(readRoute?.renderMode).toBe(RenderMode.Server);
+	});
+
+	// El montaje vive en `server.ts` y ningún test lo alcanza: los de arriba arman su propio Hono. Un
+	// prefijo que dejara de coincidir con la ruta no rompe nada — la caché simplemente deja de
+	// aplicarse—, así que se afirma leyendo la fuente, como hace el guardrail de directivas SEO.
+	it('should stay mounted on the route it caches', () => {
+		const source = readFileSync(join(process.cwd(), 'src/server.ts'), 'utf-8');
+
+		expect(source).toContain(`app.on('GET', '/${AppRoutes.Read}/*', ssrCacheControl)`);
 	});
 });
