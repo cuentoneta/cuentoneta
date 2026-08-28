@@ -49,6 +49,17 @@ describe('sitemapSlugsQuery', () => {
 		expect(entry?.lastmod).toBe(canonLiteraryWork.publishedAt);
 	});
 
+	// El dataset no guarda la fecha en nulo: guarda el documento sin el campo. `coalesce` trata los dos
+	// casos igual, y este los mantiene a los dos afirmados.
+	it('falls back to the creation date when the publication date is absent', async () => {
+		const { publishedAt, ...withoutPublishedAt } = canonLiteraryWork;
+		void publishedAt;
+
+		const [entry] = (await run([withoutPublishedAt])).literaryWorks;
+
+		expect(entry?.lastmod).toBe(canonLiteraryWork._createdAt);
+	});
+
 	it.each([
 		['literaryWorks' as const, canonLiteraryWork],
 		['authors' as const, canonAuthor],

@@ -249,11 +249,12 @@ export const configlessCollectionDocument = {
 // la era `LiteraryWork`, así que no los tiene, y las queries que todavía leen ese tipo se quedarían sin
 // fixture. La derivación vale mientras la query proyecte campos que ambos schemas declaran igual; una
 // que lea campos propios del tipo previo necesita su documento.
+// El cuento publicado no se exporta: existe como base de los de abajo, que son los que los specs usan.
 // La fecha de escritura va distinta de la de creación: compartiéndolas, una proyección que tomara la
 // equivocada quedaría indistinguible de la correcta.
 const LEGACY_UPDATED_AT = '2026-08-13T06:07:43Z';
 
-export const legacyStoryDocument = {
+const legacyStoryDocument = {
 	...canonLiteraryWork,
 	_id: 'onoff-story-publicada',
 	_type: 'story' as const,
