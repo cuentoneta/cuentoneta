@@ -14,13 +14,7 @@ import {
 	onoffResourceTypeDocumentsMock,
 	onoffTagDocumentsMock,
 } from './onoff/document/support-documents.projection';
-import {
-	asDraft,
-	documentReference,
-	documentSystemFields,
-	slugField,
-	withoutKey,
-} from './onoff/document/sanity-document.factory';
+import { asDraft, documentReference, slugField, withoutKey } from './onoff/document/sanity-document.factory';
 import { coleccionCompletaContentCampaignDocument } from './onoff/landing-page/coleccion-completa-onoff.content-campaign.document';
 import { palacioNueveFronterasContentCampaignDocument } from './onoff/landing-page/el-palacio-de-las-nueve-fronteras.content-campaign.document';
 import { onoffLandingPageDocument } from './onoff/landing-page/onoff.landing-page.document';
