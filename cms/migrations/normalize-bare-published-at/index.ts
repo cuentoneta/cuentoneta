@@ -1,13 +1,8 @@
 import { at, defineMigration, set } from 'sanity/migrate';
 
-// El schema declara `publishedAt` como `datetime`, pero el dato almacenado no siempre lo cumple:
-// hay documentos con la fecha sin componente horario. El value object del dominio exige el instante
-// completo, así que el borde de lectura no puede traducirlos y la página de la obra queda sin
-// servir. La forma desnuda llegó a las obras copiada de su cuento de origen, que la traía igual.
-//
-// Se completa a medianoche de Argentina (UTC-3), que es la hora que ya tienen las correcciones
-// hechas a mano sobre este mismo campo. Elegir el mediodía o el inicio del día en UTC movería la
-// fecha visible de algunas publicaciones al día anterior o siguiente según la zona del lector.
+// El value object del dominio exige el instante completo, así que un documento con la fecha desnuda
+// no se puede traducir y su página queda sin servir. El porqué del dato y la elección de la hora
+// están en el README de al lado.
 const ARGENTINA_MIDNIGHT_SUFFIX = 'T03:00:00.000Z';
 
 const BARE_DATE = /^\d{4}-\d{2}-\d{2}$/;
@@ -26,7 +21,7 @@ interface MigratedDocument {
 	publishedAt?: string | null;
 }
 
-export function publishedAtPatches(document: MigratedDocument) {
+function publishedAtPatches(document: MigratedDocument) {
 	const { publishedAt } = document;
 
 	// La ausencia no es lo que esta migración corrige: la query ya cae a la fecha de creación cuando

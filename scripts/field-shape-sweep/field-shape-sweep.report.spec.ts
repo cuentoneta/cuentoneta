@@ -55,12 +55,12 @@ describe('decideAction', () => {
 
 	// Nunca cierra solo: que un campo deje de incumplirse no significa que alguien lo haya atendido.
 	it('avisa la resolución sin cerrar, y una sola vez', () => {
-		const limpio = { breaches: [], scannedFields: 2 };
-		const conHallazgos = { body: formatReportBody(report) };
+		const clean = { breaches: [], scannedFields: 2 };
+		const withBreaches = { body: formatReportBody(report) };
 
-		expect(decideAction({ report: limpio, existing: conHallazgos }).kind).toBe('resolved');
-		expect(decideAction({ report: limpio, existing: { body: 'Ya no quedan campos' } }).kind).toBe('noop');
-		expect(decideAction({ report: limpio, existing: null }).kind).toBe('noop');
+		expect(decideAction({ report: clean, existing: withBreaches }).kind).toBe('resolved');
+		expect(decideAction({ report: clean, existing: { body: 'Ya no quedan campos' } }).kind).toBe('noop');
+		expect(decideAction({ report: clean, existing: null }).kind).toBe('noop');
 	});
 });
 
@@ -70,8 +70,8 @@ describe('formatConsoleReport', () => {
 	});
 
 	it('nombra cada campo incumplido con sus dos conteos', () => {
-		const salida = formatConsoleReport({ breaches: [breach('literaryWork.publishedAt', 26, 1)], scannedFields: 2 });
+		const output = formatConsoleReport({ breaches: [breach('literaryWork.publishedAt', 26, 1)], scannedFields: 2 });
 
-		expect(salida).toContain('literaryWork.publishedAt — 26 publicados, 1 borradores');
+		expect(output).toContain('literaryWork.publishedAt — 26 publicados, 1 borradores');
 	});
 });
