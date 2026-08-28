@@ -85,7 +85,7 @@ export class LiteraryWorkHeroHeaderComponent {
 
 	public readonly literaryWork = input<LiteraryWork>();
 
-	// El `sizes="100vw"` del `<img>` es lo que hace que el loader pida un ancho por breakpoint en vez de
-	// uno fijo: sin él, una imagen con `fill` no le da al loader ningún ancho del cual partir.
+	// Sin parámetros de transformación: los agrega el `IMAGE_LOADER` a partir del `sizes` del `<img>`,
+	// que acá declara el ancho real que ocupa la banda.
 	protected readonly backgroundImageUrl = computed(() => this.literaryWork()?.coverImage);
 }
