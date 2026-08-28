@@ -1,9 +1,6 @@
 // Conector a Sanity
 import { client } from '../_helpers/sanity-connector';
 
-// Funciones
-import { mapMediaSources } from './media-sources.functions';
-
 // Sanity utils
 import { createImageUrlBuilder, SanityImageSource } from '@sanity/image-url';
 
@@ -11,7 +8,6 @@ import { createImageUrlBuilder, SanityImageSource } from '@sanity/image-url';
 import { Author, AuthorProfile, AuthorTeaser } from '@models/author.model';
 import { ContentCampaign, viewportElementSizes } from '@models/content-campaign.model';
 import { Resource } from '@models/resource.model';
-import { Story, StoryTeaser, StoryTeaserWithAuthor } from '@models/story.model';
 import { Tag } from '@models/tag.model';
 import { TextBlockContent } from '@models/block-content.model';
 import { createMarkdown } from '@models/markdown.model';
@@ -25,11 +21,6 @@ import {
 	CollectionBySlugQueryResult,
 	LandingPageContentQueryResult,
 	LiteraryWorkBySlugQueryResult,
-	StoriesByAuthorSlugQueryResult,
-	StoriesBySlugsQueryResult,
-	StoryBySlugQueryResult,
-	StorylistQueryResult,
-	StorylistTeasersQueryResult,
 } from '@sanity-types';
 
 // Tipos de datos
@@ -39,7 +30,8 @@ import { DateString, IsoDateTime } from '@utils/date.utils';
 type UnwrapArray<A> = A extends unknown[] ? UnwrapArray<A[number]> : A;
 
 // Acepta el autor crudo sin los timestamps de ficha (los proyecta solo `authorBySlugQuery`, no el
-// autor embebido en `storyBySlugQuery`), para que ambos orígenes compartan este mapper de dominio.
+// autor embebido en `literaryWorkBySlugQuery`), para que ambos orígenes compartan este mapper de
+// dominio.
 export function mapAuthor(
 	rawAuthorData: Omit<NonNullable<AuthorBySlugQueryResult>, 'createdAt' | 'updatedAt'>,
 ): Author {
@@ -75,17 +67,12 @@ export function mapAuthorProfile(rawAuthorData: NonNullable<AuthorBySlugQueryRes
 		updatedAt: rawAuthorData.updatedAt as IsoDateTime,
 	};
 }
-type AuthorTeaserForStoriesSubQuery = NonNullable<StorylistQueryResult>['stories'][0]['author'];
 type AuthorTeaserForListSubQuery = UnwrapArray<AuthorsQueryResult>;
 type AuthorTeaserForCollectionSubQuery =
 	NonNullable<CollectionBySlugQueryResult>['literaryWorks'][number]['authors'][number];
 type AuthorTeaserForHighlightSubQuery = HighlightedAuthorsSubQuery[number]['author'];
 export function mapAuthorTeaser(
-	rawAuthorData:
-		| AuthorTeaserForStoriesSubQuery
-		| AuthorTeaserForListSubQuery
-		| AuthorTeaserForCollectionSubQuery
-		| AuthorTeaserForHighlightSubQuery,
+	rawAuthorData: AuthorTeaserForListSubQuery | AuthorTeaserForCollectionSubQuery | AuthorTeaserForHighlightSubQuery,
 ): AuthorTeaser {
 	return {
 		_id: rawAuthorData._id,
@@ -135,12 +122,7 @@ export function urlForWithAutoFormat(source: SanityImageSource): string {
 }
 
 type ResourcesSubQuery = (
-	| NonNullable<AuthorBySlugQueryResult>
-	| NonNullable<StoryBySlugQueryResult>
-	| NonNullable<StoryBySlugQueryResult>['author']
-	| NonNullable<StorylistQueryResult>['stories'][0]
-	| NonNullable<LiteraryWorkBySlugQueryResult>
-	| StoriesByAuthorSlugQueryResult[0]
+	NonNullable<AuthorBySlugQueryResult> | NonNullable<LiteraryWorkBySlugQueryResult>
 )['resources'];
 type RawResource = NonNullable<ResourcesSubQuery>[number];
 
@@ -187,9 +169,7 @@ export function mapResources(resources: ResourcesSubQuery): Resource[] {
 }
 
 type TagsSubQuery =
-	| NonNullable<StoryBySlugQueryResult>['tags']
 	| NonNullable<AuthorBySlugQueryResult>['tags']
-	| NonNullable<StorylistTeasersQueryResult>[0]['tags']
 	| NonNullable<LiteraryWorkBySlugQueryResult>['tags']
 	| NonNullable<CollectionBySlugQueryResult>['tags']
 	| NonNullable<CollectionBySlugQueryResult>['literaryWorks'][number]['tags']
@@ -205,53 +185,6 @@ export function mapTags(tags: TagsSubQuery): Tag[] {
 // TODO: Agregar soporte a futuro para mapear imágenes dentro del cuerpo de una story
 export function mapBlockContentToTextParagraphs(content: BlockContent): TextBlockContent[] {
 	return content.filter((element) => element._type === 'block') as TextBlockContent[];
-}
-
-export async function mapStoryContent(result: NonNullable<StoryBySlugQueryResult>): Promise<Story> {
-	const { coverImage, ...rest } = result;
-	return {
-		...rest,
-		coverImage: urlFor(coverImage),
-		epigraphs: result.epigraphs.map((epigraph) => ({
-			text: mapBlockContentToTextParagraphs(epigraph.text),
-			reference: mapBlockContentToTextParagraphs(epigraph.reference),
-		})),
-		paragraphs: mapBlockContentToTextParagraphs(result.body),
-		summary: mapBlockContentToTextParagraphs(result.review),
-		author: mapAuthor(result.author),
-		media: mapMediaSources(result.mediaSources),
-		resources: mapResources(result.resources),
-		tags: mapTags(result.tags),
-	};
-}
-
-export function mapStoryTeaserWithAuthor(story: StoryTeaserWithAuthor): StoryTeaserWithAuthor {
-	return {
-		...story,
-		paragraphs: story?.paragraphs ?? [],
-		media: story.media ?? [],
-		originalPublication: story.originalPublication ?? '',
-	};
-}
-
-export type StoryTeasersQueryResult = NonNullable<StoriesByAuthorSlugQueryResult | StoriesBySlugsQueryResult>;
-export function mapStoryTeaser(result: StoryTeasersQueryResult): StoryTeaser[] {
-	const stories = [];
-
-	for (const item of result) {
-		const { mediaSources, resources, body, coverImage, ...properties } = item;
-
-		stories.push({
-			...properties,
-			coverImage: urlFor(coverImage),
-			media: mapMediaSources(mediaSources),
-			resources: mapResources(resources),
-			paragraphs: mapBlockContentToTextParagraphs(body) as [TextBlockContent, TextBlockContent, TextBlockContent],
-			tags: [],
-		});
-	}
-
-	return stories;
 }
 
 type HighlightedAuthorsSubQuery = NonNullable<LandingPageContentQueryResult>['highlightedAuthors'];
