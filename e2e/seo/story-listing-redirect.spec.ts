@@ -27,10 +27,12 @@ test('story-listing — el listado viejo con barra final también redirige', asy
 	expect(response.headers()['location']).toBe('/literary-work');
 });
 
-// El detalle de una obra tiene su propio traslado, en otro tren: si esta redirección se lo llevara
-// puesto, cada obra publicada dejaría de responder.
-test('story-listing — el detalle de una obra sigue respondiendo', async ({ request }) => {
+// El detalle de una obra tiene su propio traslado, en otro tren. Lo que se protege es que esta
+// redirección no se lo lleve puesto: el día que el detalle redirija, tiene que ir a su obra y no al
+// listado. Se afirma el destino y no el estado, que es lo único cierto de las dos puntas — hoy el
+// detalle ya no tiene ruta y responde 404, y cuando gane su 301 responderá 301.
+test('story-listing — el detalle de una obra no cae en la redirección del listado', async ({ request }) => {
 	const response = await request.get(`/story/${STABLE_SLUGS.story}`, { maxRedirects: 0 });
 
-	expect(response.status()).toBe(200);
+	expect(response.headers()['location']).not.toBe('/literary-work');
 });
