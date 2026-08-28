@@ -10,6 +10,7 @@
  *       y BreadcrumbList.
  *  - D. Bloques sitewide Organization y WebSite.
  *  - E. La tanda completa de invariantes de una página indexable, H1 único y cuerpo saneado.
+ *  - F. Un único enlace al perfil del autor.
  *
  * El contenido de prueba lo cura el equipo en los datasets (development local / staging CI).
  */
@@ -18,8 +19,9 @@ import type { Article, BreadcrumbList, WithContext } from 'schema-dts';
 
 import { parseJsonLdBlocks, getMetaContent, getTitleText, getCanonicalHref } from '../_utils/seo';
 import { assertValidJsonLd } from '@testing/json-ld-validation';
-import { collectIndexableHtmlViolations } from '../_utils/seo-invariants';
+import { collectIndexableHtmlViolations, getInternalLinkHrefs } from '../_utils/seo-invariants';
 import { STABLE_SLUGS, SCHEMA_IDS, SITEWIDE_SCHEMA_IDS } from '../_utils/seo-fixtures';
+import { fetchLiteraryWork } from '../_utils/literary-work-fixtures';
 
 const literaryWorkPath = `/literary-work/${STABLE_SLUGS.literaryWork}`;
 const requiredJsonLdIds = [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.article, SCHEMA_IDS.breadcrumbLiteraryWork];
@@ -31,6 +33,7 @@ test('literary-work — A: una obra inexistente responde 404 real en SSR', async
 
 test.describe('literary-work — HTML server-rendered de una obra existente', () => {
 	let html: string;
+	let primaryAuthorSlug: string | undefined;
 
 	test.beforeAll(async ({ request }) => {
 		const response = await request.get(literaryWorkPath);
@@ -38,6 +41,7 @@ test.describe('literary-work — HTML server-rendered de una obra existente', ()
 		// sin nombrar la causa. Se afirma en vez de saltearse: es el skip el que ya dejó un verde engañoso.
 		expect(response.status(), `No existe literaryWork con slug "${STABLE_SLUGS.literaryWork}" en el dataset`).toBe(200);
 		html = await response.text();
+		primaryAuthorSlug = (await fetchLiteraryWork(request, STABLE_SLUGS.literaryWork))?.authors[0]?.slug;
 	});
 
 	test('B: meta tags en el HTML server-rendered', () => {
@@ -89,6 +93,15 @@ test.describe('literary-work — HTML server-rendered de una obra existente', ()
 				requiredInternalLinkPrefix: '/author/',
 			}),
 		).toEqual([]);
+	});
+
+	// Un segundo enlace al mismo perfil le da al crawler dos rutas equivalentes y, en el DOM, dos
+	// destinos que el lector de pantalla anuncia igual salvo que cada uno traiga su propio nombre
+	// accesible. El pie sugiere más obras del autor, pero su bloque es diferido sin `hydrate`: en el
+	// HTML servido está el marcador de posición y no el enlace. Si ese diferido pasara a hidratarse, la
+	// cuenta sube y este caso lo reporta.
+	test('F: enlaza al perfil del autor una sola vez', () => {
+		expect(getInternalLinkHrefs(html, '/author/')).toEqual([`/author/${primaryAuthorSlug}`]);
 	});
 
 	test('E: H1 único con contenido real y cuerpo saneado', () => {
