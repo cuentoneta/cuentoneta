@@ -1,7 +1,7 @@
-import type { StoryBySlugQueryResult } from '@sanity-types';
+import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
 
 // El shape que devuelve la proyección `tags[] -> { … }`, idéntica en todas las queries que la usan.
-export type RawTag = NonNullable<StoryBySlugQueryResult>['tags'][number];
+export type RawTag = NonNullable<LiteraryWorkBySlugQueryResult>['tags'][number];
 
 // Tipo literario de la obra.
 export const cuentoRawTag: RawTag = {

@@ -213,7 +213,7 @@ describe('scanRequiredFields', () => {
 		it('covers every document type that declares required attributes', () => {
 			const scanned = new Set(scanRequiredFields(schema as never).required.map((field) => field.documentType));
 
-			expect([...scanned]).toEqual(expect.arrayContaining(['author', 'story', 'literaryWork', 'tag', 'resourceType']));
+			expect([...scanned]).toEqual(expect.arrayContaining(['author', 'literaryWork', 'tag', 'resourceType']));
 		});
 	});
 });
