@@ -41,7 +41,7 @@ Las **obras más leídas** son un ejemplo de contenido dentro del patrón de **c
 
 De manera diaria se ejecuta un cron job, definido en `vercel.json` para su ejecución a las 03:30 am (GMT -3), que se encarga, partiendo de esas listas, de alojar en el documento singleton `rotatingContent` las referencias correspondientes.
 
-Escribe en `mostReadLiteraryWorks`, con referencias a documentos `literaryWork`. La ruta servida hoy es `/literary-work/:slug`, pero el conteo de páginas populares de Clarity lee también el prefijo indexado anterior, `/story/:slug`: la métrica registra la URL efectivamente visitada, y una redirección no recupera lo medido bajo el prefijo viejo — la ventana que se consulta alcanza días en los que la obra respondía ahí, y quedarse solo con el vigente subestimaría el ranking mientras ese tráfico histórico siga dentro de la ventana. Los slugs resultantes se deduplican —una obra puede aparecer bajo más de un prefijo dentro de la misma ventana— y se resuelven a `_id` de `literaryWork` antes de escribir las referencias.
+Escribe en `mostReadLiteraryWorks`, con referencias a documentos `literaryWork`. El conteo de páginas populares de Clarity filtra por un único prefijo de lectura, `/literary-work/:slug`. La métrica registra la URL efectivamente visitada, así que el prefijo indexado anterior aportó mientras quedó tráfico suyo dentro de la ventana; hoy no queda, porque `src/server.ts` lo redirige con 301 desde hace más tiempo que los tres días que la ventana abarca. Los slugs resultantes se deduplican —una misma obra llega varias veces cuando la URL viene decorada con querystring de campaña, un ancla o una barra final— y se resuelven a `_id` de `literaryWork` antes de escribir las referencias.
 
 ### Ubicación en el Código
 

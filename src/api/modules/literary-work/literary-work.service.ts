@@ -49,9 +49,10 @@ function slugFromReadingUrl(url: string, prefixes: readonly string[]): string | 
 	return slug === '' ? undefined : slug;
 }
 
-// La métrica registra la URL que el lector visitó, no la que el servidor sirvió. El prefijo de
-// lectura anterior ya no se mira porque `src/server.ts` lo redirige con 301, así que la visita se
-// reporta contra la ruta de destino.
+// La métrica registra la URL que el lector visitó, no la que el servidor sirvió, así que el prefijo
+// de lectura anterior siguió aportando mientras quedó tráfico suyo dentro de la ventana. Ya no se
+// mira porque el 301 de `src/server.ts` lleva desplegado más que esos tres días: lo que llegue hoy
+// bajo el prefijo viejo rankearía una ruta que el servidor ya no sirve.
 export async function updateMostReadLiteraryWorks(
 	contentRepository: ContentRepository = new SanityContentRepository(),
 ): Promise<RotatingContent> {

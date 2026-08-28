@@ -126,8 +126,8 @@ describe('updateMostReadLiteraryWorks', () => {
 
 	beforeEach(() => clearAllMocks());
 
-	// El prefijo retirado sigue apareciendo en lo que reporta la métrica mientras queden visitas suyas
-	// en la ventana: leerlo volvería a rankear una ruta que el servidor ya redirige.
+	// El filtro de prefijo es exacto: una URL bajo el prefijo retirado no aporta al ranking, venga de
+	// donde venga, porque rankearía una ruta que el servidor ya redirige.
 	it('ignores popular pages from the withdrawn story route', async () => {
 		(fetchClarityData as Mock).mockResolvedValue(
 			popularPages(

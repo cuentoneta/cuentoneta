@@ -547,9 +547,13 @@ interface RotatingContent {
 interface HighlightedAuthor {
 	author: AuthorTeaser;
 	tags: readonly Tag[]; // Las etiquetas derivadas del autor
-	storyCount: number; // Obras del autor, contadas sobre los documentos literaryWork
+	storyCount: number; // Obras del autor, contadas sobre los documentos literaryWork y story
 }
 ```
+
+El conteo abarca **ambos** tipos de documento a propósito: dar de baja el schema `story` no borra del
+dataset los documentos que quedaron sin migrar, y contar solo obras dejaría en cero a todo autor cuya
+obra todavía no migró.
 
 `mostRead` y `latestReads` conservan su nombre porque nombran el **rol editorial** del slot; lo transportan obras (`LiteraryWorkNavigationTeaserWithAuthors`). `collections` agrupa `CollectionTeaser` (ver [el agregado](#agregado-collection-colección-de-obras-literarias)). `RotatingContent` es la proyección que el cron de "lo más leído" persiste y expone por separado del resto de la landing — detalle del productor en [Estrategias de Actualización de Contenido](./CONTENT_UPDATE_STRATEGIES.md).
 
