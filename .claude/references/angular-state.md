@@ -45,7 +45,9 @@ El servicio de datos devuelve **siempre `Observable<T>`**, nunca `Promise<T>`:
 ```typescript
 // literary-work.provider.ts
 public getBySlug(slug: string): Observable<LiteraryWork> {
-	return this.http.get<LiteraryWorkDto>(`${this.url}/${slug}`).pipe(map((response) => this.toLiteraryWork(response)));
+	return this.http
+		.get<unknown>(`${this.url}/${slug}`)
+		.pipe(map((response) => this.toLiteraryWork(literaryWorkDtoSchema.parse(response)))); // el DTO se valida acá
 }
 ```
 

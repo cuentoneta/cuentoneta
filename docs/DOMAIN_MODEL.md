@@ -753,7 +753,7 @@ interface Icon {
 
 ```typescript
 interface InternalLink {
-	path: string; // Ruta interna (ej: "/story/la-casa-de-los-espíritus")
+	path: string; // Ruta interna (ej: "/read/la-casa-de-los-espíritus")
 	label: string; // Texto del enlace
 }
 

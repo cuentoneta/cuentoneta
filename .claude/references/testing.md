@@ -169,6 +169,8 @@ const [literaryWorkMock] = onoffLiteraryWorksMock;
 const getBySlug = fn<[string], Observable<LiteraryWork>>();
 getBySlug.mockReturnValue(of(literaryWorkMock));
 
+// El objeto parcial alcanza mientras el test no ejercite el resto de la interfaz. Cuando la ejercite,
+// la forma es una clase completa: así lo hace `read.page.spec.ts`.
 await render(ReadPage, {
 	providers: [{ provide: LiteraryWorkApi, useValue: { getBySlug } }],
 });

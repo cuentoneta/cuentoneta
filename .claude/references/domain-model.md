@@ -194,7 +194,7 @@ Un **Value Object** no tiene identidad propia: representa un concepto del domini
 
 ### Slug — clave de negocio
 
-`slug` es el patrón **Business Key** del proyecto: identificador amigable, único e **inmutable** que reemplaza al `_id` técnico de Sanity en URLs y rutas (`/story/el-aleph`, `/author/jorge-luis-borges`). El `_id` se reserva para GROQ y manipulación en la capa de datos.
+`slug` es el patrón **Business Key** del proyecto: identificador amigable, único e **inmutable** que reemplaza al `_id` técnico de Sanity en URLs y rutas (`/read/el-fin`, `/author/jorge-luis-borges`). El `_id` se reserva para GROQ y manipulación en la capa de datos.
 
 ```typescript
 // slug.model.ts — implementado
