@@ -60,9 +60,9 @@ Regla central: **un campo de componente nunca es `public` por defecto.** Las pla
 | `public`    | **Solo** inputs/outputs/models de signals (`input()`, `output()`, `model()`), **API imperativa** llamada por padres (`open()`, `close()`), y miembros **requeridos por interfaces**. |
 
 ```typescript
-// Miembros de `src/app/components/share-button/share-button.component.ts`
-export class ShareButtonComponent {
-	public readonly platform = input.required<SharingPlatform>();
+// Miembros de `src/app/components/resource/resource.component.ts`
+export class ResourceComponent {
+	public readonly resource = input.required<Resource>();
 
 	protected readonly NgIcon = NgIcon;
 
@@ -81,7 +81,7 @@ protected readonly icon = computed(() => /* … */); // la plantilla lo interpol
 private readonly isExpanded = signal(false); // estado interno, no llega a la plantilla
 ```
 
-`public` queda reservado a las dos excepciones que ya fija la tabla: un miembro **requerido por una interfaz** (p. ej. `story` en `StoryComponent`, exigido por `StoryHost`) o **consumido por otro componente** (p. ej. `hiddenCount` de `TagsOverflowDirective`, que lee `TagsListComponent`). Exponer una signal en `public` "por las dudas" agranda la API del componente sin que nadie la consuma.
+`public` queda reservado a las dos excepciones que ya fija la tabla: un miembro **requerido por una interfaz** (p. ej. `literaryWork` en `ReadPage`, exigido por `ReadHost`) o **consumido por otro componente** (p. ej. `hiddenCount` de `TagsOverflowDirective`, que lee `TagsListComponent`). Exponer una signal en `public` "por las dudas" agranda la API del componente sin que nadie la consuma.
 
 ---
 
@@ -209,19 +209,19 @@ Todo `effect()` / `afterRenderEffect()` / `afterNextRender()` se declara como **
 
 ```typescript
 // ✅ Correcto — effect nombrado como field, después de lo que referencia
-// (tomado de `share-button.component.ts`)
-export class ShareButtonComponent {
+// (tomado de `resource.component.ts`)
+export class ResourceComponent {
 	private readonly tooltipDirective = inject(TooltipDirective);
-	public readonly platform = input.required<SharingPlatform>();
+	public readonly resource = input.required<Resource>();
 
 	private readonly syncTooltipEffect = effect(() => {
-		this.tooltipDirective.text.set(`Compartir en ${this.platform().name}`);
+		this.tooltipDirective.text.set(this.resource().title);
 		this.tooltipDirective.position.set('bottom');
 	});
 }
 
 // ❌ Incorrecto — effect anónimo dentro del constructor
-export class StoryComponent {
+export class ReadPage {
 	constructor() {
 		effect(() => {
 			/* ... */
@@ -244,7 +244,7 @@ Reglas:
 - Marcar las dependencias `private readonly` (o `protected readonly` si la plantilla las usa).
 
 ```typescript
-private readonly storyApi = inject(StoryApi); // token del API provider, no la clase concreta
+private readonly literaryWorkApi = inject(LiteraryWorkApi); // token del API provider, no la clase concreta
 private readonly injector = inject(EnvironmentInjector);
 ```
 
