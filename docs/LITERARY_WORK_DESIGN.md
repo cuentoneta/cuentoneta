@@ -418,6 +418,8 @@ Tres cosas que la extensión no cambia y una que sí:
 - **El corte por entorno y la guarda anti-CSR son los mismos**, y esta última pesa más que antes: la home es justamente donde el deopt a CSR ya ocurrió en producción.
 - **Lo que sí cambia es el alcance del trade-off de frescura.** La ventana de propagación de una edición ahora también aplica al contenido rotativo de la home y a las colecciones, que se editan con más frecuencia que una obra ya publicada — a diferencia del contenido de una obra, que es inmutable una vez creada.
 
+**Invariante de deploy que la extensión vuelve más pesado.** El corte por entorno mira `environment.production`, no qué dataset está sirviendo: da por supuesto que un deploy marcado como producción apunta al dataset público. El supuesto no es nuevo, pero antes cubría una ruta y ahora cubre seis páginas y siete módulos, así que un deploy de producción apuntando por error a un dataset no público —una migración, una prueba, una variable de entorno mal puesta— se serviría desde un CDN compartido en mucha más superficie. Se verifica fuera de banda, al configurar el entorno; si alguna vez conviene volverlo verificable, la vía es comparar además el dataset efectivo contra el público esperado.
+
 El registro es explícito por módulo y por página, nunca un middleware global: cada módulo tiene rutas de escritura servidas por `GET` (`update-most-read`, `add-next-weeks-landing-page-content`) que se declaran `no-store` en su handler, y un middleware ciego las cachearía. `src/api/routes.spec.ts` afirma el conjunto exacto de módulos cacheados, para que sumar uno nuevo obligue a decidir su cacheabilidad en vez de heredarla por olvido.
 
 ---
