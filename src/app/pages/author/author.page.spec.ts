@@ -176,14 +176,14 @@ describe('AuthorPage', () => {
 		expect(screen.queryByTestId('web-resources')).not.toBeInTheDocument();
 	});
 
-	// El destino de lectura es /read: la página salió del mundo Story y sus enlaces también.
+	// El destino de lectura es la ruta de la obra: la página salió del mundo Story y sus enlaces también.
 	it('should link each listed work to its reading page', async () => {
 		await renderPage();
 
 		const [firstWork] = worksByAuthor;
 		const link = within(screen.getByTestId('literary-works')).getByRole('link', { name: firstWork.title });
 
-		expect(link.getAttribute('href')).toContain(`/read/${firstWork.slug}`);
+		expect(link.getAttribute('href')).toContain(`/literary-work/${firstWork.slug}`);
 	});
 
 	// La página de lectura deriva sus sugerencias de esta procedencia: sin el contexto, una lectura
@@ -195,7 +195,7 @@ describe('AuthorPage', () => {
 		const link = within(screen.getByTestId('literary-works')).getByRole('link', { name: firstWork.title });
 
 		expect(link.getAttribute('href')).toBe(
-			`/read/${firstWork.slug}?navigation=author&navigationSlug=${authorMock.slug}`,
+			`/literary-work/${firstWork.slug}?navigation=author&navigationSlug=${authorMock.slug}`,
 		);
 	});
 

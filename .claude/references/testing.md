@@ -157,7 +157,7 @@ expect(heading).toBeInTheDocument();
 
 ### Servicios inyectados (mock con `fn()`)
 
-> Cuando el doble no necesita registrar llamadas, se provee la clase `Stub*` del propio provider en vez de `fn()` — es lo que hace `read.page.spec.ts` con `StubLiteraryWorkApi` + `provideLiteraryWorkApiMock()`. `fn()` sigue siendo la herramienta cuando el test necesita **inspeccionar** la llamada (con qué slug se invocó, cuántas veces).
+> Cuando el doble no necesita registrar llamadas, se provee la clase `Stub*` del propio provider en vez de `fn()` — es lo que hace `literary-work.page.spec.ts` con `StubLiteraryWorkApi` + `provideLiteraryWorkApiMock()`. `fn()` sigue siendo la herramienta cuando el test necesita **inspeccionar** la llamada (con qué slug se invocó, cuántas veces).
 
 ```typescript
 import { fn } from '@test-utils';
@@ -170,8 +170,8 @@ const getBySlug = fn<[string], Observable<LiteraryWork>>();
 getBySlug.mockReturnValue(of(literaryWorkMock));
 
 // El objeto parcial alcanza mientras el test no ejercite el resto de la interfaz. Cuando la ejercite,
-// la forma es una clase completa: así lo hace `read.page.spec.ts`.
-await render(ReadPage, {
+// la forma es una clase completa: así lo hace `literary-work.page.spec.ts`.
+await render(LiteraryWorkPage, {
 	providers: [{ provide: LiteraryWorkApi, useValue: { getBySlug } }],
 });
 
@@ -329,7 +329,7 @@ describe('SitemapService', () => {
 		});
 
 		const urls = await getSitemapUrls();
-		expect(urls).toContainEqual(expect.objectContaining({ loc: 'https://test.cuentoneta.ar/read/el-fin' }));
+		expect(urls).toContainEqual(expect.objectContaining({ loc: 'https://test.cuentoneta.ar/literary-work/el-fin' }));
 	});
 });
 ```
@@ -422,7 +422,7 @@ Todo componente nuevo en **`src/app/components/`** lleva su `*.stories.ts` (docu
 
 **La exención de las páginas es un permiso, no una prohibición.** Una página _puede_ catalogarse cuando lo que se quiere mirar es el **ensamblado**: cómo conviven sus bloques a lo largo del scroll, y cómo responde a los parámetros con que la ruta la invoca. Esas entradas van bajo la sección **`Páginas/`**, separadas del catálogo de componentes, y se montan con `applicationConfig` sobre los dobles de sus proveedores, resolviendo **por el mismo parámetro que resuelve la ruta** —el slug— en vez de devolver siempre el mismo dato: así los controles mueven la página de verdad y los estados de borde (una obra inexistente, un contexto ausente) quedan alcanzables desde el propio catálogo.
 
-`ReadPage` es la primera. Lo que la hizo valer el catálogo es que ninguna otra vista permite evaluar el bloque de sugerencias contra los dos contextos de navegación sin levantar la aplicación entera.
+`LiteraryWorkPage` es la primera. Lo que la hizo valer el catálogo es que ninguna otra vista permite evaluar el bloque de sugerencias contra los dos contextos de navegación sin levantar la aplicación entera.
 
 ### Convenciones (según las stories existentes)
 

@@ -13,7 +13,8 @@ import type { LiteraryWorkTeaser } from '@models/literary-work.model';
 import type { NavigationParams } from '@app-utils/navigation-params';
 
 describe('LiteraryWorkCardTeaserComponent', () => {
-	const literaryWorkUrl = '/read/el-palacio-de-las-nueve-fronteras?navigation=author&navigationSlug=francois-onoff';
+	const literaryWorkUrl =
+		'/literary-work/el-palacio-de-las-nueve-fronteras?navigation=author&navigationSlug=francois-onoff';
 	const authorUrl = '/author/francois-onoff';
 
 	let navigationParams: NavigationParams = { navigation: 'author', navigationSlug: '' };
@@ -52,7 +53,7 @@ describe('LiteraryWorkCardTeaserComponent', () => {
 		await render(LiteraryWorkCardTeaserComponent, {
 			inputs: { literaryWork: palacioNueveFronterasLiteraryWorkTeaserMock, navigationParams },
 		});
-		const link = screen.getAllByRole('link').find((l) => l.getAttribute('href')?.includes('/read/'));
+		const link = screen.getAllByRole('link').find((l) => l.getAttribute('href')?.includes('/literary-work/'));
 		expect(link?.getAttribute('href')).toContain(literaryWorkUrl);
 	});
 
@@ -160,7 +161,7 @@ describe('LiteraryWorkCardTeaserComponent', () => {
 			expect(screen.getByTestId('cover-image')).toBeInTheDocument();
 			const links = screen.getAllByRole('link');
 			expect(links).toHaveLength(1);
-			expect(links[0]).toHaveAttribute('href', expect.stringContaining('/read/'));
+			expect(links[0]).toHaveAttribute('href', expect.stringContaining('/literary-work/'));
 		});
 	});
 

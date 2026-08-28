@@ -5,14 +5,14 @@ import { signal } from '@angular/core';
 
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 import { type LiteraryWork } from '@models/literary-work.model';
-import { ReadStructuredDataDirective } from './read-structured-data.directive';
-import { READ_HOST } from './read-host';
+import { LiteraryWorkStructuredDataDirective } from './literary-work-structured-data.directive';
+import { LITERARY_WORK_HOST } from './literary-work-host';
 
-describe('ReadStructuredDataDirective', () => {
+describe('LiteraryWorkStructuredDataDirective', () => {
 	const literaryWorkSignal = signal<LiteraryWork | undefined>(undefined);
 
 	function instantiate(): void {
-		TestBed.runInInjectionContext(() => new ReadStructuredDataDirective());
+		TestBed.runInInjectionContext(() => new LiteraryWorkStructuredDataDirective());
 	}
 
 	beforeEach(() => {
@@ -20,8 +20,8 @@ describe('ReadStructuredDataDirective', () => {
 		literaryWorkSignal.set(undefined);
 		TestBed.configureTestingModule({
 			providers: [
-				ReadStructuredDataDirective,
-				{ provide: READ_HOST, useValue: { literaryWork: literaryWorkSignal.asReadonly() } },
+				LiteraryWorkStructuredDataDirective,
+				{ provide: LITERARY_WORK_HOST, useValue: { literaryWork: literaryWorkSignal.asReadonly() } },
 			],
 		});
 	});
@@ -50,7 +50,7 @@ describe('ReadStructuredDataDirective', () => {
 			'@type': 'Article',
 		});
 		expect(
-			JSON.parse(head.querySelector('script[data-schema-id="breadcrumb-read"]')?.textContent ?? '{}'),
+			JSON.parse(head.querySelector('script[data-schema-id="breadcrumb-literary-work"]')?.textContent ?? '{}'),
 		).toMatchObject({ '@type': 'BreadcrumbList' });
 	});
 
@@ -64,6 +64,6 @@ describe('ReadStructuredDataDirective', () => {
 		TestBed.resetTestingModule();
 
 		expect(head.querySelector('script[data-schema-id="article"]')).toBeNull();
-		expect(head.querySelector('script[data-schema-id="breadcrumb-read"]')).toBeNull();
+		expect(head.querySelector('script[data-schema-id="breadcrumb-literary-work"]')).toBeNull();
 	});
 });

@@ -82,7 +82,7 @@ describe('CollectionPage', () => {
 			const link = screen.getByRole('link', { name: firstWork.title });
 
 			expect(link.getAttribute('href')).toBe(
-				`/read/${firstWork.slug}?navigation=collection&navigationSlug=${showingAuthors.slug}`,
+				`/literary-work/${firstWork.slug}?navigation=collection&navigationSlug=${showingAuthors.slug}`,
 			);
 		});
 

@@ -13,7 +13,7 @@ import { SkeletonComponent } from '@components/skeleton/skeleton.component';
  * reproducir su silueta acá.
  */
 @Component({
-	selector: 'cuentoneta-read-page-skeleton',
+	selector: 'cuentoneta-literary-work-page-skeleton',
 	imports: [DividerComponent, LiteraryWorkHeroHeaderComponent, SkeletonComponent],
 	host: { class: 'block w-full' },
 	template: `
@@ -34,7 +34,7 @@ import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 		</section>
 	`,
 })
-export class ReadPageSkeleton {
+export class LiteraryWorkPageSkeleton {
 	// Silueta de carga, no una medida del texto real: el largo del cuerpo recién se conoce cuando la
 	// obra llegó.
 	protected readonly bodyLines = Array.from({ length: 8 });

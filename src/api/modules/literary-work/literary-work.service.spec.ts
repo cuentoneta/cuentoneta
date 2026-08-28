@@ -130,7 +130,10 @@ describe('updateMostReadLiteraryWorks', () => {
 	// vaciaría la lista a medida que los lectores se corren a la otra.
 	it('reads popular pages from both the story and the reading routes', async () => {
 		(fetchClarityData as Mock).mockResolvedValue(
-			popularPages(`${environment.basePath}/story/${first.slug}`, `${environment.basePath}/read/${second.slug}`),
+			popularPages(
+				`${environment.basePath}/story/${first.slug}`,
+				`${environment.basePath}/literary-work/${second.slug}`,
+			),
 		);
 		const content = repositories();
 
@@ -143,7 +146,10 @@ describe('updateMostReadLiteraryWorks', () => {
 	// caminos: sin deduplicar, la lista destacaría dos veces la misma obra.
 	it('counts a work reached through both routes only once', async () => {
 		(fetchClarityData as Mock).mockResolvedValue(
-			popularPages(`${environment.basePath}/story/${first.slug}`, `${environment.basePath}/read/${first.slug}`),
+			popularPages(
+				`${environment.basePath}/story/${first.slug}`,
+				`${environment.basePath}/literary-work/${first.slug}`,
+			),
 		);
 		const content = repositories();
 
@@ -154,7 +160,20 @@ describe('updateMostReadLiteraryWorks', () => {
 
 	it('ignores popular pages outside the reading routes', async () => {
 		(fetchClarityData as Mock).mockResolvedValue(
-			popularPages(`${environment.basePath}/about`, `${environment.basePath}/read/${first.slug}`),
+			popularPages(`${environment.basePath}/about`, `${environment.basePath}/literary-work/${first.slug}`),
+		);
+		const content = repositories();
+
+		const result = await literaryWorkService.updateMostReadLiteraryWorks(content);
+
+		expect(result.mostRead.map(({ slug }) => slug)).toEqual([first.slug]);
+	});
+
+	// El prefijo de la ruta nueva es el del catálogo más una barra, así que el catálogo en sí no
+	// entra: sin este caso, una visita a `/literary-work` aportaría un slug vacío al ranking.
+	it('ignores the catalog itself, which shares the prefix without a slug', async () => {
+		(fetchClarityData as Mock).mockResolvedValue(
+			popularPages(`${environment.basePath}/literary-work`, `${environment.basePath}/literary-work/${first.slug}`),
 		);
 		const content = repositories();
 
@@ -176,7 +195,7 @@ describe('updateMostReadLiteraryWorks', () => {
 	it('preserves the ranking order of the metrics, not the storage order', async () => {
 		const ranked = [...onoffLiteraryWorkNavigationTeasersWithAuthorsMock].reverse().slice(0, 3);
 		(fetchClarityData as Mock).mockResolvedValue(
-			popularPages(...ranked.map(({ slug }) => `${environment.basePath}/read/${slug}`)),
+			popularPages(...ranked.map(({ slug }) => `${environment.basePath}/literary-work/${slug}`)),
 		);
 		const content = repositories();
 
@@ -192,7 +211,9 @@ describe('updateMostReadLiteraryWorks', () => {
 		['ancla', (url: string) => `${url}#final`],
 		['barra final', (url: string) => `${url}/`],
 	])('deriva el slug de una URL con %s', async (_label, decorate) => {
-		(fetchClarityData as Mock).mockResolvedValue(popularPages(decorate(`${environment.basePath}/read/${first.slug}`)));
+		(fetchClarityData as Mock).mockResolvedValue(
+			popularPages(decorate(`${environment.basePath}/literary-work/${first.slug}`)),
+		);
 		const content = repositories();
 
 		const result = await literaryWorkService.updateMostReadLiteraryWorks(content);
@@ -204,7 +225,7 @@ describe('updateMostReadLiteraryWorks', () => {
 		(fetchClarityData as Mock).mockResolvedValue(
 			popularPages(
 				`${environment.basePath}/story/${first.slug}?utm_source=x`,
-				`${environment.basePath}/read/${first.slug}`,
+				`${environment.basePath}/literary-work/${first.slug}`,
 			),
 		);
 		const content = repositories();
@@ -219,7 +240,7 @@ describe('updateMostReadLiteraryWorks', () => {
 	it('writes every ranked work, however many the metrics bring', async () => {
 		const everyWork = onoffLiteraryWorkNavigationTeasersWithAuthorsMock;
 		(fetchClarityData as Mock).mockResolvedValue(
-			popularPages(...everyWork.map(({ slug }) => `${environment.basePath}/read/${slug}`)),
+			popularPages(...everyWork.map(({ slug }) => `${environment.basePath}/literary-work/${slug}`)),
 		);
 		const content = repositories();
 
@@ -229,7 +250,7 @@ describe('updateMostReadLiteraryWorks', () => {
 	});
 
 	it('falla cuando el contenido rotativo no está instalado', async () => {
-		(fetchClarityData as Mock).mockResolvedValue(popularPages(`${environment.basePath}/read/${first.slug}`));
+		(fetchClarityData as Mock).mockResolvedValue(popularPages(`${environment.basePath}/literary-work/${first.slug}`));
 
 		await expect(literaryWorkService.updateMostReadLiteraryWorks(new InMemoryContentRepository())).rejects.toThrow(
 			RotatingContentNotFoundError,

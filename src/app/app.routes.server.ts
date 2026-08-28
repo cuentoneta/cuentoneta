@@ -23,7 +23,7 @@ export const serverRoutes: Array<ServerRoute> = [
 		renderMode: RenderMode.Server,
 	},
 	{
-		path: `${AppRoutes.Read}/:slug`,
+		path: `${AppRoutes.LiteraryWork}/:slug`,
 		renderMode: RenderMode.Server,
 	},
 	{

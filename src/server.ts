@@ -34,12 +34,12 @@ app.route('/sitemap.xml', sitemapController);
 // Registra rutas de API
 app.route('/api', apiRoutes);
 
-// Caché de borde para las páginas SSR de `/read/*`. Registrado antes de `serveStatic` y del
+// Caché de borde para las páginas SSR de `/literary-work/*`. Registrado antes de `serveStatic` y del
 // catch-all SSR para envolverlos (el orden de registro define el anidamiento onion de Hono):
 // corre tras `angularApp.handle()` y decide la cacheabilidad inspeccionando la respuesta.
 // Acotado a GET: solo esas respuestas son cacheables por el borde, y un POST que devolviera 200
 // con el marcador no debe recibir headers de caché.
-app.on('GET', '/read/*', ssrCacheControl);
+app.on('GET', '/literary-work/*', ssrCacheControl);
 
 // Las rutas viejas de obra y de colección se mudaron. Van antes del catch-all SSR, que es un
 // `use('*')`: si la request llegara hasta él se renderizaría una página y el 301 no se emitiría nunca.

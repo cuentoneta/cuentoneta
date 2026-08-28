@@ -83,7 +83,7 @@ test('home — invariantes de indexado para crawlers (ssr, h1 real, contenido pr
 		checkPrimaryContentLength(html),
 		// Que no haya esqueletos dice que los decks no difieren; que haya un enlace a una obra dice que
 		// además trajeron contenido. Sin esto, una página que sirviera los decks vacíos pasaría igual.
-		checkInternalLink(html, '/read/'),
+		checkInternalLink(html, '/literary-work/'),
 		...(await checkJsonLdBlocks(html, SITEWIDE_SCHEMA_IDS)),
 	].filter((violation): violation is SeoInvariantViolation => violation !== null);
 	expect(violations).toEqual([]);
@@ -97,8 +97,8 @@ test('home — D: al navegar a una obra aparece el Article y el sitewide persist
 	await page.goto('/home');
 	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.organization}"]`)).toHaveCount(1);
 
-	await page.locator('a[href^="/read/"]').filter({ visible: true }).first().click();
-	await expect(page).toHaveURL(/\/read\//);
+	await page.locator('a[href^="/literary-work/"]').filter({ visible: true }).first().click();
+	await expect(page).toHaveURL(/\/literary-work\//);
 	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.article}"]`)).toHaveCount(1);
 
 	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.organization}"]`)).toHaveCount(1);

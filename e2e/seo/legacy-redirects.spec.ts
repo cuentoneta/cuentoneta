@@ -19,7 +19,7 @@ const LISTINGS = [
 ] as const;
 
 const DETAILS = [
-	{ from: `/story/${STABLE_SLUGS.literaryWork}`, to: `/read/${STABLE_SLUGS.literaryWork}` },
+	{ from: `/story/${STABLE_SLUGS.literaryWork}`, to: `/literary-work/${STABLE_SLUGS.literaryWork}` },
 	{ from: `/storylist/${STABLE_SLUGS.collection}`, to: `/collection/${STABLE_SLUGS.collection}` },
 ] as const;
 

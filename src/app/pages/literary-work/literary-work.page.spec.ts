@@ -33,7 +33,7 @@ import type { LiteraryWorkApi } from '../../providers/literary-work.provider';
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 import { AppRoutes } from '../../app.routes';
-import ReadPage from './read.page';
+import LiteraryWorkPage from './literary-work.page';
 
 class StubFailingLiteraryWorkApi implements LiteraryWorkApi {
 	constructor(private readonly status: number) {}
@@ -134,7 +134,7 @@ const literaryWorkWithMaliciousBody = (base: LiteraryWork): LiteraryWork => {
 
 // Estos tests cubren el layout de la página, sus estados y el cableado del contexto de navegación.
 // La cobertura de extremo a extremo y el catálogo de variantes viven en sus propios issues.
-describe('ReadPage', () => {
+describe('LiteraryWorkPage', () => {
 	const setup = async (
 		literaryWork: LiteraryWork,
 		options: {
@@ -144,7 +144,7 @@ describe('ReadPage', () => {
 			navigationSlug?: string;
 		} = {},
 	) => {
-		return await render(ReadPage, {
+		return await render(LiteraryWorkPage, {
 			providers: [
 				provideLiteraryWorkApiMock(options.api ?? new StubLiteraryWorkApi(literaryWork, onoffLiteraryWorkTeasersMock)),
 				provideCollectionApiMock(new StubCollectionApi(onoffCollectionsMock)),
@@ -170,13 +170,13 @@ describe('ReadPage', () => {
 
 			// Control positivo doble: el esqueleto está y el contenido todavía no. Sin la segunda mitad, un
 			// esqueleto que conviviera con el contenido pasaría igual.
-			expect(screen.getByTestId('read-page-skeleton')).toBeTruthy();
+			expect(screen.getByTestId('literary-work-page-skeleton')).toBeTruthy();
 			expect(screen.queryByRole('heading', { level: 1 })).toBeNull();
 
 			api.emit(representativeLiteraryWork);
 
 			expect(await screen.findByRole('heading', { level: 1, name: representativeLiteraryWork.title })).toBeTruthy();
-			expect(screen.queryByTestId('read-page-skeleton')).toBeNull();
+			expect(screen.queryByTestId('literary-work-page-skeleton')).toBeNull();
 		});
 	});
 
@@ -445,7 +445,7 @@ describe('ReadPage', () => {
 			await setup(representativeLiteraryWork);
 
 			expect(canonicalSpy).toHaveBeenCalledWith(
-				buildCanonicalUrl(`${AppRoutes.Read}/${representativeLiteraryWork.slug}`),
+				buildCanonicalUrl(`${AppRoutes.LiteraryWork}/${representativeLiteraryWork.slug}`),
 			);
 		});
 	});

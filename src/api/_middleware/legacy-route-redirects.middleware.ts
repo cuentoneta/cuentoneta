@@ -2,9 +2,8 @@ import type { Handler } from 'hono';
 import type { BlankEnv } from 'hono/types';
 
 /**
- * Las URLs indexadas de la plataforma se mudaron: el listado y el detalle de obra a `/literary-work`
- * y `/read/:slug`, y los de colección a `/collection` y `/collection/:slug`. La mudanza tiene que
- * viajar en la respuesta HTTP y no en el router del cliente: un crawler que no ejecuta JavaScript
+ * Las URLs indexadas de la plataforma se mudaron: obra y colección tienen rutas nuevas para su listado
+ * y su detalle. La mudanza tiene que viajar en la respuesta HTTP y no en el router del cliente: un crawler que no ejecuta JavaScript
  * solo ve el 301, y es el 301 —no un alias— lo que traslada lo que la ruta vieja tenga indexado.
  *
  * Son handlers terminales y no middlewares: responden en vez de ceder a `next()`, a diferencia del
@@ -32,5 +31,5 @@ function legacyDetailRedirect(sectionPath: string): Handler<BlankEnv, '/:slug'> 
 
 export const legacyStoryListingRedirect: Handler = (c) => c.redirect('/literary-work', 301);
 export const legacyStorylistListingRedirect: Handler = (c) => c.redirect('/collection', 301);
-export const legacyStoryDetailRedirect = legacyDetailRedirect('/read');
+export const legacyStoryDetailRedirect = legacyDetailRedirect('/literary-work');
 export const legacyStorylistDetailRedirect = legacyDetailRedirect('/collection');

@@ -11,7 +11,7 @@
  *  - E. La tanda completa de invariantes de una página indexable.
  *
  * La tanda completa corre sin `fixme`: el encabezado y el listado de obras se server-renderizan sin
- * diferir, así que el HTML trae H1 real y enlaces a `/read/`.
+ * diferir, así que el HTML trae H1 real y enlaces a `/literary-work/`.
  */
 import { test, expect } from '@playwright/test';
 
@@ -63,7 +63,7 @@ test.describe('collection — HTML server-rendered de una colección existente',
 
 		const [firstItem] = (mainEntity?.['itemListElement'] ?? []) as Record<string, unknown>[];
 		expect(firstItem?.['position']).toBe(1);
-		expect(String(firstItem?.['url'])).toContain('/read/');
+		expect(String(firstItem?.['url'])).toContain('/literary-work/');
 	});
 
 	test('C: JSON-LD BreadcrumbList', async () => {
@@ -85,7 +85,7 @@ test.describe('collection — HTML server-rendered de una colección existente',
 			await collectIndexableHtmlViolations(html, {
 				path: collectionPath,
 				requiredJsonLdIds,
-				requiredInternalLinkPrefix: '/read/',
+				requiredInternalLinkPrefix: '/literary-work/',
 			}),
 		).toEqual([]);
 	});

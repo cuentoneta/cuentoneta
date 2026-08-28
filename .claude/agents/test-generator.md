@@ -62,7 +62,7 @@ beforeEach(() => {
 
 // ...
 getBySlug.mockReturnValue(of(literaryWorkMock));
-await render(ReadPage, {
+await render(LiteraryWorkPage, {
 	providers: [{ provide: LiteraryWorkApi, useValue: { getBySlug } }],
 });
 ```
@@ -139,7 +139,7 @@ describe('SitemapService', () => {
 		});
 
 		const urls = await getSitemapUrls();
-		expect(urls).toContainEqual(expect.objectContaining({ loc: 'https://test.cuentoneta.ar/read/el-fin' }));
+		expect(urls).toContainEqual(expect.objectContaining({ loc: 'https://test.cuentoneta.ar/literary-work/el-fin' }));
 	});
 });
 ```

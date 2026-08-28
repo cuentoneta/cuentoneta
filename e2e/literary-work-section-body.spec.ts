@@ -1,5 +1,5 @@
 /**
- * Test e2e del tratamiento tipográfico del cuerpo de una obra (`/read/:slug`).
+ * Test e2e del tratamiento tipográfico del cuerpo de una obra (`/literary-work/:slug`).
  *
  * Es la única aserción de la suite que ve el CSS ya aplicado: las reglas del cuerpo viven en una hoja
  * global (los nodos los emite el pipeline de Markdown y no llevan clases), así que ningún test unitario
@@ -12,14 +12,14 @@ import { test, expect } from '@playwright/test';
 
 import { STABLE_SLUGS } from './_utils/seo-fixtures';
 
-const readPath = `/read/${STABLE_SLUGS.literaryWork}`;
+const literaryWorkPath = `/literary-work/${STABLE_SLUGS.literaryWork}`;
 
-test('read — los bloques del cuerpo de la obra quedan separados entre sí', async ({ page, request }) => {
-	const response = await request.get(readPath);
+test('literary-work — los bloques del cuerpo de la obra quedan separados entre sí', async ({ page, request }) => {
+	const response = await request.get(literaryWorkPath);
 	// eslint-disable-next-line playwright/no-skipped-test -- skip condicional por contenido del dataset, no un test deshabilitado
 	test.skip(response.status() === 404, `No existe literaryWork con slug "${STABLE_SLUGS.literaryWork}" en el dataset`);
 
-	await page.goto(readPath);
+	await page.goto(literaryWorkPath);
 
 	// Acotado a la primera sección: el segundo bloque de una sección lleva margen, pero el primero de la
 	// siguiente no, y un locator que cruce secciones mediría ese cero cuando la primera tenga un bloque.

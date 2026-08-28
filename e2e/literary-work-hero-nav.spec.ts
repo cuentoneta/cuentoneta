@@ -13,12 +13,12 @@ import { test, expect } from '@playwright/test';
 import { NAV_OWNS_EVERY_SAMPLE, STACKING_VIEWPORTS, VIEWPORT_HEIGHT, navStackingReport } from './_utils/stacking';
 import { STABLE_SLUGS } from './_utils/seo-fixtures';
 
-const readPath = `/read/${STABLE_SLUGS.literaryWork}`;
+const literaryWorkPath = `/literary-work/${STABLE_SLUGS.literaryWork}`;
 
 let status: number;
 
 test.beforeAll(async ({ request }) => {
-	const response = await request.get(readPath);
+	const response = await request.get(literaryWorkPath);
 	status = response.status();
 });
 
@@ -26,17 +26,19 @@ test.beforeAll(async ({ request }) => {
 // infraestructura de test, no un motivo para dejar de verificar. Sin este caso, los de abajo se
 // saltearían en silencio y el gate quedaría verde sin haber mirado nada — que es exactamente lo que
 // venía pasando con el slug anterior.
-test('read — el slug estable de la obra existe en el dataset', () => {
-	expect(status, `"${readPath}" no responde 200: los casos de /read no verifican nada`).toBe(200);
+test('literary-work — el slug estable de la obra existe en el dataset', () => {
+	expect(status, `"${literaryWorkPath}" no responde 200: los casos de la obra no verifican nada`).toBe(200);
 });
 
 for (const viewport of STACKING_VIEWPORTS) {
-	test(`read — el hero no se dibuja sobre la barra de navegación en el viewport ${viewport.name}`, async ({ page }) => {
+	test(`literary-work — el hero no se dibuja sobre la barra de navegación en el viewport ${viewport.name}`, async ({
+		page,
+	}) => {
 		// eslint-disable-next-line playwright/no-skipped-test -- la ausencia de la obra ya la reporta el caso de arriba; repetirla acá sería el mismo fallo cuatro veces
 		test.skip(status !== 200, `No existe literaryWork con slug "${STABLE_SLUGS.literaryWork}" en el dataset`);
 
 		await page.setViewportSize({ width: viewport.width, height: VIEWPORT_HEIGHT });
-		await page.goto(readPath);
+		await page.goto(literaryWorkPath);
 		await expect(page.locator('cuentoneta-literary-work-hero-header')).toBeVisible();
 
 		const report = await navStackingReport(page);

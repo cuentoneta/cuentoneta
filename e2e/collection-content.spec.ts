@@ -59,7 +59,7 @@ test('collection — el listado muestra las obras y cada una lleva a su lectura'
 
 	// Se cuentan los enlaces a la lectura contra las tarjetas y no se afirma que *todos* los enlaces del
 	// listado lleven ahí: la tarjeta enlaza además al autor cuando la curaduría lo muestra.
-	const readingLinks = page.getByTestId('literary-works').locator('a[href^="/read/"]');
+	const readingLinks = page.getByTestId('literary-works').locator('a[href^="/literary-work/"]');
 	await expect(readingLinks, 'alguna obra del listado no ofrece su lectura').toHaveCount(await cards.count());
 
 	// Cada tarjeta lleva a *su* obra: sin esto, N enlaces al mismo destino darían el mismo conteo.

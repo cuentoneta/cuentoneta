@@ -99,36 +99,36 @@ describe('sample', () => {
 });
 
 describe('selectByType', () => {
-	const paths = ['/read/a', '/read/b', '/author/c', '/collection/d'];
+	const paths = ['/literary-work/a', '/literary-work/b', '/author/c', '/collection/d'];
 
 	it('filtra por prefijo de tipo', () => {
 		expect(selectByType(paths, '/author/', 5, true)).toEqual(['/author/c']);
 	});
 
 	it('con full=true devuelve todos los del tipo', () => {
-		expect(selectByType(paths, '/read/', 1, true).sort()).toEqual(['/read/a', '/read/b']);
+		expect(selectByType(paths, '/literary-work/', 1, true).sort()).toEqual(['/literary-work/a', '/literary-work/b']);
 	});
 
 	it('con full=false muestrea hasta size', () => {
-		expect(selectByType(paths, '/read/', 1, false)).toHaveLength(1);
+		expect(selectByType(paths, '/literary-work/', 1, false)).toHaveLength(1);
 	});
 });
 
 describe('expectationsFor', () => {
 	it('read: patrón por slug + JSON-LD Article y breadcrumb-read + enlace a autor', () => {
-		const expectations = expectationsFor('/read/el-fin');
+		const expectations = expectationsFor('/literary-work/el-fin');
 		expect(expectations?.titlePattern?.test('El fin')).toBe(true);
 		expect(expectations?.h1Pattern?.test('El fin')).toBe(true);
-		expect(expectations?.canonicalContains).toBe('/read/el-fin');
+		expect(expectations?.canonicalContains).toBe('/literary-work/el-fin');
 		expect(expectations?.requiredInternalLinkPrefix).toBe('/author/');
 		expect(expectations?.requiredJsonLdIds).toContain('article');
-		expect(expectations?.requiredJsonLdIds).toContain('breadcrumb-read');
+		expect(expectations?.requiredJsonLdIds).toContain('breadcrumb-literary-work');
 	});
 
 	it('author: patrón por slug + ProfilePage + enlace a obra', () => {
 		const expectations = expectationsFor('/author/jorge-luis-borges');
 		expect(expectations?.titlePattern?.test('Jorge Luis Borges')).toBe(true);
-		expect(expectations?.requiredInternalLinkPrefix).toBe('/read/');
+		expect(expectations?.requiredInternalLinkPrefix).toBe('/literary-work/');
 		expect(expectations?.requiredJsonLdIds).toContain('profile-page');
 	});
 

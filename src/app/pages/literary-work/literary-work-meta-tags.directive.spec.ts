@@ -8,14 +8,14 @@ import { type LiteraryWork } from '@models/literary-work.model';
 import { AppRoutes } from '../../app.routes';
 import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
-import { ReadMetaTagsDirective } from './read-meta-tags.directive';
-import { READ_HOST } from './read-host';
+import { LiteraryWorkMetaTagsDirective } from './literary-work-meta-tags.directive';
+import { LITERARY_WORK_HOST } from './literary-work-host';
 
-describe('ReadMetaTagsDirective', () => {
+describe('LiteraryWorkMetaTagsDirective', () => {
 	const literaryWorkSignal = signal<LiteraryWork | undefined>(undefined);
 
 	function instantiate(): void {
-		TestBed.runInInjectionContext(() => new ReadMetaTagsDirective());
+		TestBed.runInInjectionContext(() => new LiteraryWorkMetaTagsDirective());
 	}
 
 	beforeEach(() => {
@@ -23,9 +23,9 @@ describe('ReadMetaTagsDirective', () => {
 		literaryWorkSignal.set(undefined);
 		TestBed.configureTestingModule({
 			providers: [
-				ReadMetaTagsDirective,
+				LiteraryWorkMetaTagsDirective,
 				HeadMetadataDirective,
-				{ provide: READ_HOST, useValue: { literaryWork: literaryWorkSignal.asReadonly() } },
+				{ provide: LITERARY_WORK_HOST, useValue: { literaryWork: literaryWorkSignal.asReadonly() } },
 			],
 		});
 	});
@@ -51,14 +51,14 @@ describe('ReadMetaTagsDirective', () => {
 		);
 	});
 
-	it.each(onoffLiteraryWorksMock)('setea la URL canónica de /read desde el slug de "$slug"', (literaryWork) => {
+	it.each(onoffLiteraryWorksMock)('setea la URL canónica de la obra desde el slug de "$slug"', (literaryWork) => {
 		literaryWorkSignal.set(literaryWork);
 		const canonicalSpy = spyOn(TestBed.inject(HeadMetadataDirective), 'setCanonicalUrl');
 
 		instantiate();
 		TestBed.tick();
 
-		expect(canonicalSpy).toHaveBeenCalledWith(buildCanonicalUrl(`${AppRoutes.Read}/${literaryWork.slug}`));
+		expect(canonicalSpy).toHaveBeenCalledWith(buildCanonicalUrl(`${AppRoutes.LiteraryWork}/${literaryWork.slug}`));
 	});
 
 	it('marca la página como indexable', () => {

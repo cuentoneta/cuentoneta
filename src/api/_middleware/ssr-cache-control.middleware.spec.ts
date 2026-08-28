@@ -1,3 +1,6 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 import { RenderMode } from '@angular/ssr';
 import { Hono } from 'hono';
 import { AppRoutes } from '../../app/app.routes';
@@ -33,11 +36,13 @@ describe('ssrCacheControl', () => {
 
 	function appUnderTest(): Hono {
 		const app = new Hono();
-		app.use('/read/*', ssrCacheControl);
-		app.get('/read/la-obra', (c) => c.html('<html ng-server-context="ssr"><body>obra</body></html>'));
-		app.get('/read/csr', (c) => c.html('<html ng-server-context="csr"><body></body></html>'));
-		app.get('/read/missing', (c) => c.text('no existe', 404));
-		app.get('/read/streamed', () => streamedHtml('<html ng-server-context="ssr"><body>obra en stream</body></html>'));
+		app.use('/literary-work/*', ssrCacheControl);
+		app.get('/literary-work/la-obra', (c) => c.html('<html ng-server-context="ssr"><body>obra</body></html>'));
+		app.get('/literary-work/csr', (c) => c.html('<html ng-server-context="csr"><body></body></html>'));
+		app.get('/literary-work/missing', (c) => c.text('no existe', 404));
+		app.get('/literary-work/streamed', () =>
+			streamedHtml('<html ng-server-context="ssr"><body>obra en stream</body></html>'),
+		);
 		return app;
 	}
 
@@ -45,7 +50,7 @@ describe('ssrCacheControl', () => {
 		environment.production = true;
 		environment.readCacheSMaxAge = 600;
 
-		const response = await appUnderTest().request('/read/la-obra');
+		const response = await appUnderTest().request('/literary-work/la-obra');
 
 		expect(response.headers.get('Vercel-CDN-Cache-Control')).toBe(
 			'public, s-maxage=600, stale-while-revalidate=604800',
@@ -55,7 +60,7 @@ describe('ssrCacheControl', () => {
 	it('should keep the browser copy fresh', async () => {
 		environment.production = true;
 
-		const response = await appUnderTest().request('/read/la-obra');
+		const response = await appUnderTest().request('/literary-work/la-obra');
 
 		expect(response.headers.get('Cache-Control')).toBe('public, max-age=0, must-revalidate');
 	});
@@ -63,7 +68,7 @@ describe('ssrCacheControl', () => {
 	it('should not cache the degraded CSR fallback (a 200 without the SSR marker)', async () => {
 		environment.production = true;
 
-		const response = await appUnderTest().request('/read/csr');
+		const response = await appUnderTest().request('/literary-work/csr');
 
 		expect(response.headers.get('Vercel-CDN-Cache-Control')).toBeNull();
 	});
@@ -71,7 +76,7 @@ describe('ssrCacheControl', () => {
 	it('should not cache outside production even when the body is real SSR', async () => {
 		environment.production = false;
 
-		const response = await appUnderTest().request('/read/la-obra');
+		const response = await appUnderTest().request('/literary-work/la-obra');
 
 		expect(response.headers.get('Vercel-CDN-Cache-Control')).toBeNull();
 	});
@@ -79,7 +84,7 @@ describe('ssrCacheControl', () => {
 	it('should not cache non-200 responses', async () => {
 		environment.production = true;
 
-		const response = await appUnderTest().request('/read/missing');
+		const response = await appUnderTest().request('/literary-work/missing');
 
 		expect(response.headers.get('Vercel-CDN-Cache-Control')).toBeNull();
 	});
@@ -87,7 +92,7 @@ describe('ssrCacheControl', () => {
 	it('should preserve the downstream response body', async () => {
 		environment.production = true;
 
-		const response = await appUnderTest().request('/read/la-obra');
+		const response = await appUnderTest().request('/literary-work/la-obra');
 
 		expect(await response.text()).toContain('obra');
 	});
@@ -95,7 +100,7 @@ describe('ssrCacheControl', () => {
 	it('should cache a streamed SSR response and still deliver its whole body', async () => {
 		environment.production = true;
 
-		const response = await appUnderTest().request('/read/streamed');
+		const response = await appUnderTest().request('/literary-work/streamed');
 
 		expect(response.headers.get('Vercel-CDN-Cache-Control')).toContain('s-maxage=');
 		expect(await response.text()).toBe('<html ng-server-context="ssr"><body>obra en stream</body></html>');
@@ -103,9 +108,23 @@ describe('ssrCacheControl', () => {
 
 	// La guarda anti-CSR busca el marcador `ssr`, que Angular solo emite bajo `RenderMode.Server`:
 	// pasar la ruta a `Prerender` la haría emitir `ssg` y el cacheo se apagaría sin señal.
-	it('should keep /read/:slug declared as a server-rendered route', () => {
-		const readRoute = serverRoutes.find((route) => route.path === `${AppRoutes.Read}/:slug`);
+	it('should keep /literary-work/:slug declared as a server-rendered route', () => {
+		const literaryWorkRoute = serverRoutes.find((route) => route.path === `${AppRoutes.LiteraryWork}/:slug`);
 
-		expect(readRoute?.renderMode).toBe(RenderMode.Server);
+		expect(literaryWorkRoute?.renderMode).toBe(RenderMode.Server);
+	});
+
+	// El montaje vive en `server.ts` y ningún test lo alcanza: los de arriba arman su propio Hono. Un
+	// prefijo que dejara de coincidir con la ruta no rompe nada — la caché simplemente deja de
+	// aplicarse—, así que se afirma leyendo la fuente, como hace el guardrail de directivas SEO.
+	it('should stay mounted on the route it caches', () => {
+		const source = readFileSync(join(process.cwd(), 'src/server.ts'), 'utf-8');
+		// La línea, no el archivo: buscar la cadena en el texto entero daría verde con el montaje
+		// comentado, que es justo la forma en que la caché se apagaría sin que nada más lo note.
+		const mount = source
+			.split('\n')
+			.find((line) => line.includes('ssrCacheControl)') && !line.trimStart().startsWith('//'));
+
+		expect(mount).toContain(`'/${AppRoutes.LiteraryWork}/*'`);
 	});
 });

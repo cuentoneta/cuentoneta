@@ -81,7 +81,7 @@ protected readonly icon = computed(() => /* … */); // la plantilla lo interpol
 private readonly isExpanded = signal(false); // estado interno, no llega a la plantilla
 ```
 
-`public` queda reservado a las dos excepciones que ya fija la tabla: un miembro **requerido por una interfaz** (p. ej. `literaryWork` en `ReadPage`, exigido por `ReadHost`) o **consumido por otro componente** (p. ej. `hiddenCount` de `TagsOverflowDirective`, que lee `TagsListComponent`). Exponer una signal en `public` "por las dudas" agranda la API del componente sin que nadie la consuma.
+`public` queda reservado a las dos excepciones que ya fija la tabla: un miembro **requerido por una interfaz** (p. ej. `literaryWork` en `LiteraryWorkPage`, exigido por `LiteraryWorkHost`) o **consumido por otro componente** (p. ej. `hiddenCount` de `TagsOverflowDirective`, que lee `TagsListComponent`). Exponer una signal en `public` "por las dudas" agranda la API del componente sin que nadie la consuma.
 
 ---
 
@@ -221,7 +221,7 @@ export class ResourceComponent {
 }
 
 // ❌ Incorrecto — effect anónimo dentro del constructor
-export class ReadPage {
+export class LiteraryWorkPage {
 	constructor() {
 		effect(() => {
 			/* ... */

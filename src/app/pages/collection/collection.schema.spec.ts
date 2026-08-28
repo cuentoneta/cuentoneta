@@ -27,7 +27,7 @@ describe('buildCollectionPageSchema', () => {
 				itemListElement: geometriasDelDesveloCollectionMock.literaryWorks.map((literaryWork, index) => ({
 					'@type': 'ListItem',
 					position: index + 1,
-					url: `https://www.cuentoneta.ar/read/${literaryWork.slug}`,
+					url: `https://www.cuentoneta.ar/literary-work/${literaryWork.slug}`,
 					name: literaryWork.title,
 				})),
 			},
