@@ -98,7 +98,7 @@ test('home — D: al navegar a una obra aparece el Article y el sitewide persist
 	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.organization}"]`)).toHaveCount(1);
 
 	await page.locator('a[href^="/literary-work/"]').filter({ visible: true }).first().click();
-	await expect(page).toHaveURL(/\/read\//);
+	await expect(page).toHaveURL(/\/literary-work\//);
 	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.article}"]`)).toHaveCount(1);
 
 	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.organization}"]`)).toHaveCount(1);

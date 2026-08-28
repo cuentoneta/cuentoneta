@@ -51,7 +51,7 @@ describe('LiteraryWorkMetaTagsDirective', () => {
 		);
 	});
 
-	it.each(onoffLiteraryWorksMock)('setea la URL canónica de /read desde el slug de "$slug"', (literaryWork) => {
+	it.each(onoffLiteraryWorksMock)('setea la URL canónica de la obra desde el slug de "$slug"', (literaryWork) => {
 		literaryWorkSignal.set(literaryWork);
 		const canonicalSpy = spyOn(TestBed.inject(HeadMetadataDirective), 'setCanonicalUrl');
 

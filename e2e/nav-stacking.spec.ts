@@ -2,7 +2,7 @@
  * La barra de navegación fija responde sobre su propia franja en toda ruta con contenido, en los tres
  * anchos del Design System.
  *
- * Generaliza el caso de `/read`, que nació de un defecto puntual: dos componentes que no se conocían
+ * Generaliza el caso de la página de lectura, que nació de un defecto puntual: dos componentes que no se conocían
  * eligieron el mismo valor de apilamiento, quedaron en el mismo contexto y el empate lo resolvió el orden
  * del documento. La escala y sus reglas de lint impiden ahora elegir un valor fuera de rango, pero no
  * pueden juzgar si el aislamiento quedó en el ancestro correcto: eso solo se mide en un navegador.
@@ -16,7 +16,7 @@ import { STABLE_SLUGS } from './_utils/seo-fixtures';
 // puede ser del shell —`cuentoneta-header` está presente aun con la ruta en esqueleto o en error—, porque
 // entonces el hit-test correría antes de que haya contenido con el que disputar la franja.
 //
-// `/read` no está acá: tiene su propio spec de regresión, que es el del defecto que originó todo esto y
+// La página de lectura no está acá: tiene su propio spec de regresión, que es el del defecto que originó todo esto y
 // nombra al hero como sospechoso. Sumarla también acá duplicaría su costo en el gate más frágil del repo.
 const ROUTES = Object.freeze([
 	{ name: 'home', path: '/home', ready: 'h1' },

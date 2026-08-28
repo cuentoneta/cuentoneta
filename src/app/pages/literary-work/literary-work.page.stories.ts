@@ -62,9 +62,9 @@ const navigationSlugLabels = Object.fromEntries([
 	...onoffCollectionsMock.map(({ slug, title }) => [slug, `Colección — ${title}`]),
 ]);
 
-type ReadPageArgs = { slug: string; navigation: string; navigationSlug: string };
+type LiteraryWorkPageArgs = { slug: string; navigation: string; navigationSlug: string };
 
-const meta: Meta<ReadPageArgs> = {
+const meta: Meta<LiteraryWorkPageArgs> = {
 	component: LiteraryWorkPage,
 	title: 'Páginas/LiteraryWorkPage',
 	decorators: [
@@ -108,7 +108,7 @@ const meta: Meta<ReadPageArgs> = {
 };
 
 export default meta;
-type Story = StoryObj<ReadPageArgs>;
+type Story = StoryObj<LiteraryWorkPageArgs>;
 
 const [firstWork] = onoffLiteraryWorksMock;
 const [firstAuthorSlug] = authorSlugs;

@@ -16,7 +16,7 @@ import { test, expect } from '@playwright/test';
 import { getTitleText, getCanonicalHref } from '../_utils/seo';
 import { STABLE_SLUGS } from '../_utils/seo-fixtures';
 
-const readPath = `/literary-work/${STABLE_SLUGS.literaryWork}`;
+const literaryWorkPath = `/literary-work/${STABLE_SLUGS.literaryWork}`;
 
 // `x-forwarded-for` es el header que Vercel agrega a toda request y que dispara el deopt si no se
 // confía (no está en el set confiable por default de Angular). Se omite `x-forwarded-proto: https`
@@ -25,12 +25,12 @@ const readPath = `/literary-work/${STABLE_SLUGS.literaryWork}`;
 const proxyHeaders = { 'x-forwarded-for': '66.249.66.1' };
 
 test('SSR con x-forwarded-for sirve el HTML por página, no el shell CSR genérico', async ({ request }) => {
-	const html = await (await request.get(readPath, { headers: proxyHeaders })).text();
+	const html = await (await request.get(literaryWorkPath, { headers: proxyHeaders })).text();
 
 	// Afirma sobre el mecanismo: el deopt sirve el shell CSR (`ng-server-context="ssg"`); el SSR
 	// real lo marca como `"ssr"`.
 	expect(html).toContain('ng-server-context="ssr"');
 	// Y sobre el efecto observable: título y canónica de la obra, no el genérico de home.
 	expect(getTitleText(html)).toMatch(/el fin/i);
-	expect(getCanonicalHref(html)).toContain(readPath);
+	expect(getCanonicalHref(html)).toContain(literaryWorkPath);
 });

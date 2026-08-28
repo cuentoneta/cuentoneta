@@ -1,18 +1,18 @@
 /**
  * Flujo de la página de lectura hidratada: el hero, el bloque multimedia y las sugerencias del pie.
  *
- * `e2e/seo/read.spec.ts` mira esta misma ruta, pero mira el HTML que ve el crawler. Acá se ejercita lo
+ * `e2e/seo/literary-work.spec.ts` mira esta misma ruta, pero mira el HTML que ve el crawler. Acá se ejercita lo
  * que sólo existe después de hidratar y en un navegador real: los bloques diferidos (`on idle` /
  * `on viewport`), la interacción de cambio de formato y la navegación entre páginas con sus query params.
  *
- * Las aserciones se derivan del DTO que entrega el API (`_utils/read-fixtures.ts`), no de prosa clavada:
+ * Las aserciones se derivan del DTO que entrega el API (`_utils/literary-work-fixtures.ts`), no de prosa clavada:
  * el spec afirma que la página muestra la obra que el API dice que es.
  */
 import { expect, test, type Page } from '@playwright/test';
 
 import type { LiteraryWorkDto } from '@models/literary-work.dto';
 
-import { fetchLiteraryWork } from './_utils/read-fixtures';
+import { fetchLiteraryWork } from './_utils/literary-work-fixtures';
 import { fetchCollectionCatalog, type CollectionCatalogEntry } from './_utils/collection-fixtures';
 import { DESKTOP_VIEWPORT } from './_utils/viewports';
 import { STABLE_SLUGS } from './_utils/seo-fixtures';
@@ -36,7 +36,7 @@ test.beforeAll(async ({ request }) => {
 
 // Guardas como casos propios, no como `skip` silencioso: los e2e de esta ruta tienen historia de
 // saltearse en verde cuando el dataset no acompaña, y un caso salteado en CI es cobertura que no existe.
-test('read — la obra estable existe en el dataset y cumple el contrato', () => {
+test('literary-work — la obra estable existe en el dataset y cumple el contrato', () => {
 	expect(status, `"${ROUTE}" no responde 200: nada de esta suite verifica la página real`).toBe(200);
 	expect(work, `el API no sirve "${STABLE_SLUGS.literaryWork}": no habría con qué comparar`).toBeDefined();
 });
@@ -48,7 +48,7 @@ async function openWork(page: Page, route: string): Promise<void> {
 	await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 }
 
-test('read — el hero presenta la obra que el API dice que es', async ({ page }) => {
+test('literary-work — el hero presenta la obra que el API dice que es', async ({ page }) => {
 	// eslint-disable-next-line playwright/no-skipped-test -- la ausencia del fixture ya la reporta la guarda de arriba; repetirla acá sería el mismo fallo dos veces
 	test.skip(status !== 200, `"${ROUTE}" no responde 200 en el dataset`);
 	// Separado del anterior: un motivo compuesto reporta siempre el primero, y el diagnóstico se pierde.
@@ -71,7 +71,7 @@ test('read — el hero presenta la obra que el API dice que es', async ({ page }
 
 // El 404 del SSR ya lo afirma la suite de indexado; acá se cubre lo que sólo el navegador ve: que el
 // estado no encontrado ofrece una salida navegable y que la salida efectivamente navega.
-test('read — una obra inexistente ofrece la vuelta al inicio', async ({ page }) => {
+test('literary-work — una obra inexistente ofrece la vuelta al inicio', async ({ page }) => {
 	await page.setViewportSize(DESKTOP_VIEWPORT);
 	await page.goto('/literary-work/obra-inexistente-e2e');
 
@@ -91,7 +91,7 @@ const distinctMediaTypes = (dto: LiteraryWorkDto | undefined): number =>
 // Guarda de curaduría, como caso propio: el cambio de formato sólo se puede afirmar si la obra curada
 // ofrece formatos distintos, y ninguna otra puede buscarse porque el módulo no expone un listado. Si
 // esto sale rojo, la acción es curar esa obra en development y staging.
-test('read — la obra con multimedia ofrece más de un formato', () => {
+test('literary-work — la obra con multimedia ofrece más de un formato', () => {
 	expect(mediaWork, `el API no sirve "${STABLE_SLUGS.literaryWorkWithMedia}"`).toBeDefined();
 	expect(
 		distinctMediaTypes(mediaWork),
@@ -106,7 +106,7 @@ async function settleMediaBlock(page: Page) {
 	return block;
 }
 
-test('read — el bloque multimedia ofrece una opción por recurso', async ({ page }) => {
+test('literary-work — el bloque multimedia ofrece una opción por recurso', async ({ page }) => {
 	// eslint-disable-next-line playwright/no-skipped-test -- la ausencia del fixture ya la reporta su guarda; repetirla acá sería el mismo fallo dos veces
 	test.skip(!mediaWork, `"${MEDIA_ROUTE}" no está en el dataset`);
 	// eslint-disable-next-line playwright/no-skipped-test -- ídem: la curaduría faltante la reporta su propia guarda
@@ -122,7 +122,7 @@ test('read — el bloque multimedia ofrece una opción por recurso', async ({ pa
 	);
 });
 
-test('read — cambiar de formato monta el widget del formato elegido', async ({ page }) => {
+test('literary-work — cambiar de formato monta el widget del formato elegido', async ({ page }) => {
 	// eslint-disable-next-line playwright/no-skipped-test -- la ausencia del fixture ya la reporta su guarda; repetirla acá sería el mismo fallo dos veces
 	test.skip(!mediaWork, `"${MEDIA_ROUTE}" no está en el dataset`);
 	// eslint-disable-next-line playwright/no-skipped-test -- ídem: la curaduría faltante la reporta su propia guarda
@@ -166,7 +166,7 @@ async function settleSuggestions(page: Page, heading: string) {
 
 // Ancla en la obra curada y no en la estable: el autor de `el-fin` tiene una sola obra publicada, así
 // que sus sugerencias por autor salen vacías y el caso no afirmaría nada.
-test('read — sin contexto, el pie sugiere más obras del autor', async ({ page }) => {
+test('literary-work — sin contexto, el pie sugiere más obras del autor', async ({ page }) => {
 	// eslint-disable-next-line playwright/no-skipped-test -- la ausencia del fixture ya la reporta su guarda; repetirla acá sería el mismo fallo dos veces
 	test.skip(!mediaWork, `"${MEDIA_ROUTE}" no está en el dataset`);
 
@@ -204,7 +204,7 @@ test('read — sin contexto, el pie sugiere más obras del autor', async ({ page
 // El único cableado que ningún unitario ve: la tarjeta de la colección EMITE los query params de contexto
 // y la página los CONSUME. Entrar directo con la URL armada probaría la mitad de consumo, que el spec
 // unitario ya cubre.
-test('read — llegar desde una colección cambia la fuente de las sugerencias', async ({ page }) => {
+test('literary-work — llegar desde una colección cambia la fuente de las sugerencias', async ({ page }) => {
 	// eslint-disable-next-line playwright/no-skipped-test -- el catálogo sin la colección estable ya lo reportan los e2e de colección
 	test.skip(!stableCollection, `el catálogo no trae "${STABLE_SLUGS.collection}"`);
 
