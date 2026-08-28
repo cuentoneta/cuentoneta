@@ -188,20 +188,20 @@ Si un cambio toca tipos, schemas de Sanity/Zod, contratos de API o terminología
 
 **Catálogo completo (`.claude/references/`):**
 
-| Referencia                 | Contenido                                                                           |
-| -------------------------- | ----------------------------------------------------------------------------------- |
-| `coding-agent-policies.md` | Políticas de colaboración de agentes (carga obligatoria al inicio)                  |
-| `solid.md`                 | Principios SOLID                                                                    |
-| `cupid.md`                 | Propiedades CUPID                                                                   |
-| `guiding-principles.md`    | YAGNI / KISS + disciplina de operadores RxJS                                        |
-| `cross-reference.md`       | Cómo se relacionan SOLID / CUPID / Clean Architecture / DDD                         |
-| `clean-architecture.md`    | Capas, regla de dependencia, "Qualified Implementation" (Sanity/InMemory)           |
-| `domain-model.md`          | DDD estratégico (agregados, invariantes, bounded contexts) — Story/Author/Storylist |
-| `angular-components.md`    | Componentes, effects, DI/providers, control flow                                    |
-| `angular-state.md`         | Estado signals-first sin NgRx (servicios + signals/RxJS)                            |
-| `testing.md`               | Vitest + Angular Testing Library + `@test-utils` + Storybook                        |
-| `sanity-acl.md`            | GROQ → repository → mapper → modelo de dominio (el ACL central)                     |
-| `scripts.md`               | Convención de `scripts/` vs. `scripts/audit/` (auditoría one-off)                   |
-| `sanity-migrations.md`     | Migraciones de datos de Sanity (`cms/migrations/`), no en `scripts/`                |
-| `typescript.md`            | Micro-convenciones TS/JS (`Object.freeze`, type-only, duration strings)             |
-| `maintainability.md`       | Mantenibilidad y simplificación estructural                                         |
+| Referencia                 | Contenido                                                                                   |
+| -------------------------- | ------------------------------------------------------------------------------------------- |
+| `coding-agent-policies.md` | Políticas de colaboración de agentes (carga obligatoria al inicio)                          |
+| `solid.md`                 | Principios SOLID                                                                            |
+| `cupid.md`                 | Propiedades CUPID                                                                           |
+| `guiding-principles.md`    | YAGNI / KISS + disciplina de operadores RxJS                                                |
+| `cross-reference.md`       | Cómo se relacionan SOLID / CUPID / Clean Architecture / DDD                                 |
+| `clean-architecture.md`    | Capas, regla de dependencia, "Qualified Implementation" (Sanity/InMemory)                   |
+| `domain-model.md`          | DDD estratégico (agregados, invariantes, bounded contexts) — Author/LiteraryWork/Collection |
+| `angular-components.md`    | Componentes, effects, DI/providers, control flow                                            |
+| `angular-state.md`         | Estado signals-first sin NgRx (servicios + signals/RxJS)                                    |
+| `testing.md`               | Vitest + Angular Testing Library + `@test-utils` + Storybook                                |
+| `sanity-acl.md`            | GROQ → repository → mapper → modelo de dominio (el ACL central)                             |
+| `scripts.md`               | Convención de `scripts/` vs. `scripts/audit/` (auditoría one-off)                           |
+| `sanity-migrations.md`     | Migraciones de datos de Sanity (`cms/migrations/`), no en `scripts/`                        |
+| `typescript.md`            | Micro-convenciones TS/JS (`Object.freeze`, type-only, duration strings)                     |
+| `maintainability.md`       | Mantenibilidad y simplificación estructural                                                 |
