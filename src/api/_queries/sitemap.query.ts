@@ -9,7 +9,7 @@
 import { defineQuery } from 'groq';
 
 export const sitemapSlugsQuery = defineQuery(`{
-	"stories": *[_type == "story" && !(_id in path('drafts.**'))]{ "slug": slug.current, "lastmod": coalesce(publishedAt, _createdAt) },
+	"literaryWorks": *[_type == "literaryWork" && !(_id in path('drafts.**'))]{ "slug": slug.current, "lastmod": coalesce(publishedAt, _createdAt) },
 	"authors": *[_type == "author" && !(_id in path('drafts.**'))]{ "slug": slug.current, "lastmod": _createdAt },
-	"storylists": *[_type == "storylist" && !(_id in path('drafts.**'))]{ "slug": slug.current, "lastmod": _createdAt }
+	"collections": *[_type == "collection" && !(_id in path('drafts.**'))]{ "slug": slug.current, "lastmod": _createdAt }
 }`);

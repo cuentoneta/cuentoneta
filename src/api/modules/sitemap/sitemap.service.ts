@@ -11,7 +11,7 @@ interface SitemapUrl {
  * Obtiene todas las URLs para el sitemap
  */
 export async function getSitemapUrls(): Promise<SitemapUrl[]> {
-	const { stories, authors, storylists } = await fetchSitemapSlugs();
+	const { literaryWorks, authors, collections } = await fetchSitemapSlugs();
 	const BASE_URL = process.env['BASE_URL'] || 'https://www.cuentoneta.ar';
 
 	return [
@@ -22,14 +22,14 @@ export async function getSitemapUrls(): Promise<SitemapUrl[]> {
 		{ loc: `${BASE_URL}/collection` },
 		{ loc: `${BASE_URL}/literary-work` },
 
-		// Páginas de cuentos
-		...stories.map((s) => ({ loc: `${BASE_URL}/story/${s.slug}`, lastmod: s.lastmod })),
+		// Páginas de obras
+		...literaryWorks.map((lw) => ({ loc: `${BASE_URL}/read/${lw.slug}`, lastmod: lw.lastmod })),
 
 		// Páginas de autores
 		...authors.map((a) => ({ loc: `${BASE_URL}/author/${a.slug}`, lastmod: a.lastmod })),
 
-		// Páginas de storylists
-		...storylists.map((sl) => ({ loc: `${BASE_URL}/storylist/${sl.slug}`, lastmod: sl.lastmod })),
+		// Páginas de colecciones
+		...collections.map((c) => ({ loc: `${BASE_URL}/collection/${c.slug}`, lastmod: c.lastmod })),
 	];
 }
 
