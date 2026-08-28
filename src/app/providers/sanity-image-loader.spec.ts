@@ -1,28 +1,6 @@
-import { isSanityImageUrl, sanityImageLoader } from './sanity-image-loader';
+import { sanityImageLoader } from './sanity-image-loader';
 
 const CDN = 'https://cdn.sanity.io/images/s4dbqkc5/production/abc-1024x1536.png';
-
-describe('isSanityImageUrl', () => {
-	it.each([CDN, `${CDN}?rect=0,0,660,660`, 'https://cdn.sanity.io/files/s4dbqkc5/production/abc.m4a'])(
-		'reconoce "%s" como asset del CDN',
-		(src) => {
-			expect(isSanityImageUrl(src)).toBe(true);
-		},
-	);
-
-	it.each([
-		// Un host que contiene el del CDN como sufijo o como segmento de ruta no es el CDN.
-		'https://cdn.sanity.io.evil.com/images/abc.png',
-		'https://evil.com/cdn.sanity.io/images/abc.png',
-		// Lo que la aplicación pinta con `ngSrc` sin ser de Sanity: assets propios y un host externo.
-		'./assets/svg/logo.svg',
-		'/assets/svg/cover-placeholder.svg',
-		'https://user-images.githubusercontent.com/1/2.png',
-		'',
-	])('no reconoce "%s"', (src) => {
-		expect(isSanityImageUrl(src)).toBe(false);
-	});
-});
 
 describe('sanityImageLoader', () => {
 	it('pide el ancho, el formato negociado y la calidad de la aplicación', () => {

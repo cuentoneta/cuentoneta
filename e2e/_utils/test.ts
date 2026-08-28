@@ -19,7 +19,9 @@
  */
 import { test as base } from '@playwright/test';
 
-import { isSanityAssetUrl, PLACEHOLDER_CONTENT_TYPE, placeholderFor } from './sanity-assets';
+import { isSanityImageUrl } from '@utils/sanity-image.utils';
+
+import { PLACEHOLDER_CONTENT_TYPE, placeholderFor } from './sanity-assets';
 
 type SanityAssetOptions = {
 	/** Se declara por spec con `test.use()`. Ver el opt-out en el encabezado del archivo. */
@@ -48,7 +50,7 @@ export const test = base.extend<SanityAssetOptions & SanityAssetFixtures>({
 	context: async ({ context, interceptSanityAssets, interceptedSanityAssets }, use) => {
 		if (interceptSanityAssets) {
 			await context.route(
-				(url) => isSanityAssetUrl(url.toString()),
+				(url) => isSanityImageUrl(url.toString()),
 				async (route) => {
 					const url = route.request().url();
 					interceptedSanityAssets.push(url);

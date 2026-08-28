@@ -1,26 +1,16 @@
 /**
- * Reconocimiento de los assets que sirve el CDN de Sanity, y la respuesta con la que los e2e los
- * sustituyen.
+ * La respuesta con la que los e2e sustituyen los assets que sirve el CDN de Sanity.
  *
  * El CDN factura ancho de banda y una corrida completa pide las mismas portadas muchas veces —un
- * proyecto por browser, contexto nuevo por test, sin cache HTTP entre ellos—, así que ninguna sale
- * a la red. Núcleo puro, sin dependencia de Playwright: quien lo instala es el fixture de `test.ts`.
+ * proyecto por browser, contexto nuevo por test, sin cache HTTP entre ellos—, así que se sustituyen
+ * en todo spec que no lo desactive; el opt-out y su justificación viven en `test.ts`, que es quien
+ * instala la intercepción.
+ *
+ * Núcleo puro, sin dependencia de Playwright. El reconocimiento de la URL no se declara acá sino en
+ * el kernel (`@utils/sanity-image.utils`), compartido con el `IMAGE_LOADER` de la aplicación: si los
+ * tests sustituyeran un conjunto distinto del que la aplicación transforma, el bloqueo pasaría en
+ * verde sin cubrir lo que se pide de verdad.
  */
-
-const SANITY_CDN_HOSTNAME = 'cdn.sanity.io';
-
-/**
- * Verdadero solo si `url` es absoluta y su host es exactamente el del CDN. Compara el hostname
- * parseado y no el texto de la URL, porque `https://cdn.sanity.io.evil.com/x.png` contiene el
- * string sin ser el CDN. Una URL relativa o mal formada da `false`.
- */
-export function isSanityAssetUrl(url: string): boolean {
-	try {
-		return new URL(url).hostname === SANITY_CDN_HOSTNAME;
-	} catch {
-		return false;
-	}
-}
 
 // El CDN nombra cada asset de imagen con sus dimensiones antes de la extensión
 // (`<hash>-1024x1536.png`), y esa es la única fuente de la relación de aspecto disponible sin
@@ -45,9 +35,12 @@ export const PLACEHOLDER_CONTENT_TYPE = 'image/svg+xml';
  *
  * Las dimensiones no son cosmética: las portadas se pintan con `h-auto`, así que el navegador
  * deriva su alto de la relación de aspecto de la imagen que llegó. Un sustituto cuadrado las achica,
- * la página se acorta y los specs que miden geometría —el apilamiento contra la barra— fallan por
- * la sustitución en vez de por lo que miden. Un SVG vacío las lleva porque declara su tamaño en el
- * documento, sin tener que generar un raster por cada medida.
+ * la página se acorta y los specs que miden geometría fallan por la sustitución en vez de por lo que
+ * miden. Un SVG vacío lleva su tamaño declarado en el documento, sin tener que generar un raster por
+ * cada medida.
+ *
+ * Un asset sin dimensiones en el nombre —los `/files/*`, que no son imágenes— cae a 1×1: no hay
+ * layout que preservar.
  */
 export function placeholderFor(url: string): string {
 	const { width, height } = dimensionsOf(url);

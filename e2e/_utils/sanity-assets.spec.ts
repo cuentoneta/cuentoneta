@@ -1,31 +1,6 @@
-import { isSanityAssetUrl, placeholderFor } from './sanity-assets';
+import { placeholderFor } from './sanity-assets';
 
 const CDN = 'https://cdn.sanity.io/images/s4dbqkc5/production';
-
-describe('isSanityAssetUrl', () => {
-	it.each([
-		`${CDN}/abc-1024x1536.png`,
-		`${CDN}/abc-660x860.png?rect=0,0,660,660`,
-		'https://cdn.sanity.io/files/s4dbqkc5/production/abc.m4a',
-	])('reconoce el asset del CDN "%s"', (url) => {
-		expect(isSanityAssetUrl(url)).toBe(true);
-	});
-
-	it.each([
-		// Un host que contiene el del CDN como sufijo o como segmento de ruta no es el CDN: el
-		// predicado compara el hostname parseado, no el texto.
-		'https://cdn.sanity.io.evil.com/images/x.png',
-		'https://evil.com/cdn.sanity.io/images/x.png',
-		'https://www.sanity.io/images/x.png',
-		// El resto de lo que la app pinta con `ngSrc`: assets locales y un host externo.
-		'./assets/svg/logo.svg',
-		'/assets/svg/cover-placeholder.svg',
-		'https://user-images.githubusercontent.com/1/2.png',
-		'',
-	])('deja pasar "%s"', (url) => {
-		expect(isSanityAssetUrl(url)).toBe(false);
-	});
-});
 
 describe('placeholderFor', () => {
 	it('conserva las dimensiones que el nombre del asset declara', () => {
