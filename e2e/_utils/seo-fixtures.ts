@@ -1,4 +1,6 @@
 export const STABLE_SLUGS = Object.freeze({
+	// Ya no nombra una página servida: la ruta de cuento se retiró. Queda porque el spec del 301 del
+	// listado necesita una URL de detalle con la que probar que esa redirección no se lo lleva puesto.
 	story: 'el-aleph',
 	author: 'jorge-luis-borges',
 	// Cada slug de acá tiene que existir en los dos datasets que sirven a los e2e (development en local,
@@ -17,7 +19,6 @@ export const SCHEMA_IDS = Object.freeze({
 	organization: 'organization',
 	website: 'website',
 	article: 'article',
-	breadcrumbStory: 'breadcrumb-story',
 	profilePage: 'profile-page',
 	breadcrumbAuthor: 'breadcrumb-author',
 	breadcrumbRead: 'breadcrumb-read',
