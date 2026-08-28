@@ -1,3 +1,4 @@
+import { onoffImageAssets } from '../../onoff-image-assets.mock';
 import { embeddedAuthorMock } from '../../author.mock';
 import { neronRawLiteraryWork } from './neron.literary-work.raw.mock';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
@@ -8,16 +9,15 @@ import { createIsoDateTime } from '@utils/date.utils';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import neronMdBody from './neron.md?raw';
 import { toDomainTags } from '../../onoff-tags.mock';
-import { neronStoryMock } from '../story/neron.story.mock';
 
 const neronBody = createMarkdown(neronMdBody);
 
 export const neronLiteraryWorkMock: LiteraryWork = createLiteraryWork({
 	_id: 'onoff-literary-work-neron',
-	slug: neronStoryMock.slug,
-	title: neronStoryMock.title,
+	slug: neronRawLiteraryWork.slug,
+	title: neronRawLiteraryWork.title,
 	authors: [embeddedAuthorMock],
-	coverImage: neronStoryMock.coverImage,
+	coverImage: onoffImageAssets.neronCover.path,
 	content: [
 		createLiteraryWorkSection({
 			position: 0,
@@ -27,9 +27,9 @@ export const neronLiteraryWorkMock: LiteraryWork = createLiteraryWork({
 		}),
 	],
 	mediaSources: [],
-	resources: neronStoryMock.resources,
-	badLanguage: neronStoryMock.badLanguage,
+	resources: [],
+	badLanguage: neronRawLiteraryWork.badLanguage,
 	tags: toDomainTags(neronRawLiteraryWork.tags),
-	originalPublication: neronStoryMock.originalPublication,
-	publishedAt: createIsoDateTime(neronStoryMock.publishedAt),
+	originalPublication: neronRawLiteraryWork.originalPublication,
+	publishedAt: createIsoDateTime(neronRawLiteraryWork.publishedAt),
 });

@@ -1,7 +1,9 @@
 import type { Media } from '@models/media.model';
 import { createMarkdown } from '@models/markdown.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
+import { onoffImageAssets } from '../../onoff-image-assets.mock';
 import {
+	geometriasDelDesveloSpaceDescription,
 	geometriasDelDesveloSpotifyDescription,
 	geometriasDelDesveloYoutubeDescription,
 } from './geometrias-del-desvelo.media';
@@ -20,5 +22,17 @@ export const geometriasDelDesveloMediaMock: Media[] = [
 		type: 'youTubeVideo',
 		description: markdownToSanitizedHtml(createMarkdown(geometriasDelDesveloYoutubeDescription)),
 		data: { videoId: 'geometriasDelDesveloVideoId' },
+	},
+	{
+		title: 'Mesa de lectura sobre el insomnio',
+		type: 'spaceRecording',
+		description: markdownToSanitizedHtml(createMarkdown(geometriasDelDesveloSpaceDescription)),
+		data: {
+			url: 'https://cdn.example.org/onoff/geometria-space.ogg',
+			duration: '52:40',
+			hostName: 'Biblioteca del Méridien',
+			hostAvatar: onoffImageAssets.bibliotecaMeridienAvatar.path,
+			date: '1974-07-03',
+		},
 	},
 ];

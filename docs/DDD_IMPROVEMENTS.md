@@ -14,6 +14,8 @@ Este documento detalla las mejoras recomendadas para evolucionar la arquitectura
 
 Para contexto sobre el modelo de dominio actual, consulta [Modelo de Dominio - DDD](./DOMAIN_MODEL.md).
 
+> **Nota sobre los ejemplos de código.** Los ejemplos de abajo usan `Story`/`Storylist` como vehículo ilustrativo del patrón propuesto (repositorio, eventos, invariantes), heredado de cuando ese era el agregado principal del catálogo. `Story` y `Storylist` se retiraron: los agregados vigentes son `LiteraryWork` y `Collection`. Ninguno de estos patrones está implementado todavía (son propuestas), así que el nombre del agregado en el ejemplo es secundario a la técnica que ilustra; al implementarlos, aplicá el patrón sobre `LiteraryWork`/`Collection`/`Author`/`Contributor`.
+
 ---
 
 ## Tabla de Contenidos
@@ -172,23 +174,22 @@ export const appConfig: ApplicationConfig = {
 src/
 ├── api/
 │   ├── modules/
-│   │   ├── story/
-│   │   │   ├── story.repository.ts          (nuevo)
-│   │   │   ├── sanity-story.repository.ts   (nuevo)
-│   │   │   ├── story.service.ts             (refactorizado)
-│   │   │   └── story.query.ts               (existente)
+│   │   ├── literary-work/
+│   │   │   ├── literary-work.repository.ts         (existente)
+│   │   │   ├── sanity-literary-work.repository.ts   (existente)
+│   │   │   └── literary-work.service.ts             (existente)
 │   │   ├── author/
 │   │   │   ├── author.repository.ts         (nuevo)
 │   │   │   ├── sanity-author.repository.ts  (nuevo)
 │   │   │   └── author.service.ts            (refactorizado)
-│   │   └── storylist/
-│   │       ├── storylist.repository.ts      (nuevo)
+│   │   └── collection/
+│   │       ├── collection.repository.ts     (existente)
 │   │       └── ...
 ```
 
 ### Issues Relacionados
 
-- [ ] Crear interfaces de repositorio para Story, Author, Storylist, Contributor
+- [ ] Crear interfaces de repositorio para `Author` y `Contributor` (`LiteraryWork` y `Collection` ya las tienen)
 - [ ] Implementar repositorios concretos de Sanity
 - [ ] Refactorizar servicios para usar repositorios
 - [ ] Agregar tests unitarios para repositorios
@@ -200,7 +201,7 @@ src/
 
 ### Situación Actual
 
-Los cambios significativos en agregados (como publicar una historia) no se registran ni se comunican a otros contextos. Esto dificulta:
+Los cambios significativos en agregados (como publicar una obra) no se registran ni se comunican a otros contextos. Esto dificulta:
 
 - Auditoría de cambios
 - Sincronización entre contextos
@@ -496,7 +497,7 @@ class SanityEventStore implements EventStore {
 
 - [ ] Crear interfaces de eventos de dominio
 - [ ] Implementar EventPublisher (in-memory primero)
-- [ ] Agregar eventos a agregados (Story, Author, Storylist, Contributor)
+- [ ] Agregar eventos a agregados (`LiteraryWork`, `Author`, `Collection`, `Contributor`)
 - [ ] Crear event handlers para reacciones
 - [ ] Implementar EventStore en Sanity (opcional)
 - [ ] Agregar tests para eventos
@@ -734,7 +735,7 @@ export class StorySearchComponent {
 
 ### Issues Relacionados
 
-- [ ] Crear interfaces de especificación (StorySpecification, AuthorSpecification, etc.)
+- [ ] Crear interfaces de especificación (`LiteraryWorkSpecification`, `AuthorSpecification`, etc.)
 - [ ] Implementar en repositorios
 - [ ] Agregar validadores de especificación
 - [ ] Crear tests para especificaciones complejas
@@ -972,6 +973,8 @@ try {
 }
 ```
 
+> **Nota:** `LiteraryWork` ya implementa este patrón en producción (`Slug`, `ReadingTime`, etc. — ver [`domain-model.md`](../.claude/references/domain-model.md#value-objects-slug-readingtime-datestring)). Los ejemplos de arriba muestran el diseño original de la propuesta, sobre `Story`; `Author` sigue siendo el agregado pendiente de adoptarlo.
+
 ### Mapeo desde Sanity
 
 ```typescript
@@ -1023,8 +1026,8 @@ function storyToApiResponse(story: Story): StoryApiResponse {
 
 ### Issues Relacionados
 
-- [ ] Crear Value Objects (Slug, DateString, ReadingTime)
-- [ ] Actualizar interfaces de dominio
+- [ ] Crear Value Object `DateString` (`Slug` y `ReadingTime` ya existen para `LiteraryWork`)
+- [ ] Actualizar interfaz de dominio de `Author`
 - [ ] Actualizar funciones de mapeo
 - [ ] Actualizar tests
 - [ ] Documentar creación de Value Objects
@@ -1168,47 +1171,47 @@ namespace AuthorMapper {
 	}
 }
 
-// 3. Mapper para Storylist
-namespace StorylistMapper {
-	export function toDomain(sanityStorylist: SanityStorylistSchemaObject): Storylist {
+// 3. Mapper para Collection
+namespace CollectionMapper {
+	export function toDomain(sanityCollection: SanityCollectionSchemaObject): Collection {
 		return {
-			_id: sanityStorylist._id,
-			title: sanityStorylist.title,
-			slug: Slug.create(sanityStorylist.slug),
-			count: sanityStorylist.count,
-			description: sanityStorylist.description,
-			imagery: sanityStorylist.imagery,
-			tags: sanityStorylist.tags,
-			stories: sanityStorylist.stories.map((story) => StoryMapper.toTeaserWithAuthor(story)),
-			config: sanityStorylist.config,
+			_id: sanityCollection._id,
+			title: sanityCollection.title,
+			slug: Slug.create(sanityCollection.slug),
+			count: sanityCollection.count,
+			description: sanityCollection.description,
+			imagery: sanityCollection.imagery,
+			tags: sanityCollection.tags,
+			literaryWorks: sanityCollection.literaryWorks.map((work) => LiteraryWorkMapper.toTeaser(work)),
+			config: sanityCollection.config,
 		};
 	}
 
-	export function toTeaser(storylist: Storylist): StorylistTeaser {
+	export function toTeaser(collection: Collection): CollectionTeaser {
 		return {
-			_id: storylist._id,
-			title: storylist.title,
-			slug: storylist.slug,
-			count: storylist.count,
-			description: storylist.description,
-			imagery: storylist.imagery,
-			tags: storylist.tags,
-			stories: [], // Vacío en teaser
-			config: storylist.config,
+			_id: collection._id,
+			title: collection.title,
+			slug: collection.slug,
+			count: collection.count,
+			description: collection.description,
+			imagery: collection.imagery,
+			tags: collection.tags,
+			literaryWorks: [], // Vacío en teaser
+			config: collection.config,
 		};
 	}
 
-	export function toApiResponse(storylist: Storylist): StorylistApiResponse {
+	export function toApiResponse(collection: Collection): CollectionApiResponse {
 		return {
-			_id: storylist._id,
-			title: storylist.title,
-			slug: storylist.slug.getValue(),
-			count: storylist.count,
-			description: storylist.description,
-			imagery: storylist.imagery,
-			tags: storylist.tags,
-			stories: storylist.stories.map((story) => StoryMapper.toApiResponse(story)),
-			config: storylist.config,
+			_id: collection._id,
+			title: collection.title,
+			slug: collection.slug.getValue(),
+			count: collection.count,
+			description: collection.description,
+			imagery: collection.imagery,
+			tags: collection.tags,
+			literaryWorks: collection.literaryWorks.map((work) => LiteraryWorkMapper.toApiResponse(work)),
+			config: collection.config,
 		};
 	}
 }
@@ -1302,32 +1305,32 @@ Serializa Story para HTTP.
 **Output:** StoryApiResponse (JSON serializable)
 **Cambios:** Value Objects se convierten a strings
 
-# Storylist Mappings
+# Collection Mappings
 
 ## toDomain
 
-Convierte un documento de Storylist desde Sanity a un objeto Storylist de dominio.
+Convierte un documento de Collection desde Sanity a un objeto Collection de dominio.
 
-**Input:** SanityStorylistSchemaObject
-**Output:** Storylist
+**Input:** SanityCollectionSchemaObject
+**Output:** Collection
 **Validaciones:** Se validan slugs
-**Cambios:** Las historias se mapean directamente (sin wrapper Publication)
+**Cambios:** Las obras literarias se mapean directamente (sin wrapper Publication)
 
 ## toTeaser
 
-Proyecta una Storylist a una vista ligera sin historias cargadas.
+Proyecta una Collection a una vista ligera sin obras cargadas.
 
-**Input:** Storylist
-**Output:** StorylistTeaser
-**Cambios:** `stories = []`
+**Input:** Collection
+**Output:** CollectionTeaser
+**Cambios:** `literaryWorks = []`
 
 ## toApiResponse
 
-Serializa Storylist para HTTP.
+Serializa Collection para HTTP.
 
-**Input:** Storylist
-**Output:** StorylistApiResponse (JSON serializable)
-**Cambios:** Value Objects se convierten a strings, stories se mapean a API response
+**Input:** Collection
+**Output:** CollectionApiResponse (JSON serializable)
+**Cambios:** Value Objects se convierten a strings, obras se mapean a API response
 ```
 
 ### Beneficios
@@ -1372,6 +1375,8 @@ const story: Story = {
 	approximateReadingTime: -5, // ¿Tiempos negativos?
 };
 ```
+
+> **Nota:** `LiteraryWork` y `Collection` ya implementan este patrón en producción — sus factories (`createLiteraryWork`, `createCollection`) lanzan ante invariantes violadas (ver [`domain-model.md`](../.claude/references/domain-model.md#diseño-de-agregados)). El ejemplo de abajo muestra el diseño original de la propuesta, sobre `Story`; `Author` sigue siendo el agregado pendiente de adoptarlo.
 
 ### Mejora Propuesta
 
@@ -1686,8 +1691,8 @@ namespace StoryMapper {
 
 ### Issues Relacionados
 
-- [ ] Crear clases de agregado (Story, Author, Storylist, Contributor)
-- [ ] Crear clases de invariantes para cada agregado
+- [ ] Crear clase de agregado para `Author` (`LiteraryWork` y `Collection` ya la tienen vía factory)
+- [ ] Crear clase de invariantes para `Author`
 - [ ] Actualizar mappers para usar factories
 - [ ] Agregar tests para violaciones de invariantes
 - [ ] Documentar invariantes por agregado
@@ -1703,19 +1708,19 @@ namespace StoryMapper {
 **Ejemplo propuesto:**
 
 ```typescript
-// Especificación: Obtener historias publicadas después de 2023
-interface StorySpecification {
+// Especificación: Obtener obras publicadas después de 2023
+interface LiteraryWorkSpecification {
 	publishedAfter?: DateString;
 	author?: string;
 	minReadingTime?: number;
 }
 
 // Uso
-const spanishStoriesSpec: StorySpecification = {
+const spanishWorksSpec: LiteraryWorkSpecification = {
 	publishedAfter: '2023-01-01',
 };
 
-const stories = await storyService.findBySpecification(spanishStoriesSpec);
+const literaryWorks = await literaryWorkService.findBySpecification(spanishWorksSpec);
 ```
 
 **Beneficio:** Evita crear nuevos métodos para cada combinación de filtros.
@@ -1737,11 +1742,11 @@ interface DomainEvent {
 	aggregateType: string;
 }
 
-interface StoryPublishedEvent extends DomainEvent {
-	storyId: string;
-	storySlug: string;
+interface LiteraryWorkPublishedEvent extends DomainEvent {
+	literaryWorkId: string;
+	literaryWorkSlug: string;
 	authorId: string;
-	storylistId?: string;
+	collectionId?: string;
 }
 
 interface AuthorCreatedEvent extends DomainEvent {
@@ -1751,7 +1756,7 @@ interface AuthorCreatedEvent extends DomainEvent {
 }
 
 // Publicación de eventos
-story.publish(); // Internally: emits StoryPublishedEvent
+literaryWork.publish(); // Internally: emits LiteraryWorkPublishedEvent
 ```
 
 **Beneficio:** Facilita integración entre contextos y rastrea cambios significativos.

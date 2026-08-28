@@ -39,9 +39,8 @@ export async function getLiteraryWorkTeasers(
 // Clarity reporta la URL visitada, no el slug: puede traer querystring de campaña, un ancla a una
 // sección o una barra final, y ninguna de las tres formas resuelve contra `slug.current`. Sin
 // normalizar, la obra más leída desaparece del ranking justo cuando llega tráfico de campaña.
-function slugFromReadingUrl(url: string, prefixes: readonly string[]): string | undefined {
-	const prefix = prefixes.find((candidate) => url.startsWith(candidate));
-	if (prefix === undefined) {
+function slugFromReadingUrl(url: string, prefix: string): string | undefined {
+	if (!url.startsWith(prefix)) {
 		return undefined;
 	}
 	const [path] = url.slice(prefix.length).split(/[?#]/);
@@ -49,10 +48,10 @@ function slugFromReadingUrl(url: string, prefixes: readonly string[]): string | 
 	return slug === '' ? undefined : slug;
 }
 
-// La métrica registra la URL que el lector visitó, así que una redirección no recupera lo que se
-// midió antes de instalarla: se lee también el prefijo indexado anterior, que sigue aportando
-// mientras queden visitas suyas dentro de la ventana y se drena solo. La obra conserva el slug al
-// mudarse, y por eso el mismo puede llegar por los dos caminos y se deduplica antes de resolverlo.
+// La métrica registra la URL que el lector visitó, no la que el servidor sirvió, así que el prefijo
+// de lectura anterior siguió aportando mientras quedó tráfico suyo dentro de la ventana. Ya no se
+// mira porque el 301 de `src/server.ts` lleva desplegado más que esos tres días: lo que llegue hoy
+// bajo el prefijo viejo rankearía una ruta que el servidor ya no sirve.
 export async function updateMostReadLiteraryWorks(
 	contentRepository: ContentRepository = new SanityContentRepository(),
 ): Promise<RotatingContent> {
@@ -61,12 +60,12 @@ export async function updateMostReadLiteraryWorks(
 		throw new Error('Could not fetch metrics.');
 	}
 
-	const readingPathPrefixes = [`${environment.basePath}/story/`, `${environment.basePath}/literary-work/`];
+	const readingPathPrefix = `${environment.basePath}/literary-work/`;
 	// El `Set` conserva el orden de inserción, que es el de Clarity: la deduplicación no reordena, y el
 	// orden **es** el ranking.
 	const rankedSlugs = [
 		...new Set(
-			popularPagesMetrics.information.flatMap((entry) => slugFromReadingUrl(entry.url, readingPathPrefixes) ?? []),
+			popularPagesMetrics.information.flatMap((entry) => slugFromReadingUrl(entry.url, readingPathPrefix) ?? []),
 		),
 	];
 

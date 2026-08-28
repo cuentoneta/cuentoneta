@@ -304,11 +304,9 @@ pnpm run dev
 
 Navega por la colección y ejecuta los endpoints que necesites probar. Todos los endpoints están organizados por recurso:
 
-- `/story` - Endpoints de cuentos
 - `/literary-work` - Endpoints de obras literarias
 - `/author` - Endpoints de autores
 - `/collection` - Endpoints de colecciones de obras literarias
-- `/storylist` - Endpoints de listas de cuentos
 - `/content` - Contenido de landing page
 - `/contributor` - Información de contribuyentes
 - `/og` - Generación de imágenes Open Graph
@@ -345,7 +343,7 @@ params:query {
 }
 ```
 
-En el ejemplo anterior, `author` y `storylist` son opcionales, mientras que `rrss` y `title` son requeridos.
+En el ejemplo anterior, `author` y `storylist` son opcionales, mientras que `rrss` y `title` son requeridos. Este es el ejemplo real del endpoint `/og` (`docs/api/bruno/og/generate-og-image.bru`): `storylist` ahí es un parámetro de texto libre para el OG de compartir, no una referencia al agregado `Storylist` (retirado).
 
 ---
 
@@ -428,7 +426,7 @@ base a
 la plantilla seleccionada al momento de su creación, mientras que otras son asignadas por los gestores del proyecto
 a la hora de realizar el _triaging_ y análisis de la incidencia.
 
-### Planes de prueba
+#### Planes de prueba
 
 Para características que requieran pruebas de integración, sean estas manuales o implementadas mediante Playwright, se
 encuentra disponible una guía y plantilla de cómo confeccionar un plan de pruebas para una funcionalidad determinada del

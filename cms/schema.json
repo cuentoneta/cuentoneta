@@ -47,7 +47,7 @@
 					"type": "objectAttribute",
 					"value": {
 						"type": "inline",
-						"name": "audioFile.media"
+						"name": "media"
 					},
 					"optional": true
 				},
@@ -141,36 +141,6 @@
 	},
 	{
 		"type": "type",
-		"name": "story.reference",
-		"value": {
-			"type": "object",
-			"attributes": {
-				"_ref": {
-					"type": "objectAttribute",
-					"value": {
-						"type": "string"
-					}
-				},
-				"_type": {
-					"type": "objectAttribute",
-					"value": {
-						"type": "string",
-						"value": "reference"
-					}
-				},
-				"_weak": {
-					"type": "objectAttribute",
-					"value": {
-						"type": "boolean"
-					},
-					"optional": true
-				}
-			},
-			"dereferencesTo": "story"
-		}
-	},
-	{
-		"type": "type",
 		"name": "literaryWork.reference",
 		"value": {
 			"type": "object",
@@ -240,28 +210,6 @@
 					"type": "string"
 				},
 				"optional": false
-			},
-			"mostRead": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "array",
-					"of": {
-						"type": "object",
-						"attributes": {
-							"_key": {
-								"type": "objectAttribute",
-								"value": {
-									"type": "string"
-								}
-							}
-						},
-						"rest": {
-							"type": "inline",
-							"name": "story.reference"
-						}
-					}
-				},
-				"optional": true
 			},
 			"mostReadLiteraryWorks": {
 				"type": "objectAttribute",
@@ -378,7 +326,7 @@
 	},
 	{
 		"type": "type",
-		"name": "author.reference",
+		"name": "nationality.reference",
 		"value": {
 			"type": "object",
 			"attributes": {
@@ -403,7 +351,7 @@
 					"optional": true
 				}
 			},
-			"dereferencesTo": "author"
+			"dereferencesTo": "nationality"
 		}
 	},
 	{
@@ -464,6 +412,448 @@
 				}
 			},
 			"dereferencesTo": "tag"
+		}
+	},
+	{
+		"name": "author",
+		"type": "document",
+		"attributes": {
+			"_id": {
+				"type": "objectAttribute",
+				"value": {
+					"type": "string"
+				}
+			},
+			"_type": {
+				"type": "objectAttribute",
+				"value": {
+					"type": "string",
+					"value": "author"
+				}
+			},
+			"_createdAt": {
+				"type": "objectAttribute",
+				"value": {
+					"type": "string"
+				}
+			},
+			"_updatedAt": {
+				"type": "objectAttribute",
+				"value": {
+					"type": "string"
+				}
+			},
+			"_rev": {
+				"type": "objectAttribute",
+				"value": {
+					"type": "string"
+				}
+			},
+			"name": {
+				"type": "objectAttribute",
+				"value": {
+					"type": "string"
+				},
+				"optional": false
+			},
+			"slug": {
+				"type": "objectAttribute",
+				"value": {
+					"type": "inline",
+					"name": "slug"
+				},
+				"optional": false
+			},
+			"image": {
+				"type": "objectAttribute",
+				"value": {
+					"type": "object",
+					"attributes": {
+						"asset": {
+							"type": "objectAttribute",
+							"value": {
+								"type": "inline",
+								"name": "sanity.imageAsset.reference"
+							},
+							"optional": true
+						},
+						"media": {
+							"type": "objectAttribute",
+							"value": {
+								"type": "unknown"
+							},
+							"optional": true
+						},
+						"hotspot": {
+							"type": "objectAttribute",
+							"value": {
+								"type": "inline",
+								"name": "sanity.imageHotspot"
+							},
+							"optional": true
+						},
+						"crop": {
+							"type": "objectAttribute",
+							"value": {
+								"type": "inline",
+								"name": "sanity.imageCrop"
+							},
+							"optional": true
+						},
+						"_type": {
+							"type": "objectAttribute",
+							"value": {
+								"type": "string",
+								"value": "image"
+							}
+						}
+					}
+				},
+				"optional": false
+			},
+			"nationality": {
+				"type": "objectAttribute",
+				"value": {
+					"type": "inline",
+					"name": "nationality.reference"
+				},
+				"optional": false
+			},
+			"bornOn": {
+				"type": "objectAttribute",
+				"value": {
+					"type": "string"
+				},
+				"optional": true
+			},
+			"bornOnYear": {
+				"type": "objectAttribute",
+				"value": {
+					"type": "inline",
+					"name": "computedNumber"
+				},
+				"optional": true
+			},
+			"diedOn": {
+				"type": "objectAttribute",
+				"value": {
+					"type": "string"
+				},
+				"optional": true
+			},
+			"diedOnYear": {
+				"type": "objectAttribute",
+				"value": {
+					"type": "inline",
+					"name": "computedNumber"
+				},
+				"optional": true
+			},
+			"biography": {
+				"type": "objectAttribute",
+				"value": {
+					"type": "inline",
+					"name": "markdown"
+				},
+				"optional": false
+			},
+			"resources": {
+				"type": "objectAttribute",
+				"value": {
+					"type": "array",
+					"of": {
+						"type": "object",
+						"attributes": {
+							"title": {
+								"type": "objectAttribute",
+								"value": {
+									"type": "string"
+								},
+								"optional": false
+							},
+							"url": {
+								"type": "objectAttribute",
+								"value": {
+									"type": "string"
+								},
+								"optional": false
+							},
+							"resourceType": {
+								"type": "objectAttribute",
+								"value": {
+									"type": "inline",
+									"name": "resourceType.reference"
+								},
+								"optional": false
+							},
+							"_type": {
+								"type": "objectAttribute",
+								"value": {
+									"type": "string",
+									"value": "resource"
+								}
+							}
+						},
+						"rest": {
+							"type": "object",
+							"attributes": {
+								"_key": {
+									"type": "objectAttribute",
+									"value": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}
+				},
+				"optional": true
+			},
+			"tags": {
+				"type": "objectAttribute",
+				"value": {
+					"type": "array",
+					"of": {
+						"type": "object",
+						"attributes": {
+							"_key": {
+								"type": "objectAttribute",
+								"value": {
+									"type": "string"
+								}
+							}
+						},
+						"rest": {
+							"type": "inline",
+							"name": "tag.reference"
+						}
+					}
+				},
+				"optional": true
+			}
+		}
+	},
+	{
+		"name": "markdown",
+		"type": "type",
+		"value": {
+			"type": "string"
+		}
+	},
+	{
+		"name": "computedNumber",
+		"type": "type",
+		"value": {
+			"type": "number"
+		}
+	},
+	{
+		"name": "nationality",
+		"type": "document",
+		"attributes": {
+			"_id": {
+				"type": "objectAttribute",
+				"value": {
+					"type": "string"
+				}
+			},
+			"_type": {
+				"type": "objectAttribute",
+				"value": {
+					"type": "string",
+					"value": "nationality"
+				}
+			},
+			"_createdAt": {
+				"type": "objectAttribute",
+				"value": {
+					"type": "string"
+				}
+			},
+			"_updatedAt": {
+				"type": "objectAttribute",
+				"value": {
+					"type": "string"
+				}
+			},
+			"_rev": {
+				"type": "objectAttribute",
+				"value": {
+					"type": "string"
+				}
+			},
+			"country": {
+				"type": "objectAttribute",
+				"value": {
+					"type": "string"
+				},
+				"optional": false
+			},
+			"flag": {
+				"type": "objectAttribute",
+				"value": {
+					"type": "object",
+					"attributes": {
+						"asset": {
+							"type": "objectAttribute",
+							"value": {
+								"type": "inline",
+								"name": "sanity.imageAsset.reference"
+							},
+							"optional": true
+						},
+						"media": {
+							"type": "objectAttribute",
+							"value": {
+								"type": "unknown"
+							},
+							"optional": true
+						},
+						"hotspot": {
+							"type": "objectAttribute",
+							"value": {
+								"type": "inline",
+								"name": "sanity.imageHotspot"
+							},
+							"optional": true
+						},
+						"crop": {
+							"type": "objectAttribute",
+							"value": {
+								"type": "inline",
+								"name": "sanity.imageCrop"
+							},
+							"optional": true
+						},
+						"_type": {
+							"type": "objectAttribute",
+							"value": {
+								"type": "string",
+								"value": "image"
+							}
+						}
+					}
+				},
+				"optional": false
+			}
+		}
+	},
+	{
+		"name": "sanity.imageCrop",
+		"type": "type",
+		"value": {
+			"type": "object",
+			"attributes": {
+				"_type": {
+					"type": "objectAttribute",
+					"value": {
+						"type": "string",
+						"value": "sanity.imageCrop"
+					}
+				},
+				"top": {
+					"type": "objectAttribute",
+					"value": {
+						"type": "number"
+					},
+					"optional": false
+				},
+				"bottom": {
+					"type": "objectAttribute",
+					"value": {
+						"type": "number"
+					},
+					"optional": false
+				},
+				"left": {
+					"type": "objectAttribute",
+					"value": {
+						"type": "number"
+					},
+					"optional": false
+				},
+				"right": {
+					"type": "objectAttribute",
+					"value": {
+						"type": "number"
+					},
+					"optional": false
+				}
+			}
+		}
+	},
+	{
+		"name": "sanity.imageHotspot",
+		"type": "type",
+		"value": {
+			"type": "object",
+			"attributes": {
+				"_type": {
+					"type": "objectAttribute",
+					"value": {
+						"type": "string",
+						"value": "sanity.imageHotspot"
+					}
+				},
+				"x": {
+					"type": "objectAttribute",
+					"value": {
+						"type": "number"
+					},
+					"optional": false
+				},
+				"y": {
+					"type": "objectAttribute",
+					"value": {
+						"type": "number"
+					},
+					"optional": false
+				},
+				"height": {
+					"type": "objectAttribute",
+					"value": {
+						"type": "number"
+					},
+					"optional": false
+				},
+				"width": {
+					"type": "objectAttribute",
+					"value": {
+						"type": "number"
+					},
+					"optional": false
+				}
+			}
+		}
+	},
+	{
+		"type": "type",
+		"name": "author.reference",
+		"value": {
+			"type": "object",
+			"attributes": {
+				"_ref": {
+					"type": "objectAttribute",
+					"value": {
+						"type": "string"
+					}
+				},
+				"_type": {
+					"type": "objectAttribute",
+					"value": {
+						"type": "string",
+						"value": "reference"
+					}
+				},
+				"_weak": {
+					"type": "objectAttribute",
+					"value": {
+						"type": "boolean"
+					},
+					"optional": true
+				}
+			},
+			"dereferencesTo": "author"
 		}
 	},
 	{
@@ -1063,1225 +1453,6 @@
 		}
 	},
 	{
-		"name": "markdown",
-		"type": "type",
-		"value": {
-			"type": "string"
-		}
-	},
-	{
-		"name": "sanity.imageCrop",
-		"type": "type",
-		"value": {
-			"type": "object",
-			"attributes": {
-				"_type": {
-					"type": "objectAttribute",
-					"value": {
-						"type": "string",
-						"value": "sanity.imageCrop"
-					}
-				},
-				"top": {
-					"type": "objectAttribute",
-					"value": {
-						"type": "number"
-					},
-					"optional": false
-				},
-				"bottom": {
-					"type": "objectAttribute",
-					"value": {
-						"type": "number"
-					},
-					"optional": false
-				},
-				"left": {
-					"type": "objectAttribute",
-					"value": {
-						"type": "number"
-					},
-					"optional": false
-				},
-				"right": {
-					"type": "objectAttribute",
-					"value": {
-						"type": "number"
-					},
-					"optional": false
-				}
-			}
-		}
-	},
-	{
-		"name": "sanity.imageHotspot",
-		"type": "type",
-		"value": {
-			"type": "object",
-			"attributes": {
-				"_type": {
-					"type": "objectAttribute",
-					"value": {
-						"type": "string",
-						"value": "sanity.imageHotspot"
-					}
-				},
-				"x": {
-					"type": "objectAttribute",
-					"value": {
-						"type": "number"
-					},
-					"optional": false
-				},
-				"y": {
-					"type": "objectAttribute",
-					"value": {
-						"type": "number"
-					},
-					"optional": false
-				},
-				"height": {
-					"type": "objectAttribute",
-					"value": {
-						"type": "number"
-					},
-					"optional": false
-				},
-				"width": {
-					"type": "objectAttribute",
-					"value": {
-						"type": "number"
-					},
-					"optional": false
-				}
-			}
-		}
-	},
-	{
-		"name": "story",
-		"type": "document",
-		"attributes": {
-			"_id": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "string"
-				}
-			},
-			"_type": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "string",
-					"value": "story"
-				}
-			},
-			"_createdAt": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "string"
-				}
-			},
-			"_updatedAt": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "string"
-				}
-			},
-			"_rev": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "string"
-				}
-			},
-			"title": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "string"
-				},
-				"optional": false
-			},
-			"slug": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "inline",
-					"name": "slug"
-				},
-				"optional": false
-			},
-			"author": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "inline",
-					"name": "author.reference"
-				},
-				"optional": false
-			},
-			"coverImage": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "object",
-					"attributes": {
-						"asset": {
-							"type": "objectAttribute",
-							"value": {
-								"type": "inline",
-								"name": "sanity.imageAsset.reference"
-							},
-							"optional": true
-						},
-						"media": {
-							"type": "objectAttribute",
-							"value": {
-								"type": "unknown"
-							},
-							"optional": true
-						},
-						"hotspot": {
-							"type": "objectAttribute",
-							"value": {
-								"type": "inline",
-								"name": "sanity.imageHotspot"
-							},
-							"optional": true
-						},
-						"crop": {
-							"type": "objectAttribute",
-							"value": {
-								"type": "inline",
-								"name": "sanity.imageCrop"
-							},
-							"optional": true
-						},
-						"_type": {
-							"type": "objectAttribute",
-							"value": {
-								"type": "string",
-								"value": "image"
-							}
-						}
-					}
-				},
-				"optional": false
-			},
-			"mediaSources": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "array",
-					"of": {
-						"type": "union",
-						"of": [
-							{
-								"type": "object",
-								"attributes": {
-									"title": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "string"
-										},
-										"optional": false
-									},
-									"description": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "inline",
-											"name": "markdown"
-										},
-										"optional": false
-									},
-									"url": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "string"
-										},
-										"optional": false
-									},
-									"_type": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "string",
-											"value": "audioRecording"
-										}
-									}
-								},
-								"rest": {
-									"type": "object",
-									"attributes": {
-										"_key": {
-											"type": "objectAttribute",
-											"value": {
-												"type": "string"
-											}
-										}
-									}
-								}
-							},
-							{
-								"type": "object",
-								"attributes": {
-									"title": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "string"
-										},
-										"optional": false
-									},
-									"description": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "inline",
-											"name": "markdown"
-										},
-										"optional": false
-									},
-									"audioFile": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "inline",
-											"name": "audioFile"
-										},
-										"optional": false
-									},
-									"hostName": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "string"
-										},
-										"optional": false
-									},
-									"hostAvatar": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "inline",
-											"name": "hostAvatar"
-										},
-										"optional": true
-									},
-									"date": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "string"
-										},
-										"optional": false
-									},
-									"duration": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "string"
-										},
-										"optional": false
-									},
-									"_type": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "string",
-											"value": "spaceRecording"
-										}
-									}
-								},
-								"rest": {
-									"type": "object",
-									"attributes": {
-										"_key": {
-											"type": "objectAttribute",
-											"value": {
-												"type": "string"
-											}
-										}
-									}
-								}
-							},
-							{
-								"type": "object",
-								"attributes": {
-									"title": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "string"
-										},
-										"optional": false
-									},
-									"description": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "inline",
-											"name": "markdown"
-										},
-										"optional": false
-									},
-									"videoId": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "string"
-										},
-										"optional": false
-									},
-									"_type": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "string",
-											"value": "youTubeVideo"
-										}
-									}
-								},
-								"rest": {
-									"type": "object",
-									"attributes": {
-										"_key": {
-											"type": "objectAttribute",
-											"value": {
-												"type": "string"
-											}
-										}
-									}
-								}
-							},
-							{
-								"type": "object",
-								"attributes": {
-									"title": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "string"
-										},
-										"optional": false
-									},
-									"description": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "inline",
-											"name": "markdown"
-										},
-										"optional": false
-									},
-									"url": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "string"
-										},
-										"optional": false
-									},
-									"_type": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "string",
-											"value": "spotifyPodcastEpisode"
-										}
-									}
-								},
-								"rest": {
-									"type": "object",
-									"attributes": {
-										"_key": {
-											"type": "objectAttribute",
-											"value": {
-												"type": "string"
-											}
-										}
-									}
-								}
-							},
-							{
-								"type": "object",
-								"attributes": {
-									"title": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "string"
-										},
-										"optional": false
-									},
-									"description": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "inline",
-											"name": "markdown"
-										},
-										"optional": false
-									},
-									"url": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "string"
-										},
-										"optional": false
-									},
-									"_type": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "string",
-											"value": "pdfLink"
-										}
-									}
-								},
-								"rest": {
-									"type": "object",
-									"attributes": {
-										"_key": {
-											"type": "objectAttribute",
-											"value": {
-												"type": "string"
-											}
-										}
-									}
-								}
-							}
-						]
-					}
-				},
-				"optional": true
-			},
-			"resources": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "array",
-					"of": {
-						"type": "object",
-						"attributes": {
-							"title": {
-								"type": "objectAttribute",
-								"value": {
-									"type": "string"
-								},
-								"optional": false
-							},
-							"url": {
-								"type": "objectAttribute",
-								"value": {
-									"type": "string"
-								},
-								"optional": false
-							},
-							"resourceType": {
-								"type": "objectAttribute",
-								"value": {
-									"type": "inline",
-									"name": "resourceType.reference"
-								},
-								"optional": false
-							},
-							"_type": {
-								"type": "objectAttribute",
-								"value": {
-									"type": "string",
-									"value": "resource"
-								}
-							}
-						},
-						"rest": {
-							"type": "object",
-							"attributes": {
-								"_key": {
-									"type": "objectAttribute",
-									"value": {
-										"type": "string"
-									}
-								}
-							}
-						}
-					}
-				},
-				"optional": true
-			},
-			"badLanguage": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "boolean"
-				},
-				"optional": false
-			},
-			"approximateReadingTime": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "inline",
-					"name": "computedNumber"
-				},
-				"optional": false
-			},
-			"epigraphs": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "array",
-					"of": {
-						"type": "object",
-						"attributes": {
-							"text": {
-								"type": "objectAttribute",
-								"value": {
-									"type": "inline",
-									"name": "blockContent"
-								},
-								"optional": false
-							},
-							"reference": {
-								"type": "objectAttribute",
-								"value": {
-									"type": "inline",
-									"name": "blockContent"
-								},
-								"optional": true
-							},
-							"_type": {
-								"type": "objectAttribute",
-								"value": {
-									"type": "string",
-									"value": "epigraph"
-								}
-							}
-						},
-						"rest": {
-							"type": "object",
-							"attributes": {
-								"_key": {
-									"type": "objectAttribute",
-									"value": {
-										"type": "string"
-									}
-								}
-							}
-						}
-					}
-				},
-				"optional": true
-			},
-			"tags": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "array",
-					"of": {
-						"type": "object",
-						"attributes": {
-							"_key": {
-								"type": "objectAttribute",
-								"value": {
-									"type": "string"
-								}
-							}
-						},
-						"rest": {
-							"type": "inline",
-							"name": "tag.reference"
-						}
-					}
-				},
-				"optional": true
-			},
-			"body": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "inline",
-					"name": "blockContent"
-				},
-				"optional": true
-			},
-			"review": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "inline",
-					"name": "blockContent"
-				},
-				"optional": true
-			},
-			"originalPublication": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "string"
-				},
-				"optional": false
-			},
-			"publishedAt": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "string"
-				},
-				"optional": true
-			}
-		}
-	},
-	{
-		"name": "blockContent",
-		"type": "type",
-		"value": {
-			"type": "array",
-			"of": {
-				"type": "union",
-				"of": [
-					{
-						"type": "object",
-						"attributes": {
-							"children": {
-								"type": "objectAttribute",
-								"value": {
-									"type": "array",
-									"of": {
-										"type": "object",
-										"attributes": {
-											"marks": {
-												"type": "objectAttribute",
-												"value": {
-													"type": "array",
-													"of": {
-														"type": "string"
-													}
-												},
-												"optional": true
-											},
-											"text": {
-												"type": "objectAttribute",
-												"value": {
-													"type": "string"
-												},
-												"optional": true
-											},
-											"_type": {
-												"type": "objectAttribute",
-												"value": {
-													"type": "string",
-													"value": "span"
-												}
-											}
-										},
-										"rest": {
-											"type": "object",
-											"attributes": {
-												"_key": {
-													"type": "objectAttribute",
-													"value": {
-														"type": "string"
-													}
-												}
-											}
-										}
-									}
-								},
-								"optional": true
-							},
-							"style": {
-								"type": "objectAttribute",
-								"value": {
-									"type": "union",
-									"of": [
-										{
-											"type": "string",
-											"value": "normal"
-										},
-										{
-											"type": "string",
-											"value": "h1"
-										},
-										{
-											"type": "string",
-											"value": "h2"
-										},
-										{
-											"type": "string",
-											"value": "h3"
-										},
-										{
-											"type": "string",
-											"value": "h4"
-										},
-										{
-											"type": "string",
-											"value": "h5"
-										},
-										{
-											"type": "string",
-											"value": "h6"
-										},
-										{
-											"type": "string",
-											"value": "blockquote"
-										}
-									]
-								},
-								"optional": true
-							},
-							"listItem": {
-								"type": "objectAttribute",
-								"value": {
-									"type": "union",
-									"of": [
-										{
-											"type": "string",
-											"value": "bullet"
-										},
-										{
-											"type": "string",
-											"value": "number"
-										}
-									]
-								},
-								"optional": true
-							},
-							"markDefs": {
-								"type": "objectAttribute",
-								"value": {
-									"type": "array",
-									"of": {
-										"type": "object",
-										"attributes": {
-											"href": {
-												"type": "objectAttribute",
-												"value": {
-													"type": "string"
-												},
-												"optional": true
-											},
-											"_type": {
-												"type": "objectAttribute",
-												"value": {
-													"type": "string",
-													"value": "link"
-												}
-											}
-										},
-										"rest": {
-											"type": "object",
-											"attributes": {
-												"_key": {
-													"type": "objectAttribute",
-													"value": {
-														"type": "string"
-													}
-												}
-											}
-										}
-									}
-								},
-								"optional": true
-							},
-							"level": {
-								"type": "objectAttribute",
-								"value": {
-									"type": "number"
-								},
-								"optional": true
-							},
-							"_type": {
-								"type": "objectAttribute",
-								"value": {
-									"type": "string",
-									"value": "block"
-								}
-							}
-						},
-						"rest": {
-							"type": "object",
-							"attributes": {
-								"_key": {
-									"type": "objectAttribute",
-									"value": {
-										"type": "string"
-									}
-								}
-							}
-						}
-					},
-					{
-						"type": "object",
-						"attributes": {
-							"asset": {
-								"type": "objectAttribute",
-								"value": {
-									"type": "inline",
-									"name": "sanity.imageAsset.reference"
-								},
-								"optional": true
-							},
-							"media": {
-								"type": "objectAttribute",
-								"value": {
-									"type": "unknown"
-								},
-								"optional": true
-							},
-							"hotspot": {
-								"type": "objectAttribute",
-								"value": {
-									"type": "inline",
-									"name": "sanity.imageHotspot"
-								},
-								"optional": true
-							},
-							"crop": {
-								"type": "objectAttribute",
-								"value": {
-									"type": "inline",
-									"name": "sanity.imageCrop"
-								},
-								"optional": true
-							},
-							"_type": {
-								"type": "objectAttribute",
-								"value": {
-									"type": "string",
-									"value": "image"
-								}
-							}
-						},
-						"rest": {
-							"type": "object",
-							"attributes": {
-								"_key": {
-									"type": "objectAttribute",
-									"value": {
-										"type": "string"
-									}
-								}
-							}
-						}
-					}
-				]
-			}
-		}
-	},
-	{
-		"name": "computedNumber",
-		"type": "type",
-		"value": {
-			"type": "number"
-		}
-	},
-	{
-		"type": "type",
-		"name": "nationality.reference",
-		"value": {
-			"type": "object",
-			"attributes": {
-				"_ref": {
-					"type": "objectAttribute",
-					"value": {
-						"type": "string"
-					}
-				},
-				"_type": {
-					"type": "objectAttribute",
-					"value": {
-						"type": "string",
-						"value": "reference"
-					}
-				},
-				"_weak": {
-					"type": "objectAttribute",
-					"value": {
-						"type": "boolean"
-					},
-					"optional": true
-				}
-			},
-			"dereferencesTo": "nationality"
-		}
-	},
-	{
-		"name": "author",
-		"type": "document",
-		"attributes": {
-			"_id": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "string"
-				}
-			},
-			"_type": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "string",
-					"value": "author"
-				}
-			},
-			"_createdAt": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "string"
-				}
-			},
-			"_updatedAt": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "string"
-				}
-			},
-			"_rev": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "string"
-				}
-			},
-			"name": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "string"
-				},
-				"optional": false
-			},
-			"slug": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "inline",
-					"name": "slug"
-				},
-				"optional": false
-			},
-			"image": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "object",
-					"attributes": {
-						"asset": {
-							"type": "objectAttribute",
-							"value": {
-								"type": "inline",
-								"name": "sanity.imageAsset.reference"
-							},
-							"optional": true
-						},
-						"media": {
-							"type": "objectAttribute",
-							"value": {
-								"type": "unknown"
-							},
-							"optional": true
-						},
-						"hotspot": {
-							"type": "objectAttribute",
-							"value": {
-								"type": "inline",
-								"name": "sanity.imageHotspot"
-							},
-							"optional": true
-						},
-						"crop": {
-							"type": "objectAttribute",
-							"value": {
-								"type": "inline",
-								"name": "sanity.imageCrop"
-							},
-							"optional": true
-						},
-						"_type": {
-							"type": "objectAttribute",
-							"value": {
-								"type": "string",
-								"value": "image"
-							}
-						}
-					}
-				},
-				"optional": false
-			},
-			"nationality": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "inline",
-					"name": "nationality.reference"
-				},
-				"optional": false
-			},
-			"bornOn": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "string"
-				},
-				"optional": true
-			},
-			"bornOnYear": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "inline",
-					"name": "computedNumber"
-				},
-				"optional": true
-			},
-			"diedOn": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "string"
-				},
-				"optional": true
-			},
-			"diedOnYear": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "inline",
-					"name": "computedNumber"
-				},
-				"optional": true
-			},
-			"biography": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "inline",
-					"name": "markdown"
-				},
-				"optional": false
-			},
-			"resources": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "array",
-					"of": {
-						"type": "object",
-						"attributes": {
-							"title": {
-								"type": "objectAttribute",
-								"value": {
-									"type": "string"
-								},
-								"optional": false
-							},
-							"url": {
-								"type": "objectAttribute",
-								"value": {
-									"type": "string"
-								},
-								"optional": false
-							},
-							"resourceType": {
-								"type": "objectAttribute",
-								"value": {
-									"type": "inline",
-									"name": "resourceType.reference"
-								},
-								"optional": false
-							},
-							"_type": {
-								"type": "objectAttribute",
-								"value": {
-									"type": "string",
-									"value": "resource"
-								}
-							}
-						},
-						"rest": {
-							"type": "object",
-							"attributes": {
-								"_key": {
-									"type": "objectAttribute",
-									"value": {
-										"type": "string"
-									}
-								}
-							}
-						}
-					}
-				},
-				"optional": true
-			},
-			"tags": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "array",
-					"of": {
-						"type": "object",
-						"attributes": {
-							"_key": {
-								"type": "objectAttribute",
-								"value": {
-									"type": "string"
-								}
-							}
-						},
-						"rest": {
-							"type": "inline",
-							"name": "tag.reference"
-						}
-					}
-				},
-				"optional": true
-			}
-		}
-	},
-	{
-		"name": "nationality",
-		"type": "document",
-		"attributes": {
-			"_id": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "string"
-				}
-			},
-			"_type": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "string",
-					"value": "nationality"
-				}
-			},
-			"_createdAt": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "string"
-				}
-			},
-			"_updatedAt": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "string"
-				}
-			},
-			"_rev": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "string"
-				}
-			},
-			"country": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "string"
-				},
-				"optional": false
-			},
-			"flag": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "object",
-					"attributes": {
-						"asset": {
-							"type": "objectAttribute",
-							"value": {
-								"type": "inline",
-								"name": "sanity.imageAsset.reference"
-							},
-							"optional": true
-						},
-						"media": {
-							"type": "objectAttribute",
-							"value": {
-								"type": "unknown"
-							},
-							"optional": true
-						},
-						"hotspot": {
-							"type": "objectAttribute",
-							"value": {
-								"type": "inline",
-								"name": "sanity.imageHotspot"
-							},
-							"optional": true
-						},
-						"crop": {
-							"type": "objectAttribute",
-							"value": {
-								"type": "inline",
-								"name": "sanity.imageCrop"
-							},
-							"optional": true
-						},
-						"_type": {
-							"type": "objectAttribute",
-							"value": {
-								"type": "string",
-								"value": "image"
-							}
-						}
-					}
-				},
-				"optional": false
-			}
-		}
-	},
-	{
 		"name": "collection",
 		"type": "document",
 		"attributes": {
@@ -2441,500 +1612,6 @@
 						"rest": {
 							"type": "inline",
 							"name": "literaryWork.reference"
-						}
-					}
-				},
-				"optional": true
-			},
-			"mediaSources": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "array",
-					"of": {
-						"type": "union",
-						"of": [
-							{
-								"type": "object",
-								"attributes": {
-									"title": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "string"
-										},
-										"optional": false
-									},
-									"description": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "inline",
-											"name": "markdown"
-										},
-										"optional": false
-									},
-									"url": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "string"
-										},
-										"optional": false
-									},
-									"_type": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "string",
-											"value": "audioRecording"
-										}
-									}
-								},
-								"rest": {
-									"type": "object",
-									"attributes": {
-										"_key": {
-											"type": "objectAttribute",
-											"value": {
-												"type": "string"
-											}
-										}
-									}
-								}
-							},
-							{
-								"type": "object",
-								"attributes": {
-									"title": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "string"
-										},
-										"optional": false
-									},
-									"description": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "inline",
-											"name": "markdown"
-										},
-										"optional": false
-									},
-									"audioFile": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "inline",
-											"name": "audioFile"
-										},
-										"optional": false
-									},
-									"hostName": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "string"
-										},
-										"optional": false
-									},
-									"hostAvatar": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "inline",
-											"name": "hostAvatar"
-										},
-										"optional": true
-									},
-									"date": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "string"
-										},
-										"optional": false
-									},
-									"duration": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "string"
-										},
-										"optional": false
-									},
-									"_type": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "string",
-											"value": "spaceRecording"
-										}
-									}
-								},
-								"rest": {
-									"type": "object",
-									"attributes": {
-										"_key": {
-											"type": "objectAttribute",
-											"value": {
-												"type": "string"
-											}
-										}
-									}
-								}
-							},
-							{
-								"type": "object",
-								"attributes": {
-									"title": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "string"
-										},
-										"optional": false
-									},
-									"description": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "inline",
-											"name": "markdown"
-										},
-										"optional": false
-									},
-									"videoId": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "string"
-										},
-										"optional": false
-									},
-									"_type": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "string",
-											"value": "youTubeVideo"
-										}
-									}
-								},
-								"rest": {
-									"type": "object",
-									"attributes": {
-										"_key": {
-											"type": "objectAttribute",
-											"value": {
-												"type": "string"
-											}
-										}
-									}
-								}
-							},
-							{
-								"type": "object",
-								"attributes": {
-									"title": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "string"
-										},
-										"optional": false
-									},
-									"description": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "inline",
-											"name": "markdown"
-										},
-										"optional": false
-									},
-									"url": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "string"
-										},
-										"optional": false
-									},
-									"_type": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "string",
-											"value": "spotifyPodcastEpisode"
-										}
-									}
-								},
-								"rest": {
-									"type": "object",
-									"attributes": {
-										"_key": {
-											"type": "objectAttribute",
-											"value": {
-												"type": "string"
-											}
-										}
-									}
-								}
-							},
-							{
-								"type": "object",
-								"attributes": {
-									"title": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "string"
-										},
-										"optional": false
-									},
-									"description": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "inline",
-											"name": "markdown"
-										},
-										"optional": false
-									},
-									"url": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "string"
-										},
-										"optional": false
-									},
-									"_type": {
-										"type": "objectAttribute",
-										"value": {
-											"type": "string",
-											"value": "pdfLink"
-										}
-									}
-								},
-								"rest": {
-									"type": "object",
-									"attributes": {
-										"_key": {
-											"type": "objectAttribute",
-											"value": {
-												"type": "string"
-											}
-										}
-									}
-								}
-							}
-						]
-					}
-				},
-				"optional": true
-			}
-		}
-	},
-	{
-		"name": "storylist",
-		"type": "document",
-		"attributes": {
-			"_id": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "string"
-				}
-			},
-			"_type": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "string",
-					"value": "storylist"
-				}
-			},
-			"_createdAt": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "string"
-				}
-			},
-			"_updatedAt": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "string"
-				}
-			},
-			"_rev": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "string"
-				}
-			},
-			"title": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "string"
-				},
-				"optional": false
-			},
-			"slug": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "inline",
-					"name": "slug"
-				},
-				"optional": false
-			},
-			"description": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "inline",
-					"name": "blockContent"
-				},
-				"optional": false
-			},
-			"featuredImage": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "object",
-					"attributes": {
-						"asset": {
-							"type": "objectAttribute",
-							"value": {
-								"type": "inline",
-								"name": "sanity.imageAsset.reference"
-							},
-							"optional": true
-						},
-						"media": {
-							"type": "objectAttribute",
-							"value": {
-								"type": "unknown"
-							},
-							"optional": true
-						},
-						"hotspot": {
-							"type": "objectAttribute",
-							"value": {
-								"type": "inline",
-								"name": "sanity.imageHotspot"
-							},
-							"optional": true
-						},
-						"crop": {
-							"type": "objectAttribute",
-							"value": {
-								"type": "inline",
-								"name": "sanity.imageCrop"
-							},
-							"optional": true
-						},
-						"_type": {
-							"type": "objectAttribute",
-							"value": {
-								"type": "string",
-								"value": "image"
-							}
-						}
-					}
-				},
-				"optional": true
-			},
-			"tags": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "array",
-					"of": {
-						"type": "object",
-						"attributes": {
-							"_key": {
-								"type": "objectAttribute",
-								"value": {
-									"type": "string"
-								}
-							}
-						},
-						"rest": {
-							"type": "inline",
-							"name": "tag.reference"
-						}
-					}
-				},
-				"optional": true
-			},
-			"config": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "object",
-					"attributes": {
-						"showAuthors": {
-							"type": "objectAttribute",
-							"value": {
-								"type": "boolean"
-							},
-							"optional": true
-						}
-					}
-				},
-				"optional": true
-			},
-			"stories": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "array",
-					"of": {
-						"type": "object",
-						"attributes": {
-							"_key": {
-								"type": "objectAttribute",
-								"value": {
-									"type": "string"
-								}
-							}
-						},
-						"rest": {
-							"type": "inline",
-							"name": "story.reference"
-						}
-					}
-				},
-				"optional": true
-			},
-			"tabs": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "array",
-					"of": {
-						"type": "object",
-						"attributes": {
-							"title": {
-								"type": "objectAttribute",
-								"value": {
-									"type": "string"
-								},
-								"optional": false
-							},
-							"slug": {
-								"type": "objectAttribute",
-								"value": {
-									"type": "inline",
-									"name": "slug"
-								},
-								"optional": false
-							},
-							"content": {
-								"type": "objectAttribute",
-								"value": {
-									"type": "inline",
-									"name": "blockContent"
-								},
-								"optional": false
-							},
-							"icon": {
-								"type": "objectAttribute",
-								"value": {
-									"type": "string"
-								},
-								"optional": true
-							},
-							"_type": {
-								"type": "objectAttribute",
-								"value": {
-									"type": "string",
-									"value": "storylistTab"
-								}
-							}
-						},
-						"rest": {
-							"type": "object",
-							"attributes": {
-								"_key": {
-									"type": "objectAttribute",
-									"value": {
-										"type": "string"
-									}
-								}
-							}
 						}
 					}
 				},
@@ -3421,36 +2098,6 @@
 	},
 	{
 		"type": "type",
-		"name": "storylist.reference",
-		"value": {
-			"type": "object",
-			"attributes": {
-				"_ref": {
-					"type": "objectAttribute",
-					"value": {
-						"type": "string"
-					}
-				},
-				"_type": {
-					"type": "objectAttribute",
-					"value": {
-						"type": "string",
-						"value": "reference"
-					}
-				},
-				"_weak": {
-					"type": "objectAttribute",
-					"value": {
-						"type": "boolean"
-					},
-					"optional": true
-				}
-			},
-			"dereferencesTo": "storylist"
-		}
-	},
-	{
-		"type": "type",
 		"name": "collection.reference",
 		"value": {
 			"type": "object",
@@ -3546,50 +2193,6 @@
 						"rest": {
 							"type": "inline",
 							"name": "contentCampaign.reference"
-						}
-					}
-				},
-				"optional": true
-			},
-			"cards": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "array",
-					"of": {
-						"type": "object",
-						"attributes": {
-							"_key": {
-								"type": "objectAttribute",
-								"value": {
-									"type": "string"
-								}
-							}
-						},
-						"rest": {
-							"type": "inline",
-							"name": "storylist.reference"
-						}
-					}
-				},
-				"optional": true
-			},
-			"latestReads": {
-				"type": "objectAttribute",
-				"value": {
-					"type": "array",
-					"of": {
-						"type": "object",
-						"attributes": {
-							"_key": {
-								"type": "objectAttribute",
-								"value": {
-									"type": "string"
-								}
-							}
-						},
-						"rest": {
-							"type": "inline",
-							"name": "story.reference"
 						}
 					}
 				},
@@ -3864,6 +2467,244 @@
 					"type": "string"
 				},
 				"optional": true
+			}
+		}
+	},
+	{
+		"name": "blockContent",
+		"type": "type",
+		"value": {
+			"type": "array",
+			"of": {
+				"type": "union",
+				"of": [
+					{
+						"type": "object",
+						"attributes": {
+							"children": {
+								"type": "objectAttribute",
+								"value": {
+									"type": "array",
+									"of": {
+										"type": "object",
+										"attributes": {
+											"marks": {
+												"type": "objectAttribute",
+												"value": {
+													"type": "array",
+													"of": {
+														"type": "string"
+													}
+												},
+												"optional": true
+											},
+											"text": {
+												"type": "objectAttribute",
+												"value": {
+													"type": "string"
+												},
+												"optional": true
+											},
+											"_type": {
+												"type": "objectAttribute",
+												"value": {
+													"type": "string",
+													"value": "span"
+												}
+											}
+										},
+										"rest": {
+											"type": "object",
+											"attributes": {
+												"_key": {
+													"type": "objectAttribute",
+													"value": {
+														"type": "string"
+													}
+												}
+											}
+										}
+									}
+								},
+								"optional": true
+							},
+							"style": {
+								"type": "objectAttribute",
+								"value": {
+									"type": "union",
+									"of": [
+										{
+											"type": "string",
+											"value": "normal"
+										},
+										{
+											"type": "string",
+											"value": "h1"
+										},
+										{
+											"type": "string",
+											"value": "h2"
+										},
+										{
+											"type": "string",
+											"value": "h3"
+										},
+										{
+											"type": "string",
+											"value": "h4"
+										},
+										{
+											"type": "string",
+											"value": "h5"
+										},
+										{
+											"type": "string",
+											"value": "h6"
+										},
+										{
+											"type": "string",
+											"value": "blockquote"
+										}
+									]
+								},
+								"optional": true
+							},
+							"listItem": {
+								"type": "objectAttribute",
+								"value": {
+									"type": "union",
+									"of": [
+										{
+											"type": "string",
+											"value": "bullet"
+										},
+										{
+											"type": "string",
+											"value": "number"
+										}
+									]
+								},
+								"optional": true
+							},
+							"markDefs": {
+								"type": "objectAttribute",
+								"value": {
+									"type": "array",
+									"of": {
+										"type": "object",
+										"attributes": {
+											"href": {
+												"type": "objectAttribute",
+												"value": {
+													"type": "string"
+												},
+												"optional": true
+											},
+											"_type": {
+												"type": "objectAttribute",
+												"value": {
+													"type": "string",
+													"value": "link"
+												}
+											}
+										},
+										"rest": {
+											"type": "object",
+											"attributes": {
+												"_key": {
+													"type": "objectAttribute",
+													"value": {
+														"type": "string"
+													}
+												}
+											}
+										}
+									}
+								},
+								"optional": true
+							},
+							"level": {
+								"type": "objectAttribute",
+								"value": {
+									"type": "number"
+								},
+								"optional": true
+							},
+							"_type": {
+								"type": "objectAttribute",
+								"value": {
+									"type": "string",
+									"value": "block"
+								}
+							}
+						},
+						"rest": {
+							"type": "object",
+							"attributes": {
+								"_key": {
+									"type": "objectAttribute",
+									"value": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					},
+					{
+						"type": "object",
+						"attributes": {
+							"asset": {
+								"type": "objectAttribute",
+								"value": {
+									"type": "inline",
+									"name": "sanity.imageAsset.reference"
+								},
+								"optional": true
+							},
+							"media": {
+								"type": "objectAttribute",
+								"value": {
+									"type": "unknown"
+								},
+								"optional": true
+							},
+							"hotspot": {
+								"type": "objectAttribute",
+								"value": {
+									"type": "inline",
+									"name": "sanity.imageHotspot"
+								},
+								"optional": true
+							},
+							"crop": {
+								"type": "objectAttribute",
+								"value": {
+									"type": "inline",
+									"name": "sanity.imageCrop"
+								},
+								"optional": true
+							},
+							"_type": {
+								"type": "objectAttribute",
+								"value": {
+									"type": "string",
+									"value": "image"
+								}
+							}
+						},
+						"rest": {
+							"type": "object",
+							"attributes": {
+								"_key": {
+									"type": "objectAttribute",
+									"value": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}
+				]
 			}
 		}
 	},

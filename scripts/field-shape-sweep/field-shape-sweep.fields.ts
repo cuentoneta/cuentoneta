@@ -19,5 +19,4 @@ export interface WatchedField {
 
 export const WATCHED_FIELDS: readonly WatchedField[] = Object.freeze([
 	{ documentType: 'literaryWork', path: 'publishedAt', shape: FIELD_SHAPES.dateTime },
-	{ documentType: 'story', path: 'publishedAt', shape: FIELD_SHAPES.dateTime },
 ] satisfies readonly WatchedField[]);

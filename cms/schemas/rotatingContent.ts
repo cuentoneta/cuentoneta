@@ -17,21 +17,6 @@ export default defineType({
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
-			name: 'mostRead',
-			title: 'Lo más leído (en baja)',
-			type: 'array',
-			of: [
-				defineArrayMember({
-					name: 'story',
-					title: 'Historia',
-					type: 'reference',
-					to: [{ type: 'story' }],
-				}),
-			],
-		}),
-		// Convive con el de arriba por el mismo motivo que los de la página de inicio: el Studio y la
-		// aplicación no despliegan a la vez.
-		defineField({
 			name: 'mostReadLiteraryWorks',
 			title: 'Lo más leído (obras)',
 			type: 'array',

@@ -1,3 +1,4 @@
+import { onoffImageAssets } from '../../onoff-image-assets.mock';
 import { embeddedAuthorMock } from '../../author.mock';
 import { elOdioRawLiteraryWork } from './el-odio.literary-work.raw.mock';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
@@ -12,7 +13,6 @@ import elOdioMdBody from './el-odio.md?raw';
 import elOdioEditorialNoteMd from './el-odio.editorial-note.md?raw';
 import { elOdioEpigraphReference, elOdioEpigraphText, elOdioSectionTitle } from './el-odio.epigraph';
 import { toDomainTags } from '../../onoff-tags.mock';
-import { elOdioStoryMock } from '../story/el-odio.story.mock';
 
 const elOdioBody = createMarkdown(elOdioMdBody);
 
@@ -23,10 +23,10 @@ export const elOdioEpigraphMock = createAttributedText({
 
 export const elOdioLiteraryWorkMock: LiteraryWork = createLiteraryWork({
 	_id: 'onoff-literary-work-el-odio',
-	slug: elOdioStoryMock.slug,
-	title: elOdioStoryMock.title,
+	slug: elOdioRawLiteraryWork.slug,
+	title: elOdioRawLiteraryWork.title,
 	authors: [embeddedAuthorMock],
-	coverImage: elOdioStoryMock.coverImage,
+	coverImage: onoffImageAssets.elOdioCover.path,
 	content: [
 		createLiteraryWorkSection({
 			position: 0,
@@ -37,10 +37,10 @@ export const elOdioLiteraryWorkMock: LiteraryWork = createLiteraryWork({
 		}),
 	],
 	mediaSources: [],
-	resources: elOdioStoryMock.resources,
-	badLanguage: elOdioStoryMock.badLanguage,
+	resources: [],
+	badLanguage: elOdioRawLiteraryWork.badLanguage,
 	tags: toDomainTags(elOdioRawLiteraryWork.tags),
-	originalPublication: elOdioStoryMock.originalPublication,
+	originalPublication: elOdioRawLiteraryWork.originalPublication,
 	editorialNote: markdownToSanitizedHtml(createMarkdown(elOdioEditorialNoteMd)),
-	publishedAt: createIsoDateTime(elOdioStoryMock.publishedAt),
+	publishedAt: createIsoDateTime(elOdioRawLiteraryWork.publishedAt),
 });

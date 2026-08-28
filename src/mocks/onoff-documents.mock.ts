@@ -14,13 +14,7 @@ import {
 	onoffResourceTypeDocumentsMock,
 	onoffTagDocumentsMock,
 } from './onoff/document/support-documents.projection';
-import {
-	asDraft,
-	documentReference,
-	documentSystemFields,
-	slugField,
-	withoutKey,
-} from './onoff/document/sanity-document.factory';
+import { asDraft, documentReference, slugField, withoutKey } from './onoff/document/sanity-document.factory';
 import { coleccionCompletaContentCampaignDocument } from './onoff/landing-page/coleccion-completa-onoff.content-campaign.document';
 import { palacioNueveFronterasContentCampaignDocument } from './onoff/landing-page/el-palacio-de-las-nueve-fronteras.content-campaign.document';
 import { onoffLandingPageDocument } from './onoff/landing-page/onoff.landing-page.document';
@@ -245,37 +239,20 @@ export const configlessCollectionDocument = {
 	slug: slugField('sin-config'),
 };
 
+// `Rule.required()` valida la edición en el Studio, no el almacenamiento: el dataset real tiene obras
+// publicadas sin `badLanguage`, sin `originalPublication` y sin tiempo de lectura. Este documento
+// reproduce los tres huecos a la vez, para ejercitar qué rellena la proyección y qué deja ausente.
+export const incompleteLiteraryWorkDocument = {
+	...withoutKey(canonLiteraryWork, 'badLanguage', 'originalPublication', 'totalReadingTime'),
+	_id: 'onoff-obra-campos-requeridos-incumplidos',
+	slug: slugField('obra-campos-requeridos-incumplidos'),
+};
+
 // Documentos del tipo previo (`story`), derivados del canon cambiándoles el `_type`. El corpus modela
-// la era `LiteraryWork`, así que no los tiene, y las queries que todavía leen ese tipo se quedarían sin
+// la era `LiteraryWork`, así que no los tiene, y la query que todavía lee ese tipo se quedaría sin
 // fixture. La derivación vale mientras la query proyecte campos que ambos schemas declaran igual; una
 // que lea campos propios del tipo previo necesita su documento.
-// El cuento publicado no se exporta: existe como base de los de abajo, que son los que los specs usan.
-// La fecha de escritura va distinta de la de creación: compartiéndolas, una proyección que tomara la
-// equivocada quedaría indistinguible de la correcta.
-const LEGACY_UPDATED_AT = '2026-08-13T06:07:43Z';
-
-const legacyStoryDocument = {
-	...canonLiteraryWork,
-	_id: 'onoff-story-publicada',
-	_type: 'story' as const,
-	_updatedAt: LEGACY_UPDATED_AT,
-	slug: slugField('story-publicada'),
-};
-
-// `Rule.required()` valida la edición en el Studio, no el almacenamiento: el dataset real tiene cuentos
-// publicados sin `badLanguage`, sin `originalPublication` y (en menor medida) sin `approximateReadingTime`.
-// Este documento reproduce los tres huecos a la vez: los dos primeros por `withoutKey` sobre el canon, y
-// el tercero por construcción — el canon es un `literaryWork`, que nunca declaró ese campo (usa
-// `totalReadingTime`), así que nunca hizo falta quitarlo. También suma `author` (referencia única, propia
-// del schema `story`) porque el canon trae `authors` (plural, de `literaryWork`), y así queda fiel a lo
-// que cualquier proyección `author->` de las queries reales espera resolver.
-export const incompleteLegacyStoryDocument = {
-	...withoutKey(withoutKey(legacyStoryDocument, 'badLanguage'), 'originalPublication'),
-	_id: 'onoff-story-campos-requeridos-incumplidos',
-	slug: slugField('story-campos-requeridos-incumplidos'),
-	author: documentReference(onoffAuthorDocument._id),
-};
-
+//
 // La migración de cuentos a obras no da de baja el cuento de origen: emite la obra al lado, copiándole
 // el slug tal cual. Este documento reproduce esa coexistencia contra una obra que el corpus ya modela,
 // y es la única forma de exhibir un conteo por autor que cuente dos veces la misma obra. Comparte slug
@@ -295,16 +272,4 @@ export const unmigratedStoryDocument = {
 	_type: 'story' as const,
 	slug: slugField('story-sin-migrar'),
 	author: documentReference(onoffAuthorDocument._id),
-};
-
-// La proyección de abajo dereferencia el cuento en vez de proyectarlo directo (`stories[]->`), así que
-// necesita un documento contenedor propio apuntando por `_ref` a `incompleteLegacyStoryDocument`. Es un
-// escenario de un solo caso, sin otro consumidor, y por eso no se suma a `onoffDatasetMock`.
-
-export const storylistWithIncompleteStoryDocument = {
-	...documentSystemFields('onoff-storylist-campos-incumplidos'),
-	_type: 'storylist' as const,
-	slug: slugField('storylist-campos-incumplidos'),
-	title: 'Storylist de prueba',
-	stories: [documentReference(incompleteLegacyStoryDocument._id, 'story-incompleto')],
 };

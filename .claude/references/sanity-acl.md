@@ -4,36 +4,36 @@
 > de Sanity, queries GROQ, mappers o tipos de dominio. Es el **patrón central** de cuentoneta.
 >
 > Relacionadas: [`clean-architecture.md`](clean-architecture.md) (capas y regla de dependencia) ·
-> [`domain-model.md`](domain-model.md) (Story / Author / Storylist / Resource / LiteraryWork).
+> [`domain-model.md`](domain-model.md) (Author / Collection / LiteraryWork / Resource).
 
 ---
 
 ## Por qué existe el ACL
 
 Sanity expone su contenido vía **GROQ**, y el typegen (`pnpm sanity:run-typegen-generator`) genera
-tipos a partir del schema y de cada query (`StoryBySlugQueryResult`, `AuthorBySlugQueryResult`,
-`StoriesByAuthorSlugQueryResult`, …). Esos tipos describen el **shape crudo de Sanity**: campos
+tipos a partir del schema y de cada query (`AuthorBySlugQueryResult`, `LiteraryWorkBySlugQueryResult`,
+`CollectionBySlugQueryResult`, …). Esos tipos describen el **shape crudo de Sanity**: campos
 opcionales/nullables, referencias sin resolver, imágenes como `SanityImageSource`, bloques
 `BlockContent`, `coalesce(...)` con defaults, etc.
 
 **Regla dura:** el resultado crudo de GROQ (los tipos `*QueryResult`) **nunca** se filtra al
-frontend. El frontend consume únicamente el **modelo de dominio** (`Story`, `Author`, `Storylist`,
-`Resource`, `Tag`, …, definidos en `@models/*`), que es **independiente del shape de Sanity**.
+frontend. El frontend consume únicamente el **modelo de dominio** (`Author`, `LiteraryWork`,
+`Collection`, `Resource`, `Tag`, …, definidos en `@models/*`), que es **independiente del shape de
+Sanity**.
 
 El **Anti-Corruption Layer** son los **mappers**: funciones puras que traducen el resultado crudo de
 Sanity al modelo de dominio. Si mañana se cambia el CMS o se reorganiza una query, el blast radius
 queda contenido en el mapper; el dominio y el frontend no se enteran.
 
-> **Alcance de los ejemplos de este archivo.** El pipeline se ejemplifica con el módulo `story`
-> (`src/api/modules/story/`), hoy el único módulo de contenido narrativo con esta capa completa
-> (repository → mapper → service → controller), con el ACL como **mappers puros en
-> `_utils/*.functions.ts`** (ver más abajo). `LiteraryWork`, `Collection` y `content` **divergen a
+> **Alcance de los ejemplos de este archivo.** El pipeline se ejemplifica con el módulo `author`
+> (`src/api/modules/author/`), hoy el ejemplo canónico de este patrón, con el ACL como **mappers
+> puros en `_utils/*.functions.ts`** (ver más abajo). `contributor` y `sitemap` siguen la misma forma
+> general (repository con `fetch*()` desacoplado del mapeo), aunque `contributor` resuelve su propio
+> mapeo inline en vez de delegar en `_utils/`. `LiteraryWork`, `Collection` y `content` **divergen a
 > propósito**: su ACL (la traducción raw Sanity → dominio) vive **dentro del repository** como
 > métodos privados, no como funciones en `_utils/`. No es una variación accidental — es la
 > **dirección arquitectónica objetivo**: el repository es dueño de su propia ACL y entrega el
-> agregado de dominio listo; el service recibe dominio, sin una capa de mappers intermedia. `story`
-> y `storylist` conservan por ahora el patrón mapper-en-`_utils` de los ejemplos de abajo, hasta que
-> se migren.
+> agregado de dominio listo; el service recibe dominio, sin una capa de mappers intermedia.
 >
 > **Split de archivos de los módulos que ya divergen** — tres archivos, no uno: `<dominio>.repository.ts`
 > (el puerto, la interfaz), `<dominio>.repository.sanity.ts` (el adaptador, con la ACL en privados) y
@@ -45,7 +45,7 @@ queda contenido en el mapper; el dominio y el frontend no se enteran.
 > el contrato en [`docs/LITERARY_WORK_DESIGN.md`](../../docs/LITERARY_WORK_DESIGN.md) §6.
 > `collection` y `content` también, con la misma forma: la ACL vive dentro de su repository, y el
 > service y el controller quedan del lado del dominio. Los ejemplos de código de abajo se conservan
-> sobre `story`, que sigue vigente para ese patrón.
+> sobre `author`, que sigue vigente para ese patrón.
 >
 > **Qué sí se comparte desde `_utils/`.** La divergencia no es aislarse: los repositories que la
 > adoptaron siguen usando las primitivas genéricas de traducción (`mapTags`, `mapAuthorTeaser`,
@@ -75,7 +75,7 @@ queda contenido en el mapper; el dominio y el frontend no se enteran.
 
 ```
                  GROQ query                 client.fetch(query, params)
-   _queries/story.query.ts  ───────────────▶  repository.fetch*()
+   _queries/author.query.ts ───────────────▶  repository.fetch*()
                                                    │  (resultado CRUDO de Sanity:
                                                    │   tipos generados *QueryResult)
                                                    ▼
@@ -84,7 +84,7 @@ queda contenido en el mapper; el dominio y el frontend no se enteran.
                                                    ▼
                                   mapX(rawResult): DomainType
                               (mapper / ACL en _utils/functions.ts)
-                                                   │  (modelo de dominio: Story, Author, …)
+                                                   │  (modelo de dominio: Author, LiteraryWork, …)
                                                    ▼
                                             controller (Hono)
                                                    │  c.json(result)
@@ -100,9 +100,9 @@ queda contenido en el mapper; el dominio y el frontend no se enteran.
 | **Service**    | `<dominio>.service.ts`        | `get*()`: llama al repository y **mapea** al dominio; lógica de negocio |
 | **Controller** | `<dominio>.controller.ts`     | Rutas Hono + `zValidator`; llama al service y responde `c.json(...)`    |
 
-El módulo **story** (`src/api/modules/story/`) es el ejemplo canónico. `author`, `storylist`,
-`contributor` y `sitemap` siguen la misma forma; `literary-work`, `collection` y `content` divergen
-a propósito (ver la nota de arriba).
+El módulo **author** (`src/api/modules/author/`) es el ejemplo canónico. `contributor` y `sitemap`
+siguen la misma forma general; `literary-work`, `collection` y `content` divergen a propósito (ver la
+nota de arriba).
 
 ---
 
@@ -119,34 +119,49 @@ a propósito (ver la nota de arriba).
 ### Repository — `fetch*()` (crudo)
 
 ```typescript
-// story.repository.ts
+// author.repository.ts
 import { client } from '../../_helpers/sanity-connector';
-import { storyBySlugQuery, allStoriesQuery /* … */ } from '../../_queries/story.query';
+import { authorBySlugQuery, authorsQuery } from '@queries/author.query';
 
-export async function fetchStoryBySlug(slug: string) {
-	return client.fetch(storyBySlugQuery, { slug });
+export async function fetchAuthorBySlug(slug: string) {
+	return client.fetch(authorBySlugQuery, { slug });
 }
 
-export async function fetchStories(start: number, end: number) {
-	return client.fetch(allStoriesQuery, { start, end });
+export async function fetchAllAuthors() {
+	return client.fetch(authorsQuery);
 }
 ```
 
 Notá que `fetch*` **no anota** un tipo de retorno: el tipo lo infiere el typegen a partir de la
-query (`StoryBySlugQueryResult`, etc.). Ese tipo crudo es justo lo que el mapper recibe como entrada.
+query (`AuthorBySlugQueryResult`, `AuthorsQueryResult`). Ese tipo crudo es justo lo que el mapper
+recibe como entrada.
 
 ### Service — `get*()` (mapea al dominio)
 
 ```typescript
-// story.service.ts
-export async function getStoryBySlug(slug: string): Promise<Story> {
-	const result = await fetchStoryBySlug(slug);
+// author.service.ts
+import { AuthorProfile, AuthorTeaser } from '@models/author.model';
+import { mapAuthorProfile, mapAuthorTeaser } from '../../_utils/functions';
+import { fetchAllAuthors, fetchAuthorBySlug } from './author.repository';
+
+export async function getAuthorBySlug(slug: string): Promise<AuthorProfile> {
+	const result = await fetchAuthorBySlug(slug);
 
 	if (!result) {
-		throw new Error(`Story with slug ${slug} not found`);
+		throw new Error(`Author with slug ${slug} not found.`);
 	}
 
-	return await mapStoryContent(result); // ← ACL: crudo → dominio (Story)
+	return mapAuthorProfile(result);
+}
+
+export async function getAllAuthors(): Promise<AuthorTeaser[]> {
+	const result = await fetchAllAuthors();
+
+	if (!result) {
+		throw new Error(`Could not fetch authors data.`);
+	}
+
+	return result.map((author) => mapAuthorTeaser(author));
 }
 ```
 
@@ -156,20 +171,26 @@ de su `return`, solo circula dominio.
 ### Controller — Hono + zValidator
 
 ```typescript
-// story.controller.ts
-const storyController = new Hono();
+// author.controller.ts
+const authorController = new Hono();
 
-storyController.get('/:slug', zValidator('param', slugSchema), async (c) => {
+authorController.get('/', async (c) => {
+	const result = await getAllAuthors();
+	return c.json(result);
+});
+
+authorController.get('/:slug', zValidator('param', slugSchema), async (c) => {
 	const { slug } = c.req.valid('param');
-	const result = await getStoryBySlug(slug);
+	const result = await getAuthorBySlug(slug);
+
 	return c.json(result);
 });
 ```
 
 - Validación de path params / query con **`@hono/zod-validator`** (`zValidator('param', …)`,
   `zValidator('query', …)`). Los path params usan `:slug` (estilo Hono).
-- **Orden de rutas:** las rutas específicas van **antes** del wildcard `/:slug` (p. ej.
-  `/most-read`, `/author/:slug/navigation`, `/author/:slug`, luego `/`, y al final `/:slug`).
+- **Orden de rutas:** las rutas específicas van **antes** del wildcard `/:slug` (p. ej.,
+  en `literary-work`, `/` → `/update-most-read` → `/:slug`).
 - El controller no conoce Sanity ni los mappers: solo valida, llama al service y serializa.
 
 ---
@@ -211,9 +232,9 @@ export function mapAuthor(
 Patrones que se repiten:
 
 - **Entrada tipada con el resultado crudo de Sanity** (`NonNullable<AuthorBySlugQueryResult>`,
-  `StorylistTeasersQueryResult`, sub-queries derivadas como
-  `NonNullable<StorylistQueryResult>['stories'][0]['author']`). **Salida = tipo de dominio**
-  (`Author`, `AuthorTeaser`, `Resource`, `Tag`, …).
+  sub-queries derivadas como
+  `NonNullable<CollectionBySlugQueryResult>['literaryWorks'][number]['authors'][number]`). **Salida =
+  tipo de dominio** (`Author`, `AuthorTeaser`, `Resource`, `Tag`, …).
 - **Normalización de nullables:** `?? undefined`, `?? ''`, `?? []` para colapsar los opcionales de
   Sanity a la forma que el dominio espera. `biography` es la excepción deliberada: el schema la
   exige (`Rule.required()`), así que el mapper la pasa **sin** `?? ''` — un valor faltante es un
@@ -226,15 +247,15 @@ Patrones que se repiten:
   **descartar** el dato (accesorio para el agregado) o **lanzar** (central para el agregado) — nunca
   dejar pasar el hueco en silencio. `mapResources` es el caso descartar: filtra, con
   `console.warn`, todo recurso cuyo `url` no sea un string no vacío, porque un recurso es
-  información accesoria de `Author`/`Story`/`LiteraryWork` y perder uno no invalida el agregado.
+  información accesoria de `Author`/`LiteraryWork` y perder uno no invalida el agregado.
   `biography` (arriba) es el caso lanzar: sin ella, `Author` pierde su contenido central.
 - **Descartar y lanzar no son las únicas salidas: cuando existe un valor por defecto honesto, va como
   `coalesce` en la query.** Es lo que hacen `badLanguage` (a `false`) y `originalPublication` (a `''`)
-  en las proyecciones de cuento: el dominio recibe el tipo que promete y ningún consumidor se entera.
-  La condición es que el valor sea **verdadero**, no un relleno — `approximateReadingTime` queda
-  deliberadamente sin `coalesce`, porque un `0` afirmaría "cero minutos de lectura" sobre un cuerpo
-  de miles de caracteres, y un dato inventado es peor que una ausencia que se puede detectar. Ahí la
-  decisión vuelve al borde, que falla nombrando el campo que falta.
+  en las proyecciones de `LiteraryWork`. La condición es que el valor sea **verdadero**, no un
+  relleno — `totalReadingTime` y `content[].readingTime` quedan deliberadamente sin `coalesce`,
+  porque un `0` afirmaría "cero minutos de lectura" sobre un cuerpo de miles de caracteres, y un dato
+  inventado es peor que una ausencia que se puede detectar. Ahí la decisión vuelve al borde, que
+  falla nombrando el campo que falta.
   El corolario práctico: **la decisión es por campo, no global**, y una misma propiedad tiene que
   resolverse igual en todas las proyecciones que la traen. Cuando una la protege y otra no, el mismo
   campo llega distinto según por dónde se lo pida — un spec de contrato sobre las queries es lo que
@@ -242,24 +263,22 @@ Patrones que se repiten:
 - **Qué campos incumple hoy el dato lo mide `pnpm required-fields:sweep`**, que deriva los requeridos
   del schema versionado y cuenta los documentos que no los cumplen. Reporta, no bloquea: lo corre un
   job programado → [`scripts.md`](scripts.md).
-- **Composición:** un mapper grande delega en otros (`mapStoryContent` usa `mapAuthor`,
-  `mapResources`, `mapTags`, `mapBlockContentToTextParagraphs`, `mapMediaSources`). `mapStoryContent`
-  y `mapAuthor` propagan los **tags** del cuento y del autor vía `mapTags`; los mappers de teasers
-  devuelven `tags: []` (sus queries no proyectan los tags completos).
+- **Composición:** un mapper puede delegar en otros — `mapAuthorProfile` reutiliza `mapAuthor`, que a
+  su vez delega en `mapResources` y `mapTags`. Los mappers de teaser (`mapAuthorTeaser`) devuelven
+  `resources: []`/`tags: []` porque sus queries no proyectan esos campos completos.
 - **`BlockContent` → texto de dominio:** `mapBlockContentToTextParagraphs(content)` filtra los
-  bloques `_type === 'block'` a `TextBlockContent[]`. Cubre el cuerpo y la reseña de `Story`, sus
-  epígrafes y la descripción de `Storylist` — no la biografía del autor, que es Markdown, no
-  Portable Text (ver bullet siguiente).
+  bloques `_type === 'block'` de Portable Text a `TextBlockContent[]`. Hoy ningún mapper de dominio
+  lo consume — no lo usa la biografía del autor, que es Markdown, no Portable Text (ver bullet
+  siguiente).
 - **Markdown → `SanitizedHtml`:** `markdownToSanitizedHtml(createMarkdown(raw))` (`@utils/markdown-pipeline.utils`)
   es el pipeline que usa `mapAuthor` para `biography`. Es el mismo pipeline que consume el módulo
   `literary-work` para su contenido en Markdown (ver la nota de divergencia arriba).
 
-Mappers principales (no exhaustivo): `mapAuthor`, `mapAuthorTeaser`, `mapResources`, `mapTags`,
-`mapStoryContent`, `mapStoryTeaser`, `mapStoryTeaserWithAuthor`, `mapContentCampaigns`. Los mappers de
-la landing (`mapLandingPageContent`, `mapHighlightedAuthors`, la vista de navegación de obra) ya no
+Mappers principales (no exhaustivo): `mapAuthor`, `mapAuthorProfile`, `mapAuthorTeaser`,
+`mapResources`, `mapTags`, `mapBlockContentToTextParagraphs`, `mapContentCampaigns`. Los mappers de
+la landing (`mapLandingPageContent`, `mapHighlightedAuthors`, la vista de navegación de obra) no
 viven acá: son métodos privados de `SanityContentRepository`, siguiendo la divergencia descripta
-arriba. El que armaba los teasers de `storylist` para la landing se retiró junto con el campo que los
-alimentaba.
+arriba.
 
 ### Helpers de imagen (también parte de la capa de mappers)
 
@@ -317,15 +336,16 @@ Sanity. La dirección objetivo (ver [`clean-architecture.md`](clean-architecture
 Implementation") es invertir esa dependencia con un **puerto de repositorio** y dos
 implementaciones intercambiables:
 
-- **`SanityStoryRepository`** — implementación real contra GROQ/`@sanity/client` (lo que hoy hacen
+- **`SanityAuthorRepository`** — implementación real contra GROQ/`@sanity/client` (lo que hoy hacen
   las funciones `fetch*`).
-- **`InMemoryStoryRepository`** — implementación de prueba con datos en memoria, para tests rápidos y
-  deterministas sin tocar Sanity.
+- **`InMemoryAuthorRepository`** — implementación de prueba con datos en memoria, para tests rápidos
+  y deterministas sin tocar Sanity.
 
 El service dependería del **puerto** (interfaz), no de la implementación concreta, y la elección se
 resolvería vía un **contenedor de DI**. Esa dirección está registrada en **#1503**, sin estructura
 creada todavía en el repo. Mientras tanto, rige el patrón de funciones `fetch*()` /
-`get*()` descripto arriba; **no** introducir clases de repositorio ni DI salvo que el issue lo pida.
+`get*()` descripto arriba para `author`, `contributor` y `sitemap`; **no** introducir clases de
+repositorio ni DI salvo que el issue lo pida.
 
 `LiteraryWork` ya adoptó esta dirección — puerto (`LiteraryWorkRepository`) + adaptador
 (`SanityLiteraryWorkRepository`) + doble (`InMemoryLiteraryWorkRepository`), ver

@@ -5,11 +5,9 @@ import {
 	mapBlockContentToTextParagraphs,
 	mapContentCampaigns,
 	mapResources,
-	mapStoryTeaser,
 	mapTags,
 	urlFor,
 } from './functions';
-import { onoffRawTeasersMock } from '@mocks/onoff-raw-stories.mock';
 import { rawOnoffAuthor, rawOnoffAuthorTeaser } from '@mocks/onoff-raw-author.mock';
 import { onoffRawContentCampaignsMock } from '@mocks/onoff-raw-landing-page.mock';
 import { onoffRawTagsMock } from '@mocks/onoff-raw-tags.mock';
@@ -82,20 +80,6 @@ describe('mapAuthor (ACL)', () => {
 describe('mapAuthorTeaser (ACL)', () => {
 	it('does not emit a biography: the teaser contract does not declare it', () => {
 		expect(mapAuthorTeaser(rawOnoffAuthorTeaser)).not.toHaveProperty('biography');
-	});
-});
-
-// El input crudo no incluye `tags`: el mapper es la única fuente del campo vacío (consistente con `mapAuthorTeaser`).
-//
-// El teaser sale de la colección del canon y no de un export por obra: el caso necesita "un teaser
-// crudo cualquiera", no uno puntual, y pedirlo por nombre lo ataría a la obra que exista hoy.
-describe('mapStoryTeaser (ACL)', () => {
-	const [rawTeaser] = onoffRawTeasersMock;
-
-	it('sets tags to [] from the mapper, not from the raw spread', () => {
-		const result = mapStoryTeaser([rawTeaser]);
-
-		expect(result[0].tags).toEqual([]);
 	});
 });
 

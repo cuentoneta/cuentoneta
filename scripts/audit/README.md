@@ -15,18 +15,8 @@ pnpm exec tsx --env-file=.env scripts/audit/<script>.ts
 
 ## Scripts disponibles
 
-| Script                         | Tipo             | Qué hace                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| ------------------------------ | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `audit-story-portable-text.ts` | **Read-only** ✅ | Censa el Portable Text de los cuentos antes de migrarlo a Markdown, **publicados y borradores por separado**: construcciones que el conversor no traduce (agrupadas por campo, con el slug y el `_key` del bloque), **construcciones de riesgo escritas en el texto** (numeral que abre línea, sangría de bloque de código, cercas, backticks, entidades, tiradas que quedarían como subrayado de encabezado) y esquemas de enlace fuera de la allowlist, más conteos —incluidos los campos cuya ausencia aborta el mapeo, y cuántos cuentos admite o excluye el filtro de la migración de borradores—, colisiones de slug, miembros de array sin `_key` y el baseline de fidelidad en caracteres. |
-
-> **Sobre `audit-story-portable-text.ts`:** correrlo **antes** de una migración de conversión, no durante. El conversor de `resources/portable-text-to-markdown/` falla ante lo que no sabe traducir —a propósito, para no perder contenido en silencio—, así que descubrir una construcción no cubierta con la migración ya en curso la detendría con documentos ya escritos. Si el censo encuentra algo nuevo, se agrega **en el conversor** con su caso de prueba.
-
-### Comandos
-
-```bash
-# Censo del Portable Text de los cuentos, previo a convertirlo (solo lectura)
-pnpm exec tsx --env-file=.env scripts/audit/audit-story-portable-text.ts
-```
+Hoy no hay ninguno: los que vivieron acá cumplieron su propósito y se dieron de baja (ver abajo). La
+carpeta se conserva porque la convención de más abajo rige para el próximo.
 
 ## Scripts dados de baja
 
@@ -34,8 +24,10 @@ Tres exportadores y auditores de biografías de autor vivieron acá y ya no: ope
 
 Su salida en `tools/author-bios/` sigue en disco y **ya no es reproducible**. La política de [`coding-agent-policies.md`](../../.claude/references/coding-agent-policies.md) cubre ese caso: sin un comando que lo regenere, el artefacto se trata como no re-generable y no se toca.
 
+El censo del Portable Text de los cuentos siguió el mismo camino. Existía para responder, **antes** de convertir el contenido a Markdown, si entraba en el subconjunto que el conversor traduce; esa conversión ya se hizo y el tipo de documento que censaba dejó de estar registrado en el Studio. Los documentos siguen en el dataset, así que el script todavía correría — pero mediría un corpus que nadie va a volver a convertir, y su resultado no destraba ninguna decisión pendiente.
+
 ## Convención
 
-Cualquier script futuro de diagnóstico/auditoría/migración sobre datos de Sanity vive en `scripts/audit/`, se documenta en esta tabla con su comando y su etiqueta **read-only / escribe-en-prod**, y **no** se agrega a `package.json`.
+Cualquier script futuro de diagnóstico/auditoría/migración sobre datos de Sanity vive en `scripts/audit/`, se documenta arriba con su comando y su etiqueta **read-only / escribe-en-prod**, y **no** se agrega a `package.json`.
 
 **La carpeta se lintea como el resto de `scripts/`, sin exención.** Que un script sea one-off describe una intención sobre su uso, no una propiedad de su código: se lee igual, se copia igual y sirve igual de plantilla para el próximo. Exceptuarla sería exceptuar todo lo que venga.

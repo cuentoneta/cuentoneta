@@ -47,17 +47,14 @@ export const landingPageListQuery = defineQuery(`
 }`);
 
 // Las referencias crudas de la última semana cargada, que la generación de semanas futuras copia
-// hacia adelante. Se proyectan también los campos en baja: siguen siendo editables en el Studio hasta
-// el PR que los retira, y dejar de copiarlos vaciaría la landing vieja de las semanas nuevas.
+// hacia adelante.
 export const latestLandingPageReferencesQuery = defineQuery(`
 *[_type == 'landingPage' && !(_id in path('drafts.**')) && config <= $currentSlug]{
     _id,
     _type,
     'slug': slug.current,
     config,
-    'cards': coalesce(cards[],[]),
     'campaigns': coalesce(campaigns[],[]),
-    'latestReads': coalesce(latestReads,[]),
     'collections': coalesce(collections,[]),
     'latestLiteraryWorks': coalesce(latestLiteraryWorks,[]),
     'highlightedAuthors': coalesce(highlightedAuthors,[]),

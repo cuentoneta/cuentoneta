@@ -58,36 +58,6 @@ export default defineType({
 			],
 		}),
 		defineField({
-			name: 'cards',
-			title: 'Storylists con Tarjetas (en baja)',
-			type: 'array',
-			of: [
-				defineArrayMember({
-					name: 'storylist',
-					title: 'Storylist',
-					type: 'reference',
-					to: [{ type: 'storylist' }],
-				}),
-			],
-		}),
-		defineField({
-			name: 'latestReads',
-			title: 'Últimas novedades (en baja)',
-			type: 'array',
-			of: [
-				defineArrayMember({
-					name: 'story',
-					title: 'Historia',
-					type: 'reference',
-					to: [{ type: 'story' }],
-				}),
-			],
-		}),
-		// Los campos nuevos conviven con los de arriba en vez de reemplazarlos: el Studio y la aplicación no
-		// despliegan a la vez, así que reusar el nombre dejaría una ventana en la que un lado lee lo que el
-		// otro todavía no escribe. Sin `required`: durante la convivencia un documento puede tener poblado
-		// un par u otro, y exigirlos rompería la edición de los documentos que todavía no migraron.
-		defineField({
 			name: 'collections',
 			title: 'Colecciones con Tarjetas',
 			type: 'array',

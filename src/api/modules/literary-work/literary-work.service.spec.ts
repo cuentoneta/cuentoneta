@@ -126,9 +126,9 @@ describe('updateMostReadLiteraryWorks', () => {
 
 	beforeEach(() => clearAllMocks());
 
-	// Las dos rutas conviven durante la migración y el tráfico está repartido: quedarse con un prefijo
-	// vaciaría la lista a medida que los lectores se corren a la otra.
-	it('reads popular pages from both the story and the reading routes', async () => {
+	// El filtro de prefijo es exacto: una URL bajo el prefijo retirado no aporta al ranking, venga de
+	// donde venga, porque rankearía una ruta que el servidor ya redirige.
+	it('ignores popular pages from the withdrawn story route', async () => {
 		(fetchClarityData as Mock).mockResolvedValue(
 			popularPages(
 				`${environment.basePath}/story/${first.slug}`,
@@ -139,23 +139,7 @@ describe('updateMostReadLiteraryWorks', () => {
 
 		const result = await literaryWorkService.updateMostReadLiteraryWorks(content);
 
-		expect(result.mostRead.map(({ slug }) => slug)).toEqual([first.slug, second.slug]);
-	});
-
-	// La obra migrada conserva el slug de su historia de origen, así que el mismo slug llega por los dos
-	// caminos: sin deduplicar, la lista destacaría dos veces la misma obra.
-	it('counts a work reached through both routes only once', async () => {
-		(fetchClarityData as Mock).mockResolvedValue(
-			popularPages(
-				`${environment.basePath}/story/${first.slug}`,
-				`${environment.basePath}/literary-work/${first.slug}`,
-			),
-		);
-		const content = repositories();
-
-		const result = await literaryWorkService.updateMostReadLiteraryWorks(content);
-
-		expect(result.mostRead.map(({ slug }) => slug)).toEqual([first.slug]);
+		expect(result.mostRead.map(({ slug }) => slug)).toEqual([second.slug]);
 	});
 
 	it('ignores popular pages outside the reading routes', async () => {
@@ -224,7 +208,7 @@ describe('updateMostReadLiteraryWorks', () => {
 	it('deduplicates a work reached through decorated and clean URLs alike', async () => {
 		(fetchClarityData as Mock).mockResolvedValue(
 			popularPages(
-				`${environment.basePath}/story/${first.slug}?utm_source=x`,
+				`${environment.basePath}/literary-work/${first.slug}?utm_source=x`,
 				`${environment.basePath}/literary-work/${first.slug}`,
 			),
 		);

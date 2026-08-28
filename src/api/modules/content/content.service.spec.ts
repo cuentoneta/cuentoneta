@@ -13,8 +13,6 @@ import { addNextWeeksLandingPageContent, getLandingPageContent, getRotatingConte
 const latestReferences: LandingPageReferences = {
 	_type: 'landingPage',
 	campaigns: [{ _key: 'campaign-1', _type: 'reference', _ref: 'campaign-1' }],
-	cards: [{ _key: 'card-1', _type: 'reference', _ref: 'card-1' }],
-	latestReads: [{ _key: 'story-1', _type: 'reference', _ref: 'story-1' }],
 	collections: [{ _key: 'collection-1', _type: 'reference', _ref: 'collection-1' }],
 	latestLiteraryWorks: [{ _key: 'work-1', _type: 'reference', _ref: 'work-1' }],
 	highlightedAuthors: [{ _key: 'highlighted-1', _type: 'reference', _ref: 'author-1' }],
@@ -142,13 +140,23 @@ describe('addNextWeeksLandingPageContent', () => {
 
 		repository.createdLandingPages.forEach((created) => {
 			expect(created.campaigns).toEqual(latestReferences.campaigns);
-			expect(created.cards).toEqual(latestReferences.cards);
-			expect(created.latestReads).toEqual(latestReferences.latestReads);
 		});
 	});
 
 	// El clonado enumera los campos que copia, así que un campo nuevo que quede afuera no rompe nada:
-	// el slot se vaciaría solo cada semana, sin emitir ningún error.
+	// el slot se vaciaría solo cada semana, sin emitir ningún error. Afirmar el conjunto exacto de
+	// claves es lo que convierte esa omisión en un rojo, en las dos direcciones: un slot vigente que se
+	// caiga y uno retirado que reaparezca fallan igual.
+	it('creates each week with exactly the slots the base declares', async () => {
+		const repository = repositoryWith();
+
+		await addNextWeeksLandingPageContent(2, repository);
+
+		repository.createdLandingPages.forEach((created) => {
+			expect(Object.keys(created).sort()).toEqual([...Object.keys(latestReferences), 'config', 'slug'].sort());
+		});
+	});
+
 	it('carries the collections, the highlighted works and the highlighted authors over to every cloned week', async () => {
 		const repository = repositoryWith();
 

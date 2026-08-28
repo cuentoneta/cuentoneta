@@ -1,3 +1,4 @@
+import { onoffImageAssets } from '../../onoff-image-assets.mock';
 import { embeddedAuthorMock } from '../../author.mock';
 import { losPeldanosRawLiteraryWork } from './los-peldanos.literary-work.raw.mock';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
@@ -9,16 +10,15 @@ import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import losPeldanosMdBody from './los-peldanos.md?raw';
 import losPeldanosEditorialNoteMd from './los-peldanos.editorial-note.md?raw';
 import { toDomainTags } from '../../onoff-tags.mock';
-import { losPeldanosStoryMock } from '../story/los-peldanos.story.mock';
 
 const losPeldanosBody = createMarkdown(losPeldanosMdBody);
 
 export const losPeldanosLiteraryWorkMock: LiteraryWork = createLiteraryWork({
 	_id: 'onoff-literary-work-los-peldanos',
-	slug: losPeldanosStoryMock.slug,
-	title: losPeldanosStoryMock.title,
+	slug: losPeldanosRawLiteraryWork.slug,
+	title: losPeldanosRawLiteraryWork.title,
 	authors: [embeddedAuthorMock],
-	coverImage: losPeldanosStoryMock.coverImage,
+	coverImage: onoffImageAssets.losPeldanosCover.path,
 	content: [
 		createLiteraryWorkSection({
 			position: 0,
@@ -28,10 +28,10 @@ export const losPeldanosLiteraryWorkMock: LiteraryWork = createLiteraryWork({
 		}),
 	],
 	mediaSources: [],
-	resources: losPeldanosStoryMock.resources,
-	badLanguage: losPeldanosStoryMock.badLanguage,
+	resources: [],
+	badLanguage: losPeldanosRawLiteraryWork.badLanguage,
 	tags: toDomainTags(losPeldanosRawLiteraryWork.tags),
-	originalPublication: losPeldanosStoryMock.originalPublication,
+	originalPublication: losPeldanosRawLiteraryWork.originalPublication,
 	editorialNote: markdownToSanitizedHtml(createMarkdown(losPeldanosEditorialNoteMd)),
-	publishedAt: createIsoDateTime(losPeldanosStoryMock.publishedAt),
+	publishedAt: createIsoDateTime(losPeldanosRawLiteraryWork.publishedAt),
 });
