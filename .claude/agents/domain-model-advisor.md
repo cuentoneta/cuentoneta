@@ -66,7 +66,7 @@ Como toda sesión de agente sobre este repo: cargá también `.claude/references
 
 ### Value Objects (Slug, ReadingTime, DateString) — hoy primitivos, promoción = roadmap
 
-- [ ] **`slug`** es la **Business Key**: identificador amigable, único e inmutable que reemplaza al `_id` técnico de Sanity en URLs (`/read/el-fin`, `/author/jorge-luis-borges`). El `_id` se reserva para GROQ y la capa de datos.
+- [ ] **`slug`** es la **Business Key**: identificador amigable, único e inmutable que reemplaza al `_id` técnico de Sanity en URLs (`/literary-work/el-fin`, `/author/jorge-luis-borges`). El `_id` se reserva para GROQ y la capa de datos.
 - [ ] **`approximateReadingTime`** respeta la invariante "número positivo (`>= 1`)".
 - [ ] **`bornOn` / `diedOn`** usan formato `YYYY-MM-DD` (`DateString`); la regla cruzada "`diedOn` posterior a `bornOn`" pertenece al agregado `Author`, no al value object aislado.
 - [ ] _(Roadmap #1503)_ Promover estos primitivos a value objects branded con auto-validación al construir — recomendar como dirección, no exigir hoy.

@@ -69,7 +69,7 @@ pnpm backfill:reading-time --no-dry-run    # persiste
 
 ### 6. Verificar la lectura
 
-Sobre una muestra representativa —una obra con epígrafes, una sin reseña, una con multimedia, una con enlaces en el cuerpo—: `/read/<slug>` debe renderizar cuerpo, epígrafes y nota editorial.
+Sobre una muestra representativa —una obra con epígrafes, una sin reseña, una con multimedia, una con enlaces en el cuerpo—: `/literary-work/<slug>` debe renderizar cuerpo, epígrafes y nota editorial.
 
 ## Revertir
 

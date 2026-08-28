@@ -28,7 +28,7 @@ Dónde viven los servicios de estado:
 **Prohibido** `firstValueFrom`, `lastValueFrom`, `toPromise` y `async/await` sobre observables en el frontend (restricción dura de `CLAUDE.md`). Se compone con **operadores RxJS** y se cruza a signals con `rxResource` / `toSignal`.
 
 ```typescript
-// ✅ Correcto — el HTTP queda como Observable y se consume vía un rxResource (read.page.ts).
+// ✅ Correcto — el HTTP queda como Observable y se consume vía un rxResource (literary-work.page.ts).
 // En componentes de página se usa el wrapper `ssrBlockingRxResource` (ver §7), no `rxResource` crudo.
 private readonly literaryWorkResource = ssrBlockingRxResource({
 	params: this.slug,
@@ -56,10 +56,10 @@ public getBySlug(slug: string): Observable<LiteraryWork> {
 Los valores derivados son **`computed`** (o `toSignal` para fuentes observables), **jamás** estado guardado que haya que sincronizar a mano.
 
 ```typescript
-// ✅ Correcto — todo lo derivado cuelga de un único origen (read.page.ts)
+// ✅ Correcto — todo lo derivado cuelga de un único origen (literary-work.page.ts)
 public readonly literaryWork = computed(() =>
 	this.literaryWorkResource.hasValue() ? this.literaryWorkResource.value() : undefined,
-); // `public`: lo exige la interfaz ReadHost
+); // `public`: lo exige la interfaz LiteraryWorkHost
 protected readonly byline = computed(
 	() =>
 		this.literaryWork()
@@ -182,7 +182,7 @@ Cuándo **bloquear**: rutas cuyo HTML server-rendered debe traer contenido/meta 
 
 Cada componente de página compone su SEO en el campo **`hostDirectives`** del decorador `@Component` (distinto de `host`, ver [`angular-components.md`](angular-components.md#host-element)). Hay exactamente **dos formas**, elegidas según si la ruta es indexable:
 
-- **Página indexable** (`RenderMode.Server`/`Prerender` sin `noindex`): `hostDirectives: [<Page>MetaTagsDirective, <Page>StructuredDataDirective]`. Ambas extienden `AbstractMetaTagsDirective`/`AbstractStructuredDataDirective`; la `<Page>MetaTagsDirective` emite `setRobots('index, follow')` y la `<Page>StructuredDataDirective` inyecta el JSON-LD. Ejemplos: `home`, `author`, `read`, `collection`.
+- **Página indexable** (`RenderMode.Server`/`Prerender` sin `noindex`): `hostDirectives: [<Page>MetaTagsDirective, <Page>StructuredDataDirective]`. Ambas extienden `AbstractMetaTagsDirective`/`AbstractStructuredDataDirective`; la `<Page>MetaTagsDirective` emite `setRobots('index, follow')` y la `<Page>StructuredDataDirective` inyecta el JSON-LD. Ejemplos: `home`, `author`, `literary-work`, `collection`.
 - **Página no indexable** (`noindex`): `hostDirectives: [HeadMetadataDirective]` (la directiva genérica, sin structured data) y el componente llama `setRobots('noindex, ...')` en su constructor. Ejemplos: `about`, `authors`, `dmca`. La ausencia de structured data acá es intencional, no un hueco.
 
 Una página indexable **nunca** debe usar la forma no indexable: quedaría sin structured data y sin `setRobots('index...')` de forma silenciosa.

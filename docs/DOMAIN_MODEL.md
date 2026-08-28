@@ -279,7 +279,7 @@ interface AttributedText {
 **Ciclo de Vida:**
 
 ```
-Borrador en Sanity → Publicación → Accesible para lectura en /read/:slug
+Borrador en Sanity → Publicación → Accesible para lectura en /literary-work/:slug
 ```
 
 **Vistas Polimórficas:**
@@ -753,7 +753,7 @@ interface Icon {
 
 ```typescript
 interface InternalLink {
-	path: string; // Ruta interna (ej: "/read/la-casa-de-los-espíritus")
+	path: string; // Ruta interna (ej: "/literary-work/la-casa-de-los-espíritus")
 	label: string; // Texto del enlace
 }
 

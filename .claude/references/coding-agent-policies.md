@@ -141,12 +141,12 @@ Peor: **desplaza al label**. Los once issues de CollectionPage llevaban prefijo 
 
 La prohibición es **por la función, no por la puntuación** — `[SEO] …`, `SEO — …` y `SEO: …` son el mismo mecanismo:
 
-| ❌                                                  | ✅                                                                 |
-| --------------------------------------------------- | ------------------------------------------------------------------ |
-| `[Backend] Controller Hono GET /collection/:slug`   | `Controller Hono GET /collection/:slug` + label `🔌 backend`       |
-| `SEO — opt-out temporal de indexación de /read`     | `Opt-out temporal de indexación de /read` + label `🧭 indexado`    |
-| `[Cloudflare] Crons: migrar a Cron Triggers`        | `Migrar los crons a Cloudflare Cron Triggers` + sub-issue del epic |
-| `[#<id>] - Integrar ReadingSuggestions en ReadPage` | `Integrar ReadingSuggestions en ReadPage`                          |
+| ❌                                                          | ✅                                                                       |
+| ----------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `[Backend] Controller Hono GET /collection/:slug`           | `Controller Hono GET /collection/:slug` + label `🔌 backend`             |
+| `SEO — opt-out temporal de indexación de /literary-work`    | `Opt-out temporal de indexación de /literary-work` + label `🧭 indexado` |
+| `[Cloudflare] Crons: migrar a Cron Triggers`                | `Migrar los crons a Cloudflare Cron Triggers` + sub-issue del epic       |
+| `[#<id>] - Integrar ReadingSuggestions en LiteraryWorkPage` | `Integrar ReadingSuggestions en LiteraryWorkPage`                        |
 
 Dos precisiones:
 
