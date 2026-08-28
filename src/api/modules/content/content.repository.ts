@@ -20,8 +20,6 @@ export interface LandingPageSummary {
 export interface LandingPageReferences {
 	readonly _type: string;
 	readonly campaigns: readonly KeyedReference[];
-	readonly cards: readonly KeyedReference[];
-	readonly latestReads: readonly KeyedReference[];
 	readonly collections: readonly KeyedReference[];
 	readonly latestLiteraryWorks: readonly KeyedReference[];
 	readonly highlightedAuthors: readonly KeyedReference[];

@@ -265,8 +265,8 @@ describe('SanityContentRepository.fetchLatestLandingPageReferences', () => {
 		slug: '1974-24',
 		config: '1974-24',
 		campaigns: [{ _key: 'campaign-1', _type: 'reference', _ref: 'campaign-1' }],
-		cards: [],
-		latestReads: [],
+		cards: [{ _key: 'card-1', _type: 'reference', _ref: 'card-1' }],
+		latestReads: [{ _key: 'story-1', _type: 'reference', _ref: 'story-1' }],
 		collections: [{ _key: 'collection-1', _type: 'reference', _ref: 'collection-1' }],
 		latestLiteraryWorks: [],
 		highlightedAuthors: [],
@@ -286,6 +286,16 @@ describe('SanityContentRepository.fetchLatestLandingPageReferences', () => {
 
 		expect(references?.campaigns).toEqual(raw.campaigns);
 		expect(references?.collections).toEqual(raw.collections);
+	});
+
+	// Los slots retirados siguen en el content lake: las semanas ya cargadas los declaran, y la query
+	// dejó de proyectarlos. Que el adaptador enumere qué copia es lo único que impide que vuelvan a
+	// propagarse si alguna vez se los volviera a proyectar.
+	it('leaves behind the withdrawn slots, even when the stored week still declares them', async () => {
+		const references = await repoReturning(raw).fetchLatestLandingPageReferences('1974-24');
+
+		expect(references).not.toHaveProperty('cards');
+		expect(references).not.toHaveProperty('latestReads');
 	});
 
 	it('returns null when there is no earlier week to clone', async () => {
