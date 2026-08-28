@@ -5,8 +5,6 @@
  */
 import { test, expect } from '@playwright/test';
 
-import { STABLE_SLUGS } from '../_utils/seo-fixtures';
-
 // Una redirección HTTP no ejercita nada distinto en un segundo motor, y el gate es el más caro.
 test.skip(({ browserName }) => browserName !== 'chromium');
 
@@ -29,10 +27,15 @@ test('story-listing — el listado viejo con barra final también redirige', asy
 
 // El detalle de una obra tiene su propio traslado, en otro tren. Lo que se protege es que esta
 // redirección no se lo lleve puesto: el día que el detalle redirija, tiene que ir a su obra y no al
-// listado. Se afirma el destino y no el estado, que es lo único cierto de las dos puntas — hoy el
-// detalle ya no tiene ruta y responde 404, y cuando gane su 301 responderá 301.
-test('story-listing — el detalle de una obra no cae en la redirección del listado', async ({ request }) => {
-	const response = await request.get(`/story/${STABLE_SLUGS.story}`, { maxRedirects: 0 });
+// listado. Se afirma el destino y no el estado, que es lo único que las dos puntas del traslado
+// tienen en común. El slug es local: cualquier segmento sirve, porque lo que se mide es qué captura
+// el handler del listado, no qué hay publicado con ese nombre.
+const LEGACY_DETAIL_PATH = '/story/el-aleph';
 
+test('story-listing — el detalle de una obra no cae en la redirección del listado', async ({ request }) => {
+	const response = await request.get(LEGACY_DETAIL_PATH, { maxRedirects: 0 });
+
+	// Sin esta guarda un 5xx daría verde: una respuesta caída tampoco trae `location`.
+	expect(response.status(), 'el servidor no respondió: la aserción siguiente pasaría en vacío').toBeLessThan(500);
 	expect(response.headers()['location']).not.toBe('/literary-work');
 });
