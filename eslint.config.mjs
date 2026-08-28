@@ -184,6 +184,32 @@ export default [
 		},
 	},
 	{
+		// El `test` de Playwright trae el navegador sin la intercepción de los assets de Sanity, así que
+		// un spec que lo importe descarga las imágenes del CDN de verdad — el consumo que el fixture de
+		// `e2e/_utils/test.ts` existe para evitar, y que en verde no se nota. La restricción va por
+		// nombre importado: `expect` y los tipos no los toca ningún fixture y siguen saliendo del paquete.
+		name: 'e2e-playwright-fixture',
+		files: ['e2e/**/*.ts'],
+		ignores: ['e2e/_utils/test.ts'],
+		rules: {
+			'no-restricted-imports': 'off',
+			'@typescript-eslint/no-restricted-imports': [
+				'error',
+				{
+					paths: [
+						{
+							name: '@playwright/test',
+							importNames: ['test'],
+							allowTypeImports: true,
+							message:
+								'Importá `test` de `e2e/_utils/test`: ese `test` sustituye los assets del CDN de Sanity por un pixel local en vez de descargarlos. `expect` y los tipos sí salen de @playwright/test.',
+						},
+					],
+				},
+			],
+		},
+	},
+	{
 		name: 'nx',
 		files: ['**/*.ts'],
 		plugins: {

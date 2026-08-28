@@ -6,10 +6,15 @@
  * enfocable y clickeable. Las dos consecuencias que se afirman acá —el hit-test y la política de foco—
  * solo existen en un navegador real; el spec unitario alcanza únicamente el atributo que las declara.
  */
-import { test, expect, type Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 
+import { test } from './_utils/test';
 import { STACKING_VIEWPORTS, VIEWPORT_HEIGHT } from './_utils/stacking';
 import { STABLE_SLUGS } from './_utils/seo-fixtures';
+
+// Mismo motivo que en `nav-stacking.spec.ts`: el hit-test sobre la barra depende de cuándo termina de
+// asentarse la página, y sustituir las imágenes lo corre.
+test.use({ interceptSanityAssets: false });
 
 // El único ancho donde la barra llega a ocultarse: `WindowLayoutService` la mantiene visible en cuanto el
 // viewport supera `xs`.

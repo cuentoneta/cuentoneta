@@ -6,7 +6,9 @@
  * Se afirma además que el destino responde: un 301 hacia una URL que no existe pierde lo mismo que
  * no redirigir.
  */
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+
+import { test } from '../_utils/test';
 
 import { STABLE_SLUGS } from '../_utils/seo-fixtures';
 

@@ -14,7 +14,9 @@
  *
  * El contenido de prueba lo cura el equipo en los datasets (development local / staging CI).
  */
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+
+import { test } from '../_utils/test';
 import type { Article, BreadcrumbList, WithContext } from 'schema-dts';
 
 import { parseJsonLdBlocks, getMetaContent, getTitleText, getCanonicalHref } from '../_utils/seo';

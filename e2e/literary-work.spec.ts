@@ -8,10 +8,11 @@
  * Las aserciones se derivan del DTO que entrega el API (`_utils/literary-work-fixtures.ts`), no de prosa clavada:
  * el spec afirma que la página muestra la obra que el API dice que es.
  */
-import { expect, test, type Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 
 import type { LiteraryWorkDto } from '@models/literary-work.dto';
 
+import { test } from './_utils/test';
 import { fetchLiteraryWork } from './_utils/literary-work-fixtures';
 import { fetchCollectionCatalog, type CollectionCatalogEntry } from './_utils/collection-fixtures';
 import { DESKTOP_VIEWPORT } from './_utils/viewports';

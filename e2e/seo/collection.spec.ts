@@ -13,7 +13,9 @@
  * La tanda completa corre sin `fixme`: el encabezado y el listado de obras se server-renderizan sin
  * diferir, así que el HTML trae H1 real y enlaces a `/literary-work/`.
  */
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+
+import { test } from '../_utils/test';
 
 import { parseJsonLdBlocks, getMetaContent, getTitleText, getCanonicalHref } from '../_utils/seo';
 import { assertValidJsonLd } from '@testing/json-ld-validation';
