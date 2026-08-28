@@ -40,6 +40,10 @@ export function createContentController(repository?: ContentRepository) {
 	 */
 	controller.get('/add-next-weeks-landing-page-content', zValidator('query', addWeeksSchema), async (c) => {
 		const { weeksInTheFuture } = c.req.valid('query');
+		// El `no-store` no es decorativo: el módulo sirve sus lecturas con caché de borde, y sin
+		// declararse incacheable esta escritura recibiría el mismo tratamiento y la invocación siguiente
+		// se resolvería con un hit, devolviendo un 200 sin haber creado ningún documento.
+		c.header('Cache-Control', 'no-store');
 		return respond(c, () => addNextWeeksLandingPageContent(weeksInTheFuture, repository));
 	});
 

@@ -34,12 +34,17 @@ app.route('/sitemap.xml', sitemapController);
 // Registra rutas de API
 app.route('/api', apiRoutes);
 
-// Caché de borde para las páginas SSR de `/literary-work/*`. Registrado antes de `serveStatic` y del
-// catch-all SSR para envolverlos (el orden de registro define el anidamiento onion de Hono):
+// Caché de borde para las páginas que se renderizan en el servidor. Registrada antes de `serveStatic`
+// y del catch-all SSR para envolverlos (el orden de registro define el anidamiento onion de Hono):
 // corre tras `angularApp.handle()` y decide la cacheabilidad inspeccionando la respuesta.
-// Acotado a GET: solo esas respuestas son cacheables por el borde, y un POST que devolviera 200
+// Acotada a GET: solo esas respuestas son cacheables por el borde, y un POST que devolviera 200
 // con el marcador no debe recibir headers de caché.
-app.on('GET', '/literary-work/*', ssrCacheControl);
+//
+// La lista se corresponde con las rutas que `app.routes.server.ts` declara `RenderMode.Server`: son
+// las que arman su HTML pidiéndole el dato a Sanity en cada visita. Las `Prerender` no entran acá —
+// las sirve `serveStatic` con su propio `Cache-Control`—, y lo que sí les cuesta es la consulta que
+// el navegador dispara al hidratar, que cubre la caché del API.
+app.on('GET', ['/home', '/about', '/collection', '/collection/*', '/author/*', '/literary-work/*'], ssrCacheControl);
 
 // Las rutas viejas de obra y de colección se mudaron. Van antes del catch-all SSR, que es un
 // `use('*')`: si la request llegara hasta él se renderizaría una página y el 301 no se emitiría nunca.

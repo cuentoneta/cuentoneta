@@ -2,7 +2,7 @@ import { createMiddleware } from 'hono/factory';
 import { applyReadCacheHeaders } from '../_helpers/cache-control';
 
 /**
- * Emite los headers de caché de borde para las respuestas 200 de las rutas de lectura de una obra
+ * Emite los headers de caché de borde para las respuestas 200 de las rutas de lectura del API,
  * servidas como JSON. A diferencia de `ssrCacheControl`, no inspecciona el body: la respuesta la
  * produce el propio controller y es determinística, sin el fallback CSR que obliga a la guarda.
  */

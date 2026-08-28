@@ -43,6 +43,10 @@ describe('ssrCacheControl', () => {
 		app.get('/literary-work/streamed', () =>
 			streamedHtml('<html ng-server-context="ssr"><body>obra en stream</body></html>'),
 		);
+		// La home es la ruta donde el deopt a CSR ya ocurrió en producción, así que es donde la guarda
+		// anti-CSR tiene que estar probada: cachear ese fallback serviría una página vacía por siete días.
+		app.use('/home', ssrCacheControl);
+		app.get('/home', (c) => c.html('<html ng-server-context="ssr"><body>inicio</body></html>'));
 		return app;
 	}
 
@@ -106,25 +110,34 @@ describe('ssrCacheControl', () => {
 		expect(await response.text()).toBe('<html ng-server-context="ssr"><body>obra en stream</body></html>');
 	});
 
-	// La guarda anti-CSR busca el marcador `ssr`, que Angular solo emite bajo `RenderMode.Server`:
-	// pasar la ruta a `Prerender` la haría emitir `ssg` y el cacheo se apagaría sin señal.
-	it('should keep /literary-work/:slug declared as a server-rendered route', () => {
-		const literaryWorkRoute = serverRoutes.find((route) => route.path === `${AppRoutes.LiteraryWork}/:slug`);
+	// Las rutas cacheadas y el prefijo con el que se montan, apareados: cada entrada es lo que hay que
+	// mantener sincronizado entre `app.routes.server.ts` y `server.ts`.
+	const CACHED_SSR_ROUTES = [
+		{ route: AppRoutes.Home, mount: `'/${AppRoutes.Home}'` },
+		{ route: AppRoutes.About, mount: `'/${AppRoutes.About}'` },
+		{ route: AppRoutes.Collection, mount: `'/${AppRoutes.Collection}'` },
+		{ route: `${AppRoutes.Collection}/:slug`, mount: `'/${AppRoutes.Collection}/*'` },
+		{ route: `${AppRoutes.Author}/:slug`, mount: `'/${AppRoutes.Author}/*'` },
+		{ route: `${AppRoutes.LiteraryWork}/:slug`, mount: `'/${AppRoutes.LiteraryWork}/*'` },
+	];
 
-		expect(literaryWorkRoute?.renderMode).toBe(RenderMode.Server);
+	// La guarda anti-CSR busca el marcador `ssr`, que Angular solo emite bajo `RenderMode.Server`:
+	// pasar una de estas rutas a `Prerender` la haría emitir `ssg` y el cacheo se apagaría sin señal.
+	it.each(CACHED_SSR_ROUTES)('should keep $route declared as a server-rendered route', ({ route }) => {
+		expect(serverRoutes.find(({ path }) => path === route)?.renderMode).toBe(RenderMode.Server);
 	});
 
 	// El montaje vive en `server.ts` y ningún test lo alcanza: los de arriba arman su propio Hono. Un
 	// prefijo que dejara de coincidir con la ruta no rompe nada — la caché simplemente deja de
 	// aplicarse—, así que se afirma leyendo la fuente, como hace el guardrail de directivas SEO.
-	it('should stay mounted on the route it caches', () => {
+	it.each(CACHED_SSR_ROUTES)('should stay mounted on $mount', ({ mount }) => {
 		const source = readFileSync(join(process.cwd(), 'src/server.ts'), 'utf-8');
 		// La línea, no el archivo: buscar la cadena en el texto entero daría verde con el montaje
 		// comentado, que es justo la forma en que la caché se apagaría sin que nada más lo note.
-		const mount = source
+		const registration = source
 			.split('\n')
 			.find((line) => line.includes('ssrCacheControl)') && !line.trimStart().startsWith('//'));
 
-		expect(mount).toContain(`'/${AppRoutes.LiteraryWork}/*'`);
+		expect(registration).toContain(mount);
 	});
 });
