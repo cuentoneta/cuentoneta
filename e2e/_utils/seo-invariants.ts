@@ -128,9 +128,15 @@ function noSkeletonMarkers(root: HTMLElement): SeoInvariantViolation | null {
 	return null;
 }
 
-function internalLink(root: HTMLElement, prefix: string): SeoInvariantViolation | null {
+function hrefsWithPrefix(root: HTMLElement, prefix: string): string[] {
 	const anchors = root.querySelector('main')?.querySelectorAll('a') ?? [];
-	if (anchors.some((anchor) => anchor.getAttribute('href')?.startsWith(prefix))) {
+	return anchors
+		.map((anchor) => anchor.getAttribute('href'))
+		.filter((href): href is string => href !== undefined && href.startsWith(prefix));
+}
+
+function internalLink(root: HTMLElement, prefix: string): SeoInvariantViolation | null {
+	if (hrefsWithPrefix(root, prefix).length > 0) {
 		return null;
 	}
 	return {
@@ -218,6 +224,16 @@ function emptyBodyViolations(root: HTMLElement, minLength?: number): SeoInvarian
 
 export function checkInternalLink(html: string, prefix: string): SeoInvariantViolation | null {
 	return internalLink(parseHtml(html), prefix);
+}
+
+/**
+ * Los `href` de `<main>` que empiezan en `prefix`, en orden de documento y con los repetidos
+ * incluidos: es la misma consulta sobre la que se apoya el check de presencia, expuesta para que una
+ * página pueda además afirmar *cuántos* enlaces sirve. Cuántos son correctos depende de la página, así
+ * que esa política queda en cada spec y no en `IndexableHtmlExpectations`.
+ */
+export function getInternalLinkHrefs(html: string, prefix: string): string[] {
+	return hrefsWithPrefix(parseHtml(html), prefix);
 }
 
 export function checkJsonLdBlocks(html: string, ids: readonly string[]): Promise<SeoInvariantViolation[]> {
