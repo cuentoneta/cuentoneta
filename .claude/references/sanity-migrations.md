@@ -63,6 +63,8 @@ pnpm exec sanity dataset export <destino> "<ruta fuera del repo>/<destino>-<fech
 
 Conviene además enunciar qué **otras** migraciones invalida la corrida: una reversión que aborta cuando su campo de origen ya no está poblado queda inservible desde el momento en que se da de baja ese campo, y descubrirlo al querer usarla es tarde.
 
+Ejemplo vivo: [`cms/migrations/purge-story-documents/README.md`](../../cms/migrations/purge-story-documents/README.md) — el runbook de las tres corridas ordenadas que dan de baja un tipo de contenido entero, con su export previo y sus consultas de censo.
+
 ### Migraciones que convierten contenido
 
 Las que llevan rich text a Markdown consumen [`resources/portable-text-to-markdown/`](../../resources/portable-text-to-markdown/README.md), que **falla ante lo que no sabe traducir** en vez de descartarlo en silencio. Antes de correr una conversión sobre el corpus, censar qué construcciones usa realmente el dataset (ver `scripts/audit/`): descubrirlo con la migración la detendría en el primer documento raro, con los anteriores ya escritos.

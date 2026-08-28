@@ -1,8 +1,8 @@
 import { at, defineMigration, unset } from 'sanity/migrate';
 
-// Cada entrada es un campo de referencia que su issue quitó del schema del Studio, de la proyección
-// GROQ y del puerto del backend, pero que sigue poblado en cada documento del dataset: quitar un campo
-// del schema no borra el dato.
+// Cada entrada es un campo de referencia que se quitó del schema del Studio, de la proyección GROQ y
+// del puerto del backend, y que aun así puede seguir presente en un documento: quitar un campo del
+// schema no borra el dato.
 const LEGACY_REFERENCE_FIELDS: Readonly<Record<string, readonly string[]>> = Object.freeze({
 	landingPage: ['cards', 'latestReads'],
 	rotatingContent: ['mostRead'],
@@ -19,7 +19,7 @@ interface LegacyReferenceDocument {
  * Da de baja los campos que todavía referencian los tipos de contenido retirados.
  *
  * **Es el paso previo que habilita la purga, no una limpieza posterior.** El content lake rechaza
- * borrar un documento que conserva una referencia fuerte entrante, así que mientras estos tres campos
+ * borrar un documento que conserva una referencia fuerte entrante, así que mientras estos campos
  * apunten a los documentos viejos, ninguna migración puede borrarlos.
  *
  * Corre con el runner recorriendo también los borradores —de ahí la ausencia de `filter`—: una landing
@@ -36,7 +36,9 @@ export default defineMigration({
 	documentTypes: DOCUMENT_TYPES,
 	migrate: {
 		document(doc: LegacyReferenceDocument) {
-			const fields = LEGACY_REFERENCE_FIELDS[doc._type] ?? [];
+			// Se pregunta por propiedad propia: un `_type` que colisione con una heredada devolvería una
+			// función en vez de undefined, y el operador de fallback no la atraparía.
+			const fields = Object.hasOwn(LEGACY_REFERENCE_FIELDS, doc._type) ? LEGACY_REFERENCE_FIELDS[doc._type] : [];
 			return fields.filter((field) => field in doc).map((field) => at(field, unset()));
 		},
 	},

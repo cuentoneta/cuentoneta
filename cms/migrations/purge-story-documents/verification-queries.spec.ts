@@ -3,9 +3,9 @@ import { describe, expect, it } from 'vitest';
 
 import {
 	CENSUS_QUERY,
-	DANGLING_AFTER_PURGE_QUERY,
 	INCOMING_REFERENCES_QUERY,
 	LEGACY_FIELDS_CENSUS_QUERY,
+	SURVIVING_REFERENCES_QUERY,
 	WORKS_WITHOUT_COUNTERPART_QUERY,
 } from './verification-queries';
 
@@ -32,8 +32,20 @@ const datasetAntesDePurgar = [
 		latestLiteraryWorks: [reference('lw-from-story-story-1')],
 	},
 	{ _id: 'rotatingContent', _type: 'rotatingContent', mostRead: [reference('story-1')] },
+	// Referencia **débil**: es la única clase que el content lake no bloquea al borrar, así que un
+	// referente débil pasaría la purga sin avisar y dejaría el hueco. Es justo lo que el gate previo
+	// tiene que encontrar.
+	{ _id: 'coleccion-suelta', _type: 'collection', destacada: { ...reference('story-1'), _weak: true } },
 	{ _id: 'collection-1', _type: 'collection', literaryWorks: [reference('lw-from-story-story-1')] },
 ];
+
+// El estado posterior a los dos primeros pasos: sin los campos legacy y sin las listas.
+const sinReferentesFuertes = () => {
+	const LEGACY_FIELDS = ['cards', 'latestReads', 'mostRead'];
+	return datasetAntesDePurgar
+		.filter((doc) => doc._type !== 'storylist')
+		.map((doc) => Object.fromEntries(Object.entries(doc).filter(([key]) => !LEGACY_FIELDS.includes(key))));
+};
 
 describe('consultas de censo y verificación de la purga', () => {
 	it('censa los documentos a purgar, separando publicados de borradores', async () => {
@@ -87,15 +99,23 @@ describe('consultas de censo y verificación de la purga', () => {
 		]);
 	});
 
-	// Es la consulta que decide si la purga puede correr: tras dar de baja los campos legacy y las
-	// listas, ya no debe quedar ningún referente.
-	it('no encuentra referentes una vez dados de baja los campos legacy y las listas', async () => {
-		const LEGACY_FIELDS = ['cards', 'latestReads', 'mostRead'];
-		const sinReferentes = datasetAntesDePurgar
-			.filter((doc) => doc._type !== 'storylist')
-			.map((doc) => Object.fromEntries(Object.entries(doc).filter(([key]) => !LEGACY_FIELDS.includes(key))));
+	// Es la consulta que decide si la purga puede correr, y por eso importa que siga encontrando lo que
+	// el content lake **no** bloquea: una referencia débil deja borrar el destino sin protestar, así que
+	// un referente débil pasaría la purga sin avisar y dejaría el hueco.
+	it('sigue encontrando el referente débil, que es el que el content lake no bloquea', async () => {
+		const referenciados = (await run(INCOMING_REFERENCES_QUERY, sinReferentesFuertes())) as {
+			_id: string;
+			referentes: { _id: string }[];
+		}[];
 
-		expect(await run(INCOMING_REFERENCES_QUERY, sinReferentes)).toEqual([]);
+		expect(referenciados).toHaveLength(1);
+		expect(referenciados[0]?.referentes).toEqual([{ _id: 'coleccion-suelta', _type: 'collection' }]);
+	});
+
+	it('no encuentra ninguno una vez retirado también el referente débil', async () => {
+		const sinNinguno = sinReferentesFuertes().filter((doc) => doc._id !== 'coleccion-suelta');
+
+		expect(await run(INCOMING_REFERENCES_QUERY, sinNinguno)).toEqual([]);
 	});
 
 	it('lista el cuento publicado que no tiene obra derivada', async () => {
@@ -104,10 +124,11 @@ describe('consultas de censo y verificación de la purga', () => {
 		]);
 	});
 
-	it('encuentra las referencias que quedaron colgadas', async () => {
+	// El caso que la consulta existe para atrapar: una purga que se excedió y se llevó una obra.
+	it('delata que la purga se llevó una obra que debía sobrevivir', async () => {
 		const conColgada = datasetAntesDePurgar.filter((doc) => doc._id !== 'lw-from-story-story-1');
 
-		expect(await run(DANGLING_AFTER_PURGE_QUERY, conColgada)).toEqual({
+		expect(await run(SURVIVING_REFERENCES_QUERY, conColgada)).toEqual({
 			collections: 0,
 			latestWorks: 1,
 			mostReadWorks: 0,
@@ -116,7 +137,7 @@ describe('consultas de censo y verificación de la purga', () => {
 	});
 
 	it('no encuentra ninguna colgada sobre un dataset íntegro', async () => {
-		expect(await run(DANGLING_AFTER_PURGE_QUERY, datasetAntesDePurgar)).toEqual({
+		expect(await run(SURVIVING_REFERENCES_QUERY, datasetAntesDePurgar)).toEqual({
 			collections: 0,
 			latestWorks: 0,
 			mostReadWorks: 0,

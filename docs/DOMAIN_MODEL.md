@@ -137,7 +137,7 @@ Un **Agregado** es un cluster de objetos de dominio (entidades y objetos de valo
 
 ### Agregado: Story (Historia) — retirado
 
-> **Estado: retirado.** El document type `story` y su endpoint (`/api/story`) se dieron de baja, y sus documentos se purgaron del dataset: el catálogo de contenido narrativo hoy es exclusivamente `LiteraryWork` (ver más abajo). La purga es lo que separa un tipo apagado de un tipo que ya no está — dar de baja el schema deja los documentos en el content lake, invisibles pero presentes. Esta sección se conserva como referencia histórica del modelo que `LiteraryWork` reemplazó.
+> **Estado: retirado.** El document type `story` y su endpoint (`/api/story`) se dieron de baja: el catálogo de contenido narrativo hoy es exclusivamente `LiteraryWork` (ver más abajo). Dar de baja el schema no borra los documentos, que siguen en el content lake invisibles pero presentes; su purga tiene procedimiento propio en `cms/migrations/purge-story-documents/README.md`. Esta sección se conserva como referencia histórica del modelo que `LiteraryWork` reemplazó.
 
 **Raíz de Agregado:** `Story`
 
@@ -346,7 +346,7 @@ Borrador de perfil -> Publicación de perfil -> Perfil disponible para búsqueda
 
 ### Agregado: Storylist (Colección) — retirado
 
-> **Estado: retirado.** El document type `storylist` y su endpoint (`/api/storylist`) se dieron de baja, y sus documentos se purgaron del dataset: la curación de obras en colecciones hoy es exclusivamente `Collection` (ver más abajo). Esta sección se conserva como referencia histórica del modelo que `Collection` reemplazó.
+> **Estado: retirado.** El document type `storylist` y su endpoint (`/api/storylist`) se dieron de baja: la curación de obras en colecciones hoy es exclusivamente `Collection` (ver más abajo). Sus documentos siguen en el content lake hasta que se aplique la purga, que tiene procedimiento propio en `cms/migrations/purge-story-documents/README.md`. Esta sección se conserva como referencia histórica del modelo que `Collection` reemplazó.
 
 **Raíz de Agregado:** `Storylist`
 

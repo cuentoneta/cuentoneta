@@ -4,13 +4,13 @@ import { MIGRATED_ID_PREFIX } from '../story-to-literary-work/build-literary-wor
  * Las consultas del censo previo y de la verificación posterior, como constantes ejecutables en vez de
  * prosa en el README.
  *
- * El motivo lo dejó documentado el relinkeo de la landing: una consulta publicada que nadie ejecuta
- * puede estar inerte y aparentar que verifica, y sus dos defectos sólo aparecieron al correrla. Acá el
- * costo de un falso verde es mayor, porque el paso siguiente es irreversible: una consulta inerte
- * diría "ninguna referencia colgada" justo antes de una purga que no se deshace.
+ * Una consulta publicada que nadie ejecuta puede estar inerte y aparentar que verifica. Acá el costo
+ * de un falso verde es que el paso siguiente no se deshace: una consulta muerta diría "ninguna
+ * referencia colgada" justo antes de una purga irreversible. Por eso son constantes con spec, y el spec
+ * las evalúa con el motor de GROQ en vez de compararlas como texto.
  *
- * De ahí que cada conteo lleve su `defined(...)` en el filtro del documento: recorrer un campo ausente
- * con `doc.campo[]` no da una lista vacía sino `[null]`, y cuenta de más.
+ * Cada conteo lleva además su `defined(...)` en el filtro del documento: recorrer un campo ausente con
+ * `doc.campo[]` no da una lista vacía sino `[null]`, y cuenta de más.
  */
 
 /**
@@ -68,13 +68,18 @@ export const WORKS_WITHOUT_COUNTERPART_QUERY = `*[
 ]{ _id, 'slug': slug.current }`;
 
 /**
- * Referencias del dataset que dejaron de resolver, tras la purga. Debe devolver `[]`.
+ * Integridad del grafo que **sobrevive** a la purga. Los cuatro conteos deben dar `0`.
+ *
+ * No detecta referencias rotas *por* la purga: los campos que apuntaban al contenido retirado se dan
+ * de baja en el primer paso y las listas que lo referenciaban se borran en el segundo, así que cuando
+ * esta corre ya no queda ninguno. Lo que detecta es una purga que se **excedió** — si un guard fallara
+ * y la corrida se llevara una obra o una colección, acá aparecería el hueco.
  *
  * `[!defined(@->_id)]` **filtra** los miembros cuyo destino no existe. Comparar "conteo resuelto contra
  * conteo de origen" no sirve: dereferenciar conserva el `null` del destino ausente y `count()` lo
  * cuenta, así que los dos números coinciden aunque todas las referencias estén colgadas.
  */
-export const DANGLING_AFTER_PURGE_QUERY = `{
+export const SURVIVING_REFERENCES_QUERY = `{
   'collections':   count(*[_type == 'landingPage' && defined(collections)].collections[!defined(@->_id)]),
   'latestWorks':   count(*[_type == 'landingPage' && defined(latestLiteraryWorks)].latestLiteraryWorks[!defined(@->_id)]),
   'mostReadWorks': count(*[_type == 'rotatingContent' && defined(mostReadLiteraryWorks)].mostReadLiteraryWorks[!defined(@->_id)]),

@@ -62,6 +62,11 @@ function unsetIfMigrationWroteIt(
  * Recorre los borradores igual que la ida, porque es lo que aquélla escribió.
  *
  * Es idempotente: un documento sin los campos nuevos no produce mutación.
+ *
+ * **Deja de servir en cuanto se dan de baja los campos de origen.** Su comparación aborta cuando el
+ * campo viejo ya no está poblado —es la primera de las dos condiciones de arriba—, así que sobre un
+ * dataset donde ya corrió `unset-legacy-story-references` no revierte nada. A partir de ahí la vuelta
+ * atrás es el export previo que describe `../purge-story-documents/README.md`.
  */
 export default defineMigration({
 	title: 'Revertir el reapuntado de referencias de la página de inicio y del contenido rotativo',

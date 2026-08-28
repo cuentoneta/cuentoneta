@@ -49,12 +49,14 @@ pnpm exec sanity documents query "<consulta>" \
   --project-id "$(node --env-file=.env -p 'process.env.SANITY_STUDIO_PROJECT_ID')" --dataset <destino>
 ```
 
-| Consulta                          | Qué responde                                        | Antes de purgar                    |
-| --------------------------------- | --------------------------------------------------- | ---------------------------------- |
-| `CENSUS_QUERY`                    | Cuántos documentos se van, publicados y en borrador | El censo que va al PR              |
-| `LEGACY_FIELDS_CENSUS_QUERY`      | Cuántas referencias tienen los tres campos legacy   | El censo que va al PR              |
-| `INCOMING_REFERENCES_QUERY`       | Qué documentos referencian un cuento o una lista    | Debe quedar en `[]` tras el paso 1 |
-| `WORKS_WITHOUT_COUNTERPART_QUERY` | Qué cuentos publicados no tienen obra derivada      | Se registra (ver §6)               |
+| Consulta                          | Qué responde                                        | Antes de purgar         |
+| --------------------------------- | --------------------------------------------------- | ----------------------- |
+| `CENSUS_QUERY`                    | Cuántos documentos se van, publicados y en borrador | El censo que va al PR   |
+| `LEGACY_FIELDS_CENSUS_QUERY`      | Cuántas referencias tienen los tres campos legacy   | El censo que va al PR   |
+| `INCOMING_REFERENCES_QUERY`       | Qué documentos referencian un cuento o una lista    | Ver el párrafo de abajo |
+| `WORKS_WITHOUT_COUNTERPART_QUERY` | Qué cuentos publicados no tienen obra derivada      | Se registra (ver §6)    |
+
+**`INCOMING_REFERENCES_QUERY` es el gate del paso 3, y llega a `[]` recién después del paso 2.** Tras el paso 1 todavía devuelve los cuentos, porque las listas siguen presentes y cada una los referencia. Correrla **entre el paso 2 y el 3** es lo que confirma que ya no queda ningún referente y que el borrado puede proceder. Si devuelve algo, **no continuar**: hay un referente que este procedimiento no previó, y el paso siguiente no se deshace.
 
 ## 4. Las tres corridas, por dataset
 
@@ -73,15 +75,20 @@ pnpm exec sanity migration run <slug> \
 
 **Orden de datasets: `development` → `staging` → `production`**, verificando cada uno antes de pasar al siguiente. Ningún gate de CI detecta un dataset que quedó sin migrar.
 
+> [!WARNING]
+> **El sync nocturno deshace los dos primeros.** El job programado replica `production` sobre `staging` y `development` con wipe + import, todos los días. Mientras `production` conserve los documentos, purgar los otros dos dura hasta esa corrida.
+>
+> Los dos primeros datasets son entonces un **ensayo**, no un estado final: sirven para leer el dry-run y confirmar el procedimiento, y hay que darlos por buenos sabiendo que se revierten solos. El estado final de los tres llega recién cuando `production` está purgado y el sync propaga ese estado. Si hace falta que queden purgados antes, correrlos en la misma ventana entre dos corridas del sync.
+
 ## 5. Verificación posterior
 
 Contra el **dataset**, no contra el sitio: la aplicación produce con la caché del CDN encendida, así que la primera lectura del sitio devuelve la versión vieja y parece un fallo de la migración.
 
-| Consulta                     | Esperado                                                                              |
-| ---------------------------- | ------------------------------------------------------------------------------------- |
-| `CENSUS_QUERY`               | Los cuatro conteos en `0`                                                             |
-| `LEGACY_FIELDS_CENSUS_QUERY` | Los tres conteos en `0`                                                               |
-| `DANGLING_AFTER_PURGE_QUERY` | Los cuatro conteos en `0` — ninguna referencia quedó apuntando a un documento borrado |
+| Consulta                     | Esperado                                                                                            |
+| ---------------------------- | --------------------------------------------------------------------------------------------------- |
+| `CENSUS_QUERY`               | Los cuatro conteos en `0`                                                                           |
+| `LEGACY_FIELDS_CENSUS_QUERY` | Los tres conteos en `0`                                                                             |
+| `SURVIVING_REFERENCES_QUERY` | Los cuatro conteos en `0` — la purga no se llevó ninguna obra ni colección de las que debían quedar |
 
 ## 6. El cuento sin contraparte
 
