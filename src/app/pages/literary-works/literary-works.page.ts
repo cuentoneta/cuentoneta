@@ -48,7 +48,7 @@ import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 									<tr class="transition-colors hover:bg-neutral-50">
 										<td class="px-6 py-4">
 											<a
-												[routerLink]="['/', appRoutes.Read, literaryWork.slug]"
+												[routerLink]="['/', appRoutes.LiteraryWork, literaryWork.slug]"
 												class="text-blue-600 hover:text-blue-800 hover:underline"
 											>
 												{{ literaryWork.title }}

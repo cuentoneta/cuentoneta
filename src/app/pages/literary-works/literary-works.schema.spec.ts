@@ -12,7 +12,7 @@ describe('buildLiteraryWorkCatalogSchema', () => {
 		).resolves.toBeUndefined();
 	});
 
-	// El catálogo vive en `/literary-work` y cada obra en `/read/<slug>`: a diferencia de las colecciones,
+	// El catálogo vive en `/literary-work` y cada obra en `/literary-work/<slug>`: a diferencia de las colecciones,
 	// el listado y el detalle no comparten prefijo de ruta.
 	it('should build a CollectionPage whose items point at the reading route', () => {
 		const schema = buildLiteraryWorkCatalogSchema(onoffLiteraryWorkTeasersMock, websiteUrl);
@@ -29,7 +29,7 @@ describe('buildLiteraryWorkCatalogSchema', () => {
 				itemListElement: onoffLiteraryWorkTeasersMock.map((literaryWork, index) => ({
 					'@type': 'ListItem',
 					position: index + 1,
-					url: `https://www.cuentoneta.ar/read/${literaryWork.slug}`,
+					url: `https://www.cuentoneta.ar/literary-work/${literaryWork.slug}`,
 					name: literaryWork.title,
 				})),
 			},

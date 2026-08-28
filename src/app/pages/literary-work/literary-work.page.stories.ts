@@ -16,7 +16,7 @@ import { onoffCollectionsMock } from '@mocks/onoff-collections.mock';
 import { provideLiteraryWorkApiMock } from '../../providers/literary-work.mock';
 import { provideCollectionApiMock, StubCollectionApi } from '../../providers/collection.mock';
 import type { LiteraryWorkApi, LiteraryWorkTeaserFilter } from '../../providers/literary-work.provider';
-import ReadPage from './read.page';
+import LiteraryWorkPage from './literary-work.page';
 
 // Los dos estados que no son una obra entran al control como una opción más, así que se alternan con
 // las obras en el mismo slot. Ninguno es un slug del corpus a propósito: si lo fuera, curar esa obra
@@ -65,8 +65,8 @@ const navigationSlugLabels = Object.fromEntries([
 type ReadPageArgs = { slug: string; navigation: string; navigationSlug: string };
 
 const meta: Meta<ReadPageArgs> = {
-	component: ReadPage,
-	title: 'Páginas/ReadPage',
+	component: LiteraryWorkPage,
+	title: 'Páginas/LiteraryWorkPage',
 	decorators: [
 		applicationConfig({
 			providers: [
@@ -81,7 +81,7 @@ const meta: Meta<ReadPageArgs> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>La página de lectura, <strong>ReadPage</strong>, montada sobre el corpus de Onoff. Como el resto de las entradas bajo <strong>Páginas</strong>, no cataloga un componente sino el ensamblado completo, que es lo que permite mirar cómo conviven el encabezado, la barra de lectura, el bloque de formatos, el cuerpo y las sugerencias.</p><p>Los tres controles reproducen lo que la ruta le entrega a la página:</p><ul><li><code>slug</code> — qué obra del corpus se lee. Un slug que no existe cae en el estado de obra inexistente, y la entrada <code>— Cargando —</code> deja la página en su esqueleto.</li><li><code>navigation</code> y <code>navigationSlug</code> — el contexto con el que se llegó, que decide qué <a href="./?path=/docs/componentes-v3-readingsuggestionslist--docs" target="_top"><strong>sugerencias de lectura</strong></a> se ofrecen al pie: las del autor o las de una colección.</li></ul><p>Los dos ejes que el diseño define se recorren desde acá: el <strong>tipo de multimedia</strong>, según cuántos recursos declare la obra —lo resuelve <a href="./?path=/docs/componentes-v3-mediawidgetselector--docs" target="_top"><strong>MediaWidgetSelector</strong></a>—, y la <strong>forma de las sugerencias</strong>, según el contexto de navegación.</p><p>Las sugerencias viven en un bloque diferido por viewport, así que aparecen al bajar hasta el pie. El bloque de formatos también es diferido, pero dispara al quedar el hilo libre, así que en la práctica su esqueleto no llega a verse acá; está catalogado en las entradas de <strong>MediaWidgetSelector</strong>.</p><p>Los destinos de los medios del corpus son ficticios, así que los reproductores no cargan contenido real: lo que se evalúa en estas entradas es la disposición.</p></div>`,
+				component: `<div><p>La página de lectura, <strong>LiteraryWorkPage</strong>, montada sobre el corpus de Onoff. Como el resto de las entradas bajo <strong>Páginas</strong>, no cataloga un componente sino el ensamblado completo, que es lo que permite mirar cómo conviven el encabezado, la barra de lectura, el bloque de formatos, el cuerpo y las sugerencias.</p><p>Los tres controles reproducen lo que la ruta le entrega a la página:</p><ul><li><code>slug</code> — qué obra del corpus se lee. Un slug que no existe cae en el estado de obra inexistente, y la entrada <code>— Cargando —</code> deja la página en su esqueleto.</li><li><code>navigation</code> y <code>navigationSlug</code> — el contexto con el que se llegó, que decide qué <a href="./?path=/docs/componentes-v3-readingsuggestionslist--docs" target="_top"><strong>sugerencias de lectura</strong></a> se ofrecen al pie: las del autor o las de una colección.</li></ul><p>Los dos ejes que el diseño define se recorren desde acá: el <strong>tipo de multimedia</strong>, según cuántos recursos declare la obra —lo resuelve <a href="./?path=/docs/componentes-v3-mediawidgetselector--docs" target="_top"><strong>MediaWidgetSelector</strong></a>—, y la <strong>forma de las sugerencias</strong>, según el contexto de navegación.</p><p>Las sugerencias viven en un bloque diferido por viewport, así que aparecen al bajar hasta el pie. El bloque de formatos también es diferido, pero dispara al quedar el hilo libre, así que en la práctica su esqueleto no llega a verse acá; está catalogado en las entradas de <strong>MediaWidgetSelector</strong>.</p><p>Los destinos de los medios del corpus son ficticios, así que los reproductores no cargan contenido real: lo que se evalúa en estas entradas es la disposición.</p></div>`,
 			},
 		},
 	},

@@ -8,7 +8,7 @@ import { buildBreadcrumbSchema } from '@utils/schema-org.builders';
  * Construye el JSON-LD `CollectionPage` de una colección, con un `ItemList` ordenado de las obras
  * que la integran (posición + URL + título), para que los answer engines entiendan la colección.
  *
- * Los ítems apuntan a `/read/:slug`, que es a donde enlaza el listado de la página.
+ * Los ítems apuntan a `/literary-work/:slug`, que es a donde enlaza el listado de la página.
  */
 export function buildCollectionPageSchema(collection: Collection, websiteUrl: string): WithContext<CollectionPage> {
 	const baseUrl = Location.stripTrailingSlash(websiteUrl);
@@ -24,7 +24,7 @@ export function buildCollectionPageSchema(collection: Collection, websiteUrl: st
 			itemListElement: collection.literaryWorks.map((literaryWork, index) => ({
 				'@type': 'ListItem',
 				position: index + 1,
-				url: `${baseUrl}/read/${literaryWork.slug}`,
+				url: `${baseUrl}/literary-work/${literaryWork.slug}`,
 				name: literaryWork.title,
 			})),
 		},

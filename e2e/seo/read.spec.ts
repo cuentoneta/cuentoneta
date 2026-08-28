@@ -1,5 +1,5 @@
 /**
- * Tests e2e de SEO para la página de lectura (`/read/:slug`, entidad LiteraryWork).
+ * Tests e2e de SEO para la página de lectura (`/literary-work/:slug`, entidad LiteraryWork).
  *
  * Sobre el HTML server-rendered (lo que ve el crawler, sin ejecutar JS):
  *  - A. Status 404 real del SSR para una obra inexistente (no 200 con página vacía).
@@ -21,11 +21,11 @@ import { assertValidJsonLd } from '@testing/json-ld-validation';
 import { collectIndexableHtmlViolations } from '../_utils/seo-invariants';
 import { STABLE_SLUGS, SCHEMA_IDS, SITEWIDE_SCHEMA_IDS } from '../_utils/seo-fixtures';
 
-const readPath = `/read/${STABLE_SLUGS.literaryWork}`;
-const requiredJsonLdIds = [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.article, SCHEMA_IDS.breadcrumbRead];
+const readPath = `/literary-work/${STABLE_SLUGS.literaryWork}`;
+const requiredJsonLdIds = [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.article, SCHEMA_IDS.breadcrumbLiteraryWork];
 
 test('read — A: una obra inexistente responde 404 real en SSR', async ({ request }) => {
-	const response = await request.get('/read/obra-inexistente-e2e');
+	const response = await request.get('/literary-work/obra-inexistente-e2e');
 	expect(response.status()).toBe(404);
 });
 
@@ -62,11 +62,11 @@ test.describe('read — HTML server-rendered de una obra existente', () => {
 		expect(article?.['@type']).toBe('Article');
 		expect(article?.headline).toBeTruthy();
 		expect(article?.datePublished).toBeTruthy();
-		expect(String(article?.mainEntityOfPage)).toContain('/read/');
+		expect(String(article?.mainEntityOfPage)).toContain('/literary-work/');
 	});
 
 	test('C: JSON-LD BreadcrumbList', async () => {
-		const breadcrumb = parseJsonLdBlocks(html).get(SCHEMA_IDS.breadcrumbRead) as
+		const breadcrumb = parseJsonLdBlocks(html).get(SCHEMA_IDS.breadcrumbLiteraryWork) as
 			WithContext<BreadcrumbList> | undefined;
 		await assertValidJsonLd(breadcrumb);
 

@@ -93,7 +93,7 @@ describe('SitemapService', () => {
 
 			const urls = await getSitemapUrls();
 
-			expect(urls).toContainEqual({ loc: 'https://test.cuentoneta.ar/read/el-fin', lastmod: '2025-01-01' });
+			expect(urls).toContainEqual({ loc: 'https://test.cuentoneta.ar/literary-work/el-fin', lastmod: '2025-01-01' });
 		});
 
 		it('should include author URLs', async () => {
@@ -135,7 +135,7 @@ describe('SitemapService', () => {
 
 			const urls = await getSitemapUrls();
 
-			const literaryWorkUrl = urls.find((u) => u.loc.includes('/read/sin-lastmod'));
+			const literaryWorkUrl = urls.find((u) => u.loc.includes('/literary-work/sin-lastmod'));
 			expect(literaryWorkUrl?.lastmod).toBeUndefined();
 		});
 
@@ -167,7 +167,7 @@ describe('SitemapService', () => {
 
 			const locations = (await getSitemapUrls()).map(({ loc }) => loc);
 
-			for (const segment of ['read', 'author', 'collection']) {
+			for (const segment of ['literary-work', 'author', 'collection']) {
 				expect(locations.filter((location) => location.includes(`/${segment}/`))).toHaveLength(3);
 			}
 			expect(new Set(locations).size).toBe(locations.length);
@@ -188,9 +188,11 @@ describe('SitemapService', () => {
 			});
 
 			const urls = await getSitemapUrls();
-			const repeated = urls.filter(({ loc }) => loc.endsWith('/read/el-taco-de-ebano'));
+			const repeated = urls.filter(({ loc }) => loc.endsWith('/literary-work/el-taco-de-ebano'));
 
-			expect(repeated).toEqual([{ loc: 'https://test.cuentoneta.ar/read/el-taco-de-ebano', lastmod: '2024-10-30' }]);
+			expect(repeated).toEqual([
+				{ loc: 'https://test.cuentoneta.ar/literary-work/el-taco-de-ebano', lastmod: '2024-10-30' },
+			]);
 		});
 	});
 
@@ -314,7 +316,7 @@ describe('SitemapService', () => {
 			const xml = await generateSitemap();
 
 			expect(xml).toContain('<?xml version="1.0" encoding="UTF-8"?>');
-			expect(xml).toContain('<loc>https://test.cuentoneta.ar/read/obra-de-prueba</loc>');
+			expect(xml).toContain('<loc>https://test.cuentoneta.ar/literary-work/obra-de-prueba</loc>');
 			expect(xml).toContain('<lastmod>2025-01-01</lastmod>');
 		});
 	});

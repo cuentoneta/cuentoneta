@@ -48,11 +48,11 @@ test.describe('literary-work — HTML server-rendered del catálogo', () => {
 		expect(mainEntity?.['@type']).toBe('ItemList');
 		expect(Number(mainEntity?.['numberOfItems'])).toBeGreaterThan(0);
 
-		// El catálogo vive en `/literary-work` y cada obra en `/read/<slug>`: el elemento apunta a la
+		// El catálogo vive en `/literary-work` y cada obra en `/literary-work/<slug>`: el elemento apunta a la
 		// lectura, no al listado.
 		const [firstItem] = (mainEntity?.['itemListElement'] ?? []) as Record<string, unknown>[];
 		expect(firstItem?.['position']).toBe(1);
-		expect(String(firstItem?.['url'])).toContain('/read/');
+		expect(String(firstItem?.['url'])).toContain('/literary-work/');
 	});
 
 	test('B: JSON-LD BreadcrumbList', async () => {
@@ -74,7 +74,7 @@ test.describe('literary-work — HTML server-rendered del catálogo', () => {
 			await collectIndexableHtmlViolations(html, {
 				path: catalogPath,
 				requiredJsonLdIds,
-				requiredInternalLinkPrefix: '/read/',
+				requiredInternalLinkPrefix: '/literary-work/',
 				h1Pattern: /\d+ Obras?/,
 			}),
 		).toEqual([]);

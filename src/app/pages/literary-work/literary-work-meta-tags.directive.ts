@@ -4,14 +4,14 @@ import { AppRoutes } from '../../app.routes';
 import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 import { AbstractMetaTagsDirective } from '../../directives/abstract-meta-tags.directive';
-import { READ_HOST } from './read-host';
+import { LITERARY_WORK_HOST } from './literary-work-host';
 
 @Directive({
-	selector: '[cuentonetaReadMetaTags]',
+	selector: '[cuentonetaLiteraryWorkMetaTags]',
 	hostDirectives: [HeadMetadataDirective],
 })
-export class ReadMetaTagsDirective extends AbstractMetaTagsDirective {
-	private readonly host = inject(READ_HOST);
+export class LiteraryWorkMetaTagsDirective extends AbstractMetaTagsDirective {
+	private readonly host = inject(LITERARY_WORK_HOST);
 
 	protected applyMetaTags(): void {
 		const literaryWork = this.host.literaryWork();
@@ -25,7 +25,7 @@ export class ReadMetaTagsDirective extends AbstractMetaTagsDirective {
 			this.head.setDescription(
 				'Una lectura en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.',
 			);
-			this.head.setCanonicalUrl(buildCanonicalUrl(`${AppRoutes.Read}/${literaryWork.slug}`));
+			this.head.setCanonicalUrl(buildCanonicalUrl(`${AppRoutes.LiteraryWork}/${literaryWork.slug}`));
 			this.head.setRobots('index, follow');
 			this.head.setKeywords([
 				'literatura',

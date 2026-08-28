@@ -1,7 +1,7 @@
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 
 import { assertValidJsonLd } from '@testing/json-ld-validation';
-import { buildLiteraryWorkArticleSchema, buildLiteraryWorkBreadcrumb } from './read.schema';
+import { buildLiteraryWorkArticleSchema, buildLiteraryWorkBreadcrumb } from './literary-work.schema';
 
 const WEBSITE = 'https://test.cuentoneta.ar';
 
@@ -20,7 +20,7 @@ describe('read.schema', () => {
 
 			expect(article['@type']).toBe('Article');
 			expect(article.headline).toBe(literaryWork.title);
-			expect(article.mainEntityOfPage).toBe(`${WEBSITE}/read/${literaryWork.slug}`);
+			expect(article.mainEntityOfPage).toBe(`${WEBSITE}/literary-work/${literaryWork.slug}`);
 		});
 
 		it.each(onoffLiteraryWorksMock)('emite un Person por autor de "$slug"', (literaryWork) => {

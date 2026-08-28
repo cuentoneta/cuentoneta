@@ -8,7 +8,6 @@ export const AppRoutes = Object.freeze({
 	Dmca: 'dmca',
 	Collection: 'collection',
 	LiteraryWork: 'literary-work',
-	Read: 'read',
 } as const);
 export type AppRoutes = (typeof AppRoutes)[keyof typeof AppRoutes];
 
@@ -26,8 +25,8 @@ export const appRoutes: Routes = [
 		loadComponent: () => import('./pages/author/author.page'),
 	},
 	{
-		path: `${AppRoutes.Read}/:slug`,
-		loadComponent: () => import('./pages/read/read.page'),
+		path: `${AppRoutes.LiteraryWork}/:slug`,
+		loadComponent: () => import('./pages/literary-work/literary-work.page'),
 	},
 	{
 		path: `${AppRoutes.Collection}/:slug`,

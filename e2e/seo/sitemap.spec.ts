@@ -43,7 +43,7 @@ test('sitemap — B: cubre las páginas estáticas y los tres tipos de contenido
 	const locs = locations(xml);
 	// El origen sale de una URL de contenido y no de la primera entrada: derivarlo del orden volvería
 	// la aserción de la raíz una tautología.
-	const contentUrl = locs.find((loc) => loc.includes('/read/'));
+	const contentUrl = locs.find((loc) => loc.includes('/literary-work/'));
 	const origin = new URL(contentUrl ?? '').origin;
 
 	// Piso y no conteo exacto: el dataset del entorno de tests cambia con cada sincronización.
@@ -52,7 +52,7 @@ test('sitemap — B: cubre las páginas estáticas y los tres tipos de contenido
 	expect(locs).toContain(`${origin}/dmca`);
 	expect(locs).toContain(`${origin}/collection`);
 	expect(locs).toContain(`${origin}/literary-work`);
-	expect(locs.some((loc) => loc.includes('/read/'))).toBe(true);
+	expect(locs.some((loc) => loc.includes('/literary-work/'))).toBe(true);
 	expect(locs.some((loc) => loc.includes('/author/'))).toBe(true);
 	expect(locs.some((loc) => loc.includes('/collection/'))).toBe(true);
 

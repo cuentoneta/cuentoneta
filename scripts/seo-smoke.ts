@@ -124,7 +124,7 @@ function reportSitemapDocument(xml: string): boolean {
 function sampledPaths(baseline: readonly string[], xml: string): string[] {
 	const paths = parseSitemap(xml);
 	const excluded = new Set(baseline);
-	return ['/author/', '/collection/', '/read/']
+	return ['/author/', '/collection/', '/literary-work/']
 		.flatMap((prefix) => selectByType(paths, prefix, SAMPLE_SIZE, FULL))
 		.filter((path) => !excluded.has(path));
 }
@@ -176,7 +176,7 @@ async function run(): Promise<void> {
 			: [
 					`/author/${STABLE_SLUGS.author}`,
 					`/collection/${STABLE_SLUGS.collection}`,
-					`/read/${STABLE_SLUGS.literaryWork}`,
+					`/literary-work/${STABLE_SLUGS.literaryWork}`,
 				];
 
 	let failed = await reportBaseline(baseline);

@@ -17,8 +17,8 @@ import { fetchCollectionCatalog, type CollectionCatalogEntry } from './_utils/co
 import { DESKTOP_VIEWPORT } from './_utils/viewports';
 import { STABLE_SLUGS } from './_utils/seo-fixtures';
 
-const ROUTE = `/read/${STABLE_SLUGS.literaryWork}`;
-const MEDIA_ROUTE = `/read/${STABLE_SLUGS.literaryWorkWithMedia}`;
+const ROUTE = `/literary-work/${STABLE_SLUGS.literaryWork}`;
+const MEDIA_ROUTE = `/literary-work/${STABLE_SLUGS.literaryWorkWithMedia}`;
 
 let status = 0;
 let work: LiteraryWorkDto | undefined;
@@ -73,7 +73,7 @@ test('read — el hero presenta la obra que el API dice que es', async ({ page }
 // estado no encontrado ofrece una salida navegable y que la salida efectivamente navega.
 test('read — una obra inexistente ofrece la vuelta al inicio', async ({ page }) => {
 	await page.setViewportSize(DESKTOP_VIEWPORT);
-	await page.goto('/read/obra-inexistente-e2e');
+	await page.goto('/literary-work/obra-inexistente-e2e');
 
 	await expect(page.getByText('No encontramos esta obra')).toBeVisible();
 
@@ -175,7 +175,7 @@ test('read — sin contexto, el pie sugiere más obras del autor', async ({ page
 
 	// Los enlaces de lectura se acotan por prefijo: el bloque ofrece además el acceso a la página del
 	// autor ("ver más"), que es parte del diseño y se afirma aparte.
-	const readingLinks = page.locator('cuentoneta-reading-suggestions').locator('a[href^="/read/"]');
+	const readingLinks = page.locator('cuentoneta-reading-suggestions').locator('a[href^="/literary-work/"]');
 
 	// Control positivo: sin él, una lista vacía dejaría la exclusión de abajo cumpliéndose en vacío.
 	await expect(
@@ -212,7 +212,7 @@ test('read — llegar desde una colección cambia la fuente de las sugerencias',
 	await page.goto(`/collection/${STABLE_SLUGS.collection}`);
 	await expect(page.locator('main h1')).toBeVisible();
 
-	await page.getByTestId('literary-works').locator('a[href^="/read/"]').first().click();
+	await page.getByTestId('literary-works').locator('a[href^="/literary-work/"]').first().click();
 
 	await expect(page).toHaveURL(/navigation=collection/);
 	await settleSuggestions(page, `Más obras de ${stableCollection?.title}`);

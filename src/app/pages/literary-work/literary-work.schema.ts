@@ -28,7 +28,7 @@ export function buildLiteraryWorkArticleSchema(literaryWork: LiteraryWork, websi
 			url: baseUrl,
 			logo: `${baseUrl}/assets/svg/logo.svg`,
 		},
-		mainEntityOfPage: `${baseUrl}/read/${literaryWork.slug}`,
+		mainEntityOfPage: `${baseUrl}/literary-work/${literaryWork.slug}`,
 	};
 }
 
@@ -40,6 +40,6 @@ export function buildLiteraryWorkBreadcrumb(
 	const baseUrl = Location.stripTrailingSlash(websiteUrl);
 	return buildBreadcrumbSchema([
 		{ name: 'Inicio', url: `${baseUrl}/home` },
-		{ name: literaryWork.title, url: `${baseUrl}/read/${literaryWork.slug}` },
+		{ name: literaryWork.title, url: `${baseUrl}/literary-work/${literaryWork.slug}` },
 	]);
 }

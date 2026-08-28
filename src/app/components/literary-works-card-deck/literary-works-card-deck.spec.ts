@@ -106,7 +106,7 @@ describe('LiteraryWorksCardDeck', () => {
 
 		const hrefs = screen.getAllByRole('link').map((link) => link.getAttribute('href'));
 		literaryWorks.forEach(({ slug }) => {
-			expect(hrefs.some((href) => href?.startsWith(`/read/${slug}`))).toBe(true);
+			expect(hrefs.some((href) => href?.startsWith(`/literary-work/${slug}`))).toBe(true);
 		});
 	});
 

@@ -183,7 +183,7 @@ describe('AuthorPage', () => {
 		const [firstWork] = worksByAuthor;
 		const link = within(screen.getByTestId('literary-works')).getByRole('link', { name: firstWork.title });
 
-		expect(link.getAttribute('href')).toContain(`/read/${firstWork.slug}`);
+		expect(link.getAttribute('href')).toContain(`/literary-work/${firstWork.slug}`);
 	});
 
 	// La página de lectura deriva sus sugerencias de esta procedencia: sin el contexto, una lectura
@@ -195,7 +195,7 @@ describe('AuthorPage', () => {
 		const link = within(screen.getByTestId('literary-works')).getByRole('link', { name: firstWork.title });
 
 		expect(link.getAttribute('href')).toBe(
-			`/read/${firstWork.slug}?navigation=author&navigationSlug=${authorMock.slug}`,
+			`/literary-work/${firstWork.slug}?navigation=author&navigationSlug=${authorMock.slug}`,
 		);
 	});
 

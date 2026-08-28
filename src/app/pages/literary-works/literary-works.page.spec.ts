@@ -51,7 +51,7 @@ const readingHrefs = () =>
 	within(screen.getByTestId('literary-works'))
 		.getAllByRole('link')
 		.map((link) => link.getAttribute('href'))
-		.filter((href) => href?.startsWith('/read/'));
+		.filter((href) => href?.startsWith('/literary-work/'));
 
 describe('LiteraryWorksPage', () => {
 	beforeEach(() => clearAllMocks());
@@ -81,7 +81,7 @@ describe('LiteraryWorksPage', () => {
 		const hrefs = readingHrefs();
 		expect(hrefs).toHaveLength(onoffLiteraryWorkTeasersMock.length);
 		onoffLiteraryWorkTeasersMock.forEach(({ slug }) => {
-			expect(hrefs).toContain(`/read/${slug}`);
+			expect(hrefs).toContain(`/literary-work/${slug}`);
 		});
 	});
 
@@ -95,7 +95,7 @@ describe('LiteraryWorksPage', () => {
 
 		await renderPage(stubbing(desordenadas));
 
-		expect(readingHrefs()).toEqual(['/read/ambar', '/read/bruma', '/read/zoologico']);
+		expect(readingHrefs()).toEqual(['/literary-work/ambar', '/literary-work/bruma', '/literary-work/zoologico']);
 	});
 
 	it('should say the catalogue is empty instead of showing placeholders', async () => {
@@ -175,7 +175,7 @@ describe('LiteraryWorksPage', () => {
 		const { fixture } = await renderPage();
 
 		const host = fixture.debugElement.injector.get(LITERARY_WORKS_HOST);
-		expect(host.literaryWorks().map(({ slug }) => `/read/${slug}`)).toEqual(readingHrefs());
+		expect(host.literaryWorks().map(({ slug }) => `/literary-work/${slug}`)).toEqual(readingHrefs());
 	});
 
 	describe('código de respuesta', () => {

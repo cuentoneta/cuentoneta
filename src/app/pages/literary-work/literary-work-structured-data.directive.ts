@@ -2,14 +2,14 @@ import { Directive, inject, untracked } from '@angular/core';
 
 import { environment } from '../../environments/environment';
 import { AbstractStructuredDataDirective } from '../../directives/abstract-structured-data.directive';
-import { READ_HOST } from './read-host';
-import { buildLiteraryWorkArticleSchema, buildLiteraryWorkBreadcrumb } from './read.schema';
+import { LITERARY_WORK_HOST } from './literary-work-host';
+import { buildLiteraryWorkArticleSchema, buildLiteraryWorkBreadcrumb } from './literary-work.schema';
 
 @Directive({
-	selector: '[cuentonetaReadStructuredData]',
+	selector: '[cuentonetaLiteraryWorkStructuredData]',
 })
-export class ReadStructuredDataDirective extends AbstractStructuredDataDirective {
-	private readonly host = inject(READ_HOST);
+export class LiteraryWorkStructuredDataDirective extends AbstractStructuredDataDirective {
+	private readonly host = inject(LITERARY_WORK_HOST);
 
 	protected applyStructuredData(): void {
 		const literaryWork = this.host.literaryWork();
@@ -19,7 +19,7 @@ export class ReadStructuredDataDirective extends AbstractStructuredDataDirective
 		untracked(() => {
 			this.schemaOrg.setPageScopedJsonLd('article', buildLiteraryWorkArticleSchema(literaryWork, environment.website));
 			this.schemaOrg.setPageScopedJsonLd(
-				'breadcrumb-read',
+				'breadcrumb-literary-work',
 				buildLiteraryWorkBreadcrumb(literaryWork, environment.website),
 			);
 		});
@@ -27,6 +27,6 @@ export class ReadStructuredDataDirective extends AbstractStructuredDataDirective
 
 	protected removeStructuredData(): void {
 		this.schemaOrg.removeJsonLd('article');
-		this.schemaOrg.removeJsonLd('breadcrumb-read');
+		this.schemaOrg.removeJsonLd('breadcrumb-literary-work');
 	}
 }

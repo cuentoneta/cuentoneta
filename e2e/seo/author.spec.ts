@@ -68,7 +68,7 @@ test('author — invariantes de indexado para crawlers (ssr, h1, bio, sin skelet
 			path: authorPath,
 			titlePattern: /borges/i,
 			requiredJsonLdIds: [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.profilePage, SCHEMA_IDS.breadcrumbAuthor],
-			requiredInternalLinkPrefix: '/read/',
+			requiredInternalLinkPrefix: '/literary-work/',
 		}),
 	).toEqual([]);
 });

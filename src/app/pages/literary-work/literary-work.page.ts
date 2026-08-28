@@ -12,9 +12,9 @@ import { createAttributedText } from '@models/attributed-text.model';
 import { LiteraryWorkApi } from '../../providers/literary-work.provider';
 
 // SEO
-import { ReadMetaTagsDirective } from './read-meta-tags.directive';
-import { ReadStructuredDataDirective } from './read-structured-data.directive';
-import { READ_HOST, type ReadHost } from './read-host';
+import { LiteraryWorkMetaTagsDirective } from './literary-work-meta-tags.directive';
+import { LiteraryWorkStructuredDataDirective } from './literary-work-structured-data.directive';
+import { LITERARY_WORK_HOST, type LiteraryWorkHost } from './literary-work-host';
 
 // Components
 import { LiteraryWorkHeroHeaderComponent } from '@components/literary-work-hero-header/literary-work-hero-header.component';
@@ -25,15 +25,15 @@ import { MediaWidgetSelector } from '@components/media-widget-selector/media-wid
 import { MediaWidgetSelectorSkeleton } from '@components/media-widget-selector/media-widget-selector-skeleton.component';
 import { DividerComponent } from '@components/divider/divider.component';
 import { ReadingSuggestionsComponent } from '@components/reading-suggestions/reading-suggestions.component';
-import { ReadPageSkeleton } from './read-page-skeleton.component';
+import { LiteraryWorkPageSkeleton } from './literary-work-page-skeleton.component';
 import { RouterLink } from '@angular/router';
 import { toNavigationContext, type NavigationContext, type NavigationParams } from '@app-utils/navigation-params';
 
 @Component({
-	selector: 'cuentoneta-read',
-	templateUrl: './read.page.html',
-	providers: [{ provide: READ_HOST, useExisting: forwardRef(() => ReadPage) }],
-	hostDirectives: [ReadMetaTagsDirective, ReadStructuredDataDirective],
+	selector: 'cuentoneta-literary-work',
+	templateUrl: './literary-work.page.html',
+	providers: [{ provide: LITERARY_WORK_HOST, useExisting: forwardRef(() => LiteraryWorkPage) }],
+	hostDirectives: [LiteraryWorkMetaTagsDirective, LiteraryWorkStructuredDataDirective],
 	imports: [
 		LiteraryWorkHeroHeaderComponent,
 		ButtonComponent,
@@ -42,12 +42,12 @@ import { toNavigationContext, type NavigationContext, type NavigationParams } fr
 		LiteraryWorkSectionBodyComponent,
 		MediaWidgetSelector,
 		MediaWidgetSelectorSkeleton,
-		ReadPageSkeleton,
+		LiteraryWorkPageSkeleton,
 		ReadingSuggestionsComponent,
 		RouterLink,
 	],
 })
-export default class ReadPage implements ReadHost {
+export default class LiteraryWorkPage implements LiteraryWorkHost {
 	public readonly slug = input.required<string>();
 
 	/** Contexto con el que se entró a la obra. Decide qué sugerencias se ofrecen al pie. */

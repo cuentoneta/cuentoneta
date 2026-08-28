@@ -32,7 +32,7 @@ describe('legacy route redirects', () => {
 	});
 
 	it.each([
-		['/story/el-palacio-de-las-nueve-fronteras', '/read/el-palacio-de-las-nueve-fronteras'],
+		['/story/el-palacio-de-las-nueve-fronteras', '/literary-work/el-palacio-de-las-nueve-fronteras'],
 		['/storylist/verano-2022', '/collection/verano-2022'],
 	])('should carry the slug of %s over to its new section', async (path, destination) => {
 		const response = await appUnderTest().request(path);
@@ -45,7 +45,7 @@ describe('legacy route redirects', () => {
 		const response = await appUnderTest().request('/story/el-fin/');
 
 		expect(response.status).toBe(301);
-		expect(response.headers.get('Location')).toBe('/read/el-fin');
+		expect(response.headers.get('Location')).toBe('/literary-work/el-fin');
 	});
 
 	// El slug llega decodificado desde el router: sin volver a codificarlo, un carácter reservado
@@ -53,7 +53,7 @@ describe('legacy route redirects', () => {
 	it('should re-encode a slug that carries a reserved character', async () => {
 		const response = await appUnderTest().request('/story/a%2Fb');
 
-		expect(response.headers.get('Location')).toBe('/read/a%2Fb');
+		expect(response.headers.get('Location')).toBe('/literary-work/a%2Fb');
 	});
 
 	// El traslado es del prefijo de ruta, no una sustitución de texto: un slug que contiene el nombre
@@ -61,7 +61,7 @@ describe('legacy route redirects', () => {
 	it('should leave a slug that contains the old section name alone', async () => {
 		const response = await appUnderTest().request('/story/historia-de-story');
 
-		expect(response.headers.get('Location')).toBe('/read/historia-de-story');
+		expect(response.headers.get('Location')).toBe('/literary-work/historia-de-story');
 	});
 
 	// Los parámetros de campaña vienen en la query string: perderlos en el traslado rompe la atribución
@@ -69,7 +69,7 @@ describe('legacy route redirects', () => {
 	it('should carry the query string over', async () => {
 		const response = await appUnderTest().request('/story/el-fin?utm_source=boletin&page=2');
 
-		expect(response.headers.get('Location')).toBe('/read/el-fin?utm_source=boletin&page=2');
+		expect(response.headers.get('Location')).toBe('/literary-work/el-fin?utm_source=boletin&page=2');
 	});
 
 	// El detalle captura cualquier segmento bajo el prefijo, no solo un slug. Hoy no hay nada más ahí, y
@@ -78,6 +78,6 @@ describe('legacy route redirects', () => {
 		const response = await appUnderTest().request('/story/index.html');
 
 		expect(response.status).toBe(301);
-		expect(response.headers.get('Location')).toBe('/read/index.html');
+		expect(response.headers.get('Location')).toBe('/literary-work/index.html');
 	});
 });

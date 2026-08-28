@@ -26,7 +26,7 @@ export function buildLiteraryWorkCatalogSchema(
 			itemListElement: literaryWorks.map((literaryWork, index) => ({
 				'@type': 'ListItem',
 				position: index + 1,
-				url: `${baseUrl}/read/${literaryWork.slug}`,
+				url: `${baseUrl}/literary-work/${literaryWork.slug}`,
 				name: literaryWork.title,
 			})),
 		},

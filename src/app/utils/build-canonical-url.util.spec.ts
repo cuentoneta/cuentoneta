@@ -3,12 +3,14 @@ import { environment } from '../environments/environment';
 
 describe('buildCanonicalUrl', () => {
 	it('should join host and path with a single slash when the host has no trailing slash', () => {
-		expect(buildCanonicalUrl('read/el-fin', 'https://www.cuentoneta.ar')).toBe('https://www.cuentoneta.ar/read/el-fin');
+		expect(buildCanonicalUrl('literary-work/el-fin', 'https://www.cuentoneta.ar')).toBe(
+			'https://www.cuentoneta.ar/literary-work/el-fin',
+		);
 	});
 
 	it('should not produce a double slash when the host already has a trailing slash', () => {
-		expect(buildCanonicalUrl('read/el-fin', 'https://www.cuentoneta.ar/')).toBe(
-			'https://www.cuentoneta.ar/read/el-fin',
+		expect(buildCanonicalUrl('literary-work/el-fin', 'https://www.cuentoneta.ar/')).toBe(
+			'https://www.cuentoneta.ar/literary-work/el-fin',
 		);
 	});
 
@@ -25,10 +27,12 @@ describe('buildCanonicalUrl', () => {
 	});
 
 	it('should default the host to environment.website when the website argument is omitted', () => {
-		expect(buildCanonicalUrl('read/el-fin')).toBe(buildCanonicalUrl('read/el-fin', environment.website));
+		expect(buildCanonicalUrl('literary-work/el-fin')).toBe(
+			buildCanonicalUrl('literary-work/el-fin', environment.website),
+		);
 	});
 
 	it('should produce a root-relative URL when the host is just "/" (dev environment.website)', () => {
-		expect(buildCanonicalUrl('read/el-fin', '/')).toBe('/read/el-fin');
+		expect(buildCanonicalUrl('literary-work/el-fin', '/')).toBe('/literary-work/el-fin');
 	});
 });

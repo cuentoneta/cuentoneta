@@ -16,7 +16,7 @@ import { test, expect } from '@playwright/test';
 import { getTitleText, getCanonicalHref } from '../_utils/seo';
 import { STABLE_SLUGS } from '../_utils/seo-fixtures';
 
-const readPath = `/read/${STABLE_SLUGS.literaryWork}`;
+const readPath = `/literary-work/${STABLE_SLUGS.literaryWork}`;
 
 // `x-forwarded-for` es el header que Vercel agrega a toda request y que dispara el deopt si no se
 // confía (no está en el set confiable por default de Angular). Se omite `x-forwarded-proto: https`

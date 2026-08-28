@@ -22,7 +22,7 @@ import { LiteraryWorkHomeCardTeaserSkeletonComponent } from './literary-work-hom
  *
  * Patrón de tarjeta clickeable (sin wrapper `<a>`): el enlace de la obra se estira con un
  * pseudo-elemento (`after:absolute after:inset-0`) para cubrir toda la tarjeta, de modo que cualquier
- * sección navega a `/read/:slug`. El bloque del autor es un enlace propio elevado a `z-content`, por
+ * sección navega a `/literary-work/:slug`. El bloque del autor es un enlace propio elevado a `z-content`, por
  * encima del pseudo-elemento, para que la foto y el nombre naveguen a `/author/:slug`.
  */
 @Component({
@@ -115,5 +115,9 @@ export class LiteraryWorkHomeCardTeaserComponent {
 	public readonly navigationParams = input<NavigationParams>();
 
 	protected readonly coverImageUrl = computed(() => this.literaryWork()?.coverImage);
-	protected readonly literaryWorkRouterLink = computed(() => ['/', this.appRoutes.Read, this.literaryWork()?.slug]);
+	protected readonly literaryWorkRouterLink = computed(() => [
+		'/',
+		this.appRoutes.LiteraryWork,
+		this.literaryWork()?.slug,
+	]);
 }

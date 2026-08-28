@@ -1,5 +1,5 @@
 /**
- * Test e2e del tratamiento tipográfico del cuerpo de una obra (`/read/:slug`).
+ * Test e2e del tratamiento tipográfico del cuerpo de una obra (`/literary-work/:slug`).
  *
  * Es la única aserción de la suite que ve el CSS ya aplicado: las reglas del cuerpo viven en una hoja
  * global (los nodos los emite el pipeline de Markdown y no llevan clases), así que ningún test unitario
@@ -12,7 +12,7 @@ import { test, expect } from '@playwright/test';
 
 import { STABLE_SLUGS } from './_utils/seo-fixtures';
 
-const readPath = `/read/${STABLE_SLUGS.literaryWork}`;
+const readPath = `/literary-work/${STABLE_SLUGS.literaryWork}`;
 
 test('read — los bloques del cuerpo de la obra quedan separados entre sí', async ({ page, request }) => {
 	const response = await request.get(readPath);

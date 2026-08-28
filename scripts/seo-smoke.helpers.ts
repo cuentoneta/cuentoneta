@@ -71,14 +71,14 @@ type ExpectationsFactory = (path: string) => IndexableHtmlExpectations;
 // Prefijos disjuntos: el `/` de cola cierra el segmento (`/collection/` no matchea `/collection`, el
 // catálogo, que el sitemap también emite), así que el orden de la tabla no afecta el resultado.
 const EXPECTATIONS_FACTORIES: Readonly<Record<string, ExpectationsFactory>> = {
-	'/read/': (path) => {
+	'/literary-work/': (path) => {
 		const pattern = slugToTitlePattern(slugOf(path));
 		return {
 			path,
 			canonicalContains: path,
 			titlePattern: pattern,
 			h1Pattern: pattern,
-			requiredJsonLdIds: [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.article, SCHEMA_IDS.breadcrumbRead],
+			requiredJsonLdIds: [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.article, SCHEMA_IDS.breadcrumbLiteraryWork],
 			requiredInternalLinkPrefix: '/author/',
 		};
 	},
@@ -87,7 +87,7 @@ const EXPECTATIONS_FACTORIES: Readonly<Record<string, ExpectationsFactory>> = {
 		canonicalContains: path,
 		titlePattern: slugToTitlePattern(slugOf(path)),
 		requiredJsonLdIds: [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.profilePage, SCHEMA_IDS.breadcrumbAuthor],
-		requiredInternalLinkPrefix: '/read/',
+		requiredInternalLinkPrefix: '/literary-work/',
 	}),
 	'/collection/': (path) =>
 		// El título de la colección es editorial (no deriva del slug); sin titlePattern/h1Pattern.
@@ -95,7 +95,7 @@ const EXPECTATIONS_FACTORIES: Readonly<Record<string, ExpectationsFactory>> = {
 			path,
 			canonicalContains: path,
 			requiredJsonLdIds: [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.collection, SCHEMA_IDS.breadcrumbCollection],
-			requiredInternalLinkPrefix: '/read/',
+			requiredInternalLinkPrefix: '/literary-work/',
 		}),
 };
 

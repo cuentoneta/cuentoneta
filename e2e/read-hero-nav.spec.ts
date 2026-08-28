@@ -13,7 +13,7 @@ import { test, expect } from '@playwright/test';
 import { NAV_OWNS_EVERY_SAMPLE, STACKING_VIEWPORTS, VIEWPORT_HEIGHT, navStackingReport } from './_utils/stacking';
 import { STABLE_SLUGS } from './_utils/seo-fixtures';
 
-const readPath = `/read/${STABLE_SLUGS.literaryWork}`;
+const readPath = `/literary-work/${STABLE_SLUGS.literaryWork}`;
 
 let status: number;
 
