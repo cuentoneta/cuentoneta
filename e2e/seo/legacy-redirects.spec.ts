@@ -21,7 +21,6 @@ const LISTINGS = [
 const DETAILS = [
 	{ from: `/story/${STABLE_SLUGS.literaryWork}`, to: `/literary-work/${STABLE_SLUGS.literaryWork}` },
 	{ from: `/storylist/${STABLE_SLUGS.collection}`, to: `/collection/${STABLE_SLUGS.collection}` },
-	{ from: `/read/${STABLE_SLUGS.literaryWork}`, to: `/literary-work/${STABLE_SLUGS.literaryWork}` },
 ] as const;
 
 for (const { from, to } of LISTINGS) {

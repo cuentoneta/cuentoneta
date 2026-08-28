@@ -50,10 +50,9 @@ function slugFromReadingUrl(url: string, prefixes: readonly string[]): string | 
 }
 
 // La métrica registra la URL que el lector visitó, así que una redirección no recupera lo que se
-// midió antes de instalarla: se leen todos los prefijos bajo los que la obra haya respondido. Un
-// prefijo retirado sigue aportando mientras queden visitas suyas dentro de la ventana, y se drena
-// solo. La obra conserva el slug en cada mudanza, y por eso el mismo puede llegar por más de un
-// camino y se deduplica antes de resolverlo.
+// midió antes de instalarla: se lee también el prefijo indexado anterior, que sigue aportando
+// mientras queden visitas suyas dentro de la ventana y se drena solo. La obra conserva el slug al
+// mudarse, y por eso el mismo puede llegar por los dos caminos y se deduplica antes de resolverlo.
 export async function updateMostReadLiteraryWorks(
 	contentRepository: ContentRepository = new SanityContentRepository(),
 ): Promise<RotatingContent> {
@@ -62,11 +61,7 @@ export async function updateMostReadLiteraryWorks(
 		throw new Error('Could not fetch metrics.');
 	}
 
-	const readingPathPrefixes = [
-		`${environment.basePath}/story/`,
-		`${environment.basePath}/read/`,
-		`${environment.basePath}/literary-work/`,
-	];
+	const readingPathPrefixes = [`${environment.basePath}/story/`, `${environment.basePath}/literary-work/`];
 	// El `Set` conserva el orden de inserción, que es el de Clarity: la deduplicación no reordena, y el
 	// orden **es** el ranking.
 	const rankedSlugs = [

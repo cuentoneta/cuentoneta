@@ -33,7 +33,3 @@ export const legacyStoryListingRedirect: Handler = (c) => c.redirect('/literary-
 export const legacyStorylistListingRedirect: Handler = (c) => c.redirect('/collection', 301);
 export const legacyStoryDetailRedirect = legacyDetailRedirect('/literary-work');
 export const legacyStorylistDetailRedirect = legacyDetailRedirect('/collection');
-
-// La página de lectura se sirvió un tiempo bajo un prefijo que nombraba la acción y no el recurso.
-// Nunca estuvo indexada, pero sí publicada: el traslado cubre los enlaces que se hayan compartido.
-export const legacyReadDetailRedirect = legacyDetailRedirect('/literary-work');
