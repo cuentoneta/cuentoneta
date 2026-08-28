@@ -10,6 +10,7 @@
  *       y BreadcrumbList.
  *  - D. Bloques sitewide Organization y WebSite.
  *  - E. La tanda completa de invariantes de una página indexable, H1 único y cuerpo saneado.
+ *  - F. Un único enlace al perfil del autor.
  *
  * El contenido de prueba lo cura el equipo en los datasets (development local / staging CI).
  */
@@ -18,8 +19,9 @@ import type { Article, BreadcrumbList, WithContext } from 'schema-dts';
 
 import { parseJsonLdBlocks, getMetaContent, getTitleText, getCanonicalHref } from '../_utils/seo';
 import { assertValidJsonLd } from '@testing/json-ld-validation';
-import { collectIndexableHtmlViolations } from '../_utils/seo-invariants';
+import { collectIndexableHtmlViolations, getInternalLinkHrefs } from '../_utils/seo-invariants';
 import { STABLE_SLUGS, SCHEMA_IDS, SITEWIDE_SCHEMA_IDS } from '../_utils/seo-fixtures';
+import { fetchLiteraryWork } from '../_utils/literary-work-fixtures';
 
 const literaryWorkPath = `/literary-work/${STABLE_SLUGS.literaryWork}`;
 const requiredJsonLdIds = [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.article, SCHEMA_IDS.breadcrumbLiteraryWork];
@@ -96,5 +98,25 @@ test.describe('literary-work — HTML server-rendered de una obra existente', ()
 		expect(html).toContain('<article');
 		// El markdown crudo no cruza al frontend: sin ** literales dentro del artículo.
 		expect(html).not.toMatch(/<article[^>]*>[\s\S]*\*\*[\s\S]*<\/article>/);
+	});
+
+	// Un segundo enlace al mismo perfil le da al crawler dos rutas equivalentes, y en el DOM dos
+	// destinos que el lector de pantalla anuncia igual salvo que cada uno traiga su propio nombre
+	// accesible. Acá se exige uno solo, que es más estricto que pedir nombres distinguibles: el pie
+	// sugiere más obras del autor, pero su bloque es diferido sin `hydrate`, así que en el HTML servido
+	// hay marcador de posición y no enlace. Si ese diferido pasara a hidratarse, la corrección no es
+	// subir el número: es traer acá el criterio de nombres distinguibles que hoy vive en el spec de la
+	// página hidratada.
+	//
+	// El slug se resuelve en el caso y no en el `beforeAll`: el resto de la tanda solo necesita el HTML
+	// ya capturado, y un endpoint caído no tiene por qué tumbarla entera.
+	test('F: enlaza al perfil del autor una sola vez', async ({ request }) => {
+		const primaryAuthorSlug = (await fetchLiteraryWork(request, STABLE_SLUGS.literaryWork))?.authors[0]?.slug;
+		expect(
+			primaryAuthorSlug,
+			`el API no sirve "${STABLE_SLUGS.literaryWork}": no habría con qué comparar`,
+		).toBeDefined();
+
+		expect(getInternalLinkHrefs(html, '/author/')).toEqual([`/author/${primaryAuthorSlug}`]);
 	});
 });

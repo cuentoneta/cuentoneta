@@ -10,6 +10,7 @@ import {
 	checkTitle,
 	collectEmptyBodyViolations,
 	collectIndexableHtmlViolations,
+	getInternalLinkHrefs,
 	type IndexableHtmlExpectations,
 } from './seo-invariants';
 
@@ -202,6 +203,42 @@ describe('checkInternalLink', () => {
 		expect(checkInternalLink('<header><a href="/story/x">x</a></header><main><p>ok</p></main>', '/story/')?.rule).toBe(
 			'internal-link',
 		);
+	});
+});
+
+describe('getInternalLinkHrefs', () => {
+	it('devuelve el href cuando hay un enlace con el prefijo dentro de main', () => {
+		expect(getInternalLinkHrefs(GOOD_HTML, '/author/')).toEqual(['/author/jorge-luis-borges']);
+	});
+
+	// El caso que la guarda de la página de lectura existe para atrapar: el destino repetido no
+	// colapsa, porque son dos enlaces y cada uno necesita su propio nombre accesible.
+	it('devuelve una entrada por enlace aunque repitan destino', () => {
+		const html = GOOD_HTML.replace('</main>', '<a href="/author/jorge-luis-borges">Ver más</a></main>');
+		expect(getInternalLinkHrefs(html, '/author/')).toEqual(['/author/jorge-luis-borges', '/author/jorge-luis-borges']);
+	});
+
+	it('devuelve los href en orden de documento', () => {
+		const html = '<main><a href="/author/segundo">b</a><a href="/author/primero">a</a></main>';
+		expect(getInternalLinkHrefs(html, '/author/')).toEqual(['/author/segundo', '/author/primero']);
+	});
+
+	it('ignora enlaces fuera de main', () => {
+		expect(getInternalLinkHrefs('<header><a href="/story/x">x</a></header><main><p>ok</p></main>', '/story/')).toEqual(
+			[],
+		);
+	});
+
+	// Un ancla sin destino no es un enlace: cuenta como cero, no como una entrada vacía que descuadre
+	// el conteo de la página.
+	it('ignora las anclas sin href', () => {
+		expect(getInternalLinkHrefs('<main><a>sin destino</a><a href="/author/x">x</a></main>', '/author/')).toEqual([
+			'/author/x',
+		]);
+	});
+
+	it('devuelve lista vacía cuando ningún enlace matchea el prefijo', () => {
+		expect(getInternalLinkHrefs(GOOD_HTML, '/story/')).toEqual([]);
 	});
 });
 

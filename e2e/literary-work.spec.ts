@@ -201,6 +201,35 @@ test('literary-work — sin contexto, el pie sugiere más obras del autor', asyn
 	await expect(authorAccess.first()).toBeVisible();
 });
 
+// Una vez hidratada, la página sí sirve dos enlaces al mismo perfil: el del hero y el del pie. Se
+// afirma que se distinguen entre sí y no que digan tal o cual cosa: la copy es curaduría y puede
+// cambiar sin que el criterio —dos destinos iguales no pueden anunciarse igual— deje de valer.
+test('literary-work — los dos enlaces al perfil del autor tienen nombres accesibles distintos', async ({ page }) => {
+	// eslint-disable-next-line playwright/no-skipped-test -- la ausencia del fixture ya la reporta su guarda; repetirla acá sería el mismo fallo dos veces
+	test.skip(!mediaWork, `"${MEDIA_ROUTE}" no está en el dataset`);
+
+	await openWork(page, MEDIA_ROUTE);
+	await settleSuggestions(page, `Más obras de ${mediaWork?.authors[0]?.name}`);
+
+	const profileLinks = page.locator(`a[href^="/author/${mediaWork?.authors[0]?.slug}"]`);
+	await expect(
+		profileLinks,
+		'se esperan dos enlaces al perfil, el del hero y el del pie: con una sola obra del autor el bloque de sugerencias no se monta',
+	).toHaveCount(2);
+
+	// El nombre se aproxima con `aria-label ?? textContent`, que alcanza para estos dos enlaces, pero
+	// omite `aria-labelledby`, el `alt` de una imagen descendiente y `title`. Un enlace que se nombre
+	// por esas vías necesitaría el accname real, no esta aproximación.
+	const names = await profileLinks.evaluateAll((links) =>
+		links.map((link) => (link.getAttribute('aria-label') ?? link.textContent ?? '').replace(/\s+/g, ' ').trim()),
+	);
+	expect(
+		names.every((name) => name.length > 0),
+		`algún enlace al perfil no tiene nombre: ${names}`,
+	).toBe(true);
+	expect(new Set(names).size, `los dos enlaces al perfil se anuncian igual: ${names}`).toBe(2);
+});
+
 // El único cableado que ningún unitario ve: la tarjeta de la colección EMITE los query params de contexto
 // y la página los CONSUME. Entrar directo con la URL armada probaría la mitad de consumo, que el spec
 // unitario ya cubre.
