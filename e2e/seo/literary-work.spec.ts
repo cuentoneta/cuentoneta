@@ -33,7 +33,6 @@ test('literary-work — A: una obra inexistente responde 404 real en SSR', async
 
 test.describe('literary-work — HTML server-rendered de una obra existente', () => {
 	let html: string;
-	let primaryAuthorSlug: string | undefined;
 
 	test.beforeAll(async ({ request }) => {
 		const response = await request.get(literaryWorkPath);
@@ -41,7 +40,6 @@ test.describe('literary-work — HTML server-rendered de una obra existente', ()
 		// sin nombrar la causa. Se afirma en vez de saltearse: es el skip el que ya dejó un verde engañoso.
 		expect(response.status(), `No existe literaryWork con slug "${STABLE_SLUGS.literaryWork}" en el dataset`).toBe(200);
 		html = await response.text();
-		primaryAuthorSlug = (await fetchLiteraryWork(request, STABLE_SLUGS.literaryWork))?.authors[0]?.slug;
 	});
 
 	test('B: meta tags en el HTML server-rendered', () => {
@@ -95,19 +93,30 @@ test.describe('literary-work — HTML server-rendered de una obra existente', ()
 		).toEqual([]);
 	});
 
-	// Un segundo enlace al mismo perfil le da al crawler dos rutas equivalentes y, en el DOM, dos
-	// destinos que el lector de pantalla anuncia igual salvo que cada uno traiga su propio nombre
-	// accesible. El pie sugiere más obras del autor, pero su bloque es diferido sin `hydrate`: en el
-	// HTML servido está el marcador de posición y no el enlace. Si ese diferido pasara a hidratarse, la
-	// cuenta sube y este caso lo reporta.
-	test('F: enlaza al perfil del autor una sola vez', () => {
-		expect(getInternalLinkHrefs(html, '/author/')).toEqual([`/author/${primaryAuthorSlug}`]);
-	});
-
 	test('E: H1 único con contenido real y cuerpo saneado', () => {
 		expect(html.match(/<h1[^>]*>/g) ?? []).toHaveLength(1);
 		expect(html).toContain('<article');
 		// El markdown crudo no cruza al frontend: sin ** literales dentro del artículo.
 		expect(html).not.toMatch(/<article[^>]*>[\s\S]*\*\*[\s\S]*<\/article>/);
+	});
+
+	// Un segundo enlace al mismo perfil le da al crawler dos rutas equivalentes, y en el DOM dos
+	// destinos que el lector de pantalla anuncia igual salvo que cada uno traiga su propio nombre
+	// accesible. Acá se exige uno solo, que es más estricto que pedir nombres distinguibles: el pie
+	// sugiere más obras del autor, pero su bloque es diferido sin `hydrate`, así que en el HTML servido
+	// hay marcador de posición y no enlace. Si ese diferido pasara a hidratarse, la corrección no es
+	// subir el número: es traer acá el criterio de nombres distinguibles que hoy vive en el spec de la
+	// página hidratada.
+	//
+	// El slug se resuelve en el caso y no en el `beforeAll`: el resto de la tanda solo necesita el HTML
+	// ya capturado, y un endpoint caído no tiene por qué tumbarla entera.
+	test('F: enlaza al perfil del autor una sola vez', async ({ request }) => {
+		const primaryAuthorSlug = (await fetchLiteraryWork(request, STABLE_SLUGS.literaryWork))?.authors[0]?.slug;
+		expect(
+			primaryAuthorSlug,
+			`el API no sirve "${STABLE_SLUGS.literaryWork}": no habría con qué comparar`,
+		).toBeDefined();
+
+		expect(getInternalLinkHrefs(html, '/author/')).toEqual([`/author/${primaryAuthorSlug}`]);
 	});
 });

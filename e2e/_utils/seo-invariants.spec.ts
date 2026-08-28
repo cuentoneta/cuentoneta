@@ -218,10 +218,23 @@ describe('getInternalLinkHrefs', () => {
 		expect(getInternalLinkHrefs(html, '/author/')).toEqual(['/author/jorge-luis-borges', '/author/jorge-luis-borges']);
 	});
 
+	it('devuelve los href en orden de documento', () => {
+		const html = '<main><a href="/author/segundo">b</a><a href="/author/primero">a</a></main>';
+		expect(getInternalLinkHrefs(html, '/author/')).toEqual(['/author/segundo', '/author/primero']);
+	});
+
 	it('ignora enlaces fuera de main', () => {
 		expect(getInternalLinkHrefs('<header><a href="/story/x">x</a></header><main><p>ok</p></main>', '/story/')).toEqual(
 			[],
 		);
+	});
+
+	// Un ancla sin destino no es un enlace: cuenta como cero, no como una entrada vacía que descuadre
+	// el conteo de la página.
+	it('ignora las anclas sin href', () => {
+		expect(getInternalLinkHrefs('<main><a>sin destino</a><a href="/author/x">x</a></main>', '/author/')).toEqual([
+			'/author/x',
+		]);
 	});
 
 	it('devuelve lista vacía cuando ningún enlace matchea el prefijo', () => {
