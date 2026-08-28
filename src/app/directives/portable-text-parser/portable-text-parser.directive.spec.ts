@@ -1,9 +1,33 @@
 import { type ComponentFixture, TestBed } from '@angular/core/testing';
 import { Component, signal } from '@angular/core';
-import { storyMock } from '@mocks/story.mock';
-import { storylistMock } from '@mocks/storylist.mock';
 import { PortableTextDirective } from './portable-text-parser.directive';
 import type { TextBlockContent } from '@models/block-content.model';
+
+// Las entradas van declaradas acá y no tomadas de un mock del corpus: lo que se prueba es cómo el
+// parser traduce marcas y `markDefs`, así que el Portable Text es el sujeto del test, no un accesorio.
+const titledBlock: TextBlockContent[] = [
+	{
+		_type: 'block',
+		style: 'normal',
+		_key: 'titled',
+		markDefs: [],
+		children: [
+			{ _type: 'span', _key: 't1', marks: ['strong', 'em'], text: 'El espejo del tiempo' },
+			{ _type: 'span', _key: 't2', marks: [], text: ' apareció en ' },
+			{ _type: 'span', _key: 't3', marks: ['em'], text: 'Ecos del Silencio' },
+		],
+	},
+];
+
+const replacementBlock: TextBlockContent[] = [
+	{
+		_type: 'block',
+		style: 'normal',
+		_key: 'replacement',
+		markDefs: [],
+		children: [{ _type: 'span', _key: 'r1', marks: [], text: 'Otro contenido por completo' }],
+	},
+];
 
 @Component({
 	imports: [PortableTextDirective],
@@ -14,7 +38,7 @@ import type { TextBlockContent } from '@models/block-content.model';
 	</article>`,
 })
 class TestComponent {
-	public readonly content = signal(storyMock.summary);
+	public readonly content = signal(titledBlock);
 	public readonly classes = signal('test-class');
 }
 
@@ -36,9 +60,9 @@ describe('PortableTextDirective', () => {
 		expect(component).toBeTruthy();
 	});
 
-	describe('story content formatting', () => {
-		it('should format story title in bold and italics', () => {
-			component.content.set(storyMock.summary);
+	describe('title formatting', () => {
+		it('should format the work title in bold and italics', () => {
+			component.content.set(titledBlock);
 			fixture().detectChanges();
 
 			const container = fixture().nativeElement.querySelector('article');
@@ -47,7 +71,7 @@ describe('PortableTextDirective', () => {
 		});
 
 		it('should format book collection title in italics', () => {
-			component.content.set(storyMock.summary);
+			component.content.set(titledBlock);
 			fixture().detectChanges();
 
 			const container = fixture().nativeElement.querySelector('article') as HTMLElement;
@@ -58,8 +82,6 @@ describe('PortableTextDirective', () => {
 	});
 
 	describe('media description formatting', () => {
-		// La entrada va declarada acá y no tomada de un mock del corpus: lo que se prueba es cómo el parser
-		// traduce marcas y `markDefs`, así que el Portable Text es el sujeto del test, no un accesorio.
 		const markedUpBlock: TextBlockContent[] = [
 			{
 				_type: 'block',
@@ -200,13 +222,13 @@ describe('PortableTextDirective', () => {
 
 	describe('content updates', () => {
 		it('should update content when signal changes', () => {
-			component.content.set(storyMock.summary);
+			component.content.set(titledBlock);
 			fixture().detectChanges();
 
 			let container = fixture().nativeElement.querySelector('article');
 			expect(container).toHaveTextContent('El espejo del tiempo');
 
-			component.content.set(storylistMock.description);
+			component.content.set(replacementBlock);
 			fixture().detectChanges();
 
 			container = fixture().nativeElement.querySelector('article');
