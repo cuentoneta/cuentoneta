@@ -4,7 +4,6 @@ import {
 	onoffCollectionDocumentsMock,
 	onoffLiteraryWorkDocumentsMock,
 } from '@mocks/onoff-documents.mock';
-import { withoutKey } from '@mocks/onoff/document/sanity-document.factory';
 
 import { sitemapSlugsQuery } from './sitemap.query';
 
@@ -23,16 +22,18 @@ const [canonAuthor] = onoffAuthorDocumentsMock;
 const [canonLiteraryWork] = onoffLiteraryWorkDocumentsMock;
 const [canonCollection] = onoffCollectionDocumentsMock;
 
-// El canon guarda la misma fecha en las dos marcas, así que un documento que distinga entre ambas se
-// deriva acá: es la condición que estos casos necesitan y que el corpus no tiene por qué traer.
+// Las dos condiciones que estos casos necesitan y que el corpus no tiene por qué traer: una fecha de
+// escritura distinta de la de creación, y una obra sin fecha de publicación. `coalesce` saltea el nulo
+// igual que la ausencia del campo, así que alcanza con anularlo.
 const WRITE_DATE = '2026-08-13T06:07:43Z';
 const touched = <T extends object>(document: T): T => ({ ...document, _updatedAt: WRITE_DATE });
+const unpublished = <T extends object>(document: T): T => ({ ...document, publishedAt: null });
 
 describe('sitemapSlugsQuery', () => {
 	// Una escritura operativa —un backfill, una migración, una copia de dataset— mueve la fecha de
 	// escritura de todo el corpus a la vez. El sitemap no debe reflejarla.
 	it.each([
-		['literaryWorks' as const, touched(withoutKey(canonLiteraryWork, 'publishedAt'))],
+		['literaryWorks' as const, touched(unpublished(canonLiteraryWork))],
 		['authors' as const, touched(canonAuthor)],
 		['collections' as const, touched(canonCollection)],
 	])('derives the %s lastmod from the creation date, not the write date', async (type, document) => {

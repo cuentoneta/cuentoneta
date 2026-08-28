@@ -245,12 +245,12 @@ export const configlessCollectionDocument = {
 	slug: slugField('sin-config'),
 };
 
-// Documentos de los tipos previos (`story`, `storylist`), derivados del canon cambiándoles el `_type`.
-// El corpus modela la era `LiteraryWork`, así que no los tiene, y las queries que todavía leen esos
-// tipos —el sitemap— se quedarían sin fixture. La derivación vale mientras la query proyecte campos
-// que ambos schemas declaran igual; una que lea campos propios del tipo previo necesita su documento.
-// Todos llevan una fecha de escritura distinta de la de creación: compartiéndolas, una proyección que
-// tomara la equivocada quedaría indistinguible de la correcta.
+// Documentos del tipo previo (`story`), derivados del canon cambiándoles el `_type`. El corpus modela
+// la era `LiteraryWork`, así que no los tiene, y las queries que todavía leen ese tipo se quedarían sin
+// fixture. La derivación vale mientras la query proyecte campos que ambos schemas declaran igual; una
+// que lea campos propios del tipo previo necesita su documento.
+// La fecha de escritura va distinta de la de creación: compartiéndolas, una proyección que tomara la
+// equivocada quedaría indistinguible de la correcta.
 const LEGACY_UPDATED_AT = '2026-08-13T06:07:43Z';
 
 export const legacyStoryDocument = {
@@ -259,13 +259,6 @@ export const legacyStoryDocument = {
 	_type: 'story' as const,
 	_updatedAt: LEGACY_UPDATED_AT,
 	slug: slugField('story-publicada'),
-};
-
-// La fecha de publicación es opcional, y la query del sitemap cae a la de creación cuando falta.
-export const undatedLegacyStoryDocument = {
-	...withoutKey(legacyStoryDocument, 'publishedAt'),
-	_id: 'onoff-story-sin-fecha',
-	slug: slugField('story-sin-fecha'),
 };
 
 // `Rule.required()` valida la edición en el Studio, no el almacenamiento: el dataset real tiene cuentos
@@ -301,14 +294,6 @@ export const unmigratedStoryDocument = {
 	_type: 'story' as const,
 	slug: slugField('story-sin-migrar'),
 	author: documentReference(onoffAuthorDocument._id),
-};
-
-export const legacyStorylistDocument = {
-	...canonCollection,
-	_id: 'onoff-storylist',
-	_type: 'storylist' as const,
-	_updatedAt: LEGACY_UPDATED_AT,
-	slug: slugField('storylist'),
 };
 
 // La proyección de abajo dereferencia el cuento en vez de proyectarlo directo (`stories[]->`), así que
