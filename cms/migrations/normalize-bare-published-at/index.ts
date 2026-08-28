@@ -12,6 +12,14 @@ const ARGENTINA_MIDNIGHT_SUFFIX = 'T03:00:00.000Z';
 
 const BARE_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
+// La forma no alcanza: `2022-13-45` la cumple y produciría un instante que el value object del
+// dominio acepta y el reloj no resuelve, cambiando un error ruidoso por una corrupción callada. Se
+// exige además que la fecha exista, comparando contra lo que el calendario devuelve.
+function namesARealDate(value: string): boolean {
+	const parsed = new Date(`${value}T00:00:00.000Z`);
+	return !Number.isNaN(parsed.getTime()) && parsed.toISOString().startsWith(value);
+}
+
 interface MigratedDocument {
 	_id: string;
 	_type: string;
@@ -27,6 +35,14 @@ export function publishedAtPatches(document: MigratedDocument) {
 		return [];
 	}
 
+	// Un valor que no es texto no tiene forma que corregir, y dejarlo llegar a la comparación de abajo
+	// produciría un error que no nombra el documento.
+	if (typeof publishedAt !== 'string') {
+		throw new Error(
+			`El documento "${document._id}" guarda una fecha de publicación que no es texto: ${JSON.stringify(publishedAt)}`,
+		);
+	}
+
 	// Ya tiene hora: sin patch. Es lo que hace idempotente una segunda corrida.
 	if (publishedAt.includes('T')) {
 		return [];
@@ -34,7 +50,7 @@ export function publishedAtPatches(document: MigratedDocument) {
 
 	// Una forma que no es ni la sana ni la que se viene a corregir no tiene disposición asignada, y
 	// completarla a ciegas escribiría un instante arbitrario sobre un dato que nadie miró.
-	if (!BARE_DATE.test(publishedAt)) {
+	if (!BARE_DATE.test(publishedAt) || !namesARealDate(publishedAt)) {
 		throw new Error(
 			`El documento "${document._id}" tiene una fecha de publicación de forma desconocida: "${publishedAt}"`,
 		);

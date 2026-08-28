@@ -29,6 +29,13 @@ function assertIdentifier(value: string, kind: string): string {
 
 // El campo ausente no es una forma inválida: lo cubre el barrido de campos requeridos, y contarlo acá
 // duplicaría el mismo hallazgo en dos reportes que se atienden distinto.
+//
+// **Lo que este predicado no ve.** `match` tokeniza el valor y no distingue mayúsculas, así que
+// alcanza a la fecha desnuda —el caso que motivó el barrido— pero deja pasar un valor que contenga
+// una `t` suelta en otro token (`"2022-01-23 tarde"`) o que traiga el separador sin nada detrás
+// (`"2022-01-23T"`). El dominio rechaza a los dos. Detectarlos exigiría comparar contra un patrón,
+// que GROQ no ofrece sobre texto libre; mientras tanto el hueco queda acá enunciado y no descubierto
+// por quien lea un reporte en cero.
 function malformedPredicate(field: WatchedField): string {
 	if (field.shape === FIELD_SHAPES.dateTime) {
 		return `defined(${field.path}) && !(${field.path} match "*T*")`;

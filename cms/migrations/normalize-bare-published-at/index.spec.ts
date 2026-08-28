@@ -40,7 +40,18 @@ describe('normalize-bare-published-at', () => {
 
 	// Una forma que no es ni la sana ni la que se corrige no tiene disposición: la corrida se detiene
 	// nombrando el documento, en vez de escribirle un instante arbitrario.
-	it.each(['2022-1-3', '23/01/2022', ''])('aborta ante la forma desconocida %p', (publishedAt) => {
-		expect(() => migrateDocument({ _id: 'obra-rara', _type: 'literaryWork', publishedAt })).toThrow('obra-rara');
+	// La forma no alcanza: una fecha que el calendario no tiene produciría un instante que el value
+	// object acepta y el reloj no resuelve — un error ruidoso cambiado por una corrupción callada.
+	it.each(['2022-1-3', '23/01/2022', '', '2022-13-45', '2022-02-30'])(
+		'aborta ante la forma desconocida %p',
+		(publishedAt) => {
+			expect(() => migrateDocument({ _id: 'obra-rara', _type: 'literaryWork', publishedAt })).toThrow('obra-rara');
+		},
+	);
+
+	it('aborta cuando el valor no es texto', () => {
+		const noEsTexto = { _id: 'obra-rara', _type: 'literaryWork', publishedAt: 20220123 } as unknown as TestDocument;
+
+		expect(() => migrateDocument(noEsTexto)).toThrow('obra-rara');
 	});
 });
