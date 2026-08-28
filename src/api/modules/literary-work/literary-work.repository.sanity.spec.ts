@@ -39,6 +39,24 @@ describe('SanityLiteraryWorkRepository.fetchBySlug', () => {
 		expect(literaryWork?.totalReadingTime).toBe(12);
 	});
 
+	// El dato que no entra al dominio existió: obras con la fecha de publicación sin hora, que el value
+	// object rechaza. Sobre una lectura puntual, el error crudo dice qué campo falló pero no de qué obra.
+	it('nombra la obra cuando el crudo no se puede traducir', async () => {
+		const repository = repoReturning({ ...onoffRawLiteraryWorksMock[0], publishedAt: '2022-01-23' });
+
+		await expect(repository.fetchBySlug('una-venganza')).rejects.toThrow(MalformedLiteraryWorkError);
+		await expect(repository.fetchBySlug('una-venganza')).rejects.toThrow('una-venganza');
+	});
+
+	it('preserva la causa original del rechazo', async () => {
+		const repository = repoReturning({ ...onoffRawLiteraryWorksMock[0], publishedAt: '2022-01-23' });
+
+		const error = await repository.fetchBySlug('una-venganza').catch((thrown: unknown) => thrown);
+
+		expect((error as MalformedLiteraryWorkError).cause).toBeInstanceOf(Error);
+		expect(String((error as MalformedLiteraryWorkError).cause)).toContain('2022-01-23');
+	});
+
 	it('convierte el body por el pipeline de sanitización', async () => {
 		const literaryWork = await repoReturning(onoffRawLiteraryWorksMock[0]).fetchBySlug('x');
 
@@ -150,7 +168,14 @@ describe('SanityLiteraryWorkRepository.fetchBySlug', () => {
 			content: [{ ...onoffRawLiteraryWorksMock[0].content[0], epigraphs: [{ text: null, reference: null }] }],
 		};
 
-		await expect(repoReturning(broken).fetchBySlug('x')).rejects.toThrow('Markdown inválido: contenido vacío');
+		// El rechazo viaja envuelto en el error del agregado, que nombra la obra; el motivo concreto
+		// queda en la causa, que es donde se lee qué campo lo produjo.
+		const error = await repoReturning(broken)
+			.fetchBySlug('x')
+			.catch((thrown: unknown) => thrown);
+
+		expect(error).toBeInstanceOf(MalformedLiteraryWorkError);
+		expect(String((error as MalformedLiteraryWorkError).cause)).toContain('Markdown inválido: contenido vacío');
 	});
 
 	it('convierte la nota editorial por el pipeline de sanitización', async () => {

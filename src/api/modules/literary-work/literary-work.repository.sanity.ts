@@ -36,7 +36,17 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 		if (!raw) {
 			return null;
 		}
-		return this.mapLiteraryWork(raw);
+		try {
+			return this.mapLiteraryWork(raw);
+		} catch (error) {
+			// La obra intraducible se nombra, como en el catálogo: sobre una lectura puntual, el error
+			// crudo del value object dice qué campo rechazó pero no de qué obra, y sin eso no hay dónde
+			// ir a corregir el dato. No se degrada el valor — inventar un instante lo publicaría como
+			// fecha de publicación en los datos estructurados.
+			throw error instanceof MalformedLiteraryWorkError
+				? error
+				: new MalformedLiteraryWorkError(slug, { cause: error });
+		}
 	}
 
 	// Trae el catálogo de obras que satisfacen el filtro, traducidas a la vista de teaser.
