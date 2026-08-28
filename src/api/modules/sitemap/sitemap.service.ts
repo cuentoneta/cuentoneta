@@ -8,13 +8,31 @@ interface SitemapUrl {
 }
 
 /**
+ * Deja una sola entrada por ubicación, conservando la primera.
+ *
+ * Dos documentos publicados pueden compartir slug —el dataset no lo impide—, y entonces resuelven a
+ * la misma ruta. Anunciar esa URL dos veces no agrega nada y le pide al buscador que decida cuál de
+ * las dos fechas vale; la ambigüedad de qué documento sirve la página es un problema del contenido,
+ * no algo que el sitemap pueda arbitrar.
+ */
+function deduplicateByLocation(urls: SitemapUrl[]): SitemapUrl[] {
+	const byLocation = new Map<string, SitemapUrl>();
+	for (const url of urls) {
+		if (!byLocation.has(url.loc)) {
+			byLocation.set(url.loc, url);
+		}
+	}
+	return [...byLocation.values()];
+}
+
+/**
  * Obtiene todas las URLs para el sitemap
  */
 export async function getSitemapUrls(): Promise<SitemapUrl[]> {
 	const { literaryWorks, authors, collections } = await fetchSitemapSlugs();
 	const BASE_URL = process.env['BASE_URL'] || 'https://www.cuentoneta.ar';
 
-	return [
+	return deduplicateByLocation([
 		// Páginas estáticas
 		{ loc: BASE_URL },
 		{ loc: `${BASE_URL}/about` },
@@ -30,7 +48,7 @@ export async function getSitemapUrls(): Promise<SitemapUrl[]> {
 
 		// Páginas de colecciones
 		...collections.map((c) => ({ loc: `${BASE_URL}/collection/${c.slug}`, lastmod: c.lastmod })),
-	];
+	]);
 }
 
 /**

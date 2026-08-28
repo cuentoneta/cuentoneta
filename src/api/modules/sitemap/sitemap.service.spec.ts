@@ -172,6 +172,24 @@ describe('SitemapService', () => {
 			}
 			expect(new Set(locations).size).toBe(locations.length);
 		});
+
+		// El dataset no impide que dos documentos publicados compartan slug, y entonces resuelven a la
+		// misma ruta. El sitemap la anuncia una vez.
+		it('should emit a single entry for two documents that resolve to the same location', async () => {
+			(sitemapRepository.fetchSitemapSlugs as Mock).mockResolvedValue({
+				literaryWorks: [
+					{ slug: 'el-taco-de-ebano', lastmod: '2026-07-31' },
+					{ slug: 'el-taco-de-ebano', lastmod: '2024-10-30' },
+				],
+				authors: [],
+				collections: [],
+			});
+
+			const urls = await getSitemapUrls();
+			const repeated = urls.filter(({ loc }) => loc.endsWith('/read/el-taco-de-ebano'));
+
+			expect(repeated).toEqual([{ loc: 'https://test.cuentoneta.ar/read/el-taco-de-ebano', lastmod: '2026-07-31' }]);
+		});
 	});
 
 	describe('generateSitemapXml', () => {
