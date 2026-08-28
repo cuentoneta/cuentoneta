@@ -21,6 +21,10 @@ const apiRoutes = new Hono();
  * El registro va por par —el recurso y lo que cuelga de él— porque el comodín de Hono exige al menos
  * un segmento: `/x/*` deja fuera al catálogo `/x`. Cada `GET` que en realidad escribe se declara
  * `no-store` en su propio handler; el middleware lo respeta.
+ *
+ * **Va antes del montaje de los controllers, y el orden es parte del mecanismo:** los handlers no
+ * llaman `next()`, así que un middleware registrado después de ellos no correría nunca y la caché se
+ * apagaría en silencio. Lo afirma `routes.spec.ts`.
  */
 const CACHED_MODULES = ['/author', '/collection', '/content', '/contributor', '/literary-work', '/story', '/storylist'];
 

@@ -132,12 +132,17 @@ describe('ssrCacheControl', () => {
 	// aplicarse—, así que se afirma leyendo la fuente, como hace el guardrail de directivas SEO.
 	it.each(CACHED_SSR_ROUTES)('should stay mounted on $mount', ({ mount }) => {
 		const source = readFileSync(join(process.cwd(), 'src/server.ts'), 'utf-8');
-		// La línea, no el archivo: buscar la cadena en el texto entero daría verde con el montaje
-		// comentado, que es justo la forma en que la caché se apagaría sin que nada más lo note.
-		const registration = source
+		// Se descartan los comentarios y se busca sobre el resto: mirar el archivo entero daría verde con
+		// el montaje comentado —que es justo la forma en que la caché se apagaría sin que nada lo note—,
+		// y mirar una única línea rompe en cuanto la registración crece y el formateo la parte en varias.
+		const code = source
 			.split('\n')
-			.find((line) => line.includes('ssrCacheControl)') && !line.trimStart().startsWith('//'));
+			.filter((line) => !line.trimStart().startsWith('//'))
+			.join('\n');
 
-		expect(registration).toContain(mount);
+		const end = code.indexOf('ssrCacheControl)');
+		expect(end, '`server.ts` no monta `ssrCacheControl`: la caché de las páginas SSR está apagada').toBeGreaterThan(-1);
+
+		expect(code.slice(code.lastIndexOf('app.on(', end), end)).toContain(mount);
 	});
 });
