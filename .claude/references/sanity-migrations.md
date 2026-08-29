@@ -44,6 +44,27 @@ Ejemplo vivo: [`cms/migrations/draft-story-to-literary-work/`](../../cms/migrati
 
 El predicado que reconoce un documento migrado se declara **una sola vez** y lo importan ambas migraciones. Si cada una tuviera el suyo, una divergencia entre las dos definiciones podría dejar documentos sin borrar —o borrar de más—. Y el guard va **dentro** de `migrate.document`, no solo en el `filter`: el filtro es una optimización del recorrido, no la garantía.
 
+### Migraciones que borran documentos
+
+Borrar un documento no es un `unset` más grande: la infraestructura expone `del(id)`, pero el content lake impone tres cosas que ninguna migración de escritura enfrenta.
+
+**El content lake rechaza borrar un documento con una referencia fuerte entrante.** Dar de baja el campo que lo referencia es entonces un **paso previo**, no una limpieza posterior — y hay que buscar esos referentes en el dataset, no en los schemas: quitar un campo del schema no borra el dato, así que un documento puede conservar referencias por un campo que el Studio ya no declara. La consulta que los descubre usa `references(^._id)` en vez de enumerar los campos conocidos, justamente porque la lista escrita a mano no ve los que ya nadie declara.
+
+**Cuando el grafo tiene profundidad, cada nivel va en su propia migración.** El runner batchea mutaciones y no garantiza el orden dentro de una corrida, así que un `documentTypes` con el referente y el referido juntos puede intentar borrar el segundo mientras el primero todavía lo apunta, y detenerse a mitad de camino con documentos ya borrados. Una migración por nivel, corridas en orden, es lo que vuelve cada corrida atómica y verificable por separado.
+
+**No hay migración hermana de reversión, y no puede haberla:** una migración destructiva no crea nada que una de vuelta pueda reconocer por su `_id`, y lo que borra no se reconstruye. Su lugar lo ocupa el **export previo del dataset**, guardado fuera del árbol de trabajo. Los borradores entran por defecto y no deben excluirse: son lo que la purga se lleva sin dejar rastro visible en el Studio.
+
+```bash
+# Desde cms/. El dataset va posicional y el flag de proyecto es `--project-id` — distinto del
+# `--project`/`--dataset` inseparables de `migration run`.
+pnpm exec sanity dataset export <destino> "<ruta fuera del repo>/<destino>-<fecha>.tar.gz" \
+  --project-id "$(node --env-file=.env -p 'process.env.SANITY_STUDIO_PROJECT_ID')"
+```
+
+Conviene además enunciar qué **otras** migraciones invalida la corrida: una reversión que aborta cuando su campo de origen ya no está poblado queda inservible desde el momento en que se da de baja ese campo, y descubrirlo al querer usarla es tarde.
+
+Ejemplo vivo: [`cms/migrations/purge-story-documents/README.md`](../../cms/migrations/purge-story-documents/README.md) — el runbook de las tres corridas ordenadas que dan de baja un tipo de contenido entero, con su export previo y sus consultas de censo.
+
 ### Migraciones que convierten contenido
 
 Las que llevan rich text a Markdown consumen [`resources/portable-text-to-markdown/`](../../resources/portable-text-to-markdown/README.md), que **falla ante lo que no sabe traducir** en vez de descartarlo en silencio. Antes de correr una conversión sobre el corpus, censar qué construcciones usa realmente el dataset (ver `scripts/audit/`): descubrirlo con la migración la detendría en el primer documento raro, con los anteriores ya escritos.
