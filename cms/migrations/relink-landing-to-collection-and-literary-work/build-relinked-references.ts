@@ -12,9 +12,9 @@ type TargetType = 'collection' | 'literaryWork';
 /** Sanity marca el borrador de un documento con este prefijo de path en su `_id`. */
 const DRAFTS_PATH_PREFIX = 'drafts.';
 
-// Los dos prefijos con los que se nombró a los documentos creados por migración. Son valores
-// históricos: identifican documentos que ya existen en el dataset, así que no pueden cambiar sin
-// dejar de reconocerlos.
+// Los prefijos con los que se nombró a los documentos creados por migración. Son valores históricos:
+// identifican documentos que ya existen en el dataset, así que no pueden cambiar sin dejar de
+// reconocerlos.
 const MIGRATED_LITERARY_WORK_ID_PREFIX = 'lw-from-story-';
 const MIGRATED_COLLECTION_ID_PREFIX = 'collection-from-storylist-';
 
@@ -46,9 +46,9 @@ function collectionIdFor(storylistId: string): string {
 /**
  * Deriva las referencias del campo nuevo a partir de las del viejo.
  *
- * Las derivaciones de `_id` viven acá abajo: nacieron en las migraciones que crearon los documentos
- * destino, y pasaron a este módulo cuando ésas se dieron de baja. El destino sigue existiendo, así que
- * la regla con la que se lo nombra tenía que sobrevivirlas.
+ * Las derivaciones de `_id` viven acá abajo, y no en la migración que creó los documentos destino: son
+ * la única forma de nombrarlos, así que tienen que estar donde se los nombra. El mismo prefijo de obra
+ * se declara además en la verificación de la purga, que es su otro consumidor.
  *
  * **La referencia se construye campo por campo y no se spreadea.** El destino cambia de tipo, así que
  * `_strengthenOnPublish` —que nombra contra qué tipo el Studio debe fortalecer la referencia al

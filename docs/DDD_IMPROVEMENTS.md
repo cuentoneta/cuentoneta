@@ -1500,9 +1500,9 @@ class StoryInvariants {
     }
   }
 
-  private static validateContent(paragraphs: Markdown): void {
-    if (!Array.isArray(paragraphs) || paragraphs.length === 0) {
-      throw new Error('Invariante violada: Historia debe tener al menos un párrafo');
+  private static validateContent(body: Markdown): void {
+    if (body.trim().length === 0) {
+      throw new Error('Invariante violada: la obra debe tener cuerpo');
     }
   }
 

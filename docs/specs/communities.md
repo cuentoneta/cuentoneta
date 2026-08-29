@@ -3333,3 +3333,5 @@ Extender `sitemap.xml` para incluir:
 **Próxima Revisión:** Después de completar Fase 1 (Infraestructura Base)
 
 ---
+
+_Esta especificación está en proceso de implementación y será refinada conforme se avance en su desarrollo._
