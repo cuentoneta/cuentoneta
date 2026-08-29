@@ -1,15 +1,17 @@
 # Scripts del monorepo
 
-> Convención para agentes y colaboradores sobre qué vive en `scripts/` y qué no. Detalle de auditoría/diagnóstico Sanity: [`scripts/audit/README.md`](../../scripts/audit/README.md).
+> Convención para agentes y colaboradores sobre qué vive en `scripts/` y qué no.
 
 ## Convención
 
-| Qué                                | Dónde                                                                             |
-| ---------------------------------- | --------------------------------------------------------------------------------- |
-| Build / config de la app           | raíz de `scripts/` (p. ej. `set-environment.ts`, `fix-index-file-name.mjs`)       |
-| Operaciones reusables sobre Sanity | raíz de `scripts/` o npm script en `package.json` (p. ej. `delete-unused-assets`) |
-| Auditoría / diagnóstico one-off    | `scripts/audit/` — **no** se agregan a `package.json`; se lintean como el resto   |
-| Herramienta con núcleo y spec      | subdirectorio propio (p. ej. `scripts/extract-comments/`), con su npm script      |
+| Qué                                | Dónde                                                                                                                   |
+| ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| Build / config de la app           | raíz de `scripts/` (p. ej. `set-environment.ts`, `fix-index-file-name.mjs`)                                             |
+| Operaciones reusables sobre Sanity | raíz de `scripts/` o npm script en `package.json` (p. ej. `delete-unused-assets`)                                       |
+| Auditoría / diagnóstico one-off    | raíz de `scripts/`, sin script en `package.json` — se corren explícitos con `pnpm exec tsx`, y se lintean como el resto |
+| Herramienta con núcleo y spec      | subdirectorio propio (p. ej. `scripts/extract-comments/`), con su npm script                                            |
+
+Lo que distingue a un script vivo de uno de auditoría no es el directorio: es si tiene **comando propio en `package.json`**. El primero se corre por rutina (un build, un backfill recurrente); el segundo se corre una vez para responder una pregunta puntual sobre el dataset y no necesita quedar expuesto — quien lo corre invoca `pnpm exec tsx scripts/<script>.ts` directo.
 
 **No** viven en `scripts/` las migraciones de datos: se delegan exclusivamente a la infraestructura de migrations de Sanity → [`sanity-migrations.md`](sanity-migrations.md).
 

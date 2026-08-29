@@ -9,7 +9,7 @@
 | Migración de datos | `cms/migrations/<slug>/index.ts` (un directorio por migración) |
 | Definición         | `export default defineMigration({...})` de `sanity/migrate`    |
 
-A diferencia de los scripts one-off (que se borran del working tree tras correr), las migraciones **se versionan y se conservan** en `cms/migrations/`: quedan como registro reproducible del cambio aplicado al contenido.
+A diferencia de los scripts one-off (que se borran del working tree tras correr), una migración se versiona mientras sigue siendo **aplicable** — a un dataset o a una forma de dato que todavía puede aparecer — y queda en `cms/migrations/` como registro reproducible del cambio aplicado al contenido. Deja de serlo, y se da de baja, cuando su **tipo de origen dejó de existir en el schema**: no queda dataset ni forma de dato futura sobre la que pueda volver a correr. Antes de borrarla se extrae a un módulo propio lo que otra migración viva todavía consuma (un predicado de reconocimiento, una tabla de correcciones, …); su historia —qué hacía y por qué se dio de baja— queda en el historial de git y en el PR que la retiró, no en este documento.
 
 ## Convención
 
@@ -26,8 +26,6 @@ Ejemplo vivo: [`cms/migrations/set-default-story-coverimage/index.ts`](../../cms
 
 `migrate.document` no está limitado a parchear el documento que recibe: puede devolver mutaciones dirigidas a **otro** documento, incluso de otro tipo. Eso habilita migrar iterando un tipo y escribiendo otro — `documentTypes` acota qué se **recorre**, no qué se **escribe**.
 
-Ejemplo vivo: [`cms/migrations/story-to-literary-work/`](../../cms/migrations/story-to-literary-work/) recorre `story` y emite `createIfNotExists` sobre `literaryWork`, sin tocar el cuento de origen.
-
 Cuando una migración crea documentos, tres decisiones se resuelven juntas con **un `_id` derivado** del documento de origen:
 
 | Necesidad                        | Cómo la resuelve el `_id` derivado                                                 |
@@ -39,8 +37,6 @@ Cuando una migración crea documentos, tres decisiones se resuelven juntas con *
 Preferir `createIfNotExists` sobre `createOrReplace`: el segundo refresca el contenido a costa de pisar lo que alguien haya editado a mano después de migrar.
 
 **Si el origen puede ser un borrador, el prefijo de path se reaplica, no se concatena.** Sanity marca un borrador con `drafts.` **encabezando** el `_id`, así que derivar `drafts.<origen>` como `<prefijo>drafts.<origen>` produce un documento publicado con nombre de borrador — y publica contenido inédito sin que nada lo señale. Lo correcto es separar el path del identificador, derivar sobre lo que queda y volver a anteponerlo: `drafts.<prefijo><origen>`. El predicado de reconocimiento y el `filter` de la reversión tienen que contemplar ambas formas.
-
-Ejemplo vivo: [`cms/migrations/draft-story-to-literary-work/`](../../cms/migrations/draft-story-to-literary-work/README.md) — crea una obra en borrador por cada cuento en borrador, con su reversión acotada a ese lote.
 
 El predicado que reconoce un documento migrado se declara **una sola vez** y lo importan ambas migraciones. Si cada una tuviera el suyo, una divergencia entre las dos definiciones podría dejar documentos sin borrar —o borrar de más—. Y el guard va **dentro** de `migrate.document`, no solo en el `filter`: el filtro es una optimización del recorrido, no la garantía.
 
@@ -64,12 +60,6 @@ pnpm exec sanity dataset export <destino> "<ruta fuera del repo>/<destino>-<fech
 Conviene además enunciar qué **otras** migraciones invalida la corrida: una reversión que aborta cuando su campo de origen ya no está poblado queda inservible desde el momento en que se da de baja ese campo, y descubrirlo al querer usarla es tarde.
 
 Ejemplo vivo: [`cms/migrations/purge-story-documents/README.md`](../../cms/migrations/purge-story-documents/README.md) — el runbook de las tres corridas ordenadas que dan de baja un tipo de contenido entero, con su export previo y sus consultas de censo.
-
-### Migraciones que convierten contenido
-
-Las que llevan rich text a Markdown consumen [`resources/portable-text-to-markdown/`](../../resources/portable-text-to-markdown/README.md), que **falla ante lo que no sabe traducir** en vez de descartarlo en silencio. Antes de correr una conversión sobre el corpus, censar qué construcciones usa realmente el dataset (ver `scripts/audit/`): descubrirlo con la migración la detendría en el primer documento raro, con los anteriores ya escritos.
-
-Que una corrida reporte N mutaciones dice que **alcanzó** N documentos, no que no perdió contenido —ni, al aplicar, que haya escrito algo: el contador cuenta lo que la migración emite, no lo que el servidor termina aplicando—. La verificación de fidelidad se hace comparando el texto de origen contra el que produce el pipeline real, y la de idempotencia mirando si el contenido cambió, no contando mutaciones.
 
 ## Orden de despliegue: clasificar antes de correr
 

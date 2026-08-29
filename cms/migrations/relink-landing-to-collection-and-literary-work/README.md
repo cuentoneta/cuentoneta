@@ -10,7 +10,7 @@ Puebla los campos de la página de inicio y del contenido rotativo que referenci
 
 ## Prerequisito
 
-**`storylist-to-collection` y `story-to-literary-work` tienen que estar aplicadas con `--no-dry-run` en el mismo dataset.** Las referencias nuevas se derivan del identificador del documento migrado; si ese documento no existe y la referencia es fuerte, el content lake rechaza la transacción entera al escribir.
+**Los documentos destino tienen que existir ya en el dataset.** Las referencias nuevas se derivan del identificador del documento migrado; si ese documento no existe y la referencia es fuerte, el content lake rechaza la transacción entera al escribir. Las migraciones que los crearon se dieron de baja una vez aplicadas en los tres datasets, así que el prerequisito hoy se verifica mirando el dataset, no corriéndolas.
 
 El dry-run **no** lo detecta: imprime mutaciones sin llegar al servidor. Por eso la verificación de referencias colgadas es un paso obligatorio del procedimiento, no una sugerencia.
 

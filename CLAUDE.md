@@ -201,7 +201,7 @@ Si un cambio toca tipos, schemas de Sanity/Zod, contratos de API o terminología
 | `angular-state.md`         | Estado signals-first sin NgRx (servicios + signals/RxJS)                                    |
 | `testing.md`               | Vitest + Angular Testing Library + `@test-utils` + Storybook                                |
 | `sanity-acl.md`            | GROQ → repository → mapper → modelo de dominio (el ACL central)                             |
-| `scripts.md`               | Convención de `scripts/` vs. `scripts/audit/` (auditoría one-off)                           |
+| `scripts.md`               | Convención de qué vive en `scripts/` y qué no (expuesto en `package.json` o no)             |
 | `sanity-migrations.md`     | Migraciones de datos de Sanity (`cms/migrations/`), no en `scripts/`                        |
 | `typescript.md`            | Micro-convenciones TS/JS (`Object.freeze`, type-only, duration strings)                     |
 | `maintainability.md`       | Mantenibilidad y simplificación estructural                                                 |

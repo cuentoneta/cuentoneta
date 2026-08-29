@@ -489,7 +489,7 @@ Consecuencias:
 
 ## 12. Migración del corpus de `Story`
 
-Decisiones vigentes sobre las obras que nacen de migrar un cuento. La migración vive en [`cms/migrations/story-to-literary-work/`](../cms/migrations/story-to-literary-work/README.md), con su procedimiento operativo y su reversión; los cuentos en borrador los cubre [`cms/migrations/draft-story-to-literary-work/`](../cms/migrations/draft-story-to-literary-work/README.md).
+Decisiones vigentes sobre las obras que nacieron de migrar un cuento. Las migraciones que las crearon —la del corpus publicado y la de los borradores— se dieron de baja una vez aplicadas en los tres datasets; lo que queda vigente es la forma de los documentos que produjeron, que es lo que este apartado describe.
 
 **Un cuento en borrador produce una obra en borrador.** El estado de publicación se conserva: el prefijo de path `drafts.` **encabeza** el identificador derivado, en vez de concatenarse detrás del origen —Sanity lo lee como borrador solo cuando abre el `_id`, así que la otra forma publicaría contenido inédito en silencio—. De ahí se sigue que un cuento con versión publicada y borrador produce el borrador de su **misma** obra, no una obra distinta. **La referencia al autor conserva su debilidad.** Cuando el autor todavía no está publicado, el Studio marca la referencia como débil y anota que hay que fortalecerla al publicarlo; reconstruirla fuerte haría que el content lake rechazara la escritura, porque una referencia fuerte exige que el destino exista y estar en un borrador no exime de eso. Los borradores que no permiten construir una obra válida se excluyen **en el filtro** de la migración, no en el mapeo: estar a medio escribir es un estado legítimo de un borrador, no un error del dataset.
 
