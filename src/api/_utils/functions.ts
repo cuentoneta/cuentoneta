@@ -9,7 +9,6 @@ import { Author, AuthorProfile, AuthorTeaser } from '@models/author.model';
 import { ContentCampaign, viewportElementSizes } from '@models/content-campaign.model';
 import { Resource } from '@models/resource.model';
 import { Tag } from '@models/tag.model';
-import { TextBlockContent } from '@models/block-content.model';
 import { createMarkdown } from '@models/markdown.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 
@@ -17,7 +16,6 @@ import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import {
 	AuthorBySlugQueryResult,
 	AuthorsQueryResult,
-	BlockContent,
 	CollectionBySlugQueryResult,
 	LandingPageContentQueryResult,
 	LiteraryWorkBySlugQueryResult,
@@ -180,11 +178,6 @@ export function mapTags(tags: TagsSubQuery): Tag[] {
 		slug: tag.slug,
 		description: tag.description,
 	}));
-}
-
-// TODO: Agregar soporte a futuro para mapear imágenes dentro del cuerpo de una story
-export function mapBlockContentToTextParagraphs(content: BlockContent): TextBlockContent[] {
-	return content.filter((element) => element._type === 'block') as TextBlockContent[];
 }
 
 type HighlightedAuthorsSubQuery = NonNullable<LandingPageContentQueryResult>['highlightedAuthors'];

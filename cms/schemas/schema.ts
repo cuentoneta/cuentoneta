@@ -3,7 +3,6 @@
 
 // We import object and document schemas
 import author from './author';
-import blockContent from './blockContent';
 import collection from './collection';
 import literaryWork from './literaryWork';
 import nationality from './nationality';
@@ -16,7 +15,6 @@ import rotatingContent from './rotatingContent';
 
 export default [
 	// Tipos de propiedades
-	blockContent,
 	contributors,
 	resource,
 	// Tipos de documentos

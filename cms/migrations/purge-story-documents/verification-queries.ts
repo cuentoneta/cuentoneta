@@ -1,4 +1,7 @@
-import { MIGRATED_ID_PREFIX } from '../story-to-literary-work/build-literary-work-document';
+// El prefijo con el que se nombró a las obras creadas a partir de un cuento. Es un valor histórico:
+// identifica documentos que ya existen en el dataset, así que no puede cambiar sin dejar de
+// reconocerlos. La migración que lo acuñó se dio de baja; el prefijo sobrevive en sus `_id`.
+const MIGRATED_LITERARY_WORK_ID_PREFIX = 'lw-from-story-';
 
 /**
  * Las consultas del censo previo y de la verificación posterior, como constantes ejecutables en vez de
@@ -57,14 +60,11 @@ export const INCOMING_REFERENCES_QUERY = `*[_type in ['story', 'storylist']]{
  * No aborta nada — la decisión de que desaparezcan ya está tomada. Se corre para que el censo del PR
  * los nombre, en vez de que se descubran ausentes después.
  *
- * El identificador esperado se deriva del prefijo que usa la migración de ida, importado y no
- * reescrito: con dos definiciones, una divergencia haría que este censo declarara huérfano a un cuento
- * que sí migró.
  */
 export const WORKS_WITHOUT_COUNTERPART_QUERY = `*[
   _type == 'story' &&
   !(_id in path('drafts.**')) &&
-  !defined(*[_id == '${MIGRATED_ID_PREFIX}' + ^._id][0])
+  !defined(*[_id == '${MIGRATED_LITERARY_WORK_ID_PREFIX}' + ^._id][0])
 ]{ _id, 'slug': slug.current }`;
 
 /**
