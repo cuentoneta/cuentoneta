@@ -62,6 +62,29 @@ beforeEach(() => {
 
 ---
 
+## Regla dura: en `e2e/`, el `test` sale del fixture del repo
+
+Los specs de Playwright importan `test` de **`e2e/_utils/test.ts`**, nunca de `@playwright/test`. Ese
+`test` intercepta los assets del CDN de Sanity y responde una imagen local del mismo tamaño que el
+original, en vez de descargarlos: el CDN factura ancho de banda y una corrida completa pide las
+mismas portadas muchas veces —un proyecto por browser, contexto nuevo por test, sin cache HTTP entre
+ellos—. Lo verifica el bloque `e2e-playwright-fixture` de `eslint.config.mjs`, porque el olvido no
+tiene otra señal: el spec que sale al CDN pasa igual.
+
+- **`expect` y los tipos** (`Page`, `Locator`, …) siguen saliendo de `@playwright/test`: no los toca
+  ningún fixture.
+- La sustitución se cuelga del fixture `context`, no de uno automático, para que los specs que solo
+  usan `request` no paguen el arranque de un navegador.
+- **`interceptedSanityAssets`** expone las URLs interceptadas del test. Quien lo use para afirmar
+  cobertura tiene que exigirlo **no vacío**: una página que dejara de referenciar imágenes daría
+  verde sin proteger nada.
+- **Opt-out**: `test.use({ interceptSanityAssets: false })`, para los specs que miden **geometría** y
+  no contenido. Sustituir una imagen cambia _cuándo_ llega, y eso corre las carreras que esos specs
+  ya bordean — medido sobre el apilamiento contra la barra de navegación, que empezó a fallar de a
+  ratos. Quien lo tome paga el ancho de banda real, así que la vara es alta.
+
+---
+
 ## Regla dura: el corpus se consume por colecciones, nunca por obra
 
 ESLint (`no-single-work-corpus-imports` en `eslint.config.mjs`) **prohíbe** importar una pieza puntual del corpus desde cualquier archivo fuera de `src/mocks/**` — los agregadores son justamente quienes las importan. El glob es `@mocks/onoff/**`, así que cubre las subcarpetas por entidad —`literary-work/`, `collection/`, `landing-page/`, `author/`, `media/`, `document/`— a cualquier profundidad.
