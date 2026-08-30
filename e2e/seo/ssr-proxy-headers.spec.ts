@@ -11,7 +11,9 @@
  * canónica del cuento, no el shell genérico de home). Si alguien quita `trustProxyHeaders: true`,
  * el server deoptea y este test falla.
  */
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+
+import { test } from '../_utils/test';
 
 import { getTitleText, getCanonicalHref } from '../_utils/seo';
 import { STABLE_SLUGS } from '../_utils/seo-fixtures';

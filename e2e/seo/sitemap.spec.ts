@@ -15,7 +15,9 @@
  * No es una validación contra el esquema publicado: no cubre cardinalidades, el tipo de dato de la
  * fecha ni los límites de tamaño del documento.
  */
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+
+import { test } from '../_utils/test';
 
 import { childElementSequences, locations } from '@testing/sitemap-xml';
 

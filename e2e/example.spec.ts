@@ -1,4 +1,6 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+
+import { test } from './_utils/test';
 
 test('home: único H1 de contenido y marca en el header', async ({ page }) => {
 	await page.goto('/');

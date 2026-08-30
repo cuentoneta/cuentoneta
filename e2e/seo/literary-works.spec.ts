@@ -4,7 +4,9 @@
  * La tanda completa corre sin `fixme`: la página no difiere nada, así que el HTML servido trae la
  * tabla entera con el enlace a la lectura de cada obra.
  */
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+
+import { test } from '../_utils/test';
 
 import { parseJsonLdBlocks, getMetaContent, getTitleText, getCanonicalHref } from '../_utils/seo';
 import { assertValidJsonLd } from '@testing/json-ld-validation';

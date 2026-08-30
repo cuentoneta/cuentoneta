@@ -8,7 +8,9 @@
  * El mecanismo vive en `_utils/stacking`, compartido con el caso general de todas las rutas. Acá queda el
  * caso que nombra al hero: es el que documenta el defecto concreto del que salió la escala.
  */
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+
+import { test } from './_utils/test';
 
 import { NAV_OWNS_EVERY_SAMPLE, STACKING_VIEWPORTS, VIEWPORT_HEIGHT, navStackingReport } from './_utils/stacking';
 import { STABLE_SLUGS } from './_utils/seo-fixtures';
