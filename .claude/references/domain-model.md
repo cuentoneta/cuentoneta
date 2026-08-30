@@ -284,7 +284,7 @@ GROQ → repository.fetch*()  →  service.get*()  →  mapX(raw): DomainType  �
 ```
 
 - Mappers como **funciones puras**: `mapAuthor`, `mapAuthorTeaser`, `mapResources`, `mapTags`, …
-- Los helpers de imágenes (`urlFor`, `urlForWithAutoFormat`) también viven en la capa de mappers.
+- El helper de imágenes (`urlFor`) también vive en la capa de mappers, y emite la URL canónica: los parámetros de transformación los agrega el `IMAGE_LOADER` del frontend.
 - Al cambiar una query GROQ o un tipo generado de Sanity, actualizá el **mapper** y los tipos de dominio en el **mismo** PR.
 
 El ACL es la frontera explícita entre la infraestructura (Sanity) y el dominio: un cambio en el CMS no afecta al dominio mientras se mantengan los contratos. Detalle en [`sanity-acl.md`](sanity-acl.md).

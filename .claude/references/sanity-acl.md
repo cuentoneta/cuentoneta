@@ -294,14 +294,17 @@ export function urlFor(source: SanityImageSource): string {
 		return '';
 	}
 }
-
-export function urlForWithAutoFormat(source: SanityImageSource): string {
-	// idéntico, pero .auto('format').url() para servir el formato óptimo (WebP/AVIF)
-}
 ```
 
-Los mappers invocan `urlFor` / `urlForWithAutoFormat` y exponen al dominio un `imageUrl: string`,
-nunca el `SanityImageSource` crudo.
+Los mappers invocan `urlFor` y exponen al dominio un `imageUrl: string`, nunca el
+`SanityImageSource` crudo.
+
+**La URL sale del ACL sin parámetros de transformación.** El tamaño, el formato y la calidad los
+agrega el `IMAGE_LOADER` que la aplicación registra en `app.config.ts`
+(`src/app/providers/sanity-image-loader.ts`), que es quien conoce la caja donde la imagen se pinta —
+el ACL no: la misma portada alimenta una tarjeta chica y el fondo a ancho completo de un hero.
+Agregar un parámetro acá lo **duplica** en la URL final, porque el loader corre igual sobre lo que
+el mapper emitió.
 
 ---
 

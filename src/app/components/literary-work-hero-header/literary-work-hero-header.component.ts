@@ -3,7 +3,6 @@ import { NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
 import type { LiteraryWork } from '@models/literary-work.model';
-import { withSanityImageParams } from '@utils/sanity-image.utils';
 import { AppRoutes } from '../../app.routes';
 import { CoverImageComponent } from '../cover-image/cover-image.component';
 import { ImageProfileComponent } from '../image-profile/image-profile.component';
@@ -86,7 +85,7 @@ export class LiteraryWorkHeroHeaderComponent {
 
 	public readonly literaryWork = input<LiteraryWork>();
 
-	protected readonly backgroundImageUrl = computed(() =>
-		withSanityImageParams(this.literaryWork()?.coverImage ?? '', { w: 1920 }),
-	);
+	// Sin parámetros de transformación: los agrega el `IMAGE_LOADER` a partir del `sizes` del `<img>`,
+	// que acá declara el ancho real que ocupa la banda.
+	protected readonly backgroundImageUrl = computed(() => this.literaryWork()?.coverImage);
 }
