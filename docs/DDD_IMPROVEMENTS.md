@@ -1360,7 +1360,7 @@ Las reglas de negocio (invariantes) no están explícitas en el código. Se encu
 ```typescript
 // Ejemplo actual - Invariantes implícitas
 interface Story {
-	paragraphs: TextBlockContent[]; // ¿Puede estar vacío?
+	paragraphs: Markdown; // ¿Puede estar vacío?
 	author: Author; // ¿Siempre presente?
 	approximateReadingTime: number; // ¿Puede ser negativo?
 }
@@ -1388,13 +1388,13 @@ class Story {
   readonly _id: string;
   readonly slug: Slug;
   readonly title: string;
-  readonly paragraphs: TextBlockContent[];
+  readonly paragraphs: Markdown;
   readonly author: Author;
   readonly approximateReadingTime: ReadingTime;
   readonly badLanguage?: boolean;
   readonly originalPublication: string;
   readonly epigraphs: Epigraph[];
-  readonly summary: TextBlockContent[];
+  readonly summary: Markdown;
   readonly resources: Resource[];
   readonly media: Media[];
 
@@ -1500,9 +1500,9 @@ class StoryInvariants {
     }
   }
 
-  private static validateContent(paragraphs: TextBlockContent[]): void {
-    if (!Array.isArray(paragraphs) || paragraphs.length === 0) {
-      throw new Error('Invariante violada: Historia debe tener al menos un párrafo');
+  private static validateContent(body: Markdown): void {
+    if (body.trim().length === 0) {
+      throw new Error('Invariante violada: la obra debe tener cuerpo');
     }
   }
 
@@ -1528,7 +1528,7 @@ class Author {
   readonly nationality: AuthorNationality;
   readonly bornOn?: DateString;
   readonly diedOn?: DateString;
-  readonly biography: TextBlockContent[];
+  readonly biography: Markdown;
   readonly resources: Resource[];
 
   private constructor(props: AuthorProps) {

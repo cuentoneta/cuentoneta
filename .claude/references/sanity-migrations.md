@@ -9,7 +9,11 @@
 | Migración de datos | `cms/migrations/<slug>/index.ts` (un directorio por migración) |
 | Definición         | `export default defineMigration({...})` de `sanity/migrate`    |
 
-A diferencia de los scripts one-off (que se borran del working tree tras correr), las migraciones **se versionan y se conservan** en `cms/migrations/`: quedan como registro reproducible del cambio aplicado al contenido.
+A diferencia de los scripts one-off (que se borran del working tree tras correr), una migración se versiona mientras sigue siendo **aplicable** y queda en `cms/migrations/` como registro reproducible del cambio aplicado al contenido.
+
+**Aplicable se mide contra el dato, no contra el schema.** Una migración sigue siéndolo mientras exista contenido sobre el que pueda actuar —en cualquiera de los datasets— o una forma de dato que todavía pueda aparecer. Que su tipo de origen ya no esté registrado en el Studio **no** alcanza para darla de baja: dar de baja un schema no borra los documentos, y una migración que recorre un tipo retirado puede ser justamente la que falta correr sobre ellos.
+
+Se da de baja cuando no queda nada sobre lo que pueda actuar y nadie la consume: ni documentos de la forma que transforma, ni posibilidad de que reaparezcan. Antes de borrarla hay que reubicar lo que otra migración viva todavía consuma —un predicado de reconocimiento, un prefijo derivado, una tabla de correcciones—; dónde se reubica es un juicio de diseño y no una regla: en el consumidor, si es uno solo, y en un módulo propio recién cuando son varios y una divergencia entre copias tendría consecuencias. Su historia —qué hacía y por qué se dio de baja— queda en el historial de git y en el PR que la retiró, no en este documento.
 
 ## Convención
 
@@ -20,13 +24,11 @@ A diferencia de los scripts one-off (que se borran del working tree tras correr)
 - Migraciones idempotentes cuando sea posible (p. ej. `setIfMissing` para backfills).
 - La migración lleva su **spec co-locado**: `index.spec.ts` al lado del `index.ts`, con un `describe` nombrado por el slug de la migración. Como `defineMigration` conserva el objeto tal cual, el spec ejercita `migrate.document` directamente —es la función pura que decide el patch de cada documento— con el mismo helper que usan los specs existentes (`migration.migrate?.document`, casteado al tipo de parámetro inferido). Corre como Vitest standalone de `cms/` dentro del gate `studio-build` (`pnpm sanity:test`) — ver [Segunda config de Vitest: el Studio](testing.md#segunda-config-de-vitest-el-studio-cms). Como mínimo cubre el camino feliz, la idempotencia (una segunda corrida no produce mutación) y el aborto de cada guard.
 
-Ejemplo vivo: [`cms/migrations/set-default-story-coverimage/index.ts`](../../cms/migrations/set-default-story-coverimage/index.ts) — backfill de `coverImage` (ahora requerido) en historias previas al campo.
+Ejemplo vivo: [`cms/migrations/set-default-bad-language/index.ts`](../../cms/migrations/set-default-bad-language/index.ts) — backfill de `badLanguage` en las obras previas al campo.
 
 ### Una migración puede crear documentos de otro tipo
 
 `migrate.document` no está limitado a parchear el documento que recibe: puede devolver mutaciones dirigidas a **otro** documento, incluso de otro tipo. Eso habilita migrar iterando un tipo y escribiendo otro — `documentTypes` acota qué se **recorre**, no qué se **escribe**.
-
-Ejemplo vivo: [`cms/migrations/story-to-literary-work/`](../../cms/migrations/story-to-literary-work/) recorre `story` y emite `createIfNotExists` sobre `literaryWork`, sin tocar el cuento de origen.
 
 Cuando una migración crea documentos, tres decisiones se resuelven juntas con **un `_id` derivado** del documento de origen:
 
@@ -40,9 +42,11 @@ Preferir `createIfNotExists` sobre `createOrReplace`: el segundo refresca el con
 
 **Si el origen puede ser un borrador, el prefijo de path se reaplica, no se concatena.** Sanity marca un borrador con `drafts.` **encabezando** el `_id`, así que derivar `drafts.<origen>` como `<prefijo>drafts.<origen>` produce un documento publicado con nombre de borrador — y publica contenido inédito sin que nada lo señale. Lo correcto es separar el path del identificador, derivar sobre lo que queda y volver a anteponerlo: `drafts.<prefijo><origen>`. El predicado de reconocimiento y el `filter` de la reversión tienen que contemplar ambas formas.
 
-Ejemplo vivo: [`cms/migrations/draft-story-to-literary-work/`](../../cms/migrations/draft-story-to-literary-work/README.md) — crea una obra en borrador por cada cuento en borrador, con su reversión acotada a ese lote.
+Cuando más de una migración viva reconoce al mismo documento derivado, el predicado se declara **una sola vez** y lo importan todas: con una copia por consumidor, una divergencia entre definiciones podría dejar documentos sin alcanzar —o alcanzar de más—. Con un solo consumidor la copia vive en él, y la fuente compartida deja de pagarse. Y el guard va **dentro** de `migrate.document`, no solo en el `filter`: el filtro es una optimización del recorrido, no la garantía.
 
-El predicado que reconoce un documento migrado se declara **una sola vez** y lo importan ambas migraciones. Si cada una tuviera el suyo, una divergencia entre las dos definiciones podría dejar documentos sin borrar —o borrar de más—. Y el guard va **dentro** de `migrate.document`, no solo en el `filter`: el filtro es una optimización del recorrido, no la garantía.
+### Qué dice —y qué no— el contador de una corrida
+
+Que una corrida reporte N mutaciones dice que **alcanzó** N documentos, no que los haya transformado fielmente; ni, al aplicar, que el servidor haya escrito algo: el contador cuenta lo que la migración emite. La verificación de fidelidad se hace comparando el contenido de origen contra el que produce la migración, y la de idempotencia mirando si el contenido cambió, no contando mutaciones.
 
 ### Migraciones que borran documentos
 
@@ -64,12 +68,6 @@ pnpm exec sanity dataset export <destino> "<ruta fuera del repo>/<destino>-<fech
 Conviene además enunciar qué **otras** migraciones invalida la corrida: una reversión que aborta cuando su campo de origen ya no está poblado queda inservible desde el momento en que se da de baja ese campo, y descubrirlo al querer usarla es tarde.
 
 Ejemplo vivo: [`cms/migrations/purge-story-documents/README.md`](../../cms/migrations/purge-story-documents/README.md) — el runbook de las tres corridas ordenadas que dan de baja un tipo de contenido entero, con su export previo y sus consultas de censo.
-
-### Migraciones que convierten contenido
-
-Las que llevan rich text a Markdown consumen [`resources/portable-text-to-markdown/`](../../resources/portable-text-to-markdown/README.md), que **falla ante lo que no sabe traducir** en vez de descartarlo en silencio. Antes de correr una conversión sobre el corpus, censar qué construcciones usa realmente el dataset (ver `scripts/audit/`): descubrirlo con la migración la detendría en el primer documento raro, con los anteriores ya escritos.
-
-Que una corrida reporte N mutaciones dice que **alcanzó** N documentos, no que no perdió contenido —ni, al aplicar, que haya escrito algo: el contador cuenta lo que la migración emite, no lo que el servidor termina aplicando—. La verificación de fidelidad se hace comparando el texto de origen contra el que produce el pipeline real, y la de idempotencia mirando si el contenido cambió, no contando mutaciones.
 
 ## Orden de despliegue: clasificar antes de correr
 

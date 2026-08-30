@@ -13,8 +13,8 @@
 Sanity expone su contenido vía **GROQ**, y el typegen (`pnpm sanity:run-typegen-generator`) genera
 tipos a partir del schema y de cada query (`AuthorBySlugQueryResult`, `LiteraryWorkBySlugQueryResult`,
 `CollectionBySlugQueryResult`, …). Esos tipos describen el **shape crudo de Sanity**: campos
-opcionales/nullables, referencias sin resolver, imágenes como `SanityImageSource`, bloques
-`BlockContent`, `coalesce(...)` con defaults, etc.
+opcionales/nullables, referencias sin resolver, imágenes como `SanityImageSource`,
+`coalesce(...)` con defaults, etc.
 
 **Regla dura:** el resultado crudo de GROQ (los tipos `*QueryResult`) **nunca** se filtra al
 frontend. El frontend consume únicamente el **modelo de dominio** (`Author`, `LiteraryWork`,
@@ -266,16 +266,12 @@ Patrones que se repiten:
 - **Composición:** un mapper puede delegar en otros — `mapAuthorProfile` reutiliza `mapAuthor`, que a
   su vez delega en `mapResources` y `mapTags`. Los mappers de teaser (`mapAuthorTeaser`) devuelven
   `resources: []`/`tags: []` porque sus queries no proyectan esos campos completos.
-- **`BlockContent` → texto de dominio:** `mapBlockContentToTextParagraphs(content)` filtra los
-  bloques `_type === 'block'` de Portable Text a `TextBlockContent[]`. Hoy ningún mapper de dominio
-  lo consume — no lo usa la biografía del autor, que es Markdown, no Portable Text (ver bullet
-  siguiente).
 - **Markdown → `SanitizedHtml`:** `markdownToSanitizedHtml(createMarkdown(raw))` (`@utils/markdown-pipeline.utils`)
   es el pipeline que usa `mapAuthor` para `biography`. Es el mismo pipeline que consume el módulo
   `literary-work` para su contenido en Markdown (ver la nota de divergencia arriba).
 
 Mappers principales (no exhaustivo): `mapAuthor`, `mapAuthorProfile`, `mapAuthorTeaser`,
-`mapResources`, `mapTags`, `mapBlockContentToTextParagraphs`, `mapContentCampaigns`. Los mappers de
+`mapResources`, `mapTags`, `mapContentCampaigns`. Los mappers de
 la landing (`mapLandingPageContent`, `mapHighlightedAuthors`, la vista de navegación de obra) no
 viven acá: son métodos privados de `SanityContentRepository`, siguiendo la divergencia descripta
 arriba.

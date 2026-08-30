@@ -1,13 +1,5 @@
 import type { SanityImageSource } from '@sanity/image-url';
-import {
-	mapAuthor,
-	mapAuthorTeaser,
-	mapBlockContentToTextParagraphs,
-	mapContentCampaigns,
-	mapResources,
-	mapTags,
-	urlFor,
-} from './functions';
+import { mapAuthor, mapAuthorTeaser, mapContentCampaigns, mapResources, mapTags, urlFor } from './functions';
 import { rawOnoffAuthor, rawOnoffAuthorTeaser } from '@mocks/onoff-raw-author.mock';
 import { onoffRawContentCampaignsMock } from '@mocks/onoff-raw-landing-page.mock';
 import { onoffRawTagsMock } from '@mocks/onoff-raw-tags.mock';
@@ -31,29 +23,6 @@ describe('mapTags (ACL)', () => {
 
 	it('returns an empty array when there are no tags', () => {
 		expect(mapTags([])).toEqual([]);
-	});
-});
-
-// El helper sobrevive a la baja de la descripción de tag con más de una decena de llamadores (biografía,
-// recursos, colecciones, cuerpo y epígrafes de story). Su predicado de descarte se ejercita acá porque
-// ningún fixture del corpus mezcla elementos no-`block` dentro de un `BlockContent`.
-describe('mapBlockContentToTextParagraphs (ACL)', () => {
-	const paragraph = {
-		_type: 'block' as const,
-		_key: 'b1',
-		style: 'normal' as const,
-		markDefs: [],
-		children: [{ _type: 'span' as const, _key: 's1', text: 'texto', marks: [] }],
-	};
-
-	it('keeps text blocks and discards everything else', () => {
-		const result = mapBlockContentToTextParagraphs([paragraph, { _type: 'image', _key: 'img1' }]);
-
-		expect(result).toEqual([paragraph]);
-	});
-
-	it('returns an empty array when there is no text block', () => {
-		expect(mapBlockContentToTextParagraphs([{ _type: 'image', _key: 'img1' }])).toEqual([]);
 	});
 });
 

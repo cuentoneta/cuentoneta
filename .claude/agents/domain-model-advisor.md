@@ -38,7 +38,7 @@ Como toda sesión de agente sobre este repo: cargá también `.claude/references
 
 1. **Identificar entidades de dominio** — qué entidades, value objects, vistas polimórficas o agregados (raíz `Story` / `Author` / `Storylist`) están en juego, y a qué **bounded context** pertenecen.
 2. **Revisar diseño de interfaces** — patrón interface-first; los componentes dependen de interfaces de dominio, nunca del shape crudo de Sanity.
-3. **Chequear inmutabilidad** — `readonly` en propiedades, `readonly T[]` en arrays, contenido enriquecido (`TextBlockContent`/Portable Text) tratado como inmutable.
+3. **Chequear inmutabilidad** — `readonly` en propiedades, `readonly T[]` en arrays, el pipeline de Markdown (`Markdown`/`SanitizedHtml`) tratado como inmutable una vez producido.
 4. **Validar factory functions / mappers** — options object para 3+ params, devuelven el tipo de dominio, mappers puros.
 5. **Chequear validación en frontera** — Zod (`@hono/zod-validator`) sobre datos externos, una sola vez, en el borde.
 6. **Revisar el ACL** — los mappers (`map*`) traducen Sanity crudo → dominio y no filtran tipos `*QueryResult` al frontend.
@@ -62,7 +62,7 @@ Como toda sesión de agente sobre este repo: cargá también `.claude/references
 - [ ] Arrays como `readonly T[]`.
 - [ ] Sin setters públicos ni métodos de mutación.
 - [ ] Valores derivados calculados en construcción.
-- [ ] Contenido `TextBlockContent` / Portable Text tratado como inmutable una vez producido por Sanity.
+- [ ] El texto vinculado a contenido (`Markdown` → `SanitizedHtml`) tratado como inmutable una vez producido por el pipeline.
 
 ### Value Objects (Slug, ReadingTime, DateString) — hoy primitivos, promoción = roadmap
 

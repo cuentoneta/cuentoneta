@@ -1,6 +1,3 @@
-import { collectionIdFor } from '../storylist-to-collection/build-collection-document';
-import { literaryWorkIdFor } from '../story-to-literary-work/build-literary-work-document';
-
 /** Una referencia dentro de un array de Sanity: la clave la asigna el editor y sobrevive al reapuntado. */
 export interface KeyedReference {
 	_key: string;
@@ -12,12 +9,46 @@ export interface KeyedReference {
 
 type TargetType = 'collection' | 'literaryWork';
 
+/** Sanity marca el borrador de un documento con este prefijo de path en su `_id`. */
+const DRAFTS_PATH_PREFIX = 'drafts.';
+
+// Los prefijos con los que se nombró a los documentos creados por migración. Son valores históricos:
+// identifican documentos que ya existen en el dataset, así que no pueden cambiar sin dejar de
+// reconocerlos.
+const MIGRATED_LITERARY_WORK_ID_PREFIX = 'lw-from-story-';
+const MIGRATED_COLLECTION_ID_PREFIX = 'collection-from-storylist-';
+
+/**
+ * El prefijo de path va **antes** que el de la migración, no concatenado detrás del origen: Sanity lo
+ * lee como borrador solo cuando encabeza el `_id`. Un `drafts.` en el medio deja un documento
+ * publicado con un nombre que aparenta lo contrario, así que derivar el id de un borrador sin
+ * separarlo apuntaría a un documento que no existe.
+ *
+ * `drafts.` no es el único prefijo de path que usa Sanity: las Content Releases versionan con
+ * `versions.<release>.<id>`, que reintroduciría el mismo defecto. Hoy ningún llamador recorre esos
+ * documentos, así que el corte contempla un solo prefijo; sumar otro exige generalizarlo acá.
+ */
+function derivedIdFor(prefix: string, sourceId: string): string {
+	if (sourceId.startsWith(DRAFTS_PATH_PREFIX)) {
+		return `${DRAFTS_PATH_PREFIX}${prefix}${sourceId.slice(DRAFTS_PATH_PREFIX.length)}`;
+	}
+	return `${prefix}${sourceId}`;
+}
+
+function literaryWorkIdFor(storyId: string): string {
+	return derivedIdFor(MIGRATED_LITERARY_WORK_ID_PREFIX, storyId);
+}
+
+function collectionIdFor(storylistId: string): string {
+	return derivedIdFor(MIGRATED_COLLECTION_ID_PREFIX, storylistId);
+}
+
 /**
  * Deriva las referencias del campo nuevo a partir de las del viejo.
  *
- * Las derivaciones de `_id` se **importan** de las migraciones que crearon los documentos destino en vez
- * de replicarse: una segunda noción de "cuál es el documento migrado" podría apuntar al vacío, y las
- * importadas ya contemplan el prefijo de path que marca a los borradores.
+ * Las derivaciones de `_id` viven acá abajo, y no en la migración que creó los documentos destino: son
+ * la única forma de nombrarlos, así que tienen que estar donde se los nombra. El mismo prefijo de obra
+ * se declara además en la verificación de la purga, que es su otro consumidor.
  *
  * **La referencia se construye campo por campo y no se spreadea.** El destino cambia de tipo, así que
  * `_strengthenOnPublish` —que nombra contra qué tipo el Studio debe fortalecer la referencia al

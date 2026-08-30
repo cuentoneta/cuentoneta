@@ -217,8 +217,8 @@ export default [
 	{
 		// Las restricciones numéricas de CLAUDE.md, verificables por primera vez: hasta acá se sostenían
 		// solo por lectura humana, en todo el repo. Van en un bloque propio y global porque miden tamaño
-		// y forma, no framework: valen igual en la app Angular, en el Studio React, en los scripts, en
-		// los e2e y en resources. Sumarlas al bloque `nx` no serviría — declara `**/*.ts`, que no
+		// y forma, no framework: valen igual en la app Angular, en el Studio React, en los scripts y en
+		// los e2e. Sumarlas al bloque `nx` no serviría — declara `**/*.ts`, que no
 		// matchea el `.tsx` del Studio. Son reglas core, no `no-restricted-syntax`, así que no las
 		// alcanza la trampa de que un bloque posterior reemplace el array en vez de mergearlo.
 		name: 'size-and-complexity',

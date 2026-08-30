@@ -88,6 +88,8 @@ Una **comunidad** (`community`) es una organización de personas que comparten e
 
 ## Elementos de dominio identificados
 
+> **Formato del texto vinculado a contenido:** Markdown es el formato predilecto para toda descripción, biografía, cuerpo de artículo o base de certamen de este dominio. Los bocetos de schema de abajo usan `type: 'markdown'`, y las interfaces de dominio tipan ese texto como `Markdown` (ver [`markdown.model.ts`](../../src/models/markdown.model.ts)).
+
 ### Nuevas entidades principales
 
 #### Community (Comunidad)
@@ -102,7 +104,7 @@ interface Community {
 
 	// Información organizacional
 	name: string; // Nombre de la comunidad
-	description: TextBlockContent[]; // Descripción detallada
+	description: Markdown; // Descripción detallada
 	foundationYear?: number; // Año de fundación
 
 	// Identidad visual
@@ -155,7 +157,7 @@ interface CommunityMember {
 
 	// Perfil
 	image?: string; // Foto de perfil
-	biography?: TextBlockContent[]; // Breve biografía
+	biography?: Markdown; // Breve biografía
 	email?: string; // Correo de contacto
 
 	// Rol dentro de la comunidad
@@ -191,7 +193,7 @@ interface Event {
 
 	// Información básica
 	name: string; // Nombre del evento
-	description: TextBlockContent[]; // Descripción detallada
+	description: Markdown; // Descripción detallada
 
 	// Fechas
 	startDate: string; // Fecha y hora de inicio (ISO 8601)
@@ -250,7 +252,7 @@ interface BlogEntry {
 	// Contenido
 	title: string; // Título del artículo
 	excerpt: string; // Extracto para listados (máx 200 caracteres)
-	content: TextBlockContent[]; // Cuerpo del artículo
+	content: Markdown; // Cuerpo del artículo
 
 	// Metadatos
 	author: CommunityMember | Author; // Autor del artículo
@@ -291,7 +293,7 @@ interface Contest {
 
 	// Información básica
 	name: string; // Nombre del certamen
-	description: TextBlockContent[]; // Descripción y bases
+	description: Markdown; // Descripción y bases
 
 	// Fechas
 	openDate: string; // Fecha de apertura (ISO 8601)
@@ -307,7 +309,7 @@ interface Contest {
 
 	// Información de participación
 	registrationUrl?: string; // URL para registrarse
-	submissionGuidelines: TextBlockContent[]; // Normas de presentación
+	submissionGuidelines: Markdown; // Normas de presentación
 	prizes?: Prize[]; // Premios ofrecidos
 
 	// Contenido relacionado
@@ -620,36 +622,7 @@ Antes de implementar la característica completa de comunidades, es necesario re
 - Los certámenes se mostrarán en la página de perfil de la comunidad
 - Las historias ganadoras se incluirán en compilaciones (Storylist)
 
-### 3. Parser Completo de PortableText
-
-**Descripción:** Implementar soporte completo en el parser de PortableText para todos los estilos de formato.
-
-**Estilos Pendientes:**
-
-- Headings (h1-h6)
-- Highlights/coloreado de texto
-- Subrayados
-- Tachado
-- Superíndices/subíndices
-- Código en línea
-- Bloques de código
-
-**Componentes Multimedia:**
-
-- Imágenes embebidas con descripciones
-- Videos embebidos (YouTube, Vimeo)
-- Iframes personalizados
-- Carruseles de imágenes
-
-**Impacto en Comunidades:**
-
-- Blog entries utilizan Portable Text
-- Descripciones de comunidades pueden usar todos los estilos
-- Event descriptions requerirán formato completo
-
-**Ubicación Actual:** `src/app/components/portable-text-parser/`
-
-### 4. Funcionalidad de Eventos Base
+### 3. Funcionalidad de Eventos Base
 
 **Descripción:** Implementación base del agregado Event sin personalización de comunidades.
 
@@ -668,7 +641,7 @@ Antes de implementar la característica completa de comunidades, es necesario re
 - Notificaciones de eventos próximos
 - Sincronización con plataformas externas
 
-### 5. Sistema de Blog Base
+### 4. Sistema de Blog Base
 
 **Descripción:** Implementación de la funcionalidad de blog sin gestión de usuarios.
 
@@ -680,14 +653,12 @@ Antes de implementar la característica completa de comunidades, es necesario re
 - Página frontend para listar y leer blog entries
 - Editor de contenido que no requiera acceso a Sanity Studio
 
-**Parser de PortableText Completo (Requisito 3):** Necesario para renderizar blog entries con formato completo.
-
 **Impacto en Comunidades:**
 
 - Cada comunidad puede tener su propio blog
 - Solo miembros autenticados pueden crear entries (post-MVP)
 
-### 6. Base de Datos PostgreSQL
+### 5. Base de Datos PostgreSQL
 
 **Descripción:** Migración de almacenamiento de usuarios a PostgreSQL en lugar de solo Sanity.
 
@@ -958,8 +929,7 @@ user_roles (
 **BF.5 - Crear Blog Entry**
 
 - Ruta: `/community/:slug/blog/new` (requiere autenticación)
-- Editor de texto enriquecido (WYSIWYG)
-- Soporte para PortableText completo
+- Editor de Markdown con vista previa
 - Guardar como borrador o publicar
 - Vista previa en tiempo real
 
@@ -1071,7 +1041,7 @@ export default {
 		{
 			name: 'description',
 			title: 'Descripción',
-			type: 'blockContent',
+			type: 'markdown',
 			validation: (Rule) => Rule.required(),
 		},
 		{
@@ -1269,7 +1239,7 @@ export default {
 		{
 			name: 'biography',
 			title: 'Biografía',
-			type: 'blockContent',
+			type: 'markdown',
 		},
 		{
 			name: 'email',
@@ -1354,7 +1324,7 @@ export default {
 		{
 			name: 'description',
 			title: 'Descripción',
-			type: 'blockContent',
+			type: 'markdown',
 			validation: (Rule) => Rule.required(),
 		},
 		{
@@ -1493,7 +1463,7 @@ export default {
 		{
 			name: 'content',
 			title: 'Contenido',
-			type: 'blockContent',
+			type: 'markdown',
 			validation: (Rule) => Rule.required(),
 		},
 		{
@@ -1624,7 +1594,7 @@ export default {
 		{
 			name: 'description',
 			title: 'Descripción y Bases',
-			type: 'blockContent',
+			type: 'markdown',
 			validation: (Rule) => Rule.required(),
 		},
 		{
@@ -1677,7 +1647,7 @@ export default {
 		{
 			name: 'submissionGuidelines',
 			title: 'Normas de Presentación',
-			type: 'blockContent',
+			type: 'markdown',
 			validation: (Rule) => Rule.required(),
 		},
 		{
@@ -2669,7 +2639,7 @@ export interface Community {
 	_id: string;
 	slug: string;
 	name: string;
-	description: TextBlockContent[];
+	description: Markdown;
 	logo: string;
 	banner: string;
 	// ... otros campos
@@ -2905,7 +2875,7 @@ Draft → Published → Archived
 
 **Requisitos de la aplicación para editor de blog:**
 
-- Editor WYSIWYG para PortableText completo (con soporte completo para títulos, imágenes, videos, etc.)
+- Editor de Markdown con vista previa (soporte para títulos, imágenes, videos, etc.)
 - Guardado en borrador automático cada N segundos
 - Vista previa en tiempo real
 - Opción de publicar inmediatamente o programar para fecha futura
@@ -3144,16 +3114,7 @@ Extender `sitemap.xml` para incluir:
 - [ ] Proteger endpoints con autenticación
 - [ ] Testing de autenticación
 
-#### Sprint 1.2: parser de PortableText completo
-
-- [ ] Soporte para headings h1-h6
-- [ ] Soporte para highlights/colores
-- [ ] Soporte para subrayados, tachado
-- [ ] Soporte para imágenes embebidas
-- [ ] Soporte para bloques de código
-- [ ] Testing visual en storybook
-
-#### Sprint 1.3: eventos base
+#### Sprint 1.2: eventos base
 
 - [ ] Schema `event` en Sanity
 - [ ] GROQ queries para eventos
@@ -3163,7 +3124,7 @@ Extender `sitemap.xml` para incluir:
 - [ ] Event detail page `/event/:slug`
 - [ ] Testing
 
-#### Sprint 1.4: blog base
+#### Sprint 1.3: blog base
 
 - [ ] Schema `blogEntry` en Sanity
 - [ ] GROQ queries para blog entries
@@ -3171,7 +3132,7 @@ Extender `sitemap.xml` para incluir:
 - [ ] Service y Repository layer
 - [ ] Blog listing page `/blog`
 - [ ] Blog entry detail page `/blog/:slug`
-- [ ] Basic WYSIWYG editor (sin editor completo aún)
+- [ ] Basic Markdown editor (sin editor completo aún)
 - [ ] Testing
 
 ### Fase 2: módulo de comunidades (core)
@@ -3221,7 +3182,7 @@ Extender `sitemap.xml` para incluir:
 
 - [ ] Autenticación del usuario
 - [ ] Página de crear blog entry
-- [ ] Editor WYSIWYG completo
+- [ ] Editor de Markdown completo (con vista previa)
 - [ ] Guardado automático en borrador
 - [ ] Publicación de blog entry
 - [ ] Testing
@@ -3283,9 +3244,8 @@ Extender `sitemap.xml` para incluir:
          ┌─────▼──────────────────────────────────────────────────────┐
          │  FASE 1: Infraestructura Base (BLOQUEADORES)              │
          │  ├─ Autenticación y Gestión de Usuarios (Requiere)        │
-         │  ├─ Parser PortableText Completo                          │
          │  ├─ Eventos (Independiente, pero usado por Comunidades)   │
-         │  └─ Blog Base (Depende de Parser Completo)               │
+         │  └─ Blog Base                                              │
          └──────────┬──────────────────────────────────────────────┘
                     │
          ┌──────────▼───────────────────────────────────────────────┐
@@ -3327,7 +3287,6 @@ Extender `sitemap.xml` para incluir:
 | **Slug**           | Identificador único y amigable basado en el nombre (ej: tertulia-literaria)            |
 | **Plantilla**      | Configuración visual y estructura de secciones en página de comunidad                  |
 | **Teaser**         | Vista resumida de una entidad para listados                                            |
-| **PortableText**   | Formato de contenido enriquecido de Sanity (Portable Text)                             |
 
 ---
 
@@ -3353,7 +3312,6 @@ Extender `sitemap.xml` para incluir:
 - [Domain-Driven Design Reference](https://www.domainlanguage.com/ddd/reference/)
 - [Hexagonal Architecture](https://alistair.cockburn.us/hexagonal-architecture/)
 - [GROQ Query Language](https://www.sanity.io/docs/groq)
-- [Portable Text Specification](https://www.portabletext.org/)
 
 ### Tecnologías
 

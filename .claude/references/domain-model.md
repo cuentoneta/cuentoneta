@@ -176,7 +176,7 @@ export interface LiteraryWorkBase {
 - Calculá los valores derivados en la factory, antes de congelar el objeto.
 - `readonly` es una garantía **de tipos** (desaparece en runtime); el `Object.freeze` de la factory es la que sobrevive a la compilación.
 
-El contenido enriquecido (`TextBlockContent` / Portable Text) **se trata como inmutable**: una vez producido por Sanity, no se modifica en la aplicación.
+El texto vinculado a contenido (`Markdown` → `SanitizedHtml`) **se trata como inmutable**: una vez producido por el pipeline, no se modifica en la aplicación.
 
 ---
 

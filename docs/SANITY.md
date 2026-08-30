@@ -40,4 +40,4 @@ Para más detalles sobre las **consultas GROQ** y **funciones de repositorio** u
 
 ## Scripts de auditoría y diagnóstico
 
-Para tareas puntuales de **auditoría, diagnóstico o migración** sobre los datos de Sanity (por ejemplo, auditar el formato de las biografías de autores o exportarlas a Markdown), el proyecto incluye scripts one-off en `scripts/audit/`. No se exponen como comandos de `package.json` y se ejecutan explícitamente. Consulta su documentación, comandos y advertencias (read-only vs. escritura en producción) en [`scripts/audit/README.md`](../scripts/audit/README.md).
+Para tareas puntuales de **auditoría, diagnóstico o migración** sobre los datos de Sanity, el proyecto incluye scripts one-off en la raíz de `scripts/`, sin comando en `package.json`: se ejecutan explícitamente con `pnpm exec tsx`. Consulta la convención de qué vive en `scripts/` y bajo qué forma en [`scripts.md`](../.claude/references/scripts.md).

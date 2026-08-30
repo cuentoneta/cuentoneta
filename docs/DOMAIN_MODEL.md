@@ -149,8 +149,8 @@ interface Story {
 
 	// Contenido
 	title: string; // Título de la historia
-	paragraphs: TextBlockContent[]; // Cuerpo principal (nunca vacío)
-	summary: TextBlockContent[]; // Sinopsis
+	paragraphs: Markdown; // Cuerpo principal (nunca vacío)
+	summary: Markdown; // Sinopsis
 	epigraphs: Epigraph[]; // Epígrafes literarios opcionales
 
 	// Metadatos
@@ -196,8 +196,8 @@ Un epígrafe es un bloque de texto opcional que se utiliza para referenciar otro
 
 ```typescript
 interface Epigraph {
-	text: TextBlockContent[]; // El epígrafe
-	reference: TextBlockContent[]; // Referencia/fuente
+	text: Markdown; // El epígrafe
+	reference: Markdown; // Referencia/fuente
 }
 ```
 
@@ -361,7 +361,7 @@ interface Storylist {
 	count: number; // Total de historias
 
 	// Contenido
-	description: TextBlockContent[]; // Descripción de la colección
+	description: Markdown; // Descripción de la colección
 	imagery: StorylistImagery; // representative (portada editorial) o sample (portadas de historias)
 	tags: Tag[]; // Etiquetas de categorización
 
@@ -573,48 +573,6 @@ El tope de seis rige la edición en el Studio y no lo ya persistido, así que el
 ## Objetos de Valor (Value Objects)
 
 Los **Objetos de Valor** son objetos sin identidad propia que representan conceptos del dominio. Son inmutables y se comparan por su contenido, no por su referencia.
-
-### TextBlockContent
-
-**Propósito:** Representar contenido de texto enriquecido en formato Portable Text (Sanity).
-
-```typescript
-interface TextBlockContent {
-	// Identificador único dentro del documento
-	_key: string;
-	_type: 'block';
-
-	// Contenido
-	children: Block[]; // Fragmentos de texto con estilos
-	markDefs: MarkDef[]; // Definiciones de marcas (enlaces, etc.)
-
-	// Formato
-	style: 'normal' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'blockquote';
-
-	// Listas
-	listItem?: 'bullet' | 'number';
-	level?: number; // Nivel de anidación
-}
-
-interface Block {
-	_key: string;
-	_type: string;
-	text: string;
-	marks?: string[]; // Referencias a marcas definidas
-}
-
-interface MarkDef {
-	_key: string;
-	_type: string;
-	href: string; // URL del enlace
-}
-```
-
-**Uso:** Descripciones, contenido editorial, resúmenes.
-
-**Inmutabilidad:** Una vez creado por Sanity, no debe ser modificado en la aplicación.
-
----
 
 ### Media (Contenido Multimedia)
 
