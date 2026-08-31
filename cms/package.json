@@ -27,7 +27,7 @@
 		"@sanity/icons": "^5.2.1",
 		"@sanity/import": "^6.0.3",
 		"@sanity/ui": "^3.5.2",
-		"@sanity/vision": "^5.31.1",
+		"@sanity/vision": "^5.31.2",
 		"date-fns": "^4.4.0",
 		"prop-types": "^15.8.1",
 		"react": "^19.2.8",
