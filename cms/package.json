@@ -34,7 +34,7 @@
 		"react-dom": "^19.2.8",
 		"react-icons": "^5.7.0",
 		"react-is": "^19.2.8",
-		"sanity": "^5.31.1",
+		"sanity": "^5.31.2",
 		"sanity-plugin-bulk-actions-table": "^1.0.4",
 		"sanity-plugin-computed-field": "^2.0.2",
 		"sanity-plugin-markdown": "^9.0.13",
