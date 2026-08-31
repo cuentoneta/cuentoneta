@@ -180,13 +180,12 @@ describe('LiteraryWorkPage', () => {
 		});
 	});
 
-	// Test de aceptación del criterio principal de LiteraryWork: una obra de una sola sección ofrece al lector
-	// las mismas affordances que la página Story (story.component.html) — título como encabezado
-	// principal, byline de autoría, indicador de tiempo de lectura, control de compartir y el cuerpo
-	// saneado legible. Se corre sobre el selector mono-sección (hoy todo el corpus) para declarar
-	// explícitamente la intención de paridad, consolidando las aserciones antes dispersas.
+	// Test de aceptación del criterio principal de la página: una obra de una sola sección ofrece al
+	// lector título como encabezado principal, byline de autoría, indicador de tiempo de lectura,
+	// control de compartir y el cuerpo saneado legible. Se corre sobre el selector mono-sección —hoy
+	// todo el corpus— y consolida en un solo caso las aserciones que antes estaban dispersas.
 	it.each(onoffLiteraryWorksSingleSection)(
-		'ofrece las affordances de lectura de una Story para la obra mono-sección "$slug"',
+		'ofrece las affordances de lectura de la obra mono-sección "$slug"',
 		async (literaryWork) => {
 			await setup(literaryWork);
 

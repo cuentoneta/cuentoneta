@@ -214,8 +214,8 @@ describe('SanityLiteraryWorkRepository.fetchBySlug', () => {
 		expect(literaryWork?.tags).toEqual([]);
 	});
 
-	// El ACL de multimedia lo comparten Story, Storylist y LiteraryWork, pero con todo el corpus crudo de
-	// obras en `mediaSources: []` esta rama nunca se ejercitaba con datos.
+	// Con todo el corpus crudo de obras en `mediaSources: []`, esta rama del ACL no se ejercitaba con
+	// datos: el selector por capacidad es lo que le da una obra que sí los trae.
 	it('mapea los recursos multimedia de la obra, descartando los tipos que el dominio no modela', async () => {
 		const [rawLiteraryWork] = onoffRawLiteraryWorksWithMediaSources;
 
@@ -228,8 +228,8 @@ describe('SanityLiteraryWorkRepository.fetchBySlug', () => {
 		);
 	});
 
-	// La proyección de obra literaria resuelve `audioUrl` dereferenciando el asset del archivo, igual que
-	// la de Story: es lo que el dominio consume como `data.url` del space recording.
+	// La proyección resuelve `audioUrl` dereferenciando el asset del archivo: es lo que el dominio
+	// consume como `data.url` del space recording.
 	it('resuelve la URL del audio en un space recording', async () => {
 		const [rawLiteraryWork] = onoffRawLiteraryWorksWithMediaSources;
 		const rawSpaceRecording = rawLiteraryWork.mediaSources.find((media) => media._type === 'spaceRecording');

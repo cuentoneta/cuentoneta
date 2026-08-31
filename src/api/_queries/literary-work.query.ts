@@ -167,8 +167,8 @@ export const readingTimeBackfillCandidatesQuery = defineQuery(`
 // proyección duplicada.
 //
 // `$author == null` cubre el listado sin filtro; con filtro se recorre `authors[]` porque una obra
-// admite varios: a diferencia de una story, que declara un autor único, acá la pertenencia es de
-// conjunto. `$slugs` sigue la misma forma, y filtra por pertenencia: devuelve en orden de documento,
+// admite varios, así que la pertenencia es de conjunto y no una igualdad. `$slugs` sigue la misma
+// forma, y filtra por pertenencia: devuelve en orden de documento,
 // así que un consumidor que pase un lote ordenado repone el orden por su cuenta.
 //
 // La proyección repite literal la que `collectionBySlugQuery` usa para las obras de una colección

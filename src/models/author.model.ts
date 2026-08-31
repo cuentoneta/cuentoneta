@@ -30,7 +30,7 @@ export interface Author extends AuthorBase {
 }
 
 // La página de perfil necesita las fechas de la ficha (campos de sistema de Sanity) para el
-// JSON-LD `ProfilePage`. No viven en `Author` porque la story embebe un autor que no las usa.
+// JSON-LD `ProfilePage`. No viven en `Author` porque las vistas que embeben un autor no las usan.
 export interface AuthorProfile extends Author {
 	createdAt: IsoDateTime;
 	updatedAt: IsoDateTime;

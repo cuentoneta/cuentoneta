@@ -9,8 +9,8 @@ import { losPeldanosLiteraryWorkMock } from './onoff/literary-work/los-peldanos.
 import { neronLiteraryWorkMock } from './onoff/literary-work/neron.literary-work.mock';
 import { palacioNueveFronterasLiteraryWorkMock } from './onoff/literary-work/el-palacio-de-las-nueve-fronteras.literary-work.mock';
 
-// Corpus LiteraryWork de las obras (ficticias) de François Onoff — contraparte del corpus Story, con
-// el cuerpo en Markdown (./onoff/literary-work/<slug>.md) materializado a bodyHtml por el pipeline del dominio.
+// Corpus LiteraryWork de las obras (ficticias) de François Onoff, con el cuerpo en Markdown
+// (./onoff/literary-work/<slug>.md) materializado a bodyHtml por el pipeline del dominio.
 export const onoffLiteraryWorksMock: LiteraryWork[] = [
 	palacioNueveFronterasLiteraryWorkMock,
 	geometriaLiteraryWorkMock,
@@ -25,7 +25,7 @@ export const onoffLiteraryWorksMock: LiteraryWork[] = [
 // Selectores por capacidad, derivados por predicado: un spec declara el shape que necesita (obras con
 // título de sección / con epígrafes) en vez de conocer un slug concreto. Se auto-mantienen al crecer el
 // corpus o al enriquecer más obras, sin tocar los specs.
-// Obras de una sola sección: el shape mono-sección que el test de paridad con Story necesita. Hoy todo
+// Obras de una sola sección: el shape que los tests de lectura mono-sección necesitan. Hoy todo
 // el corpus es mono-sección; el predicado se auto-mantiene si más adelante se incorpora una obra multi-sección.
 export const onoffLiteraryWorksSingleSection: LiteraryWork[] = onoffLiteraryWorksMock.filter(
 	(literaryWork) => literaryWork.content.length === 1,

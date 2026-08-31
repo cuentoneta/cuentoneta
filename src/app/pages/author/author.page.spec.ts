@@ -176,7 +176,7 @@ describe('AuthorPage', () => {
 		expect(screen.queryByTestId('web-resources')).not.toBeInTheDocument();
 	});
 
-	// El destino de lectura es la ruta de la obra: la página salió del mundo Story y sus enlaces también.
+	// El destino de lectura de cada obra listada es su propia ruta, no la ficha del autor.
 	it('should link each listed work to its reading page', async () => {
 		await renderPage();
 
