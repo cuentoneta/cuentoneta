@@ -159,7 +159,7 @@ Este repositorio y el contenido de la web de La Cuentoneta se publican bajo lice
 
 <!-- Enlaces al repositorio en Github -->
 
-[gh-issues]: https://github.com/rolivencia/cuentoneta/issues
+[gh-issues]: https://github.com/cuentoneta/cuentoneta/issues
 
 <!-- Recursos y otros -->
 
