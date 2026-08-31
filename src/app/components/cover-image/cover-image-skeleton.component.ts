@@ -4,7 +4,7 @@ import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 
 /**
  * Estado de carga (esqueleto) de CoverImageComponent: reproduce la caja de la portada (118×164) con
- * un placeholder de cuentoneta-skeleton para evitar saltos de layout mientras la story carga.
+ * un placeholder de cuentoneta-skeleton para evitar saltos de layout mientras la obra carga.
  */
 @Component({
 	selector: 'cuentoneta-cover-image-skeleton',

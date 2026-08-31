@@ -337,13 +337,13 @@ Bruno utiliza el prefijo `~` para indicar parámetros opcionales en las solicitu
 ```
 params:query {
   ~author: jorge-luis-borges    # El ~ indica parámetro opcional
-  ~storylist: cuentos-de-terror
+  ~collection: Cuentos de terror
   rrss: twitter                 # Parámetro requerido (sin ~)
   title: Example Title
 }
 ```
 
-En el ejemplo anterior, `author` y `storylist` son opcionales, mientras que `rrss` y `title` son requeridos. Este es el ejemplo real del endpoint `/og` (`docs/api/bruno/og/generate-og-image.bru`): `storylist` ahí es un parámetro de texto libre para el OG de compartir.
+En el ejemplo anterior, `author` y `collection` son opcionales, mientras que `rrss` y `title` son requeridos. Este es el ejemplo real del endpoint `/og` (`docs/api/bruno/og/generate-og-image.bru`): `collection` ahí es un parámetro de texto libre para el OG de compartir.
 
 ---
 

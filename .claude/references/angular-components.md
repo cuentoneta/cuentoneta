@@ -286,7 +286,7 @@ export function provideFooInitializer() {
 	} @if (author().nationality.flag) {
 	<img [ngSrc]="author().nationality.flag" [alt]="author().nationality.country" width="21" height="16" />
 	} @if (storyCount() !== undefined) {
-	<span data-testid="story-count"> {{ storyCount() }} {{ storyCount() === 1 ? 'historia' : 'historias' }} </span>
+	<span data-testid="story-count"> {{ storyCount() }} {{ storyCount() === 1 ? 'obra' : 'obras' }} </span>
 	}
 </article>
 ```

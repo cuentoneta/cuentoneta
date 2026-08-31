@@ -12,7 +12,7 @@ const meta: Meta<NavigableCollectionTeaserComponent> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>El componente <strong>NavigableCollectionTeaserComponent</strong> es el item compacto y navegable de una colección (Design System v3): ícono de biblioteca, nombre, categoría y cantidad de historias. Pensado para listas como «Otras colecciones sugeridas» del sidebar de la página de una colección.</p><p>Se modela como un <code>&lt;article&gt;</code> con un único enlace real sobre el nombre, estirado con un pseudo-elemento para que toda la tarjeta sea clickeable sin inflar el nombre accesible del link.</p><p>Se compone de <a href="./?path=/docs/componentes-v3-imageprofile--docs" target="_top"><strong>ImageProfile</strong></a> (ícono de colección, variante <code>collection</code>) y <a href="./?path=/docs/componentes-v3-tag--docs" target="_top"><strong>Tag</strong></a> (categoría, variante <code>soft</code>).</p></div>`,
+				component: `<div><p>El componente <strong>NavigableCollectionTeaserComponent</strong> es el item compacto y navegable de una colección (Design System v3): ícono de biblioteca, nombre, categoría y cantidad de obras. Pensado para listas como «Otras colecciones sugeridas» del sidebar de la página de una colección.</p><p>Se modela como un <code>&lt;article&gt;</code> con un único enlace real sobre el nombre, estirado con un pseudo-elemento para que toda la tarjeta sea clickeable sin inflar el nombre accesible del link.</p><p>Se compone de <a href="./?path=/docs/componentes-v3-imageprofile--docs" target="_top"><strong>ImageProfile</strong></a> (ícono de colección, variante <code>collection</code>) y <a href="./?path=/docs/componentes-v3-tag--docs" target="_top"><strong>Tag</strong></a> (categoría, variante <code>soft</code>).</p></div>`,
 			},
 		},
 		layout: 'padded',
@@ -36,7 +36,7 @@ export const Default: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Item completo: ícono de colección, nombre, categoría y cantidad de historias. Toda la tarjeta es clickeable y navega a la colección.</p><p><strong>Usos:</strong> «Otras colecciones sugeridas» en el sidebar de la CollectionPage.</p>`,
+				story: `<p>Item completo: ícono de colección, nombre, categoría y cantidad de obras. Toda la tarjeta es clickeable y navega a la colección.</p><p><strong>Usos:</strong> «Otras colecciones sugeridas» en el sidebar de la CollectionPage.</p>`,
 			},
 		},
 	},
@@ -49,7 +49,7 @@ export const SinCategoria: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Colección sin categoría asignada: se omiten el tag y el separador, y queda solo la cantidad de historias.</p><p><strong>Usos:</strong> «Otras colecciones sugeridas», para colecciones que todavía no tienen una categoría cargada en el CMS.</p>`,
+				story: `<p>Colección sin categoría asignada: se omiten el tag y el separador, y queda solo la cantidad de obras.</p><p><strong>Usos:</strong> «Otras colecciones sugeridas», para colecciones que todavía no tienen una categoría cargada en el CMS.</p>`,
 			},
 		},
 	},

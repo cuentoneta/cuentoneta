@@ -105,7 +105,7 @@ describe('scanRequiredFields', () => {
 	it('does not descend into a reference', () => {
 		const node = {
 			type: 'document',
-			name: 'story',
+			name: 'literaryWork',
 			value: {
 				type: 'object',
 				attributes: {
@@ -129,7 +129,7 @@ describe('scanRequiredFields', () => {
 	it('reports an array inside another array as uncovered', () => {
 		const node = {
 			type: 'document',
-			name: 'story',
+			name: 'literaryWork',
 			value: {
 				type: 'object',
 				attributes: {
@@ -156,7 +156,7 @@ describe('scanRequiredFields', () => {
 
 		expect(uncovered).toEqual([
 			{
-				documentType: 'story',
+				documentType: 'literaryWork',
 				segments: ['content', 'epigraphs'],
 				reason: 'no se desciende: array dentro de otro array',
 			},
@@ -166,7 +166,7 @@ describe('scanRequiredFields', () => {
 	it('reports an array of unions as uncovered instead of skipping it silently', () => {
 		const node = {
 			type: 'document',
-			name: 'storylist',
+			name: 'collection',
 			value: {
 				type: 'object',
 				attributes: {
@@ -178,7 +178,7 @@ describe('scanRequiredFields', () => {
 		const { uncovered } = scanRequiredFields([node] as never);
 
 		expect(uncovered).toEqual([
-			{ documentType: 'storylist', segments: ['mediaSources'], reason: 'no se desciende: array de tipos unión' },
+			{ documentType: 'collection', segments: ['mediaSources'], reason: 'no se desciende: array de tipos unión' },
 		]);
 	});
 

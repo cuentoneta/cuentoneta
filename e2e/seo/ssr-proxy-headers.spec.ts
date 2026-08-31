@@ -8,7 +8,7 @@
  * deopteaba a CSR y los crawlers recibían el shell genérico → desindexación.
  *
  * Este test simula ese header y verifica que el SSR igual sirve el HTML por página (título y
- * canónica del cuento, no el shell genérico de home). Si alguien quita `trustProxyHeaders: true`,
+ * canónica de la obra, no el shell genérico de home). Si alguien quita `trustProxyHeaders: true`,
  * el server deoptea y este test falla.
  */
 import { expect } from '@playwright/test';

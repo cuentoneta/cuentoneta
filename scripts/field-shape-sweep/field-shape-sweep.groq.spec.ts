@@ -44,6 +44,6 @@ describe('buildShapeCountQuery', () => {
 	});
 
 	it('construye una consulta por campo', () => {
-		expect(buildShapeCountQueries([dateTimeField, { ...dateTimeField, documentType: 'story' }])).toHaveLength(2);
+		expect(buildShapeCountQueries([dateTimeField, { ...dateTimeField, documentType: 'literaryWork' }])).toHaveLength(2);
 	});
 });

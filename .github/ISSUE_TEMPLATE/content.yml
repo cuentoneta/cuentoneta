@@ -1,14 +1,14 @@
 name: 📜 Proponer el agregado de contenido a La Cuentoneta
-description: Proponer el agregado de un nuevo texto en particular (sea un cuento, poema, ensayo, etc.) o una temática para generar una nueva storylist
+description: Proponer el agregado de un nuevo texto en particular (sea un cuento, poema, ensayo, etc.) o una temática para generar una nueva colección
 labels: ['📜 contenido', '✍️ bosquejo']
 body:
   - type: textarea
     id: description
     attributes:
       label: Descripción
-      description: Detalla el nuevo contenido a agregar a La Cuentoneta. Puede ser un texto de elaboración propia, una propuesta de temática para una storylist o la mención a un cuento que te gustaría esté disponible en La Cuentoneta.
+      description: Detalla el nuevo contenido a agregar a La Cuentoneta. Puede ser un texto de elaboración propia, una propuesta de temática para una colección o la mención a un cuento que te gustaría esté disponible en La Cuentoneta.
       placeholder: |
-        Por ejemplo: "Agregar el cuento 'El Marajá de San Telmo' en la próxima storylist de La Cuentoneta, escrito por Rolando Gativideo", o "Agregar una storylist relacionada al género de la ciencia ficción. Propongo también considerar el cuento 'En los Confines del Sistema Solar', de Rolando Gativideo".
+        Por ejemplo: "Agregar el cuento 'El Marajá de San Telmo' en la próxima colección de La Cuentoneta, escrito por Rolando Gativideo", o "Agregar una colección relacionada al género de la ciencia ficción. Propongo también considerar el cuento 'En los Confines del Sistema Solar', de Rolando Gativideo".
     validations:
       required: true
   - type: textarea

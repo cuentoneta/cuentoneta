@@ -104,7 +104,7 @@ function primaryHeading(root: HTMLElement, pattern?: RegExp): SeoInvariantViolat
 function primaryContentLength(
 	root: HTMLElement,
 	// Umbral por defecto de texto en `<main>`: muy por debajo del contenido real de los fixtures (bio,
-	// cuerpo del cuento, ficha técnica) pero muy por encima del ruido de whitespace de un skeleton.
+	// cuerpo de la obra, ficha técnica) pero muy por encima del ruido de whitespace de un skeleton.
 	minLength: number = 120,
 ): SeoInvariantViolation | null {
 	const length = normalizedText(root.querySelector('main')).length;

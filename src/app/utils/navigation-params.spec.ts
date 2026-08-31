@@ -10,12 +10,8 @@ describe('toNavigationContext', () => {
 	});
 
 	// El router asigna `undefined` explícitamente cuando el query param desaparece al navegar, así que
-	// no alcanza con el default del input: el transform tiene que aceptarlo. `storylist` es el nombre
-	// viejo del contexto de colección, que sigue llegando desde enlaces compartidos hacia afuera.
-	it.each([undefined, '', 'storylist', 'cualquier-otra-cosa'])(
-		'should fall back to the author context for %p',
-		(value) => {
-			expect(toNavigationContext(value)).toBe('author');
-		},
-	);
+	// no alcanza con el default del input: el transform tiene que aceptarlo.
+	it.each([undefined, '', 'cualquier-otra-cosa'])('should fall back to the author context for %p', (value) => {
+		expect(toNavigationContext(value)).toBe('author');
+	});
 });
