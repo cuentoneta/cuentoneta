@@ -1,5 +1,4 @@
 <div align="center" width="100%">
-    <h1>La Cuentoneta</h1>
     <img width="33%" alt="" src=".github/assets/cuentoneta-logo.png">
 </div>
 
