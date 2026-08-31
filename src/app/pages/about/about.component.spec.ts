@@ -1,4 +1,4 @@
-import { render } from '@testing-library/angular';
+import { render, screen } from '@testing-library/angular';
 import { restoreAllMocks, spyOn } from '@test-utils';
 
 import AboutComponent from './about.component';
@@ -34,13 +34,14 @@ describe('AboutComponent', () => {
 	// previo a la organización resuelven por redirección, así que una regresión acá no se vería
 	// navegando: solo se nota el día que GitHub deje de redirigir.
 	it('no enlaza al repositorio previo a la organización', async () => {
-		const { container } = await setup();
+		await setup();
 
-		const destinos = Array.from(container.querySelectorAll('a[href*="github.com"]')).map((anchor) =>
-			anchor.getAttribute('href'),
-		);
+		const destinos = screen
+			.getAllByRole('link')
+			.map((enlace) => enlace.getAttribute('href') ?? '')
+			.filter((destino) => destino.includes('github.com'));
 
 		expect(destinos.length).toBeGreaterThan(0);
-		expect(destinos.every((href) => href?.startsWith('https://github.com/cuentoneta/cuentoneta'))).toBe(true);
+		expect(destinos.every((destino) => destino.startsWith('https://github.com/cuentoneta/cuentoneta'))).toBe(true);
 	});
 });
