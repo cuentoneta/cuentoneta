@@ -5,8 +5,8 @@ import {
 	onoffLiteraryWorkTeasersWithExcerptMock,
 	onoffLiteraryWorkTeasersWithMediaSources,
 	onoffLiteraryWorkTeasersWithMediaSourcesMock,
-	palacioNueveFronterasLiteraryWorkTeaserMock,
 } from './onoff-literary-work-teasers.mock';
+import { palacioNueveFronterasLiteraryWorkTeaserMock } from './onoff/literary-work/literary-work-teasers.mock';
 import { onoffLiteraryWorksMock } from './onoff-literary-works.mock';
 import { palacioNueveFronterasLiteraryWorkMock } from './onoff/literary-work/el-palacio-de-las-nueve-fronteras.literary-work.mock';
 
