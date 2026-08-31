@@ -23,19 +23,26 @@ describe('LiteraryWorkHeroHeaderComponent', () => {
 		expect(link).toHaveAttribute('href', expect.stringContaining(`/author/${author.slug}`));
 	});
 
-	// El fondo va con `fill` + `sizes="100vw"`, así que el loader recibe un ancho por breakpoint en vez de
-	// uno fijo. Se afirma sobre el `srcset` porque es de donde el navegador elige; el `src` queda como
-	// fallback sin ancho.
-	it('should render the blurred background offering a width per breakpoint', async () => {
-		const coverImage = 'https://cdn.sanity.io/images/x/cover-1024x1536.png';
+	// El fondo y la portada comparten una descarga porque piden la misma URL, y nada en el código las
+	// ata: el hero elige su ancho por su cuenta. Este caso es el que sostiene esa coincidencia, así que
+	// compara lo que renderiza cada una en vez de afirmar la medida que se espera de ambas.
+	it('should request the very same image as the foreground cover', async () => {
 		await render(LiteraryWorkHeroHeaderComponent, {
-			inputs: { literaryWork: { ...literaryWork, coverImage } },
+			inputs: { literaryWork: { ...literaryWork, coverImage: 'https://cdn.sanity.io/images/x/cover-1024x1536.png' } },
 			providers: [provideSanityImageLoader()],
 		});
 
-		const srcset = screen.getByTestId('hero-background').getAttribute('srcset');
-		expect(srcset).toContain(`${coverImage}?w=640&auto=format&q=75 640w`);
-		expect(srcset).toContain(`${coverImage}?w=1920&auto=format&q=75 1920w`);
+		const background = screen.getByTestId('hero-background');
+		const requested = background.getAttribute('src');
+
+		// Control positivo: sin él, dos atributos ausentes se darían por coincidentes.
+		expect(requested).toContain('auto=format');
+		// Sin variantes por breakpoint: cada una traería la imagen de nuevo a otro ancho, que es
+		// justamente lo que se quiere evitar.
+		expect(background).not.toHaveAttribute('srcset');
+		// La portada sí declara `width`, así que su URL con ancho vive en el `srcset` —el `src` es su
+		// fallback— y es la entrada 1× la que tiene que coincidir con la del fondo.
+		expect(screen.getByTestId('cover-image').getAttribute('srcset')).toContain(`${requested} 1x`);
 	});
 
 	// El canon guarda sus portadas como assets propios del repo, así que este caso es además el que
@@ -46,7 +53,7 @@ describe('LiteraryWorkHeroHeaderComponent', () => {
 			providers: [provideSanityImageLoader()],
 		});
 
-		expect(screen.getByTestId('hero-background').getAttribute('srcset')).not.toContain('auto=format');
+		expect(screen.getByTestId('hero-background')).toHaveAttribute('src', literaryWork.coverImage);
 	});
 
 	it('should not render the background when the literary work has no cover', async () => {

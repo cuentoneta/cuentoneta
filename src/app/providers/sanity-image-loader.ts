@@ -4,34 +4,46 @@ import { makeEnvironmentProviders, type EnvironmentProviders } from '@angular/co
 import { isSanityImageUrl, withSanityImageParams } from '@utils/sanity-image.utils';
 
 /**
- * Deriva de cada `ngSrc` la URL que el navegador realmente pide al CDN de Sanity.
+ * Único punto donde se le agregan parámetros de transformación a una imagen de Sanity.
  *
- * El ACL emite la URL canónica del asset, sin parámetros: el ancho al que una imagen se pinta es un
- * dato de la pantalla, y el backend no lo conoce —la misma portada alimenta una tarjeta chica y el
- * fondo del hero—. Sin un loader, `NgOptimizedImage` no reescribe nada y se descarga el original,
- * que en este dataset llega a pesar megabytes para una caja de un par de cientos de píxeles.
+ * El ACL emite la URL canónica del asset: el ancho al que se pinta es un dato de la pantalla, y el
+ * backend no lo conoce —la misma portada alimenta una tarjeta chica y el fondo de un hero—. Envolver
+ * la URL además en el componente duplica el parámetro, y el CDN se queda con el primero.
  */
 
-/**
- * Calidad de recompresión que pide la app. Fijarla acá, y no dejar la del CDN, es lo que vuelve
- * predecible el peso de una imagen frente a un original subido sin optimizar.
- */
+// La calidad la fija la app y no el CDN, para que el peso no dependa de cuán optimizado se haya
+// subido cada original.
 const IMAGE_QUALITY = 75;
 
+/** Lo que un `<img>` puede pedirle al loader por `[loaderParams]`. */
+export type SanityImageLoaderParams = {
+	/**
+	 * Ancho a pedir, en píxeles, en lugar del que `NgOptimizedImage` deriva del `<img>`. Para una
+	 * imagen cuyo tamaño de descarga no se sigue del espacio que ocupa: un fondo difuminado, que se
+	 * estira a la pantalla entera pero no gana nada con resolución.
+	 */
+	readonly width?: number;
+};
+
 /**
- * Devuelve el `src` intacto cuando no es del CDN de Sanity — el loader intercepta *todo* `ngSrc` de
- * la aplicación, incluidos los assets propios y algún host externo, así que el guard es lo que
- * impide corromperlos.
+ * Devuelve el `src` intacto cuando no es del CDN de Sanity: el loader intercepta *todo* `ngSrc` de
+ * la aplicación, incluidos los assets propios y algún host externo, y el guard es lo que impide
+ * corromperlos.
  *
- * `NgOptimizedImage` invoca al loader una vez por entrada del `srcset` —con el ancho de cada una— y
- * otra sin ancho para el `src` de fallback, que queda sin `w` a propósito: es el que usa un
- * navegador que no entiende `srcset`.
+ * Sin ancho —el `src` de fallback, que `NgOptimizedImage` pide aparte de las entradas del `srcset`—
+ * el CDN sirve el original, negociado en formato y calidad.
  */
 export function sanityImageLoader(config: ImageLoaderConfig): string {
 	if (!isSanityImageUrl(config.src)) {
 		return config.src;
 	}
-	return withSanityImageParams(config.src, { w: config.width, auto: 'format', q: IMAGE_QUALITY });
+
+	const requested: SanityImageLoaderParams | undefined = config.loaderParams;
+	return withSanityImageParams(config.src, {
+		w: requested?.width ?? config.width,
+		auto: 'format',
+		q: IMAGE_QUALITY,
+	});
 }
 
 export function provideSanityImageLoader(): EnvironmentProviders {

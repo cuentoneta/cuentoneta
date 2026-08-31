@@ -1,10 +1,10 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
 import type { LiteraryWork } from '@models/literary-work.model';
-import { withSanityImageParams } from '@utils/sanity-image.utils';
 import { AppRoutes } from '../../app.routes';
+import type { SanityImageLoaderParams } from '../../providers/sanity-image-loader';
 import { CoverImageComponent } from '../cover-image/cover-image.component';
 import { ImageProfileComponent } from '../image-profile/image-profile.component';
 import { TagComponent } from '../tag/tag.component';
@@ -36,12 +36,13 @@ import { LiteraryWorkHeroHeaderSkeletonComponent } from './literary-work-hero-he
 	host: { class: 'relative isolate block overflow-hidden bg-neutral-900' },
 	template: `
 		@if (literaryWork(); as literaryWork) {
-			@if (backgroundImageUrl(); as backgroundImageUrl) {
+			@if (literaryWork.coverImage; as coverImage) {
 				<img
-					[ngSrc]="backgroundImageUrl"
+					[ngSrc]="coverImage"
+					[loaderParams]="backgroundLoaderParams"
 					fill
 					priority
-					sizes="100vw"
+					disableOptimizedSrcset
 					alt=""
 					class="scale-105 object-cover blur-xl"
 					data-testid="hero-background"
@@ -51,7 +52,7 @@ import { LiteraryWorkHeroHeaderSkeletonComponent } from './literary-work-hero-he
 
 			<div class="relative z-content px-6 pt-28 pb-10">
 				<div class="mx-auto flex w-full max-w-180 items-center gap-8">
-					<cuentoneta-cover-image [src]="backgroundImageUrl()" [priority]="true" />
+					<cuentoneta-cover-image [src]="literaryWork.coverImage" [priority]="true" />
 					<div class="flex min-w-0 flex-col items-start gap-2.5">
 						<cuentoneta-tags-list data-testid="tags">
 							@for (tag of literaryWork.tags; track tag.slug) {
@@ -86,7 +87,9 @@ export class LiteraryWorkHeroHeaderComponent {
 
 	public readonly literaryWork = input<LiteraryWork>();
 
-	protected readonly backgroundImageUrl = computed(() =>
-		withSanityImageParams(this.literaryWork()?.coverImage ?? '', { w: 118 }),
-	);
+	// El ancho es el de la portada en primer plano, para que las dos pidan la misma URL y compartan una
+	// sola descarga. El fondo va difuminado y bajo un velo, así que no pierde nada con esa medida. Que
+	// sigan coincidiendo lo afirma el spec comparando lo que renderiza cada una, no una constante
+	// compartida: acá el número es una decisión de este componente y no un contrato con `CoverImage`.
+	protected readonly backgroundLoaderParams: SanityImageLoaderParams = { width: 118 };
 }
