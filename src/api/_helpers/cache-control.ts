@@ -16,7 +16,7 @@ const READ_CACHE_STALE_WHILE_REVALIDATE = 604800; // 7 días
 const BROWSER_CACHE_CONTROL = 'public, max-age=0, must-revalidate';
 
 /**
- * Decide si la página de lectura es cacheable en el entorno actual. Fuera de producción no lo es (coherente con
+ * Decide si una respuesta es cacheable en el entorno actual. Fuera de producción no lo es (coherente con
  * `noindexNonProduction`): un preview comparte el CDN y serviría contenido de un dataset que no es
  * el público. Exportada para que el middleware corte antes de bufferizar el body, sin duplicar la
  * condición: la política sigue teniendo un solo dueño.
@@ -26,11 +26,12 @@ export function isReadCacheEnabled(): boolean {
 }
 
 /**
- * Aplica a una respuesta cacheable de la página de lectura los headers de caché de borde: `s-maxage` corto
- * (interruptor `environment.readCacheSMaxAge`) con `stale-while-revalidate` largo, efectivos solo
- * en el CDN de Vercel, más un `Cache-Control` que mantiene fresco al browser.
+ * Aplica a una respuesta cacheable los headers de caché de borde: `s-maxage` corto (interruptor
+ * `environment.readCacheSMaxAge`) con `stale-while-revalidate` largo, efectivos solo en el CDN de
+ * Vercel, más un `Cache-Control` que mantiene fresco al browser.
  *
- * La frescura la da el vencimiento del `s-maxage`, no una invalidación explícita.
+ * El TTL es único para todas las rutas cacheadas. La frescura la da su vencimiento, no una
+ * invalidación explícita: una edición del CMS se ve en la visita siguiente al vencimiento.
  * Ver LITERARY_WORK_DESIGN.md §8.
  */
 export function applyReadCacheHeaders(c: Context): void {
