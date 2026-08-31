@@ -16,13 +16,13 @@ function reportOf(breaches: FieldBreach[], uncovered: SweepReport['uncovered'] =
 
 describe('breachesOf', () => {
 	it('leaves out the fields every document fulfils', () => {
-		expect(breachesOf([breach('story.title', 0), breach('story.badLanguage', 155)])).toEqual([
-			breach('story.badLanguage', 155),
+		expect(breachesOf([breach('literaryWork.title', 0), breach('literaryWork.badLanguage', 155)])).toEqual([
+			breach('literaryWork.badLanguage', 155),
 		]);
 	});
 
 	it('keeps a field that only drafts breach', () => {
-		expect(breachesOf([breach('story.title', 0, 2)])).toEqual([breach('story.title', 0, 2)]);
+		expect(breachesOf([breach('literaryWork.title', 0, 2)])).toEqual([breach('literaryWork.title', 0, 2)]);
 	});
 
 	it('orders by how widespread the breach is', () => {
@@ -34,7 +34,9 @@ describe('breachesOf', () => {
 
 describe('fingerprint', () => {
 	it('does not change when only the counts move', () => {
-		expect(fingerprint([breach('story.badLanguage', 155)])).toBe(fingerprint([breach('story.badLanguage', 156)]));
+		expect(fingerprint([breach('literaryWork.badLanguage', 155)])).toBe(
+			fingerprint([breach('literaryWork.badLanguage', 156)]),
+		);
 	});
 
 	it('changes when a field joins the set', () => {
@@ -48,20 +50,20 @@ describe('fingerprint', () => {
 
 describe('formatReportBody', () => {
 	it('lists every breach with both perspectives', () => {
-		const body = formatReportBody(reportOf([breach('story.badLanguage', 155, 4)]));
+		const body = formatReportBody(reportOf([breach('literaryWork.badLanguage', 155, 4)]));
 
-		expect(body).toContain('| `story.badLanguage` | 155 | 4 |');
+		expect(body).toContain('| `literaryWork.badLanguage` | 155 | 4 |');
 	});
 
 	it('declares the paths it cannot measure', () => {
 		const body = formatReportBody(
 			reportOf(
 				[breach('a', 1)],
-				[{ documentType: 'storylist', segments: ['mediaSources'], reason: 'array de tipos unión' }],
+				[{ documentType: 'collection', segments: ['mediaSources'], reason: 'array de tipos unión' }],
 			),
 		);
 
-		expect(body).toContain('storylist.mediaSources');
+		expect(body).toContain('collection.mediaSources');
 		expect(body).toContain('array de tipos unión');
 	});
 
@@ -125,8 +127,8 @@ describe('formatConsoleReport', () => {
 	});
 
 	it('lists each breach with both perspectives', () => {
-		expect(formatConsoleReport(reportOf([breach('story.badLanguage', 155, 4)]))).toContain(
-			'story.badLanguage — 155 publicados, 4 borradores',
+		expect(formatConsoleReport(reportOf([breach('literaryWork.badLanguage', 155, 4)]))).toContain(
+			'literaryWork.badLanguage — 155 publicados, 4 borradores',
 		);
 	});
 });

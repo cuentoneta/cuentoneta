@@ -93,8 +93,8 @@ export class HeadMetadataDirective {
 	}
 
 	// Fecha de publicación y de última modificación (ISO) vía las propiedades og/article. Son señales
-	// E-E-A-T aplicables a cualquier entidad del sistema modelada como artículo —cuentos, perfiles de
-	// autor (cuándo se creó/actualizó la ficha), etc.—, no solo a cuentos.
+	// E-E-A-T aplicables a cualquier entidad modelada como artículo —una obra, la ficha de un autor
+	// (cuándo se creó o se actualizó)—, no solo a las obras.
 	public setArticleDates(publishedTime: string, modifiedTime: string) {
 		this.metaTagService.updateTag({
 			property: 'article:published_time',

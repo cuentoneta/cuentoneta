@@ -58,7 +58,7 @@ describe('buildFieldCountQuery', () => {
 	// expresa igual de bien que un campo directo.
 	it('reaches an attribute nested in an object inside the array', () => {
 		const field: RequiredFieldPath = {
-			documentType: 'storylist',
+			documentType: 'collection',
 			segments: ['tabs', 'slug', 'current'],
 			insideArray: true,
 		};
@@ -82,7 +82,7 @@ describe('the generated queries, evaluated', () => {
 		{ _id: 'a', _type: 'author', name: 'Con nombre', nationality: { country: 'Argentina' } },
 		{ _id: 'b', _type: 'author', nationality: { country: 'Uruguay' } },
 		{ _id: 'c', _type: 'author', name: 'Sin nacionalidad' },
-		{ _id: 'd', _type: 'story', title: 'De otro tipo' },
+		{ _id: 'd', _type: 'literaryWork', title: 'De otro tipo' },
 	];
 
 	it('counts only the documents of its own type that miss the attribute', async () => {
@@ -116,22 +116,22 @@ describe('the generated queries, evaluated', () => {
 	// `tabs.slug.current`, y el reporte exagera el problema.
 	it('does not count an item that lacks the whole nested object as breaching its every field', async () => {
 		const field: RequiredFieldPath = {
-			documentType: 'storylist',
+			documentType: 'collection',
 			segments: ['tabs', 'slug', 'current'],
 			insideArray: true,
 		};
-		const withoutSlugObject = [{ _id: 'a', _type: 'storylist', tabs: [{ title: 'sin slug' }] }];
+		const withoutSlugObject = [{ _id: 'a', _type: 'collection', tabs: [{ title: 'sin slug' }] }];
 
 		expect(await count(buildFieldCountQuery(field).publishedQuery, withoutSlugObject)).toBe(0);
 	});
 
 	it('does count an item whose nested object exists but misses the attribute', async () => {
 		const field: RequiredFieldPath = {
-			documentType: 'storylist',
+			documentType: 'collection',
 			segments: ['tabs', 'slug', 'current'],
 			insideArray: true,
 		};
-		const withEmptySlug = [{ _id: 'a', _type: 'storylist', tabs: [{ slug: {} }] }];
+		const withEmptySlug = [{ _id: 'a', _type: 'collection', tabs: [{ slug: {} }] }];
 
 		expect(await count(buildFieldCountQuery(field).publishedQuery, withEmptySlug)).toBe(1);
 	});

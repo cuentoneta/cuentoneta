@@ -120,7 +120,7 @@ GET /api/contributor               # Obtener lista de colaboradores
 
 - Organizar colecciones destacadas
 - Gestionar campañas de contenido con variantes responsivas
-- Mantener listados de historias más leídas y recientes
+- Mantener listados de obras más leídas y recientes
 - Proporcionar múltiples vistas según dispositivo (xs, md)
 
 **Interfaces de API:**
