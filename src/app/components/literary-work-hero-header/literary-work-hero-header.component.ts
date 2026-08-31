@@ -3,6 +3,7 @@ import { NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
 import type { LiteraryWork } from '@models/literary-work.model';
+import { withSanityImageParams } from '@utils/sanity-image.utils';
 import { AppRoutes } from '../../app.routes';
 import { CoverImageComponent } from '../cover-image/cover-image.component';
 import { ImageProfileComponent } from '../image-profile/image-profile.component';
@@ -50,7 +51,7 @@ import { LiteraryWorkHeroHeaderSkeletonComponent } from './literary-work-hero-he
 
 			<div class="relative z-content px-6 pt-28 pb-10">
 				<div class="mx-auto flex w-full max-w-180 items-center gap-8">
-					<cuentoneta-cover-image [src]="literaryWork.coverImage" [priority]="true" />
+					<cuentoneta-cover-image [src]="backgroundImageUrl()" [priority]="true" />
 					<div class="flex min-w-0 flex-col items-start gap-2.5">
 						<cuentoneta-tags-list data-testid="tags">
 							@for (tag of literaryWork.tags; track tag.slug) {
@@ -85,7 +86,7 @@ export class LiteraryWorkHeroHeaderComponent {
 
 	public readonly literaryWork = input<LiteraryWork>();
 
-	// Sin parámetros de transformación: los agrega el `IMAGE_LOADER` a partir del `sizes` del `<img>`,
-	// que acá declara el ancho real que ocupa la banda.
-	protected readonly backgroundImageUrl = computed(() => this.literaryWork()?.coverImage);
+	protected readonly backgroundImageUrl = computed(() =>
+		withSanityImageParams(this.literaryWork()?.coverImage ?? '', { w: 118 }),
+	);
 }
