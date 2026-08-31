@@ -7,8 +7,8 @@ import { CollectionTeaserCard } from './collection-teaser-card';
 
 // Mocks
 import {
-	geometriasDelDesveloCollectionTeaserMock,
-	inventarioDeLasPasionesCollectionTeaserMock,
+	onoffCollectionTeasersWithRepresentativeImageryMock,
+	onoffCollectionTeasersWithSampleImageryMock,
 } from '@mocks/onoff-collections.mock';
 
 // Modelos
@@ -20,8 +20,8 @@ import { markdownToLinklessSanitizedHtml } from '@utils/markdown-pipeline.utils'
 // Utilidades de test
 import { clearAllMocks } from '@test-utils';
 
-const representativeMock = geometriasDelDesveloCollectionTeaserMock;
-const sampleMock = inventarioDeLasPasionesCollectionTeaserMock;
+const [representativeMock] = onoffCollectionTeasersWithRepresentativeImageryMock;
+const [sampleMock] = onoffCollectionTeasersWithSampleImageryMock;
 
 // Deriva una variante del canon pasando por la factory, no por spread: el agregado está congelado y
 // armarlo a mano saltearía las invariantes que la factory existe para hacer cumplir.

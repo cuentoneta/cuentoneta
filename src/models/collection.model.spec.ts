@@ -1,10 +1,11 @@
 import { createCollection, createCollectionTeaser, type CollectionImagery } from './collection.model';
-import { geometriasDelDesveloCollectionMock } from '@mocks/onoff-collections.mock';
+import { onoffCollectionsWithRepresentativeImageryMock } from '@mocks/onoff-collections.mock';
 import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
 
-// "Geometrías del desvelo" del canon de Onoff: la colección con portada editorial propia. Se
-// descompone en las opciones que la construyeron, en vez de inventar una colección de prueba.
-const canon = geometriasDelDesveloCollectionMock;
+// Una colección del canon con portada editorial propia, que es la rama de `imagery` sobre la que
+// este spec afirma. Se descompone en las opciones que la construyeron, en vez de inventar una
+// colección de prueba.
+const [canon] = onoffCollectionsWithRepresentativeImageryMock;
 
 function buildOptions(overrides: Partial<Parameters<typeof createCollection>[0]> = {}) {
 	return {
@@ -48,7 +49,7 @@ describe('createCollection', () => {
 
 	// El formato del slug lo valida el value object, no la factory.
 	it('delegates slug validation to the value object', () => {
-		expect(() => createCollection(buildOptions({ slug: 'Geometrías Del Desvelo' }))).toThrow(/Slug inválido/);
+		expect(() => createCollection(buildOptions({ slug: 'No Es Un Slug' }))).toThrow(/Slug inválido/);
 	});
 
 	// Se afirma el discriminante y su payload contra valores independientes del objeto pasado: si la
@@ -63,7 +64,7 @@ describe('createCollection', () => {
 		const representative = createCollection(buildOptions()).imagery;
 		expect(representative.kind).toBe('representative');
 		expect(representative.kind === 'representative' && representative.image).toBe(
-			'assets/img/mocks/collections/geometrias-del-desvelo.png',
+			canon.imagery.kind === 'representative' && canon.imagery.image,
 		);
 
 		const sampled = createCollection(buildOptions({ imagery: sample })).imagery;
@@ -80,7 +81,7 @@ describe('createCollection', () => {
 
 	// Normalizar el opcional del schema es trabajo del mapper, no de la factory.
 	it('preserves showAuthors as received', () => {
-		expect(createCollection(buildOptions()).config.showAuthors).toBe(true);
+		expect(createCollection(buildOptions({ config: { showAuthors: true } })).config.showAuthors).toBe(true);
 		expect(createCollection(buildOptions({ config: { showAuthors: false } })).config.showAuthors).toBe(false);
 	});
 
@@ -131,8 +132,6 @@ describe('createCollectionTeaser', () => {
 	});
 
 	it('delegates slug validation to the value object', () => {
-		expect(() => createCollectionTeaser(buildTeaserOptions({ slug: 'Geometrías Del Desvelo' }))).toThrow(
-			/Slug inválido/,
-		);
+		expect(() => createCollectionTeaser(buildTeaserOptions({ slug: 'No Es Un Slug' }))).toThrow(/Slug inválido/);
 	});
 });

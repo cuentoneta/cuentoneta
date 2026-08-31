@@ -2,8 +2,12 @@ import { argsToTemplate, componentWrapperDecorator, Meta, moduleMetadata, StoryO
 
 import { NavigableCollectionTeaserComponent } from './navigable-collection-teaser.component';
 import { NavigableCollectionTeaserSkeletonComponent } from './navigable-collection-teaser-skeleton.component';
-import { geometriasDelDesveloCollectionTeaserMock } from '@mocks/onoff-collections.mock';
+import { onoffCollectionTeasersWithTagsMock } from '@mocks/onoff-collections.mock';
 import { createCollectionTeaser } from '@models/collection.model';
+
+// Con etiquetas, porque la story «Sin categoría» es el contracaso: vaciarlas solo muestra algo si el
+// punto de partida las traía.
+const [taggedTeaser] = onoffCollectionTeasersWithTagsMock;
 
 const meta: Meta<NavigableCollectionTeaserComponent> = {
 	component: NavigableCollectionTeaserComponent,
@@ -32,7 +36,7 @@ type Story = StoryObj<NavigableCollectionTeaserComponent>;
 export const Default: Story = {
 	name: 'Por defecto',
 	render: (args) => ({ props: args, template: `<cuentoneta-navigable-collection-teaser ${argsToTemplate(args)} />` }),
-	args: { collection: geometriasDelDesveloCollectionTeaserMock },
+	args: { collection: taggedTeaser },
 	parameters: {
 		docs: {
 			description: {
@@ -45,7 +49,7 @@ export const Default: Story = {
 export const SinCategoria: Story = {
 	name: 'Sin categoría',
 	render: (args) => ({ props: args, template: `<cuentoneta-navigable-collection-teaser ${argsToTemplate(args)} />` }),
-	args: { collection: createCollectionTeaser({ ...geometriasDelDesveloCollectionTeaserMock, tags: [] }) },
+	args: { collection: createCollectionTeaser({ ...taggedTeaser, tags: [] }) },
 	parameters: {
 		docs: {
 			description: {
@@ -60,7 +64,7 @@ export const TituloLargo: Story = {
 	render: (args) => ({ props: args, template: `<cuentoneta-navigable-collection-teaser ${argsToTemplate(args)} />` }),
 	args: {
 		collection: createCollectionTeaser({
-			...geometriasDelDesveloCollectionTeaserMock,
+			...taggedTeaser,
 			title: 'Book & Morfi: Especial Michis y Perritos en adopción en el refugio',
 		}),
 	},
@@ -89,7 +93,7 @@ export const Estados: StoryObj<NavigableCollectionTeaserComponent & { loading: b
 			</div>
 		`,
 	}),
-	args: { loading: true, collection: geometriasDelDesveloCollectionTeaserMock },
+	args: { loading: true, collection: taggedTeaser },
 	parameters: {
 		docs: { description: { story: 'Activá/desactivá "Cargando" para alternar entre el estado real y el skeleton.' } },
 	},

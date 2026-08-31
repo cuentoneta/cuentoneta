@@ -2,7 +2,9 @@ import { argsToTemplate, Meta, moduleMetadata, StoryObj } from '@storybook/angul
 
 import { LiteraryWorkHomeCardTeaserComponent } from './literary-work-home-card-teaser.component';
 import { LiteraryWorkHomeCardTeaserSkeletonComponent } from './literary-work-home-card-teaser-skeleton.component';
-import { palacioNueveFronterasLiteraryWorkTeaserMock, withMediaSources } from '@mocks/onoff-literary-work-teasers.mock';
+import { onoffLiteraryWorkTeasersWithMediaSourcesMock } from '@mocks/onoff-literary-work-teasers.mock';
+
+const [teaser] = onoffLiteraryWorkTeasersWithMediaSourcesMock;
 import { corpusLiteraryWorkTeasers, literaryWorkSelectArgType } from '@mocks/onoff-corpus.storybook';
 
 const meta: Meta<LiteraryWorkHomeCardTeaserComponent> = {
@@ -101,7 +103,7 @@ export const Default: Story = {
 		template: `<cuentoneta-literary-work-home-card-teaser ${argsToTemplate(args)} />`,
 	}),
 	args: {
-		literaryWork: withMediaSources(palacioNueveFronterasLiteraryWorkTeaserMock),
+		literaryWork: teaser,
 		order: 1,
 		tagLabel: 'Cuento',
 		showMultimedia: true,
@@ -141,7 +143,7 @@ export const Estados: StoryObj<LiteraryWorkHomeCardTeaserComponent & { loading: 
 	}),
 	args: {
 		loading: true,
-		literaryWork: withMediaSources(palacioNueveFronterasLiteraryWorkTeaserMock),
+		literaryWork: teaser,
 		order: 1,
 		tagLabel: 'Cuento',
 		showMultimedia: true,

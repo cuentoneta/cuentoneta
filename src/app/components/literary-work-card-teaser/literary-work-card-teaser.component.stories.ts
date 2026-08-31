@@ -2,13 +2,14 @@ import { argsToTemplate, Meta, StoryObj } from '@storybook/angular-vite';
 
 import { LiteraryWorkCardTeaserComponent } from './literary-work-card-teaser.component';
 import {
-	elOdioLiteraryWorkTeaserMock,
-	geometriaLiteraryWorkTeaserMock,
 	onoffLiteraryWorkNavigationTeasersMock,
-	palacioNueveFronterasLiteraryWorkTeaserMock,
-	withMediaSources,
+	onoffLiteraryWorkTeasersWithMediaSourcesMock,
 } from '@mocks/onoff-literary-work-teasers.mock';
 import { corpusLiteraryWorkTeasers, literaryWorkSelectArgType } from '@mocks/onoff-corpus.storybook';
+
+// Tres obras distintas, para que el showcase de variantes muestre portadas, títulos y extractos
+// dispares en vez de la misma tarjeta tres veces.
+const [firstTeaser, secondTeaser, thirdTeaser] = onoffLiteraryWorkTeasersWithMediaSourcesMock;
 
 const meta: Meta<LiteraryWorkCardTeaserComponent> = {
 	component: LiteraryWorkCardTeaserComponent,
@@ -125,7 +126,7 @@ export const OnWhite: Story = {
 		template: `<cuentoneta-literary-work-card-teaser ${argsToTemplate(args)} />`,
 	}),
 	args: {
-		literaryWork: withMediaSources(palacioNueveFronterasLiteraryWorkTeaserMock),
+		literaryWork: firstTeaser,
 		variant: 'on-white',
 		order: 1,
 		tagLabel: 'Cuento',
@@ -149,7 +150,7 @@ export const OnGray: Story = {
 		template: `<div class="rounded-lg bg-neutral-100 p-6"><cuentoneta-literary-work-card-teaser ${argsToTemplate(args)} /></div>`,
 	}),
 	args: {
-		literaryWork: withMediaSources(geometriaLiteraryWorkTeaserMock),
+		literaryWork: secondTeaser,
 		variant: 'on-gray',
 		order: 1,
 		tagLabel: 'Cuento',
@@ -173,7 +174,7 @@ export const Highlighted: Story = {
 		template: `<cuentoneta-literary-work-card-teaser ${argsToTemplate(args)} />`,
 	}),
 	args: {
-		literaryWork: withMediaSources(elOdioLiteraryWorkTeaserMock),
+		literaryWork: thirdTeaser,
 		variant: 'highlighted',
 		order: 1,
 		tagLabel: 'Cuento',
@@ -197,11 +198,7 @@ export const AllVariants: Story = {
 	render: (args) => ({
 		props: {
 			...args,
-			literaryWorks: [
-				withMediaSources(palacioNueveFronterasLiteraryWorkTeaserMock),
-				withMediaSources(geometriaLiteraryWorkTeaserMock),
-				withMediaSources(elOdioLiteraryWorkTeaserMock),
-			],
+			literaryWorks: [firstTeaser, secondTeaser, thirdTeaser],
 		},
 		template: `
 			<div class="flex flex-col gap-10">
@@ -299,7 +296,7 @@ export const Estados: StoryObj<LiteraryWorkCardTeaserComponent & { loading: bool
 	}),
 	args: {
 		loading: true,
-		literaryWork: withMediaSources(palacioNueveFronterasLiteraryWorkTeaserMock),
+		literaryWork: firstTeaser,
 		variant: 'on-white',
 		order: 1,
 		tagLabel: 'Cuento',
