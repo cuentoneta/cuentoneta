@@ -48,12 +48,10 @@ describe('AuthorCardTeaserComponent', () => {
 		);
 	});
 
-	it('should request the avatar at 2x of 80px (HiDPI)', async () => {
+	// La tarjeta decide el tamaño; qué se le pide al CDN a partir de él tiene sus propios specs.
+	it('should mount the avatar at the lg size', async () => {
 		await render(AuthorCardTeaserComponent, { inputs: { author: authorTeaserMock } });
-		expect(screen.getByRole('img', { name: avatarName })).toHaveAttribute(
-			'src',
-			expect.stringContaining('h=160&w=160'),
-		);
+		expect(screen.getByRole('img', { name: avatarName })).toHaveAttribute('width', '80');
 	});
 
 	it('should render the nationality flag', async () => {

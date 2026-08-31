@@ -17,7 +17,7 @@ export function mapAuthorTeaser(raw: SanityAuthor): AuthorTeaser {
 	return {
 		slug: raw.slug.current,
 		name: raw.name,
-		imageUrl: urlForWithAutoFormat(raw.image),
+		imageUrl: urlFor(raw.image),
 	};
 }
 ```
