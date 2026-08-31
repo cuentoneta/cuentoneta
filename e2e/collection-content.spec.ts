@@ -7,8 +7,9 @@
  * vive tras un breakpoint y por lo tanto depende del ancho real del viewport, y el bloque de sugeridas,
  * que se alimenta de un recurso progresivo y en el HTML del servidor todavía no existe.
  */
-import { expect, test, type Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 
+import { test } from './_utils/test';
 import { fetchCollectionCatalog, type CollectionCatalogEntry } from './_utils/collection-fixtures';
 import { DESKTOP_VIEWPORT } from './_utils/viewports';
 import { STABLE_SLUGS } from './_utils/seo-fixtures';

@@ -8,7 +8,9 @@
  * El contenido de prueba lo cura el equipo en los datasets (development local / staging CI); el caso se
  * saltea con anotación si el slug aún no existe.
  */
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+
+import { test } from './_utils/test';
 
 import { STABLE_SLUGS } from './_utils/seo-fixtures';
 

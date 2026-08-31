@@ -7,10 +7,17 @@
  * del documento. La escala y sus reglas de lint impiden ahora elegir un valor fuera de rango, pero no
  * pueden juzgar si el aislamiento quedó en el ancestro correcto: eso solo se mide en un navegador.
  */
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+
+import { test } from './_utils/test';
 
 import { NAV_OWNS_EVERY_SAMPLE, STACKING_VIEWPORTS, VIEWPORT_HEIGHT, navStackingReport } from './_utils/stacking';
 import { STABLE_SLUGS } from './_utils/seo-fixtures';
+
+// Lo que este spec mide es geometría, y la geometría depende de cuándo llega cada imagen: con las del CDN
+// sustituidas, que resuelven al instante, el hit-test empezó a resolver a la raíz de a ratos. Se paga el
+// ancho de banda de estas cargas a cambio del timing real.
+test.use({ interceptSanityAssets: false });
 
 // Las rutas con fixture estable, cada una con un elemento que **la propia página** aporta. El selector no
 // puede ser del shell —`cuentoneta-header` está presente aun con la ruta en esqueleto o en error—, porque

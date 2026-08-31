@@ -4,7 +4,9 @@
  * La tanda completa de invariantes corre sin `fixme`: esta página no difiere nada, así que el HTML
  * trae encabezado real y los enlaces a cada colección.
  */
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+
+import { test } from '../_utils/test';
 
 import { parseJsonLdBlocks, getMetaContent, getTitleText, getCanonicalHref } from '../_utils/seo';
 import { assertValidJsonLd } from '@testing/json-ld-validation';

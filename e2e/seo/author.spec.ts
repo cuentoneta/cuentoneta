@@ -12,7 +12,9 @@
  *  - D. Al volver a la home (logo del header), los bloques del autor se remueven y los
  *       sitewide persisten; sin duplicar canonical ni <title>.
  */
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+
+import { test } from '../_utils/test';
 
 import { parseJsonLdBlocks, getMetaContent, getTitleText, getCanonicalHref } from '../_utils/seo';
 import { assertValidJsonLd } from '@testing/json-ld-validation';

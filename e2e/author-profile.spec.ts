@@ -5,7 +5,9 @@
  * de medidas reales —el spec unitario se las fija a mano porque happy-dom no computa layout— y el sticky
  * no existe fuera de un navegador con viewport.
  */
-import { expect, test } from '@playwright/test';
+import { expect } from '@playwright/test';
+
+import { test } from './_utils/test';
 
 import { STABLE_SLUGS } from './_utils/seo-fixtures';
 import { DESKTOP_VIEWPORT } from './_utils/viewports';
