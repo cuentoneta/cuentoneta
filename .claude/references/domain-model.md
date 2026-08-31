@@ -182,7 +182,7 @@ El texto vinculado a contenido (`Markdown` → `SanitizedHtml`) **se trata como 
 
 ## Value Objects (Slug, ReadingTime, DateString)
 
-Un **Value Object** no tiene identidad propia: representa un concepto del dominio, es inmutable y se compara por su contenido. Hoy `Author` sigue usando **tipos primitivos** para estos conceptos (`slug: string`, `bornOn?: DateString`) — promoverlos a value objects es **roadmap (#1503)**, sin cambios. `LiteraryWork` ya implementa el patrón en producción: `Slug`, `WordCount`, `ReadingTime`, `Markdown`, `SanitizedHtml`, `ChapterTitle` en `src/models/*.model.ts` (branded types + factory `create*` que valida y lanza), con specs, más `createIsoDateTime` en `src/utils/date.utils.ts`; los contratos están en `docs/LITERARY_WORK_DESIGN.md` §4. `Collection` también lo adopta para su `Slug`. Los ejemplos de `Slug`/`ReadingTime` de abajo muestran esa implementación real; `DateString` (`Author.bornOn`/`diedOn`) sigue siendo el ejemplo roadmap, sin factory validadora.
+Un **Value Object** no tiene identidad propia: representa un concepto del dominio, es inmutable y se compara por su contenido. Hoy `Author` sigue usando **tipos primitivos** para estos conceptos (`slug: string`, `bornOn?: DateString`) — promoverlos a value objects es **roadmap (#1503)**, sin cambios. `LiteraryWork` ya implementa el patrón en producción: `Slug`, `WordCount`, `ReadingTime`, `Markdown`, `SanitizedHtml`, `SectionTitle` en `src/models/*.model.ts` (branded types + factory `create*` que valida y lanza), con specs, más `createIsoDateTime` en `src/utils/date.utils.ts`; los contratos están en `docs/LITERARY_WORK_DESIGN.md` §4. `Collection` también lo adopta para su `Slug`. Los ejemplos de `Slug`/`ReadingTime` de abajo muestran esa implementación real; `DateString` (`Author.bornOn`/`diedOn`) sigue siendo el ejemplo roadmap, sin factory validadora.
 
 ### Slug — clave de negocio
 
@@ -234,7 +234,7 @@ export function dateString(value: string): DateString {
 }
 ```
 
-> **Nota de estilo (CLAUDE.md):** para conjuntos cerrados de literales **nunca** usar `enum` de TS — usar `Object.freeze({...} as const)`. Esto aplica a `ResourceType.slug`, `MediaType`, `ContributorAreaType`, etc.
+> **Nota de estilo (CLAUDE.md):** para conjuntos cerrados de literales **nunca** usar `enum` de TS — usar `Object.freeze({...} as const)`. Esto aplica a `ResourceType.slug`, `MediaTypeKey`, `ContributorAreaType`, etc.
 
 ---
 
@@ -355,7 +355,7 @@ Un **domain event** es un hecho en pasado sobre algo que **ya ocurrió**: `Liter
 
 Los eventos permiten que un bounded context reaccione a otro sin llamada directa: el contexto productor registra el hecho y los consumidores se suscriben. Esto **desacopla** contextos.
 
-**Estado — roadmap (#1503).** Los domain events **no están implementados** todavía. La comunicación entre contextos hoy pasa por los **mappers del ACL** y llamadas directas a services. Esta sección documenta el patrón para el momento en que ese acoplamiento directo se vuelva una carga — por ejemplo, cuando publicar una obra deba propagarse a varios contextos (Página de Inicio: `mostRead`/`latestReads`; perfil de `Author`; notificaciones) que no conviene cablear en un único service. El diseño detallado (incluyendo `LiteraryWorkPublished`, `LiteraryWorkCreated`, `AuthorAssigned`) vive en `docs/DDD_IMPROVEMENTS.md` §2. Los nombres son ilustrativos; los autoritativos se acordarán al introducir los eventos.
+**Estado — roadmap (#1503).** Los domain events **no están implementados** todavía. La comunicación entre contextos hoy pasa por los **mappers del ACL** y llamadas directas a services. Esta sección documenta el patrón para el momento en que ese acoplamiento directo se vuelva una carga — por ejemplo, cuando publicar una obra deba propagarse a varios contextos (Página de Inicio: `mostRead`/`latestReads`; perfil de `Author`; notificaciones) que no conviene cablear en un único service. El diseño detallado (incluyendo `LiteraryWorkPublished`, `LiteraryWorkCreated`, `AuthorCreatedEvent`) vive en `docs/DDD_IMPROVEMENTS.md` §1. Los nombres son ilustrativos; los autoritativos se acordarán al introducir los eventos.
 
 ## Type-state pattern
 

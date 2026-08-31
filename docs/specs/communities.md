@@ -123,8 +123,8 @@ interface Community {
 
 	// Contenido asociado
 	authors: Author[]; // Autores vinculados a la comunidad
-	stories: Story[]; // Historias publicadas por/para la comunidad
-	storylists: Storylist[]; // Colecciones de la comunidad
+	literaryWorks: LiteraryWork[]; // Historias publicadas por/para la comunidad
+	collections: Collection[]; // Colecciones de la comunidad
 	events: Event[]; // Eventos organizados
 	blogEntries: BlogEntry[]; // Entradas de blog
 	contests: Contest[]; // Certámenes de escritura
@@ -313,9 +313,9 @@ interface Contest {
 	prizes?: Prize[]; // Premios ofrecidos
 
 	// Contenido relacionado
-	stories?: Story[]; // Historias participantes (después de cierre)
+	literaryWorks?: LiteraryWork[]; // Historias participantes (después de cierre)
 	winners?: ContestWinner[]; // Ganadores y menciones especiales
-	resultsStorylist?: Storylist; // Compilación de participantes
+	resultsCollection?: Collection; // Compilación de participantes
 
 	// Estado
 	status: ContestStatus; // Estado actual
@@ -348,7 +348,7 @@ interface Prize {
 interface ContestWinner {
 	_key: string;
 	position: number; // Posición (1 = 1er premio)
-	story: Story; // Historia ganadora
+	literaryWork: LiteraryWork; // Historia ganadora
 	category: string; // Categoría
 	comments?: string; // Comentarios del jurado
 }
@@ -384,8 +384,8 @@ interface TemplateConfiguration {
 		showEvents: boolean; // Mostrar eventos próximos
 		showBlog: boolean; // Mostrar blog
 		showContests: boolean; // Mostrar certámenes
-		showStories: boolean; // Mostrar historias
-		showStorylist: boolean; // Mostrar colecciones
+		showLiteraryWorks: boolean; // Mostrar historias
+		showCollections: boolean; // Mostrar colecciones
 		showResources: boolean; // Mostrar recursos externos
 	};
 
@@ -541,8 +541,8 @@ Community
 ```
 Community
 ├── references Author[] (muchos autores pueden no estar en comunidad)
-├── references Story[] (historias pueden ser de múltiples orígenes)
-├── references Storylist[] (colecciones propias o curadas)
+├── references LiteraryWork[] (historias pueden ser de múltiples orígenes)
+├── references Collection[] (colecciones propias o curadas)
 ├── references Event[]
 ├── references BlogEntry[]
 └── references Contest[]
@@ -560,8 +560,8 @@ BlogEntry
 Contest
 ├── references Community
 ├── contains ContestCategory[]
-├── references Story[] (participantes después de cierre)
-└── references Storylist (compilación de resultados)
+├── references LiteraryWork[] (participantes después de cierre)
+└── references Collection (compilación de resultados)
 ```
 
 ### Relaciones de agregación en landing page
@@ -620,7 +620,7 @@ Antes de implementar la característica completa de comunidades, es necesario re
 
 - Las comunidades podrán crear y gestionar sus propios certámenes
 - Los certámenes se mostrarán en la página de perfil de la comunidad
-- Las historias ganadoras se incluirán en compilaciones (Storylist)
+- Las historias ganadoras se incluirán en compilaciones (Collection)
 
 ### 3. Funcionalidad de Eventos Base
 
@@ -754,11 +754,11 @@ user_roles (
 - Vista en grid/list con opción de cambio
 - Búsqueda dentro de historias de la comunidad
 
-**CF.7 - Colecciones de Comunidad (Storylists)**
+**CF.7 - Colecciones de Comunidad**
 
 - Mostrar colecciones/antologías propias de la comunidad
 - Distinción visual entre colecciones propias y colecciones curadas
-- Enlaces a storylists completas
+- Enlaces a colecciones completas
 
 #### Eventos
 
@@ -983,7 +983,7 @@ user_roles (
 - Visualizar ganadores por categoría
 - Incluir comentarios del jurado (si existen)
 - Enlace a historias ganadoras
-- Compilación en Storylist (colección de participantes)
+- Compilación en Collection (colección de participantes)
 
 #### Para administradores
 
@@ -1126,25 +1126,25 @@ export default {
 			description: 'Autores que pertenecen o colaboran con la comunidad',
 		},
 		{
-			name: 'stories',
+			name: 'literaryWorks',
 			title: 'Historias de la Comunidad',
 			type: 'array',
 			of: [
 				{
 					type: 'reference',
-					to: [{ type: 'story' }],
+					to: [{ type: 'literaryWork' }],
 				},
 			],
 			description: 'Historias publicadas bajo la iniciativa de la comunidad',
 		},
 		{
-			name: 'storylists',
-			title: 'Colecciones (Storylists)',
+			name: 'collections',
+			title: 'Colecciones',
 			type: 'array',
 			of: [
 				{
 					type: 'reference',
-					to: [{ type: 'storylist' }],
+					to: [{ type: 'collection' }],
 				},
 			],
 			description: 'Colecciones/antologías propias de la comunidad',
@@ -1657,13 +1657,13 @@ export default {
 			of: [{ type: 'prize' }],
 		},
 		{
-			name: 'stories',
+			name: 'literaryWorks',
 			title: 'Historias Participantes',
 			type: 'array',
 			of: [
 				{
 					type: 'reference',
-					to: [{ type: 'story' }],
+					to: [{ type: 'literaryWork' }],
 				},
 			],
 			description: 'Agregada después del cierre del certamen',
@@ -1675,10 +1675,10 @@ export default {
 			of: [{ type: 'contestWinner' }],
 		},
 		{
-			name: 'resultsStorylist',
+			name: 'resultsCollection',
 			title: 'Compilación de Resultados',
 			type: 'reference',
-			to: [{ type: 'storylist' }],
+			to: [{ type: 'collection' }],
 			description: 'Colección de todas las historias participantes/ganadoras',
 		},
 		{
@@ -1886,10 +1886,10 @@ export default {
 			validation: (Rule) => Rule.required().greaterThan(0),
 		},
 		{
-			name: 'story',
+			name: 'literaryWork',
 			title: 'Historia Ganadora',
 			type: 'reference',
-			to: [{ type: 'story' }],
+			to: [{ type: 'literaryWork' }],
 			validation: (Rule) => Rule.required(),
 		},
 		{
@@ -1956,13 +1956,13 @@ export default {
 					initialValue: true,
 				},
 				{
-					name: 'showStories',
+					name: 'showLiteraryWorks',
 					title: 'Mostrar Historias',
 					type: 'boolean',
 					initialValue: true,
 				},
 				{
-					name: 'showStorylist',
+					name: 'showCollections',
 					title: 'Mostrar Colecciones',
 					type: 'boolean',
 					initialValue: true,
@@ -2049,9 +2049,9 @@ export default {
 
 ### Integración con esquemas existentes
 
-#### story (modificado)
+#### literaryWork (modificado)
 
-Agregar campo a `cms/schemas/story.ts`:
+Agregar campo a `cms/schemas/literaryWork.ts`:
 
 ```typescript
 {
@@ -2087,9 +2087,9 @@ Agregar campo a `cms/schemas/author.ts`:
 },
 ```
 
-#### storylist (modificado)
+#### collection (modificado)
 
-Agregar campo a `cms/schemas/storylist.ts`:
+Agregar campo a `cms/schemas/collection.ts`:
 
 ```typescript
 {
@@ -2135,8 +2135,8 @@ Agregar a `src/api/routes.ts`:
 routes = [
 	// Existentes
 	{ path: '/author', controller: authorController },
-	{ path: '/story', controller: storyController },
-	{ path: '/storylist', controller: storylistController },
+	{ path: '/literary-work', controller: literaryWorkController },
+	{ path: '/collection', controller: collectionController },
 	{ path: '/contributor', controller: contributorController },
 	{ path: '/content', controller: contentController },
 
@@ -2301,10 +2301,10 @@ export class CommunityService {
 
 	async getCommunityWithRelatedContent(slug: string): Promise<CommunityFull> {
 		const community = await this.communityRepository.fetchBySlug(slug);
-		const [authors, stories, storylists, events, blogEntries, contests] = await Promise.all([
+		const [authors, literaryWorks, collections, events, blogEntries, contests] = await Promise.all([
 			this.authorRepository.fetchByCommunitySlug(slug),
-			this.storyRepository.fetchByCommunitySlug(slug),
-			this.storylistRepository.fetchByCommunitySlug(slug),
+			this.literaryWorkRepository.fetchByCommunitySlug(slug),
+			this.collectionRepository.fetchByCommunitySlug(slug),
 			this.eventRepository.fetchByCommunitySlug(slug),
 			this.blogEntryRepository.fetchByCommunitySlug(slug),
 			this.contestRepository.fetchByCommunitySlug(slug),
@@ -2312,8 +2312,8 @@ export class CommunityService {
 
 		return this.mapToCommunityFull(community, {
 			authors,
-			stories,
-			storylists,
+			literaryWorks,
+			collections,
 			events,
 			blogEntries,
 			contests,
@@ -2360,8 +2360,8 @@ export const communityBySlugQuery = `
     },
     leadership[] { ... },
     authors[]-> { slug, name },
-    stories[]-> { slug, title },
-    storylists[]-> { slug, title },
+    literaryWorks[]-> { slug, title },
+    collections[]-> { slug, title },
     status,
     publishedAt,
     templateSettings,
@@ -2395,7 +2395,7 @@ Agregar a `src/app/app.routes.ts`:
 ```typescript
 const routes: Routes = [
 	// Rutas existentes
-	{ path: 'story/:slug', component: StoryComponent },
+	{ path: 'literary-work/:slug', component: LiteraryWorkComponent },
 	{ path: 'author/:slug', component: AuthorComponent },
 
 	// Nuevas rutas de comunidades
@@ -2657,7 +2657,7 @@ export interface CommunityProfile extends Community {
 	members: CommunityMember[];
 	leadership: MemberRole[];
 	authors: AuthorTeaser[];
-	stories: StoryNavigationTeaser[];
+	literaryWorks: LiteraryWorkNavigationTeaser[];
 	templateSettings: TemplateConfiguration;
 }
 
@@ -2931,8 +2931,8 @@ interface TemplateConfiguration {
 		showEvents: boolean;
 		showBlog: boolean;
 		showContests: boolean;
-		showStories: boolean;
-		showStorylist: boolean;
+		showLiteraryWorks: boolean;
+		showCollections: boolean;
 		showResources: boolean;
 	};
 
@@ -3141,7 +3141,7 @@ Extender `sitemap.xml` para incluir:
 
 - [ ] Schema `community` en Sanity
 - [ ] Object types: `communityMember`, `memberRole`, `contactInformation`, `templateConfiguration`
-- [ ] Integrar campos en schemas existentes (story, author, storylist)
+- [ ] Integrar campos en schemas existentes (literaryWork, author, collection)
 - [ ] GROQ queries para comunidades
 - [ ] TypeScript models en frontend
 
@@ -3235,9 +3235,9 @@ Extender `sitemap.xml` para incluir:
 ┌─────────────────────────────────────────────────────────────┐
 │                                                             │
 │  Core Platform (Existente)                                 │
-│  ├─ Story                                                  │
+│  ├─ LiteraryWork                                            │
 │  ├─ Author                                                 │
-│  └─ Storylist                                              │
+│  └─ Collection                                              │
 │                                                             │
 └──────────────┬──────────────────────────────────────────────┘
                │

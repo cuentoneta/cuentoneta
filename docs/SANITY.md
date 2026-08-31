@@ -20,7 +20,7 @@ Se pueden ver ejemplos de consultas definidas con tipos generados en `src/api/_q
 
 Debe tenerse en cuenta que los tipos generados pueden incluir casos donde los campos serán nulos o no definidos. Por ejemplo `slug?: string | null`. Hasta ahora recurrimos a la correción manual en casos donde tenemos completa seguridad de que el valor siempre estará definido (ni `null` ni `undefined`), buscando evitar estos casos mediante la especificación de la regla de validación `required` en los schemas de Sanity.
 
-Las queries de GROQ pueden ser nulas en caso de que no se encuentre el documento en la base de datos, lo cual debe ser validado mediante una cláusula `if` en el código de la aplicación a nivel del servicio que dispara la consulta y, para su posterior procesamiento por funciones de mapeo, puede utilizarse el operador `NonNullable` para definir un tipo derivado. Pueden observarse ejemplos de esto en los servicios de `author` y `story`, en consultas que devuelven un valor único en base a una búsqueda por `slug`. En el caso de que las consultas devuelvan un array, el array será vacío -- lo cual es un comportamiento esperado y no debe ser tratado como un error o problema.
+Las queries de GROQ pueden ser nulas en caso de que no se encuentre el documento en la base de datos, lo cual debe ser validado mediante una cláusula `if` en el código de la aplicación a nivel del servicio que dispara la consulta y, para su posterior procesamiento por funciones de mapeo, puede utilizarse el operador `NonNullable` para definir un tipo derivado. Pueden observarse ejemplos de esto en los servicios de `author` y `literary-work`, en consultas que devuelven un valor único en base a una búsqueda por `slug`. En el caso de que las consultas devuelvan un array, el array será vacío -- lo cual es un comportamiento esperado y no debe ser tratado como un error o problema.
 
 Para aquellos casos en los que los campos sean de tipo array debe hacerse uso de la función `coalesce` en las consultas GROQ para evitar que el campo sea `null` y devolver, en cambio, un array vacío que pueda ser tipado mediante `Array<never>`. Puede observarse un ejemplo en la consulta `src/api/author/author.query.ts`.
 
@@ -37,7 +37,3 @@ Este patrón asegura que los cambios en el esquema de Sanity no afecten directam
 ## Actualización y generación automática de contenido
 
 Para más detalles sobre las **consultas GROQ** y **funciones de repositorio** utilizadas para actualizar contenido automáticamente en Sanity, así como la estructura y mantenimiento de documentos clave como `landingPage` y `rotatingContent`, consulta la documentación sobre [Estrategias de Actualización de Contenido](./CONTENT_UPDATE_STRATEGIES.md).
-
-## Scripts de auditoría y diagnóstico
-
-Para tareas puntuales de **auditoría, diagnóstico o migración** sobre los datos de Sanity, el proyecto incluye scripts one-off en la raíz de `scripts/`, sin comando en `package.json`: se ejecutan explícitamente con `pnpm exec tsx`. Consulta la convención de qué vive en `scripts/` y bajo qué forma en [`scripts.md`](../.claude/references/scripts.md).

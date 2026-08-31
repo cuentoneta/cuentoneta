@@ -105,7 +105,7 @@ Estos patrones son intencionales y correctos. NO los reportes como problemas:
 - [ ] Unix Philosophy — hace una sola cosa bien
 - [ ] Predictable — el código hace lo que aparenta
 - [ ] Idiomatic — sigue las convenciones del framework/lenguaje
-- [ ] Domain-Based — usa lenguaje de negocio (Story / Author / Storylist)
+- [ ] Domain-Based — usa lenguaje de negocio (LiteraryWork / Author / Collection)
 
 ### Patrones del modelo de dominio (si aplica)
 
