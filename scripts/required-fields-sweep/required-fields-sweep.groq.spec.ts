@@ -58,13 +58,13 @@ describe('buildFieldCountQuery', () => {
 	// expresa igual de bien que un campo directo.
 	it('reaches an attribute nested in an object inside the array', () => {
 		const field: RequiredFieldPath = {
-			documentType: 'collection',
-			segments: ['tabs', 'slug', 'current'],
+			documentType: 'author',
+			segments: ['resources', 'resourceType', '_ref'],
 			insideArray: true,
 		};
 
 		expect(buildFieldCountQuery(field).publishedQuery).toContain(
-			'count(tabs[defined(slug) && !defined(slug.current)]) > 0',
+			'count(resources[defined(resourceType) && !defined(resourceType._ref)]) > 0',
 		);
 	});
 
@@ -112,28 +112,28 @@ describe('the generated queries, evaluated', () => {
 	});
 
 	// Un ítem que no trae el objeto contenedor entero incumple **un** dato, no uno por cada campo de
-	// ese objeto: sin el guard, el mismo documento se cuenta en la fila de `tabs.slug` y en la de
-	// `tabs.slug.current`, y el reporte exagera el problema.
+	// ese objeto: sin el guard, el mismo documento se cuenta en la fila del objeto y en la de cada uno
+	// de sus atributos, y el reporte exagera el problema.
 	it('does not count an item that lacks the whole nested object as breaching its every field', async () => {
 		const field: RequiredFieldPath = {
-			documentType: 'collection',
-			segments: ['tabs', 'slug', 'current'],
+			documentType: 'author',
+			segments: ['resources', 'resourceType', '_ref'],
 			insideArray: true,
 		};
-		const withoutSlugObject = [{ _id: 'a', _type: 'collection', tabs: [{ title: 'sin slug' }] }];
+		const withoutResourceType = [{ _id: 'a', _type: 'author', resources: [{ title: 'sin tipo' }] }];
 
-		expect(await count(buildFieldCountQuery(field).publishedQuery, withoutSlugObject)).toBe(0);
+		expect(await count(buildFieldCountQuery(field).publishedQuery, withoutResourceType)).toBe(0);
 	});
 
 	it('does count an item whose nested object exists but misses the attribute', async () => {
 		const field: RequiredFieldPath = {
-			documentType: 'collection',
-			segments: ['tabs', 'slug', 'current'],
+			documentType: 'author',
+			segments: ['resources', 'resourceType', '_ref'],
 			insideArray: true,
 		};
-		const withEmptySlug = [{ _id: 'a', _type: 'collection', tabs: [{ slug: {} }] }];
+		const withEmptyResourceType = [{ _id: 'a', _type: 'author', resources: [{ resourceType: {} }] }];
 
-		expect(await count(buildFieldCountQuery(field).publishedQuery, withEmptySlug)).toBe(1);
+		expect(await count(buildFieldCountQuery(field).publishedQuery, withEmptyResourceType)).toBe(1);
 	});
 
 	// El caso que la perspectiva no distingue: el mismo documento vive publicado y como borrador, y

@@ -14,7 +14,7 @@ Desde el staff y equipo de "La Cuentoneta" establecimos la Misión, Visión y Va
 
 ## Misión:
 
-Nuestra misión en "La Cuentoneta" es fomentar y hacer accesible la lectura digital a través de la publicación de relatos breves en storylists temáticas, creando un espacio comunitario virtual dedicado a la difusión de la literatura. Buscamos promover el placer de la lectura, emulando la experiencia de las playlists musicales o de videos, para que usuarias y usuarios puedan disfrutar de la lectura de una manera divertida y entretenida.
+Nuestra misión en "La Cuentoneta" es fomentar y hacer accesible la lectura digital a través de la publicación de relatos breves en colecciones temáticas, creando un espacio comunitario virtual dedicado a la difusión de la literatura. Buscamos promover el placer de la lectura, emulando la experiencia de las playlists musicales o de videos, para que usuarias y usuarios puedan disfrutar de la lectura de una manera divertida y entretenida.
 
 ## Visión:
 
