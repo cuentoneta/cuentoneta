@@ -48,8 +48,7 @@ describe('AuthorCardTeaserComponent', () => {
 		);
 	});
 
-	// Lo que esta tarjeta decide es el tamaño del avatar; qué se le pide al CDN a partir de él lo
-	// resuelven el loader de imágenes y `ImageProfileComponent`, que tienen sus propios specs.
+	// La tarjeta decide el tamaño; qué se le pide al CDN a partir de él tiene sus propios specs.
 	it('should mount the avatar at the lg size', async () => {
 		await render(AuthorCardTeaserComponent, { inputs: { author: authorTeaserMock } });
 		expect(screen.getByRole('img', { name: avatarName })).toHaveAttribute('width', '80');

@@ -3,14 +3,12 @@ const SANITY_CDN_HOSTNAME = 'cdn.sanity.io';
 /**
  * Verdadero solo si `url` es una URL absoluta servida por el CDN de Sanity.
  *
- * Vive en el kernel y no en cada consumidor porque quienes lo usan tienen que reconocer **el mismo**
- * conjunto: el `IMAGE_LOADER` de la aplicación decide con esto qué transforma, y la intercepción de
- * los e2e decide con esto qué sustituye. Dos definiciones que divergieran dejarían el bloqueo de los
- * tests pasando en verde sobre un conjunto distinto del que la aplicación pide.
+ * Compartido a propósito: el loader de la aplicación decide con esto qué transforma y la
+ * intercepción de los e2e qué sustituye, y dos definiciones que divergieran dejarían a los tests
+ * cubriendo un conjunto distinto del que la aplicación pide.
  *
- * Compara el hostname parseado y no el texto de la URL, porque `https://cdn.sanity.io.evil.com/x.png`
- * lo contiene sin ser el CDN. El protocolo se exige explícito: el CDN solo sirve por HTTPS, así que
- * cualquier otro esquema es algo que no queremos ni transformar ni dar por sustituido.
+ * Compara el hostname parseado y no el texto, porque `https://cdn.sanity.io.evil.com/x.png` lo
+ * contiene sin ser el CDN.
  */
 export function isSanityImageUrl(url: string): boolean {
 	try {

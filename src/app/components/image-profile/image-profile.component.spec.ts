@@ -29,9 +29,8 @@ describe('ImageProfileComponent', () => {
 		expect(img).not.toHaveAttribute('src', expect.stringContaining('photo.jpg'));
 	});
 
-	// El componente ya no arma la URL: declara el tamaño de display y el loader deriva de ahí lo que se
-	// le pide al CDN. Se ejercita con el loader real —el mismo que la aplicación registra— porque lo que
-	// hay que afirmar es el resultado de los dos juntos, no el contrato de cada uno por separado.
+	// El componente declara el tamaño de display y el loader deriva de ahí lo que se le pide al CDN. Se
+	// ejercita con el loader real porque lo que importa es el resultado de los dos juntos.
 	describe('Tamaño solicitado al CDN', () => {
 		const renderWithLoader = (size: ImageProfileSize) =>
 			render(ImageProfileComponent, {
@@ -39,8 +38,7 @@ describe('ImageProfileComponent', () => {
 				providers: [provideSanityImageLoader()],
 			});
 
-		// Se afirma sobre el `srcset` y no sobre el `src`: NgOptimizedImage deja en `src` la URL sin ancho,
-		// como fallback, y son las entradas del `srcset` las que el navegador elige y descarga.
+		// Sobre el `srcset`, que es de donde el navegador elige; el `src` queda sin ancho, como fallback.
 		it.each([
 			['small', 24],
 			['medium', 40],
@@ -51,8 +49,7 @@ describe('ImageProfileComponent', () => {
 
 			const srcset = screen.getByRole('img', { name: alt }).getAttribute('srcset');
 			expect(srcset).toContain(`${src}?w=${px}&auto=format&q=75 1x`);
-			// La densidad la cubre el `srcset`, y por eso el componente dejó de pedir el doble a mano:
-			// pedirlo de nuevo duplicaría el parámetro.
+			// La densidad la cubre el `srcset`: pedir el doble a mano duplicaría el parámetro.
 			expect(srcset).toContain(`${src}?w=${px * 2}&auto=format&q=75 2x`);
 		});
 

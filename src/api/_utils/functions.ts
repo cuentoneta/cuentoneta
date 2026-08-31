@@ -91,11 +91,8 @@ export function mapAuthorTeaser(
 }
 
 /**
- * URL canónica del asset, sin parámetros de transformación.
- *
- * Los de tamaño, formato y calidad los agrega el `IMAGE_LOADER` del frontend, que es quien conoce la
- * caja donde la imagen se pinta. Agregar acá alguno de ellos lo duplica en la URL final, porque el
- * loader corre igual sobre lo que emite este mapper.
+ * URL canónica del asset, sin parámetros de transformación: los agrega el `IMAGE_LOADER` del
+ * frontend. Agregar uno acá lo duplicaría, y el CDN se queda con el primero.
  */
 export function urlFor(source: SanityImageSource): string {
 	if (!source) {
