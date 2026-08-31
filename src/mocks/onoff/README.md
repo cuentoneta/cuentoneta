@@ -2,7 +2,7 @@
 
 > **Datos ficticios.** Autor y obras pertenecen al personaje "Onoff" del film _Una pura formalità_ (G. Tornatore, 1994). Ninguna de estas obras existe. Las citas entrecomilladas provienen de los diálogos del film; el resto (fechas, editorial, sinopsis) es invención coherente con su universo.
 
-Este directorio (`src/mocks/onoff/`) es la **única ubicación** del corpus de las 8 obras de François Onoff, accesible por frontend y backend vía el alias `@mocks/onoff`. Desde [#1981](https://github.com/cuentoneta/cuentoneta/issues/1981) conviven acá tres capas del mismo elenco:
+Este directorio (`src/mocks/onoff/`) es la **única ubicación** del corpus de las 8 obras de François Onoff, accesible por frontend y backend vía el alias `@mocks/onoff`. Conviven acá tres capas del mismo elenco:
 
 - **Documentos** (los consume `groq-js`): `<slug>.<entidad>.document.ts` — lo que Sanity guarda tal cual. Es la **única capa escrita a mano**.
 - **Fixtures raw** (las consume el backend): `<slug>.<entidad>.raw.mock.ts`, tipadas contra los `*QueryResult` de `@sanity-types` (los tipos generados de Sanity, promovidos al kernel). Se **generan**, no se editan (ver [Las tres capas](#las-tres-capas)).
@@ -80,7 +80,7 @@ Las exclusiones no son todas de la misma naturaleza, y la diferencia importa: al
 
 Una sub-proyección **sí** puede generarse cuando su query tiene capa de documentos: es lo que pasa con `ContentCampaign`, que se deriva del resultado generado de la landing page (ver [Corpus raw: página de inicio](#corpus-raw-página-de-inicio-contenido-rotativo-y-contentcampaign-generado)). Lo que la vuelve inderivable no es ser sub-proyección, sino que ninguna query la devuelva.
 
-> Las fichas Markdown por obra (metadata + reseña) que vivían en `tools/story-mocks/onoff/` se retiraron en #1653: los mocks TS de este directorio son ahora la fuente.
+Los mocks TS de este directorio son la fuente única del corpus: no hay fichas de otro formato ni ubicación paralela con la que puedan desincronizarse.
 
 ## Corpus de dominio: `LiteraryWork` (#1653)
 
@@ -145,7 +145,7 @@ Contraparte cruda del corpus de dominio `LiteraryWork`, tipada contra `NonNullab
 
 El documento de landing es el único que no lleva su slug en el nombre del archivo (`onoff.landing-page.document.ts`): su slug es una semana, y nombrarlo así obligaría a renombrar el archivo cada vez que el corpus se moviera de fecha.
 
-**La landing declara `collections` y `latestLiteraryWorks`, no `cards` ni `latestReads`.** Esos dos campos referenciaban `storylist` y `story`, agregados que ya no existen; sus reemplazos referencian `collection` y `literaryWork`, que sí están en el dataset — y `landingPageContentQuery` ya no proyecta los campos retirados, así que la fixture generada tampoco los transporta.
+**La landing declara `collections` y `latestLiteraryWorks`.** Referencian `collection` y `literaryWork`, que están en el dataset; `landingPageContentQuery` proyecta exactamente esos campos, y la fixture generada los transporta tal cual.
 
 **Se genera el resultado entero de la query, no solo `campaigns`.** Un archivo generado afirma "esto es lo que la query devuelve", y recortar obligaría al gate de frescura a replicar el mismo recorte para poder comparar: la transformación quedaría afirmada por sí misma.
 

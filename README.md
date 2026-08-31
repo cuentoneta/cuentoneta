@@ -16,7 +16,7 @@
 
 **La Cuentoneta** es un proyecto abierto y sin fines de lucro que busca generar un espacio comunitario para difundir escritos en literatura breve. Esta iniciativa fue gestada originalmente por un grupo de amigas y amigos residentes de la ciudad de Santa Fe, Argentina durante los últimos días de diciembre de 2021.
 
-La misión de **La Cuentoneta** es construir colectivamente una plataforma accesible, amigable y gamificada que sea útil para fomentar, compartir y disfrutar la lectura digital. Buscamos lograrlo a través de la publicación de escritos breves en _storylists_ temáticas, emulando las playlists que utilizan plataformas de audio como Spotify y de video como YouTube; intentando resignificar el formato de antología de relatos breves.
+La misión de **La Cuentoneta** es construir colectivamente una plataforma accesible, amigable y gamificada que sea útil para fomentar, compartir y disfrutar la lectura digital. Buscamos lograrlo a través de la publicación de escritos breves en _colecciones_ temáticas, emulando las playlists que utilizan plataformas de audio como Spotify y de video como YouTube; intentando resignificar el formato de antología de relatos breves.
 
 ---
 
@@ -76,7 +76,7 @@ La Cuentoneta también es parte de [For Good First Issue](https://forgoodfirstis
     <img height="96" width="96" alt="logo-tertulia-literaria" src="https://github.com/cuentoneta/cuentoneta/assets/32349705/7ca8a3d3-ed76-4785-a6ef-f3f7498b94c3">
 </picture>
 
-La comunidad [Tertulia Literaria](https://discord.gg/tertulia-literaria-795704695485235231), enfocada a compartir conocimiento, lecturas y en general la grata convivencia, colabora activamente con la selección de historias, la generación de iniciativas y la confección de storylists en La Cuentoneta.
+La comunidad [Tertulia Literaria](https://discord.gg/tertulia-literaria-795704695485235231), enfocada a compartir conocimiento, lecturas y en general la grata convivencia, colabora activamente con la selección de historias, la generación de iniciativas y la confección de colecciones temáticas en La Cuentoneta.
 
 ---
 

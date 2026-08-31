@@ -8,10 +8,8 @@ import { buildBreadcrumbSchema, buildPersonSchema } from '@utils/schema-org.buil
  * Construye el JSON-LD `Article` (+ un `Person` por autor) de una obra.
  *
  * Multi-autor: `LiteraryWork` modela 1..N autores, así que `author` es un arreglo de `Person`.
- * Omite `dateModified`: a diferencia de `Story`, `LiteraryWork` no expone `updatedAt`. Sin `image`
- * todavía (igual que la página de cuento): una imagen raster requiere que `/api/og` emita PNG.
- *
- * // TODO: Agregar campos faltantes en schema como parte de la implementación del issue #1471
+ * Omite `dateModified`: `LiteraryWork` no expone `updatedAt`. Sin `image` todavía: una imagen raster
+ * requiere que `/api/og` emita PNG.
  */
 export function buildLiteraryWorkArticleSchema(literaryWork: LiteraryWork, websiteUrl: string): WithContext<Article> {
 	const baseUrl = Location.stripTrailingSlash(websiteUrl);

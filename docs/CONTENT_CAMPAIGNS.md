@@ -12,7 +12,7 @@
 
 ### ¿Qué es una campaña de contenido?
 
-Denominamos como **campaña de contenido** a una característica del sistema que tiene como objetivo principal la difusión, en un espacio de tiempo particular, de un contenido específico. Este contenido puede ser una colección, una story particular, el perfil de un autor, etc. Cualquier tipo de contenido enrutable en la web, tanto dentro como fuera de la plataforma, es susceptible de ser parte de una campaña de contenido.
+Denominamos como **campaña de contenido** a una característica del sistema que tiene como objetivo principal la difusión, en un espacio de tiempo particular, de un contenido específico. Este contenido puede ser una colección, una obra particular, el perfil de un autor, etc. Cualquier tipo de contenido enrutable en la web, tanto dentro como fuera de la plataforma, es susceptible de ser parte de una campaña de contenido.
 
 El carrusel superior visualizado en la web es el espacio destinado a las campaña de contenido vigentes. En este banner se muestra una imagen que invita al usuario a interactuar con el contenido de la campaña y permite, en el tiempo, la difusión por redes sociales y otros medios de comunicación. El título de la campaña no se pinta como texto: viaja como texto alternativo de la imagen, para lectores de pantalla y para el caso en que la imagen no cargue.
 

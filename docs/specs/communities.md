@@ -78,7 +78,7 @@ Una **comunidad** (`community`) es una organización de personas que comparten e
 **Contenido asociado:**
 
 - **Autores vinculados**: Escritores que pertenecen o colaboran con la comunidad
-- **Historias**: Obras literarias publicadas bajo la iniciativa de la comunidad
+- **Obras**: las que se publican bajo la iniciativa de la comunidad
 - **Colecciones**: Antologías, compilaciones, certámenes organizados por la comunidad
 - **Eventos**: Lecturas públicas, conferencias, talleres literarios
 - **Blog**: Entradas de análisis, crítica literaria, noticias de la comunidad
@@ -123,8 +123,8 @@ interface Community {
 
 	// Contenido asociado
 	authors: Author[]; // Autores vinculados a la comunidad
-	stories: Story[]; // Historias publicadas por/para la comunidad
-	storylists: Storylist[]; // Colecciones de la comunidad
+	literaryWorks: LiteraryWork[]; // Obras publicadas por/para la comunidad
+	collections: Collection[]; // Colecciones de la comunidad
 	events: Event[]; // Eventos organizados
 	blogEntries: BlogEntry[]; // Entradas de blog
 	contests: Contest[]; // Certámenes de escritura
@@ -313,9 +313,9 @@ interface Contest {
 	prizes?: Prize[]; // Premios ofrecidos
 
 	// Contenido relacionado
-	stories?: Story[]; // Historias participantes (después de cierre)
+	literaryWorks?: LiteraryWork[]; // Obras participantes (después de cierre)
 	winners?: ContestWinner[]; // Ganadores y menciones especiales
-	resultsStorylist?: Storylist; // Compilación de participantes
+	resultsCollection?: Collection; // Compilación de participantes
 
 	// Estado
 	status: ContestStatus; // Estado actual
@@ -348,7 +348,7 @@ interface Prize {
 interface ContestWinner {
 	_key: string;
 	position: number; // Posición (1 = 1er premio)
-	story: Story; // Historia ganadora
+	literaryWork: LiteraryWork; // Obra ganadora
 	category: string; // Categoría
 	comments?: string; // Comentarios del jurado
 }
@@ -384,8 +384,8 @@ interface TemplateConfiguration {
 		showEvents: boolean; // Mostrar eventos próximos
 		showBlog: boolean; // Mostrar blog
 		showContests: boolean; // Mostrar certámenes
-		showStories: boolean; // Mostrar historias
-		showStorylist: boolean; // Mostrar colecciones
+		showLiteraryWorks: boolean; // Mostrar obras
+		showCollections: boolean; // Mostrar colecciones
 		showResources: boolean; // Mostrar recursos externos
 	};
 
@@ -501,14 +501,14 @@ Draft → Published → Archived
 - Gestionar certámenes de escritura con cronograma
 - Permitir participación de múltiples categorías
 - Administrar premios y resultados
-- Publicar historias ganadoras
+- Publicar obras ganadoras
 
 **Invariantes de Negocio:**
 
 - Slug único
 - `announcementDate` < `openDate` < `closeDate` (si todas existen)
 - Al menos una categoría definida
-- Solo historias publicadas pueden ser ganadoras
+- Solo obras publicadas pueden ser ganadoras
 - `isActive` debe ser true solo si status es 'open'
 
 **Vistas Polimórficas:**
@@ -541,8 +541,8 @@ Community
 ```
 Community
 ├── references Author[] (muchos autores pueden no estar en comunidad)
-├── references Story[] (historias pueden ser de múltiples orígenes)
-├── references Storylist[] (colecciones propias o curadas)
+├── references LiteraryWork[] (obras pueden ser de múltiples orígenes)
+├── references Collection[] (colecciones propias o curadas)
 ├── references Event[]
 ├── references BlogEntry[]
 └── references Contest[]
@@ -560,8 +560,8 @@ BlogEntry
 Contest
 ├── references Community
 ├── contains ContestCategory[]
-├── references Story[] (participantes después de cierre)
-└── references Storylist (compilación de resultados)
+├── references LiteraryWork[] (participantes después de cierre)
+└── references Collection (compilación de resultados)
 ```
 
 ### Relaciones de agregación en landing page
@@ -572,7 +572,7 @@ La página de inicio de una comunidad agrega:
 - Próximos eventos
 - Últimas entradas de blog
 - Certámenes activos/próximos
-- Historias destacadas
+- Obras destacadas
 - Colecciones propias
 
 ---
@@ -614,13 +614,13 @@ Antes de implementar la característica completa de comunidades, es necesario re
 - GROQ queries para obtener certámenes
 - Endpoints API `/api/contest`
 - Página frontend para listar y visualizar certámenes
-- Capacidad de vincular historias a certámenes
+- Capacidad de vincular obras a certámenes
 
 **Impacto en Comunidades:**
 
 - Las comunidades podrán crear y gestionar sus propios certámenes
 - Los certámenes se mostrarán en la página de perfil de la comunidad
-- Las historias ganadoras se incluirán en compilaciones (Storylist)
+- Las obras ganadoras se incluirán en compilaciones (Collection)
 
 ### 3. Funcionalidad de Eventos Base
 
@@ -709,7 +709,7 @@ user_roles (
 
 **CF.1 - Perfil de Comunidad**
 
-- Visualizar página de perfil de comunidad con: nombre, descripción, logo, banner, miembros, eventos próximos, blog, historias
+- Visualizar página de perfil de comunidad con: nombre, descripción, logo, banner, miembros, eventos próximos, blog, obras
 - Ruta: `/community/:slug`
 - Vistas responsivas (mobile, tablet, desktop)
 - Integración con plantilla configurable
@@ -747,18 +747,18 @@ user_roles (
 - Vista de "Autores destacados" vs "Todos los autores"
 - Enlaces a perfiles de autores
 
-**CF.6 - Historias de Comunidad**
+**CF.6 - Obras de Comunidad**
 
-- Mostrar historias publicadas por/bajo la iniciativa de la comunidad
+- Mostrar obras publicadas por/bajo la iniciativa de la comunidad
 - Filtrado por: fecha, author, length
 - Vista en grid/list con opción de cambio
-- Búsqueda dentro de historias de la comunidad
+- Búsqueda dentro de obras de la comunidad
 
-**CF.7 - Colecciones de Comunidad (Storylists)**
+**CF.7 - Colecciones de Comunidad**
 
 - Mostrar colecciones/antologías propias de la comunidad
 - Distinción visual entre colecciones propias y colecciones curadas
-- Enlaces a storylists completas
+- Enlaces a colecciones completas
 
 #### Eventos
 
@@ -808,7 +808,7 @@ user_roles (
 - Página de perfil de miembro dentro de contexto de comunidad
 - Ruta: `/community/:slug/member/:memberSlug`
 - Información: nombre, foto, rol, biografía, recursos personales
-- Lista de historias del miembro (si es autor)
+- Lista de obras del miembro (si es autor)
 
 **MF.2 - Directorio de Miembros**
 
@@ -982,8 +982,8 @@ user_roles (
 
 - Visualizar ganadores por categoría
 - Incluir comentarios del jurado (si existen)
-- Enlace a historias ganadoras
-- Compilación en Storylist (colección de participantes)
+- Enlace a obras ganadoras
+- Compilación en Collection (colección de participantes)
 
 #### Para administradores
 
@@ -993,18 +993,18 @@ user_roles (
 - Campos: nombre, descripción, fechas, categorías, bases
 - Definir premios
 - Cambiar estado del certamen
-- Vincular historias participantes (después de cierre)
+- Vincular obras participantes (después de cierre)
 - Designar ganadores
 - Control de acceso: solo administradores de comunidad
 
-#### Integración con historias
+#### Integración con obras
 
-**CTF.5 - Marcar Historias como Participantes**
+**CTF.5 - Marcar Obras como Participantes**
 
-- Historias pueden vincularse a un certamen
+- Obras pueden vincularse a un certamen
 - Metadata: "Mención especial - Certamen X", "Ganador Categoría Y"
-- Mostrar badge en tarjeta de historia
-- Enlace hacia certamen desde historia
+- Mostrar badge en tarjeta de obra
+- Enlace hacia certamen desde obra
 
 ---
 
@@ -1126,25 +1126,25 @@ export default {
 			description: 'Autores que pertenecen o colaboran con la comunidad',
 		},
 		{
-			name: 'stories',
-			title: 'Historias de la Comunidad',
+			name: 'literaryWorks',
+			title: 'Obras de la Comunidad',
 			type: 'array',
 			of: [
 				{
 					type: 'reference',
-					to: [{ type: 'story' }],
+					to: [{ type: 'literaryWork' }],
 				},
 			],
-			description: 'Historias publicadas bajo la iniciativa de la comunidad',
+			description: 'Obras publicadas bajo la iniciativa de la comunidad',
 		},
 		{
-			name: 'storylists',
-			title: 'Colecciones (Storylists)',
+			name: 'collections',
+			title: 'Colecciones',
 			type: 'array',
 			of: [
 				{
 					type: 'reference',
-					to: [{ type: 'storylist' }],
+					to: [{ type: 'collection' }],
 				},
 			],
 			description: 'Colecciones/antologías propias de la comunidad',
@@ -1657,13 +1657,13 @@ export default {
 			of: [{ type: 'prize' }],
 		},
 		{
-			name: 'stories',
-			title: 'Historias Participantes',
+			name: 'literaryWorks',
+			title: 'Obras Participantes',
 			type: 'array',
 			of: [
 				{
 					type: 'reference',
-					to: [{ type: 'story' }],
+					to: [{ type: 'literaryWork' }],
 				},
 			],
 			description: 'Agregada después del cierre del certamen',
@@ -1675,11 +1675,11 @@ export default {
 			of: [{ type: 'contestWinner' }],
 		},
 		{
-			name: 'resultsStorylist',
+			name: 'resultsCollection',
 			title: 'Compilación de Resultados',
 			type: 'reference',
-			to: [{ type: 'storylist' }],
-			description: 'Colección de todas las historias participantes/ganadoras',
+			to: [{ type: 'collection' }],
+			description: 'Colección de todas las obras participantes/ganadoras',
 		},
 		{
 			name: 'status',
@@ -1886,10 +1886,10 @@ export default {
 			validation: (Rule) => Rule.required().greaterThan(0),
 		},
 		{
-			name: 'story',
-			title: 'Historia Ganadora',
+			name: 'literaryWork',
+			title: 'Obra Ganadora',
 			type: 'reference',
-			to: [{ type: 'story' }],
+			to: [{ type: 'literaryWork' }],
 			validation: (Rule) => Rule.required(),
 		},
 		{
@@ -1956,13 +1956,13 @@ export default {
 					initialValue: true,
 				},
 				{
-					name: 'showStories',
-					title: 'Mostrar Historias',
+					name: 'showLiteraryWorks',
+					title: 'Mostrar Obras',
 					type: 'boolean',
 					initialValue: true,
 				},
 				{
-					name: 'showStorylist',
+					name: 'showCollections',
 					title: 'Mostrar Colecciones',
 					type: 'boolean',
 					initialValue: true,
@@ -2049,9 +2049,9 @@ export default {
 
 ### Integración con esquemas existentes
 
-#### story (modificado)
+#### literaryWork (modificado)
 
-Agregar campo a `cms/schemas/story.ts`:
+Agregar campo a `cms/schemas/literaryWork.ts`:
 
 ```typescript
 {
@@ -2064,7 +2064,7 @@ Agregar campo a `cms/schemas/story.ts`:
       to: [{ type: 'community' }],
     },
   ],
-  description: 'Comunidades bajo cuya iniciativa se publicó esta historia',
+  description: 'Comunidades bajo cuya iniciativa se publicó esta obra',
 },
 ```
 
@@ -2087,9 +2087,9 @@ Agregar campo a `cms/schemas/author.ts`:
 },
 ```
 
-#### storylist (modificado)
+#### collection (modificado)
 
-Agregar campo a `cms/schemas/storylist.ts`:
+Agregar campo a `cms/schemas/collection.ts`:
 
 ```typescript
 {
@@ -2135,8 +2135,8 @@ Agregar a `src/api/routes.ts`:
 routes = [
 	// Existentes
 	{ path: '/author', controller: authorController },
-	{ path: '/story', controller: storyController },
-	{ path: '/storylist', controller: storylistController },
+	{ path: '/literary-work', controller: literaryWorkController },
+	{ path: '/collection', controller: collectionController },
 	{ path: '/contributor', controller: contributorController },
 	{ path: '/content', controller: contentController },
 
@@ -2301,10 +2301,10 @@ export class CommunityService {
 
 	async getCommunityWithRelatedContent(slug: string): Promise<CommunityFull> {
 		const community = await this.communityRepository.fetchBySlug(slug);
-		const [authors, stories, storylists, events, blogEntries, contests] = await Promise.all([
+		const [authors, literaryWorks, collections, events, blogEntries, contests] = await Promise.all([
 			this.authorRepository.fetchByCommunitySlug(slug),
-			this.storyRepository.fetchByCommunitySlug(slug),
-			this.storylistRepository.fetchByCommunitySlug(slug),
+			this.literaryWorkRepository.fetchByCommunitySlug(slug),
+			this.collectionRepository.fetchByCommunitySlug(slug),
 			this.eventRepository.fetchByCommunitySlug(slug),
 			this.blogEntryRepository.fetchByCommunitySlug(slug),
 			this.contestRepository.fetchByCommunitySlug(slug),
@@ -2312,8 +2312,8 @@ export class CommunityService {
 
 		return this.mapToCommunityFull(community, {
 			authors,
-			stories,
-			storylists,
+			literaryWorks,
+			collections,
 			events,
 			blogEntries,
 			contests,
@@ -2360,8 +2360,8 @@ export const communityBySlugQuery = `
     },
     leadership[] { ... },
     authors[]-> { slug, name },
-    stories[]-> { slug, title },
-    storylists[]-> { slug, title },
+    literaryWorks[]-> { slug, title },
+    collections[]-> { slug, title },
     status,
     publishedAt,
     templateSettings,
@@ -2395,7 +2395,7 @@ Agregar a `src/app/app.routes.ts`:
 ```typescript
 const routes: Routes = [
 	// Rutas existentes
-	{ path: 'story/:slug', component: StoryComponent },
+	{ path: 'literary-work/:slug', component: LiteraryWorkComponent },
 	{ path: 'author/:slug', component: AuthorComponent },
 
 	// Nuevas rutas de comunidades
@@ -2464,7 +2464,7 @@ const routes: Routes = [
 - Mostrar miembros destacados
 - Mostrar próximos eventos (widget)
 - Mostrar últimas entradas de blog
-- Mostrar historias destacadas
+- Mostrar obras destacadas
 - Mostrar colecciones propias
 - Implementar plantilla configurable
 
@@ -2657,7 +2657,7 @@ export interface CommunityProfile extends Community {
 	members: CommunityMember[];
 	leadership: MemberRole[];
 	authors: AuthorTeaser[];
-	stories: StoryNavigationTeaser[];
+	literaryWorks: LiteraryWorkNavigationTeaser[];
 	templateSettings: TemplateConfiguration;
 }
 
@@ -2698,7 +2698,7 @@ Tarjeta de entrada de blog con título, autor, fecha, excerpt.
 
 **Ubicación:** `src/app/components/contest-badge/contest-badge.component.ts`
 
-Badge que indica si una historia es ganadora/mención especial en certamen.
+Badge que indica si una obra es ganadora/mención especial en certamen.
 
 ---
 
@@ -2931,8 +2931,8 @@ interface TemplateConfiguration {
 		showEvents: boolean;
 		showBlog: boolean;
 		showContests: boolean;
-		showStories: boolean;
-		showStorylist: boolean;
+		showLiteraryWorks: boolean;
+		showCollections: boolean;
 		showResources: boolean;
 	};
 
@@ -2953,7 +2953,7 @@ Secciones: Descripción, contacto, recursos
 
 #### Layout: standard (predeterminado)
 
-Secciones: Descripción, miembros, últimos eventos, últimas entradas blog, historias destacadas
+Secciones: Descripción, miembros, últimos eventos, últimas entradas blog, obras destacadas
 
 - Configuración por defecto
 - Balance entre información y contenido
@@ -3141,7 +3141,7 @@ Extender `sitemap.xml` para incluir:
 
 - [ ] Schema `community` en Sanity
 - [ ] Object types: `communityMember`, `memberRole`, `contactInformation`, `templateConfiguration`
-- [ ] Integrar campos en schemas existentes (story, author, storylist)
+- [ ] Integrar campos en schemas existentes (literaryWork, author, collection)
 - [ ] GROQ queries para comunidades
 - [ ] TypeScript models en frontend
 
@@ -3235,9 +3235,9 @@ Extender `sitemap.xml` para incluir:
 ┌─────────────────────────────────────────────────────────────┐
 │                                                             │
 │  Core Platform (Existente)                                 │
-│  ├─ Story                                                  │
+│  ├─ LiteraryWork                                            │
 │  ├─ Author                                                 │
-│  └─ Storylist                                              │
+│  └─ Collection                                              │
 │                                                             │
 └──────────────┬──────────────────────────────────────────────┘
                │
@@ -3261,7 +3261,7 @@ Extender `sitemap.xml` para incluir:
          │  ├─ Editor de Blog Entries                               │
          │  ├─ Control de Acceso (Requiere Autenticación)           │
          │  ├─ Moderación de Contenido                              │
-         │  └─ Certámenes (Depende de Historias)                    │
+         │  └─ Certámenes (Depende de Obras)                    │
          └──────────┬──────────────────────────────────────────────┘
                     │
          ┌──────────▼───────────────────────────────────────────────┐

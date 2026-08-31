@@ -26,7 +26,7 @@ En **La Cuentoneta** buscamos progresivamente la aplicación de los principios f
 4. [Lenguaje Ubicuo (Ubiquitous Language)](#lenguaje-ubicuo-ubiquitous-language)
 5. [Patrones y Estrategias](#patrones-y-estrategias)
 6. [Estructura de Capas](#estructura-de-capas)
-7. [Mejoras Recomendadas](#mejoras-recomendadas) (ver [DDD_IMPROVEMENTS.md](./DDD_IMPROVEMENTS.md))
+7. [Mejoras Recomendadas](./DDD_IMPROVEMENTS.md)
 8. [Referencias](#referencias)
 
 ---
@@ -67,7 +67,7 @@ GET /api/literary-work             # Catálogo de obras (teasers), filtrable por
 
 **Agregados Raíz:**
 
-- `Collection` - Colecciones de obras literarias. Es la única con página propia: sirve su catálogo y su detalle; el sitemap la lista por slug. `Storylist`, la forma anterior que agrupaba historias, se retiró junto con su endpoint y su document type; las URLs viejas responden con un traslado permanente. Ver [el agregado](#agregado-collection-colección-de-obras-literarias)
+- `Collection` - Colecciones de obras literarias, única raíz de este contexto, con página propia que sirve su catálogo y su detalle; el sitemap la lista por slug. Ver [el agregado](#agregado-collection-colección-de-obras-literarias)
 
 **Responsabilidades:**
 
@@ -135,86 +135,11 @@ GET /api/content                   # Obtener contenido de página inicio
 
 Un **Agregado** es un cluster de objetos de dominio (entidades y objetos de valor) que se tratan como una unidad para fines de cambios en los datos. La **Raíz de Agregado** es la entidad que define el límite del agregado.
 
-### Agregado: Story (Historia) — retirado
-
-> **Estado: retirado.** El document type `story` y su endpoint (`/api/story`) se dieron de baja: el catálogo de contenido narrativo hoy es exclusivamente `LiteraryWork` (ver más abajo). Dar de baja el schema no borra los documentos, que siguen en el content lake invisibles pero presentes; su purga tiene procedimiento propio en `cms/migrations/purge-story-documents/README.md`. Esta sección se conserva como referencia histórica del modelo que `LiteraryWork` reemplazó.
-
-**Raíz de Agregado:** `Story`
-
-```typescript
-interface Story {
-	// Identidad
-	_id: string; // Identificador único (Sanity)
-	slug: string; // Clave de negocio, invariante única
-
-	// Contenido
-	title: string; // Título de la historia
-	paragraphs: Markdown; // Cuerpo principal (nunca vacío)
-	summary: Markdown; // Sinopsis
-	epigraphs: Epigraph[]; // Epígrafes literarios opcionales
-
-	// Metadatos
-	approximateReadingTime: number; // Minutos estimados de lectura (>= 1)
-	badLanguage?: boolean; // Advertencia de lenguaje explícito
-	originalPublication: string; // Atribución/publicación original
-	publishedAt: string; // Fecha ISO de publicación en la plataforma (fallback a _createdAt). Datos estructurados/E-E-A-T
-	updatedAt: string; // Fecha ISO de última modificación (_updatedAt de Sanity)
-
-	// Imagen
-	coverImage: string; // URL de portada de la historia; '' si no fue asignada
-
-	// Relaciones
-	author: Author; // Autor de la historia (requerido)
-
-	// Categorización
-	tags: Tag[]; // Etiquetas de taxonomía (editoriales). Vacío en los teasers
-
-	// Recursos Multimedia
-	resources: Resource[]; // Enlaces a recursos externos
-	media: Media[]; // Contenido multimedia (audio, video, tweets)
-}
-```
-
-**Invariantes de Negocio:**
-
-- El slug debe ser único y no puede cambiar una vez creado
-- Toda historia debe tener un autor
-- La historia debe tener al menos un párrafo de contenido
-- El tiempo de lectura debe ser un número positivo
-- El idioma debe ser un código ISO válido
-- `resources` nunca contiene un ítem con `url` ausente o vacía (ver [Resource](#resource-recurso-externo))
-
-**Ciclo de Vida:**
-
-```
-Borrador en Sanity → Publicación en Contexto (Storylist, perfil de Autor) → Accesible para lectura
-```
-
-**Entidades Secundarias:**
-
-Un epígrafe es un bloque de texto opcional que se utiliza para referenciar otros textos o trabajos literarios. La plataforma permite
-
-```typescript
-interface Epigraph {
-	text: Markdown; // El epígrafe
-	reference: Markdown; // Referencia/fuente
-}
-```
-
-**Vistas Polimórficas:**
-
-- `Story` - Vista completa (incluye párrafos, epígrafes, autor completo)
-- `StoryTeaser` - Vista resumida (sin párrafos)
-- `StoryNavigationTeaser` - Vista mínima para navegación
-- `StoryNavigationTeaserWithAuthor` - Vista mínima con autor resumido
-
----
-
 ### Agregado: LiteraryWork (Obra literaria)
 
 **Raíz de Agregado:** `LiteraryWork`
 
-> Contratos completos y decisiones de diseño en [`LITERARY_WORK_DESIGN.md`](LITERARY_WORK_DESIGN.md). `LiteraryWork` es el agregado que sirve todo el contenido narrativo del catálogo. Es la primera raíz de agregado con **invariantes implementadas en código** (factory `createLiteraryWork` + value objects brandeados en `src/models/`).
+> Contratos completos y decisiones de diseño en [`LITERARY_WORK_DESIGN.md`](LITERARY_WORK_DESIGN.md). `LiteraryWork` es el agregado que sirve todo el contenido narrativo del catálogo, con **invariantes implementadas en código** (factory `createLiteraryWork` + value objects brandeados en `src/models/`).
 
 ```typescript
 interface LiteraryWork {
@@ -249,7 +174,7 @@ interface LiteraryWork {
 
 interface LiteraryWorkSection {
 	position: number; // Identidad numérica en la obra (0-based, igual al índice del array en el CMS)
-	chapterTitle?: ChapterTitle; // Opcional; expone toAnchor(): Slug para anclas
+	title?: SectionTitle; // Opcional; expone toAnchor(): Slug para anclas
 	epigraphs?: AttributedText[]; // 0..N epígrafes por sección
 	bodyHtml: SanitizedHtml; // HTML saneado server-side (nunca markdown crudo)
 	readingTime: ReadingTime; // Minutos de lectura de la sección
@@ -344,64 +269,11 @@ Borrador de perfil -> Publicación de perfil -> Perfil disponible para búsqueda
 
 ---
 
-### Agregado: Storylist (Colección) — retirado
-
-> **Estado: retirado.** El document type `storylist` y su endpoint (`/api/storylist`) se dieron de baja: la curación de obras en colecciones hoy es exclusivamente `Collection` (ver más abajo). Sus documentos siguen en el content lake hasta que se aplique la purga, que tiene procedimiento propio en `cms/migrations/purge-story-documents/README.md`. Esta sección se conserva como referencia histórica del modelo que `Collection` reemplazó.
-
-**Raíz de Agregado:** `Storylist`
-
-```typescript
-interface Storylist {
-	// Identidad
-	_id: string; // Identificador único (Sanity)
-	title: string; // Nombre de la colección
-	slug: string; // Clave de negocio, invariante única
-
-	// Metadatos
-	count: number; // Total de historias
-
-	// Contenido
-	description: Markdown; // Descripción de la colección
-	imagery: StorylistImagery; // representative (portada editorial) o sample (portadas de historias)
-	tags: Tag[]; // Etiquetas de categorización
-
-	// Configuración
-	config: {
-		showAuthors: boolean; // ¿Mostrar información de autores?
-	};
-
-	// Composición
-	stories: StoryTeaserWithAuthor[]; // Historias en la colección (ordenadas)
-}
-```
-
-**Invariantes de Negocio:**
-
-- El slug debe ser único
-- `count` debe coincidir con el número real de stories
-- `imagery` es un value object (`{ kind: 'representative', image }` cuando hay portada editorial propia; `{ kind: 'sample', images }` con las portadas de las historias cuando no la hay). Las dos vistas polimórficas de la colección (`Storylist`, `StorylistTeaser`) lo comparten desde `StorylistBase`, en vez de exponer una `featuredImage` cruda.
-
-**Ciclo de Vida:**
-
-```
-Creación de colección → Adición de historias → Publicación de colección
-```
-
-**Relación con Story:**
-Las historias se referencian directamente en el array `stories`. Cada entrada es una proyección de tipo `StoryTeaserWithAuthor`, que incluye la información esencial de la historia y su autor.
-
-**Vistas Polimórficas:**
-
-- `Storylist` - Vista completa (incluye todas las historias con información de autor)
-- `StorylistTeaser` - Vista sin historias
-
----
-
 ### Agregado: Collection (Colección de obras literarias)
 
 **Raíz de Agregado:** `Collection`
 
-> `Collection` reemplazó a `Storylist`: agrupa `LiteraryWork` en vez de `Story`. Es la única raíz de este contexto, con página propia que sirve su catálogo y su detalle. El sitemap la lista por slug; las URLs viejas de `Storylist` responden con un traslado permanente. Es la **segunda** raíz de agregado con **invariantes hechas cumplir en código** (factory `createCollection` + el value object `Slug`, en `src/models/collection.model.ts`), después de `LiteraryWork` — esa es la dirección del proyecto: cada entidad nueva del catálogo suma sus invariantes al código en vez de solo documentarlas.
+> `Collection` es la única raíz de este contexto, con página propia que sirve su catálogo y su detalle. El sitemap la lista por slug. Sus invariantes están **hechas cumplir en código** (factory `createCollection` + el value object `Slug`, en `src/models/collection.model.ts`) — la dirección del proyecto es que cada entidad nueva del catálogo sume sus invariantes al código en vez de solo documentarlas.
 
 ```typescript
 interface Collection {
@@ -547,13 +419,11 @@ interface RotatingContent {
 interface HighlightedAuthor {
 	author: AuthorTeaser;
 	tags: readonly Tag[]; // Las etiquetas derivadas del autor
-	storyCount: number; // Obras del autor, contadas sobre los documentos literaryWork y story
+	storyCount: number; // Obras del autor, contadas sobre los dos _type que el dataset contiene: literaryWork y story
 }
 ```
 
-El conteo abarca **ambos** tipos de documento a propósito: dar de baja el schema `story` no borra del
-dataset los documentos que quedaron sin migrar, y contar solo obras dejaría en cero a todo autor cuya
-obra todavía no migró.
+El campo `storyCount` cuenta los documentos de **ambos** `_type` que hoy conviven en el dataset: la migración de `story` a `literaryWork` no está completa en todo el corpus, así que contar solo `literaryWork` dejaría en cero a todo autor cuya obra todavía no migró.
 
 `mostRead` y `latestReads` conservan su nombre porque nombran el **rol editorial** del slot; lo transportan obras (`LiteraryWorkNavigationTeaserWithAuthors`). `collections` agrupa `CollectionTeaser` (ver [el agregado](#agregado-collection-colección-de-obras-literarias)). `RotatingContent` es la proyección que el cron de "lo más leído" persiste y expone por separado del resto de la landing — detalle del productor en [Estrategias de Actualización de Contenido](./CONTENT_UPDATE_STRATEGIES.md).
 
