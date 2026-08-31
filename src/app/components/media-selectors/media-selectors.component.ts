@@ -22,8 +22,9 @@ interface MediaSelectorItem {
 }
 
 /**
- * Renderiza los selectores de los recursos multimedia asociados a una obra. Es un componente de presentación: no monta los widgets de los recursos, solo emite cuál
- * quedó elegido para que el componente padre decida qué renderizar.
+ * Renderiza los selectores de los recursos multimedia asociados a una obra. Es un componente de
+ * presentación: no monta los widgets de los recursos, solo emite cuál quedó elegido para que el
+ * componente padre decida qué renderizar.
  *
  * Consume la **vista de teaser** del medio: el tag para elegir el ícono y el título para nombrar el
  * recurso. Por eso lo que emite no alcanza para montar un widget: quien lo monte tiene que resolver

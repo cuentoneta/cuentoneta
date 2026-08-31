@@ -214,8 +214,8 @@ describe('SanityLiteraryWorkRepository.fetchBySlug', () => {
 		expect(literaryWork?.tags).toEqual([]);
 	});
 
-	// Con todo el corpus crudo de obras en `mediaSources: []`, esta rama del ACL no se ejercitaba con
-	// datos: el selector por capacidad es lo que le da una obra que sí los trae.
+	// La mayoría del corpus crudo declara `mediaSources: []`, así que el caso se apoya en el selector por
+	// capacidad: entrega una obra que sí los trae, en vez de atarse al slug de la que hoy los tiene.
 	it('mapea los recursos multimedia de la obra, descartando los tipos que el dominio no modela', async () => {
 		const [rawLiteraryWork] = onoffRawLiteraryWorksWithMediaSources;
 

@@ -9,7 +9,7 @@
 > **Estado del proyecto — leer primero.** Hoy cuentoneta es **DDD-lite**: módulos organizados en capas (`controller → service → repository`) con un **ACL de mappers** sólido, pero los **repositorios están acoplados a Sanity** y no existen todavía clases de agregado, specification ni domain events como código (los value objects sí, para `LiteraryWork` y `Collection`). La implementación profunda de estos patrones es un **ROADMAP**, no el estado actual:
 >
 > - El **modelo de dominio descriptivo** (agregados, vistas polimórficas, value objects, lenguaje ubicuo) vive en [`docs/DOMAIN_MODEL.md`](../../docs/DOMAIN_MODEL.md).
-> - Las **mejoras propuestas** (repository pattern desacoplado, domain events, specification) viven en [`docs/DDD_IMPROVEMENTS.md`](../../docs/DDD_IMPROVEMENTS.md).
+> - Las **mejoras propuestas** (domain events, specification, mapeo explícito) viven en [`docs/DDD_IMPROVEMENTS.md`](../../docs/DDD_IMPROVEMENTS.md).
 > - El **issue de implementación** es **#1503**.
 >
 > Esta referencia es el **norte conceptual**; donde un patrón aún no esté implementado, se marca explícitamente como roadmap.

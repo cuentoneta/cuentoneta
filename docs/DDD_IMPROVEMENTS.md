@@ -14,6 +14,8 @@ Este documento enuncia los patrones DDD que **todavía no están adoptados** en 
 
 Para contexto sobre el modelo de dominio actual, consulta [Modelo de Dominio - DDD](./DOMAIN_MODEL.md).
 
+> **Alcance de este documento.** Cubre los patrones que ningún agregado adoptó todavía. Lo que falta en un agregado puntual —las interfaces de repositorio de `Author` y `Contributor`, el brandeo de sus identificadores, o sus invariantes hechas cumplir en código— vive con el agregado: en [Modelo de Dominio](./DOMAIN_MODEL.md) y en las referencias de [arquitectura limpia](../.claude/references/clean-architecture.md) y del [ACL de Sanity](../.claude/references/sanity-acl.md).
+
 ---
 
 ## Tabla de Contenidos
@@ -38,11 +40,11 @@ Los cambios significativos en agregados (como publicar una obra) no se registran
 ```typescript
 // Ejemplo actual - Sin eventos
 async publishLiteraryWork(slug: string): Promise<void> {
-  const literaryWork = await this.literaryWorkRepository.findBySlug(slug);
-  if (literaryWork) {
+  const work = await this.repository.findBySlug(slug);
+  if (work) {
     // El cambio se persiste pero no se notifica a nadie
-    literaryWork.published = true;
-    await this.literaryWorkRepository.save(literaryWork);
+    work.published = true;
+    await this.repository.save(work);
   }
 }
 ```
