@@ -82,7 +82,7 @@
 		"remark-parse": "^11.0.0",
 		"remark-rehype": "^11.1.2",
 		"rxjs": "~7.8.1",
-		"satori": "^0.33.4",
+		"satori": "^0.32.0",
 		"satori-html": "^0.3.2",
 		"tslib": "^2.6.2",
 		"unified": "^11.0.5",
