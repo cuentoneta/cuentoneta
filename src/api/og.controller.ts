@@ -5,9 +5,8 @@ import { Hono } from 'hono';
 
 import type { ReactNode } from 'react';
 
-import Logo from './_utils/Logo';
-
 import { resolveOgText } from './_helpers/og-text';
+import Logo from './_utils/Logo';
 
 const ogController = new Hono();
 
@@ -15,11 +14,7 @@ const ogController = new Hono();
 ogController.get('/og', async (c) => {
 	const rrss = c.req.query('rrss');
 
-	const text = resolveOgText({
-		collection: c.req.query('collection'),
-		author: c.req.query('author'),
-		title: c.req.query('title'),
-	});
+	const text = resolveOgText((name) => c.req.query(name));
 
 	let width: number;
 	let height: number;

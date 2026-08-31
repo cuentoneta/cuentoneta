@@ -337,7 +337,7 @@ Bruno utiliza el prefijo `~` para indicar parámetros opcionales en las solicitu
 ```
 params:query {
   ~author: jorge-luis-borges    # El ~ indica parámetro opcional
-  ~collection: cuentos-de-terror
+  ~collection: Cuentos de terror
   rrss: twitter                 # Parámetro requerido (sin ~)
   title: Example Title
 }
