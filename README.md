@@ -1,9 +1,6 @@
 <div align="center" width="100%">
-    <h1>La Cuentoneta</h1>
-    <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="https://github.com/rolivencia/cuentoneta/assets/32349705/b0ea0659-3c9d-4c4f-9d14-ab60d50dd832">
-        <img width="33%" alt="La Cuentoneta" src="https://github.com/rolivencia/cuentoneta/assets/32349705/b0ea0659-3c9d-4c4f-9d14-ab60d50dd832">
-    </picture>
+    <h2>La Cuentoneta</h2>
+    <img width="33%" alt="" src=".github/assets/cuentoneta-logo.png">
 </div>
 
 <div align="center" width="100%">
@@ -55,6 +52,12 @@ La misión, la visión y los valores de La Cuentoneta nos proporcionan el marco 
 
 ## Comunidad
 
+<!--
+    Los logos de esta sección son marca de terceros y se sirven desde sus URLs de origen:
+    no se versionan en el repositorio, a diferencia de la insignia de la cabecera. Un
+    barrido que "corrija" esto estaría copiando marca ajena al árbol del proyecto.
+-->
+
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://user-images.githubusercontent.com/78808163/198993731-299e973d-8f3b-4a6c-a445-b2b77e0b3286.svg">
   <source media="(prefers-color-scheme: light)" srcset="https://user-images.githubusercontent.com/78808163/228854353-cbd1f9b2-68a3-4cf0-851c-d2c49b3eb85c.svg">
@@ -72,9 +75,7 @@ Este proyecto se desarrolla con la participación y el apoyo de FrontendCafé. E
 La Cuentoneta también es parte de [For Good First Issue](https://forgoodfirstissue.github.com/), una iniciativa que busca generar una lista curada de proyectos open-source con foco en desarrollos del tipo [Bienes Públicos Digitales (DPGs, Digital Public Goods)
 ](https://digitalpublicgoods.net/digital-public-goods/), los cuales además se encuentran disponibles para colaboración abierta.
 
-<picture>
-    <img height="96" width="96" alt="logo-tertulia-literaria" src="https://github.com/cuentoneta/cuentoneta/assets/32349705/7ca8a3d3-ed76-4785-a6ef-f3f7498b94c3">
-</picture>
+<img height="96" width="96" alt="logo-tertulia-literaria" src="https://github.com/cuentoneta/cuentoneta/assets/32349705/7ca8a3d3-ed76-4785-a6ef-f3f7498b94c3">
 
 La comunidad [Tertulia Literaria](https://discord.gg/tertulia-literaria-795704695485235231), enfocada a compartir conocimiento, lecturas y en general la grata convivencia, colabora activamente con la selección de historias, la generación de iniciativas y la confección de colecciones temáticas en La Cuentoneta.
 
@@ -162,7 +163,7 @@ Este repositorio y el contenido de la web de La Cuentoneta se publican bajo lice
 
 <!-- Enlaces al repositorio en Github -->
 
-[gh-issues]: https://github.com/rolivencia/cuentoneta/issues
+[gh-issues]: https://github.com/cuentoneta/cuentoneta/issues
 
 <!-- Recursos y otros -->
 
