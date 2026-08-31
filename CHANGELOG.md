@@ -98,7 +98,7 @@ Ver el changelog completo en [2.11.0](https://github.com/cuentoneta/cuentoneta/r
 #### Dominio y Portable Text
 
 - [#2029] - Separa la vista de multimedia de teaser de la completa en el dominio.
-- [#2049] - Migra el contenido editorial de blockContent a Markdown.
+- [#2049] - Cierra el epic de migración del contenido editorial a Markdown, cuyas conversiones shippearon en 2.9.0 y 2.10.0.
 - [#2055] - Elimina la infraestructura de Portable Text del repositorio.
 
 #### Datos de producción
