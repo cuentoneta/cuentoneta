@@ -1,3 +1,6 @@
+// TODO(#2450): satori está acotado a la línea 0.32 en package.json. Desde 0.33 arrastra harfbuzzjs,
+// que resuelve su WASM con __dirname y rompe la extracción de rutas al empaquetarse en el bundle ESM
+// de servidor. Levantar el pin exige que eso deje de pasar, o tratar el paquete como externo.
 import { html } from 'satori-html';
 import satori from 'satori';
 import { readFileSync } from 'fs';
