@@ -12,7 +12,7 @@ import { TagComponent } from '../tag/tag.component';
 /**
  * Vista previa de un autor enlazada a su perfil, según el Design System v3. Componente de
  * presentación reutilizable para listar y visualizar perfiles de autores: avatar, tags,
- * nombre + bandera de nacionalidad y cantidad de historias.
+ * nombre + bandera de nacionalidad y cantidad de obras.
  *
  * Se modela como un `<article>` (unidad autocontenida) con un único enlace real sobre el nombre del autor,
  * estirado con un pseudo-elemento (`after:absolute after:inset-0`) para que toda la tarjeta sea clickeable
@@ -58,7 +58,7 @@ import { TagComponent } from '../tag/tag.component';
 				</div>
 				@if (storyCount() !== undefined) {
 					<span class="font-inter text-xs font-medium text-neutral-600" data-testid="story-count">
-						{{ storyCount() }} {{ storyCount() === 1 ? 'historia' : 'historias' }}
+						{{ storyCount() }} {{ storyCount() === 1 ? 'obra' : 'obras' }}
 					</span>
 				}
 			</div>

@@ -108,7 +108,7 @@ describe('HighlightedAuthorsComponent', () => {
 				componentImports: defaultImports,
 			});
 
-			expect(screen.getByText(`${highlighted.storyCount} historias`)).toBeInTheDocument();
+			expect(screen.getByText(`${highlighted.storyCount} obras`)).toBeInTheDocument();
 		});
 
 		it('should transition from loading to complete state', async () => {
