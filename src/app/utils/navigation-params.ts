@@ -16,6 +16,11 @@ export type NavigationParams = {
  *
  * Acepta `undefined` porque el router lo asigna explícitamente cuando el query param desaparece al
  * navegar: sin ese caso, el binding del input rompe la navegación del lado del cliente.
+ *
+ * Cualquier otro valor cae al contexto de autor. No es solo una defensa contra un query param
+ * inventado: el 301 de las rutas retiradas preserva la query string, así que un enlace compartido
+ * puede traer el nombre con el que ese contexto viajaba antes, y el slug que lo acompaña se
+ * interpreta entonces como el de un autor.
  */
 export function toNavigationContext(value: string | undefined): NavigationContext {
 	return value === 'collection' ? 'collection' : 'author';
