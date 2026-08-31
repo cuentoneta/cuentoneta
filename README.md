@@ -78,6 +78,16 @@ La Cuentoneta también es parte de [For Good First Issue](https://forgoodfirstis
 
 La comunidad [Tertulia Literaria](https://discord.gg/tertulia-literaria-795704695485235231), enfocada a compartir conocimiento, lecturas y en general la grata convivencia, colabora activamente con la selección de historias, la generación de iniciativas y la confección de colecciones temáticas en La Cuentoneta.
 
+<a href="https://appgentina.com.ar/producto/la-cuentoneta?ref=badge" title="La Cuentoneta | Appgentina">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://appgentina.com.ar/embed-svg/la-cuentoneta/dark">
+    <source media="(prefers-color-scheme: light)" srcset="https://appgentina.com.ar/embed-svg/la-cuentoneta">
+    <img alt="La Cuentoneta | Appgentina" src="https://appgentina.com.ar/embed-svg/la-cuentoneta" width="229" height="54">
+  </picture>
+</a>
+
+La Cuentoneta también se encuentra listada en [Appgentina](https://appgentina.com.ar/), una plataforma dedicada a difundir los productos digitales hechos en Argentina, permitiendo a la comunidad descubrir, compartir y apoyar el talento local.
+
 ---
 
 ## Accesibilidad
