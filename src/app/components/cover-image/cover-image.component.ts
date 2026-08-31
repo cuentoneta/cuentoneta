@@ -2,7 +2,7 @@ import { Component, input } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 
 /**
- * Imagen de portada (cover) de una historia para las tarjetas del Design System v3. El host ES la
+ * Imagen de portada (cover) de una obra para las tarjetas del Design System v3. El host ES la
  * caja de la portada (tamaño fijo 118×164, recortada y con fondo neutro); el consumidor controla su
  * ubicación dentro de la tarjeta con clases utilitarias (p. ej. `order-last`). Si no se provee `src`,
  * muestra el placeholder del Design System. Es decorativa: el click se delega al enlace de la tarjeta,

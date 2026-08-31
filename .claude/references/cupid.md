@@ -17,14 +17,14 @@ export function mapAuthorTeaser(raw: SanityAuthor): AuthorTeaser {
 	return {
 		slug: raw.slug.current,
 		name: raw.name,
-		imageUrl: urlForWithAutoFormat(raw.image),
+		imageUrl: urlFor(raw.image),
 	};
 }
 ```
 
 ## Filosofía Unix (Unix Philosophy)
 
-- Hacé una sola cosa, y hacela bien (un `fetchStoryBySlug` lee; no mapea ni valida)
+- Hacé una sola cosa, y hacela bien (un `fetchAuthorBySlug` lee; no mapea ni valida)
 - Trabajá con interfaces simples y bien definidas entre capas (`repository` → `service` → `controller`)
 - Diseñá para componer con otras herramientas
 - Evitá la complejidad innecesaria (respetá los límites de función ≤ 50 líneas y complejidad ≤ 10)
@@ -32,10 +32,11 @@ export function mapAuthorTeaser(raw: SanityAuthor): AuthorTeaser {
 ```typescript
 // ✅ Cada capa hace una cosa
 // repository: solo trae el resultado crudo de Sanity
-export const fetchStoryBySlug = (slug: string) => client.fetch(storyBySlugQuery, { slug });
+export const fetchAuthorBySlug = (slug: string) => client.fetch(authorBySlugQuery, { slug });
 
 // service: envuelve al repository y mapea al dominio vía la ACL
-export const getStoryBySlug = async (slug: string): Promise<Story> => mapStory(await fetchStoryBySlug(slug));
+export const getAuthorBySlug = async (slug: string): Promise<AuthorProfile> =>
+	mapAuthorProfile(await fetchAuthorBySlug(slug));
 ```
 
 ## Predecible (Predictable)
@@ -43,7 +44,7 @@ export const getStoryBySlug = async (slug: string): Promise<Story> => mapStory(a
 - El código hace lo que parece que hace
 - Comportate de forma consistente y determinística
 - Minimizá las sorpresas; seguí el principio de la menor sorpresa
-- Usá nombres que revelen la intención (`getStories`, `closeOnSuccessEffect`)
+- Usá nombres que revelen la intención (`getAuthorBySlug`, `closeOnSuccessEffect`)
 - Manejá los casos límite de forma explícita y visible (errores tipados por operación, no un `string | null` compartido)
 
 ```typescript
@@ -67,20 +68,20 @@ private readonly syncSlugEffect = effect(() => {
 
 ```typescript
 // ✅ Idiomático en cuentoneta: derivar con computed, no estado duplicado
-protected readonly hasStories = computed(() => this.stories().length > 0);
+protected readonly hasLiteraryWorks = computed(() => this.literaryWorks().length > 0);
 ```
 
 ## Basado en el dominio (Domain-Based)
 
 - Usá el lenguaje del dominio del problema, no detalles de implementación técnica
-- Estructurá el código alrededor de conceptos de negocio (`Story`, `Author`, `Storylist`, `Resource`, `LiteraryWork`)
+- Estructurá el código alrededor de conceptos de negocio (`Author`, `LiteraryWork`, `Collection`, `Resource`)
 - Hacé que el código cuente la historia de lo que el sistema hace
 - Mantené la lógica de dominio separada de la infraestructura: el **ACL (mappers)** traduce el shape crudo de Sanity al modelo de dominio, y los resultados crudos de GROQ **nunca** se filtran al frontend
 
 ```typescript
-// ✅ El dominio habla: lecturas de Storylist, no "documents con _type"
-export const getStorylistBySlug = async (slug: string): Promise<Storylist> =>
-	mapStorylist(await fetchStorylistBySlug(slug));
+// ✅ El dominio habla: lecturas de Collection, no "documents con _type"
+export const getCollectionBySlug = async (slug: string): Promise<Collection> =>
+	mapCollection(await fetchCollectionBySlug(slug));
 ```
 
 _Fuente: Dan North, "CUPID—for joyful coding"_

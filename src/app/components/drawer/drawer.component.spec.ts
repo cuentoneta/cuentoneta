@@ -104,6 +104,18 @@ describe('DrawerComponent', () => {
 		expect(fixture.componentInstance.afterClosedCount).toBe(1);
 	});
 
+	// El efecto real —que el panel cerrado no ocupe lugar ni retenga foco— lo afirma el e2e, que es el
+	// único que computa layout. Acá se fija la declaración que lo produce: un display incondicional pisa
+	// el `display: none` del diálogo cerrado y devuelve el panel a la página.
+	it('should tie the dialog display to the open attribute', async () => {
+		await render(HostComponent);
+		const classes = getDialog().className.split(/\s+/);
+
+		expect(classes).toContain('hidden');
+		expect(classes).toContain('open:flex');
+		expect(classes).not.toContain('flex');
+	});
+
 	it('should close on backdrop click but not on content click', async () => {
 		const user = userEvent.setup();
 		const { fixture } = await render(HostComponent);

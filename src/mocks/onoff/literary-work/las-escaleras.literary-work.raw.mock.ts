@@ -3,6 +3,7 @@
 import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
 import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
 import { absurdoRawTag, alegoriaRawTag, novelaRawTag } from '../../onoff-raw-tags.mock';
+import { lasEscalerasAudioDescription } from '../media/las-escaleras.media';
 import lasEscalerasEditorialNoteMd from './las-escaleras.editorial-note.md?raw';
 import lasEscalerasMdBody from './las-escaleras.md?raw';
 
@@ -18,7 +19,15 @@ export const lasEscalerasRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryRes
 	totalReadingTime: 9,
 	sectionCount: 1,
 	tags: [novelaRawTag, absurdoRawTag, alegoriaRawTag],
-	mediaSources: [],
+	mediaSources: [
+		{
+			_key: 'las-escaleras-audio',
+			_type: 'audioRecording',
+			title: 'Lectura de "Las escaleras" por su autor',
+			description: lasEscalerasAudioDescription,
+			url: 'https://cdn.example.org/onoff/las-escaleras.ogg',
+		},
+	],
 	resources: [],
 	authors: [rawOnoffAuthor],
 	content: [{ _key: 'section-1', title: null, epigraphs: [], body: lasEscalerasMdBody, readingTime: 9 }],

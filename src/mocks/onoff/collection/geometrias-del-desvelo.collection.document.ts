@@ -1,6 +1,7 @@
 import { onoffImageAssets } from '../../onoff-image-assets.mock';
 import type { Collection } from '@sanity-types';
 import {
+	geometriasDelDesveloSpaceDescription,
 	geometriasDelDesveloSpotifyDescription,
 	geometriasDelDesveloYoutubeDescription,
 } from '../media/geometrias-del-desvelo.media';
@@ -43,6 +44,22 @@ export const geometriasDelDesveloCollectionDocument: Collection = {
 			title: 'Las tres geometrías',
 			description: geometriasDelDesveloYoutubeDescription,
 			videoId: 'geometriasDelDesveloVideoId',
+		},
+		// El único medio de la colección que la proyección resuelve a un campo derivado: sin él, la rama
+		// que lee la url del audio quedaría afirmada solo por el compilador.
+		{
+			_key: 'geometrias-space',
+			_type: 'spaceRecording',
+			title: 'Mesa de lectura sobre el insomnio',
+			description: geometriasDelDesveloSpaceDescription,
+			audioFile: { _type: 'file', asset: { _type: 'reference', _ref: 'file-geometria-space-ogg' } },
+			hostName: 'Biblioteca del Méridien',
+			hostAvatar: {
+				_type: 'image',
+				asset: { _type: 'reference', _ref: onoffImageAssets.bibliotecaMeridienAvatar.ref },
+			},
+			date: '1974-07-03',
+			duration: '52:40',
 		},
 	],
 };

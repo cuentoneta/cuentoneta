@@ -13,15 +13,9 @@ import {
 	type Collection,
 	type CollectionTeaser,
 } from '@models/collection.model';
-import { createAttributedText } from '@models/attributed-text.model';
-import { createLiteraryWorkSection } from '@models/literary-work-section.model';
-import type { LiteraryWorkTeaser } from '@models/literary-work.model';
-import { createReadingTime } from '@models/reading-time.model';
 import { createSanitizedHtml } from '@models/sanitized-html.model';
-import { createSectionTitle } from '@models/section-title.model';
-import { createSlug } from '@models/slug.model';
 import { collectionDtoSchema, collectionTeaserListDtoSchema, type CollectionDto } from '@models/collection.dto';
-import type { LiteraryWorkTeaserDto } from '@models/literary-work.dto';
+import { toLiteraryWorkTeaser } from '@models/literary-work.dto';
 import { ApiUrl, Endpoints } from './endpoints';
 
 // El listado devuelve teasers: la vista de catálogo muestra cada colección sin sus obras.
@@ -59,35 +53,8 @@ export class HttpCollectionApi implements CollectionApi {
 		return createCollection({
 			...dto,
 			description: createSanitizedHtml(dto.description),
-			literaryWorks: dto.literaryWorks.map((work) => this.toLiteraryWorkTeaser(work)),
+			literaryWorks: dto.literaryWorks.map(toLiteraryWorkTeaser),
 		});
-	}
-
-	private toLiteraryWorkTeaser(dto: LiteraryWorkTeaserDto): LiteraryWorkTeaser {
-		return {
-			...dto,
-			slug: createSlug(dto.slug),
-			totalReadingTime: createReadingTime(dto.totalReadingTime),
-			// Los medios transportan su descripción como HTML ya saneado, pero el schema la ve como un
-			// objeto opaco: se rehidrata por la misma factory que el cuerpo, para que la garantía sea la
-			// misma en toda la superficie.
-			mediaSources: dto.mediaSources.map((media) => ({
-				...media,
-				description: createSanitizedHtml(media.description),
-			})),
-			teaserSection: createLiteraryWorkSection({
-				position: dto.teaserSection.position,
-				title: dto.teaserSection.title ? createSectionTitle(dto.teaserSection.title.value) : undefined,
-				epigraphs: dto.teaserSection.epigraphs?.map((epigraph) =>
-					createAttributedText({
-						text: createSanitizedHtml(epigraph.text),
-						reference: epigraph.reference ? createSanitizedHtml(epigraph.reference) : undefined,
-					}),
-				),
-				bodyHtml: createSanitizedHtml(dto.teaserSection.bodyHtml),
-				readingTime: createReadingTime(dto.teaserSection.readingTime),
-			}),
-		};
 	}
 }
 

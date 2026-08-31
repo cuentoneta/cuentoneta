@@ -1,6 +1,7 @@
 import type { Author, AuthorTeaser } from './author.model';
 import type { LiteraryWorkSection } from './literary-work-section.model';
-import type { Media } from './media.model';
+import type { LiteraryWorkExcerpt } from './literary-work-excerpt.model';
+import type { Media, MediaTeaser } from './media.model';
 import type { Resource } from './resource.model';
 import type { SanitizedHtml } from './sanitized-html.model';
 import type { Tag } from './tag.model';
@@ -18,14 +19,17 @@ interface LiteraryWorkBase {
 	// y en los teasers puede ser mayor que las secciones transportadas — ver LITERARY_WORK_DESIGN.md §7.
 	readonly sectionCount: number;
 	readonly tags: readonly Tag[];
-	// Las tarjetas de listado (vistas de teaser/navegación) muestran los recursos multimedia
-	// de la obra; por eso el campo vive en la base y no solo en el agregado completo.
-	readonly mediaSources: readonly Media[];
 }
+
+// `mediaSources` lo declara cada vista con su propio tipo, igual que `authors`: todas lo exponen,
+// pero la tarjeta de listado solo pinta el ícono de la plataforma y su proyección no resuelve la
+// carga con la que se reproduce el recurso. Declararlo en la base obligaría a las vistas de teaser
+// a prometer lo que su proyección no trae.
 
 export interface LiteraryWork extends LiteraryWorkBase {
 	// 1..N; la obra anónima referencia al author "Anónimo" (ver isAnonymous).
 	readonly authors: readonly Author[];
+	readonly mediaSources: readonly Media[];
 	readonly content: readonly LiteraryWorkSection[];
 	readonly resources: readonly Resource[];
 	readonly badLanguage?: boolean;
@@ -36,19 +40,59 @@ export interface LiteraryWork extends LiteraryWorkBase {
 	readonly editorialNote?: SanitizedHtml;
 }
 
-// El teaser expone la primera sección completa (no vacía el contenido como StoryTeaser):
-// decisión de diseño del contrato — ver docs/LITERARY_WORK_DESIGN.md §2.
+// El teaser expone un extracto del arranque de la obra, no una sección: su cuerpo va recortado, así
+// que no puede prometer el tiempo de lectura ni la posición que una sección declara — ver
+// docs/LITERARY_WORK_DESIGN.md §2.
 export interface LiteraryWorkTeaser extends LiteraryWorkBase {
 	readonly authors: readonly AuthorTeaser[];
-	readonly teaserSection: LiteraryWorkSection;
+	readonly mediaSources: readonly MediaTeaser[];
+	readonly excerpt: LiteraryWorkExcerpt;
 }
 
 export interface LiteraryWorkNavigationTeaser extends LiteraryWorkBase {
 	readonly authors: Array<never>;
+	readonly mediaSources: readonly MediaTeaser[];
 }
 
 export interface LiteraryWorkNavigationTeaserWithAuthors extends LiteraryWorkBase {
 	readonly authors: readonly AuthorTeaser[];
+	readonly mediaSources: readonly MediaTeaser[];
+}
+
+interface CreateLiteraryWorkNavigationTeaserOptions {
+	_id: string;
+	slug: string;
+	title: string;
+	coverImage: string;
+	totalReadingTime: ReadingTime;
+	sectionCount: number;
+	tags: readonly Tag[];
+	mediaSources: readonly MediaTeaser[];
+	authors: readonly AuthorTeaser[];
+}
+
+/**
+ * Construye la vista de navegación con autores haciendo cumplir las invariantes que sí puede
+ * sostener: título no vacío y al menos un autor.
+ *
+ * La de autores no es defensiva — es la misma que `createLiteraryWork` hace cumplir para el agregado
+ * completo, traducida a esta vista. La proyección la deja pasar (`coalesce(authors[]->…, [])` devuelve
+ * la lista vacía tanto para la obra sin autores como para la que los perdió al despublicarse), y las
+ * tarjetas que pintan esta vista muestran al primero sin preguntar. Sin la factory, una obra mal
+ * curada no rompe donde se puede corregir sino al renderizarse.
+ */
+export function createLiteraryWorkNavigationTeaser(
+	options: CreateLiteraryWorkNavigationTeaserOptions,
+): LiteraryWorkNavigationTeaserWithAuthors {
+	if (options.title.trim() === '') {
+		throw new Error(`LiteraryWorkNavigationTeaser inválido: título vacío (slug "${options.slug}")`);
+	}
+	if (options.authors.length === 0) {
+		throw new Error(
+			`LiteraryWorkNavigationTeaser inválido: sin autores (slug "${options.slug}") — la obra anónima referencia al author "Anónimo"`,
+		);
+	}
+	return Object.freeze({ ...options, slug: createSlug(options.slug) });
 }
 
 // "Anónimo" es un author real del catálogo: la obra anónima lo referencia explícitamente

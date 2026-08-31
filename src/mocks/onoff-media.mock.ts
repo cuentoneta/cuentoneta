@@ -1,9 +1,16 @@
-import type { AudioRecording, Media, SpaceRecording, SpotifyPodcastEpisode, YouTubeVideo } from '@models/media.model';
+import type {
+	AudioRecording,
+	Media,
+	MediaTeaser,
+	SpaceRecording,
+	SpotifyPodcastEpisode,
+	YouTubeVideo,
+} from '@models/media.model';
 import { isAudioRecording, isSpaceRecording, isSpotifyPodcastEpisode, isYouTubeVideo } from '@models/media.model';
 import { geometriaMediaMock } from './onoff/media/geometria.media.mock';
 
-// Canon de multimedia del corpus. Sale de la única obra que declara medios, así que no hay una lista
-// en paralelo que mantener: enriquecer esa obra alcanza a todos los consumidores.
+// Canon de multimedia del corpus. Sale de la obra que declara los cuatro tipos, la única que sostiene a la
+// vez todos los selectores por tipo de abajo; otras obras declaran medios, pero un subconjunto.
 export const onoffMediaMock: Media[] = geometriaMediaMock;
 
 // Selectores por tipo, derivados con los type guards del propio dominio en vez de por el tag a mano:
@@ -12,6 +19,13 @@ export const onoffAudioRecordingsMock: AudioRecording[] = onoffMediaMock.filter(
 export const onoffSpaceRecordingsMock: SpaceRecording[] = onoffMediaMock.filter(isSpaceRecording);
 export const onoffYouTubeVideosMock: YouTubeVideo[] = onoffMediaMock.filter(isYouTubeVideo);
 export const onoffSpotifyPodcastEpisodesMock: SpotifyPodcastEpisode[] = onoffMediaMock.filter(isSpotifyPodcastEpisode);
+
+// La vista de teaser se deriva de la completa, igual que los selectores de arriba: es la misma
+// pérdida de información que hace el ACL al mapear la proyección de listado, y no una lista aparte
+// que podría divergir del canon.
+export function toMediaTeaser(media: Media): MediaTeaser {
+	return { type: media.type, title: media.title };
+}
 
 // El texto plano de una descripción, para que las specs de los widgets afirmen contra el fixture en vez
 // de repetir su texto literal. Vive acá, y no en cada spec, para que todas compartan un mismo criterio

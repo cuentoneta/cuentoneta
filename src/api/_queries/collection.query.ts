@@ -41,12 +41,7 @@ export const collectionBySlugQuery = defineQuery(`
             'slug': slug.current,
             description
         }, []),
-        'mediaSources': coalesce(mediaSources[]{
-            ...,
-            _type == 'spaceRecording' => {
-                'audioUrl': audioFile.asset->url
-            }
-        }, []),
+        'mediaSources': coalesce(mediaSources[]{ _type, title }, []),
         'authors': coalesce(authors[]->{
             _id,
             'slug': slug.current,
@@ -58,11 +53,22 @@ export const collectionBySlugQuery = defineQuery(`
             diedOn,
             diedOnYear
         }, []),
-        'teaserSection': content[0...1]{
+        // El cuerpo va recortado al primer bloque: la tarjeta lo pinta con line-clamp, así que traer la
+        // sección entera transporta la obra completa de cada obra del listado para mostrar dos
+        // renglones. El corte es una **heurística de doble salto de línea**, no una garantía de que el
+        // fragmento sea un párrafo válido: GROQ parte texto, no conoce la gramática de Markdown. El
+        // split va anidado porque el contenido puede llegar con CRLF —el corpus del repo lo hace en
+        // Windows— y ahí un corte por doble LF a secas devolvería el cuerpo entero. Las barras van
+        // dobles porque la query vive en un template literal: una barra sola la consumiría JavaScript
+        // y GROQ recibiría un salto de línea real dentro de la cadena, que no parsea.
+        //
+        // Se toma el primer bloque **no vacío**: un cuerpo que arranca con un renglón en blanco es
+        // contenido válido —nada en el schema lo impide— y con el índice pelado daría un extracto
+        // vacío, que el mapper trataría como obra mal curada y tumbaría la colección entera.
+        'excerpt': content[0...1]{
             _key,
             title,
-            body,
-            readingTime
+            'body': string::split(string::split(body, "\\r\\n\\r\\n")[0], "\\n\\n")[@ != ""][0]
         }
     }, [])
 }[0]`);

@@ -3,11 +3,13 @@ import { moduleMetadata, Meta, StoryObj } from '@storybook/angular-vite';
 import { DrawerComponent, DrawerDirection } from './drawer.component';
 import { DrawerHeaderDirective } from './drawer-header.directive';
 import { DrawerFooterDirective } from './drawer-footer.directive';
-import { CoverImageComponent } from '@components/cover-image/cover-image.component';
-import { TagComponent } from '@components/tag/tag.component';
-import { PortableTextParserComponent } from '@components/portable-text-parser/portable-text-parser.component';
+import { CollectionInfoPanelComponent } from '@components/collection-info-panel/collection-info-panel.component';
 import { NavigableCollectionTeaserComponent } from '@components/navigable-collection-teaser/navigable-collection-teaser.component';
-import { storylistMock, storylistTeaserRepresentativeMock, storylistTeaserSampleMock } from '@mocks/storylist.mock';
+import { DividerComponent } from '@components/divider/divider.component';
+import {
+	onoffCollectionsWithRepresentativeImageryMock,
+	onoffCollectionTeasersMock,
+} from '@mocks/onoff-collections.mock';
 
 type DrawerArgs = DrawerComponent & { direction: DrawerDirection };
 
@@ -120,48 +122,33 @@ export const ComposicionCollectionPage: Story = {
 	name: 'Composición CollectionPage',
 	decorators: [
 		moduleMetadata({
-			imports: [CoverImageComponent, TagComponent, PortableTextParserComponent, NavigableCollectionTeaserComponent],
+			imports: [CollectionInfoPanelComponent, NavigableCollectionTeaserComponent, DividerComponent],
 		}),
 	],
 	render: (args) => ({
 		props: {
 			...args,
-			collection: storylistMock,
-			suggested: [storylistTeaserRepresentativeMock, storylistTeaserSampleMock],
+			collection: onoffCollectionsWithRepresentativeImageryMock[0],
+			suggested: onoffCollectionTeasersMock,
 		},
 		template: `
 			${openButton}
-			<cuentoneta-drawer #drawer>
-				<div class="flex flex-col gap-4">
-					@if (collection.imagery.kind === 'representative') {
-						<cuentoneta-cover-image [src]="collection.imagery.image" />
-					}
-					<div class="flex flex-col items-start gap-2">
-						<p class="font-inter text-xl font-bold text-neutral-900">{{ collection.title }}</p>
-						@if (collection.tags[0]; as tag) {
-							<cuentoneta-tag [label]="tag.title" variant="filled" />
-						}
-					</div>
-				</div>
-				<cuentoneta-portable-text-parser
-					[paragraphs]="collection.description"
-					classes="font-inter text-sm font-medium text-neutral-700"
-					class="flex flex-col gap-2"
-				/>
-				<div class="h-px w-full bg-neutral-200" role="separator"></div>
-				<div class="flex flex-col gap-4">
-					<h2 class="font-inter text-base font-bold text-neutral-900">Otras colecciones sugeridas</h2>
+			<cuentoneta-drawer #drawer [ariaLabel]="'Descripción de ' + collection.title">
+				<cuentoneta-collection-info-panel [collection]="collection" />
+				<cuentoneta-divider class="my-5" />
+				<section class="flex flex-col gap-4">
+					<h2 class="font-inter text-lg font-bold text-neutral-900">Otras colecciones sugeridas</h2>
 					@for (item of suggested; track item.slug) {
 						<cuentoneta-navigable-collection-teaser [collection]="item" />
 					}
-				</div>
+				</section>
 			</cuentoneta-drawer>
 		`,
 	}),
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Réplica del contenido real del drawer de la CollectionPage: portada, título, tag, descripción completa, divisor y colecciones sugeridas — todo por <code>ng-content</code> plano.</p><p><strong>Usos:</strong> el "Leer más" de la descripción de una colección.</p>`,
+				story: `<p>Réplica del contenido real del drawer de la CollectionPage: <strong><a href="./?path=/docs/componentes-v3-collectioninfopanel--docs" target="_top">CollectionInfoPanel</a></strong> con la descripción completa, <strong><a href="./?path=/docs/componentes-v3-divider--docs" target="_top">Divider</a></strong> y las <strong><a href="./?path=/docs/componentes-v3-navigablecollectionteaser--docs" target="_top">NavigableCollectionTeaser</a></strong> sugeridas — todo por <code>ng-content</code> plano.</p><p><strong>Usos:</strong> el "Leer más" de la descripción de una colección.</p>`,
 			},
 		},
 	},

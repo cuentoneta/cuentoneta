@@ -78,7 +78,7 @@ Una **comunidad** (`community`) es una organización de personas que comparten e
 **Contenido asociado:**
 
 - **Autores vinculados**: Escritores que pertenecen o colaboran con la comunidad
-- **Historias**: Obras literarias publicadas bajo la iniciativa de la comunidad
+- **Obras**: las que se publican bajo la iniciativa de la comunidad
 - **Colecciones**: Antologías, compilaciones, certámenes organizados por la comunidad
 - **Eventos**: Lecturas públicas, conferencias, talleres literarios
 - **Blog**: Entradas de análisis, crítica literaria, noticias de la comunidad
@@ -87,6 +87,8 @@ Una **comunidad** (`community`) es una organización de personas que comparten e
 ---
 
 ## Elementos de dominio identificados
+
+> **Formato del texto vinculado a contenido:** Markdown es el formato predilecto para toda descripción, biografía, cuerpo de artículo o base de certamen de este dominio. Los bocetos de schema de abajo usan `type: 'markdown'`, y las interfaces de dominio tipan ese texto como `Markdown` (ver [`markdown.model.ts`](../../src/models/markdown.model.ts)).
 
 ### Nuevas entidades principales
 
@@ -102,7 +104,7 @@ interface Community {
 
 	// Información organizacional
 	name: string; // Nombre de la comunidad
-	description: TextBlockContent[]; // Descripción detallada
+	description: Markdown; // Descripción detallada
 	foundationYear?: number; // Año de fundación
 
 	// Identidad visual
@@ -121,8 +123,8 @@ interface Community {
 
 	// Contenido asociado
 	authors: Author[]; // Autores vinculados a la comunidad
-	stories: Story[]; // Historias publicadas por/para la comunidad
-	storylists: Storylist[]; // Colecciones de la comunidad
+	literaryWorks: LiteraryWork[]; // Obras publicadas por/para la comunidad
+	collections: Collection[]; // Colecciones de la comunidad
 	events: Event[]; // Eventos organizados
 	blogEntries: BlogEntry[]; // Entradas de blog
 	contests: Contest[]; // Certámenes de escritura
@@ -155,7 +157,7 @@ interface CommunityMember {
 
 	// Perfil
 	image?: string; // Foto de perfil
-	biography?: TextBlockContent[]; // Breve biografía
+	biography?: Markdown; // Breve biografía
 	email?: string; // Correo de contacto
 
 	// Rol dentro de la comunidad
@@ -191,7 +193,7 @@ interface Event {
 
 	// Información básica
 	name: string; // Nombre del evento
-	description: TextBlockContent[]; // Descripción detallada
+	description: Markdown; // Descripción detallada
 
 	// Fechas
 	startDate: string; // Fecha y hora de inicio (ISO 8601)
@@ -250,7 +252,7 @@ interface BlogEntry {
 	// Contenido
 	title: string; // Título del artículo
 	excerpt: string; // Extracto para listados (máx 200 caracteres)
-	content: TextBlockContent[]; // Cuerpo del artículo
+	content: Markdown; // Cuerpo del artículo
 
 	// Metadatos
 	author: CommunityMember | Author; // Autor del artículo
@@ -291,7 +293,7 @@ interface Contest {
 
 	// Información básica
 	name: string; // Nombre del certamen
-	description: TextBlockContent[]; // Descripción y bases
+	description: Markdown; // Descripción y bases
 
 	// Fechas
 	openDate: string; // Fecha de apertura (ISO 8601)
@@ -307,13 +309,13 @@ interface Contest {
 
 	// Información de participación
 	registrationUrl?: string; // URL para registrarse
-	submissionGuidelines: TextBlockContent[]; // Normas de presentación
+	submissionGuidelines: Markdown; // Normas de presentación
 	prizes?: Prize[]; // Premios ofrecidos
 
 	// Contenido relacionado
-	stories?: Story[]; // Historias participantes (después de cierre)
+	literaryWorks?: LiteraryWork[]; // Obras participantes (después de cierre)
 	winners?: ContestWinner[]; // Ganadores y menciones especiales
-	resultsStorylist?: Storylist; // Compilación de participantes
+	resultsCollection?: Collection; // Compilación de participantes
 
 	// Estado
 	status: ContestStatus; // Estado actual
@@ -346,7 +348,7 @@ interface Prize {
 interface ContestWinner {
 	_key: string;
 	position: number; // Posición (1 = 1er premio)
-	story: Story; // Historia ganadora
+	literaryWork: LiteraryWork; // Obra ganadora
 	category: string; // Categoría
 	comments?: string; // Comentarios del jurado
 }
@@ -382,8 +384,8 @@ interface TemplateConfiguration {
 		showEvents: boolean; // Mostrar eventos próximos
 		showBlog: boolean; // Mostrar blog
 		showContests: boolean; // Mostrar certámenes
-		showStories: boolean; // Mostrar historias
-		showStorylist: boolean; // Mostrar colecciones
+		showLiteraryWorks: boolean; // Mostrar obras
+		showCollections: boolean; // Mostrar colecciones
 		showResources: boolean; // Mostrar recursos externos
 	};
 
@@ -499,14 +501,14 @@ Draft → Published → Archived
 - Gestionar certámenes de escritura con cronograma
 - Permitir participación de múltiples categorías
 - Administrar premios y resultados
-- Publicar historias ganadoras
+- Publicar obras ganadoras
 
 **Invariantes de Negocio:**
 
 - Slug único
 - `announcementDate` < `openDate` < `closeDate` (si todas existen)
 - Al menos una categoría definida
-- Solo historias publicadas pueden ser ganadoras
+- Solo obras publicadas pueden ser ganadoras
 - `isActive` debe ser true solo si status es 'open'
 
 **Vistas Polimórficas:**
@@ -539,8 +541,8 @@ Community
 ```
 Community
 ├── references Author[] (muchos autores pueden no estar en comunidad)
-├── references Story[] (historias pueden ser de múltiples orígenes)
-├── references Storylist[] (colecciones propias o curadas)
+├── references LiteraryWork[] (obras pueden ser de múltiples orígenes)
+├── references Collection[] (colecciones propias o curadas)
 ├── references Event[]
 ├── references BlogEntry[]
 └── references Contest[]
@@ -558,8 +560,8 @@ BlogEntry
 Contest
 ├── references Community
 ├── contains ContestCategory[]
-├── references Story[] (participantes después de cierre)
-└── references Storylist (compilación de resultados)
+├── references LiteraryWork[] (participantes después de cierre)
+└── references Collection (compilación de resultados)
 ```
 
 ### Relaciones de agregación en landing page
@@ -570,7 +572,7 @@ La página de inicio de una comunidad agrega:
 - Próximos eventos
 - Últimas entradas de blog
 - Certámenes activos/próximos
-- Historias destacadas
+- Obras destacadas
 - Colecciones propias
 
 ---
@@ -612,44 +614,15 @@ Antes de implementar la característica completa de comunidades, es necesario re
 - GROQ queries para obtener certámenes
 - Endpoints API `/api/contest`
 - Página frontend para listar y visualizar certámenes
-- Capacidad de vincular historias a certámenes
+- Capacidad de vincular obras a certámenes
 
 **Impacto en Comunidades:**
 
 - Las comunidades podrán crear y gestionar sus propios certámenes
 - Los certámenes se mostrarán en la página de perfil de la comunidad
-- Las historias ganadoras se incluirán en compilaciones (Storylist)
+- Las obras ganadoras se incluirán en compilaciones (Collection)
 
-### 3. Parser Completo de PortableText
-
-**Descripción:** Implementar soporte completo en el parser de PortableText para todos los estilos de formato.
-
-**Estilos Pendientes:**
-
-- Headings (h1-h6)
-- Highlights/coloreado de texto
-- Subrayados
-- Tachado
-- Superíndices/subíndices
-- Código en línea
-- Bloques de código
-
-**Componentes Multimedia:**
-
-- Imágenes embebidas con descripciones
-- Videos embebidos (YouTube, Vimeo)
-- Iframes personalizados
-- Carruseles de imágenes
-
-**Impacto en Comunidades:**
-
-- Blog entries utilizan Portable Text
-- Descripciones de comunidades pueden usar todos los estilos
-- Event descriptions requerirán formato completo
-
-**Ubicación Actual:** `src/app/components/portable-text-parser/`
-
-### 4. Funcionalidad de Eventos Base
+### 3. Funcionalidad de Eventos Base
 
 **Descripción:** Implementación base del agregado Event sin personalización de comunidades.
 
@@ -668,7 +641,7 @@ Antes de implementar la característica completa de comunidades, es necesario re
 - Notificaciones de eventos próximos
 - Sincronización con plataformas externas
 
-### 5. Sistema de Blog Base
+### 4. Sistema de Blog Base
 
 **Descripción:** Implementación de la funcionalidad de blog sin gestión de usuarios.
 
@@ -680,14 +653,12 @@ Antes de implementar la característica completa de comunidades, es necesario re
 - Página frontend para listar y leer blog entries
 - Editor de contenido que no requiera acceso a Sanity Studio
 
-**Parser de PortableText Completo (Requisito 3):** Necesario para renderizar blog entries con formato completo.
-
 **Impacto en Comunidades:**
 
 - Cada comunidad puede tener su propio blog
 - Solo miembros autenticados pueden crear entries (post-MVP)
 
-### 6. Base de Datos PostgreSQL
+### 5. Base de Datos PostgreSQL
 
 **Descripción:** Migración de almacenamiento de usuarios a PostgreSQL en lugar de solo Sanity.
 
@@ -738,7 +709,7 @@ user_roles (
 
 **CF.1 - Perfil de Comunidad**
 
-- Visualizar página de perfil de comunidad con: nombre, descripción, logo, banner, miembros, eventos próximos, blog, historias
+- Visualizar página de perfil de comunidad con: nombre, descripción, logo, banner, miembros, eventos próximos, blog, obras
 - Ruta: `/community/:slug`
 - Vistas responsivas (mobile, tablet, desktop)
 - Integración con plantilla configurable
@@ -776,18 +747,18 @@ user_roles (
 - Vista de "Autores destacados" vs "Todos los autores"
 - Enlaces a perfiles de autores
 
-**CF.6 - Historias de Comunidad**
+**CF.6 - Obras de Comunidad**
 
-- Mostrar historias publicadas por/bajo la iniciativa de la comunidad
+- Mostrar obras publicadas por/bajo la iniciativa de la comunidad
 - Filtrado por: fecha, author, length
 - Vista en grid/list con opción de cambio
-- Búsqueda dentro de historias de la comunidad
+- Búsqueda dentro de obras de la comunidad
 
-**CF.7 - Colecciones de Comunidad (Storylists)**
+**CF.7 - Colecciones de Comunidad**
 
 - Mostrar colecciones/antologías propias de la comunidad
 - Distinción visual entre colecciones propias y colecciones curadas
-- Enlaces a storylists completas
+- Enlaces a colecciones completas
 
 #### Eventos
 
@@ -837,7 +808,7 @@ user_roles (
 - Página de perfil de miembro dentro de contexto de comunidad
 - Ruta: `/community/:slug/member/:memberSlug`
 - Información: nombre, foto, rol, biografía, recursos personales
-- Lista de historias del miembro (si es autor)
+- Lista de obras del miembro (si es autor)
 
 **MF.2 - Directorio de Miembros**
 
@@ -958,8 +929,7 @@ user_roles (
 **BF.5 - Crear Blog Entry**
 
 - Ruta: `/community/:slug/blog/new` (requiere autenticación)
-- Editor de texto enriquecido (WYSIWYG)
-- Soporte para PortableText completo
+- Editor de Markdown con vista previa
 - Guardar como borrador o publicar
 - Vista previa en tiempo real
 
@@ -1012,8 +982,8 @@ user_roles (
 
 - Visualizar ganadores por categoría
 - Incluir comentarios del jurado (si existen)
-- Enlace a historias ganadoras
-- Compilación en Storylist (colección de participantes)
+- Enlace a obras ganadoras
+- Compilación en Collection (colección de participantes)
 
 #### Para administradores
 
@@ -1023,18 +993,18 @@ user_roles (
 - Campos: nombre, descripción, fechas, categorías, bases
 - Definir premios
 - Cambiar estado del certamen
-- Vincular historias participantes (después de cierre)
+- Vincular obras participantes (después de cierre)
 - Designar ganadores
 - Control de acceso: solo administradores de comunidad
 
-#### Integración con historias
+#### Integración con obras
 
-**CTF.5 - Marcar Historias como Participantes**
+**CTF.5 - Marcar Obras como Participantes**
 
-- Historias pueden vincularse a un certamen
+- Obras pueden vincularse a un certamen
 - Metadata: "Mención especial - Certamen X", "Ganador Categoría Y"
-- Mostrar badge en tarjeta de historia
-- Enlace hacia certamen desde historia
+- Mostrar badge en tarjeta de obra
+- Enlace hacia certamen desde obra
 
 ---
 
@@ -1071,7 +1041,7 @@ export default {
 		{
 			name: 'description',
 			title: 'Descripción',
-			type: 'blockContent',
+			type: 'markdown',
 			validation: (Rule) => Rule.required(),
 		},
 		{
@@ -1156,25 +1126,25 @@ export default {
 			description: 'Autores que pertenecen o colaboran con la comunidad',
 		},
 		{
-			name: 'stories',
-			title: 'Historias de la Comunidad',
+			name: 'literaryWorks',
+			title: 'Obras de la Comunidad',
 			type: 'array',
 			of: [
 				{
 					type: 'reference',
-					to: [{ type: 'story' }],
+					to: [{ type: 'literaryWork' }],
 				},
 			],
-			description: 'Historias publicadas bajo la iniciativa de la comunidad',
+			description: 'Obras publicadas bajo la iniciativa de la comunidad',
 		},
 		{
-			name: 'storylists',
-			title: 'Colecciones (Storylists)',
+			name: 'collections',
+			title: 'Colecciones',
 			type: 'array',
 			of: [
 				{
 					type: 'reference',
-					to: [{ type: 'storylist' }],
+					to: [{ type: 'collection' }],
 				},
 			],
 			description: 'Colecciones/antologías propias de la comunidad',
@@ -1269,7 +1239,7 @@ export default {
 		{
 			name: 'biography',
 			title: 'Biografía',
-			type: 'blockContent',
+			type: 'markdown',
 		},
 		{
 			name: 'email',
@@ -1354,7 +1324,7 @@ export default {
 		{
 			name: 'description',
 			title: 'Descripción',
-			type: 'blockContent',
+			type: 'markdown',
 			validation: (Rule) => Rule.required(),
 		},
 		{
@@ -1493,7 +1463,7 @@ export default {
 		{
 			name: 'content',
 			title: 'Contenido',
-			type: 'blockContent',
+			type: 'markdown',
 			validation: (Rule) => Rule.required(),
 		},
 		{
@@ -1624,7 +1594,7 @@ export default {
 		{
 			name: 'description',
 			title: 'Descripción y Bases',
-			type: 'blockContent',
+			type: 'markdown',
 			validation: (Rule) => Rule.required(),
 		},
 		{
@@ -1677,7 +1647,7 @@ export default {
 		{
 			name: 'submissionGuidelines',
 			title: 'Normas de Presentación',
-			type: 'blockContent',
+			type: 'markdown',
 			validation: (Rule) => Rule.required(),
 		},
 		{
@@ -1687,13 +1657,13 @@ export default {
 			of: [{ type: 'prize' }],
 		},
 		{
-			name: 'stories',
-			title: 'Historias Participantes',
+			name: 'literaryWorks',
+			title: 'Obras Participantes',
 			type: 'array',
 			of: [
 				{
 					type: 'reference',
-					to: [{ type: 'story' }],
+					to: [{ type: 'literaryWork' }],
 				},
 			],
 			description: 'Agregada después del cierre del certamen',
@@ -1705,11 +1675,11 @@ export default {
 			of: [{ type: 'contestWinner' }],
 		},
 		{
-			name: 'resultsStorylist',
+			name: 'resultsCollection',
 			title: 'Compilación de Resultados',
 			type: 'reference',
-			to: [{ type: 'storylist' }],
-			description: 'Colección de todas las historias participantes/ganadoras',
+			to: [{ type: 'collection' }],
+			description: 'Colección de todas las obras participantes/ganadoras',
 		},
 		{
 			name: 'status',
@@ -1916,10 +1886,10 @@ export default {
 			validation: (Rule) => Rule.required().greaterThan(0),
 		},
 		{
-			name: 'story',
-			title: 'Historia Ganadora',
+			name: 'literaryWork',
+			title: 'Obra Ganadora',
 			type: 'reference',
-			to: [{ type: 'story' }],
+			to: [{ type: 'literaryWork' }],
 			validation: (Rule) => Rule.required(),
 		},
 		{
@@ -1986,13 +1956,13 @@ export default {
 					initialValue: true,
 				},
 				{
-					name: 'showStories',
-					title: 'Mostrar Historias',
+					name: 'showLiteraryWorks',
+					title: 'Mostrar Obras',
 					type: 'boolean',
 					initialValue: true,
 				},
 				{
-					name: 'showStorylist',
+					name: 'showCollections',
 					title: 'Mostrar Colecciones',
 					type: 'boolean',
 					initialValue: true,
@@ -2079,9 +2049,9 @@ export default {
 
 ### Integración con esquemas existentes
 
-#### story (modificado)
+#### literaryWork (modificado)
 
-Agregar campo a `cms/schemas/story.ts`:
+Agregar campo a `cms/schemas/literaryWork.ts`:
 
 ```typescript
 {
@@ -2094,7 +2064,7 @@ Agregar campo a `cms/schemas/story.ts`:
       to: [{ type: 'community' }],
     },
   ],
-  description: 'Comunidades bajo cuya iniciativa se publicó esta historia',
+  description: 'Comunidades bajo cuya iniciativa se publicó esta obra',
 },
 ```
 
@@ -2117,9 +2087,9 @@ Agregar campo a `cms/schemas/author.ts`:
 },
 ```
 
-#### storylist (modificado)
+#### collection (modificado)
 
-Agregar campo a `cms/schemas/storylist.ts`:
+Agregar campo a `cms/schemas/collection.ts`:
 
 ```typescript
 {
@@ -2165,8 +2135,8 @@ Agregar a `src/api/routes.ts`:
 routes = [
 	// Existentes
 	{ path: '/author', controller: authorController },
-	{ path: '/story', controller: storyController },
-	{ path: '/storylist', controller: storylistController },
+	{ path: '/literary-work', controller: literaryWorkController },
+	{ path: '/collection', controller: collectionController },
 	{ path: '/contributor', controller: contributorController },
 	{ path: '/content', controller: contentController },
 
@@ -2331,10 +2301,10 @@ export class CommunityService {
 
 	async getCommunityWithRelatedContent(slug: string): Promise<CommunityFull> {
 		const community = await this.communityRepository.fetchBySlug(slug);
-		const [authors, stories, storylists, events, blogEntries, contests] = await Promise.all([
+		const [authors, literaryWorks, collections, events, blogEntries, contests] = await Promise.all([
 			this.authorRepository.fetchByCommunitySlug(slug),
-			this.storyRepository.fetchByCommunitySlug(slug),
-			this.storylistRepository.fetchByCommunitySlug(slug),
+			this.literaryWorkRepository.fetchByCommunitySlug(slug),
+			this.collectionRepository.fetchByCommunitySlug(slug),
 			this.eventRepository.fetchByCommunitySlug(slug),
 			this.blogEntryRepository.fetchByCommunitySlug(slug),
 			this.contestRepository.fetchByCommunitySlug(slug),
@@ -2342,8 +2312,8 @@ export class CommunityService {
 
 		return this.mapToCommunityFull(community, {
 			authors,
-			stories,
-			storylists,
+			literaryWorks,
+			collections,
 			events,
 			blogEntries,
 			contests,
@@ -2390,8 +2360,8 @@ export const communityBySlugQuery = `
     },
     leadership[] { ... },
     authors[]-> { slug, name },
-    stories[]-> { slug, title },
-    storylists[]-> { slug, title },
+    literaryWorks[]-> { slug, title },
+    collections[]-> { slug, title },
     status,
     publishedAt,
     templateSettings,
@@ -2425,7 +2395,7 @@ Agregar a `src/app/app.routes.ts`:
 ```typescript
 const routes: Routes = [
 	// Rutas existentes
-	{ path: 'story/:slug', component: StoryComponent },
+	{ path: 'literary-work/:slug', component: LiteraryWorkComponent },
 	{ path: 'author/:slug', component: AuthorComponent },
 
 	// Nuevas rutas de comunidades
@@ -2494,7 +2464,7 @@ const routes: Routes = [
 - Mostrar miembros destacados
 - Mostrar próximos eventos (widget)
 - Mostrar últimas entradas de blog
-- Mostrar historias destacadas
+- Mostrar obras destacadas
 - Mostrar colecciones propias
 - Implementar plantilla configurable
 
@@ -2574,7 +2544,7 @@ const routes: Routes = [
 **Ubicación:** `src/app/providers/community.service.ts`
 
 ```typescript
-@Injectable({ providedIn: 'root' })
+@Service()
 export class CommunityService {
 	private http = inject(HttpClient);
 	private url = `${environment.apiUrl}/api/community`;
@@ -2601,7 +2571,7 @@ export class CommunityService {
 **Ubicación:** `src/app/providers/event.service.ts`
 
 ```typescript
-@Injectable({ providedIn: 'root' })
+@Service()
 export class EventService {
 	private http = inject(HttpClient);
 	private url = `${environment.apiUrl}/api/event`;
@@ -2618,7 +2588,7 @@ export class EventService {
 **Ubicación:** `src/app/providers/blog-entry.service.ts`
 
 ```typescript
-@Injectable({ providedIn: 'root' })
+@Service()
 export class BlogEntryService {
 	private http = inject(HttpClient);
 	private url = `${environment.apiUrl}/api/blog`;
@@ -2636,7 +2606,7 @@ export class BlogEntryService {
 **Ubicación:** `src/app/providers/contest.service.ts`
 
 ```typescript
-@Injectable({ providedIn: 'root' })
+@Service()
 export class ContestService {
 	private http = inject(HttpClient);
 	private url = `${environment.apiUrl}/api/contest`;
@@ -2669,7 +2639,7 @@ export interface Community {
 	_id: string;
 	slug: string;
 	name: string;
-	description: TextBlockContent[];
+	description: Markdown;
 	logo: string;
 	banner: string;
 	// ... otros campos
@@ -2687,7 +2657,7 @@ export interface CommunityProfile extends Community {
 	members: CommunityMember[];
 	leadership: MemberRole[];
 	authors: AuthorTeaser[];
-	stories: StoryNavigationTeaser[];
+	literaryWorks: LiteraryWorkNavigationTeaser[];
 	templateSettings: TemplateConfiguration;
 }
 
@@ -2728,7 +2698,7 @@ Tarjeta de entrada de blog con título, autor, fecha, excerpt.
 
 **Ubicación:** `src/app/components/contest-badge/contest-badge.component.ts`
 
-Badge que indica si una historia es ganadora/mención especial en certamen.
+Badge que indica si una obra es ganadora/mención especial en certamen.
 
 ---
 
@@ -2905,7 +2875,7 @@ Draft → Published → Archived
 
 **Requisitos de la aplicación para editor de blog:**
 
-- Editor WYSIWYG para PortableText completo (con soporte completo para títulos, imágenes, videos, etc.)
+- Editor de Markdown con vista previa (soporte para títulos, imágenes, videos, etc.)
 - Guardado en borrador automático cada N segundos
 - Vista previa en tiempo real
 - Opción de publicar inmediatamente o programar para fecha futura
@@ -2961,8 +2931,8 @@ interface TemplateConfiguration {
 		showEvents: boolean;
 		showBlog: boolean;
 		showContests: boolean;
-		showStories: boolean;
-		showStorylist: boolean;
+		showLiteraryWorks: boolean;
+		showCollections: boolean;
 		showResources: boolean;
 	};
 
@@ -2983,7 +2953,7 @@ Secciones: Descripción, contacto, recursos
 
 #### Layout: standard (predeterminado)
 
-Secciones: Descripción, miembros, últimos eventos, últimas entradas blog, historias destacadas
+Secciones: Descripción, miembros, últimos eventos, últimas entradas blog, obras destacadas
 
 - Configuración por defecto
 - Balance entre información y contenido
@@ -3144,16 +3114,7 @@ Extender `sitemap.xml` para incluir:
 - [ ] Proteger endpoints con autenticación
 - [ ] Testing de autenticación
 
-#### Sprint 1.2: parser de PortableText completo
-
-- [ ] Soporte para headings h1-h6
-- [ ] Soporte para highlights/colores
-- [ ] Soporte para subrayados, tachado
-- [ ] Soporte para imágenes embebidas
-- [ ] Soporte para bloques de código
-- [ ] Testing visual en storybook
-
-#### Sprint 1.3: eventos base
+#### Sprint 1.2: eventos base
 
 - [ ] Schema `event` en Sanity
 - [ ] GROQ queries para eventos
@@ -3163,7 +3124,7 @@ Extender `sitemap.xml` para incluir:
 - [ ] Event detail page `/event/:slug`
 - [ ] Testing
 
-#### Sprint 1.4: blog base
+#### Sprint 1.3: blog base
 
 - [ ] Schema `blogEntry` en Sanity
 - [ ] GROQ queries para blog entries
@@ -3171,7 +3132,7 @@ Extender `sitemap.xml` para incluir:
 - [ ] Service y Repository layer
 - [ ] Blog listing page `/blog`
 - [ ] Blog entry detail page `/blog/:slug`
-- [ ] Basic WYSIWYG editor (sin editor completo aún)
+- [ ] Basic Markdown editor (sin editor completo aún)
 - [ ] Testing
 
 ### Fase 2: módulo de comunidades (core)
@@ -3180,7 +3141,7 @@ Extender `sitemap.xml` para incluir:
 
 - [ ] Schema `community` en Sanity
 - [ ] Object types: `communityMember`, `memberRole`, `contactInformation`, `templateConfiguration`
-- [ ] Integrar campos en schemas existentes (story, author, storylist)
+- [ ] Integrar campos en schemas existentes (literaryWork, author, collection)
 - [ ] GROQ queries para comunidades
 - [ ] TypeScript models en frontend
 
@@ -3221,7 +3182,7 @@ Extender `sitemap.xml` para incluir:
 
 - [ ] Autenticación del usuario
 - [ ] Página de crear blog entry
-- [ ] Editor WYSIWYG completo
+- [ ] Editor de Markdown completo (con vista previa)
 - [ ] Guardado automático en borrador
 - [ ] Publicación de blog entry
 - [ ] Testing
@@ -3274,18 +3235,17 @@ Extender `sitemap.xml` para incluir:
 ┌─────────────────────────────────────────────────────────────┐
 │                                                             │
 │  Core Platform (Existente)                                 │
-│  ├─ Story                                                  │
+│  ├─ LiteraryWork                                            │
 │  ├─ Author                                                 │
-│  └─ Storylist                                              │
+│  └─ Collection                                              │
 │                                                             │
 └──────────────┬──────────────────────────────────────────────┘
                │
          ┌─────▼──────────────────────────────────────────────────────┐
          │  FASE 1: Infraestructura Base (BLOQUEADORES)              │
          │  ├─ Autenticación y Gestión de Usuarios (Requiere)        │
-         │  ├─ Parser PortableText Completo                          │
          │  ├─ Eventos (Independiente, pero usado por Comunidades)   │
-         │  └─ Blog Base (Depende de Parser Completo)               │
+         │  └─ Blog Base                                              │
          └──────────┬──────────────────────────────────────────────┘
                     │
          ┌──────────▼───────────────────────────────────────────────┐
@@ -3301,7 +3261,7 @@ Extender `sitemap.xml` para incluir:
          │  ├─ Editor de Blog Entries                               │
          │  ├─ Control de Acceso (Requiere Autenticación)           │
          │  ├─ Moderación de Contenido                              │
-         │  └─ Certámenes (Depende de Historias)                    │
+         │  └─ Certámenes (Depende de Obras)                    │
          └──────────┬──────────────────────────────────────────────┘
                     │
          ┌──────────▼───────────────────────────────────────────────┐
@@ -3327,7 +3287,6 @@ Extender `sitemap.xml` para incluir:
 | **Slug**           | Identificador único y amigable basado en el nombre (ej: tertulia-literaria)            |
 | **Plantilla**      | Configuración visual y estructura de secciones en página de comunidad                  |
 | **Teaser**         | Vista resumida de una entidad para listados                                            |
-| **PortableText**   | Formato de contenido enriquecido de Sanity (Portable Text)                             |
 
 ---
 
@@ -3353,7 +3312,6 @@ Extender `sitemap.xml` para incluir:
 - [Domain-Driven Design Reference](https://www.domainlanguage.com/ddd/reference/)
 - [Hexagonal Architecture](https://alistair.cockburn.us/hexagonal-architecture/)
 - [GROQ Query Language](https://www.sanity.io/docs/groq)
-- [Portable Text Specification](https://www.portabletext.org/)
 
 ### Tecnologías
 

@@ -1,15 +1,11 @@
 // Tipos de Sanity
-import {
-	CollectionBySlugQueryResult,
-	LiteraryWorkBySlugQueryResult,
-	StoryBySlugQueryResult,
-	StorylistQueryResult,
-} from '@sanity-types';
+import { CollectionBySlugQueryResult, LiteraryWorkBySlugQueryResult } from '@sanity-types';
 
 // Modelos
 import {
 	AudioRecording,
 	Media,
+	MediaTeaser,
 	MediaTypeKey,
 	SpaceRecording,
 	SpotifyPodcastEpisode,
@@ -19,40 +15,24 @@ import { urlFor } from './functions';
 import { createMarkdown } from '@models/markdown.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 
-// El mapeo se invoca con la proyección de mediaSources de story, storylist, obra, teaser, colección y
-// las obras de una colección. Hoy son estructuralmente idénticas salvo por `audioUrl`; aceptarlas
-// todas explícitamente documenta el acoplamiento. Los shapes por tipo se derivan del generado por
-// typegen: si una futura corrida diverge, el mapeo deja de compilar en vez de fallar en silencio.
-type StoryMediaSources = NonNullable<StoryBySlugQueryResult>['mediaSources'];
-type StorylistMediaSources = NonNullable<StorylistQueryResult>['mediaSources'];
+// El mapeo de la vista completa se invoca con la proyección de mediaSources de obra y de colección.
+// Hoy son estructuralmente idénticas; aceptarlas ambas explícitamente documenta el acoplamiento. Los
+// shapes por tipo se derivan del generado por typegen: si una futura corrida diverge, el mapeo deja
+// de compilar en vez de fallar en silencio.
+//
+// Las obras de una colección van aparte: su proyección solo trae el tag, y las mapea mapMediaTeasers.
 type LiteraryWorkMediaSources = NonNullable<LiteraryWorkBySlugQueryResult>['mediaSources'];
-type MediaResourcesTeasersSubquery = NonNullable<StorylistQueryResult>['stories'][0]['mediaSources'];
 type CollectionMediaSources = NonNullable<CollectionBySlugQueryResult>['mediaSources'];
 type CollectionWorkMediaSources = NonNullable<CollectionBySlugQueryResult>['literaryWorks'][number]['mediaSources'];
 
-type MediaSource = (
-	| StoryMediaSources
-	| StorylistMediaSources
-	| LiteraryWorkMediaSources
-	| MediaResourcesTeasersSubquery
-	| CollectionMediaSources
-	| CollectionWorkMediaSources
-)[number];
+type MediaSource = (LiteraryWorkMediaSources | CollectionMediaSources)[number];
 
-type AudioRecordingSource = Extract<StoryMediaSources[number], { _type: 'audioRecording' }>;
+type AudioRecordingSource = Extract<MediaSource, { _type: 'audioRecording' }>;
 type SpaceRecordingSource = Extract<MediaSource, { _type: 'spaceRecording' }>;
-type SpotifyPodcastEpisodeSource = Extract<StoryMediaSources[number], { _type: 'spotifyPodcastEpisode' }>;
-type YouTubeVideoSource = Extract<StoryMediaSources[number], { _type: 'youTubeVideo' }>;
+type SpotifyPodcastEpisodeSource = Extract<MediaSource, { _type: 'spotifyPodcastEpisode' }>;
+type YouTubeVideoSource = Extract<MediaSource, { _type: 'youTubeVideo' }>;
 
-export function mapMediaSources(
-	mediaSources:
-		| StoryMediaSources
-		| StorylistMediaSources
-		| LiteraryWorkMediaSources
-		| MediaResourcesTeasersSubquery
-		| CollectionMediaSources
-		| CollectionWorkMediaSources,
-): Media[] {
+export function mapMediaSources(mediaSources: LiteraryWorkMediaSources | CollectionMediaSources): Media[] {
 	if (!mediaSources) return [];
 
 	const media: Media[] = [];
@@ -63,6 +43,38 @@ export function mapMediaSources(
 		}
 	}
 	return media;
+}
+
+// La vista de teaser solo transporta el tag, así que no hay descripción que pueda fallar el pipeline
+// de Markdown: el único descarte posible es el del tipo sin modelo de dominio. Sin `_key` en la
+// proyección, el rastro nombra el tipo — traerlo solo para el log volvería a transportar por obra un
+// campo que la vista no consume.
+export function mapMediaTeasers(mediaSources: CollectionWorkMediaSources): MediaTeaser[] {
+	const teasers: MediaTeaser[] = [];
+	for (const mediaSource of mediaSources) {
+		const type = toMediaTypeKeyOrDiscard(mediaSource._type);
+		if (type) {
+			teasers.push({ type, title: mediaSource.title });
+		}
+	}
+	return teasers;
+}
+
+function toMediaTypeKeyOrDiscard(type: CollectionWorkMediaSources[number]['_type']): MediaTypeKey | undefined {
+	switch (type) {
+		case 'audioRecording':
+		case 'spaceRecording':
+		case 'spotifyPodcastEpisode':
+		case 'youTubeVideo':
+			return type;
+		default: {
+			// Misma contención que mapMediaSource: el schema admite tipos que el dominio no modela.
+			// La anotación cubre el otro caso — sumar un MediaTypeKey sin su rama deja de compilar.
+			const unmappedType: Exclude<typeof type, MediaTypeKey> = type;
+			console.warn(`mediaSource de teaser descartado: el tipo "${unmappedType}" no tiene modelo de dominio`);
+			return undefined;
+		}
+	}
 }
 
 // Un recurso cuya descripción no pase el pipeline se descarta con rastro, en vez de propagar y tirar la
@@ -122,9 +134,9 @@ function getSpaceRecordingData(mediaSource: SpaceRecordingSource): SpaceRecordin
 		type: mediaSource._type,
 		description: markdownToSanitizedHtml(createMarkdown(mediaSource.description)),
 		data: {
-			// La proyección de teaser no resuelve audioUrl; el resto sí. Se pasa null tal cual (en vez
+			// Un spaceRecording puede no tener audioFile adjunto en Sanity. Se pasa null tal cual (en vez
 			// de '') para que el widget muestre un placeholder visible en vez de un reproductor roto.
-			url: 'audioUrl' in mediaSource ? mediaSource.audioUrl : null,
+			url: mediaSource.audioUrl,
 			duration: mediaSource.duration,
 			hostName: mediaSource.hostName,
 			hostAvatar: mediaSource.hostAvatar ? urlFor(mediaSource.hostAvatar) : undefined,

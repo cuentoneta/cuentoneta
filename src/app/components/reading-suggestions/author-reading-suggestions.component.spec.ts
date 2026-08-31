@@ -4,15 +4,16 @@ import { Observable, of, Subject, throwError } from 'rxjs';
 
 import { AuthorReadingSuggestionsComponent } from './author-reading-suggestions.component';
 import { READING_SUGGESTIONS_COUNT } from './pick-reading-suggestions';
-import { StoryApi } from '../../providers/story.provider';
-import type { StoryTeaser } from '@models/story.model';
-import { onoffStoryTeasersMock } from '@mocks/onoff-story-teasers.mock';
+import { LiteraryWorkApi, type LiteraryWorkTeaserFilter } from '../../providers/literary-work.provider';
+import type { LiteraryWorkTeaser } from '@models/literary-work.model';
+import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
 import { authorTeaserMock } from '@mocks/author.mock';
 import { cuentoTagMock } from '@mocks/onoff-tags.mock';
 import { clearAllMocks, fn, restoreAllMocks, spyOn } from '@test-utils';
+import { firstProseWord } from '@testing/corpus-prose';
 
 const setup = async (
-	getByAuthorSlug: (slug: string) => Observable<StoryTeaser[]>,
+	getTeasers: (filter: LiteraryWorkTeaserFilter) => Observable<LiteraryWorkTeaser[]>,
 	inputs: { authorSlug?: string; currentWorkSlug?: string } = {},
 ) => {
 	const view = await render(AuthorReadingSuggestionsComponent, {
@@ -21,7 +22,7 @@ const setup = async (
 			authorName: authorTeaserMock.name,
 			...inputs,
 		},
-		providers: [provideRouter([]), { provide: StoryApi, useValue: { getByAuthorSlug } }],
+		providers: [provideRouter([]), { provide: LiteraryWorkApi, useValue: { getTeasers } }],
 	});
 	view.detectChanges();
 	return view;
@@ -39,52 +40,52 @@ describe('AuthorReadingSuggestionsComponent', () => {
 		restoreAllMocks();
 	});
 
-	it('should fetch the navigation teasers of the author', async () => {
-		const getByAuthorSlug = fn<(slug: string) => Observable<StoryTeaser[]>>();
-		getByAuthorSlug.mockReturnValue(of(onoffStoryTeasersMock));
+	it('should fetch the teaser catalog filtered by the author', async () => {
+		const getTeasers = fn<(filter: LiteraryWorkTeaserFilter) => Observable<LiteraryWorkTeaser[]>>();
+		getTeasers.mockReturnValue(of(onoffLiteraryWorkTeasersMock));
 
-		await setup(getByAuthorSlug);
+		await setup(getTeasers);
 
-		expect(getByAuthorSlug).toHaveBeenCalledWith(authorTeaserMock.slug);
+		expect(getTeasers).toHaveBeenCalledWith({ author: authorTeaserMock.slug });
 	});
 
 	it('should not fetch when there is no author slug', async () => {
-		const getByAuthorSlug = fn<(slug: string) => Observable<StoryTeaser[]>>();
-		getByAuthorSlug.mockReturnValue(of(onoffStoryTeasersMock));
+		const getTeasers = fn<(filter: LiteraryWorkTeaserFilter) => Observable<LiteraryWorkTeaser[]>>();
+		getTeasers.mockReturnValue(of(onoffLiteraryWorkTeasersMock));
 
-		await setup(getByAuthorSlug, { authorSlug: '' });
+		await setup(getTeasers, { authorSlug: '' });
 
-		expect(getByAuthorSlug).not.toHaveBeenCalled();
+		expect(getTeasers).not.toHaveBeenCalled();
 	});
 
 	it('should render the fetched works as suggestions', async () => {
-		await setup(() => of(onoffStoryTeasersMock));
+		await setup(() => of(onoffLiteraryWorkTeasersMock));
 
-		for (const story of onoffStoryTeasersMock.slice(0, READING_SUGGESTIONS_COUNT)) {
+		for (const story of onoffLiteraryWorkTeasersMock.slice(0, READING_SUGGESTIONS_COUNT)) {
 			expect(screen.getByRole('link', { name: story.title })).toBeInTheDocument();
 		}
 	});
 
 	it('should suggest as many works as the block renders', async () => {
-		await setup(() => of(onoffStoryTeasersMock));
+		await setup(() => of(onoffLiteraryWorkTeasersMock));
 
 		expect(screen.getAllByRole('listitem')).toHaveLength(READING_SUGGESTIONS_COUNT);
 	});
 
 	it('should exclude the work being read', async () => {
-		const [current] = onoffStoryTeasersMock;
+		const [current] = onoffLiteraryWorkTeasersMock;
 
-		await setup(() => of(onoffStoryTeasersMock), { currentWorkSlug: current.slug });
+		await setup(() => of(onoffLiteraryWorkTeasersMock), { currentWorkSlug: current.slug });
 
 		expect(screen.queryByRole('link', { name: current.title })).not.toBeInTheDocument();
 	});
 
 	it('should draw the suggestions exactly once per fetch', async () => {
 		const randomSource = spyOn(Math, 'random').mockReturnValue(0);
-		const stories = new Subject<StoryTeaser[]>();
+		const stories = new Subject<LiteraryWorkTeaser[]>();
 
 		const view = await setup(() => stories);
-		stories.next(onoffStoryTeasersMock);
+		stories.next(onoffLiteraryWorkTeasersMock);
 		await view.fixture.whenStable();
 
 		// Un sorteo por tarjeta a renderizar, y ninguno más: leer las sugerencias no vuelve a barajar.
@@ -99,34 +100,34 @@ describe('AuthorReadingSuggestionsComponent', () => {
 
 	it('should draw again when the source emits new works', async () => {
 		const randomSource = spyOn(Math, 'random').mockReturnValue(0);
-		const stories = new Subject<StoryTeaser[]>();
+		const stories = new Subject<LiteraryWorkTeaser[]>();
 
 		const view = await setup(() => stories);
-		stories.next(onoffStoryTeasersMock);
+		stories.next(onoffLiteraryWorkTeasersMock);
 		await view.fixture.whenStable();
-		stories.next(onoffStoryTeasersMock);
+		stories.next(onoffLiteraryWorkTeasersMock);
 		await view.fixture.whenStable();
 
 		expect(randomSource).toHaveBeenCalledTimes(READING_SUGGESTIONS_COUNT * 2);
 	});
 
 	it('should resolve them again when the work being read changes', async () => {
-		const [first, second] = onoffStoryTeasersMock;
-		const getByAuthorSlug = fn<(slug: string) => Observable<StoryTeaser[]>>();
-		getByAuthorSlug.mockReturnValue(of(onoffStoryTeasersMock));
+		const [first, second] = onoffLiteraryWorkTeasersMock;
+		const getTeasers = fn<(filter: LiteraryWorkTeaserFilter) => Observable<LiteraryWorkTeaser[]>>();
+		getTeasers.mockReturnValue(of(onoffLiteraryWorkTeasersMock));
 
-		const view = await setup(getByAuthorSlug, { currentWorkSlug: first.slug });
+		const view = await setup(getTeasers, { currentWorkSlug: first.slug });
 		await view.rerender({
 			inputs: { authorSlug: authorTeaserMock.slug, authorName: authorTeaserMock.name, currentWorkSlug: second.slug },
 		});
 		await view.fixture.whenStable();
 
-		expect(getByAuthorSlug).toHaveBeenCalledTimes(2);
+		expect(getTeasers).toHaveBeenCalledTimes(2);
 		expect(screen.queryByRole('link', { name: second.title })).not.toBeInTheDocument();
 	});
 
 	it('should head the block with the author name and link to their listing', async () => {
-		await setup(() => of(onoffStoryTeasersMock));
+		await setup(() => of(onoffLiteraryWorkTeasersMock));
 
 		expect(screen.getByRole('heading', { name: `Más obras de ${authorTeaserMock.name}` })).toBeInTheDocument();
 		expect(screen.getByRole('link', { name: `Ver más de ${authorTeaserMock.name}` })).toHaveAttribute(
@@ -136,20 +137,20 @@ describe('AuthorReadingSuggestionsComponent', () => {
 	});
 
 	it('should show the loading state until the works arrive', async () => {
-		const stories = new Subject<StoryTeaser[]>();
+		const stories = new Subject<LiteraryWorkTeaser[]>();
 
 		const view = await setup(() => stories);
 
 		expect(screen.getByTestId('reading-suggestions')).toHaveAttribute('aria-busy', 'true');
 
-		stories.next(onoffStoryTeasersMock);
+		stories.next(onoffLiteraryWorkTeasersMock);
 		await view.fixture.whenStable();
 
 		expect(screen.getByTestId('reading-suggestions')).toHaveAttribute('aria-busy', 'false');
 	});
 
 	it('should stay hidden when the author has no other work to suggest', async () => {
-		const [onlyWork] = onoffStoryTeasersMock;
+		const [onlyWork] = onoffLiteraryWorkTeasersMock;
 
 		await setup(() => of([onlyWork]), { currentWorkSlug: onlyWork.slug });
 
@@ -165,7 +166,7 @@ describe('AuthorReadingSuggestionsComponent', () => {
 	// El tipo literario que el corpus deja primero entre los tags tiene que llegar hasta la etiqueta de
 	// la tarjeta: es todo el recorrido proveedor → adapter → bloque → tarjeta.
 	it('should label each suggestion with the literary type the work carries', async () => {
-		const [first, ...rest] = onoffStoryTeasersMock;
+		const [first, ...rest] = onoffLiteraryWorkTeasersMock;
 		const tagged = [{ ...first, tags: [cuentoTagMock] }, ...rest];
 
 		await setup(() => of(tagged));
@@ -177,43 +178,36 @@ describe('AuthorReadingSuggestionsComponent', () => {
 	});
 
 	// El extracto se verifica sobre lo que produce el camino real —proveedor → picker → adapter → bloque
-	// → tarjeta—, no sobre un teaser del corpus armado a mano.
+	// → tarjeta—, no sobre un teaser del corpus armado a mano. Con la fuente nativa el extracto viaja
+	// dentro del teaser, así que la palabra a buscar se deriva de su propio HTML saneado.
 	it('should show the excerpt of each suggested work', async () => {
-		await setup(() => of(onoffStoryTeasersMock));
+		await setup(() => of(onoffLiteraryWorkTeasersMock));
 
 		const excerpts = screen.getAllByTestId('description');
 
 		expect(excerpts).toHaveLength(READING_SUGGESTIONS_COUNT);
 		for (const [index, excerpt] of excerpts.entries()) {
-			const [firstParagraph] = onoffStoryTeasersMock[index].paragraphs;
-			expect(excerpt.textContent).toContain(firstParagraph.children[0].text);
+			expect(excerpt.textContent).toContain(firstProseWord(onoffLiteraryWorkTeasersMock[index].excerpt.bodyHtml));
 		}
 	});
 
-	// La regresión que dejó la capacidad muerta sin que ningún test se enterara: con una proyección sin
-	// cuerpo hay tarjetas pero no hay extracto, y el bloque se ve igual de completo.
-	it('should render no excerpt when the projection carries no body', async () => {
-		const withoutBody = onoffStoryTeasersMock.map((story) => ({ ...story, paragraphs: [] }));
-
-		await setup(() => of(withoutBody));
-
-		expect(screen.getAllByRole('link').length).toBeGreaterThan(0);
-		expect(screen.queryAllByTestId('description')).toHaveLength(0);
-	});
+	// El caso "proyección sin cuerpo" que la fuente vieja necesitaba ya no es representable: la vista
+	// de teaser exige el extracto por tipo, y la obra que llega sin él la descarta el ACL del backend
+	// —con su propio spec—. La regresión que aquel caso vigilaba la vigila ahora el sistema de tipos.
 
 	it('should carry the author context into each suggestion link', async () => {
-		await setup(() => of(onoffStoryTeasersMock));
+		await setup(() => of(onoffLiteraryWorkTeasersMock));
 
-		const [suggestion] = onoffStoryTeasersMock;
+		const [suggestion] = onoffLiteraryWorkTeasersMock;
 
 		expect(screen.getByRole('link', { name: suggestion.title })).toHaveAttribute(
 			'href',
-			`/story/${suggestion.slug}?navigation=author&navigationSlug=${authorTeaserMock.slug}`,
+			`/literary-work/${suggestion.slug}?navigation=author&navigationSlug=${authorTeaserMock.slug}`,
 		);
 	});
 
 	it('should hide the author of each suggestion, already named in the heading', async () => {
-		await setup(() => of(onoffStoryTeasersMock));
+		await setup(() => of(onoffLiteraryWorkTeasersMock));
 
 		expect(screen.queryAllByTestId('author')).toHaveLength(0);
 	});

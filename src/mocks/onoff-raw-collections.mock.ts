@@ -25,6 +25,19 @@ export const onoffRawCollectionsWithoutFeaturedImage: RawCollection[] = onoffRaw
 	(collection) => collection.featuredImage === null,
 );
 
+export const onoffRawCollectionTeasersWithFeaturedImage: CollectionsQueryResult = onoffRawCollectionTeasersMock.filter(
+	(teaser) => teaser.featuredImage !== null,
+);
+
+export const onoffRawCollectionTeasersWithoutFeaturedImage: CollectionsQueryResult =
+	onoffRawCollectionTeasersMock.filter((teaser) => teaser.featuredImage === null);
+
+// Las obras embebidas que declaran multimedia, que son las que ejercitan el mapeo de la vista de
+// teaser. Su proyección solo trae el tag, así que el shape difiere del de las obras de nivel documento.
+export const onoffRawCollectionWorksWithMediaSources: RawCollection['literaryWorks'] = onoffRawCollectionsMock
+	.flatMap((collection) => collection.literaryWorks)
+	.filter((work) => work.mediaSources.length > 0);
+
 // Escenarios de borde, construidos por spread sobre el canon para que cambien con él.
 // Los cuatro primeros son datos que impiden construir el agregado.
 
@@ -40,16 +53,30 @@ export const descriptionlessRawCollection: RawCollection = {
 	description: '',
 };
 
+// El canon no ejercita el caso: hace falta un escenario cuyo Markdown traiga enlaces para poder
+// afirmar qué hace cada vista con ellos.
+const linkedDescriptionMd = 'Una colección con [un enlace propio](https://www.cuentoneta.ar/about) en la prosa.';
+
+export const linkedDescriptionRawCollection: RawCollection = {
+	...geometriasDelDesveloRawCollection,
+	description: linkedDescriptionMd,
+};
+
+export const linkedDescriptionRawCollectionTeasers: CollectionsQueryResult = generatedTeasers.map((teaser) => ({
+	...teaser,
+	description: linkedDescriptionMd,
+}));
+
 export const sectionlessWorkRawCollection: RawCollection = {
 	...geometriasDelDesveloRawCollection,
 	literaryWorks: geometriasDelDesveloRawCollection.literaryWorks.map((work, index) =>
-		index === 0 ? { ...work, teaserSection: [], sectionCount: 0 } : work,
+		index === 0 ? { ...work, excerpt: [], sectionCount: 0 } : work,
 	),
 };
 
-// No es un dato mal curado: es el shape de un borrador, cuya obra todavía no pasó por el backfill de
-// reading time. Cubre la única rama que el opcional del tipo obliga a escribir.
-export const draftLikeRawCollection: RawCollection = {
+// Una obra a la que el backfill todavía no le calculó su tiempo de lectura total. Sin ese dato no hay
+// nada que mostrar en la tarjeta, y el ACL la trata como mal curada.
+export const unbackfilledWorkRawCollection: RawCollection = {
 	...geometriasDelDesveloRawCollection,
 	literaryWorks: geometriasDelDesveloRawCollection.literaryWorks.map((work, index) =>
 		index === 0 ? { ...work, totalReadingTime: null } : work,

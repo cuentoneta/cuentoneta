@@ -11,9 +11,13 @@ import {
 	onoffRawLiteraryWorksWithTags,
 	unmaterializedRawLiteraryWork,
 } from '@mocks/onoff-raw-literary-works.mock';
-import { onoffRawLiteraryWorksWithoutEditorialNote } from '@mocks/onoff-raw-literary-works.mock';
+import {
+	onoffRawLiteraryWorksWithoutEditorialNote,
+	onoffRawLiteraryWorkTeasersMock,
+} from '@mocks/onoff-raw-literary-works.mock';
 import { createMarkdown } from '@models/markdown.model';
 import { createReadingTime, deriveSectionReadingTime, sumReadingTimes } from '@models/reading-time.model';
+import { MalformedLiteraryWorkError } from './literary-work.errors';
 import { SanityLiteraryWorkRepository } from './literary-work.repository.sanity';
 
 // El repository solo hace `fetch` (sin escritura), así que el spy del client implementa solo eso; se
@@ -33,6 +37,24 @@ describe('SanityLiteraryWorkRepository.fetchBySlug', () => {
 		expect(literaryWork?.content.map((section) => section.position)).toEqual([0, 1]);
 		expect(literaryWork?.sectionCount).toBe(2);
 		expect(literaryWork?.totalReadingTime).toBe(12);
+	});
+
+	// El dato que no entra al dominio existió: obras con la fecha de publicación sin hora, que el value
+	// object rechaza. Sobre una lectura puntual, el error crudo dice qué campo falló pero no de qué obra.
+	it('nombra la obra cuando el crudo no se puede traducir', async () => {
+		const repository = repoReturning({ ...onoffRawLiteraryWorksMock[0], publishedAt: '2022-01-23' });
+
+		await expect(repository.fetchBySlug('una-venganza')).rejects.toThrow(MalformedLiteraryWorkError);
+		await expect(repository.fetchBySlug('una-venganza')).rejects.toThrow('una-venganza');
+	});
+
+	it('preserva la causa original del rechazo', async () => {
+		const repository = repoReturning({ ...onoffRawLiteraryWorksMock[0], publishedAt: '2022-01-23' });
+
+		const error = await repository.fetchBySlug('una-venganza').catch((thrown: unknown) => thrown);
+
+		expect((error as MalformedLiteraryWorkError).cause).toBeInstanceOf(Error);
+		expect(String((error as MalformedLiteraryWorkError).cause)).toContain('2022-01-23');
 	});
 
 	it('convierte el body por el pipeline de sanitización', async () => {
@@ -146,7 +168,14 @@ describe('SanityLiteraryWorkRepository.fetchBySlug', () => {
 			content: [{ ...onoffRawLiteraryWorksMock[0].content[0], epigraphs: [{ text: null, reference: null }] }],
 		};
 
-		await expect(repoReturning(broken).fetchBySlug('x')).rejects.toThrow('Markdown inválido: contenido vacío');
+		// El rechazo viaja envuelto en el error del agregado, que nombra la obra; el motivo concreto
+		// queda en la causa, que es donde se lee qué campo lo produjo.
+		const error = await repoReturning(broken)
+			.fetchBySlug('x')
+			.catch((thrown: unknown) => thrown);
+
+		expect(error).toBeInstanceOf(MalformedLiteraryWorkError);
+		expect(String((error as MalformedLiteraryWorkError).cause)).toContain('Markdown inválido: contenido vacío');
 	});
 
 	it('convierte la nota editorial por el pipeline de sanitización', async () => {
@@ -185,8 +214,8 @@ describe('SanityLiteraryWorkRepository.fetchBySlug', () => {
 		expect(literaryWork?.tags).toEqual([]);
 	});
 
-	// El ACL de multimedia lo comparten Story, Storylist y LiteraryWork, pero con todo el corpus crudo de
-	// obras en `mediaSources: []` esta rama nunca se ejercitaba con datos.
+	// La mayoría del corpus crudo declara `mediaSources: []`, así que el caso se apoya en el selector por
+	// capacidad: entrega una obra que sí los trae, en vez de atarse al slug de la que hoy los tiene.
 	it('mapea los recursos multimedia de la obra, descartando los tipos que el dominio no modela', async () => {
 		const [rawLiteraryWork] = onoffRawLiteraryWorksWithMediaSources;
 
@@ -199,8 +228,8 @@ describe('SanityLiteraryWorkRepository.fetchBySlug', () => {
 		);
 	});
 
-	// La proyección de obra literaria resuelve `audioUrl` dereferenciando el asset del archivo, igual que
-	// la de Story: es lo que el dominio consume como `data.url` del space recording.
+	// La proyección resuelve `audioUrl` dereferenciando el asset del archivo: es lo que el dominio
+	// consume como `data.url` del space recording.
 	it('resuelve la URL del audio en un space recording', async () => {
 		const [rawLiteraryWork] = onoffRawLiteraryWorksWithMediaSources;
 		const rawSpaceRecording = rawLiteraryWork.mediaSources.find((media) => media._type === 'spaceRecording');
@@ -214,5 +243,48 @@ describe('SanityLiteraryWorkRepository.fetchBySlug', () => {
 
 	it('devuelve null para un slug desconocido', async () => {
 		expect(await repoReturning(null).fetchBySlug('no-existe')).toBeNull();
+	});
+});
+
+describe('SanityLiteraryWorkRepository.fetchTeasers', () => {
+	it('mapea el listado a teasers congelados con el extracto saneado', async () => {
+		const { literaryWorks, malformed } = await repoReturning(onoffRawLiteraryWorkTeasersMock).fetchTeasers({});
+
+		expect(literaryWorks).toHaveLength(onoffRawLiteraryWorkTeasersMock.length);
+		expect(malformed).toEqual([]);
+		literaryWorks.forEach((teaser) => {
+			expect(Object.isFrozen(teaser)).toBe(true);
+			expect(teaser.excerpt.bodyHtml).not.toContain('**');
+		});
+	});
+
+	it('devuelve un listado vacío para un autor sin obras', async () => {
+		const { literaryWorks, malformed } = await repoReturning([]).fetchTeasers({ author: 'sin-obras' });
+
+		expect(literaryWorks).toEqual([]);
+		expect(malformed).toEqual([]);
+	});
+
+	// El mapeo por obra falla rápido, pero la obra que no se puede traducir se reporta en vez de
+	// propagarse: qué hacer con ella lo decide quien conoce el caso de uso, no este adaptador.
+	it('reporta la obra mal curada sin llevarse puestas a las demás', async () => {
+		const [sane, ...rest] = onoffRawLiteraryWorkTeasersMock;
+		const broken = { ...sane, _id: `${sane._id}-rota`, slug: `${sane.slug}-rota`, totalReadingTime: null };
+
+		const { literaryWorks, malformed } = await repoReturning([broken, ...rest]).fetchTeasers({});
+
+		expect(literaryWorks).toHaveLength(rest.length);
+		expect(malformed).toHaveLength(1);
+		expect(malformed[0].slug).toBe(broken.slug);
+	});
+
+	it('reporta como mal curada a la obra sin sección de apertura', async () => {
+		const [sane] = onoffRawLiteraryWorkTeasersMock;
+		const excerptless = { ...sane, excerpt: [] };
+
+		const { literaryWorks, malformed } = await repoReturning([excerptless]).fetchTeasers({});
+
+		expect(literaryWorks).toEqual([]);
+		expect(malformed[0]).toBeInstanceOf(MalformedLiteraryWorkError);
 	});
 });

@@ -2,12 +2,12 @@ import { argsToTemplate, moduleMetadata, Meta, StoryObj } from '@storybook/angul
 
 import { MediaSelectorsComponent } from './media-selectors.component';
 import { SkeletonComponent } from '@components/skeleton/skeleton.component';
-import { Media } from '@models/media.model';
-import { onoffMediaMock, onoffYouTubeVideosMock } from '@mocks/onoff-media.mock';
+import { MediaTeaser } from '@models/media.model';
+import { onoffMediaMock, onoffYouTubeVideosMock, toMediaTeaser } from '@mocks/onoff-media.mock';
 
 // Conjunto de medios variado: el canon completo más un video repetido, para que el modo agrupado
 // muestre el contador con más medios que plataformas.
-const media: Media[] = [...onoffMediaMock, ...onoffYouTubeVideosMock];
+const media: MediaTeaser[] = [...onoffMediaMock, ...onoffYouTubeVideosMock].map(toMediaTeaser);
 
 const meta: Meta<MediaSelectorsComponent> = {
 	component: MediaSelectorsComponent,
@@ -18,7 +18,7 @@ const meta: Meta<MediaSelectorsComponent> = {
 				sourceState: 'shown',
 			},
 			description: {
-				component: `<div><p>El componente <strong>MediaSelectorsComponent</strong> renderiza los selectores de los recursos multimedia (YouTube, X, Spotify, audio) asociados a una historia. Es un componente de presentación: no monta los widgets, solo emite el recurso seleccionado vía el output <code>selected</code>.</p><ul><li><code>selectable = false</code> (por defecto): agrupa por plataforma con un contador (badge). Decorativo.</li><li><code>selectable = true</code>: un selector clickeable por recurso; al click emite el <code>Media</code> vía <code>selected</code>.</li></ul><p>Los inputs <code>theme</code> (<code>subtle</code> / <code>solid</code> / <code>bordered</code>) y <code>orientation</code> (<code>horizontal</code> / <code>vertical</code>) controlan la presentación.</p><p>Se consume desde <a href="./?path=/docs/componentes-v3-literaryworkcardteaser--docs" target="_top"><strong>LiteraryWorkCardTeaser</strong></a> y <a href="./?path=/docs/componentes-v3-literaryworkhomecardteaser--docs" target="_top"><strong>LiteraryWorkHomeCardTeaser</strong></a> (modo agrupado), y en la página de Story en modo seleccionable.</p></div>`,
+				component: `<div><p>El componente <strong>MediaSelectorsComponent</strong> renderiza los selectores de los recursos multimedia (YouTube, X, Spotify, audio) asociados a una obra. Es un componente de presentación: no monta los widgets, solo emite cuál quedó elegido vía el output <code>selected</code>. Consume la vista de teaser del medio (<code>MediaTeaser</code>): el tag, para elegir el ícono de la plataforma, y el título, que identifica al recurso entre varios de la misma. No alcanza para montar un reproductor.</p><ul><li><code>selectable = false</code> (por defecto): agrupa por plataforma con un contador (badge). Decorativo.</li><li><code>selectable = true</code>: un selector clickeable por recurso; al click emite el <code>MediaTeaser</code> vía <code>selected</code>.</li></ul><p>Los inputs <code>theme</code> (<code>subtle</code> / <code>solid</code> / <code>bordered</code>) y <code>orientation</code> (<code>horizontal</code> / <code>vertical</code>) controlan la presentación.</p><p>Se consume desde <a href="./?path=/docs/componentes-v3-literaryworkcardteaser--docs" target="_top"><strong>LiteraryWorkCardTeaser</strong></a> y <a href="./?path=/docs/componentes-v3-literaryworkhomecardteaser--docs" target="_top"><strong>LiteraryWorkHomeCardTeaser</strong></a> (modo agrupado). El modo seleccionable todavía no tiene consumidor.</p></div>`,
 			},
 		},
 		layout: 'padded',
@@ -26,8 +26,8 @@ const meta: Meta<MediaSelectorsComponent> = {
 	argTypes: {
 		media: {
 			control: { type: 'object' },
-			description: 'Recursos multimedia de la historia',
-			table: { type: { summary: 'Media[]' }, defaultValue: { summary: '[]' } },
+			description: 'Recursos multimedia de la obra',
+			table: { type: { summary: 'MediaTeaser[]' }, defaultValue: { summary: '[]' } },
 		},
 		theme: {
 			control: { type: 'inline-radio' },
@@ -71,7 +71,7 @@ export const Selectable: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Modo seleccionable: un botón por recurso. Al hacer click emite el <code>Media</code> vía el output <code>selected</code> (ver la pestaña Actions).</p><p><strong>Usos:</strong> página de Story, donde el padre monta el widget del recurso seleccionado.</p>`,
+				story: `<p>Modo seleccionable: un botón por recurso. Al hacer click emite el <code>MediaTeaser</code> vía el output <code>selected</code> (ver la pestaña Actions).</p><p><strong>Usos:</strong> una vista que monte el widget del recurso elegido, resolviendo por su cuenta la vista completa del medio.</p>`,
 			},
 		},
 	},

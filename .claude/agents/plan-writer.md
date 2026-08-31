@@ -39,7 +39,7 @@ Cargá las referencias en dos grupos, lanzados juntos como un **único batch en 
 
 Primero determiná el change set: corré `git diff --name-only develop...HEAD` (o, si todavía no hay diff de rama, usá los archivos que la tarea describe como in-scope). Si ninguno arroja un set claro de archivos, tratá el cambio como ambiguo y aplicá la regla fail-open de abajo. Después cargá las referencias de dominio cuyas rutas trigger coincidan:
 
-- `.claude/references/domain-model.md` — el diff toca `src/api/**` o el modelo de dominio (Story/Author/Storylist, agregados, invariantes, validación Zod)
+- `.claude/references/domain-model.md` — el diff toca `src/api/**` o el modelo de dominio (LiteraryWork/Author/Collection, agregados, invariantes, validación Zod)
 - `.claude/references/sanity-acl.md` — el diff toca `src/api/**` (controllers/services/repositories, mappers en `src/api/_utils/`) o consultas GROQ
 - `.claude/references/angular-components.md` — el diff toca `src/app/components/**`, plantillas de componentes o estilos
 - `.claude/references/angular-state.md` — el diff toca servicios de estado, signals, providers o flujos RxJS del frontend

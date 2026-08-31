@@ -8,19 +8,21 @@ import { onoffLiteraryWorksMock } from './onoff-literary-works.mock';
 import { palacioNueveFronterasLiteraryWorkMock } from './onoff/literary-work/el-palacio-de-las-nueve-fronteras.literary-work.mock';
 
 describe('onoffLiteraryWorkTeasersMock (derivación de teasers desde LiteraryWork)', () => {
-	it('should expose the first section of the source work as teaserSection', () => {
-		expect(palacioNueveFronterasLiteraryWorkTeaserMock.teaserSection).toEqual({
-			...palacioNueveFronterasLiteraryWorkMock.content[0],
-			epigraphs: [],
-		});
-		for (const teaser of onoffLiteraryWorkTeasersMock) {
-			expect(teaser.teaserSection.position).toBe(0);
-		}
+	// El extracto conserva el título de la sección de apertura pero recorta su cuerpo, espejando lo que
+	// hace la query. Se afirma que es un prefijo estricto: igualarlo al cuerpo entero volvería a pasar
+	// si el recorte dejara de aplicarse, y ninguna otra aserción lo notaría.
+	it('should derive the excerpt from the opening of the source work, truncated', () => {
+		const opening = palacioNueveFronterasLiteraryWorkMock.content[0];
+		const { excerpt } = palacioNueveFronterasLiteraryWorkTeaserMock;
+
+		expect(excerpt.title).toEqual(opening.title);
+		expect(excerpt.bodyHtml.length).toBeLessThan(opening.bodyHtml.length);
+		expect(opening.bodyHtml.startsWith(excerpt.bodyHtml)).toBe(true);
 	});
 
-	it('should carry a rendered bodyHtml in the teaser section', () => {
+	it('should carry a rendered bodyHtml in the excerpt', () => {
 		for (const teaser of onoffLiteraryWorkTeasersMock) {
-			expect(teaser.teaserSection.bodyHtml).toContain('<p>');
+			expect(teaser.excerpt.bodyHtml).toContain('<p>');
 		}
 	});
 
@@ -52,7 +54,11 @@ describe('navigation teasers de LiteraryWork (proyección de la vista base)', ()
 			expect(teaser.totalReadingTime).toBe(source.totalReadingTime);
 			expect(teaser.sectionCount).toBe(source.sectionCount);
 			expect(teaser.tags).toBe(source.tags);
-			expect(teaser.mediaSources).toBe(source.mediaSources);
+			// mediaSources no se transporta por referencia: la vista de navegación promete el tag y el
+			// título, no la carga con la que se reproduce el recurso.
+			expect(teaser.mediaSources).toEqual(
+				source.mediaSources.map((media) => ({ type: media.type, title: media.title })),
+			);
 		});
 	});
 
@@ -84,7 +90,7 @@ describe('navigation teasers de LiteraryWork (proyección de la vista base)', ()
 			expect(teaser).not.toHaveProperty('originalPublication');
 			expect(teaser).not.toHaveProperty('publishedAt');
 			expect(teaser).not.toHaveProperty('editorialNote');
-			expect(teaser).not.toHaveProperty('teaserSection');
+			expect(teaser).not.toHaveProperty('excerpt');
 		}
 	});
 });

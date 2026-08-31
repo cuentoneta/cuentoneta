@@ -5,26 +5,16 @@ import { Hono } from 'hono';
 
 import type { ReactNode } from 'react';
 
+import { resolveOgText } from './_helpers/og-text';
 import Logo from './_utils/Logo';
 
 const ogController = new Hono();
 
 // Route
 ogController.get('/og', async (c) => {
-	const author = c.req.query('author');
-	const title = c.req.query('title');
 	const rrss = c.req.query('rrss');
-	const storylist = c.req.query('storylist');
 
-	let text: string;
-
-	if (storylist) {
-		text = String(storylist);
-	} else if (author && title) {
-		text = `${title} - ${author}`;
-	} else {
-		text = 'La Cuentoneta';
-	}
+	const text = resolveOgText((name) => c.req.query(name));
 
 	let width: number;
 	let height: number;

@@ -3,6 +3,9 @@ import { defineQuery } from 'groq';
 // Proyección de metadata compartida por la query full y la de sección: todo salvo el array `content`.
 // Se repite en ambas (defineQuery necesita literales para el typegen), no se concatena.
 //
+// Las dos ordenan por identificador antes de tomar el primero: dos documentos publicados pueden
+// compartir slug, y sin un orden declarado cuál de los dos sirve la página lo decide el dataset.
+//
 // `editorialNote` va sin `coalesce` a diferencia del resto: su destino en el dominio es un
 // `SanitizedHtml`, cuya factory rechaza el contenido vacío, así que un default de string vacío haría
 // lanzar el mapeo de toda obra sin nota. La ausencia se representa como `null` y el repository la
@@ -70,7 +73,8 @@ export const literaryWorkBySlugQuery = defineQuery(`
         body,
         readingTime
     }, [])
-}[0]`);
+}
+| order(_id asc) [0]`);
 
 // Obtención parcial: metadata total (incluido totalReadingTime y sectionCount) + el body de una sola
 // sección vía el slice `content[$section...$sectionEnd]` (0-based, fin exclusivo — `$sectionEnd` va
@@ -138,7 +142,8 @@ export const literaryWorkSectionBySlugQuery = defineQuery(`
         body,
         readingTime
     }
-}[0]`);
+}
+| order(_id asc) [0]`);
 
 // Candidatas del backfill de reading time: obras a las que les falta el total o el reading time de
 // alguna sección. La proyección trae **todas** las secciones, no solo las incompletas, porque el
@@ -155,3 +160,52 @@ export const readingTimeBackfillCandidatesQuery = defineQuery(`
     totalReadingTime,
     'content': coalesce(content[]{ _key, body, readingTime }, [])
 }`);
+
+// El catálogo de obras como teasers, filtrable por criterios — hoy solo `author`; la paginación
+// (limit/offset) y el filtrado por tags se sumarán acá mismo. Cada criterio es un parámetro nullable
+// y no una query aparte: una condición acá y un query param en el endpoint, no una sub-ruta ni otra
+// proyección duplicada.
+//
+// `$author == null` cubre el listado sin filtro; con filtro se recorre `authors[]` porque una obra admite
+// varios, así que la pertenencia es de conjunto y no una igualdad. `$slugs` sigue la misma forma, y filtra
+// por pertenencia: devuelve en orden de documento,
+// así que un consumidor que pase un lote ordenado repone el orden por su cuenta.
+//
+// La proyección repite literal la que `collectionBySlugQuery` usa para las obras de una colección
+// —`defineQuery` exige literales para que el typegen las lea, así que no se puede extraer—, incluido
+// el recorte del extracto y su heurística de doble salto de línea. Si las dos divergen, el corpus
+// derivado deja de tipar, que es la señal de que hay que volver a alinearlas.
+//
+// No se acota: quién elige las tres que se muestran, y con qué criterio, es del consumidor.
+export const literaryWorkTeasers = defineQuery(`
+*[_type == 'literaryWork' && !(_id in path('drafts.**')) && ($author == null || $author in authors[]->slug.current) && ($slugs == null || slug.current in $slugs)]
+{
+    _id,
+    'slug': slug.current,
+    title,
+    coverImage,
+    totalReadingTime,
+    'sectionCount': count(content),
+    'tags': coalesce(tags[] -> {
+        title,
+        'slug': slug.current,
+        description
+    }, []),
+    'mediaSources': coalesce(mediaSources[]{ _type, title }, []),
+    'authors': coalesce(authors[]->{
+        _id,
+        'slug': slug.current,
+        name,
+        image,
+        nationality->,
+        bornOn,
+        bornOnYear,
+        diedOn,
+        diedOnYear
+    }, []),
+    'excerpt': content[0...1]{
+        _key,
+        title,
+        'body': string::split(string::split(body, "\r\n\r\n")[0], "\n\n")[@ != ""][0]
+    }
+} | order(title asc)`);

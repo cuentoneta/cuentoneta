@@ -1,13 +1,13 @@
 {
 	"name": "@cuentoneta/app",
 	"type": "module",
-	"version": "2.10.3",
+	"version": "2.11.0",
 	"imports": {
 		"#tailwind-theme": "./src/tailwind.css"
 	},
 	"license": "CC BY-NC-SA 4.0",
 	"engines": {
-		"node": "^24.15.0"
+		"node": "^24.18.0"
 	},
 	"packageManager": "pnpm@10.12.1",
 	"scripts": {
@@ -24,6 +24,7 @@
 		"lint": "nx eslint:lint --skip-nx-cache",
 		"check:agents": "node --import tsx ./scripts/check-claude-docs.ts",
 		"issue-refs:sweep": "node --import tsx ./scripts/issue-refs-sweep.ts",
+		"field-shape:sweep": "node --import tsx --env-file-if-exists=.env ./scripts/field-shape-sweep/field-shape-sweep.ts",
 		"required-fields:sweep": "node --import tsx --env-file-if-exists=.env ./scripts/required-fields-sweep/required-fields-sweep.ts",
 		"worktrees:sweep": "node --import tsx ./scripts/worktree-sweep.ts",
 		"check:findings": "node --import tsx ./scripts/check-finding-refs.ts",

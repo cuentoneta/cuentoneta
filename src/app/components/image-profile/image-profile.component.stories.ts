@@ -83,7 +83,7 @@ export const Collection: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Variante collection: fondo brand-100 + ícono de biblioteca, en lugar de una foto.</p><p><strong>Usos:</strong> representación de una colección (storylist) donde no aplica un retrato de persona.</p>`,
+				story: `<p>Variante collection: fondo brand-100 + ícono de biblioteca, en lugar de una foto.</p><p><strong>Usos:</strong> representación de una colección donde no aplica un retrato de persona.</p>`,
 			},
 		},
 	},

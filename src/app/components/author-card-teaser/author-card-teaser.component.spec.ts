@@ -48,12 +48,10 @@ describe('AuthorCardTeaserComponent', () => {
 		);
 	});
 
-	it('should request the avatar at 2x of 80px (HiDPI)', async () => {
+	// La tarjeta decide el tamaño; qué se le pide al CDN a partir de él tiene sus propios specs.
+	it('should mount the avatar at the lg size', async () => {
 		await render(AuthorCardTeaserComponent, { inputs: { author: authorTeaserMock } });
-		expect(screen.getByRole('img', { name: avatarName })).toHaveAttribute(
-			'src',
-			expect.stringContaining('h=160&w=160'),
-		);
+		expect(screen.getByRole('img', { name: avatarName })).toHaveAttribute('width', '80');
 	});
 
 	it('should render the nationality flag', async () => {
@@ -75,12 +73,12 @@ describe('AuthorCardTeaserComponent', () => {
 
 	it('should render the story count (plural)', async () => {
 		await render(AuthorCardTeaserComponent, { inputs: { author: authorTeaserMock, storyCount: 21 } });
-		expect(screen.getByTestId('story-count')).toHaveTextContent('21 historias');
+		expect(screen.getByTestId('story-count')).toHaveTextContent('21 obras');
 	});
 
 	it('should use the singular for a single story', async () => {
 		await render(AuthorCardTeaserComponent, { inputs: { author: authorTeaserMock, storyCount: 1 } });
-		expect(screen.getByTestId('story-count')).toHaveTextContent('1 historia');
+		expect(screen.getByTestId('story-count')).toHaveTextContent('1 obra');
 	});
 
 	it('should not render tags or story count when not provided', async () => {

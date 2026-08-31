@@ -12,17 +12,8 @@ import {
 	surrealismoRawTag,
 } from '../../onoff-raw-tags.mock';
 import { geometriaSectionTitle } from '../literary-work/geometria.epigraph';
-import geometriaMdBody from '../literary-work/geometria.md?raw';
-import lasEscalerasMdBody from '../literary-work/las-escaleras.md?raw';
-import losPeldanosMdBody from '../literary-work/los-peldanos.md?raw';
 import {
-	geometriaAudioDescription,
-	geometriaPdfDescription,
-	geometriaSpaceDescription,
-	geometriaSpotifyDescription,
-	geometriaYoutubeDescription,
-} from '../media/geometria.media';
-import {
+	geometriasDelDesveloSpaceDescription,
 	geometriasDelDesveloSpotifyDescription,
 	geometriasDelDesveloYoutubeDescription,
 } from '../media/geometrias-del-desvelo.media';
@@ -51,6 +42,18 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 			description: geometriasDelDesveloYoutubeDescription,
 			videoId: 'geometriasDelDesveloVideoId',
 		},
+		{
+			_key: 'geometrias-space',
+			_type: 'spaceRecording',
+			title: 'Mesa de lectura sobre el insomnio',
+			description: geometriasDelDesveloSpaceDescription,
+			audioFile: { _type: 'file', asset: { _type: 'reference', _ref: 'file-geometria-space-ogg' } },
+			hostName: 'Biblioteca del Méridien',
+			hostAvatar: { _type: 'image', asset: { _type: 'reference', _ref: 'image-bibliotecaMeridienAvatar-96x96-png' } },
+			date: '1974-07-03',
+			duration: '52:40',
+			audioUrl: 'https://cdn.example.org/onoff/geometria-space.ogg',
+		},
 	],
 	literaryWorks: [
 		{
@@ -62,49 +65,11 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 			sectionCount: 1,
 			tags: [cuentoRawTag, dramaPsicologicoRawTag, filosoficoRawTag],
 			mediaSources: [
-				{
-					_key: 'geometria-audio',
-					_type: 'audioRecording',
-					title: 'Lectura de "Geometría" por su autor',
-					description: geometriaAudioDescription,
-					url: 'https://cdn.example.org/onoff/geometria.ogg',
-				},
-				{
-					_key: 'geometria-space',
-					_type: 'spaceRecording',
-					title: 'Conversación sobre el insomnio y la medida del tiempo',
-					description: geometriaSpaceDescription,
-					audioFile: { _type: 'file', asset: { _type: 'reference', _ref: 'file-geometria-space-ogg' } },
-					hostName: 'Biblioteca del Méridien',
-					hostAvatar: {
-						_type: 'image',
-						asset: { _type: 'reference', _ref: 'image-bibliotecaMeridienAvatar-96x96-png' },
-					},
-					date: '1974-06-12',
-					duration: '48:12',
-					audioUrl: 'https://cdn.example.org/onoff/geometria-space.ogg',
-				},
-				{
-					_key: 'geometria-spotify',
-					_type: 'spotifyPodcastEpisode',
-					title: 'Episodio dedicado a "Geometría"',
-					description: geometriaSpotifyDescription,
-					url: 'https://open.spotify.com/embed/episode/geometria',
-				},
-				{
-					_key: 'geometria-youtube',
-					_type: 'youTubeVideo',
-					title: 'Video ensayo sobre las coordenadas del desvelo',
-					description: geometriaYoutubeDescription,
-					videoId: 'geometriaVideoId',
-				},
-				{
-					_key: 'geometria-pdf',
-					_type: 'pdfLink',
-					title: 'Facsímil de la primera edición',
-					description: geometriaPdfDescription,
-					url: 'https://cdn.example.org/onoff/geometria.pdf',
-				},
+				{ _type: 'audioRecording', title: 'Lectura de "Geometría" por su autor' },
+				{ _type: 'spaceRecording', title: 'Conversación sobre el insomnio y la medida del tiempo' },
+				{ _type: 'spotifyPodcastEpisode', title: 'Episodio dedicado a "Geometría"' },
+				{ _type: 'youTubeVideo', title: 'Video ensayo sobre las coordenadas del desvelo' },
+				{ _type: 'pdfLink', title: 'Facsímil de la primera edición' },
 			],
 			authors: [
 				{
@@ -127,7 +92,13 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 					diedOnYear: 1994,
 				},
 			],
-			teaserSection: [{ _key: 'section-1', title: geometriaSectionTitle, body: geometriaMdBody, readingTime: 7 }],
+			excerpt: [
+				{
+					_key: 'section-1',
+					title: geometriaSectionTitle,
+					body: 'A las tres y media en punto, sin que ningún despertador lo convoque, Shannon abre los ojos. La oscuridad de la habitación tiene siempre el mismo peso, el mismo gramaje exacto, como si la noche hubiera sido recortada con escuadra. No hay sobresalto: hay precisión.',
+				},
+			],
 		},
 		{
 			_id: 'onoff-literary-work-los-peldanos',
@@ -159,7 +130,13 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 					diedOnYear: 1994,
 				},
 			],
-			teaserSection: [{ _key: 'section-1', title: null, body: losPeldanosMdBody, readingTime: 8 }],
+			excerpt: [
+				{
+					_key: 'section-1',
+					title: null,
+					body: 'La escalera empezaba en ninguna parte y terminaba un poco más arriba de eso. La Sra. Oneiras vivía en alguno de sus peldaños, aunque jamás conseguí determinar en cuál, porque cada vez que creía haberlo hecho el peldaño se desplazaba, o yo me desplazaba, o el día entero cambiaba de número sin avisarle a nadie.',
+				},
+			],
 		},
 		{
 			_id: 'onoff-literary-work-las-escaleras',
@@ -169,7 +146,7 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 			totalReadingTime: 9,
 			sectionCount: 1,
 			tags: [novelaRawTag, absurdoRawTag, alegoriaRawTag],
-			mediaSources: [],
+			mediaSources: [{ _type: 'audioRecording', title: 'Lectura de "Las escaleras" por su autor' }],
 			authors: [
 				{
 					_id: 'author_1',
@@ -191,7 +168,13 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 					diedOnYear: 1994,
 				},
 			],
-			teaserSection: [{ _key: 'section-1', title: null, body: lasEscalerasMdBody, readingTime: 9 }],
+			excerpt: [
+				{
+					_key: 'section-1',
+					title: null,
+					body: 'Dos años después la encontré donde la había dejado, al pie de la escalera, midiendo con el pulgar la distancia exacta que separaba un peldaño del siguiente. La Sra. Oneiras no había envejecido; se había vuelto más precisa, como una cifra que se repite hasta perder su sentido.',
+				},
+			],
 		},
 	],
 };

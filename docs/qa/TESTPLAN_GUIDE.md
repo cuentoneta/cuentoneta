@@ -136,8 +136,8 @@ Buenas prácticas: un caso verifica **una** cosa; el objetivo y los pasos deben 
 Cada caso declara su(s) **Test(s) asociado(s)**: la ruta del archivo y el nombre del test que lo cubre. Formato:
 
 ```
-src/app/.../story.mapper.spec.ts > "maps a Sanity story to the domain model"
-e2e/navigation.spec.ts > "navigates from home to a story"
+src/api/modules/literary-work/literary-work.repository.sanity.spec.ts > "mapea el crudo a un agregado congelado con posiciones y total persistido"
+e2e/literary-work.spec.ts > "literary-work — la obra estable existe en el dataset y cumple el contrato"
 ```
 
 Si el caso todavía **no está automatizado**, se marca `pendiente de automatizar` (o `manual` si no corresponde automatizarlo). Esto convierte al test plan en un **mapa de cobertura auditable**: los casos sin test asociado son la lista de trabajo para completar la suite (en particular, los tests de integración faltantes).
@@ -155,7 +155,7 @@ El plan de regresión (tipo B, [§4](#4-granularidad-cuándo-se-escribe-un-test-
 
 ### 9.1 Entender los requisitos
 
-Analizá el issue, sus criterios de aceptación y cualquier diseño/wireframe asociado. Priorizá las **funcionalidades críticas** (lectura y navegación de cuentos).
+Analizá el issue, sus criterios de aceptación y cualquier diseño/wireframe asociado. Priorizá las **funcionalidades críticas** (lectura y navegación de obras).
 
 ### 9.2 Definir el alcance
 

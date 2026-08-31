@@ -18,7 +18,7 @@ import type { NavigationParams } from '@app-utils/navigation-params';
 	host: { class: 'block' },
 	template: `
 		@switch (navigationParams().navigation) {
-			@case ('storylist') {
+			@case ('collection') {
 				@defer (on viewport) {
 					<cuentoneta-collection-reading-suggestions
 						[collectionSlug]="navigationParams().navigationSlug"
@@ -50,8 +50,16 @@ export class ReadingSuggestionsComponent {
 	public readonly authorName = input.required<string>();
 	public readonly currentWorkSlug = input<string>();
 
-	// Reserva el alto del bloque para que su aparición no empuje el pie de página. El valor sale de su
-	// composición: tres portadas de `h-41` (164px) más la separación entre tarjetas, el encabezado, el
-	// acceso al listado y el relleno del contenedor.
-	protected readonly placeholderClasses = 'h-189';
+	// Reserva el alto del bloque para que su aparición no empuje el pie de página.
+	//
+	// El valor está medido sobre el bloque ya montado en la página de lectura, no derivado de su
+	// composición: el revestimiento cambia varias separaciones a la vez y la aritmética se desactualiza
+	// en silencio. Se midió con la cantidad completa de sugerencias, que es la que las dos variantes
+	// pintan cuando hay datos: reservar por variante no corresponde, porque lo que mueve el alto es
+	// cuántas obras entran y no cuál de las dos ramas las trajo.
+	//
+	// Es un alto fijo, así que solo acierta al ancho en que se midió: en pantallas angostas, donde los
+	// títulos y los extractos ocupan más líneas, el bloque va a superarlo y el pie se va a correr un
+	// poco. Reservar de más en el caso ancho sería peor, porque deja un hueco visible en el caso común.
+	protected readonly placeholderClasses = 'h-211';
 }

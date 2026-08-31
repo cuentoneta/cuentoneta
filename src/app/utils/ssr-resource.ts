@@ -30,7 +30,7 @@ export function ssrBlockingRxResource<T, R>(options: RxResourceOptions<T, R>): R
 
 /**
  * Opt-out explícito del bloqueo de SSR: alias directo de `rxResource` para datos secundarios o no
- * indexables (p. ej. el listado de cuentos de un autor), que se sirven como skeleton y resuelven en
+ * indexables (p. ej. el listado de obras de un autor), que se sirven como skeleton y resuelven en
  * el cliente.
  */
 export const progressiveRxResource = rxResource;

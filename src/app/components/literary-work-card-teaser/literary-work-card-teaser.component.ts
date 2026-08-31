@@ -13,8 +13,6 @@ import { MediaSelectorsComponent, type MediaSelectorsTheme } from '../media-sele
 import { LiteraryWorkCardTeaserSkeletonComponent } from './literary-work-card-teaser-skeleton.component';
 import { ImageProfileComponent } from '../image-profile/image-profile.component';
 import { CoverImageComponent } from '../cover-image/cover-image.component';
-import { PortableTextParserComponent } from '../portable-text-parser/portable-text-parser.component';
-import type { TextBlockContent } from '@models/block-content.model';
 
 /**
  * Variantes visuales del componente LiteraryWorkCardTeaser definidas en el Design System v3.
@@ -41,7 +39,6 @@ export type LiteraryWorkCardTeaserContent =
 		LiteraryWorkCardTeaserSkeletonComponent,
 		ImageProfileComponent,
 		CoverImageComponent,
-		PortableTextParserComponent,
 	],
 	template: `
 		@if (literaryWork(); as literaryWork) {
@@ -68,22 +65,13 @@ export type LiteraryWorkCardTeaserContent =
 								}
 								<span>{{ literaryWork.title }}</span>
 							</p>
-							@if (showExcerpt()) {
-								@if (excerptParagraphs().length > 0) {
-									<cuentoneta-portable-text-parser
-										[paragraphs]="excerptParagraphs()"
-										[class]="'line-clamp-' + excerptLines()"
-										data-testid="description"
-										class="overflow-hidden font-inter text-sm font-medium text-ellipsis text-neutral-600"
-									/>
-								} @else if ('teaserSection' in literaryWork) {
-									<div
-										[innerHTML]="literaryWork.teaserSection.bodyHtml"
-										[class]="'line-clamp-' + excerptLines()"
-										data-testid="description"
-										class="overflow-hidden font-inter text-sm font-medium text-ellipsis text-neutral-600"
-									></div>
-								}
+							@if (showExcerpt() && 'excerpt' in literaryWork) {
+								<div
+									[innerHTML]="literaryWork.excerpt.bodyHtml"
+									[class]="'line-clamp-' + excerptLines()"
+									data-testid="description"
+									class="overflow-hidden font-inter text-sm font-medium text-ellipsis text-neutral-600"
+								></div>
 							}
 						</a>
 						<ng-container [ngTemplateOutlet]="readingTime" [ngTemplateOutletContext]="{ $implicit: literaryWork }" />
@@ -170,14 +158,14 @@ export class LiteraryWorkCardTeaserComponent {
 	// Acotado a [1, 10] para coincidir con el safelist `line-clamp-{1..10}` de styles.css,
 	// ya que la clase `line-clamp-N` se construye dinámicamente y no la detecta el escaneo de Tailwind.
 	public readonly excerptLines = input(2, { transform: (value: number) => Math.min(10, Math.max(1, value)) });
-	// TODO(#2037): puente desde `Story`, cuyo extracto es Portable Text y no `SanitizedHtml`. Cuando la
-	// tríada consuma obras nativas, el extracto vuelve a salir de `teaserSection` y este input se va.
-	// Tiene precedencia sobre `teaserSection` cuando llega no vacío.
-	public readonly excerptParagraphs = input<TextBlockContent[]>([]);
 	public readonly navigationParams = input<NavigationParams>();
 
 	protected readonly coverImageUrl = computed(() => this.literaryWork()?.coverImage);
-	protected readonly literaryWorkRouterLink = computed(() => ['/', this.appRoutes.Story, this.literaryWork()?.slug]);
+	protected readonly literaryWorkRouterLink = computed(() => [
+		'/',
+		this.appRoutes.LiteraryWork,
+		this.literaryWork()?.slug,
+	]);
 
 	// Mapea la variante de la tarjeta al tema visual de los selectores de multimedia.
 	protected readonly mediaTheme = computed<MediaSelectorsTheme>(() => {

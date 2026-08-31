@@ -126,7 +126,7 @@ en el canal **[#🚐 | la-cuentoneta][dc-channel]** en Discord.
 
 ### Requerimientos
 
-- Tener instalada una versión de [Node](https://nodejs.org/es/) **24** (Active LTS "Krypton") igual o superior a `v24.15.0`,
+- Tener instalada una versión de [Node](https://nodejs.org/es/) **24** (Active LTS "Krypton") igual o superior a `v24.18.0` (el `.npmrc` declara `engine-strict`, así que una versión menor **falla la instalación** en vez de solo advertir),
   idealmente la última versión LTS. El proyecto ya no soporta Node 22 ni versiones anteriores.
 - Instalar `pnpm`, un gestor de paquetes alternativo para Node: `npm install -g pnpm`. Se recomienda la versión `10.12.0` o superior.
 - Instalar `nx`, un CLI para desarrollo de monorepos: `pnpm install -g nx`. Se recomienda la versión `23.0.0` o
@@ -304,9 +304,9 @@ pnpm run dev
 
 Navega por la colección y ejecuta los endpoints que necesites probar. Todos los endpoints están organizados por recurso:
 
-- `/story` - Endpoints de cuentos
+- `/literary-work` - Endpoints de obras literarias
 - `/author` - Endpoints de autores
-- `/storylist` - Endpoints de listas de cuentos
+- `/collection` - Endpoints de colecciones de obras literarias
 - `/content` - Contenido de landing page
 - `/contributor` - Información de contribuyentes
 - `/og` - Generación de imágenes Open Graph
@@ -337,13 +337,13 @@ Bruno utiliza el prefijo `~` para indicar parámetros opcionales en las solicitu
 ```
 params:query {
   ~author: jorge-luis-borges    # El ~ indica parámetro opcional
-  ~storylist: cuentos-de-terror
+  ~collection: Cuentos de terror
   rrss: twitter                 # Parámetro requerido (sin ~)
   title: Example Title
 }
 ```
 
-En el ejemplo anterior, `author` y `storylist` son opcionales, mientras que `rrss` y `title` son requeridos.
+En el ejemplo anterior, `author` y `collection` son opcionales, mientras que `rrss` y `title` son requeridos. Este es el ejemplo real del endpoint `/og` (`docs/api/bruno/og/generate-og-image.bru`): `collection` ahí es un parámetro de texto libre para el OG de compartir.
 
 ---
 
@@ -369,7 +369,7 @@ El proyecto utiliza [git](https://git-scm.com) como herramienta de control de ve
   _pull request_ desde tu _fork_ al repositorio principal, generando el fork tal como se detalla en la sección
   [Clonar el repositorio](#clonar-el-repositorio).
 - Las ramas de trabajo se nomenclan de la siguiente manera: `feat/<numero-de-incidencia>-<nombre-de-la-funcionalidad>`,
-  con el nombre en _kebab-case_. Por ejemplo: `feat/469-implementar-nuevo-componente-story-card-component`. Si generás
+  con el nombre en _kebab-case_. Por ejemplo: `feat/469-implementar-nuevo-componente-literary-work-card-teaser`. Si generás
   la rama desde la incidencia en la interfaz de Github, tené en cuenta que el nombre que propone viene sin el prefijo
   `feat/`: hay que agregárselo antes de empezar a trabajar.
 - Todos los commits deben ser nomenclados de la siguiente manera, referenciando el commit de manera navegable desde
@@ -426,7 +426,7 @@ base a
 la plantilla seleccionada al momento de su creación, mientras que otras son asignadas por los gestores del proyecto
 a la hora de realizar el _triaging_ y análisis de la incidencia.
 
-### Planes de prueba
+#### Planes de prueba
 
 Para características que requieran pruebas de integración, sean estas manuales o implementadas mediante Playwright, se
 encuentra disponible una guía y plantilla de cómo confeccionar un plan de pruebas para una funcionalidad determinada del

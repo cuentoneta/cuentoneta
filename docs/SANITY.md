@@ -12,7 +12,7 @@ Para generar los tipos de las consultas de Sanity debemos seguir [esta guía](ht
 
 De acuerdo a lo definido en `cms/sanity.cli.ts` los tipos generados mediante `sanity typegen generate` pueden encontrarse en `src/sanity/types.ts` (kernel compartido, importable por ambas capas vía el alias `@sanity-types`), con los tipos generados para campos en la parte superior, sucedidos luego por los tipos generados para las queries de GROQ. Este archivo oficia como interfaz entre las consultas de Sanity y el código que dispara consultas mediante el conector a Sanity. Nota: `typegen.path` sigue escaneando las queries de GROQ en `src/api`; solo cambia el `generates` (output) al kernel.
 
-Se pueden ver ejemplos de consultas definidas con tipos generados en `src/api/_queries`. En `src/api/author/author.service.ts` o `src/api/story/stoy.service.ts` se pueden ver ejemplos de cómo utilizar estos mismos tipos, para referencia del equipo de desarrollo.
+Se pueden ver ejemplos de consultas definidas con tipos generados en `src/api/_queries`. En `src/api/modules/author/author.service.ts` o `src/api/modules/literary-work/literary-work.repository.sanity.ts` se pueden ver ejemplos de cómo utilizar estos mismos tipos, para referencia del equipo de desarrollo.
 
 > ⚠️Importante: No olvidar usar `defineQuery` antes de cada consulta para que la misma sea detectada por la herramienta de tipado automático de Sanity.
 
@@ -20,9 +20,9 @@ Se pueden ver ejemplos de consultas definidas con tipos generados en `src/api/_q
 
 Debe tenerse en cuenta que los tipos generados pueden incluir casos donde los campos serán nulos o no definidos. Por ejemplo `slug?: string | null`. Hasta ahora recurrimos a la correción manual en casos donde tenemos completa seguridad de que el valor siempre estará definido (ni `null` ni `undefined`), buscando evitar estos casos mediante la especificación de la regla de validación `required` en los schemas de Sanity.
 
-Las queries de GROQ pueden ser nulas en caso de que no se encuentre el documento en la base de datos, lo cual debe ser validado mediante una cláusula `if` en el código de la aplicación a nivel del servicio que dispara la consulta y, para su posterior procesamiento por funciones de mapeo, puede utilizarse el operador `NonNullable` para definir un tipo derivado. Pueden observarse ejemplos de esto en los servicios de `author` y `story`, en consultas que devuelven un valor único en base a una búsqueda por `slug`. En el caso de que las consultas devuelvan un array, el array será vacío -- lo cual es un comportamiento esperado y no debe ser tratado como un error o problema.
+Las queries de GROQ pueden ser nulas en caso de que no se encuentre el documento en la base de datos, lo cual debe ser validado mediante una cláusula `if` en el código de la aplicación a nivel del servicio que dispara la consulta y, para su posterior procesamiento por funciones de mapeo, puede utilizarse el operador `NonNullable` para definir un tipo derivado. Pueden observarse ejemplos de esto en los servicios de `author` y `literary-work`, en consultas que devuelven un valor único en base a una búsqueda por `slug`. En el caso de que las consultas devuelvan un array, el array será vacío -- lo cual es un comportamiento esperado y no debe ser tratado como un error o problema.
 
-Para aquellos casos en los que los campos sean de tipo array debe hacerse uso de la función `coalesce` en las consultas GROQ para evitar que el campo sea `null` y devolver, en cambio, un array vacío que pueda ser tipado mediante `Array<never>`. Puede observarse un ejemplo en la consulta `src/api/author/author.query.ts`.
+Para aquellos casos en los que los campos sean de tipo array debe hacerse uso de la función `coalesce` en las consultas GROQ para evitar que el campo sea `null` y devolver, en cambio, un array vacío que pueda ser tipado mediante `Array<never>`. Puede observarse un ejemplo en la consulta `src/api/_queries/author.query.ts`.
 
 ---
 
@@ -40,4 +40,4 @@ Para más detalles sobre las **consultas GROQ** y **funciones de repositorio** u
 
 ## Scripts de auditoría y diagnóstico
 
-Para tareas puntuales de **auditoría, diagnóstico o migración** sobre los datos de Sanity (por ejemplo, auditar el formato de las biografías de autores o exportarlas a Markdown), el proyecto incluye scripts one-off en `scripts/audit/`. No se exponen como comandos de `package.json` y se ejecutan explícitamente. Consulta su documentación, comandos y advertencias (read-only vs. escritura en producción) en [`scripts/audit/README.md`](../scripts/audit/README.md).
+Para tareas puntuales de **auditoría, diagnóstico o migración** sobre los datos de Sanity, el proyecto incluye scripts one-off en la raíz de `scripts/`, sin comando en `package.json`: se ejecutan explícitamente con `pnpm exec tsx`. Consulta la convención de qué vive en `scripts/` y bajo qué forma en [`scripts.md`](../.claude/references/scripts.md).

@@ -6,15 +6,18 @@ import { Observable, of } from 'rxjs';
 import { LandingPageContent } from '@models/landing-page-content.model';
 import { ContentApi } from './content.provider';
 
+// Entrega la landing vacía: cada caso superpone solo las secciones que ejercita, y así lo que no
+// declara queda demostrablemente en cero.
 export class StubContentApi implements ContentApi {
 	public getLandingPageContent(): Observable<LandingPageContent> {
 		const landingPageContent: LandingPageContent = {
 			_id: '',
 			config: '',
-			cards: [],
+			collections: [],
 			campaigns: [],
 			mostRead: [],
 			latestReads: [],
+			highlightedAuthors: [],
 		};
 		return of(landingPageContent);
 	}

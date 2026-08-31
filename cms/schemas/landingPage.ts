@@ -58,28 +58,42 @@ export default defineType({
 			],
 		}),
 		defineField({
-			name: 'cards',
-			title: 'Storylists con Tarjetas',
+			name: 'collections',
+			title: 'Colecciones con Tarjetas',
 			type: 'array',
 			of: [
 				defineArrayMember({
-					name: 'storylist',
-					title: 'Storylist',
+					name: 'collection',
+					title: 'Colección',
 					type: 'reference',
-					to: [{ type: 'storylist' }],
+					to: [{ type: 'collection' }],
 				}),
 			],
 		}),
 		defineField({
-			name: 'latestReads',
-			title: 'Últimas novedades',
+			name: 'latestLiteraryWorks',
+			title: 'Últimas novedades (obras)',
 			type: 'array',
 			of: [
 				defineArrayMember({
-					name: 'story',
-					title: 'Historia',
+					name: 'literaryWork',
+					title: 'Obra literaria',
 					type: 'reference',
-					to: [{ type: 'story' }],
+					to: [{ type: 'literaryWork' }],
+				}),
+			],
+		}),
+		defineField({
+			name: 'highlightedAuthors',
+			title: 'Autores destacados',
+			type: 'array',
+			validation: (Rule) => Rule.max(6),
+			of: [
+				defineArrayMember({
+					name: 'highlightedAuthor',
+					title: 'Autor destacado',
+					type: 'reference',
+					to: [{ type: 'author' }],
 				}),
 			],
 		}),

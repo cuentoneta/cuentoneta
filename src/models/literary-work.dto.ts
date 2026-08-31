@@ -1,8 +1,14 @@
 import * as z from 'zod/mini';
 import type { Author, AuthorTeaser } from './author.model';
-import type { Media } from './media.model';
+import type { LiteraryWorkTeaser } from './literary-work.model';
+import type { Media, MediaTeaser } from './media.model';
 import type { Resource } from './resource.model';
 import type { Tag } from './tag.model';
+import { createLiteraryWorkExcerpt } from './literary-work-excerpt.model';
+import { createReadingTime } from './reading-time.model';
+import { createSanitizedHtml } from './sanitized-html.model';
+import { createSectionTitle } from './section-title.model';
+import { createSlug } from './slug.model';
 
 // Los tipos de dominio anémicos anidados (Author/Tag/Media/Resource) se validan como opacos: se
 // verifica que cada elemento sea un objeto, pero no su estructura interna — su contrato de wire
@@ -20,6 +26,14 @@ export const literaryWorkSectionDtoSchema = z.object({
 	epigraphs: z.optional(z.array(literaryWorkEpigraphDtoSchema)),
 	bodyHtml: z.string(),
 	readingTime: z.number(),
+});
+
+// El extracto de un listado no declara `readingTime` ni `position`: su cuerpo va recortado y no
+// puede sostenerlos. Es un schema propio y no una variante del de sección, para que el contrato de
+// wire diga lo mismo que el de dominio.
+export const literaryWorkExcerptDtoSchema = z.object({
+	title: z.optional(z.object({ value: z.string() })),
+	bodyHtml: z.string(),
 });
 
 export const literaryWorkDtoSchema = z.object({
@@ -50,12 +64,27 @@ export const literaryWorkTeaserDtoSchema = z.object({
 	totalReadingTime: z.number(),
 	sectionCount: z.number(),
 	tags: z.array(opaqueDomainObject<Tag>()),
-	mediaSources: z.array(opaqueDomainObject<Media>()),
+	mediaSources: z.array(opaqueDomainObject<MediaTeaser>()),
 	authors: z.array(opaqueDomainObject<AuthorTeaser>()),
-	teaserSection: literaryWorkSectionDtoSchema,
+	excerpt: literaryWorkExcerptDtoSchema,
 });
+
+export const literaryWorkTeaserListDtoSchema = z.array(literaryWorkTeaserDtoSchema);
 
 export type LiteraryWorkEpigraphDto = z.infer<typeof literaryWorkEpigraphDtoSchema>;
 export type LiteraryWorkTeaserDto = z.infer<typeof literaryWorkTeaserDtoSchema>;
 export type LiteraryWorkSectionDto = z.infer<typeof literaryWorkSectionDtoSchema>;
+export type LiteraryWorkExcerptDto = z.infer<typeof literaryWorkExcerptDtoSchema>;
 export type LiteraryWorkDto = z.infer<typeof literaryWorkDtoSchema>;
+
+export function toLiteraryWorkTeaser(dto: LiteraryWorkTeaserDto): LiteraryWorkTeaser {
+	return {
+		...dto,
+		slug: createSlug(dto.slug),
+		totalReadingTime: createReadingTime(dto.totalReadingTime),
+		excerpt: createLiteraryWorkExcerpt({
+			title: dto.excerpt.title ? createSectionTitle(dto.excerpt.title.value) : undefined,
+			bodyHtml: createSanitizedHtml(dto.excerpt.bodyHtml),
+		}),
+	};
+}

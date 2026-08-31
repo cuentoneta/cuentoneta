@@ -26,7 +26,7 @@ En **La Cuentoneta** buscamos progresivamente la aplicación de los principios f
 4. [Lenguaje Ubicuo (Ubiquitous Language)](#lenguaje-ubicuo-ubiquitous-language)
 5. [Patrones y Estrategias](#patrones-y-estrategias)
 6. [Estructura de Capas](#estructura-de-capas)
-7. [Mejoras Recomendadas](#mejoras-recomendadas) (ver [DDD_IMPROVEMENTS.md](./DDD_IMPROVEMENTS.md))
+7. [Mejoras Recomendadas](./DDD_IMPROVEMENTS.md)
 8. [Referencias](#referencias)
 
 ---
@@ -37,17 +37,15 @@ Un **Contexto Acotado** (Bounded Context) es un límite explícito dentro del cu
 
 ### 1. **Contexto de Catálogo de Contenido**
 
-**Propósito:** Gestionar el inventario completo de historias, autores y sus metadatos.
+**Propósito:** Gestionar el inventario completo de obras literarias, autores y sus metadatos.
 
 **Agregados Raíz:**
 
-- `Story` - Historias publicadas
 - `Author` - Autores del contenido
-- `LiteraryWork` - Obras literarias con secciones/capítulos (entidad paralela a `Story`, sin supertipo compartido)
+- `LiteraryWork` - Obras literarias con secciones/capítulos
 
 **Responsabilidades:**
 
-- Almacenar y recuperar historias con toda su información (párrafos, epígrafes, recursos, multimedia)
 - Almacenar y recuperar obras literarias seccionadas con contenido Markdown saneado a HTML
 - Mantener perfiles completos de autores con biografías y referencias
 - Gestionar metadatos como tiempo de lectura, idioma, advertencias de contenido
@@ -57,33 +55,32 @@ Un **Contexto Acotado** (Bounded Context) es un límite explícito dentro del cu
 
 ```
 GET /api/author/:slug              # Obtener autor completo
-GET /api/story/:slug               # Obtener historia completa
-POST /api/story/most-read          # Obtener historias más leídas
+GET /api/literary-work/:slug       # Obtener obra literaria completa
+GET /api/literary-work             # Catálogo de obras (teasers), filtrable por query params
 ```
 
 ---
 
 ### 2. **Contexto de Curación y Colecciones**
 
-**Propósito:** Organizar historias en colecciones temáticas, cronológicas o editoriales.
+**Propósito:** Organizar obras literarias en colecciones temáticas, cronológicas o editoriales.
 
 **Agregados Raíz:**
 
-- `Storylist` - Colecciones de historias
-- `Collection` - Colecciones de obras literarias (entidad paralela a `Storylist`, no la reemplaza todavía). El modelo de dominio ya existe (`createCollection` y `createCollectionTeaser`, con invariantes hechas cumplir en código, y su propio corpus de mocks), y el repository de Sanity también, con su ACL adentro: la colección por slug, que transporta sus obras, y el listado, que devuelve teasers. El service, el controller y el traspaso del contenido real desde el Studio siguen siendo trabajo posterior, y `Storylist` sigue vigente hasta que se complete
+- `Collection` - Colecciones de obras literarias, única raíz de este contexto, con página propia que sirve su catálogo y su detalle; el sitemap la lista por slug. Ver [el agregado](#agregado-collection-colección-de-obras-literarias)
 
 **Responsabilidades:**
 
-- Crear y mantener colecciones de historias (antologías, certámenes, curadurías)
-- Gestionar el orden y el estado de publicación de historias dentro de colecciones
+- Crear y mantener colecciones de obras (antologías, certámenes, curadurías)
+- Gestionar el orden y el estado de publicación de obras dentro de colecciones
 - Definir metadatos de colecciones (descripción, imagen destacada, etiquetas)
 - Proporcionar información sobre próximas publicaciones
 
 **Interfaces de API:**
 
 ```
-GET /api/storylist/:slug           # Obtener colección completa
-GET /api/storylist/:slug/teaser    # Obtener resumen de colección
+GET /api/collection                # Catálogo de colecciones, en vista de teaser
+GET /api/collection/:slug          # Colección completa, con sus obras literarias
 ```
 
 ---
@@ -123,7 +120,7 @@ GET /api/contributor               # Obtener lista de colaboradores
 
 - Organizar colecciones destacadas
 - Gestionar campañas de contenido con variantes responsivas
-- Mantener listados de historias más leídas y recientes
+- Mantener listados de obras más leídas y recientes
 - Proporcionar múltiples vistas según dispositivo (xs, md)
 
 **Interfaces de API:**
@@ -138,84 +135,11 @@ GET /api/content                   # Obtener contenido de página inicio
 
 Un **Agregado** es un cluster de objetos de dominio (entidades y objetos de valor) que se tratan como una unidad para fines de cambios en los datos. La **Raíz de Agregado** es la entidad que define el límite del agregado.
 
-### Agregado: Story (Historia)
-
-**Raíz de Agregado:** `Story`
-
-```typescript
-interface Story {
-	// Identidad
-	_id: string; // Identificador único (Sanity)
-	slug: string; // Clave de negocio, invariante única
-
-	// Contenido
-	title: string; // Título de la historia
-	paragraphs: TextBlockContent[]; // Cuerpo principal (nunca vacío)
-	summary: TextBlockContent[]; // Sinopsis
-	epigraphs: Epigraph[]; // Epígrafes literarios opcionales
-
-	// Metadatos
-	approximateReadingTime: number; // Minutos estimados de lectura (>= 1)
-	badLanguage?: boolean; // Advertencia de lenguaje explícito
-	originalPublication: string; // Atribución/publicación original
-	publishedAt: string; // Fecha ISO de publicación en la plataforma (fallback a _createdAt). Datos estructurados/E-E-A-T
-	updatedAt: string; // Fecha ISO de última modificación (_updatedAt de Sanity)
-
-	// Imagen
-	coverImage: string; // URL de portada de la historia; '' si no fue asignada
-
-	// Relaciones
-	author: Author; // Autor de la historia (requerido)
-
-	// Categorización
-	tags: Tag[]; // Etiquetas de taxonomía (editoriales). Vacío en los teasers
-
-	// Recursos Multimedia
-	resources: Resource[]; // Enlaces a recursos externos
-	media: Media[]; // Contenido multimedia (audio, video, tweets)
-}
-```
-
-**Invariantes de Negocio:**
-
-- El slug debe ser único y no puede cambiar una vez creado
-- Toda historia debe tener un autor
-- La historia debe tener al menos un párrafo de contenido
-- El tiempo de lectura debe ser un número positivo
-- El idioma debe ser un código ISO válido
-- `resources` nunca contiene un ítem con `url` ausente o vacía (ver [Resource](#resource-recurso-externo))
-
-**Ciclo de Vida:**
-
-```
-Borrador en Sanity → Publicación en Contexto (Storylist, perfil de Autor) → Accesible para lectura
-```
-
-**Entidades Secundarias:**
-
-Un epígrafe es un bloque de texto opcional que se utiliza para referenciar otros textos o trabajos literarios. La plataforma permite
-
-```typescript
-interface Epigraph {
-	text: TextBlockContent[]; // El epígrafe
-	reference: TextBlockContent[]; // Referencia/fuente
-}
-```
-
-**Vistas Polimórficas:**
-
-- `Story` - Vista completa (incluye párrafos, epígrafes, autor completo)
-- `StoryTeaser` - Vista resumida (sin párrafos)
-- `StoryNavigationTeaser` - Vista mínima para navegación
-- `StoryNavigationTeaserWithAuthor` - Vista mínima con autor resumido
-
----
-
 ### Agregado: LiteraryWork (Obra literaria)
 
 **Raíz de Agregado:** `LiteraryWork`
 
-> Contratos completos y decisiones de diseño en [`LITERARY_WORK_DESIGN.md`](LITERARY_WORK_DESIGN.md). `LiteraryWork` es una **entidad paralela e independiente**: no extiende ni comparte tipos con `Story` (contrato limpio, sin supertipo — ver epic #1481). Es la primera raíz de agregado con **invariantes implementadas en código** (factory `createLiteraryWork` + value objects brandeados en `src/models/`).
+> Contratos completos y decisiones de diseño en [`LITERARY_WORK_DESIGN.md`](LITERARY_WORK_DESIGN.md). `LiteraryWork` es el agregado que sirve todo el contenido narrativo del catálogo, con **invariantes implementadas en código** (factory `createLiteraryWork` + value objects brandeados en `src/models/`).
 
 ```typescript
 interface LiteraryWork {
@@ -245,12 +169,12 @@ interface LiteraryWork {
 
 	// Recursos Multimedia
 	resources: Resource[]; // Enlaces a recursos externos
-	mediaSources: Media[]; // Contenido multimedia asociado
+	mediaSources: Media[]; // Contenido multimedia asociado (vista completa, con la carga del recurso)
 }
 
 interface LiteraryWorkSection {
 	position: number; // Identidad numérica en la obra (0-based, igual al índice del array en el CMS)
-	chapterTitle?: ChapterTitle; // Opcional; expone toAnchor(): Slug para anclas
+	title?: SectionTitle; // Opcional; expone toAnchor(): Slug para anclas
 	epigraphs?: AttributedText[]; // 0..N epígrafes por sección
 	bodyHtml: SanitizedHtml; // HTML saneado server-side (nunca markdown crudo)
 	readingTime: ReadingTime; // Minutos de lectura de la sección
@@ -258,7 +182,7 @@ interface LiteraryWorkSection {
 
 interface AttributedText {
 	text: SanitizedHtml; // Markdown saneado a HTML (mismo pipeline que el cuerpo)
-	reference?: SanitizedHtml; // Atribución, también markdown saneado (paridad con Story.Epigraph)
+	reference?: SanitizedHtml; // Atribución, también markdown saneado
 }
 ```
 
@@ -277,17 +201,17 @@ interface AttributedText {
 **Ciclo de Vida:**
 
 ```
-Borrador en Sanity → Publicación → Accesible para lectura en /read/:slug
+Borrador en Sanity → Publicación → Accesible para lectura en /literary-work/:slug
 ```
 
 **Vistas Polimórficas:**
 
 - `LiteraryWork` - Vista completa (todas las secciones, autores completos)
-- `LiteraryWorkTeaser` - Vista resumida: a diferencia de `StoryTeaser` (que vacía `paragraphs`), expone la **primera sección completa** (`teaserSection`) — decisión de diseño del epic #1481
+- `LiteraryWorkTeaser` - Vista resumida: expone un **extracto** del arranque de la obra (`excerpt`), que no declara tiempo de lectura ni posición porque su cuerpo va recortado
 - `LiteraryWorkNavigationTeaser` - Vista mínima para navegación
 - `LiteraryWorkNavigationTeaserWithAuthors` - Vista mínima con autores resumidos
 
-`mediaSources: Media[]` **todas** las vistas (incluidas las de teaser/navegación) lo exponen; las tarjetas de listado lo consumen para mostrar los recursos multimedia de la obra.
+`mediaSources` lo exponen **todas** las vistas, cada una con el tipo de su vista: `LiteraryWork` transporta `Media[]` (la vista completa, con la carga del recurso); `LiteraryWorkTeaser`, `LiteraryWorkNavigationTeaser` y `LiteraryWorkNavigationTeaserWithAuthors` transportan `MediaTeaser[]` (solo el `type`), que es lo único que la tarjeta de listado necesita para pintar el ícono de la plataforma — ver [Media](#media-contenido-multimedia).
 
 ---
 
@@ -345,62 +269,11 @@ Borrador de perfil -> Publicación de perfil -> Perfil disponible para búsqueda
 
 ---
 
-### Agregado: Storylist (Colección)
-
-**Raíz de Agregado:** `Storylist`
-
-```typescript
-interface Storylist {
-	// Identidad
-	_id: string; // Identificador único (Sanity)
-	title: string; // Nombre de la colección
-	slug: string; // Clave de negocio, invariante única
-
-	// Metadatos
-	count: number; // Total de historias
-
-	// Contenido
-	description: TextBlockContent[]; // Descripción de la colección
-	imagery: StorylistImagery; // representative (portada editorial) o sample (portadas de historias)
-	tags: Tag[]; // Etiquetas de categorización
-
-	// Configuración
-	config: {
-		showAuthors: boolean; // ¿Mostrar información de autores?
-	};
-
-	// Composición
-	stories: StoryTeaserWithAuthor[]; // Historias en la colección (ordenadas)
-}
-```
-
-**Invariantes de Negocio:**
-
-- El slug debe ser único
-- `count` debe coincidir con el número real de stories
-- `imagery` es un value object (`{ kind: 'representative', image }` cuando hay portada editorial propia; `{ kind: 'sample', images }` con las portadas de las historias cuando no la hay). Las dos vistas polimórficas de la colección (`Storylist`, `StorylistTeaser`) lo comparten desde `StorylistBase`, en vez de exponer una `featuredImage` cruda.
-
-**Ciclo de Vida:**
-
-```
-Creación de colección → Adición de historias → Publicación de colección
-```
-
-**Relación con Story:**
-Las historias se referencian directamente en el array `stories`. Cada entrada es una proyección de tipo `StoryTeaserWithAuthor`, que incluye la información esencial de la historia y su autor.
-
-**Vistas Polimórficas:**
-
-- `Storylist` - Vista completa (incluye todas las historias con información de autor)
-- `StorylistTeaser` - Vista sin historias
-
----
-
 ### Agregado: Collection (Colección de obras literarias)
 
 **Raíz de Agregado:** `Collection`
 
-> `Collection` es una **entidad paralela e independiente** a `Storylist`: agrupa `LiteraryWork` en vez de `Story`. Nace **en paralelo**, no la reemplaza — `Storylist` sigue vigente y sirviendo la página actual hasta su baja, que es un trabajo aparte. Es la **segunda** raíz de agregado con **invariantes hechas cumplir en código** (factory `createCollection` + el value object `Slug`, en `src/models/collection.model.ts`), después de `LiteraryWork`: `Storylist` y `Author` siguen teniendo las suyas descritas más abajo, pero no exigidas por un constructor. Esa es la dirección del proyecto, no una excepción puntual — cada entidad nueva del catálogo suma sus invariantes al código en vez de solo documentarlas.
+> `Collection` es la única raíz de este contexto, con página propia que sirve su catálogo y su detalle. El sitemap la lista por slug. Sus invariantes están **hechas cumplir en código** (factory `createCollection` + el value object `Slug`, en `src/models/collection.model.ts`) — la dirección del proyecto es que cada entidad nueva del catálogo sume sus invariantes al código en vez de solo documentarlas.
 
 ```typescript
 interface Collection {
@@ -410,7 +283,7 @@ interface Collection {
 	title: string; // Título de la colección
 
 	// Contenido
-	description: SanitizedHtml; // Markdown saneado a HTML — a diferencia de Storylist.description, no es Portable Text
+	description: SanitizedHtml; // Markdown saneado a HTML
 	imagery: CollectionImagery; // representative (portada editorial) o sample (portadas de las 3 primeras obras)
 	tags: Tag[]; // Etiquetas de categorización
 
@@ -420,13 +293,13 @@ interface Collection {
 	};
 
 	// Recursos Multimedia
-	mediaSources: Media[]; // Contenido multimedia asociado; alineado con el schema y con LiteraryWork.mediaSources (no `media`, como en Storylist)
+	mediaSources: Media[]; // Contenido multimedia asociado (vista completa); alineado con el schema y con LiteraryWork.mediaSources
 
 	// Metadatos
 	count: number; // Derivado: total de las obras que el agregado transporta
 
 	// Composición
-	literaryWorks: LiteraryWorkTeaser[]; // Obras literarias en la colección (ordenadas)
+	readonly literaryWorks: readonly LiteraryWorkTeaser[]; // Obras literarias en la colección (ordenadas); su mediaSources es MediaTeaser[], no Media[] — ver LiteraryWork
 }
 ```
 
@@ -442,7 +315,7 @@ interface Collection {
 
 Muestra la colección **sin transportar sus obras**, así que no puede derivar `count`: lo **recibe** como dato —la query lo trae contando referencias sin resolverlas— y exige que sea al menos uno. Es la invariante "al menos una obra" traducida a lo único que el teaser sí transporta. Las demás —título no vacío, slug válido, abanico de tres— le siguen aplicando igual.
 
-Existe como factory y no como proyección suelta porque el repository produce teasers desde la query: armarlos como objeto literal perdería esas reglas sin que nada avise.
+Existe como factory y no como proyección suelta porque el repository produce teasers desde la query: armarlos como objeto literal perdería esas reglas sin que nada avise. El ensamblado del teaser (`mapSanityCollectionTeaser`, `mapSharedCollectionFields`, `resolveCollectionImagery`) vive en `src/api/modules/collection/collection-teaser.acl.ts` — módulo compartido entre `SanityCollectionRepository` y `SanityContentRepository`, porque las dos proyectan una colección referenciada, cada una desde su propio agregado. Ver [`sanity-acl.md`](../.claude/references/sanity-acl.md).
 
 **Ciclo de Vida:**
 
@@ -451,13 +324,19 @@ Creación de colección → Adición de obras literarias → Publicación de col
 ```
 
 **Relación con LiteraryWork:**
-Las obras se referencian directamente en el array `literaryWorks`. Cada entrada es una proyección de tipo `LiteraryWorkTeaser`, igual que `Storylist.stories` proyecta `Story` a `StoryTeaserWithAuthor`.
+Las obras se referencian directamente en el array `literaryWorks`. Cada entrada es una proyección de tipo `LiteraryWorkTeaser`. La proyección GROQ anidada de `mediaSources` en esas entradas trae solo `{ _type, title }`, que el ACL mapea con `mapMediaTeasers` a `MediaTeaser[]`; el `mediaSources` de nivel documento de `Collection` sigue siendo la vista completa, mapeada con `mapMediaSources`.
 
-**Tres diferencias con `Storylist`** (más allá de agrupar `LiteraryWork` en vez de `Story`):
+**Puntos de contacto con `LiteraryWork`:**
 
-- **Sin pestañas.** El diseño de la página nueva no las contempla.
-- **`description` es `SanitizedHtml`**, no `TextBlockContent[]`: el schema declara el campo como Markdown, lo que la saca del pipeline de Portable Text.
-- **El campo de multimedia se llama `mediaSources`**, no `media` — alineado con el schema y con `LiteraryWork`.
+`Collection` no define su propia noción de obra: la toma entera de `LiteraryWork`. Estas son las costuras por las que se tocan, y son las que hay que revisar de conjunto ante cualquier cambio en el vocabulario de la obra.
+
+| Capa                      | Dónde                                                 | Qué toca                                                                                                                                                                                                   |
+| ------------------------- | ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **DTO de transporte**     | `src/models/collection.dto.ts`                        | Reutiliza el schema del teaser de obra en vez de declarar uno propio                                                                                                                                       |
+| **ACL**                   | `src/api/modules/collection/collection-teaser.acl.ts` | Ensambla el teaser de obra con las primitivas compartidas (`createSlug`, `createReadingTime`, `createLiteraryWorkExcerpt`); lo consumen `collection.repository.sanity.ts` y `content.repository.sanity.ts` |
+| **Provider del frontend** | `src/app/providers/collection.provider.ts`            | `toLiteraryWorkTeaser`, ACL simétrico al del backend sobre el mismo DTO                                                                                                                                    |
+| **Tipos del kernel**      | `@models/*`                                           | `Slug`, `Tag`, `Media`/`MediaTeaser`, `SanitizedHtml`, `ReadingTime` — compartidos, no duplicados                                                                                                          |
+| **Schema del Studio**     | `cms/schemas/collection.ts`                           | El campo `literaryWorks` referencia documentos `literaryWork`                                                                                                                                              |
 
 **Vistas Polimórficas:**
 
@@ -521,19 +400,41 @@ interface ContributorLink {
 interface LandingPageContent {
 	// Identidad
 	_id: string; // Identificador único
+	config: string; // Slug de la semana vigente (YYYY-SS)
 
 	// Composición
-	cards: StorylistTeaser[]; // Colecciones destacadas
-	campaigns: ContentCampaign[]; // Campañas de marketing
-	mostRead: StoryNavigationTeaserWithAuthor[]; // Top 10 historias más leídas
-	latestReads: StoryNavigationTeaserWithAuthor[]; // Últimas historias publicadas
+	collections: readonly CollectionTeaser[]; // Colecciones destacadas
+	campaigns: readonly ContentCampaign[]; // Campañas de marketing
+	mostRead: readonly LiteraryWorkNavigationTeaserWithAuthors[]; // Top de obras más leídas
+	latestReads: readonly LiteraryWorkNavigationTeaserWithAuthors[]; // Últimas obras publicadas
+	highlightedAuthors: readonly HighlightedAuthor[]; // Hasta 6 autores destacados de la semana
+}
+
+interface RotatingContent {
+	_id: string;
+	name: string;
+	mostRead: readonly LiteraryWorkNavigationTeaserWithAuthors[]; // Ranking de obras más leídas
+}
+
+interface HighlightedAuthor {
+	author: AuthorTeaser;
+	tags: readonly Tag[]; // Las etiquetas derivadas del autor
+	storyCount: number; // Obras del autor, contadas sobre los dos _type que el dataset contiene: literaryWork y story
 }
 ```
+
+El campo `storyCount` cuenta los documentos de **ambos** `_type` que hoy conviven en el dataset: la migración de `story` a `literaryWork` no está completa en todo el corpus, así que contar solo `literaryWork` dejaría en cero a todo autor cuya obra todavía no migró.
+
+`mostRead` y `latestReads` conservan su nombre porque nombran el **rol editorial** del slot; lo transportan obras (`LiteraryWorkNavigationTeaserWithAuthors`). `collections` agrupa `CollectionTeaser` (ver [el agregado](#agregado-collection-colección-de-obras-literarias)). `RotatingContent` es la proyección que el cron de "lo más leído" persiste y expone por separado del resto de la landing — detalle del productor en [Estrategias de Actualización de Contenido](./CONTENT_UPDATE_STRATEGIES.md).
 
 **Responsabilidades:**
 
 - Agregar contenido de múltiples contextos para presentación en página inicio
 - Mantener datos de lectura y estadísticas
+
+`HighlightedAuthor` es una proyección de curación de este contexto, no una vista del agregado `Author`: su conteo es un dato que solo esta pantalla paga, y sus etiquetas viajan en el wrapper porque `AuthorTeaser` entrega la suya vacía en toda vista del repositorio.
+
+El tope de seis rige la edición en el Studio y no lo ya persistido, así que el mapeo lo vuelve a aplicar como salvaguarda.
 
 > **Nota:** Para comprender la implementación práctica de este agregado, incluyendo la generación automática de configuraciones y actualización de contenido, consulta la documentación sobre [Estrategias de Actualización de Contenido](./CONTENT_UPDATE_STRATEGIES.md).
 
@@ -543,60 +444,26 @@ interface LandingPageContent {
 
 Los **Objetos de Valor** son objetos sin identidad propia que representan conceptos del dominio. Son inmutables y se comparan por su contenido, no por su referencia.
 
-### TextBlockContent
-
-**Propósito:** Representar contenido de texto enriquecido en formato Portable Text (Sanity).
-
-```typescript
-interface TextBlockContent {
-	// Identificador único dentro del documento
-	_key: string;
-	_type: 'block';
-
-	// Contenido
-	children: Block[]; // Fragmentos de texto con estilos
-	markDefs: MarkDef[]; // Definiciones de marcas (enlaces, etc.)
-
-	// Formato
-	style: 'normal' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'blockquote';
-
-	// Listas
-	listItem?: 'bullet' | 'number';
-	level?: number; // Nivel de anidación
-}
-
-interface Block {
-	_key: string;
-	_type: string;
-	text: string;
-	marks?: string[]; // Referencias a marcas definidas
-}
-
-interface MarkDef {
-	_key: string;
-	_type: string;
-	href: string; // URL del enlace
-}
-```
-
-**Uso:** Descripciones, contenido editorial, resúmenes.
-
-**Inmutabilidad:** Una vez creado por Sanity, no debe ser modificado en la aplicación.
-
----
-
 ### Media (Contenido Multimedia)
 
 **Propósito:** Encapsular diferentes tipos de contenido multimedia.
 
-`Media` es el tipo **ancho**: el de las colecciones y el que devuelve el ACL, con `data?: unknown` porque el supertipo no correlaciona el tag con la forma de su carga. `MediaTypes` es el **angosto**, la unión discriminada que consumen los widgets, donde cada tag ya fija su `data`. Se pasa de uno al otro con los type guards de abajo, nunca con una aserción.
+Dos ejes **ortogonales** organizan el modelo, y conviene no confundirlos:
+
+1. **Qué transporta la proyección.** `Media` es la vista **completa** — la de la página, con la carga (`data`, obligatorio) con la que un widget reproduce el recurso. `MediaTeaser` es la vista de **listado** — el `type`, con el que la tarjeta pinta el ícono de la plataforma, y el `title`, que está por **identidad**: sin él dos recursos de la misma plataforma son indistinguibles, y quien ofrezca elegir entre ellos no puede decir cuál se eligió ni nombrarlos. Ninguno de los dos arrastra costo: son campos planos del documento, a diferencia de la descripción (que cruza el pipeline de Markdown) y de la URL del audio (que dereferencia un asset). Cada una tiene su propia proyección GROQ y su propio mapper (`mapMediaSources` y `mapMediaTeasers`, respectivamente); el teaser no puede prometer lo que su proyección no trae. `data` es obligatorio en `Media` para que la carga no se pueda omitir al armar la vista completa: mientras fue opcional, copiar los campos textuales de un recurso bastaba para construir algo que el compilador aceptaba como reproducible.
+2. **Cómo se correlaciona el tag con su carga.** Dentro de la vista completa, `Media` es el **supertipo** —`data: unknown`, sin correlación entre el tag y la forma de la carga— y `MediaTypes` la **unión discriminada** que consumen los widgets, donde cada tag ya fija su `data`. Se pasa de uno al otro con los type guards de abajo, nunca con una aserción.
 
 ```typescript
+interface MediaTeaser {
+	type: MediaTypeKey; // 'audioRecording' | 'spaceRecording' | 'youTubeVideo' | 'spotifyPodcastEpisode'
+	title: string; // identidad del recurso dentro de su plataforma
+}
+
 interface Media {
 	title: string;
 	description: SanitizedHtml; // Markdown en el CMS, saneado a HTML por el ACL
-	type: MediaTypeKey; // 'audioRecording' | 'spaceRecording' | 'youTubeVideo' | 'spotifyPodcastEpisode'
-	data?: unknown;
+	type: MediaTypeKey;
+	data: unknown;
 }
 
 interface AudioRecording extends Media {
@@ -605,7 +472,7 @@ interface AudioRecording extends Media {
 
 interface SpaceRecording extends Media {
 	data: {
-		url: string | null; // null en la proyección de teaser, que no resuelve audioUrl
+		url: string | null; // null en proyecciones embebidas que no resuelven audioUrl
 		duration: string;
 		hostName: string;
 		hostAvatar?: string;
@@ -626,7 +493,7 @@ type MediaTypes = AudioRecording | SpaceRecording | YouTubeVideo | SpotifyPodcas
 
 **Patrón:** Polimorfismo mediante discriminador (`type`). Los type guards (`isAudioRecording`, `isSpaceRecording`, `isYouTubeVideo`, `isSpotifyPodcastEpisode`) discriminan **solo por el tag** y no por la forma de `data`: `AudioRecording` y `SpotifyPodcastEpisode` son estructuralmente idénticos (`{ url }`), así que inspeccionar `data` no alcanza para distinguirlos. `narrowMedia(media: Media): MediaTypes` los encadena y lanza si el `type` no corresponde a ningún tag que el dominio modele.
 
-**Uso:** Asociar audio, espacios de X, episodios de podcast de Spotify y videos de YouTube a una obra o colección.
+**Uso:** Asociar audio, espacios de X, episodios de podcast de Spotify y videos de YouTube a una obra o colección. `LiteraryWork.mediaSources` y el `mediaSources` de nivel documento de `Collection` exponen `Media[]`; las vistas de teaser de `LiteraryWork` (incluidas las obras dentro de `Collection.literaryWorks`) exponen `MediaTeaser[]` — ver [LiteraryWork](#agregado-literarywork-obra-literaria).
 
 ---
 
@@ -648,11 +515,11 @@ interface ResourceType {
 }
 ```
 
-> `url` es la razón de ser del recurso: sin un enlace válido, no hay nada que enlazar. El schema de Sanity la exige y valida su forma de URL, pero esa regla rige la **edición** en el Studio, no el dato ya persistido — un documento anterior a la regla, o escrito por script o migración, puede tenerla ausente o vacía sin que el Studio lo señale. El ACL cierra esa brecha en la frontera: `mapResources` descarta, con un `console.warn` para hacerlo visible en logs, todo recurso cuyo `url` no sea un string no vacío. Por eso `Author.resources`, `Story.resources` y `LiteraryWork.resources` nunca transportan un ítem incompleto — la garantía es del mapeo, no del schema.
+> `url` es la razón de ser del recurso: sin un enlace válido, no hay nada que enlazar. El schema de Sanity la exige y valida su forma de URL, pero esa regla rige la **edición** en el Studio, no el dato ya persistido — un documento anterior a la regla, o escrito por script o migración, puede tenerla ausente o vacía sin que el Studio lo señale. El ACL cierra esa brecha en la frontera: `mapResources` descarta, con un `console.warn` para hacerlo visible en logs, todo recurso cuyo `url` no sea un string no vacío. Por eso `Author.resources` y `LiteraryWork.resources` nunca transportan un ítem incompleto — la garantía es del mapeo, no del schema.
 
 > El ícono que acompaña a un recurso en la interfaz lo resuelve el frontend a partir del `slug` del tipo, contra el mapa local de `@models/icon.model`. No viaja desde el CMS.
 
-> El nombre `description` no implica un mismo tipo en todo el modelo: en `ResourceType` y en [`Tag`](#tag-etiqueta) es texto plano, mientras que `Storylist.description` es Portable Text (`TextBlockContent[]`), `Media.description` es HTML saneado y `Collection.description` es Markdown saneado a HTML. Conviene mirar la interfaz antes de asumir el formato.
+> El nombre `description` no implica un mismo tipo en todo el modelo: en `ResourceType` y en [`Tag`](#tag-etiqueta) es texto plano, mientras que `Media.description` es HTML saneado y `Collection.description` es Markdown saneado a HTML. Conviene mirar la interfaz antes de asumir el formato.
 
 **Ejemplos de tipos:**
 
@@ -678,7 +545,7 @@ interface Tag {
 
 **Uso:** Clasificar contenido por tema, género, etc.
 
-> El nombre `description` no implica un mismo tipo en todo el modelo: en `Tag` y en [`ResourceType`](#resource-recurso-externo) es texto plano, mientras que `Storylist.description` es Portable Text (`TextBlockContent[]`), `Media.description` es HTML saneado y `Collection.description` es Markdown saneado a HTML. Conviene mirar la interfaz antes de asumir el formato.
+> El nombre `description` no implica un mismo tipo en todo el modelo: en `Tag` y en [`ResourceType`](#resource-recurso-externo) es texto plano, mientras que `Media.description` es HTML saneado y `Collection.description` es Markdown saneado a HTML. Conviene mirar la interfaz antes de asumir el formato.
 
 > Una etiqueta no lleva ícono: `TagComponent` renderiza solo su título. El CMS supo tener un campo de ícono, pero ninguna superficie lo mostraba.
 
@@ -688,7 +555,7 @@ interface Tag {
 
 **Propósito:** Referenciar iconos desde diferentes proveedores.
 
-> Ninguna entidad del dominio lo declara ya: ni `Tag` ni `ResourceType` llevan ícono. Otras superficies sí muestran íconos, cada una por su cuenta —`StorylistTab.icon` viaja desde el CMS, y el pie de página y los botones de compartir los nombran literalmente en el código—, pero ninguna usa este tipo.
+> Ninguna entidad del dominio lo declara ya: ni `Tag` ni `ResourceType` llevan ícono. Otras superficies sí muestran íconos, cada una por su cuenta —el pie de página y los botones de compartir los nombran literalmente en el código—, pero ninguna usa este tipo.
 
 ```typescript
 interface Icon {
@@ -711,7 +578,7 @@ interface Icon {
 
 ```typescript
 interface InternalLink {
-	path: string; // Ruta interna (ej: "/story/la-casa-de-los-espíritus")
+	path: string; // Ruta interna (ej: "/literary-work/la-casa-de-los-espíritus")
 	label: string; // Texto del enlace
 }
 
@@ -730,7 +597,7 @@ interface UrlLink {
 
 ### ContentCampaign (Campaña de Contenido)
 
-**Propósito:** Definir campañas de contenido, destacando algún perfil de autor, storylist o link particular en la plataforma.
+**Propósito:** Definir campañas de contenido, destacando algún perfil de autor, colección o link particular en la plataforma.
 
 ```typescript
 interface ContentCampaign {
@@ -761,24 +628,43 @@ El **Lenguaje Ubicuo** es el lenguaje estructurado alrededor del modelo de domin
 
 ### Términos Clave
 
-| Término                  | Definición                                                                                                                             | Contexto              |
-| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
-| **Historia**             | Obra literaria curada y publicada en la plataforma                                                                                     | Catálogo de Contenido |
-| **Obra literaria**       | Obra con secciones/capítulos (`LiteraryWork`), paralela a Historia                                                                     | Catálogo de Contenido |
-| **Sección / Capítulo**   | Unidad de contenido de una obra literaria: epígrafes + cuerpo Markdown saneado                                                         | Catálogo de Contenido |
-| **Anónimo**              | Author real del catálogo (slug `anonimo`) que representa la obra sin autoría atribuida (policy `isAnonymous`)                          | Catálogo de Contenido |
-| **Slug**                 | Identificador amigable, único e inmutable basado en el título                                                                          | Todos                 |
-| **Epígrafe**             | Cita literaria que precede al texto principal                                                                                          | Catálogo de Contenido |
-| **Teaser**               | Vista reducida de una entidad para listados y navegación                                                                               | Todos                 |
-| **Colección**            | Agrupación temática u editorial de historias (`Storylist`) o de obras literarias (`Collection`, en paralelo — no la reemplaza todavía) | Curación              |
-| **Colaborador**          | Persona que contribuye al proyecto en algún rol                                                                                        | Administración        |
-| **Recurso**              | Enlace externo a información complementaria                                                                                            | Catálogo de Contenido |
-| **Campaña de Contenido** | Promoción temporal de contenido con variantes responsivas                                                                              | Página de Inicio      |
-| **Curaduría**            | Proceso de seleccionar, ordenar y presentar historias                                                                                  | Curación              |
+| Término                  | Definición                                                                                                    | Contexto              |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------- | --------------------- |
+| **Obra literaria**       | Obra con secciones/capítulos (`LiteraryWork`)                                                                 | Catálogo de Contenido |
+| **Sección / Capítulo**   | Unidad de contenido de una obra literaria: epígrafes + cuerpo Markdown saneado                                | Catálogo de Contenido |
+| **Anónimo**              | Author real del catálogo (slug `anonimo`) que representa la obra sin autoría atribuida (policy `isAnonymous`) | Catálogo de Contenido |
+| **Slug**                 | Identificador amigable, único e inmutable basado en el título                                                 | Todos                 |
+| **Teaser**               | Vista reducida de una entidad para listados y navegación                                                      | Todos                 |
+| **Colección**            | Agrupación temática u editorial de obras literarias (`Collection`)                                            | Curación              |
+| **Colaborador**          | Persona que contribuye al proyecto en algún rol                                                               | Administración        |
+| **Recurso**              | Enlace externo a información complementaria                                                                   | Catálogo de Contenido |
+| **Campaña de Contenido** | Promoción temporal de contenido con variantes responsivas                                                     | Página de Inicio      |
+| **Curaduría**            | Proceso de seleccionar, ordenar y presentar obras                                                             | Curación              |
+| **Faceta**               | Etiqueta con su conteo dentro del resultado visible y su estado de selección (`CollectionFacet`)              | Curación              |
 
 ---
 
 ## Patrones y Estrategias
+
+### Patrón: Faceta (Faceted Navigation)
+
+**Descripción:** una **faceta** es una etiqueta acompañada de cuántas entidades del resultado **visible** la llevan, más si está elegida como filtro. No es la etiqueta: `Tag` es un documento del CMS que existe con independencia de que algo lo use, mientras que una faceta solo existe contra un conjunto de resultados concreto y su número cambia cada vez que ese conjunto cambia.
+
+**Origen del término:** viene de la clasificación facetada de la biblioteconomía (S. R. Ranganathan, década de 1930), que clasifica un objeto por varios ejes independientes en lugar de por un único árbol jerárquico. Recuperación de información lo adoptó, y de ahí pasó a los motores de búsqueda —Solr y Elasticsearch llaman _faceting_ a la agregación que cuenta documentos por valor de campo— y a las interfaces de catálogo, donde _faceted navigation_ nombra la columna de filtros con su conteo al lado. Es vocabulario **foráneo al dominio de La Cuentoneta**: se adopta porque nombra con precisión una figura que ya existía sin nombre, no porque el negocio hablara así.
+
+**Semántica que hay que preservar:**
+
+- El conteo se calcula sobre lo que está a la vista, **no** sobre el catálogo entero: al elegir una etiqueta, las demás ajustan su número a lo que queda.
+- Una faceta que llegaría a cero no se ofrece. De ahí se sigue una garantía que conviene no romper: elegir filtros **nunca puede vaciar el listado**, porque toda faceta ofrecida tiene al menos una entidad detrás.
+- Combinar dos facetas es conjunción, no disyunción: el resultado son las entidades que llevan **todas** las etiquetas elegidas.
+- La selección no es estado de la faceta sino del listado: quien filtra decide, y la faceta se limita a reflejar esa decisión. Así el panel nunca puede discrepar de lo que se está mostrando.
+
+**Dónde vive:** es un **modelo de lectura derivado**, no un agregado ni un objeto de valor del contenido. No se persiste en Sanity, ninguna query GROQ la produce y no viaja por el API: hoy se calcula en el frontend sobre las entidades ya cargadas. Si el filtrado pasara a resolverse contra la base, lo que cambia es dónde se cuenta —la agregación la haría la query—, no el concepto ni su semántica.
+
+**Qué no es:**
+
+- No es una etiqueta con un contador pegado: fuera de un resultado concreto, una faceta no significa nada.
+- No es una taxonomía nueva. Las facetas de hoy salen de las etiquetas existentes; otro eje de clasificación (autor, año, extensión) daría facetas distintas sobre el mismo patrón.
 
 ### Patrón: Clave de Negocio (Business Key)
 
@@ -794,10 +680,10 @@ El **Lenguaje Ubicuo** es el lenguaje estructurado alrededor del modelo de domin
 
 ```typescript
 // ❌ Incorrecto - Usar solo el _id técnico
-GET /api/story/65d3b8c2a9f1b2c3d4e5f6g7
+GET /api/literary-work/65d3b8c2a9f1b2c3d4e5f6g7
 
 // ✅ Correcto - Usar el slug de negocio
-GET /api/story/el-aleph
+GET /api/literary-work/el-aleph
 GET /api/author/jorge-luis-borges
 ```
 
@@ -811,16 +697,16 @@ GET /api/author/jorge-luis-borges
 
 ```typescript
 // Vista completa para lectura profunda
-Story → incluye paragrafos, epígrafes, autor completo
+LiteraryWork → incluye secciones, autores completos
 
 // Vista para listados
-StoryTeaser → sin contenido pesado
+LiteraryWorkTeaser → extracto del arranque, sin secciones completas
 
 // Vista para navegación
-StoryNavigationTeaser → información mínima
+LiteraryWorkNavigationTeaser → información mínima
 
-// Vista con autor para contexto
-StoryNavigationTeaserWithAuthor → referencia al autor
+// Vista con autores para contexto
+LiteraryWorkNavigationTeaserWithAuthors → referencia a los autores
 ```
 
 **Beneficios:**
@@ -869,7 +755,6 @@ Frontend / API Client
 
 **Funciones Clave:**
 
-- `mapStoryContent()` - Story → formato de presentación
 - `mapAuthor()` - Author completo
 - `mapAuthorTeaser()` - Author reducido
 - etc.
@@ -951,11 +836,11 @@ La arquitectura de La Cuentoneta sigue un modelo de capas explícito:
 │  ┌─────────────────────────┐  ┌─────────────────────────┐   │
 │  │  CATÁLOGO DE CONTENIDO  │  │ CURACIÓN Y COLECCIONES │   │
 │  │                         │  │                         │   │
-│  │  • Story                │  │  • Storylist           │   │
+│  │  • LiteraryWork         │  │  • Collection          │   │
 │  │  • Author               │  │                        │   │
 │  │  • Resource             │  │                        │   │
 │  │  • Media                │  └─────────────────────────┘   │
-│  │  • Epigraph             │           ▲                     │
+│  │                         │           ▲                     │
 │  │                         │           │                     │
 │  └────────────────────────►├──────────┘                     │
 │                            │                                 │

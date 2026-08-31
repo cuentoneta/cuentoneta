@@ -1,0 +1,17 @@
+import { toNavigationContext } from './navigation-params';
+
+describe('toNavigationContext', () => {
+	it('should resolve the collection context', () => {
+		expect(toNavigationContext('collection')).toBe('collection');
+	});
+
+	it('should resolve the author context', () => {
+		expect(toNavigationContext('author')).toBe('author');
+	});
+
+	// El router asigna `undefined` explícitamente cuando el query param desaparece al navegar, así que
+	// no alcanza con el default del input: el transform tiene que aceptarlo.
+	it.each([undefined, '', 'cualquier-otra-cosa'])('should fall back to the author context for %p', (value) => {
+		expect(toNavigationContext(value)).toBe('author');
+	});
+});

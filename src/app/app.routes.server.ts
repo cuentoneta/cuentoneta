@@ -23,24 +23,20 @@ export const serverRoutes: Array<ServerRoute> = [
 		renderMode: RenderMode.Server,
 	},
 	{
-		path: AppRoutes.Story,
+		path: `${AppRoutes.LiteraryWork}/:slug`,
+		renderMode: RenderMode.Server,
+	},
+	{
+		path: `${AppRoutes.Collection}/:slug`,
+		renderMode: RenderMode.Server,
+	},
+	{
+		path: AppRoutes.Collection,
+		renderMode: RenderMode.Server,
+	},
+	{
+		path: AppRoutes.LiteraryWork,
 		renderMode: RenderMode.Prerender,
-	},
-	{
-		path: `${AppRoutes.Story}/:slug`,
-		renderMode: RenderMode.Server,
-	},
-	{
-		path: `${AppRoutes.StoryList}`,
-		renderMode: RenderMode.Server,
-	},
-	{
-		path: `${AppRoutes.StoryList}/:slug`,
-		renderMode: RenderMode.Server,
-	},
-	{
-		path: `${AppRoutes.Read}/:slug`,
-		renderMode: RenderMode.Server,
 	},
 	{
 		path: '**',

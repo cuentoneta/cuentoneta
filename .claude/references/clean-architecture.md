@@ -2,7 +2,7 @@
 
 # Principios de Clean Architecture
 
-Construir sistemas **mantenibles, testeables e independientes** de los detalles externos (Sanity, Hono, Angular, el navegador). En cuentoneta esto se traduce en una sola idea operativa: **el modelo de dominio (`Story`, `Author`, `Storylist`, `LiteraryWork`, …) no conoce ni a GROQ ni al cliente HTTP**; los detalles externos se traducen en los bordes vía la **ACL de mappers**.
+Construir sistemas **mantenibles, testeables e independientes** de los detalles externos (Sanity, Hono, Angular, el navegador). En cuentoneta esto se traduce en una sola idea operativa: **el modelo de dominio (`Author`, `LiteraryWork`, `Collection`, …) no conoce ni a GROQ ni al cliente HTTP**; los detalles externos se traducen en los bordes vía la **ACL de mappers**.
 
 ## Principios arquitectónicos centrales
 
@@ -17,8 +17,8 @@ Construir sistemas **mantenibles, testeables e independientes** de los detalles 
 
 | Capa                        | Contenido                                                        | Ejemplo en cuentoneta                                                           |
 | --------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| **Modelo de dominio**       | Tipos de negocio y datos críticos, sin dependencias de framework | `Story`, `Author`, `Storylist`, `Resource`, `LiteraryWork` (`@models/*`)        |
-| **Casos de uso / lógica**   | Reglas de aplicación: leer, mapear, coordinar                    | `getStoryBySlug`, `getStories`, `getAuthorBySlug` (services)                    |
+| **Modelo de dominio**       | Tipos de negocio y datos críticos, sin dependencias de framework | `Author`, `LiteraryWork`, `Collection`, `Resource` (`@models/*`)                |
+| **Casos de uso / lógica**   | Reglas de aplicación: leer, mapear, coordinar                    | `getAuthorBySlug`, `getAllAuthors`, `getLiteraryWorkBySlug` (services)          |
 | **Adaptadores de interfaz** | Traducen datos entre la lógica y los formatos externos           | Controllers Hono, **mappers / ACL** (`src/api/_utils/`), API services del front |
 | **Frameworks y drivers**    | Detalles externos                                                | Sanity/GROQ, Hono, `@sanity/client`, Angular, el navegador                      |
 
@@ -82,32 +82,31 @@ La interfaz lleva el **nombre limpio** (la responsabilidad), y la **implementaci
 
 El **doble de test** se nombra por lo que **es**, no con el término vago `Mock*`:
 
-- **`Stub*`** — devuelve valores fijos e ignora la entrada. Es el caso de los API providers del front: `StubStoryApi.getBySlug()` devuelve siempre el mismo `storyMock`, sin mirar el slug. No hay nada "en memoria" que consultar, así que llamarlo `InMemory*` prometería una implementación que no existe.
+- **`Stub*`** — devuelve valores fijos e ignora la entrada. Es el caso de los API providers del front: `StubLiteraryWorkApi.getBySlug()` devuelve siempre la misma obra fijada por constructor, sin mirar el slug. No hay nada "en memoria" que consultar, así que llamarlo `InMemory*` prometería una implementación que no existe.
 - **`Fake*`** — la **categoría**: una implementación real con un atajo (sí ejecuta lógica de verdad, pero se salta la dependencia costosa o externa). Se califica por lo que sustituye:
-  - **`InMemory*`** — sustituye **almacenamiento**: un repository/DB real reemplazado por una lista en memoria. `InMemoryStoryRepository` guarda datos reales y los consulta con lógica real, solo que sin Sanity de por medio.
+  - **`InMemory*`** — sustituye **almacenamiento**: un repository/DB real reemplazado por una lista en memoria. `InMemoryLiteraryWorkRepository` guarda datos reales y los consulta con lógica real, solo que sin Sanity de por medio.
   - **`Controllable*`** (o `Static*`, según el mecanismo) — sustituye un **entorno** cuyo input el test necesita fijar (viewport, reloj, random, geolocalización). `ControllableLayoutService` es el ejemplo: no reemplaza un almacén de datos, fija el viewport que el real (`WindowLayoutService`) leería de `window`. "En memoria" no distingue nada acá — todo objeto guarda su estado en memoria; lo que importa es que el input lo fija el test, no el entorno real.
 - **`Spy*`** — registra las llamadas recibidas, cuando el test las inspecciona.
 
 El **archivo** sigue siendo `<dominio>.mock.ts` y la **factory** `provide<X>ApiMock()`: ahí "mock" nombra genéricamente al proveedor del doble, no reclama una categoría de la taxonomía.
 
-**Regla del prefijo `I`:** la interfaz **nunca** lleva prefijo `I` (no `IStoryRepository`), sin excepciones. Si una clase necesitara el mismo nombre que la interfaz, el problema es el **nombre de la clase**, no el de la interfaz: la implementación se califica (`Sanity*`, `Http*`, `InMemory*`), o directamente no se declara la clase — ver el caso de los modelos de dominio en [`domain-model.md`](domain-model.md).
+**Regla del prefijo `I`:** la interfaz **nunca** lleva prefijo `I` (no `ILiteraryWorkRepository`), sin excepciones. Si una clase necesitara el mismo nombre que la interfaz, el problema es el **nombre de la clase**, no el de la interfaz: la implementación se califica (`Sanity*`, `Http*`, `InMemory*`), o directamente no se declara la clase — ver el caso de los modelos de dominio en [`domain-model.md`](domain-model.md).
 
 ### Backend
 
-| Rol                            | Interfaz (nombre limpio)   | Implementación real              | Doble de test                      |
-| ------------------------------ | -------------------------- | -------------------------------- | ---------------------------------- |
-| Repository de stories          | `StoryRepository`          | `SanityStoryRepository`          | `InMemoryStoryRepository`          |
-| Repository de autores          | `AuthorRepository`         | `SanityAuthorRepository`         | `InMemoryAuthorRepository`         |
-| Repository de storylists       | `StorylistRepository`      | `SanityStorylistRepository`      | `InMemoryStorylistRepository`      |
-| Repository de obras literarias | `LiteraryWorkRepository`\* | `SanityLiteraryWorkRepository`\* | `InMemoryLiteraryWorkRepository`\* |
-| Repository de colecciones      | `CollectionRepository`†    | `SanityCollectionRepository`†    | `InMemoryCollectionRepository`†    |
-| Service (impl. única)          | `StoryService`             | `StoryService` (mismo nombre)    | `InMemoryStoryService`             |
+| Rol                             | Interfaz (nombre limpio)   | Implementación real              | Doble de test                      |
+| ------------------------------- | -------------------------- | -------------------------------- | ---------------------------------- |
+| Repository de autores           | `AuthorRepository`         | `SanityAuthorRepository`         | `InMemoryAuthorRepository`         |
+| Repository de obras literarias  | `LiteraryWorkRepository`\* | `SanityLiteraryWorkRepository`\* | `InMemoryLiteraryWorkRepository`\* |
+| Repository de colecciones       | `CollectionRepository`†    | `SanityCollectionRepository`†    | `InMemoryCollectionRepository`†    |
+| Repository de contenido de home | `ContentRepository`‡       | `SanityContentRepository`‡       | `InMemoryContentRepository`‡       |
+| Service (impl. única)           | `AuthorService`            | `AuthorService` (mismo nombre)   | `InMemoryAuthorService`            |
 
 - Prefijo **`Sanity*`** para implementaciones de repository respaldadas por Sanity/GROQ.
 - El doble se nombra por su comportamiento (`Stub*` / `Fake*` — `InMemory*` para almacenamiento — / `Spy*`), **jamás `Mock*`**. Un repository de test con datos cargados en memoria sí es un `InMemory*Repository` (un fake de almacenamiento); uno que devuelve una lista fija es un `Stub*Repository`.
 - Los services de implementación única **conservan el nombre de la interfaz** (sin prefijo, sin sufijo `Impl`).
 
-> Nota sobre el estado actual: hoy los módulos backend exponen funciones (`getStoryBySlug`, `fetchStories`) más que clases con interfaz explícita, así que **los nombres de esta tabla son ilustrativos de la convención, no símbolos existentes** — las clases llegan con #1503. La convención rige al introducir abstracciones de repository/service o sus dobles de test, y es la dirección a la que tienden los `*.service.spec.ts`.
+> Nota sobre el estado actual: hoy `author`, `contributor` y `sitemap` exponen funciones (`getAuthorBySlug`, `fetchAllAuthors`) más que clases con interfaz explícita, así que **los nombres de esta tabla son ilustrativos de la convención, no símbolos existentes para esas filas** — las clases llegan con #1503. La convención rige al introducir abstracciones de repository/service o sus dobles de test, y es la dirección a la que tienden los `*.service.spec.ts`.
 >
 > \* Contrato cerrado en `docs/LITERARY_WORK_DESIGN.md` §6. `LiteraryWork` es la primera fila con
 > clases reales: `SanityLiteraryWorkRepository`/`InMemoryLiteraryWorkRepository` implementan el puerto
@@ -124,15 +123,22 @@ El **archivo** sigue siendo `<dominio>.mock.ts` y la **factory** `provide<X>ApiM
 > documento de diseño de `LiteraryWork`. El adaptador expone dos lecturas —la colección por slug, que
 > transporta sus obras, y el catálogo, que devuelve teasers— y levanta un error propio ante datos que
 > no permiten construir el agregado, distinto del de "no encontrado".
+>
+> ‡ Mismo patrón otra vez, aplicado a `content` (la landing page y el contenido rotativo). Se
+> distingue con su propia marca porque, además de tener la ACL en privados, es el único de los tres
+> que **reutiliza** la ACL de otro repository: para el teaser de colección de la landing llama a
+> `mapSanityCollectionTeaser` (`collection/collection-teaser.acl.ts`) en vez de reensamblarlo — ver
+> [`sanity-acl.md`](sanity-acl.md#por-qué-existe-el-acl). El controller adoptó además el helper
+> `respond()` con errores tipados en `content.errors.ts` (`LandingPageNotFoundError`,
+> `MalformedLandingPageError`, `RotatingContentNotFoundError`), en vez de un `try/catch` ad hoc por ruta.
 
 ### Frontend
 
 | Rol                     | Interfaz + token (tree-shakable) | Implementación          | Doble de test               |
 | ----------------------- | -------------------------------- | ----------------------- | --------------------------- |
-| API de stories          | `StoryApi`                       | `HttpStoryApi`          | `StubStoryApi`              |
 | API de autores          | `AuthorApi`                      | `HttpAuthorApi`         | `StubAuthorApi`             |
-| API de storylists       | `StorylistApi`                   | `HttpStorylistApi`      | `StubStorylistApi`          |
 | API de obras literarias | `LiteraryWorkApi`\*              | `HttpLiteraryWorkApi`\* | `StubLiteraryWorkApi`\*     |
+| API de colecciones      | `CollectionApi`*                 | `HttpCollectionApi`*    | `StubCollectionApi`*        |
 | Service (impl. única)   | `LayoutService` (token homónimo) | `WindowLayoutService`   | `ControllableLayoutService` |
 
 > Los dobles de API son **`Stub*`** (devuelven canned, ignoran la entrada); el de `LayoutService` es un **`Fake*` de entorno**, calificado `Controllable*` porque el viewport lo fija el test (`simulateViewport()`), no `window` como en el real (`WindowLayoutService`). No es `InMemory*`: no sustituye almacenamiento, sustituye el navegador. La diferencia no es de capa sino de qué sustituye el doble — ver la taxonomía de arriba.
@@ -160,7 +166,7 @@ El **archivo** sigue siendo `<dominio>.mock.ts` y la **factory** `provide<X>ApiM
 
 1. **Empezar por el caso de uso** (`get*` del service) — define la intención del sistema.
 2. **Diferir decisiones** — el shape de Sanity y el de transporte HTTP se deciden en los bordes, no en el dominio.
-3. **Arquitectura que grita** — la estructura de `src/api/modules/<dominio>/` revela el dominio (story, author, storylist), no el framework.
+3. **Arquitectura que grita** — la estructura de `src/api/modules/<dominio>/` revela el dominio (author, literary-work, collection), no el framework.
 4. **Objetos humildes** — lo difícil de testear (cliente Sanity, HTTP) queda en wrappers mínimos (repository / API service).
 5. **El borde es sucio** — controllers y mappers absorben el formato externo para que el dominio quede limpio.
 
@@ -171,6 +177,6 @@ _Basado en Robert C. Martin, "Clean Architecture" (2018), adaptado al stack de L
 ## Referencias relacionadas
 
 - [`sanity-acl.md`](sanity-acl.md) — el ACL central: GROQ → repository → mapper → modelo de dominio.
-- [`domain-model.md`](domain-model.md) — DDD estratégico: agregados e invariantes (Story / Author / Storylist / LiteraryWork).
+- [`domain-model.md`](domain-model.md) — DDD estratégico: agregados e invariantes (Author / LiteraryWork / Collection).
 - [`solid.md`](solid.md) — principios SOLID (la inversión de dependencias subyace a "Qualified Implementation").
 - [`cupid.md`](cupid.md) — propiedades CUPID.

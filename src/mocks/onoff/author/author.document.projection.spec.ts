@@ -5,6 +5,7 @@ import { onoffAuthorDocument } from './author.document.projection';
 import {
 	onoffNationalityDocumentsMock,
 	onoffResourceTypeDocumentsMock,
+	onoffTagDocumentsMock,
 } from '../document/support-documents.projection';
 
 describe('documento de author', () => {
@@ -22,12 +23,17 @@ describe('documento de author', () => {
 		const emitted = new Set([
 			...onoffNationalityDocumentsMock.map((document) => document._id),
 			...onoffResourceTypeDocumentsMock.map((document) => document._id),
+			...onoffTagDocumentsMock.map((document) => document._id),
 		]);
 
 		expect(emitted).toContain(onoffAuthorDocument.nationality._ref);
 		expect(onoffAuthorDocument.resources?.length).toBeGreaterThan(0);
 		(onoffAuthorDocument.resources ?? []).forEach((resource) => {
 			expect(emitted).toContain(resource.resourceType._ref);
+		});
+		expect(onoffAuthorDocument.tags?.length).toBeGreaterThan(0);
+		(onoffAuthorDocument.tags ?? []).forEach((tag) => {
+			expect(emitted).toContain(tag._ref);
 		});
 	});
 

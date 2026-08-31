@@ -1,6 +1,6 @@
 import {
 	descriptionlessRawCollection,
-	draftLikeRawCollection,
+	unbackfilledWorkRawCollection,
 	emptyRawCollection,
 	onoffRawCollectionsMock,
 	onoffRawCollectionsWithFeaturedImage,
@@ -32,8 +32,8 @@ describe('onoff raw collections mock', () => {
 			collection.literaryWorks.forEach((work) => {
 				const canon = onoffRawLiteraryWorksMock.find((candidate) => candidate._id === work._id);
 
-				expect(work.teaserSection).toHaveLength(1);
-				expect(work.teaserSection[0]?._key).toBe(canon?.content[0]?._key);
+				expect(work.excerpt).toHaveLength(1);
+				expect(work.excerpt[0]?._key).toBe(canon?.content[0]?._key);
 				expect(work.sectionCount).toBe(canon?.content.length);
 			});
 		});
@@ -84,21 +84,20 @@ describe('onoff raw collections mock', () => {
 		expect(geometriasDelDesveloRawCollection.description).not.toBe('');
 		expect(descriptionlessRawCollection.description).toBe('');
 
-		expect(geometriasDelDesveloRawCollection.literaryWorks[0]?.teaserSection.length).toBeGreaterThan(0);
-		expect(sectionlessWorkRawCollection.literaryWorks[0]?.teaserSection).toEqual([]);
+		expect(geometriasDelDesveloRawCollection.literaryWorks[0]?.excerpt.length).toBeGreaterThan(0);
+		expect(sectionlessWorkRawCollection.literaryWorks[0]?.excerpt).toEqual([]);
 
 		expect(geometriasDelDesveloRawCollection.literaryWorks[0]?.totalReadingTime).not.toBeNull();
-		expect(draftLikeRawCollection.literaryWorks[0]?.totalReadingTime).toBeNull();
+		expect(unbackfilledWorkRawCollection.literaryWorks[0]?.totalReadingTime).toBeNull();
 	});
 
-	// El borrador se distingue del dato mal curado en que lo único ausente es el reading time: si le
-	// faltara algo más, el caso del repository dejaría de probar la rama que dice probar.
-	it('keeps the draft-like scenario otherwise complete', () => {
-		expect(draftLikeRawCollection.literaryWorks.map((work) => work._id)).toEqual(
+	// Lo único ausente tiene que ser el tiempo de lectura: si al escenario le faltara algo más, el caso
+	// del repository dejaría de probar la rama que dice probar.
+	it('keeps the unbackfilled scenario otherwise complete', () => {
+		expect(unbackfilledWorkRawCollection.literaryWorks.map((work) => work._id)).toEqual(
 			geometriasDelDesveloRawCollection.literaryWorks.map((work) => work._id),
 		);
-		expect(draftLikeRawCollection.literaryWorks[0]?.teaserSection).not.toEqual([]);
-		expect(draftLikeRawCollection.literaryWorks[0]?.teaserSection[0]?.readingTime).not.toBeNull();
-		expect(draftLikeRawCollection.description).not.toBe('');
+		expect(unbackfilledWorkRawCollection.literaryWorks[0]?.excerpt).not.toEqual([]);
+		expect(unbackfilledWorkRawCollection.description).not.toBe('');
 	});
 });

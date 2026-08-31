@@ -2,17 +2,19 @@ import { LiteraryWorkCardTeaserComponent } from './literary-work-card-teaser.com
 import { DefaultUrlSerializer, UrlTree } from '@angular/router';
 import { render, screen, within } from '@testing-library/angular';
 import {
+	onoffLiteraryWorkNavigationTeasersMock,
 	onoffLiteraryWorkTeasersMock,
 	palacioNueveFronterasLiteraryWorkTeaserMock,
 } from '@mocks/onoff-literary-work-teasers.mock';
 import { clearAllMocks } from '@test-utils';
-import type { Media } from '@models/media.model';
-import { onoffSpotifyPodcastEpisodesMock, onoffYouTubeVideosMock } from '@mocks/onoff-media.mock';
+import type { MediaTeaser } from '@models/media.model';
+import { onoffSpotifyPodcastEpisodesMock, onoffYouTubeVideosMock, toMediaTeaser } from '@mocks/onoff-media.mock';
 import type { LiteraryWorkTeaser } from '@models/literary-work.model';
 import type { NavigationParams } from '@app-utils/navigation-params';
 
 describe('LiteraryWorkCardTeaserComponent', () => {
-	const literaryWorkUrl = '/story/el-palacio-de-las-nueve-fronteras?navigation=author&navigationSlug=francois-onoff';
+	const literaryWorkUrl =
+		'/literary-work/el-palacio-de-las-nueve-fronteras?navigation=author&navigationSlug=francois-onoff';
 	const authorUrl = '/author/francois-onoff';
 
 	let navigationParams: NavigationParams = { navigation: 'author', navigationSlug: '' };
@@ -51,7 +53,7 @@ describe('LiteraryWorkCardTeaserComponent', () => {
 		await render(LiteraryWorkCardTeaserComponent, {
 			inputs: { literaryWork: palacioNueveFronterasLiteraryWorkTeaserMock, navigationParams },
 		});
-		const link = screen.getAllByRole('link').find((l) => l.getAttribute('href')?.includes('/story/'));
+		const link = screen.getAllByRole('link').find((l) => l.getAttribute('href')?.includes('/literary-work/'));
 		expect(link?.getAttribute('href')).toContain(literaryWorkUrl);
 	});
 
@@ -159,12 +161,12 @@ describe('LiteraryWorkCardTeaserComponent', () => {
 			expect(screen.getByTestId('cover-image')).toBeInTheDocument();
 			const links = screen.getAllByRole('link');
 			expect(links).toHaveLength(1);
-			expect(links[0]).toHaveAttribute('href', expect.stringContaining('/story/'));
+			expect(links[0]).toHaveAttribute('href', expect.stringContaining('/literary-work/'));
 		});
 	});
 
 	describe('Description', () => {
-		// El teaser expone la primera sección completa (teaserSection) con el cuerpo ya saneado a HTML.
+		// El teaser expone un extracto del arranque de la obra, con el cuerpo ya saneado a HTML.
 		const literaryWorkWithExcerpt: LiteraryWorkTeaser = palacioNueveFronterasLiteraryWorkTeaserMock;
 
 		it('should display the description when showExcerpt is true and there is a teaser section', async () => {
@@ -179,7 +181,7 @@ describe('LiteraryWorkCardTeaserComponent', () => {
 				inputs: { literaryWork: literaryWorkWithExcerpt, showExcerpt: true },
 			});
 
-			const firstParagraph = literaryWorkWithExcerpt.teaserSection?.bodyHtml.match(/<p>([\s\S]*?)<\/p>/)?.[1] ?? '';
+			const firstParagraph = literaryWorkWithExcerpt.excerpt?.bodyHtml.match(/<p>([\s\S]*?)<\/p>/)?.[1] ?? '';
 
 			// El pipeline emite un <p> por párrafo. Si el HTML llegara escapado, el texto igual estaría
 			// —por eso no alcanza con verificar que el elemento no quedó vacío—, pero lo contendría el div
@@ -207,13 +209,27 @@ describe('LiteraryWorkCardTeaserComponent', () => {
 			});
 			expect(screen.getByTestId('description')).toHaveClass('line-clamp-10');
 		});
+
+		// La vista de navegación no transporta extracto, así que pedirlo no puede producir un hueco ni
+		// romper la tarjeta.
+		it('should omit the description for a navigation teaser that carries no excerpt', async () => {
+			const [navigationTeaser] = onoffLiteraryWorkNavigationTeasersMock;
+
+			await render(LiteraryWorkCardTeaserComponent, {
+				inputs: { literaryWork: navigationTeaser, showExcerpt: true },
+			});
+
+			expect(screen.queryByTestId('description')).not.toBeInTheDocument();
+			// Control positivo: la tarjeta sí se dibujó, así que la ausencia es del extracto y no del render.
+			expect(screen.getByRole('link', { name: navigationTeaser.title })).toBeInTheDocument();
+		});
 	});
 
 	// El detalle de agrupación, contador y emisión vive en media-selectors.component.spec.ts.
 	// Aquí solo se verifica la integración: que la tarjeta delegue en el componente cuando corresponde.
 	describe('Multimedia selectors', () => {
 		// Dos plataformas distintas del canon: es lo que la tarjeta delega al selector.
-		const richMedia: Media[] = [...onoffYouTubeVideosMock, ...onoffSpotifyPodcastEpisodesMock];
+		const richMedia: MediaTeaser[] = [...onoffYouTubeVideosMock, ...onoffSpotifyPodcastEpisodesMock].map(toMediaTeaser);
 		const literaryWorkWithMedia: LiteraryWorkTeaser = {
 			...palacioNueveFronterasLiteraryWorkTeaserMock,
 			mediaSources: richMedia,

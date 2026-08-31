@@ -5,6 +5,11 @@ import {
 	draftCollectionDocument,
 	emptyCollectionDocument,
 	multiSectionCollectionDocument,
+	nonProseOpeningCollectionDocument,
+	quoteOpeningLiteraryWorkDocument,
+	headingOpeningLiteraryWorkDocument,
+	blankLeadingLineLiteraryWorkDocument,
+	crlfOpeningLiteraryWorkDocument,
 	multiSectionLiteraryWorkDocument,
 	onoffCollectionDocumentsMock,
 	onoffDatasetMock,
@@ -61,10 +66,77 @@ describe('collectionBySlugQuery', () => {
 		const withMultiSection = [...dataset, multiSectionLiteraryWorkDocument, multiSectionCollectionDocument];
 
 		const result = await run(collectionBySlugQuery, withMultiSection, { slug: 'multi-seccion' });
-		const [work] = (result as { literaryWorks: { teaserSection: unknown[]; sectionCount: number }[] }).literaryWorks;
+		const [work] = (result as { literaryWorks: { excerpt: unknown[]; sectionCount: number }[] }).literaryWorks;
 
-		expect(work?.teaserSection).toHaveLength(1);
+		expect(work?.excerpt).toHaveLength(1);
 		expect(work?.sectionCount).toBe(multiSectionLiteraryWorkDocument.content.length);
+	});
+
+	// La colección de borde referencia las dos obras, así que las dos tienen que estar en el dataset:
+	// una referencia sin resolver entra al array como null y el caso deja de probar lo que dice.
+	const withNonProseOpenings = [
+		...dataset,
+		quoteOpeningLiteraryWorkDocument,
+		headingOpeningLiteraryWorkDocument,
+		blankLeadingLineLiteraryWorkDocument,
+		crlfOpeningLiteraryWorkDocument,
+		nonProseOpeningCollectionDocument,
+	];
+
+	// Los tres casos del recorte. El corte es una heurística de doble salto de línea, así que lo que se
+	// afirma es exactamente eso —el primer bloque, sea cual sea su forma— y no "el primer párrafo de
+	// prosa", que la query no sabe reconocer.
+	it('truncates the excerpt body to the first block', async () => {
+		const result = await run(collectionBySlugQuery, dataset, { slug: firstCollection?.slug.current });
+		const works = (result as { literaryWorks: { excerpt: { body: string }[] }[] }).literaryWorks;
+
+		for (const work of works) {
+			const body = work.excerpt[0]?.body ?? '';
+			expect(body).not.toBe('');
+			expect(body).not.toContain('\n\n');
+		}
+	});
+
+	// El caso que da sentido al split anidado. Sin él, un corte por doble LF a secas devolvería el
+	// cuerpo entero ante contenido con fines de línea de Windows, y CI —que corre en Linux— no lo
+	// notaría: el defecto aparecería recién al regenerar el corpus en una máquina Windows.
+	it('cuts on Windows line endings too', async () => {
+		const result = await run(collectionBySlugQuery, withNonProseOpenings, { slug: 'arranques-no-prosa' });
+		const works = (result as { literaryWorks: { slug: string; excerpt: { body: string }[] }[] }).literaryWorks;
+		const crlf = works.find((work) => work.slug === 'arranque-crlf');
+
+		expect(crlf?.excerpt[0]?.body).toBe('El párrafo que la tarjeta muestra.');
+	});
+
+	it('keeps a multiline blockquote whole when the section opens with one', async () => {
+		const result = await run(collectionBySlugQuery, withNonProseOpenings, { slug: 'arranques-no-prosa' });
+		const works = (result as { literaryWorks: { slug: string; excerpt: { body: string }[] }[] }).literaryWorks;
+		const quoted = works.find((work) => work.slug === 'arranque-con-cita');
+
+		// Las líneas de continuación de una cita no están separadas por doble salto, así que el bloque
+		// entero sobrevive al corte — y lo que queda afuera es la prosa que sigue.
+		expect(quoted?.excerpt[0]?.body).toBe('> Toda geometría empieza\n> por una línea que no existe.');
+	});
+
+	it('keeps a heading alone when the section opens with one', async () => {
+		const result = await run(collectionBySlugQuery, withNonProseOpenings, { slug: 'arranques-no-prosa' });
+		const works = (result as { literaryWorks: { slug: string; excerpt: { body: string }[] }[] }).literaryWorks;
+		const heading = works.find((work) => work.slug === 'arranque-con-encabezado');
+
+		// Markdown válido, pero un extracto pobre: el corte se queda con el encabezado y deja afuera el
+		// párrafo. Queda afirmado para que sea una decisión visible y no una sorpresa en una tarjeta.
+		expect(heading?.excerpt[0]?.body).toBe('## El primer umbral');
+	});
+
+	// El corte toma el primer bloque no vacío y no el primero a secas: con el índice pelado, un renglón
+	// en blanco delante del texto —contenido válido— daría un extracto vacío, que el mapper trata como
+	// obra mal curada y que se lleva puesta la colección entera.
+	it('skips a blank leading line instead of yielding an empty excerpt', async () => {
+		const result = await run(collectionBySlugQuery, withNonProseOpenings, { slug: 'arranques-no-prosa' });
+		const works = (result as { literaryWorks: { slug: string; excerpt: { body: string }[] }[] }).literaryWorks;
+		const blankLeading = works.find((work) => work.slug === 'arranque-en-blanco');
+
+		expect(blankLeading?.excerpt[0]?.body).toBe('El párrafo que la tarjeta tiene que mostrar igual.');
 	});
 
 	it('defaults showAuthors to false when the config is absent', async () => {

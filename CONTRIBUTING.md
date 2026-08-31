@@ -39,7 +39,7 @@ La Cuentoneta tiene cuentas oficiales en [Facebook][facebook-cuentoneta], [Insta
 
 ### 📜 Contenidos
 
-Puedes sugerir contenido para sumar a la plataforma, sea en forma de cuentos, poemas, ensayos o temáticas para nuevas storylists.
+Puedes sugerir contenido para sumar a la plataforma, sea en forma de cuentos, poemas, ensayos o temáticas para nuevas colecciones.
 El contenido puede ser escritura propia o de terceros, con previos permisos de publicación o disponibilidad de acceso a este contenido en la web abierta.
 
 Estamos trabajando para, a futuro, ir en busca de autores y autoras de cuentos y poemas de autoría original que deseen publicar sus obras en La Cuentoneta.
