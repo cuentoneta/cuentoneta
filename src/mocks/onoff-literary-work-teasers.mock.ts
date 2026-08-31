@@ -105,15 +105,15 @@ export const onoffLiteraryWorkTeasersMock: LiteraryWorkTeaser[] = [
 	neronLiteraryWorkTeaserMock,
 ];
 
-// Ninguna obra del canon declara recursos multimedia, así que los casos que necesitan ese shape
-// —los selectores de multimedia de las tarjetas— lo obtienen de esta variante enriquecida, en vez
-// de armarlo cada uno por su cuenta.
-// Sale del canon; el YouTube repetido existe para que los consumidores que cuentan medios tengan más
-// elementos que tipos distintos.
+// El conjunto que `withMediaSources` inyecta sale del canon; el YouTube repetido existe para que los
+// consumidores que cuentan medios tengan más elementos que tipos distintos.
 const mediaSources: MediaTeaser[] = [...onoffMediaMock, ...onoffYouTubeVideosMock].map(toMediaTeaser);
 
 export const withMediaSources = (teaser: LiteraryWorkTeaser): LiteraryWorkTeaser => ({ ...teaser, mediaSources });
 
+// Enriquece **todo** el canon, así que sirve a un caso que necesita el shape sobre cualquier obra.
+// El otro, `onoffLiteraryWorkTeasersWithMediaSources`, conserva solo las obras cuyo propio canon
+// declara medios. Los nombres se parecen y los conjuntos no: elegir por el predicado.
 export const onoffLiteraryWorkTeasersWithMediaSourcesMock: LiteraryWorkTeaser[] =
 	onoffLiteraryWorkTeasersMock.map(withMediaSources);
 
@@ -147,4 +147,10 @@ export const onoffLiteraryWorkNavigationTeasersWithAuthorsMock: LiteraryWorkNavi
 
 export const onoffLiteraryWorkTeasersWithMediaSources: LiteraryWorkTeaser[] = onoffLiteraryWorkTeasersMock.filter(
 	(teaser) => teaser.mediaSources.length > 0,
+);
+
+// El tipo exige `excerpt`, pero no que su cuerpo traiga algo: una obra cuya sección de apertura
+// arranque vacía lo satisface igual. El predicado va sobre el cuerpo, que es lo que la tarjeta pinta.
+export const onoffLiteraryWorkTeasersWithExcerptMock: LiteraryWorkTeaser[] = onoffLiteraryWorkTeasersMock.filter(
+	(teaser) => teaser.excerpt.bodyHtml !== '',
 );

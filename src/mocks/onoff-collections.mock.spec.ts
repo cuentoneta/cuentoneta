@@ -1,8 +1,17 @@
 import {
 	geometriasDelDesveloCollectionMock,
 	inventarioDeLasPasionesCollectionMock,
+	onoffCollectionsHidingAuthorsMock,
 	onoffCollectionsMock,
+	onoffCollectionsShowingAuthorsMock,
+	onoffCollectionsWithMediaSourcesMock,
+	onoffCollectionsWithRepresentativeImageryMock,
+	onoffCollectionsWithSampleImageryMock,
+	onoffCollectionsWithTagsMock,
 	onoffCollectionTeasersMock,
+	onoffCollectionTeasersWithRepresentativeImageryMock,
+	onoffCollectionTeasersWithSampleImageryMock,
+	onoffCollectionTeasersWithTagsMock,
 } from './onoff-collections.mock';
 import geometriasDescriptionMd from './onoff/collection/geometrias-del-desvelo.collection.md?raw';
 import inventarioDescriptionMd from './onoff/collection/inventario-de-las-pasiones.collection.md?raw';
@@ -46,6 +55,27 @@ describe('onoff collections mock', () => {
 				.filter((word) => /^[a-záéíóúñ]{6,}$/i.test(word))
 				.slice(0, 3)
 				.forEach((word) => expect(collection.description).toContain(word));
+		});
+	});
+
+	// Un selector vacío no rompe a su consumidor: lo deja desestructurando `undefined`, o afirmando
+	// contra un `arrayContaining([])` que pasa trivialmente. La guarda vive acá una vez, y no repetida
+	// en cada spec que toma el primer elemento.
+	it('exposes a non-empty fixture for every capability selector', () => {
+		const selectorsByName = {
+			onoffCollectionsWithRepresentativeImageryMock,
+			onoffCollectionsWithSampleImageryMock,
+			onoffCollectionsShowingAuthorsMock,
+			onoffCollectionsHidingAuthorsMock,
+			onoffCollectionsWithMediaSourcesMock,
+			onoffCollectionsWithTagsMock,
+			onoffCollectionTeasersWithRepresentativeImageryMock,
+			onoffCollectionTeasersWithSampleImageryMock,
+			onoffCollectionTeasersWithTagsMock,
+		};
+
+		Object.entries(selectorsByName).forEach(([name, selector]) => {
+			expect(selector, name).not.toHaveLength(0);
 		});
 	});
 

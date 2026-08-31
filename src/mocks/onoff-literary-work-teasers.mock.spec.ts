@@ -2,6 +2,9 @@ import {
 	onoffLiteraryWorkNavigationTeasersMock,
 	onoffLiteraryWorkNavigationTeasersWithAuthorsMock,
 	onoffLiteraryWorkTeasersMock,
+	onoffLiteraryWorkTeasersWithExcerptMock,
+	onoffLiteraryWorkTeasersWithMediaSources,
+	onoffLiteraryWorkTeasersWithMediaSourcesMock,
 	palacioNueveFronterasLiteraryWorkTeaserMock,
 } from './onoff-literary-work-teasers.mock';
 import { onoffLiteraryWorksMock } from './onoff-literary-works.mock';
@@ -30,6 +33,29 @@ describe('onoffLiteraryWorkTeasersMock (derivación de teasers desde LiteraryWor
 		for (const teaser of onoffLiteraryWorkTeasersMock) {
 			expect(teaser.authors.length).toBeGreaterThan(0);
 		}
+	});
+
+	// Un selector vacío no rompe a su consumidor: lo deja desestructurando `undefined`. La guarda vive
+	// acá una vez, y no repetida en cada spec que toma el primer elemento.
+	it('exposes a non-empty fixture for every capability selector', () => {
+		const selectorsByName = {
+			onoffLiteraryWorkTeasersWithExcerptMock,
+			onoffLiteraryWorkTeasersWithMediaSources,
+			onoffLiteraryWorkTeasersWithMediaSourcesMock,
+		};
+
+		Object.entries(selectorsByName).forEach(([name, selector]) => {
+			expect(selector, name).not.toHaveLength(0);
+		});
+	});
+
+	// Los dos nombres se parecen y los conjuntos no: el enriquecido cubre todo el canon y el filtrado
+	// solo las obras que declaran medios por sí mismas. Si dejaran de distinguirse, elegir uno u otro
+	// pasaría a dar lo mismo y un caso podría afirmar sobre el conjunto equivocado sin notarlo.
+	it('keeps the enriched media selector wider than the filtered one', () => {
+		expect(onoffLiteraryWorkTeasersWithMediaSources.length).toBeLessThan(
+			onoffLiteraryWorkTeasersWithMediaSourcesMock.length,
+		);
 	});
 
 	it('should not carry the full-view fields (content, resources, dates)', () => {

@@ -99,6 +99,10 @@ export const onoffCollectionsWithMediaSourcesMock: Collection[] = onoffCollectio
 	(collection) => collection.mediaSources.length > 0,
 );
 
+export const onoffCollectionsWithTagsMock: Collection[] = onoffCollectionsMock.filter(
+	(collection) => collection.tags.length > 0,
+);
+
 // Pasa por la factory del teaser, igual que el repository: si el corpus lo armara por spread, sería
 // el único productor que se saltea las invariantes que esa factory existe para hacer cumplir.
 function toTeaser(collection: Collection): CollectionTeaser {
@@ -121,6 +125,17 @@ export const inventarioDeLasPasionesCollectionTeaserMock: CollectionTeaser = toT
 );
 
 export const onoffCollectionTeasersMock: CollectionTeaser[] = onoffCollectionsMock.map(toTeaser);
+
+// Cada selector de teaser proyecta el de colección homónimo en vez de repetir su predicado: la
+// capacidad queda definida en un solo lugar, y las dos vistas no pueden divergir sobre qué colección
+// la cumple.
+export const onoffCollectionTeasersWithRepresentativeImageryMock: CollectionTeaser[] =
+	onoffCollectionsWithRepresentativeImageryMock.map(toTeaser);
+
+export const onoffCollectionTeasersWithSampleImageryMock: CollectionTeaser[] =
+	onoffCollectionsWithSampleImageryMock.map(toTeaser);
+
+export const onoffCollectionTeasersWithTagsMock: CollectionTeaser[] = onoffCollectionsWithTagsMock.map(toTeaser);
 
 // Los teasers extra se derivan del primero del canon y pasan uno a uno por la factory del teaser:
 // el agregado está congelado, así que armarlos por spread saltearía las invariantes que esa
