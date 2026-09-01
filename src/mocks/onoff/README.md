@@ -27,6 +27,8 @@ onoff/
 
 **Los agregadores no viven acá:** están un nivel arriba, en `src/mocks/`, y son lo que el resto del repo importa. Una regla de ESLint prohíbe importar una pieza puntual desde fuera de `src/mocks/**`. Por eso la tabla de assets de imagen (`../onoff-image-assets.mock.ts`, ver [Imágenes](#imágenes-el-puente-a-los-assets-locales)) también vive arriba: la consume un spec de `src/api/`.
 
+El corolario es que **un handle nombrado por identidad va de este lado**, y un agregador expone únicamente colecciones, derivados y selectores por capacidad. Si un handle por identidad se exportara desde arriba, quedaría alcanzable desde afuera por su nombre —una vía que la regla, que mira rutas, no ve—.
+
 ## Las tres capas
 
 ```
@@ -102,7 +104,8 @@ Archivos:
 
 - **`LiteraryWork` completa:** `literary-work/<slug>.literary-work.mock.ts`, export `<slugCamelCase>LiteraryWorkMock: LiteraryWork` (vía `createLiteraryWork`).
 - **Agregador:** `../onoff-literary-works.mock.ts` → `onoffLiteraryWorksMock: LiteraryWork[]`.
-- **Teasers derivados:** `../onoff-literary-work-teasers.mock.ts` (`toTeaser`) → `<slugCamelCase>LiteraryWorkTeaserMock` + `onoffLiteraryWorkTeasersMock`.
+- **Teasers derivados:** `literary-work/literary-work-teasers.mock.ts` (`toTeaser`) → `<slugCamelCase>LiteraryWorkTeaserMock`, uno por obra. Viven acá y no en el agregador porque un handle nombrado por identidad es justo lo que la restricción de imports no quiere alcanzable desde afuera: alcanzarlos por esta ruta es lo que falla el gate `lint`.
+- **Agregador de teasers:** `../onoff-literary-work-teasers.mock.ts` → `onoffLiteraryWorkTeasersMock`, sus variantes de navegación y los selectores por capacidad (`onoffLiteraryWorkTeasersWithExcerptMock`, los dos de multimedia).
 
 ## Corpus de dominio: `Author`
 
@@ -117,10 +120,10 @@ El autor embebido sí está anclado, aunque su raw sea a mano: las fixtures gene
 Corpus mínimo de dos colecciones de `LiteraryWork`, una por cada rama de `imagery`.
 
 - **Descripciones:** Markdown plano por colección — `collection/<slug>.collection.md`, importados con `?raw` y saneados con `markdownToSanitizedHtml`, misma convención que `<slug>.editorial-note.md` de `LiteraryWork`.
-- **Colecciones:** `../onoff-collections.mock.ts`, export `geometriasDelDesveloCollectionMock` (rama `representative`, con portada editorial propia) e `inventarioDeLasPasionesCollectionMock` (rama `sample`, sin portada propia) — ambas construidas vía `createCollection`.
-- **Obras:** cada colección se cura con las obras que su propia prosa nombra —`geometria`/`losPeldanos`/`lasEscaleras` y `elTratadoDeLosPlaceres`/`elOdio`/`lasDosAntorchas`—, importadas del agregador por nombre. No cortar el agregador por índice: las dos colecciones quedarían indistinguibles por contenido.
-- **Agregador:** `onoffCollectionsMock: Collection[]`.
-- **Selectores por capacidad:** `onoffCollectionsWithRepresentativeImageryMock`, `onoffCollectionsWithSampleImageryMock` y `onoffCollectionsWithMediaSourcesMock`, derivados por predicado sobre el agregador.
+- **Colecciones:** `collection/collections.mock.ts`, export `geometriasDelDesveloCollectionMock` (rama `representative`, con portada editorial propia) e `inventarioDeLasPasionesCollectionMock` (rama `sample`, sin portada propia) — ambas construidas vía `createCollection`, junto a sus teasers nombrados y a `toTeaser`. Viven acá por lo mismo que los teasers por obra: son handles nombrados por identidad.
+- **Obras:** cada colección se cura con las obras que su propia prosa nombra —`geometria`/`losPeldanos`/`lasEscaleras` y `elTratadoDeLosPlaceres`/`elOdio`/`lasDosAntorchas`—, tomadas por nombre de `literary-work/literary-work-teasers.mock.ts`. No cortar el agregador por índice: las dos colecciones quedarían indistinguibles por contenido.
+- **Agregador:** `../onoff-collections.mock.ts` → `onoffCollectionsMock: Collection[]`.
+- **Selectores por capacidad:** sobre las colecciones, `onoffCollectionsWith(Representative|Sample)ImageryMock`, `onoffCollectionsWithMediaSourcesMock`, `onoffCollectionsWithTagsMock` y `onoffCollections(Showing|Hiding)AuthorsMock`; sobre los teasers, `onoffCollectionTeasersWith(Representative|Sample)ImageryMock` y `onoffCollectionTeasersWithTagsMock`. Todos derivados por predicado, y los de teaser proyectando el de colección homónimo para que la capacidad quede definida una sola vez.
 - **Teasers derivados:** `toTeaser` (vacía `literaryWorks`) → `onoffCollectionTeasersMock: CollectionTeaser[]`.
 - **Nada se escribe a mano:** las obras (`literaryWorks`), los tags y las tres portadas de la rama `sample` se **derivan** del canon existente — `onoffLiteraryWorkTeasersMock` y `onoff-tags.mock.ts` — en vez de hardcodearse.
 
