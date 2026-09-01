@@ -32,7 +32,7 @@ describe('la restricción de imports del corpus', () => {
 		['por alias, desde el frontend', '@mocks/onoff/literary-work/geometria.literary-work.mock', 'src/app/probe.ts'],
 		[
 			'por alias, desde el backend',
-			'@mocks/onoff/collection/geometrias-del-desvelo.collection.mock',
+			'@mocks/onoff/collection/geometrias-del-desvelo.collection.raw.mock',
 			'src/api/probe.ts',
 		],
 		['por ruta relativa', '../../mocks/onoff/literary-work/geometria.literary-work.mock', 'src/app/pages/probe.ts'],
@@ -40,8 +40,8 @@ describe('la restricción de imports del corpus', () => {
 		expect(await restrictionErrors(importFrom(source), filePath)).toHaveLength(1);
 	});
 
-	// Los handles por identidad viven acá desde que dejaron de exportarse por los agregadores. Sin este
-	// caso, lo único verificado sería el glob genérico, y una reubicación a otra carpeta pasaría inadvertida.
+	// Los handles por identidad viven bajo `@mocks/onoff/<entidad>/`. Sin este caso, lo único verificado
+	// sería el glob genérico, y una reubicación a otra carpeta pasaría inadvertida.
 	it.each([
 		['de obras', '@mocks/onoff/literary-work/literary-work-teasers.mock'],
 		['de colecciones', '@mocks/onoff/collection/collections.mock'],
@@ -50,9 +50,17 @@ describe('la restricción de imports del corpus', () => {
 	});
 
 	it('deja pasar el mismo import desde dentro del corpus', async () => {
-		const source = '@mocks/onoff/literary-work/literary-work-teasers.mock';
+		const filePath = 'src/mocks/probe.mock.ts';
+		// Cero errores de la restricción no alcanza por sí solo: un archivo que ESLint no linteara daría
+		// cero igual. El enum es el testigo de que sí se lintea, porque lo prohíbe otra regla que acá no
+		// está exenta. Con los dos, el cero solo puede venir del `ignores`: una ruta mal escrita que
+		// siga bajo `src/` deja de estar exenta y hace fallar la otra aserción.
+		const code = `${importFrom('@mocks/onoff/literary-work/literary-work-teasers.mock')}enum Probe { A }\n`;
 
-		expect(await restrictionErrors(importFrom(source), 'src/mocks/probe.mock.ts')).toHaveLength(0);
+		const [result] = await eslint.lintText(code, { filePath, warnIgnored: false });
+
+		expect(result.messages.map((message) => message.ruleId)).toContain('no-restricted-syntax');
+		expect(result.messages.filter((message) => message.ruleId === RESTRICTION)).toHaveLength(0);
 	});
 
 	it.each([
