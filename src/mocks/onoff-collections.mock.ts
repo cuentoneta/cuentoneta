@@ -1,8 +1,6 @@
 import { createCollectionTeaser, type Collection, type CollectionTeaser } from '@models/collection.model';
 
-// Las colecciones y su proyección a teaser viven bajo `onoff/collection/`, junto a la prosa de la que
-// derivan: es la ruta que la restricción de imports alcanza, y este agregador es uno de los
-// consumidores que la convención sí admite.
+// Import permitido: la restricción de ruta exime a `src/mocks/**`.
 import {
 	geometriasDelDesveloCollectionMock,
 	inventarioDeLasPasionesCollectionMock,

@@ -60,9 +60,7 @@ describe('onoff collections mock', () => {
 		});
 	});
 
-	// Un selector vacío no rompe a su consumidor: lo deja desestructurando `undefined`, o afirmando
-	// contra un `arrayContaining([])` que pasa trivialmente. La guarda vive acá una vez, y no repetida
-	// en cada spec que toma el primer elemento.
+	// La guarda que evita que un selector vacío llegue a sus consumidores — ver `testing.md`.
 	it('exposes a non-empty fixture for every capability selector', () => {
 		const selectorsByName = {
 			onoffCollectionsWithRepresentativeImageryMock,
