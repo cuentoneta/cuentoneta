@@ -61,11 +61,12 @@ describe('createCollection', () => {
 		const covers = canon.literaryWorks.slice(0, 3).map((work) => work.coverImage);
 		const sample: CollectionImagery = { kind: 'sample', images: [covers[0] ?? '', covers[1] ?? '', covers[2] ?? ''] };
 
-		const representative = createCollection(buildOptions()).imagery;
+		const [cover] = covers;
+		const representativeInput: CollectionImagery = { kind: 'representative', image: cover ?? '' };
+
+		const representative = createCollection(buildOptions({ imagery: representativeInput })).imagery;
 		expect(representative.kind).toBe('representative');
-		expect(representative.kind === 'representative' && representative.image).toBe(
-			canon.imagery.kind === 'representative' && canon.imagery.image,
-		);
+		expect(representative.kind === 'representative' && representative.image).toBe(cover);
 
 		const sampled = createCollection(buildOptions({ imagery: sample })).imagery;
 		expect(sampled.kind).toBe('sample');
