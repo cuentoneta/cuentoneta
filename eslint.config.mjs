@@ -47,7 +47,7 @@ const readonlyFactoryMessage =
 const singleWorkCorpusImportPattern = {
 	group: ['@mocks/onoff/**', '**/mocks/onoff/**'],
 	message:
-		'No importes una obra puntual del corpus: usá las colecciones de @mocks/onoff-literary-works.mock (onoffLiteraryWorksMock, onoffLiteraryWorkEpigraphsMock) o sus selectores por capacidad (onoffLiteraryWorksWithEpigraphs, onoffLiteraryWorksWithEditorialNote, …), que declaran el shape que el caso necesita y crecen con el canon.',
+		'No importes una pieza puntual del corpus: usá el agregador de la entidad que necesitás — @mocks/onoff-literary-works.mock, @mocks/onoff-literary-work-teasers.mock o @mocks/onoff-collections.mock — por su colección (onoffLiteraryWorksMock, onoffLiteraryWorkTeasersMock, onoffCollectionsMock, onoffCollectionTeasersMock) o por el selector cuya capacidad es la que tu caso afirma (onoffLiteraryWorksWithEpigraphs, onoffLiteraryWorkTeasersWithExcerptMock, onoffCollectionTeasersWithSampleImageryMock, …). Declaran el shape que el caso necesita y crecen con el canon.',
 };
 
 const commonRestrictedSyntax = [

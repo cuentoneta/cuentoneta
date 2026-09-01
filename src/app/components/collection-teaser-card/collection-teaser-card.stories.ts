@@ -3,9 +3,12 @@ import { Meta, moduleMetadata, StoryObj } from '@storybook/angular-vite';
 import { CollectionTeaserCard } from './collection-teaser-card';
 import { CollectionTeaserCardSkeletonComponent } from './collection-teaser-card-skeleton';
 import {
-	geometriasDelDesveloCollectionTeaserMock,
-	inventarioDeLasPasionesCollectionTeaserMock,
+	onoffCollectionTeasersWithRepresentativeImageryMock,
+	onoffCollectionTeasersWithSampleImageryMock,
 } from '@mocks/onoff-collections.mock';
+
+const [representativeTeaser] = onoffCollectionTeasersWithRepresentativeImageryMock;
+const [sampleTeaser] = onoffCollectionTeasersWithSampleImageryMock;
 
 const meta: Meta<CollectionTeaserCard> = {
 	component: CollectionTeaserCard,
@@ -38,8 +41,8 @@ export default meta;
 export const Primary: StoryObj<CollectionTeaserCard> = {
 	render: () => ({
 		props: {
-			representative: geometriasDelDesveloCollectionTeaserMock,
-			sample: inventarioDeLasPasionesCollectionTeaserMock,
+			representative: representativeTeaser,
+			sample: sampleTeaser,
 		},
 		template: `
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
@@ -67,10 +70,7 @@ export const Interactiva: StoryObj<CollectionTeaserCard & { kind: 'representativ
 	},
 	render: (args) => ({
 		props: {
-			collection:
-				args.kind === 'representative'
-					? geometriasDelDesveloCollectionTeaserMock
-					: inventarioDeLasPasionesCollectionTeaserMock,
+			collection: args.kind === 'representative' ? representativeTeaser : sampleTeaser,
 		},
 		template: `
 			<div class="card p-4">
@@ -102,7 +102,7 @@ export const Estados: StoryObj<CollectionTeaserCard & { loading: boolean }> = {
 			</div>
 		`,
 	}),
-	args: { loading: true, collection: geometriasDelDesveloCollectionTeaserMock },
+	args: { loading: true, collection: representativeTeaser },
 	parameters: {
 		docs: { description: { story: 'Activá/desactivá "Cargando" para alternar entre el estado real y el skeleton.' } },
 	},

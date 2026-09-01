@@ -3,10 +3,12 @@ import { TestBed } from '@angular/core/testing';
 import { DOCUMENT } from '@angular/common';
 import { signal } from '@angular/core';
 
-import { geometriasDelDesveloCollectionMock } from '@mocks/onoff-collections.mock';
+import { onoffCollectionsMock } from '@mocks/onoff-collections.mock';
 import { type Collection } from '@models/collection.model';
 import { CollectionStructuredDataDirective } from './collection-structured-data.directive';
 import { COLLECTION_HOST } from './collection-host';
+
+const [canon] = onoffCollectionsMock;
 
 describe('CollectionStructuredDataDirective', () => {
 	const collectionSignal = signal<Collection | undefined>(undefined);
@@ -40,7 +42,7 @@ describe('CollectionStructuredDataDirective', () => {
 	});
 
 	it('should emit the CollectionPage and breadcrumb JSON-LD when the collection resolves', () => {
-		collectionSignal.set(geometriasDelDesveloCollectionMock);
+		collectionSignal.set(canon);
 
 		instantiate();
 		TestBed.tick();
@@ -55,7 +57,7 @@ describe('CollectionStructuredDataDirective', () => {
 	});
 
 	it('should emit under the schema id the collection page owns', () => {
-		collectionSignal.set(geometriasDelDesveloCollectionMock);
+		collectionSignal.set(canon);
 
 		instantiate();
 		TestBed.tick();
@@ -64,7 +66,7 @@ describe('CollectionStructuredDataDirective', () => {
 	});
 
 	it('should remove both JSON-LD blocks when destroyed', () => {
-		collectionSignal.set(geometriasDelDesveloCollectionMock);
+		collectionSignal.set(canon);
 		instantiate();
 		TestBed.tick();
 		const head = TestBed.inject(DOCUMENT).head;

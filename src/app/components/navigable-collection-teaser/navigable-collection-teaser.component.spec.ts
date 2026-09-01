@@ -2,10 +2,10 @@ import { render, screen } from '@testing-library/angular';
 import { provideRouter } from '@angular/router';
 
 import { NavigableCollectionTeaserComponent } from './navigable-collection-teaser.component';
-import { geometriasDelDesveloCollectionTeaserMock } from '@mocks/onoff-collections.mock';
+import { onoffCollectionTeasersWithTagsMock } from '@mocks/onoff-collections.mock';
 
 describe('NavigableCollectionTeaserComponent', () => {
-	const collection = geometriasDelDesveloCollectionTeaserMock;
+	const [collection] = onoffCollectionTeasersWithTagsMock;
 	const setup = (teaser = collection) =>
 		render(NavigableCollectionTeaserComponent, { inputs: { collection: teaser }, providers: [provideRouter([])] });
 
