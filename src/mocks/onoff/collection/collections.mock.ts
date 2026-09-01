@@ -86,8 +86,3 @@ export function toTeaser(collection: Collection): CollectionTeaser {
 		count: collection.count,
 	});
 }
-
-export const geometriasDelDesveloCollectionTeaserMock: CollectionTeaser = toTeaser(geometriasDelDesveloCollectionMock);
-export const inventarioDeLasPasionesCollectionTeaserMock: CollectionTeaser = toTeaser(
-	inventarioDeLasPasionesCollectionMock,
-);

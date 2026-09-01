@@ -37,7 +37,7 @@ function toExcerptHtml(markdown: string): SanitizedHtml {
 // Deriva el teaser desde la obra completa: conserva los campos de la vista base, reemplaza los autores
 // por su variante AuthorTeaser y expone el arranque de la sección de apertura como `excerpt`
 // — ver LITERARY_WORK_DESIGN.md §2.
-export function toTeaser(literaryWork: LiteraryWork, markdown: string): LiteraryWorkTeaser {
+function toTeaser(literaryWork: LiteraryWork, markdown: string): LiteraryWorkTeaser {
 	return {
 		_id: literaryWork._id,
 		slug: literaryWork.slug,
