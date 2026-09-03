@@ -24,13 +24,13 @@ Diseñá clases, módulos y sus relaciones para que sean flexibles, mantenibles 
 ```typescript
 // ✅ Responsabilidades separadas: el repository solo trae datos crudos de Sanity,
 // el service mapea al dominio vía el ACL.
-async function fetchStoryBySlug(slug: string) {
-	return client.fetch(storyBySlugQuery, { slug }); // resultado crudo de Sanity
+async function fetchAuthorBySlug(slug: string) {
+	return client.fetch(authorBySlugQuery, { slug }); // resultado crudo de Sanity
 }
 
-async function getStoryBySlug(slug: string): Promise<Story> {
-	const raw = await fetchStoryBySlug(slug);
-	return mapStory(raw); // mapper / ACL
+async function getAuthorBySlug(slug: string): Promise<AuthorProfile> {
+	const raw = await fetchAuthorBySlug(slug);
+	return mapAuthorProfile(raw); // mapper / ACL
 }
 
 // ❌ Una sola función que consulta, mapea, valida y formatea para la UI:
@@ -89,7 +89,7 @@ interface ResourceRenderer {
 
 - No sobreescribas métodos de forma que viole las expectativas de la clase base.
 - Si una subclase no puede soportar plenamente un método de la base, la jerarquía está mal.
-- En cuentoneta esto aplica a las implementaciones intercambiables de un repositorio: un `SanityStoryRepository` y un `InMemoryStoryRepository` (usado en tests) deben honrar el mismo contrato — mismas garantías de retorno y de error — para ser sustituibles sin que el `service` lo note. Ese mismo patrón ya está implementado para `LiteraryWork`: `SanityLiteraryWorkRepository` e `InMemoryLiteraryWorkRepository` implementan el puerto `LiteraryWorkRepository`, y los specs de service y controller inyectan el doble en memoria en lugar del adaptador de Sanity — contrato en `docs/LITERARY_WORK_DESIGN.md` §6.
+- En cuentoneta esto aplica a las implementaciones intercambiables de un repositorio: un `SanityLiteraryWorkRepository` y un `InMemoryLiteraryWorkRepository` (usado en tests) deben honrar el mismo contrato — mismas garantías de retorno y de error — para ser sustituibles sin que el `service` lo note. Ese patrón ya está implementado: `SanityLiteraryWorkRepository` e `InMemoryLiteraryWorkRepository` implementan el puerto `LiteraryWorkRepository`, y los specs de service y controller inyectan el doble en memoria en lugar del adaptador de Sanity — contrato en `docs/LITERARY_WORK_DESIGN.md` §6.
 
 ---
 
@@ -138,10 +138,10 @@ interface LiteraryWorkListProvider {
 
 ```typescript
 // ✅ El componente (alto nivel) depende de una abstracción inyectada, no de Sanity directo.
-export class StoryComponent {
-	private readonly storyApi = inject(StoryApi);
+export default class LiteraryWorkPage {
+	private readonly literaryWorkApi = inject(LiteraryWorkApi);
 	public readonly slug = input.required<string>();
-	public readonly story = computed(/* derivado del slug vía el API provider */); // `public`: lo exige StoryHost
+	public readonly literaryWork = computed(/* derivado del slug vía el API provider */); // `public`: lo exige LiteraryWorkHost
 }
 
 // ❌ El componente conoce GROQ y el cliente de Sanity directamente: alto nivel

@@ -1,9 +1,6 @@
 <div align="center" width="100%">
-    <h1>La Cuentoneta</h1>
-    <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="https://github.com/rolivencia/cuentoneta/assets/32349705/b0ea0659-3c9d-4c4f-9d14-ab60d50dd832">
-        <img width="33%" alt="La Cuentoneta" src="https://github.com/rolivencia/cuentoneta/assets/32349705/b0ea0659-3c9d-4c4f-9d14-ab60d50dd832">
-    </picture>
+    <h2>La Cuentoneta</h2>
+    <img width="33%" alt="" src=".github/assets/cuentoneta-logo.png">
 </div>
 
 ---
@@ -14,7 +11,7 @@ Desde el staff y equipo de "La Cuentoneta" establecimos la Misión, Visión y Va
 
 ## Misión:
 
-Nuestra misión en "La Cuentoneta" es fomentar y hacer accesible la lectura digital a través de la publicación de relatos breves en storylists temáticas, creando un espacio comunitario virtual dedicado a la difusión de la literatura. Buscamos promover el placer de la lectura, emulando la experiencia de las playlists musicales o de videos, para que usuarias y usuarios puedan disfrutar de la lectura de una manera divertida y entretenida.
+Nuestra misión en "La Cuentoneta" es fomentar y hacer accesible la lectura digital a través de la publicación de relatos breves en colecciones temáticas, creando un espacio comunitario virtual dedicado a la difusión de la literatura. Buscamos promover el placer de la lectura, emulando la experiencia de las playlists musicales o de videos, para que usuarias y usuarios puedan disfrutar de la lectura de una manera divertida y entretenida.
 
 ## Visión:
 

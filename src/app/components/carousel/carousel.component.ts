@@ -43,7 +43,7 @@ export class CarouselComponent {
 	private readonly destroyRef = inject(DestroyRef);
 
 	// Entradas
-	public readonly slides = input<ContentCampaign[]>([]);
+	public readonly slides = input<readonly ContentCampaign[]>([]);
 	public readonly transitionDuration = input<number>(600);
 	public readonly autoPlayInterval = input<number>(5000);
 

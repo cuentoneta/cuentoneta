@@ -12,13 +12,14 @@ import { applyReadCacheHeaders, isReadCacheEnabled } from '../_helpers/cache-con
 const SSR_MARKER = 'ng-server-context="ssr"';
 
 /**
- * Emite los headers de caché de borde para las respuestas SSR válidas de `/read/*`.
+ * Emite los headers de caché de borde para las respuestas SSR válidas de las páginas que lo montan
+ * (ver `server.ts`).
  *
  * Guarda anti-CSR: bufferiza e inspecciona el body (`c.res.clone().text()`) para confirmar que
- * es SSR real antes de cachear. Esto sacrifica el streaming del primer byte —acotado a `/read/*`
- * y aceptable por la inmutabilidad del contenido de una obra—, pero es la única forma correcta de
- * distinguir el SSR real del fallback CSR degradado. No cachea respuestas no-200 (404/500) ni el
- * fallback CSR.
+ * es SSR real antes de cachear. Esto sacrifica el streaming del primer byte, pero es la única forma
+ * correcta de distinguir el SSR real del fallback CSR degradado —que responde 200 y `text/html` sin
+ * ninguna señal en los headers—, y cachear ese fallback serviría una página sin contenido durante
+ * todo el TTL. No cachea respuestas no-200 (404/500) ni el fallback CSR.
  *
  * La cache key del CDN de Vercel incluye el query string, así que una página con variantes por query
  * cachea por variante.

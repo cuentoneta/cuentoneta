@@ -24,20 +24,20 @@ describe('HomeStructuredDataDirective', () => {
 		TestBed.resetTestingModule();
 	});
 
-	it('should remove collection and breadcrumb-storylist left by a previous storylist route', () => {
+	it('should remove the blocks left by a previous collection route', () => {
 		const schemaOrg = TestBed.inject(SchemaOrgService);
 		schemaOrg.setPageScopedJsonLd('collection', { '@context': CONTEXT, '@type': 'CollectionPage' });
-		schemaOrg.setPageScopedJsonLd('breadcrumb-storylist', { '@context': CONTEXT, '@type': 'BreadcrumbList' });
+		schemaOrg.setPageScopedJsonLd('breadcrumb-collection', { '@context': CONTEXT, '@type': 'BreadcrumbList' });
 
 		instantiate();
 		TestBed.tick();
 
 		const head = TestBed.inject(DOCUMENT).head;
 		expect(head.querySelector('script[data-schema-id="collection"]')).toBeNull();
-		expect(head.querySelector('script[data-schema-id="breadcrumb-storylist"]')).toBeNull();
+		expect(head.querySelector('script[data-schema-id="breadcrumb-collection"]')).toBeNull();
 	});
 
-	it('should remove page-scoped blocks left by any route, not just storylist', () => {
+	it('should remove page-scoped blocks left by any route, not just the collection one', () => {
 		const schemaOrg = TestBed.inject(SchemaOrgService);
 		schemaOrg.setPageScopedJsonLd('article', { '@context': CONTEXT, '@type': 'Article' });
 		schemaOrg.setPageScopedJsonLd('profile-page', { '@context': CONTEXT, '@type': 'ProfilePage' });

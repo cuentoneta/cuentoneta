@@ -5,13 +5,10 @@ import { filteredDocumentListItems } from 'sanity-plugin-singleton-management';
 
 import { landingPageListItem } from './landing-page-list-item';
 
-// Los tipos de documento no-singleton, planos (sin carpeta intermedia), con overrides: story y
-// literaryWork usan la tabla de acciones masivas y landingPage el pane con badge de activa.
+// Los tipos de documento no-singleton, planos (sin carpeta intermedia), con overrides: literaryWork
+// usa la tabla de acciones masivas y landingPage el pane con badge de activa.
 export const contentTypeItems = (S: StructureBuilder, context: StructureResolverContext) =>
 	filteredDocumentListItems({ S, context }).map((collection) => {
-		if (collection.getId() === 'story') {
-			return createBulkActionsTable({ type: 'story', S, context, title: 'Cuentos' });
-		}
 		// La tabla trae su propio buscador, que solo mira los campos string de primer nivel: buscar el
 		// título de una obra deja de matchear dentro del cuerpo de sus secciones, como sí pasa en el
 		// pane nativo.

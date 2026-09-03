@@ -7,9 +7,11 @@
  * vive tras un breakpoint y por lo tanto depende del ancho real del viewport, y el bloque de sugeridas,
  * que se alimenta de un recurso progresivo y en el HTML del servidor todavía no existe.
  */
-import { expect, test, type Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 
-import { DESKTOP_VIEWPORT, fetchCollectionCatalog, type CollectionCatalogEntry } from './_utils/collection-fixtures';
+import { test } from './_utils/test';
+import { fetchCollectionCatalog, type CollectionCatalogEntry } from './_utils/collection-fixtures';
+import { DESKTOP_VIEWPORT } from './_utils/viewports';
 import { STABLE_SLUGS } from './_utils/seo-fixtures';
 
 const ROUTE = `/collection/${STABLE_SLUGS.collection}`;
@@ -58,7 +60,7 @@ test('collection — el listado muestra las obras y cada una lleva a su lectura'
 
 	// Se cuentan los enlaces a la lectura contra las tarjetas y no se afirma que *todos* los enlaces del
 	// listado lleven ahí: la tarjeta enlaza además al autor cuando la curaduría lo muestra.
-	const readingLinks = page.getByTestId('literary-works').locator('a[href^="/read/"]');
+	const readingLinks = page.getByTestId('literary-works').locator('a[href^="/literary-work/"]');
 	await expect(readingLinks, 'alguna obra del listado no ofrece su lectura').toHaveCount(await cards.count());
 
 	// Cada tarjeta lleva a *su* obra: sin esto, N enlaces al mismo destino darían el mismo conteo.

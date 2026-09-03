@@ -5,7 +5,7 @@
  */
 // El criterio de qué es un identificador de hallazgo —y el porqué— viven en `finding-refs.ts`, que es
 // su definición única.
-import { hasFindingRef } from './finding-refs';
+import { hasFindingRef } from './finding-refs.ts';
 
 /**
  * Solo código, y solo bajo `src/`, `cms/` o `scripts/`. La regla rige para todo el repo; el hook cubre
@@ -29,11 +29,12 @@ const CODE_FILE = /\.(ts|tsx|html|css|js|jsx|mjs|cjs)$/;
  * Nada automático distingue un archivo que define la convención de uno que solo quiere acallar un
  * hallazgo real. Esa distinción la sostiene la review, y es la razón por la que la lista es corta.
  */
-const CONVENTION_SOURCES: ReadonlySet<string> = new Set([
+export const CONVENTION_SOURCES: ReadonlySet<string> = new Set([
 	'scripts/finding-refs.ts',
 	'scripts/finding-refs.spec.ts',
 	'scripts/block-issue-refs-in-comments.ts',
 	'scripts/block-issue-refs-in-comments.helpers.ts',
+	'scripts/block-issue-refs-in-comments.spec.ts',
 	'scripts/block-issue-refs-in-comments.helpers.spec.ts',
 	'scripts/check-issue-refs.ts',
 	'scripts/check-issue-refs.spec.ts',

@@ -128,7 +128,7 @@ function descendInline(
 		acc.uncovered.push({ documentType, segments, reason: `tipo "${name ?? 'sin nombre'}" ausente del schema` });
 		return;
 	}
-	// Un tipo que se contiene a sí mismo —`blockContent` anida bloques— haría girar el recorrido.
+	// Un tipo que se contiene a sí mismo, directa o indirectamente, haría girar el recorrido.
 	if (acc.resolving.has(name)) {
 		return;
 	}

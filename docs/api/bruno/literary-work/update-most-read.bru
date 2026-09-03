@@ -1,0 +1,17 @@
+meta {
+  name: Update most read statistics
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{apiUrl}}{{baseApiPath}}/literary-work/update-most-read
+  body: none
+  auth: none
+}
+
+docs {
+  Actualizar las estadísticas de obras más leídas.
+
+  Esto se llama típicamente mediante un trabajo programado.
+}

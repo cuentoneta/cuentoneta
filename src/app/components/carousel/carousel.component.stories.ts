@@ -129,7 +129,7 @@ const extendedSlidesMock: ContentCampaign[] = [
 	{
 		title: 'Geometrías del desvelo',
 		slug: 'geometrias-del-desvelo',
-		url: '../storylist/geometrias-del-desvelo',
+		url: '../collection/geometrias-del-desvelo',
 		contents: {
 			xs: {
 				imageUrl: 'assets/img/mocks/banners/banner-geometrias-del-desvelo-mobile.png',

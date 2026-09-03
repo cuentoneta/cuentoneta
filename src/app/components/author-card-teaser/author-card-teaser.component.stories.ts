@@ -19,7 +19,7 @@ const meta: Meta<AuthorCardTeaserComponent> = {
 				sourceState: 'shown',
 			},
 			description: {
-				component: `<div><p>El componente <strong>AuthorCardTeaserComponent</strong> muestra una vista previa de un autor enlazada a su perfil, según el Design System v3. Está pensado para listar y visualizar perfiles de autores, mostrando el avatar, los tags, el nombre con la bandera de nacionalidad y la cantidad de historias.</p><p>Se modela como un <code>&lt;article&gt;</code> con un único enlace real sobre el nombre del autor, estirado con un pseudo-elemento para que toda la tarjeta sea clickeable sin inflar el nombre accesible del link.</p><p>Se compone de <a href="./?path=/docs/componentes-v3-imageprofile--docs" target="_top"><strong>ImageProfile</strong></a> (avatar) y <a href="./?path=/docs/componentes-v3-tagslist--docs" target="_top"><strong>TagsList</strong></a> con instancias de <a href="./?path=/docs/componentes-v3-tag--docs" target="_top"><strong>Tag</strong></a> (etiquetas del autor).</p></div>`,
+				component: `<div><p>El componente <strong>AuthorCardTeaserComponent</strong> muestra una vista previa de un autor enlazada a su perfil, según el Design System v3. Está pensado para listar y visualizar perfiles de autores, mostrando el avatar, los tags, el nombre con la bandera de nacionalidad y la cantidad de obras.</p><p>Se modela como un <code>&lt;article&gt;</code> con un único enlace real sobre el nombre del autor, estirado con un pseudo-elemento para que toda la tarjeta sea clickeable sin inflar el nombre accesible del link.</p><p>Se compone de <a href="./?path=/docs/componentes-v3-imageprofile--docs" target="_top"><strong>ImageProfile</strong></a> (avatar) y <a href="./?path=/docs/componentes-v3-tagslist--docs" target="_top"><strong>TagsList</strong></a> con instancias de <a href="./?path=/docs/componentes-v3-tag--docs" target="_top"><strong>Tag</strong></a> (etiquetas del autor).</p></div>`,
 			},
 		},
 		layout: 'padded',
@@ -33,11 +33,11 @@ const meta: Meta<AuthorCardTeaserComponent> = {
 		tags: {
 			control: { type: 'object' },
 			description: 'Tags asociados al autor',
-			table: { type: { summary: 'Tag[]' }, defaultValue: { summary: '[]' } },
+			table: { type: { summary: 'readonly Tag[]' }, defaultValue: { summary: '[]' } },
 		},
 		storyCount: {
 			control: { type: 'number' },
-			description: 'Cantidad de historias del autor',
+			description: 'Cantidad de obras del autor',
 			table: { type: { summary: 'number' }, defaultValue: { summary: 'undefined' } },
 		},
 	},
@@ -53,7 +53,7 @@ export const Default: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Teaser completo del autor: avatar, fila de tags, nombre con bandera de nacionalidad y cantidad de historias. Toda la tarjeta es clickeable y navega al perfil del autor.</p><p><strong>Usos:</strong> Author List (listado de autores).</p>`,
+				story: `<p>Teaser completo del autor: avatar, fila de tags, nombre con bandera de nacionalidad y cantidad de obras. Toda la tarjeta es clickeable y navega al perfil del autor.</p><p><strong>Usos:</strong> la sección <a href="./?path=/docs/componentes-v3-highlightedauthors--docs" target="_top"><strong>HighlightedAuthors</strong></a> de la página de inicio, y el listado de autores.</p>`,
 			},
 		},
 	},

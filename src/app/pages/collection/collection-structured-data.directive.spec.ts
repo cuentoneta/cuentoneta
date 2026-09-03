@@ -3,10 +3,12 @@ import { TestBed } from '@angular/core/testing';
 import { DOCUMENT } from '@angular/common';
 import { signal } from '@angular/core';
 
-import { geometriasDelDesveloCollectionMock } from '@mocks/onoff-collections.mock';
+import { onoffCollectionsMock } from '@mocks/onoff-collections.mock';
 import { type Collection } from '@models/collection.model';
 import { CollectionStructuredDataDirective } from './collection-structured-data.directive';
 import { COLLECTION_HOST } from './collection-host';
+
+const [canon] = onoffCollectionsMock;
 
 describe('CollectionStructuredDataDirective', () => {
 	const collectionSignal = signal<Collection | undefined>(undefined);
@@ -36,46 +38,43 @@ describe('CollectionStructuredDataDirective', () => {
 		instantiate();
 		TestBed.tick();
 
-		expect(TestBed.inject(DOCUMENT).head.querySelector('script[data-schema-id="collection-page"]')).toBeNull();
+		expect(TestBed.inject(DOCUMENT).head.querySelector('script[data-schema-id="collection"]')).toBeNull();
 	});
 
 	it('should emit the CollectionPage and breadcrumb JSON-LD when the collection resolves', () => {
-		collectionSignal.set(geometriasDelDesveloCollectionMock);
+		collectionSignal.set(canon);
 
 		instantiate();
 		TestBed.tick();
 
 		const head = TestBed.inject(DOCUMENT).head;
-		expect(
-			JSON.parse(head.querySelector('script[data-schema-id="collection-page"]')?.textContent ?? '{}'),
-		).toMatchObject({ '@type': 'CollectionPage' });
+		expect(JSON.parse(head.querySelector('script[data-schema-id="collection"]')?.textContent ?? '{}')).toMatchObject({
+			'@type': 'CollectionPage',
+		});
 		expect(
 			JSON.parse(head.querySelector('script[data-schema-id="breadcrumb-collection"]')?.textContent ?? '{}'),
 		).toMatchObject({ '@type': 'BreadcrumbList' });
 	});
 
-	// La página de storylist ocupa `collection`. Que los ids no se pisen es lo que permite distinguir
-	// los bloques mientras las dos rutas convivan.
-	// TODO(#2269): este caso se invierte al renombrarse el id — pasa a afirmar que sí emite `collection`.
-	it('should not emit under the schema id the storylist page uses', () => {
-		collectionSignal.set(geometriasDelDesveloCollectionMock);
+	it('should emit under the schema id the collection page owns', () => {
+		collectionSignal.set(canon);
 
 		instantiate();
 		TestBed.tick();
 
-		expect(TestBed.inject(DOCUMENT).head.querySelector('script[data-schema-id="collection"]')).toBeNull();
+		expect(TestBed.inject(DOCUMENT).head.querySelector('script[data-schema-id="collection"]')).not.toBeNull();
 	});
 
 	it('should remove both JSON-LD blocks when destroyed', () => {
-		collectionSignal.set(geometriasDelDesveloCollectionMock);
+		collectionSignal.set(canon);
 		instantiate();
 		TestBed.tick();
 		const head = TestBed.inject(DOCUMENT).head;
-		expect(head.querySelector('script[data-schema-id="collection-page"]')).not.toBeNull();
+		expect(head.querySelector('script[data-schema-id="collection"]')).not.toBeNull();
 
 		TestBed.resetTestingModule();
 
-		expect(head.querySelector('script[data-schema-id="collection-page"]')).toBeNull();
+		expect(head.querySelector('script[data-schema-id="collection"]')).toBeNull();
 		expect(head.querySelector('script[data-schema-id="breadcrumb-collection"]')).toBeNull();
 	});
 });

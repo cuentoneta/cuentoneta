@@ -17,15 +17,15 @@ export default defineType({
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
-			name: 'mostRead',
-			title: 'Lo más leído',
+			name: 'mostReadLiteraryWorks',
+			title: 'Lo más leído (obras)',
 			type: 'array',
 			of: [
 				defineArrayMember({
-					name: 'story',
-					title: 'Historia',
+					name: 'literaryWork',
+					title: 'Obra literaria',
 					type: 'reference',
-					to: [{ type: 'story' }],
+					to: [{ type: 'literaryWork' }],
 				}),
 			],
 		}),

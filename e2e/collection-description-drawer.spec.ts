@@ -8,14 +8,15 @@
  * La colección que se lee acá no es la estable: es la de descripción más larga del catálogo, que es la
  * única con chances de desbordar. Ver `_utils/collection-fixtures.ts`.
  */
-import { expect, test, type Locator, type Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 
+import { test } from './_utils/test';
 import {
-	DESKTOP_VIEWPORT,
 	fetchCollectionCatalog,
 	pickMostDescriptiveCollection,
 	type CollectionCatalogEntry,
 } from './_utils/collection-fixtures';
+import { DESKTOP_VIEWPORT } from './_utils/viewports';
 
 const READ_MORE = 'Leer más';
 

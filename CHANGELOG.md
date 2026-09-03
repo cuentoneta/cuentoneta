@@ -1,9 +1,6 @@
 <div align="center" width="100%">
-    <h1>La Cuentoneta</h1>
-    <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="https://github.com/rolivencia/cuentoneta/assets/32349705/b0ea0659-3c9d-4c4f-9d14-ab60d50dd832">
-        <img width="33%" alt="La Cuentoneta" src="https://github.com/rolivencia/cuentoneta/assets/32349705/b0ea0659-3c9d-4c4f-9d14-ab60d50dd832">
-    </picture>
+    <h2>La Cuentoneta</h2>
+    <img width="33%" alt="" src=".github/assets/cuentoneta-logo.png">
 </div>
 
 ---
@@ -15,6 +12,111 @@ Esta bitácora de cambios detalla los hitos principales en el desarrollo de La C
 La lista de características futuras a implementar puede hallarse en la sección [issues](https://github.com/cuentoneta/cuentoneta/issues) del repositorio de Github del proyecto.
 
 Los hitos futuros de desarrollo, en los cuales se detallan las funcionalidades a desarrollar y los cambios a implementar, pueden encontrarse en las secciones [milestones](https://github.com/cuentoneta/cuentoneta/milestones) y [projects](https://github.com/cuentoneta/cuentoneta/projects) del repositorio de Github del proyecto.
+
+## Versión 2.11.0 (2026-08-31)
+
+La versión 2.11.0 es la más grande del proyecto hasta hoy y tiene un solo objetivo: **la plataforma deja de tener dos modelos de contenido y se queda con uno**. `LiteraryWork` y `Collection` dejan de convivir con `Story` y `Storylist` —que se retiran del frontend, del backend, del Studio y del dataset— y pasan a ser, simplemente, el dominio.
+
+El criterio de salida no era escribir el mundo nuevo sino **apagar el viejo sin perder lo indexado**, y esa restricción ordenó todo el hito. Las páginas nuevas se construyeron primero, cada una con su indexabilidad verificada contra el HTML que sirve el servidor; recién después se retiraron las viejas, con sus redirecciones 301 y el sitemap reapuntado en el mismo tren de release. La ruta de lectura se mudó de `/read/:slug` a **`/literary-work/:slug`** antes de ese merge y no después: `/read` nunca estuvo indexada, así que las 613 URLs de cuento que producción anunciaba saltan **una sola vez** a su destino definitivo en lugar de encadenar dos redirecciones.
+
+**Cuatro páginas pasaron a V3.** La de lectura, con su selector de formatos multimedia y sus sugerencias por autor o por colección (#1471). La de colección y su catálogo filtrable por facetas (#1472). La de autor, con su columna de perfil, su biografía en panel deslizable y su listado de obras (#2396). Y la de inicio, con encabezado propio, secciones con bajada y acción, y —lo que más importa para el indexado— **los cuatro mazos servidos en el HTML del servidor**, sin marcadores de esqueleto (#1508). La home suma además el bloque de autores destacados (#1568).
+
+Buena parte del trabajo fue **medir el dataset en vez de suponerlo**, y ahí aparecieron defectos que ninguna review de código habría encontrado: 27 obras publicadas respondían 503 porque su fecha de publicación no traía hora (#2423), dos obras compartían el mismo slug (#2421), y dos cuentos indexados tenían el slug cruzado respecto de su obra, así que la redirección los mandaba al lugar equivocado (#2424). Los tres se corrigieron sobre producción antes de este release.
+
+Sobre el final, un **spike de consumo de ancho de banda** agotó más de un cuarto de la cuota mensual de Sanity en dos días. La causa de base era anterior al hito —el sitio servía los originales del CDN, 11,3 MB de imágenes solo en la página de inicio—, pero dos decisiones correctas de esta versión le sacaron el amortiguador: la home dejó de diferir sus mazos y dos superficies pasaron a indexables. Se contuvo en cuatro frentes, con la transformación de imágenes entrando por un `IMAGE_LOADER`, porque el ancho al que una imagen se pinta es un dato de la pantalla y no del backend (#2431, #2432).
+
+Queda **un paso manual después del deploy**: la purga de los 708 cuentos y las 36 listas que siguen en el dataset como contenido invisible. No puede correr antes, porque la versión que hoy está en producción todavía lee los campos que esa purga desreferencia.
+
+### Cambios completos
+
+Ver el changelog completo en [2.11.0](https://github.com/cuentoneta/cuentoneta/releases/tag/2.11.0)
+
+### Cambios
+
+#### Retiro de Story y Storylist
+
+- [#2266] - La landing sirve Collection y LiteraryWork desde el backend.
+- [#2267] - La home renderiza las obras destacadas con los teasers de LiteraryWork.
+- [#2287] - Traslada el listado de obras de /story a /literary-work.
+- [#2184] - Da de baja Storylist en el frontend y borra los componentes descartables.
+- [#2268] - Retira StoryComponent y la ruta /story/:slug.
+- [#2269] - Retira StorylistComponent y la ruta /storylist/:slug.
+- [#2270] - Reapunta el indexado a las rutas nuevas con redirecciones 301 desde las viejas.
+- [#2425] - Sirve la página de lectura en /literary-work/:slug en lugar de /read/:slug.
+- [#2271] - Da de baja los schemas story y storylist del Studio y sus módulos de backend.
+- [#2282] - Aporta las migraciones y el runbook para purgar del dataset los documentos retirados.
+- [#2363] - Refunda el lenguaje de dominio: elimina las migraciones de la transición y el relato de reemplazo.
+
+#### Página de lectura
+
+- [#2258] - Ofrece y monta los formatos multimedia de una obra.
+- [#2283] - Ensambla la página de lectura V3 sobre el walking skeleton.
+- [#2284] - Reviste las sugerencias de lectura en V3 y resuelve su acceso a la colección o al autor.
+- [#2285] - Cubre en Storybook sus variantes con selector de obra del corpus.
+- [#2036] - Integra ReadingSuggestions con los endpoints de LiteraryWork.
+- [#2037] - Quita el adapter temporal Story→LiteraryWork de ReadingSuggestions.
+- [#1855] - SEO/AEO de la página de lectura: canónica, meta tags y JSON-LD.
+- [#1080] - Tests de la página de lectura: e2e con Playwright y unitarios.
+- [#2419] - Afirma que la página enlaza al perfil del autor una sola vez.
+
+#### Colecciones
+
+- [#1834] - Directiva reutilizable de detección de overflow vertical.
+- [#1836] - CollectionInfoPanel, que unifica portada, título, etiqueta y descripción.
+- [#1837] - Componente de portada de colección que resuelve sus dos formas de imagery.
+- [#1833] - CollectionPage con su ruta /collection/:slug y sus estados.
+- [#1835] - Descripción de la colección con recorte, "Leer más" y panel deslizable.
+- [#1838] - Directivas de meta tags y datos estructurados de CollectionPage.
+- [#1840] - Test e2e del flujo de CollectionPage.
+- [#2288] - Crea el listado de colecciones en /collection y retira /storylist.
+- [#1841] - Alinea el modelo Collection con el rename Story → LiteraryWork.
+- [#2286] - Recorta el extracto de las obras al primer párrafo de su primera sección en la query.
+- [#2097] - Da entrada de catálogo a CollectionTeasersDeck.
+
+#### Página de autor
+
+- [#2396] - Página de autor V3: perfil, listado de obras y salida del mundo Story.
+
+#### Página de inicio y autores destacados
+
+- [#1508] - Página de inicio V3: hero, encabezados de sección y render server-side de los mazos.
+- [#1570] - Declara los autores destacados en el documento de página de inicio, con su query y su contrato de dominio.
+- [#1571] - Componente HighlightedAuthors en la home.
+
+#### Design System
+
+- [#2255] - Separa apariencia, geometría y estado en los ejes de Button.
+- [#2256] - Crea un ButtonGroup de opciones excluyentes que emite el id elegido.
+- [#2257] - Extrae el catálogo de widgets multimedia fuera del despachador.
+- [#1811] - Componente Divider del Design System V3.
+- [#2304] - Quita el nombre accesible de las barras de carga, que se repetía en cada una.
+- [#2420] - Retira Tabs y Tab, que no tienen consumidor de producción.
+
+#### Dominio y Portable Text
+
+- [#2029] - Separa la vista de multimedia de teaser de la completa en el dominio.
+- [#2049] - Cierra el epic de migración del contenido editorial a Markdown, cuyas conversiones shippearon en 2.9.0 y 2.10.0.
+- [#2055] - Elimina la infraestructura de Portable Text del repositorio.
+
+#### Datos de producción
+
+- [#2423] - Corrige las obras publicadas que respondían 503 por tener la fecha de publicación sin hora.
+- [#2421] - Resuelve las dos obras publicadas que compartían el slug el-taco-de-ebano.
+- [#2424] - Corrige los dos cuentos indexados con el slug cruzado respecto de su obra.
+
+#### Rendimiento y consumo
+
+- [#2431] - Contiene el consumo de ancho de banda de Sanity en producción, CI y sincronización de datasets.
+- [#2432] - Ajusta los tamaños de portada que se piden al CDN.
+
+#### Tooling y documentación
+
+- [#2394] - Reduce el costo por edición y por turno del flujo de Claude Code.
+- [#2332] - Carga la doctrina de comentarios al escribir código y la audita en la review.
+- [#2373] - Retira el bloque de tests deshabilitado del spec de la página de inicio.
+- [#2236] - Quita los residuos de Jest de la configuración de TypeScript.
+- [#1790] - Adopta las utilidades de tiempo de Vitest y TestBed.getLastFixture().
+- [#1873] - Realinea la documentación y los ejemplos del corpus alrededor de LiteraryWork.
 
 ## Versión 2.10.3 (2026-08-19)
 

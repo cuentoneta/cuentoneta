@@ -1,24 +1,28 @@
 import { spyOn } from '@test-utils';
 import { mapMediaSources, mapMediaTeasers } from './media-sources.functions';
-import { onoffRawCollectionWorksWithMediaSources } from '@mocks/onoff-raw-collections.mock';
-import { onoffRawStoriesWithMediaSources, onoffRawTeasersWithMediaSources } from '@mocks/onoff-raw-stories.mock';
+import { onoffRawCollectionsMock, onoffRawCollectionWorksWithMediaSources } from '@mocks/onoff-raw-collections.mock';
+import { onoffRawLiteraryWorksWithMediaSources } from '@mocks/onoff-raw-literary-works.mock';
 import { isAudioRecording, isSpaceRecording, isSpotifyPodcastEpisode, isYouTubeVideo } from '@models/media.model';
 import { onoffAudioRecordingsMock } from '@mocks/onoff-media.mock';
 
-const [rawStory] = onoffRawStoriesWithMediaSources;
-const [rawTeaser] = onoffRawTeasersWithMediaSources;
+const [rawLiteraryWork] = onoffRawLiteraryWorksWithMediaSources;
+const [rawCollection] = onoffRawCollectionsMock;
 
-function rawSourceOfType<T extends (typeof rawStory.mediaSources)[number]['_type']>(type: T) {
-	const source = rawStory.mediaSources.find((mediaSource) => mediaSource._type === type);
+function sourceOfType<S extends { _type: string }, T extends S['_type']>(sources: readonly S[], type: T) {
+	const source = sources.find((mediaSource) => mediaSource._type === type);
 	if (source === undefined) {
 		throw new Error(`El fixture no trae un mediaSource de tipo "${type}"`);
 	}
-	return source as Extract<(typeof rawStory.mediaSources)[number], { _type: T }>;
+	return source as Extract<S, { _type: T }>;
+}
+
+function rawSourceOfType<T extends (typeof rawLiteraryWork.mediaSources)[number]['_type']>(type: T) {
+	return sourceOfType(rawLiteraryWork.mediaSources, type);
 }
 
 describe('mapMediaSources', () => {
 	it('mapea el audio recording con su url', () => {
-		const [audioRecording] = mapMediaSources(rawStory.mediaSources).filter(isAudioRecording);
+		const [audioRecording] = mapMediaSources(rawLiteraryWork.mediaSources).filter(isAudioRecording);
 		const source = rawSourceOfType('audioRecording');
 
 		expect(audioRecording.title).toBe(source.title);
@@ -26,7 +30,7 @@ describe('mapMediaSources', () => {
 	});
 
 	it('mapea el space recording resolviendo audioUrl y su metadata', () => {
-		const [spaceRecording] = mapMediaSources(rawStory.mediaSources).filter(isSpaceRecording);
+		const [spaceRecording] = mapMediaSources(rawLiteraryWork.mediaSources).filter(isSpaceRecording);
 		const source = rawSourceOfType('spaceRecording');
 
 		expect(spaceRecording.data.url).toBe(source.audioUrl);
@@ -35,7 +39,7 @@ describe('mapMediaSources', () => {
 	});
 
 	it('mapea el episodio de podcast y el video con su dato propio', () => {
-		const mapped = mapMediaSources(rawStory.mediaSources);
+		const mapped = mapMediaSources(rawLiteraryWork.mediaSources);
 		const [podcast] = mapped.filter(isSpotifyPodcastEpisode);
 		const [video] = mapped.filter(isYouTubeVideo);
 
@@ -45,7 +49,7 @@ describe('mapMediaSources', () => {
 
 	// El fixture lleva un pdfLink: un `_type` que el schema admite y el dominio no modela.
 	it('descarta el tipo que el dominio no modela', () => {
-		const mapped = mapMediaSources(rawStory.mediaSources);
+		const mapped = mapMediaSources(rawLiteraryWork.mediaSources);
 
 		expect(rawSourceOfType('pdfLink')).toBeTruthy();
 		expect(mapped.map((media) => media.type)).toEqual([
@@ -57,25 +61,33 @@ describe('mapMediaSources', () => {
 	});
 });
 
-describe('mapMediaSources sobre la proyección de teaser', () => {
-	it('mapea los mismos tipos que la proyección completa', () => {
-		const mapped = mapMediaSources(rawTeaser.mediaSources);
+// La colección es la otra entrada de la unión que acepta mapMediaSources: sin estos casos, esa rama
+// quedaría sin cobertura y una divergencia de su proyección solo se vería en producción.
+describe('mapMediaSources sobre la proyección de colección', () => {
+	it('mapea cada recurso de la colección a su tipo de dominio, en orden', () => {
+		const mapped = mapMediaSources(rawCollection.mediaSources);
 
-		expect(mapped.map((media) => media.type)).toEqual([
-			'audioRecording',
-			'spaceRecording',
-			'spotifyPodcastEpisode',
-			'youTubeVideo',
-		]);
+		expect(mapped.map((media) => media.type)).toEqual(rawCollection.mediaSources.map((source) => source._type));
 	});
 
-	// La proyección de teaser no resuelve audioUrl, pero sí trae el resto de la metadata: el space
-	// recording del teaser es una SpaceRecording válida con la url en null, no un objeto vacío.
-	it('produce un space recording con su metadata y la url en null', () => {
-		const [spaceRecording] = mapMediaSources(rawTeaser.mediaSources).filter(isSpaceRecording);
-		const source = rawSourceOfType('spaceRecording');
+	it('entrega el dato propio de cada tipo y la descripción ya saneada', () => {
+		const mapped = mapMediaSources(rawCollection.mediaSources);
+		const [podcast] = mapped.filter(isSpotifyPodcastEpisode);
+		const [video] = mapped.filter(isYouTubeVideo);
 
-		expect(spaceRecording.data.url).toBeNull();
+		expect(podcast.data.url).toBe(sourceOfType(rawCollection.mediaSources, 'spotifyPodcastEpisode').url);
+		expect(video.data.videoId).toBe(sourceOfType(rawCollection.mediaSources, 'youTubeVideo').videoId);
+		expect(podcast.description).toMatch(/^<p>/);
+	});
+
+	// El único campo que la proyección deriva en vez de transportar. Se afirma sobre la colección
+	// además de sobre la obra porque el mapeo lo lee sin distinguir de cuál de las dos viene: si una
+	// de ellas dejara de resolverlo, acá se ve.
+	it('resuelve la url del audio del space recording de la colección', () => {
+		const [spaceRecording] = mapMediaSources(rawCollection.mediaSources).filter(isSpaceRecording);
+		const source = sourceOfType(rawCollection.mediaSources, 'spaceRecording');
+
+		expect(spaceRecording.data.url).toBe(source.audioUrl);
 		expect(spaceRecording.data.duration).toBe(source.duration);
 		expect(spaceRecording.data.hostName).toBe(source.hostName);
 	});
@@ -86,14 +98,14 @@ describe('la descripción cruza el pipeline de Markdown', () => {
 	// que ata las dos puntas: si el mapper dejara de pasar por el pipeline, el ACL devolvería el Markdown
 	// crudo y esta igualdad se rompería. El shape de párrafo lo confirma desde el otro lado.
 	it('entrega HTML saneado y no el Markdown crudo', () => {
-		const [audioRecording] = mapMediaSources(rawStory.mediaSources).filter(isAudioRecording);
+		const [audioRecording] = mapMediaSources(rawLiteraryWork.mediaSources).filter(isAudioRecording);
 
 		expect(audioRecording.description).toBe(onoffAudioRecordingsMock[0].description);
 		expect(audioRecording.description).toMatch(/^<p>.*<\/p>$/s);
 	});
 
 	it('preserva el énfasis, la negrita y el enlace del fixture', () => {
-		const mapped = mapMediaSources(rawStory.mediaSources);
+		const mapped = mapMediaSources(rawLiteraryWork.mediaSources);
 		const [spaceRecording] = mapped.filter(isSpaceRecording);
 		const [podcast] = mapped.filter(isSpotifyPodcastEpisode);
 
@@ -159,7 +171,7 @@ describe('descarte de un tipo sin modelo de dominio', () => {
 	it('deja rastro en el log en vez de descartarlo en silencio', () => {
 		const warn = spyOn(console, 'warn').mockImplementation(() => undefined);
 
-		mapMediaSources(rawStory.mediaSources);
+		mapMediaSources(rawLiteraryWork.mediaSources);
 
 		expect(warn).toHaveBeenCalledWith(expect.stringContaining('pdfLink'), {
 			_key: rawSourceOfType('pdfLink')._key,

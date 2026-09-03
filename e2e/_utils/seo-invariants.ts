@@ -5,7 +5,7 @@
  * plano y en happy-dom), sin importar Playwright ni Vitest. Lo consumen tanto los specs de e2e (gate
  * de CI) como el script de smoke post-deploy, para que ambos afirmen las mismas invariantes sin drift.
  *
- * La API pública (`check*` + `collectIndexableHtmlViolations`) toma `string`; internamente cada check
+ * Todo lo exportado toma `string` y parsea por su cuenta; internamente cada check
  * consulta el DOM por selector CSS, así afirma el elemento exacto (p. ej. `ng-server-context` vive en
  * `<cuentoneta-root>`, no en cualquier parte del HTML). Los checks de contenido (heading, contenido
  * primario, skeleton, enlaces internos) se acotan a `<main>`: el chrome global (header/footer) vive en
@@ -34,14 +34,19 @@ function normalizedText(element: HTMLElement | null): string {
 	return (element?.text ?? '').replace(/\s+/g, ' ').trim();
 }
 
+// Angular emite `ssr` al renderizar por request y `ssg` al prerenderizar; las dos sirven el HTML
+// completo, que es lo que el crawler necesita. Lo que esta regla existe para atrapar es el deopt a
+// renderizado en el cliente, que deja el contexto vacío o ausente y la página sin cuerpo.
+const SERVER_RENDERED_CONTEXTS = ['ssr', 'ssg'];
+
 function ngServerContext(root: HTMLElement): SeoInvariantViolation | null {
 	const actual = root.querySelector('cuentoneta-root')?.getAttribute('ng-server-context');
-	if (actual === 'ssr') {
+	if (actual && SERVER_RENDERED_CONTEXTS.includes(actual)) {
 		return null;
 	}
 	return {
 		rule: 'server-render-context',
-		message: `Se esperaba ng-server-context="ssr" en <cuentoneta-root>; se encontró "${actual ?? '(ausente)'}" (deopt a CSR).`,
+		message: `Se esperaba ng-server-context "ssr" o "ssg" en <cuentoneta-root>; se encontró "${actual ?? '(ausente)'}" (deopt a CSR).`,
 	};
 }
 
@@ -99,7 +104,7 @@ function primaryHeading(root: HTMLElement, pattern?: RegExp): SeoInvariantViolat
 function primaryContentLength(
 	root: HTMLElement,
 	// Umbral por defecto de texto en `<main>`: muy por debajo del contenido real de los fixtures (bio,
-	// cuerpo del cuento, ficha técnica) pero muy por encima del ruido de whitespace de un skeleton.
+	// cuerpo de la obra, ficha técnica) pero muy por encima del ruido de whitespace de un skeleton.
 	minLength: number = 120,
 ): SeoInvariantViolation | null {
 	const length = normalizedText(root.querySelector('main')).length;
@@ -123,9 +128,15 @@ function noSkeletonMarkers(root: HTMLElement): SeoInvariantViolation | null {
 	return null;
 }
 
-function internalLink(root: HTMLElement, prefix: string): SeoInvariantViolation | null {
+function hrefsWithPrefix(root: HTMLElement, prefix: string): string[] {
 	const anchors = root.querySelector('main')?.querySelectorAll('a') ?? [];
-	if (anchors.some((anchor) => anchor.getAttribute('href')?.startsWith(prefix))) {
+	return anchors
+		.map((anchor) => anchor.getAttribute('href'))
+		.filter((href): href is string => href !== undefined && href.startsWith(prefix));
+}
+
+function internalLink(root: HTMLElement, prefix: string): SeoInvariantViolation | null {
+	if (hrefsWithPrefix(root, prefix).length > 0) {
 		return null;
 	}
 	return {
@@ -213,6 +224,16 @@ function emptyBodyViolations(root: HTMLElement, minLength?: number): SeoInvarian
 
 export function checkInternalLink(html: string, prefix: string): SeoInvariantViolation | null {
 	return internalLink(parseHtml(html), prefix);
+}
+
+/**
+ * Los `href` de `<main>` que empiezan en `prefix`, en orden de documento y con los repetidos
+ * incluidos: un destino que aparece dos veces devuelve dos entradas, porque son dos enlaces. Los
+ * anchors sin `href` no cuentan. Permite afirmar *cuántos* enlaces sirve una página; cuántos son
+ * correctos lo decide cada spec.
+ */
+export function getInternalLinkHrefs(html: string, prefix: string): string[] {
+	return hrefsWithPrefix(parseHtml(html), prefix);
 }
 
 export function checkJsonLdBlocks(html: string, ids: readonly string[]): Promise<SeoInvariantViolation[]> {

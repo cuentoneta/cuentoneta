@@ -37,7 +37,7 @@ Cargá las referencias en dos grupos, emitidos como **un único batch en paralel
 
 Primero determiná el change set: corré `git diff --name-only develop...HEAD` (o, cuando todavía no hay diff de rama, usá los archivos que la tarea describe como en alcance). Si ninguno arroja un set claro de archivos, tratá el cambio como ambiguo y aplicá la regla de fail-open de abajo. Después cargá las referencias de dominio cuyos paths-trigger coincidan:
 
-- `.claude/references/domain-model.md` — el diff toca `src/api/**` o involucra entidades de dominio, agregados, invariantes o bounded contexts (Story / Author / Storylist) y validación Zod
+- `.claude/references/domain-model.md` — el diff toca `src/api/**` o involucra entidades de dominio, agregados, invariantes o bounded contexts (LiteraryWork / Author / Collection) y validación Zod
 - `.claude/references/sanity-acl.md` — el diff toca `src/api/**` (repos / services / mappers en `src/api/_utils/`), GROQ o el Anti-Corruption Layer que traduce los resultados crudos de Sanity al modelo de dominio
 - `.claude/references/angular-components.md` — el diff toca `src/app/components/**`, plantillas, providers/DI, effects o control flow
 - `.claude/references/angular-state.md` — el diff toca estado / servicios / RxJS en `src/app/` (estado signals-first sin NgRx)
@@ -75,7 +75,7 @@ Primero determiná el change set: corré `git diff --name-only develop...HEAD` (
 - **Filosofía Unix** — cada módulo/servicio hace una sola cosa bien; evitar god classes o librerías "todo en uno"
 - **Predecible** — la arquitectura sigue el principio de mínima sorpresa; patrones estándar antes que abstracciones ingeniosas
 - **Idiomático** — sigue las convenciones de Angular 22 (standalone, **zoneless**, OnPush, signals/`computed`/`effect`, sin lifecycle hooks) y Nx 23.1 single-project
-- **Basado en el dominio** — la estructura refleja conceptos de negocio (Story / Author / Storylist), no capas técnicas; el código cuenta la historia del dominio
+- **Basado en el dominio** — la estructura refleja conceptos de negocio (LiteraryWork / Author / Collection), no capas técnicas; el código cuenta la historia del dominio
 
 ### Estado signals-first (sin NgRx)
 

@@ -8,7 +8,7 @@ body:
       label: Descripción
       description: Detalla la propuesta de mejora relacionada a UI/UX de la manera más detallada posible.
       placeholder: |
-        Por ejemplo: "Rediseño de tarjetas de stories para storylists", "Mejoras en diseño de navbar", "Mejoras en experiencia de lectura", "Propuesta de diseño para ordenamiento de elementos mutlimedia relacionados a stories", etc..
+        Por ejemplo: "Rediseño de tarjetas de obras para colecciones", "Mejoras en diseño de navbar", "Mejoras en experiencia de lectura", "Propuesta de diseño para ordenamiento de elementos mutlimedia relacionados a obras", etc..
     validations:
       required: true
   - type: textarea

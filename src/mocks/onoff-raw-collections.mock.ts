@@ -25,6 +25,13 @@ export const onoffRawCollectionsWithoutFeaturedImage: RawCollection[] = onoffRaw
 	(collection) => collection.featuredImage === null,
 );
 
+export const onoffRawCollectionTeasersWithFeaturedImage: CollectionsQueryResult = onoffRawCollectionTeasersMock.filter(
+	(teaser) => teaser.featuredImage !== null,
+);
+
+export const onoffRawCollectionTeasersWithoutFeaturedImage: CollectionsQueryResult =
+	onoffRawCollectionTeasersMock.filter((teaser) => teaser.featuredImage === null);
+
 // Las obras embebidas que declaran multimedia, que son las que ejercitan el mapeo de la vista de
 // teaser. Su proyección solo trae el tag, así que el shape difiere del de las obras de nivel documento.
 export const onoffRawCollectionWorksWithMediaSources: RawCollection['literaryWorks'] = onoffRawCollectionsMock
@@ -45,6 +52,20 @@ export const descriptionlessRawCollection: RawCollection = {
 	...geometriasDelDesveloRawCollection,
 	description: '',
 };
+
+// El canon no ejercita el caso: hace falta un escenario cuyo Markdown traiga enlaces para poder
+// afirmar qué hace cada vista con ellos.
+const linkedDescriptionMd = 'Una colección con [un enlace propio](https://www.cuentoneta.ar/about) en la prosa.';
+
+export const linkedDescriptionRawCollection: RawCollection = {
+	...geometriasDelDesveloRawCollection,
+	description: linkedDescriptionMd,
+};
+
+export const linkedDescriptionRawCollectionTeasers: CollectionsQueryResult = generatedTeasers.map((teaser) => ({
+	...teaser,
+	description: linkedDescriptionMd,
+}));
 
 export const sectionlessWorkRawCollection: RawCollection = {
 	...geometriasDelDesveloRawCollection,

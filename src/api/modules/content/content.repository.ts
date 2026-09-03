@@ -1,81 +1,51 @@
-// Sanity
-import { client } from '../../_helpers/sanity-connector';
+import type { LandingPageContent, RotatingContent } from '@models/landing-page-content.model';
 
-// Queries
-import {
-	landingPageContentQuery,
-	landingPageListQuery,
-	latestLandingPageReferencesQuery,
-	rotatingContentQuery,
-} from '@queries/content.query';
-import {
-	LandingPageContentQueryResult,
-	LandingPageListQueryResult,
-	LatestLandingPageReferencesQueryResult,
-} from '@sanity-types';
-import { mapLandingPageContent, mapStoryNavigationTeaserWithAuthor } from '../../_utils/functions';
-import { LandingPageContent, RotatingContent } from '@models/landing-page-content.model';
+export type KeyedReference = { _key: string; _type: 'reference'; _ref: string };
 
-export async function fetchLandingPageContent(slug: string): Promise<LandingPageContentQueryResult> {
-	return client.fetch(landingPageContentQuery, { slug });
-}
-
-export async function fetchLatestLandingPageReferences(
-	currentSlug: string,
-): Promise<LatestLandingPageReferencesQueryResult> {
-	return client.fetch(latestLandingPageReferencesQuery, { currentSlug });
-}
-
-export async function fetchLandingPagesList(slugs: string[]): Promise<LandingPageListQueryResult> {
-	return client.fetch(landingPageListQuery, { slugs });
-}
-
-export async function fetchRotatingContent(): Promise<RotatingContent> {
-	const result = await client.fetch(rotatingContentQuery);
-	if (!result) {
-		throw new Error('Rotating content not found');
-	}
-
-	return { ...result, mostRead: mapStoryNavigationTeaserWithAuthor(result.mostRead) };
-}
-
-export async function createLandingPages(
-	landingPageObjects: Array<{
-		_type: string;
-		config: string;
-		slug: { _type: string; current: string };
-		campaigns: Array<{ _key: string; _type: string; _ref: string }>;
-		cards: Array<{ _key: string; _type: string; _ref: string }>;
-		latestReads: Array<{ _key: string; _type: string; _ref: string }>;
-	}>,
-) {
-	return Promise.all(landingPageObjects.map((object) => client.create(object)));
-}
-
-// TODO: Rever estructura luego de migrar funciones de mapeo
-export async function fetchAndMapLandingPageContent(slug: string): Promise<LandingPageContent> {
-	const landingPageResult = await fetchLandingPageContent(slug);
-	const rotatingContentResult = await fetchRotatingContent();
-
-	if (!landingPageResult || !rotatingContentResult) {
-		throw new Error('Landing page content not found');
-	}
-
-	return {
-		...mapLandingPageContent({ ...landingPageResult, ...rotatingContentResult }),
-	};
+// Lo que el generador de semanas necesita saber de una landing ya cargada: su identidad y qué semana
+// configura. No es dominio —no transporta contenido curado— pero tampoco es el shape de Sanity: el
+// puerto lo declara por su cuenta para que el service no dependa de los tipos del typegen.
+export interface LandingPageSummary {
+	readonly _id: string;
+	readonly slug: string;
+	readonly config: string;
 }
 
 /**
- * Updates the mostRead stories in the rotating content document
+ * El contenido de una landing expresado como referencias sin resolver.
+ *
+ * Habla de referencias y no de dominio porque su consumidor las reapunta en vez de leerlas; la forma la
+ * declara el puerto y no la query, para que el service no dependa de los tipos del typegen.
  */
-export async function updateRotatingContentMostRead(
-	stories: Array<{ _key: string; _type: string; _ref: string }>,
-): Promise<void> {
-	const rotatingContent = await fetchRotatingContent();
-	if (!rotatingContent) {
-		throw new Error('Rotating content not found');
-	}
+export interface LandingPageReferences {
+	readonly _type: string;
+	readonly campaigns: readonly KeyedReference[];
+	readonly collections: readonly KeyedReference[];
+	readonly latestLiteraryWorks: readonly KeyedReference[];
+	readonly highlightedAuthors: readonly KeyedReference[];
+}
 
-	await client.patch(rotatingContent._id, { set: { mostRead: stories } }).commit();
+export type LandingPageCreatePayload = LandingPageReferences & {
+	config: string;
+	slug: { _type: string; current: string };
+};
+
+export interface ContentRepository {
+	fetchLandingPageContent(slug: string): Promise<LandingPageContent | null>;
+	fetchRotatingContent(): Promise<RotatingContent | null>;
+	fetchLandingPagesList(slugs: string[]): Promise<readonly LandingPageSummary[]>;
+	fetchLatestLandingPageReferences(currentSlug: string): Promise<LandingPageReferences | null>;
+	createLandingPages(landingPageObjects: LandingPageCreatePayload[]): Promise<unknown[]>;
+	/**
+	 * Reapunta el slot de obras más leídas a las obras de estos slugs, **en este orden**.
+	 *
+	 * Recibe slugs y no referencias porque quien lo llama no tiene de dónde sacar un identificador: los
+	 * slugs salen de una métrica externa. Resolverlos es parte de la escritura y vive con ella, en vez
+	 * de obligar al caso de uso a pedirle identificadores a otro repository para después devolvérselos
+	 * a éste.
+	 *
+	 * El orden es el ranking, así que el que se recibe es el que se escribe. Un slug que no resuelve se
+	 * descarta en silencio: la obra no existe, y no hay referencia que escribir.
+	 */
+	updateMostReadLiteraryWorks(slugs: readonly string[]): Promise<void>;
 }

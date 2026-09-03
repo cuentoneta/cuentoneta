@@ -2,10 +2,10 @@ import { render, screen } from '@testing-library/angular';
 import { provideRouter } from '@angular/router';
 
 import { NavigableCollectionTeaserComponent } from './navigable-collection-teaser.component';
-import { geometriasDelDesveloCollectionTeaserMock } from '@mocks/onoff-collections.mock';
+import { onoffCollectionTeasersWithTagsMock } from '@mocks/onoff-collections.mock';
 
 describe('NavigableCollectionTeaserComponent', () => {
-	const collection = geometriasDelDesveloCollectionTeaserMock;
+	const [collection] = onoffCollectionTeasersWithTagsMock;
 	const setup = (teaser = collection) =>
 		render(NavigableCollectionTeaserComponent, { inputs: { collection: teaser }, providers: [provideRouter([])] });
 
@@ -26,12 +26,12 @@ describe('NavigableCollectionTeaserComponent', () => {
 
 	it('should render the pluralized story count', async () => {
 		await setup({ ...collection, count: 5 });
-		expect(screen.getByText('5 historias')).toBeInTheDocument();
+		expect(screen.getByText('5 obras')).toBeInTheDocument();
 	});
 
 	it('should render the singular story count', async () => {
 		await setup({ ...collection, count: 1 });
-		expect(screen.getByText('1 historia')).toBeInTheDocument();
+		expect(screen.getByText('1 obra')).toBeInTheDocument();
 	});
 
 	it('should link to the collection exposing just the title as the accessible name', async () => {

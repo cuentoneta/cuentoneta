@@ -2,9 +2,18 @@
 # el CI los ejecuta con bash en Linux y un CR los rompería.
 *.sh text eol=lf
 
+# Salida de los generadores de Sanity: se colapsan en la review de GitHub para que una regeneración no
+# la inunde. `cms/schema.json` lo escribe `pnpm sanity:extract-schema` y `src/sanity/types.ts`,
+# `pnpm sanity:run-typegen-generator`. El generador va nombrado acá y no al lado de cada ruta porque
+# `.gitattributes` no admite comentarios al final de línea: git lee el `#` como nombre de atributo.
+cms/schema.json linguist-generated=true
+src/sanity/types.ts linguist-generated=true
+
 # Fixtures crudas que escribe `pnpm corpus:generate`: se colapsan en la review de GitHub para que una
-# regeneración no la inunde. Se enumeran una por una y no por glob `*.raw.mock.ts` — las de story y
-# storylist se siguen escribiendo a mano y un glob las escondería.
+# regeneración no la inunde. Se enumeran una por una y no por glob `*.raw.mock.ts` porque no todas las
+# que llevan ese sufijo las escribe el generador: `media/geometria.media.raw.mock.ts` se deriva a mano
+# del crudo de su obra, y un glob la escondería.
+src/mocks/onoff/landing-page/rotating-content.raw.mock.ts linguist-generated=true
 src/mocks/onoff/literary-work/geometria.literary-work.raw.mock.ts linguist-generated=true
 src/mocks/onoff/literary-work/los-peldanos.literary-work.raw.mock.ts linguist-generated=true
 src/mocks/onoff/literary-work/las-escaleras.literary-work.raw.mock.ts linguist-generated=true

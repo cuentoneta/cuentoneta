@@ -12,7 +12,9 @@
  *  - D. Al volver a la home (logo del header), los bloques del autor se remueven y los
  *       sitewide persisten; sin duplicar canonical ni <title>.
  */
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+
+import { test } from '../_utils/test';
 
 import { parseJsonLdBlocks, getMetaContent, getTitleText, getCanonicalHref } from '../_utils/seo';
 import { assertValidJsonLd } from '@testing/json-ld-validation';
@@ -62,13 +64,13 @@ test('author — C: bloques sitewide Organization y WebSite presentes', async ()
 	expect(blocks.get(SCHEMA_IDS.website)?.['@type']).toBe('WebSite');
 });
 
-test('author — invariantes de indexado para crawlers (ssr, h1, bio, sin skeleton, enlace a story)', async () => {
+test('author — invariantes de indexado para crawlers (ssr, h1, bio, sin skeleton, enlace a lectura)', async () => {
 	expect(
 		await collectIndexableHtmlViolations(html, {
 			path: authorPath,
 			titlePattern: /borges/i,
 			requiredJsonLdIds: [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.profilePage, SCHEMA_IDS.breadcrumbAuthor],
-			requiredInternalLinkPrefix: '/story/',
+			requiredInternalLinkPrefix: '/literary-work/',
 		}),
 	).toEqual([]);
 });

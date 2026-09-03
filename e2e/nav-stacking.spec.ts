@@ -2,30 +2,36 @@
  * La barra de navegación fija responde sobre su propia franja en toda ruta con contenido, en los tres
  * anchos del Design System.
  *
- * Generaliza el caso de `/read`, que nació de un defecto puntual: dos componentes que no se conocían
+ * Generaliza el caso de la página de lectura, que nació de un defecto puntual: dos componentes que no se conocían
  * eligieron el mismo valor de apilamiento, quedaron en el mismo contexto y el empate lo resolvió el orden
  * del documento. La escala y sus reglas de lint impiden ahora elegir un valor fuera de rango, pero no
  * pueden juzgar si el aislamiento quedó en el ancestro correcto: eso solo se mide en un navegador.
  */
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+
+import { test } from './_utils/test';
 
 import { NAV_OWNS_EVERY_SAMPLE, STACKING_VIEWPORTS, VIEWPORT_HEIGHT, navStackingReport } from './_utils/stacking';
 import { STABLE_SLUGS } from './_utils/seo-fixtures';
+
+// Lo que este spec mide es geometría, y la geometría depende de cuándo llega cada imagen: con las del CDN
+// sustituidas, que resuelven al instante, el hit-test empezó a resolver a la raíz de a ratos. Se paga el
+// ancho de banda de estas cargas a cambio del timing real.
+test.use({ interceptSanityAssets: false });
 
 // Las rutas con fixture estable, cada una con un elemento que **la propia página** aporta. El selector no
 // puede ser del shell —`cuentoneta-header` está presente aun con la ruta en esqueleto o en error—, porque
 // entonces el hit-test correría antes de que haya contenido con el que disputar la franja.
 //
-// `/read` no está acá: tiene su propio spec de regresión, que es el del defecto que originó todo esto y
+// La página de lectura no está acá: tiene su propio spec de regresión, que es el del defecto que originó todo esto y
 // nombra al hero como sospechoso. Sumarla también acá duplicaría su costo en el gate más frágil del repo.
 const ROUTES = Object.freeze([
 	{ name: 'home', path: '/home', ready: 'h1' },
-	{ name: 'story', path: `/story/${STABLE_SLUGS.story}`, ready: 'h1' },
-	// La ficha de autor sirve su `h1` vacío y lo completa en el cliente, así que no discrimina: se espera a
-	// las pestañas, que solo existen con el contenido de la página.
-	{ name: 'author', path: `/author/${STABLE_SLUGS.author}`, ready: 'cuentoneta-tabs' },
-	// La colección no declara `h1`; su título es un componente propio.
-	{ name: 'storylist', path: `/storylist/${STABLE_SLUGS.storylist}`, ready: 'cuentoneta-storylist-title' },
+	{ name: 'author', path: `/author/${STABLE_SLUGS.author}`, ready: 'h1' },
+	// El esqueleto de la colección no declara `h1`, así que esperarlo discrimina la página servida de su
+	// estado de carga. El estado de error sí declara uno, y a ese lo descarta la guarda de status: la
+	// colección inexistente responde 404, no 200.
+	{ name: 'collection', path: `/collection/${STABLE_SLUGS.collection}`, ready: 'h1' },
 ] as const);
 
 const statuses = new Map<string, number>();

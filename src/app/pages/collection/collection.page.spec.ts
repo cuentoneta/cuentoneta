@@ -73,6 +73,19 @@ describe('CollectionPage', () => {
 			);
 		});
 
+		// Sin los query params, la página de lectura no sabe desde dónde se llegó y cae a sugerir por
+		// autor: el contexto de colección sólo existe si la tarjeta lo emite.
+		it('should link each work carrying the collection as navigation context', async () => {
+			await renderPage(showingAuthors);
+
+			const [firstWork] = showingAuthors.literaryWorks;
+			const link = screen.getByRole('link', { name: firstWork.title });
+
+			expect(link.getAttribute('href')).toBe(
+				`/literary-work/${firstWork.slug}?navigation=collection&navigationSlug=${showingAuthors.slug}`,
+			);
+		});
+
 		it('should render the information panel of the collection', async () => {
 			await renderPage(showingAuthors);
 
@@ -151,7 +164,7 @@ describe('CollectionPage', () => {
 			await renderPage(showingAuthors);
 
 			/* eslint-disable testing-library/no-node-access -- el <head> no tiene rol accesible: se consulta por selector */
-			expect(document.head.querySelector('script[data-schema-id="collection-page"]')).not.toBeNull();
+			expect(document.head.querySelector('script[data-schema-id="collection"]')).not.toBeNull();
 			expect(document.head.querySelector('script[data-schema-id="breadcrumb-collection"]')).not.toBeNull();
 			/* eslint-enable testing-library/no-node-access */
 		});
