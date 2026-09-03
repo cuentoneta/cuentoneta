@@ -15,6 +15,10 @@ A diferencia de los scripts one-off (que se borran del working tree tras correr)
 
 Se da de baja cuando no queda nada sobre lo que pueda actuar y nadie la consume: ni documentos de la forma que transforma, ni posibilidad de que reaparezcan. Antes de borrarla hay que reubicar lo que otra migración viva todavía consuma —un predicado de reconocimiento, un prefijo derivado, una tabla de correcciones—; dónde se reubica es un juicio de diseño y no una regla: en el consumidor, si es uno solo, y en un módulo propio recién cuando son varios y una divergencia entre copias tendría consecuencias. Su historia —qué hacía y por qué se dio de baja— queda en el historial de git y en el PR que la retiró, no en este documento.
 
+## Migración o script
+
+Un cambio de datos de una sola vez, con un antes y un después, es una **migración** y se da de baja cuando no queda nada sobre lo que pueda actuar. Una remediación **recurrente** —el caso puede reaparecer porque la regla del Studio valida la edición, no lo ya almacenado— es un **script** de `scripts/` (dry-run por defecto, `--no-dry-run` para aplicar) y nunca entra como migración: el criterio de baja no le aplica, porque nunca queda «sin entrada».
+
 ## Convención
 
 - Un directorio por migración con un `index.ts` que exporta por defecto una `defineMigration`.
@@ -23,8 +27,6 @@ Se da de baja cuando no queda nada sobre lo que pueda actuar y nadie la consume:
 - Comentar el **porqué** de la migración (qué la motiva, qué caso cubre que `initialValue` no cubre), no el qué.
 - Migraciones idempotentes cuando sea posible (p. ej. `setIfMissing` para backfills).
 - La migración lleva su **spec co-locado**: `index.spec.ts` al lado del `index.ts`, con un `describe` nombrado por el slug de la migración. Como `defineMigration` conserva el objeto tal cual, el spec ejercita `migrate.document` directamente —es la función pura que decide el patch de cada documento— con el mismo helper que usan los specs existentes (`migration.migrate?.document`, casteado al tipo de parámetro inferido). Corre como Vitest standalone de `cms/` dentro del gate `studio-build` (`pnpm sanity:test`) — ver [Segunda config de Vitest: el Studio](testing.md#segunda-config-de-vitest-el-studio-cms). Como mínimo cubre el camino feliz, la idempotencia (una segunda corrida no produce mutación) y el aborto de cada guard.
-
-Ejemplo vivo: [`cms/migrations/set-default-bad-language/index.ts`](../../cms/migrations/set-default-bad-language/index.ts) — backfill de `badLanguage` en las obras previas al campo.
 
 ### Una migración puede crear documentos de otro tipo
 
@@ -66,8 +68,6 @@ pnpm exec sanity dataset export <destino> "<ruta fuera del repo>/<destino>-<fech
 ```
 
 Conviene además enunciar qué **otras** migraciones invalida la corrida: una reversión que aborta cuando su campo de origen ya no está poblado queda inservible desde el momento en que se da de baja ese campo, y descubrirlo al querer usarla es tarde.
-
-Ejemplo vivo: [`cms/migrations/purge-story-documents/README.md`](../../cms/migrations/purge-story-documents/README.md) — el runbook de las tres corridas ordenadas que dan de baja un tipo de contenido entero, con su export previo y sus consultas de censo.
 
 ## Orden de despliegue: clasificar antes de correr
 
@@ -111,8 +111,6 @@ La solución es partir el rename en dos migraciones —**expand** y **contract**
    - **Semántica de backfill, no de sincronización:** puebla el campo nuevo solo si está vacío, nunca lo sobrescribe. Comparar por igualdad alcanzaría para reintentar una corrida que se cortó a mitad de camino, pero una corrida tardía —con el schema nuevo ya desplegado— leería una edición legítima como "todavía sin copiar" y la pisaría con el valor viejo.
 2. **Contract** (`unset`): da de baja el campo viejo. Corre **después** de verificar el código nuevo en producción, y después de que la fase expand ya corrió sobre ese dataset.
    - **Interlock:** al ser destructiva y sin más recuperación que el historial de Sanity, no confía en el orden de las corridas — verifica **documento a documento** que el campo nuevo ya esté poblado, y **lanza** en lugar de borrar la única copia si no lo está.
-
-Ejemplo vivo: [`cms/migrations/copy-short-description-to-description/index.ts`](../../cms/migrations/copy-short-description-to-description/index.ts) (expand) y [`cms/migrations/unset-legacy-short-description/index.ts`](../../cms/migrations/unset-legacy-short-description/index.ts) (contract) — rename de `shortDescription` a `description` en `resourceType` y `tag`.
 
 ### Cada fase corre por dataset
 
