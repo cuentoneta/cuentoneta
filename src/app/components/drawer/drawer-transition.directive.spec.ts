@@ -80,6 +80,22 @@ describe('DrawerTransitionDirective', () => {
 		expect(secondComplete).toHaveBeenCalledTimes(1);
 	});
 
+	it('should drop a pending entry frame when close lands on an externally closed dialog', () => {
+		useFakeTimers();
+
+		const onComplete = fn();
+		directive.open(dialog);
+		dialog.close();
+		directive.close(dialog, onComplete);
+
+		expect(onComplete).toHaveBeenCalledTimes(1);
+
+		// El frame huérfano no reabre el estado sobre el diálogo ya cerrado.
+		runOnlyPendingTimers();
+		expect(directive.isTransitionedIn()).toBe(false);
+		expect(dialog.open).toBe(false);
+	});
+
 	it('should reopen normally after a close that landed before the entry frame ran', () => {
 		useFakeTimers();
 

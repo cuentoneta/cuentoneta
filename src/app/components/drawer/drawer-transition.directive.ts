@@ -25,6 +25,12 @@ export class DrawerTransitionDirective {
 	/** Dispara la salida y llama a `onComplete` al terminar; válido en cualquier instante posterior a `open()`. */
 	public close(element: HTMLDialogElement, onComplete: () => void): void {
 		if (!element.open) {
+			// Cierre por fuera de la directiva (p. ej. `form method=dialog`): limpia el frame y el estado.
+			if (this.pendingEntryFrame !== null) {
+				cancelAnimationFrame(this.pendingEntryFrame);
+				this.pendingEntryFrame = null;
+			}
+			this._isTransitionedIn.set(false);
 			onComplete();
 			return;
 		}
