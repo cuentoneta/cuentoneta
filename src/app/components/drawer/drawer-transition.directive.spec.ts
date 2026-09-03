@@ -54,8 +54,7 @@ describe('DrawerTransitionDirective', () => {
 		expect(onComplete).toHaveBeenCalledTimes(1);
 		expect(directive.isTransitionedIn()).toBe(false);
 
-		// El frame diferido quedó cancelado: correrlo no reabre el panel, y el cierre no deja
-		// ningún listener de `transitionend` colgado que dispare una segunda finalización.
+		// El frame cancelado no reabre ni completa de más.
 		runOnlyPendingTimers();
 		dialog.dispatchEvent(new Event('transitionend'));
 		expect(dialog.open).toBe(false);
@@ -72,8 +71,7 @@ describe('DrawerTransitionDirective', () => {
 		directive.close(dialog, firstComplete);
 		expect(dialog.open).toBe(false);
 
-		// Un cierre tardío sobre el diálogo ya cerrado se resuelve de una vez: no apila un listener
-		// de `transitionend` que nunca llegaría a dispararse con naturalidad.
+		// Sobre diálogo cerrado no se apilan listeners.
 		directive.close(dialog, secondComplete);
 		expect(secondComplete).toHaveBeenCalledTimes(1);
 

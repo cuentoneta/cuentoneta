@@ -100,8 +100,7 @@ describe('DrawerComponent', () => {
 		const { fixture } = await render(HostComponent);
 		const drawer = fixture.debugElement.query(By.css('cuentoneta-drawer')).injector.get(DrawerComponent);
 
-		// Ambas llamadas en la misma tarea: garantiza que el cierre aterriza antes del frame diferido
-		// de la apertura, sin depender del scheduling real de `requestAnimationFrame`.
+		// Misma tarea: el cierre cae antes del frame de entrada.
 		drawer.open();
 		drawer.close();
 
