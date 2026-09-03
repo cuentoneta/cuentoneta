@@ -2,7 +2,9 @@
  * Borra los assets huérfanos de Sanity: imágenes y archivos que ningún documento referencia.
  *
  * Uso:
- *   pnpm ops assets:delete-unused
+ *   pnpm ops assets:delete-unused --no-dry-run
+ *
+ * No tiene corrida en seco: sin el flag, el dispatcher la rechaza sin cargarla.
  */
 import { client } from '../../../src/api/_helpers/sanity-connector';
 import { Transaction } from '@sanity/client';

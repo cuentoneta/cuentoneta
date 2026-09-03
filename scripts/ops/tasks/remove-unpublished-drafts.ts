@@ -3,7 +3,9 @@
  * cualquier draft que exista en el dataset al momento de la corrida desaparece.
  *
  * Uso:
- *   pnpm ops drafts:remove-unpublished
+ *   pnpm ops drafts:remove-unpublished --no-dry-run
+ *
+ * No tiene corrida en seco: sin el flag, el dispatcher la rechaza sin cargarla.
  */
 import { client } from '../../../src/api/_helpers/sanity-connector';
 import type { OpsTask } from '../registry';

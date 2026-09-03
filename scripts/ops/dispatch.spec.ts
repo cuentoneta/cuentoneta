@@ -4,10 +4,10 @@ import { OPS_TASKS, type OpsCatalog, type OpsTaskArgs, type OpsTaskDescriptor } 
 
 type TaskRun = (args: OpsTaskArgs) => Promise<void>;
 
-function stubTask(description = 'Descripción de prueba') {
+function stubTask(description = 'Descripción de prueba', destructive = false) {
 	const run = fn<TaskRun>(() => Promise.resolve());
 	const load = fn(() => Promise.resolve({ run }));
-	const descriptor: OpsTaskDescriptor = { description, load };
+	const descriptor: OpsTaskDescriptor = { description, destructive, load };
 	return { run, load, descriptor };
 }
 
@@ -76,10 +76,10 @@ describe('resolveInvocation', () => {
 	});
 
 	it('rechaza un id que coincide con una propiedad heredada del objeto en vez de una tarea', () => {
-		for (const idHerded of ['toString', 'constructor', 'hasOwnProperty']) {
-			expect(resolveInvocation(stubCatalog().tasks, [idHerded])).toEqual({
+		for (const idHeredado of ['toString', 'constructor', 'hasOwnProperty']) {
+			expect(resolveInvocation(stubCatalog().tasks, [idHeredado])).toEqual({
 				action: 'reject',
-				reason: `Tarea desconocida: ${idHerded}`,
+				reason: `Tarea desconocida: ${idHeredado}`,
 			});
 		}
 	});
@@ -102,6 +102,25 @@ describe('resolveInvocation', () => {
 		expect(resolveInvocation(stubCatalog().tasks, ['otra:tarea', 'extra'])).toEqual({
 			action: 'reject',
 			reason: 'Tarea desconocida: otra:tarea',
+		});
+	});
+
+	it('rechaza una tarea destructiva sin el flag de confirmación', () => {
+		const { descriptor } = stubTask('Descripción de prueba', true);
+
+		expect(resolveInvocation({ 'tarea:prueba': descriptor }, ['tarea:prueba'])).toEqual({
+			action: 'reject',
+			reason: 'La tarea tarea:prueba es destructiva y requiere --no-dry-run para correr',
+		});
+	});
+
+	it('ejecuta una tarea destructiva con el flag de confirmación', () => {
+		const { descriptor } = stubTask('Descripción de prueba', true);
+
+		expect(resolveInvocation({ 'tarea:prueba': descriptor }, ['tarea:prueba', '--no-dry-run'])).toEqual({
+			action: 'execute',
+			descriptor,
+			args: { apply: true },
 		});
 	});
 });
@@ -187,9 +206,22 @@ describe('dispatch', () => {
 		expect(logged.join('\n')).toContain('tarea:prueba');
 	});
 
+	it('rechaza una tarea destructiva sin cargarla ni ejecutarla cuando falta la confirmación', async () => {
+		const { run, load, descriptor } = stubTask('Descripción de prueba', true);
+		const { logged, errors, output } = stubOutput();
+
+		await expect(dispatch({ 'tarea:prueba': descriptor }, ['tarea:prueba'], output)).resolves.toBe(1);
+
+		expect(load).not.toHaveBeenCalled();
+		expect(run).not.toHaveBeenCalled();
+		expect(errors.join('\n')).toContain('destructiva');
+		expect(logged.join('\n')).toContain('tarea:prueba');
+	});
+
 	it('reporta el error de una tarea fallida y termina con código distinto de cero', async () => {
 		const fallida: OpsTaskDescriptor = {
 			description: 'Descripción de prueba',
+			destructive: false,
 			load: () =>
 				Promise.resolve({
 					run: async () => {

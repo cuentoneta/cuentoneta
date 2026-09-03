@@ -37,9 +37,12 @@ export function resolveInvocation(tasks: OpsCatalog, argv: readonly string[]): I
 	// Object.hasOwn excluye las propiedades heredadas ('toString', 'constructor'): sin ese guard, un id
 	// que coincida con el prototipo del objeto resolvería un descriptor falso en vez de rechazarse.
 	if (!Object.hasOwn(tasks, taskId)) return { action: 'reject', reason: `Tarea desconocida: ${taskId}` };
+	const descriptor = tasks[taskId];
+	if (!apply && descriptor.destructive)
+		return { action: 'reject', reason: `La tarea ${taskId} es destructiva y requiere ${NO_DRY_RUN_FLAG} para correr` };
 	if (firstUnexpected !== undefined) return { action: 'reject', reason: `Argumento desconocido: ${firstUnexpected}` };
 
-	return { action: 'execute', descriptor: tasks[taskId], args: { apply } };
+	return { action: 'execute', descriptor, args: { apply } };
 }
 
 export function formatCatalog(tasks: OpsCatalog): readonly string[] {
