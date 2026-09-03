@@ -123,13 +123,15 @@ const DEFAULT_INTERVAL = 24 * 60 * 60 * 1000;
 
 ## Scope de constantes y variables
 
-- **Local por defecto:** declarar `const` dentro del scope de la función cuando la usa una sola función, lo más cerca posible del punto de uso. No subir una constante al tope del archivo si su único consumo está adentro de una sola función.
-- **Módulo:** promover a nivel de módulo solo cuando se comparte entre varias funciones del mismo archivo.
-- **Global:** solo tras confirmar reuso entre varios archivos.
+- **Local por defecto:** una `const` que solo lee una función vive declarada dentro de esa función, cerca del punto de uso. El fix es **moverla**, no inlinearla: el nombre se conserva.
+- **Módulo:** promover a nivel de módulo solo cuando de verdad la leen varias funciones del mismo archivo; en `camelCase`.
+- **Global:** reservada a lo reutilizado a través de **varios archivos** (y por tanto exportada). Es lo único que califica para `SCREAMING_SNAKE_CASE` — una constante con mayúsculas consumida por un solo archivo es una local mal escrita.
+
+**Rationale:** una constante declarada lejos de su único uso obliga a leer el archivo entero para descubrir quién la consume. Co-locarla con su única función consumidora hace el código autocontenido y deja el casing diciendo la verdad sobre el alcance real.
 
 **Excepción — archivos con `@Component`, `@Directive`, `@Injectable` o `@Service`:** ahí la configuración propia de la clase (mapas `size → clase`, tablas de iconos o de estilo) **no** se promueve a nivel de módulo aunque la usen varios métodos: va como `private readonly` de instancia. La excepción termina donde termina la propiedad: una correspondencia que sigue siendo verdadera fuera de cualquier clase no es configuración de ninguna, y se declara una sola vez en un módulo propio sin decoradores. La regla y su rationale están en [`angular-components.md`](angular-components.md#configuraci%C3%B3n-de-la-clase); la aplica la regla de ESLint `component-config-in-class`.
 
-**Rationale:** una constante declarada 50 líneas lejos de su único uso obliga al lector a saltar entre dos lugares. Co-locarla con su uso (cuando es único) hace el código autocontenido.
+**Enforcement activo:** la regla custom de ESLint `custom-declare-close/declare-close-to-use` recorre las variables del scope de módulo y reporta toda `const` no exportada cuyas lecturas suben todas hasta una misma función de nivel superior. Alcance: `src/**/*.ts` + `scripts/**/*.ts`; severidad `warn` mientras dura el burn-down de la deuda preexistente — visible sin bloquear el gate `lint`. Quedan exentas las instancias construidas a propósito para evaluarse una vez (`new X()`, fábricas locales, cadenas fluidas de métodos de dominio tipo `unified().use(...)`, top-level await) y todo lo que ya es compartido o API: `export const`, `export default x`, `export { x }` y cualquier lectura a nivel de módulo. Punto ciego declarado de v1: el destructuring (`const { a } = obj`) queda fuera del chequeo.
 
 ## `eslint.config.mjs`: reglas por-scope reemplazan, no mergean
 
