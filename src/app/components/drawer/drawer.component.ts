@@ -169,10 +169,11 @@ export class DrawerComponent {
 		}
 		this.isClosing.set(true);
 		this.tracker.unregister(this);
+		// Primero `closed`: el cierre síncrono resuelve `afterClosed` dentro de `transition.close`.
+		this.closed.emit();
 		this.transition.close(dialog, () => {
 			this.isClosing.set(false);
 			this.afterClosed.emit();
 		});
-		this.closed.emit();
 	}
 }
