@@ -1,7 +1,7 @@
 import type { SanityClient } from '@sanity/client';
 import { clearAllMocks, fn } from '@test-utils';
 import { createMarkdown } from './markdown.model';
-import { deriveSectionReadingTime, deriveTotalReadingTime } from './reading-time.model';
+import { deriveSectionReadingTime, deriveTotalReadingTime } from './reading-time-derivation.model';
 import {
 	applyReadingTimeMaterialization,
 	buildReadingTimeMaterialization,
