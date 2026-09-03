@@ -1,9 +1,6 @@
 <div align="center" width="100%">
-    <h1>La Cuentoneta</h1>
-    <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="https://github.com/rolivencia/cuentoneta/assets/32349705/b0ea0659-3c9d-4c4f-9d14-ab60d50dd832">
-        <img width="33%" alt="La Cuentoneta" src="https://github.com/rolivencia/cuentoneta/assets/32349705/b0ea0659-3c9d-4c4f-9d14-ab60d50dd832">
-    </picture>
+    <h2>La Cuentoneta</h2>
+    <img width="33%" alt="" src="../.github/assets/cuentoneta-logo.png">
 </div>
 
 ---
@@ -27,25 +24,30 @@ La aplicación implementa un patrón centralizado llamado **`rotatingContent`** 
 
 Actualmente, este documento almacena:
 
-- **Historias más leídas** (`mostRead`) - Ranking actualizado automáticamente de manera diaria.
+- **Lo más leído** - Ranking actualizado automáticamente de manera diaria. Vive en `mostReadLiteraryWorks`, que referencia obras (`literaryWork`).
 
 Las funcionalidades relacionadas a contenido rotativo están y deben de ser implementadas a nivel de servidor, a fin de ejecutar procedimientos en intervalos de tiempo dados, regulares o esporádicos, para garantizar que el contenido mostrado en la plataforma esté actualizado y sea coherente con la hoja de ruta de contenido del proyecto.
 
 ---
 
-## Contenido Rotativo: Historias Más Leídas
+## Contenido Rotativo: Obras Más Leídas
 
 ### Descripción General
 
-Las **historias más leídas** son un ejemplo de contenido dentro del patrón de **contenido rotativo**. Actualmente, mediante el uso de la [Data Export API de Microsoft Clarity](https://learn.microsoft.com/en-us/clarity/setup-and-installation/clarity-data-export-api), el sistema mantiene un registro de las historias más leídas por los usuarios de La Cuentoneta, tomando una referencia de las historias más leídas en los últimos tres días.
+Las **obras más leídas** son un ejemplo de contenido dentro del patrón de **contenido rotativo**. Actualmente, mediante el uso de la [Data Export API de Microsoft Clarity](https://learn.microsoft.com/en-us/clarity/setup-and-installation/clarity-data-export-api), el sistema mantiene un registro de las páginas más leídas por los usuarios de La Cuentoneta, tomando una referencia de las más leídas en los últimos tres días.
 
-De manera diaria se ejecuta un cron job, definido en `vercel.json` para su ejecución a las 03:30 am (GMT -3), que se encarga, partiendo de esas listas, de alojar en el campo `mostRead` del documento singleton `rotatingContent`, las correspondientes referencias de estas historias, a partir de los documentos `story` de Sanity.
+De manera diaria se ejecuta un cron job, definido en `vercel.json` para su ejecución a las 03:30 am (GMT -3), que se encarga, partiendo de esas listas, de alojar en el documento singleton `rotatingContent` las referencias correspondientes.
+
+Escribe en `mostReadLiteraryWorks`, con referencias a documentos `literaryWork`. El conteo de páginas populares de Clarity filtra por un único prefijo de lectura, `/literary-work/:slug`. La métrica registra la URL efectivamente visitada, así que el prefijo indexado anterior aportó mientras quedó tráfico suyo dentro de la ventana; hoy no queda, porque `src/server.ts` lo redirige con 301 desde hace más tiempo que los tres días que la ventana abarca. Los slugs resultantes se deduplican —una misma obra llega varias veces cuando la URL viene decorada con querystring de campaña, un ancla o una barra final— y se resuelven a `_id` de `literaryWork` antes de escribir las referencias.
 
 ### Ubicación en el Código
 
-- **Consulta GROQ**: `src/api/_queries/content.query.ts` - `latestLandingPageReferencesQuery`
-- **Repositorio de acceso a datos**: `src/api/modules/content/content.repository.ts` - `fetchLatestLandingPageReferences()`
-- **Servicio**: `src/api/modules/content/content.service.ts` - `fetchRotatingContent()`
+- **Consultas GROQ**: `src/api/_queries/content.query.ts` - `rotatingContentQuery` (lectura del documento singleton) y `src/api/_queries/literary-work.query.ts` - `literaryWorkTeasers`, cuyo filtro opcional por slugs resuelve el lote del ranking
+- **Repositorio de acceso a datos**: `src/api/modules/content/content.repository.sanity.ts` - `SanityContentRepository.fetchRotatingContent()` y `updateMostReadLiteraryWorks(slugs)`, que resuelve los slugs y repone el orden del ranking antes de parchear
+- **Servicio**: `src/api/modules/literary-work/literary-work.service.ts` - `updateMostReadLiteraryWorks()`, que deriva los slugs de Clarity y se los pasa al repositorio
+- **Ruta**: `src/api/modules/literary-work/literary-work.controller.ts` - `GET /update-most-read`, declarada `no-store` porque el módulo sirve sus lecturas con caché de borde y una escritura servida desde el borde devolvería un 200 sin haber corrido
+
+La resolución de slugs a identificadores vive **dentro de la escritura** y no en el puerto de obras: los slugs salen de una métrica externa, así que quien orquesta no tiene de dónde sacar un identificador, y pedírselo a otro repositorio para devolvérselo a éste haría que el caso de uso cruzara dos repositorios para escribir en uno. Los resuelve el listado de obras y no una consulta dedicada: el registro de filtro de ese listado declara que cada criterio nuevo entra como campo opcional, y una consulta que solo tradujera slugs a identificadores sería una segunda forma de preguntar lo mismo.
 
 ### Configuración en Sanity Studio
 
@@ -55,13 +57,13 @@ El documento singleton `rotatingContent` en Sanity almacena la información de c
 {
   _id: "rotatingContent",
   _type: "rotatingContent",
-  mostRead: Array<StoryReference>  // Historias más leídas (actual)
+  mostReadLiteraryWorks: Array<LiteraryWorkReference>  // Obras más leídas
 }
 ```
 
 ### Estructura Extensible del Documento
 
-El documento `rotatingContent` está diseñado para ser **extensible**. La estructura actual solo incluye `mostRead`, pero puede extenderse con nuevos campos sin romper la funcionalidad existente.
+El documento `rotatingContent` está diseñado para ser **extensible**. La estructura actual solo incluye lo más leído, pero puede extenderse con nuevos campos sin romper la funcionalidad existente.
 
 **Ejemplos de campos que podrían agregarse en el futuro:**
 
@@ -69,14 +71,14 @@ El documento `rotatingContent` está diseñado para ser **extensible**. La estru
 {
   _id: "rotatingContent",
   _type: "rotatingContent",
-  mostRead: Array<StoryReference>,           // Historias más leídas (actual)
+  mostReadLiteraryWorks: Array<LiteraryWorkReference>,  // Obras más leídas
 
   // Potenciales campos futuros:
-  // trending: Array<StoryReference>,       // Historias trending
-  // featured: Array<ContentReference>,     // Contenido destacado
-  // seasonal: Array<StoryReference>,       // Contenido estacional
-  // byGenre: Record<string, Array<StoryReference>>,  // Recomendaciones por género
-  // editorPicks: Array<StoryReference>,    // Selecciones del editor
+  // trending: Array<LiteraryWorkReference>,       // Obras trending
+  // featured: Array<ContentReference>,            // Contenido destacado
+  // seasonal: Array<LiteraryWorkReference>,        // Contenido estacional
+  // byGenre: Record<string, Array<LiteraryWorkReference>>,  // Recomendaciones por género
+  // editorPicks: Array<LiteraryWorkReference>,     // Selecciones del editor
 }
 ```
 
@@ -111,11 +113,18 @@ Este proceso garantiza que:
     _type: "slug",
     current: "2025-46"
   },
-  campaigns: Array<CampaignReference>,     // Campañas a mostrar
-  cards: Array<CardReference>,             // Tarjetas de contenido
-  latestReads: Array<StoryReference>       // Historias destacadas
+  campaigns: Array<CampaignReference>,               // Campañas a mostrar
+  collections: Array<CollectionReference>,           // Colecciones destacadas
+  latestLiteraryWorks: Array<LiteraryWorkReference>, // Obras destacadas
+  highlightedAuthors: Array<AuthorReference>         // Hasta 6 autores destacados
 }
 ```
+
+> `landingPageContentQuery` (la que sirve la landing) y `latestLandingPageReferencesQuery` (la que arma la copia semanal) proyectan hoy los mismos cuatro campos — `campaigns`, `collections`, `latestLiteraryWorks`, `highlightedAuthors` —, así que la lectura de la landing y su copia semanal ya no divergen en qué transportan.
+
+El tope de seis de `highlightedAuthors` lo impone el Studio sobre la edición, así que no gobierna lo ya guardado.
+
+Como los otros tres, viaja en la copia semanal: si quedara afuera, los destacados se vaciarían en cada rotación sin emitir ningún error.
 
 ### Nomenclatura de Slugs
 
@@ -133,13 +142,13 @@ El año va primero para que el **orden lexicográfico del slug coincida con el o
 - **Utilidad de dominio compartida (kernel)**: `src/utils/week-slug.utils.ts` - `buildWeekSlug(date)`, implementación **única** del slug semanal `YYYY-WW` (ISO-8601, ver [Nomenclatura de Slugs](#nomenclatura-de-slugs)). La consumen tanto `content.service.ts` como, desde el Studio de Sanity, `cms/utils/landing-page.ts` (resolución de la landing activa en Desk Structure) — evita mantener dos implementaciones de la misma fórmula en dos proyectos pnpm distintos.
 
 - **Consultas GROQ**: `src/api/_queries/content.query.ts`
-  - `landingPageContentQuery` - Obtiene contenido de una semana específica
+  - `landingPageContentQuery` - Obtiene contenido de una semana específica (proyecta `collections` y `latestLiteraryWorks`)
   - `landingPageListQuery` - Lista landing pages existentes
-  - `latestLandingPageReferencesQuery` - Obtiene la configuración válida más reciente no futura (`config <= $currentSlug`, ordenada por `config desc`)
+  - `latestLandingPageReferencesQuery` - Obtiene la configuración válida más reciente no futura (`config <= $currentSlug`, ordenada por `config desc`); proyecta los mismos cuatro campos, para la copia semanal
 
-- **Repositorio de acceso a datos**: `src/api/modules/content/content.repository.ts`
+- **Repositorio de acceso a datos**: `src/api/modules/content/content.repository.ts` (puerto `ContentRepository`), implementado por `content.repository.sanity.ts` (`SanityContentRepository`) y doblado por `content.repository.mock.ts` (`InMemoryContentRepository`)
   - `fetchLandingPageContent(slug)` - Obtiene landing page por slug
-  - `fetchLandingPageList(slugs)` - Lista landing pages por slugs
+  - `fetchLandingPagesList(slugs)` - Lista landing pages por slugs
   - `fetchLatestLandingPageReferences(currentSlug)` - Obtiene la configuración base (semana actual o anterior más reciente)
   - `createLandingPages(objects)` - Crea múltiples landing pages
 
@@ -218,7 +227,7 @@ La función lanza excepciones descriptivas en los siguientes casos:
 
 ### Arquitectura en Capas
 
-El módulo de contenido sigue una arquitectura en capas para mantener la separación de responsabilidades:
+El módulo de contenido sigue una arquitectura en capas para mantener la separación de responsabilidades. A diferencia de `author` (que sigue el patrón de mappers en `_utils/functions.ts`), la ACL (traducción raw Sanity → dominio) no vive ahí: queda dentro del repository, como métodos privados de `SanityContentRepository` — mismo patrón que `LiteraryWork` y `Collection` (ver [`sanity-acl.md`](../.claude/references/sanity-acl.md)).
 
 ```
 ┌─────────────────────────────────────┐
@@ -235,11 +244,15 @@ El módulo de contenido sigue una arquitectura en capas para mantener la separac
 └────────────────┬────────────────────┘
                  │
 ┌────────────────▼────────────────────┐
-│   Repositorio (Acceso a Datos)      │
-│  content.repository.ts              │
+│   Repositorio (puerto + adaptador)  │
+│  content.repository.ts (puerto)     │
+│  content.repository.sanity.ts       │
+│  (ACL en privados)                  │
 │  - fetchLandingPageContent()        │
+│  - fetchRotatingContent()           │
 │  - fetchLatestLandingPageReferences()│
 │  - createLandingPages()             │
+│  - updateMostReadLiteraryWorks()    │
 └────────────────┬────────────────────┘
                  │
 ┌────────────────▼────────────────────┐
@@ -256,7 +269,10 @@ src/api/modules/content/
 ├── content.controller.ts      # Endpoints HTTP
 ├── content.service.ts         # Lógica de negocio
 ├── content.service.spec.ts    # Tests unitarios
-└── content.repository.ts      # Acceso a datos
+├── content.repository.ts      # Puerto (interfaz ContentRepository)
+├── content.repository.sanity.ts # Adaptador Sanity (SanityContentRepository), ACL en privados
+├── content.repository.mock.ts # Doble en memoria (InMemoryContentRepository)
+└── content.errors.ts          # Errores tipados (LandingPageNotFoundError, MalformedLandingPageError, RotatingContentNotFoundError)
 
 src/api/_queries/
 └── content.query.ts           # Consultas GROQ
@@ -287,12 +303,12 @@ Todos los horarios están especificados en horario GMT -3 (Buenos Aires, Argenti
 4. **Sábado (día 6)** - Revisión final de cambios
    5**Domingo siguiente 03:30** - La Se repite el ciclo con la próxima semana como "actual"
 
-### Actualización de Historias Más Leídas
+### Actualización de Obras Más Leídas
 
 1. **Diariamente 03:15** - cron job recopila métricas de visualización
-2. **Cálculo automático** - Se ordena el ranking de historias
+2. **Cálculo automático** - Se ordena el ranking de obras
 3. **Actualización** - Documento `rotatingContent` se sincroniza
-4. **Visible en web** - Usuarios ven historias actualizadas en su próximo acceso a la landing page de La Cuentoneta
+4. **Visible en web** - Usuarios ven el ranking actualizado en su próximo acceso a la landing page de La Cuentoneta
 
 ---
 
@@ -350,7 +366,7 @@ El documento `rotatingContent` está diseñado para ser extensible. Para agregar
 3. **Crear la query GROQ** en `src/api/_queries/content.query.ts` si es necesario
 
 4. **Implementar el cron job** para actualizar el campo
-   - Crear una función similar a la de "historias más leídas"
+   - Crear una función similar a la de "obras más leídas"
 
 5. **Exponer en el servicio** (`src/api/modules/content/content.service.ts`)
    - Agregar una función para obtener el nuevo contenido
@@ -359,9 +375,9 @@ El patrón centralizado evita la proliferación de documentos y consultas, mante
 
 ### ¿Qué diferencia hay entre `rotatingContent` y las `landingPages`?
 
-- **`rotatingContent`**: Documento **singleton** que almacena referencias a contenido **dinámico/cambiante** (historias más leídas, trending, etc.). Se actualiza automáticamente mediante cron jobs.
+- **`rotatingContent`**: Documento **singleton** que almacena referencias a contenido **dinámico/cambiante** (obras más leídas, trending, etc.). Se actualiza automáticamente mediante cron jobs.
 
-- **`landingPages`**: Documentos **específicos por semana** que agrupan contenido curado para un período (campaignas, tarjetas, historias destacadas). Se generan automáticamente basándose en una configuración base, pero el contenido en sí es más estático.
+- **`landingPages`**: Documentos **específicos por semana** que agrupan contenido curado para un período (campañas, colecciones, obras destacadas). Se generan automáticamente basándose en una configuración base, pero el contenido en sí es más estático.
 
 Ambos trabajan juntos: las landing pages pueden incluir referencias al contenido rotativo.
 

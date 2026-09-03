@@ -3,7 +3,7 @@
  * de un despliegue real (`BASE_URL`), reusando el MISMO core que el gate de e2e para no divergir.
  *
  * Cobertura: siempre chequea `/home` + los slugs estables conocidos-buenos (baseline de regresión),
- * y además una muestra ALEATORIA de cuentos/autores/colecciones tomada del `/sitemap.xml` en cada
+ * y además una muestra ALEATORIA de obras/autores/colecciones tomada del `/sitemap.xml` en cada
  * corrida (cobertura rotativa). Los patrones de `<title>`/`<h1>` se derivan del slug de cada URL.
  * Si el sitemap no está disponible, el baseline igual se ejerce (la muestra se omite con un aviso).
  *
@@ -14,7 +14,7 @@
  * Uso:
  *   BASE_URL=https://www.cuentoneta.ar pnpm seo:smoke
  *   SEO_SMOKE_SAMPLE=5 pnpm seo:smoke                            # N aleatorios por tipo (default 3)
- *   SEO_SMOKE_SLUGS=/story/el-aleph,/author/... pnpm seo:smoke   # reproduce paths puntuales (sin muestra)
+ *   SEO_SMOKE_SLUGS=/literary-work/el-fin,/author/... pnpm seo:smoke      # reproduce paths puntuales (sin muestra)
  *   pnpm seo:smoke --full   (o SEO_SMOKE_FULL=true)              # recorre TODO el sitemap (lento)
  *   SIMULATE_PROXY_HEADERS=true pnpm seo:smoke                   # reproduce el x-forwarded-for de Vercel
  *
@@ -124,7 +124,7 @@ function reportSitemapDocument(xml: string): boolean {
 function sampledPaths(baseline: readonly string[], xml: string): string[] {
 	const paths = parseSitemap(xml);
 	const excluded = new Set(baseline);
-	return ['/story/', '/author/', '/storylist/']
+	return ['/author/', '/collection/', '/literary-work/']
 		.flatMap((prefix) => selectByType(paths, prefix, SAMPLE_SIZE, FULL))
 		.filter((path) => !excluded.has(path));
 }
@@ -173,7 +173,11 @@ async function run(): Promise<void> {
 	const baseline =
 		SLUGS_OVERRIDE.length > 0
 			? SLUGS_OVERRIDE
-			: [`/story/${STABLE_SLUGS.story}`, `/author/${STABLE_SLUGS.author}`, `/storylist/${STABLE_SLUGS.storylist}`];
+			: [
+					`/author/${STABLE_SLUGS.author}`,
+					`/collection/${STABLE_SLUGS.collection}`,
+					`/literary-work/${STABLE_SLUGS.literaryWork}`,
+				];
 
 	let failed = await reportBaseline(baseline);
 	// Con slugs explícitos no hay muestra que tomar: el llamador ya dijo qué quiere ejercer.

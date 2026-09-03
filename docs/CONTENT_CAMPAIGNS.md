@@ -1,18 +1,15 @@
 <div align="center" width="100%">
-    <h1>La Cuentoneta</h1>
-    <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="https://github.com/rolivencia/cuentoneta/assets/32349705/b0ea0659-3c9d-4c4f-9d14-ab60d50dd832">
-        <img width="33%" alt="La Cuentoneta" src="https://github.com/rolivencia/cuentoneta/assets/32349705/b0ea0659-3c9d-4c4f-9d14-ab60d50dd832">
-    </picture>
+    <h2>La Cuentoneta</h2>
+    <img width="33%" alt="" src="../.github/assets/cuentoneta-logo.png">
 </div>
 
 ---
 
-## Campañas de contenido
+# Campañas de contenido
 
 ### ¿Qué es una campaña de contenido?
 
-Denominamos como **campaña de contenido** a una característica del sistema que tiene como objetivo principal la difusión, en un espacio de tiempo particular, de un contenido específico. Este contenido puede ser una storylist, una story particular, el perfil de un autor, etc. Cualquier tipo de contenido enrutable en la web, tanto dentro como fuera de la plataforma, es susceptible de ser parte de una campaña de contenido.
+Denominamos como **campaña de contenido** a una característica del sistema que tiene como objetivo principal la difusión, en un espacio de tiempo particular, de un contenido específico. Este contenido puede ser una colección, una obra particular, el perfil de un autor, etc. Cualquier tipo de contenido enrutable en la web, tanto dentro como fuera de la plataforma, es susceptible de ser parte de una campaña de contenido.
 
 El carrusel superior visualizado en la web es el espacio destinado a las campaña de contenido vigentes. En este banner se muestra una imagen que invita al usuario a interactuar con el contenido de la campaña y permite, en el tiempo, la difusión por redes sociales y otros medios de comunicación. El título de la campaña no se pinta como texto: viaja como texto alternativo de la imagen, para lectores de pantalla y para el caso en que la imagen no cargue.
 
@@ -38,7 +35,7 @@ Para que una campaña de contenido sea visible como tal en la plataforma la mism
 
 ### Ejemplo
 
-Una campaña de contenido incluida actualmente en La Cuentoneta es la que referencia a la storylist ["Cuentos de terror con Alberto Laiseca"](https://www.cuentoneta.ar/storylist/cuentos-de-terror-de-alberto-laiseca). Esta campaña tiene la siguiente estructura, pudiendo observarse que lo único que cambia entre ambos tamaños de pantalla es la imagen, adaptada a cada dispositivo:
+Una campaña de contenido incluida actualmente en La Cuentoneta es la que referencia a la colección ["Cuentos de terror con Alberto Laiseca"](https://www.cuentoneta.ar/collection/cuentos-de-terror-de-alberto-laiseca). Esta campaña tiene la siguiente estructura, pudiendo observarse que lo único que cambia entre ambos tamaños de pantalla es la imagen, adaptada a cada dispositivo:
 
 #### Imágenes
 
@@ -58,7 +55,7 @@ Escritorio y tablets (1240px x 360px)
 
 #### Enlace
 
-https://www.cuentoneta.ar/storylist/cuentos-de-terror-de-alberto-laiseca
+https://www.cuentoneta.ar/collection/cuentos-de-terror-de-alberto-laiseca
 
 ---
 

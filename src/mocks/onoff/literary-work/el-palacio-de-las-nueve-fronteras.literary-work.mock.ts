@@ -1,3 +1,4 @@
+import { onoffImageAssets } from '../../onoff-image-assets.mock';
 import { embeddedAuthorMock } from '../../author.mock';
 import { palacioNueveFronterasRawLiteraryWork } from './el-palacio-de-las-nueve-fronteras.literary-work.raw.mock';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
@@ -16,7 +17,6 @@ import {
 	palacioNueveFronterasSectionTitle,
 } from './el-palacio-de-las-nueve-fronteras.epigraph';
 import { toDomainTags } from '../../onoff-tags.mock';
-import { palacioNueveFronterasStoryMock } from '../story/el-palacio-de-las-nueve-fronteras.story.mock';
 
 const palacioNueveFronterasBody = createMarkdown(palacioNueveFronterasMdBody);
 
@@ -27,10 +27,10 @@ export const palacioNueveFronterasEpigraphMock = createAttributedText({
 
 export const palacioNueveFronterasLiteraryWorkMock: LiteraryWork = createLiteraryWork({
 	_id: 'onoff-literary-work-el-palacio-de-las-nueve-fronteras',
-	slug: palacioNueveFronterasStoryMock.slug,
-	title: palacioNueveFronterasStoryMock.title,
+	slug: palacioNueveFronterasRawLiteraryWork.slug,
+	title: palacioNueveFronterasRawLiteraryWork.title,
 	authors: [embeddedAuthorMock],
-	coverImage: palacioNueveFronterasStoryMock.coverImage,
+	coverImage: onoffImageAssets.elPalacioDeLasNueveFronterasCover.path,
 	content: [
 		createLiteraryWorkSection({
 			position: 0,
@@ -41,10 +41,10 @@ export const palacioNueveFronterasLiteraryWorkMock: LiteraryWork = createLiterar
 		}),
 	],
 	mediaSources: [],
-	resources: palacioNueveFronterasStoryMock.resources,
-	badLanguage: palacioNueveFronterasStoryMock.badLanguage,
+	resources: [],
+	badLanguage: palacioNueveFronterasRawLiteraryWork.badLanguage,
 	tags: toDomainTags(palacioNueveFronterasRawLiteraryWork.tags),
-	originalPublication: palacioNueveFronterasStoryMock.originalPublication,
+	originalPublication: palacioNueveFronterasRawLiteraryWork.originalPublication,
 	editorialNote: markdownToSanitizedHtml(createMarkdown(elPalacioDeLasNueveFronterasEditorialNoteMd)),
-	publishedAt: createIsoDateTime(palacioNueveFronterasStoryMock.publishedAt),
+	publishedAt: createIsoDateTime(palacioNueveFronterasRawLiteraryWork.publishedAt),
 });

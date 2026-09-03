@@ -2,7 +2,7 @@
  * La plomería que comparten los jobs programados que mantienen un **issue de seguimiento**: cómo se
  * invoca `gh` y cómo se encuentra el issue por su título.
  *
- * Vive aparte porque los cuatro jobs la necesitan idéntica y lo que sigue —qué se reporta, cómo se
+ * Vive aparte porque los jobs la necesitan idéntica y lo que sigue —qué se reporta, cómo se
  * decide entre crear y actualizar, qué forma tiene la huella— difiere de verdad entre ellos. Unificar
  * también esa parte pediría un parámetro por cada diferencia; unificar solo la búsqueda no pide
  * ninguno.

@@ -2,14 +2,12 @@ import { Routes } from '@angular/router';
 
 export const AppRoutes = Object.freeze({
 	Home: 'home',
-	Story: 'story',
-	StoryList: 'storylist',
 	Author: 'author',
 	Authors: 'authors',
 	About: 'about',
 	Dmca: 'dmca',
 	Collection: 'collection',
-	Read: 'read',
+	LiteraryWork: 'literary-work',
 } as const);
 export type AppRoutes = (typeof AppRoutes)[keyof typeof AppRoutes];
 
@@ -24,31 +22,23 @@ export const appRoutes: Routes = [
 	},
 	{
 		path: `${AppRoutes.Author}/:slug`,
-		loadComponent: () => import('./pages/author/author.component'),
+		loadComponent: () => import('./pages/author/author.page'),
 	},
 	{
-		path: AppRoutes.Story,
-		loadComponent: () => import('./pages/stories/stories.component'),
-	},
-	{
-		path: `${AppRoutes.Story}/:slug`,
-		loadComponent: () => import('./pages/story/story.component'),
-	},
-	{
-		path: `${AppRoutes.StoryList}/:slug`,
-		loadComponent: () => import('./pages/storylist/storylist.component'),
-	},
-	{
-		path: `${AppRoutes.StoryList}`,
-		loadComponent: () => import('./pages/storylist/storylist.component'),
-	},
-	{
-		path: `${AppRoutes.Read}/:slug`,
-		loadComponent: () => import('./pages/read/read.page'),
+		path: `${AppRoutes.LiteraryWork}/:slug`,
+		loadComponent: () => import('./pages/literary-work/literary-work.page'),
 	},
 	{
 		path: `${AppRoutes.Collection}/:slug`,
 		loadComponent: () => import('./pages/collection/collection.page'),
+	},
+	{
+		path: AppRoutes.Collection,
+		loadComponent: () => import('./pages/collections/collections.page'),
+	},
+	{
+		path: AppRoutes.LiteraryWork,
+		loadComponent: () => import('./pages/literary-works/literary-works.page'),
 	},
 	{
 		path: AppRoutes.About,

@@ -10,6 +10,7 @@ import {
 	checkTitle,
 	collectEmptyBodyViolations,
 	collectIndexableHtmlViolations,
+	getInternalLinkHrefs,
 	type IndexableHtmlExpectations,
 } from './seo-invariants';
 
@@ -42,10 +43,17 @@ describe('checkNgServerContext', () => {
 		expect(checkNgServerContext(GOOD_HTML)).toBeNull();
 	});
 
-	it('viola con el deopt a CSR (ssg) e informa el valor encontrado', () => {
-		const violation = checkNgServerContext(GOOD_HTML.replace('"ssr"', '"ssg"'));
+	// Una ruta prerenderizada sirve el HTML completo igual que una renderizada por request: lo que la
+	// regla persigue es el deopt a cliente, no el modo de render.
+	it('pasa con ng-server-context="ssg" de una ruta prerenderizada', () => {
+		expect(checkNgServerContext(GOOD_HTML.replace('"ssr"', '"ssg"'))).toBeNull();
+	});
+
+	// El deopt a cliente deja el atributo puesto pero vacío, que es distinto de que falte.
+	it('viola con el deopt a CSR e informa el valor encontrado', () => {
+		const violation = checkNgServerContext(GOOD_HTML.replace('ng-server-context="ssr"', 'ng-server-context=""'));
 		expect(violation?.rule).toBe('server-render-context');
-		expect(violation?.message).toContain('ssg');
+		expect(violation?.message).toContain('se encontró ""');
 	});
 
 	it('viola cuando el atributo está ausente', () => {
@@ -198,6 +206,42 @@ describe('checkInternalLink', () => {
 	});
 });
 
+describe('getInternalLinkHrefs', () => {
+	it('devuelve el href cuando hay un enlace con el prefijo dentro de main', () => {
+		expect(getInternalLinkHrefs(GOOD_HTML, '/author/')).toEqual(['/author/jorge-luis-borges']);
+	});
+
+	// El caso que la guarda de la página de lectura existe para atrapar: el destino repetido no
+	// colapsa, porque son dos enlaces y cada uno necesita su propio nombre accesible.
+	it('devuelve una entrada por enlace aunque repitan destino', () => {
+		const html = GOOD_HTML.replace('</main>', '<a href="/author/jorge-luis-borges">Ver más</a></main>');
+		expect(getInternalLinkHrefs(html, '/author/')).toEqual(['/author/jorge-luis-borges', '/author/jorge-luis-borges']);
+	});
+
+	it('devuelve los href en orden de documento', () => {
+		const html = '<main><a href="/author/segundo">b</a><a href="/author/primero">a</a></main>';
+		expect(getInternalLinkHrefs(html, '/author/')).toEqual(['/author/segundo', '/author/primero']);
+	});
+
+	it('ignora enlaces fuera de main', () => {
+		expect(getInternalLinkHrefs('<header><a href="/story/x">x</a></header><main><p>ok</p></main>', '/story/')).toEqual(
+			[],
+		);
+	});
+
+	// Un ancla sin destino no es un enlace: cuenta como cero, no como una entrada vacía que descuadre
+	// el conteo de la página.
+	it('ignora las anclas sin href', () => {
+		expect(getInternalLinkHrefs('<main><a>sin destino</a><a href="/author/x">x</a></main>', '/author/')).toEqual([
+			'/author/x',
+		]);
+	});
+
+	it('devuelve lista vacía cuando ningún enlace matchea el prefijo', () => {
+		expect(getInternalLinkHrefs(GOOD_HTML, '/story/')).toEqual([]);
+	});
+});
+
 describe('checkJsonLdBlocks', () => {
 	it('no devuelve violaciones cuando los bloques están presentes y son schema.org válidos', async () => {
 		expect(await checkJsonLdBlocks(GOOD_HTML, ['organization', 'website'])).toEqual([]);
@@ -231,7 +275,7 @@ describe('collectIndexableHtmlViolations', () => {
 
 	it('acumula todas las violaciones simultáneas (no fail-fast)', async () => {
 		const broken =
-			'<html ng-server-context="ssg"><head><title></title></head><body><main><div data-testid="skeleton"></div></main></body></html>';
+			'<html><head><title></title></head><body><main><div data-testid="skeleton"></div></main></body></html>';
 		const rules = (await collectIndexableHtmlViolations(broken, GOOD_EXPECTATIONS)).map((violation) => violation.rule);
 		expect(rules).toEqual(
 			expect.arrayContaining([

@@ -9,8 +9,7 @@ import {
 } from './geometria.media';
 import { onoffImageAssets } from '../../onoff-image-assets.mock';
 
-// Espeja los mediaSources del fixture raw homónimo, sin el pdfLink que el ACL descarta. Lo comparten
-// la Story y la obra literaria del mismo slug, que en el crudo declaran exactamente los mismos medios.
+// Espeja los mediaSources del fixture raw homónimo, sin el pdfLink que el ACL descarta.
 export const geometriaMediaMock: Media[] = [
 	{
 		title: 'Lectura de "Geometría" por su autor',

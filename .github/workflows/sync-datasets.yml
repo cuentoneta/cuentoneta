@@ -10,10 +10,8 @@ name: Sync datasets (production → staging + development)
 
 on:
   schedule:
-    # 03:17 UTC (~00:17 ART), horario valle; minuto ≠ 0 para evitar el pico de carga de las :00.
-    # GitHub desactiva los schedules tras 60 días sin actividad en el repo (avisa por email); si el
-    # cron deja de correr, reactivarlo desde la pestaña Actions o con un push a la rama default.
-    - cron: '17 3 * * *'
+    # Domingos 03:17 UTC (~00:17 ART), horario valle; minuto ≠ 0 para evitar el pico de carga de las :00.
+    - cron: '17 3 * * 0'
   workflow_dispatch:
     inputs:
       targets:

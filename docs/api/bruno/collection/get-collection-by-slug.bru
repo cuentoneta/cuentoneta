@@ -1,0 +1,30 @@
+meta {
+  name: Get collection by slug
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{apiUrl}}{{baseApiPath}}/collection/:slug
+  body: none
+  auth: none
+}
+
+params:path {
+  slug: geometrias-del-desvelo
+}
+
+docs {
+  Colección completa por su slug, con sus obras literarias en vista de teaser. Slug inexistente
+  responde 404 con body { error }.
+
+  El `mediaSources` de las obras embebidas viaja acotado —solo tipo y título—, que es lo que la
+  tarjeta necesita para pintar el ícono de la plataforma; el `mediaSources` de nivel colección sí es
+  la vista completa.
+
+  `imagery` tiene dos formas según haya o no portada editorial propia: `representative` con una
+  imagen, o `sample` con exactamente tres portadas tomadas de sus obras. Las dos colecciones del
+  corpus de Onoff ejercitan una rama cada una (fuente: src/mocks/onoff-collections.mock.ts):
+  - geometrias-del-desvelo — portada editorial propia
+  - inventario-de-las-pasiones — abanico derivado de sus obras
+}

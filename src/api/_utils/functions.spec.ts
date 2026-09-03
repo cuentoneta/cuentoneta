@@ -1,20 +1,7 @@
 import type { SanityImageSource } from '@sanity/image-url';
-import {
-	mapAuthor,
-	mapAuthorTeaser,
-	mapBlockContentToTextParagraphs,
-	mapContentCampaigns,
-	mapLandingPageContent,
-	mapResources,
-	mapStoryNavigationTeaserWithAuthor,
-	mapStoryTeaser,
-	mapTags,
-	urlFor,
-} from './functions';
-import { elOdioRawTeaser, onoffRawNavTeasersMock } from '@mocks/onoff-raw-stories.mock';
+import { mapAuthor, mapAuthorTeaser, mapContentCampaigns, mapResources, mapTags, urlFor } from './functions';
 import { rawOnoffAuthor, rawOnoffAuthorTeaser } from '@mocks/onoff-raw-author.mock';
-import { onoffRawContentCampaignsMock, onoffRawLandingPageMock } from '@mocks/onoff-raw-landing-page.mock';
-import type { RotatingContent } from '@models/landing-page-content.model';
+import { onoffRawContentCampaignsMock } from '@mocks/onoff-raw-landing-page.mock';
 import { onoffRawTagsMock } from '@mocks/onoff-raw-tags.mock';
 import { withoutUrl } from '@testing/resource-without-url';
 import { viewportElementSizes } from '@models/content-campaign.model';
@@ -36,29 +23,6 @@ describe('mapTags (ACL)', () => {
 
 	it('returns an empty array when there are no tags', () => {
 		expect(mapTags([])).toEqual([]);
-	});
-});
-
-// El helper sobrevive a la baja de la descripción de tag con más de una decena de llamadores (biografía,
-// recursos, colecciones, cuerpo y epígrafes de story). Su predicado de descarte se ejercita acá porque
-// ningún fixture del corpus mezcla elementos no-`block` dentro de un `BlockContent`.
-describe('mapBlockContentToTextParagraphs (ACL)', () => {
-	const paragraph = {
-		_type: 'block' as const,
-		_key: 'b1',
-		style: 'normal' as const,
-		markDefs: [],
-		children: [{ _type: 'span' as const, _key: 's1', text: 'texto', marks: [] }],
-	};
-
-	it('keeps text blocks and discards everything else', () => {
-		const result = mapBlockContentToTextParagraphs([paragraph, { _type: 'image', _key: 'img1' }]);
-
-		expect(result).toEqual([paragraph]);
-	});
-
-	it('returns an empty array when there is no text block', () => {
-		expect(mapBlockContentToTextParagraphs([{ _type: 'image', _key: 'img1' }])).toEqual([]);
 	});
 });
 
@@ -85,23 +49,6 @@ describe('mapAuthor (ACL)', () => {
 describe('mapAuthorTeaser (ACL)', () => {
 	it('does not emit a biography: the teaser contract does not declare it', () => {
 		expect(mapAuthorTeaser(rawOnoffAuthorTeaser)).not.toHaveProperty('biography');
-	});
-});
-
-// El input crudo no incluye `tags`: el mapper es la única fuente del campo vacío (consistente con `mapAuthorTeaser`).
-describe('mapStoryTeaser (ACL)', () => {
-	it('sets tags to [] from the mapper, not from the raw spread', () => {
-		const result = mapStoryTeaser([elOdioRawTeaser]);
-
-		expect(result[0].tags).toEqual([]);
-	});
-});
-
-describe('mapStoryNavigationTeaserWithAuthor (ACL)', () => {
-	it('sets tags to [] from the mapper, not from the raw spread', () => {
-		const result = mapStoryNavigationTeaserWithAuthor([onoffRawNavTeasersMock[0]]);
-
-		expect(result[0].tags).toEqual([]);
 	});
 });
 
@@ -144,6 +91,30 @@ describe('mapResources (ACL)', () => {
 
 		expect(result).toHaveLength(1);
 		expect(result[0].url).toBe(rawResource.url);
+	});
+
+	// El recurso se pinta como `href` de un enlace: un esquema ejecutable convierte el clic en código.
+	// El Studio ya los acota al editar, pero valida la edición y no lo almacenado.
+	it.each(['javascript:alert(1)', 'data:text/html,<script>alert(1)</script>', 'vbscript:msgbox(1)'])(
+		'drops a resource whose url carries the non-navigable scheme of "%s"',
+		(url) => {
+			const [rawResource] = rawOnoffAuthor.resources;
+
+			expect(mapResources([{ ...rawResource, url }])).toEqual([]);
+		},
+	);
+
+	it('drops a resource whose url the parser cannot read', () => {
+		const [rawResource] = rawOnoffAuthor.resources;
+
+		expect(mapResources([{ ...rawResource, url: 'no es una url' }])).toEqual([]);
+	});
+
+	it('keeps a resource addressed by email, which the domain admits', () => {
+		const [rawResource] = rawOnoffAuthor.resources;
+		const url = 'mailto:contacto@onoff.example';
+
+		expect(mapResources([{ ...rawResource, url }])[0].url).toBe(url);
 	});
 
 	it('drops a resource whose url is null, the shape the dataset actually holds', () => {
@@ -199,38 +170,6 @@ describe('mapContentCampaigns (ACL)', () => {
 		} as unknown as (typeof onoffRawContentCampaignsMock)[number];
 
 		expect(() => mapContentCampaigns([withoutXs])).toThrow('Campaign content not found');
-	});
-});
-
-describe('mapLandingPageContent (ACL)', () => {
-	// El repository invoca al mapper con el spread de dos queries, y la rotación va segunda: aporta lo
-	// que la landing no proyecta y, al hacerlo, también pisa su `_id`. El caso reproduce ese orden con
-	// una identidad propia para que la aserción distinga cuál de las dos sobrevive.
-	const rotatingContent: RotatingContent = { _id: 'rotating-content-onoff', name: 'Rotación de Onoff', mostRead: [] };
-	const raw = { ...onoffRawLandingPageMock, ...rotatingContent };
-
-	it('exposes exactly the domain contract, dropping the raw slug and name', () => {
-		const result = mapLandingPageContent(raw);
-
-		expect(Object.keys(result).sort()).toEqual(['_id', 'campaigns', 'cards', 'config', 'latestReads', 'mostRead']);
-	});
-
-	it('takes its identity from the rotating content that overrides the landing page', () => {
-		const result = mapLandingPageContent(raw);
-
-		expect(result._id).toBe(rotatingContent._id);
-		expect(result._id).not.toBe(onoffRawLandingPageMock._id);
-	});
-
-	it('preserves the config the query returned', () => {
-		expect(mapLandingPageContent(raw).config).toEqual(onoffRawLandingPageMock.config);
-	});
-
-	it('maps every campaign the query returned, in order', () => {
-		const expectedSlugs = onoffRawLandingPageMock.campaigns.map(({ slug }) => slug);
-
-		expect(expectedSlugs.length).toBeGreaterThan(0);
-		expect(mapLandingPageContent(raw).campaigns.map(({ slug }) => slug)).toEqual(expectedSlugs);
 	});
 });
 

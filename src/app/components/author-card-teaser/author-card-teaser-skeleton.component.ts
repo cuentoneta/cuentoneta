@@ -5,7 +5,7 @@ import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 @Component({
 	selector: 'cuentoneta-author-card-teaser-skeleton',
 	imports: [SkeletonComponent],
-	host: { class: 'block w-full' },
+	host: { class: 'block w-full', 'data-testid': 'skeleton' },
 	template: `
 		<article class="flex items-start gap-4">
 			<cuentoneta-skeleton appearance="circle" class="w-20 shrink-0 bg-neutral-300" />

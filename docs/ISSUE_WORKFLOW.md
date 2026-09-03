@@ -2,7 +2,7 @@
 
 Este documento describe, para lectura humana, cómo funciona el skill [`issue-workflow`](../.claude/skills/issue-workflow/SKILL.md): sus seis fases, en qué puntos se detiene a preguntar, qué artefactos deja y qué subagentes despierta en cada tramo.
 
-La **especificación normativa** del flujo es el `SKILL.md` — es lo que el agente ejecuta. Este documento es su mapa: si alguno de los dos se desactualiza, manda el `SKILL.md`.
+La **especificación normativa** del flujo son el `SKILL.md` **y** los archivos de [`references/`](../.claude/skills/issue-workflow/references/) — es lo que el agente ejecuta. El cuerpo del `SKILL.md` trae lo que rige en toda invocación (el uso, la Fase 0 y las restricciones); cada fase vive en su propio archivo y se carga al entrar a ella, para que reanudar en una fase tardía no arrastre el texto de las anteriores. Este documento es su mapa: si se desactualiza frente a ellos, mandan ellos.
 
 ## Mapa del flujo
 

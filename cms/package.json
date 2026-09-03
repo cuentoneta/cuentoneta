@@ -1,13 +1,13 @@
 {
 	"name": "@cuentoneta/cms",
 	"private": true,
-	"version": "2.10.3",
+	"version": "2.11.0",
 	"description": "",
 	"main": "package.json",
 	"author": "Ramiro Olivencia <ramiro@olivencia.com.ar>",
 	"license": "CC BY-NC-SA 4.0",
 	"engines": {
-		"node": "^24.15.0"
+		"node": "^24.18.0"
 	},
 	"scripts": {
 		"postinstall": "pnpm run config",
@@ -22,33 +22,33 @@
 		"sanity"
 	],
 	"dependencies": {
-		"@sanity/cli": "^8.0.0",
+		"@sanity/cli": "^8.5.0",
 		"@sanity/export": "^6.2.1",
 		"@sanity/icons": "^5.2.1",
-		"@sanity/import": "^6.0.3",
+		"@sanity/import": "^6.0.4",
 		"@sanity/ui": "^3.5.2",
-		"@sanity/vision": "^5.31.1",
+		"@sanity/vision": "^5.31.2",
 		"date-fns": "^4.4.0",
 		"prop-types": "^15.8.1",
 		"react": "^19.2.8",
 		"react-dom": "^19.2.8",
 		"react-icons": "^5.7.0",
 		"react-is": "^19.2.8",
-		"sanity": "^5.31.1",
+		"sanity": "^5.31.2",
 		"sanity-plugin-bulk-actions-table": "^1.0.4",
 		"sanity-plugin-computed-field": "^2.0.2",
-		"sanity-plugin-markdown": "^9.0.11",
-		"sanity-plugin-singleton-management": "^1.0.7",
-		"styled-components": "^6.5.2"
+		"sanity-plugin-markdown": "^9.0.13",
+		"sanity-plugin-singleton-management": "^1.1.1",
+		"styled-components": "^6.5.3"
 	},
 	"devDependencies": {
 		"@types/node": "^24.13.3",
 		"@types/react": "^19.2.18",
-		"@types/react-dom": "^19.2.4",
+		"@types/react-dom": "^19.2.5",
 		"groq-js": "^2.0.0",
 		"tsx": "^4.23.12",
 		"typescript": "6.0.3",
-		"vitest": "^4.1.10"
+		"vitest": "^4.1.11"
 	},
 	"pnpm": {
 		"overrides": {

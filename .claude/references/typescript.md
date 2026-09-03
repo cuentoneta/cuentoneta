@@ -145,3 +145,20 @@ En ESLint flat config, cuando **dos config objects aplican al mismo archivo** y 
 ```
 
 Precedentes en el propio archivo: `test-utils-vi-exception` (recompone `commonRestrictedSyntax` al soltar `viRestrictedSyntax` para `src/test-utils.ts`), `ssr-fetch-must-decide-blocking` (recompone `commonRestrictedSyntax` al sumar las restricciones de fetch de página) y el bloque `cms` (recompone `commonRestrictedSyntax` soltando `viRestrictedSyntax` para todo `cms/**/*.ts`/`.tsx`, con un motivo propio: no es que `vi.*` no aplique ahí como en `test-utils-vi-exception`, sino que en `cms/` no existe `@test-utils` al que redirigir — sus dobles se escriben a mano). La única parte que **sí** se puede soltar sin recomponer es la que no aplica al scope (`viRestrictedSyntax` en un bloque que ya `ignores: ['**/*.spec.ts']`, porque `vi.*` solo aparece en specs).
+
+---
+
+## `allowImportingTsExtensions`: dónde vive y por qué no en el raíz
+
+Un import relativo con extensión `.ts` solo compila si el programa lo declara con `allowImportingTsExtensions`, y TypeScript lo condiciona (`TS5096`) a que además esté seteado `noEmit`, `emitDeclarationOnly` o `rewriteRelativeImportExtensions`.
+
+En el repo esa forma la necesita **una sola cadena**: la del hook `PreToolUse`, que corre con `node` puro y por eso paga la exigencia de extensión explícita de ESM — ver [`scripts.md`](scripts.md). El flag va en los dos programas que incluyen `scripts/`, nunca en el `tsconfig.json` raíz:
+
+| Archivo                   | Qué declara                                                      | Por qué                                                                                                                                                                                                           |
+| ------------------------- | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `tsconfig.typecheck.json` | `allowImportingTsExtensions`                                     | Ya tiene `noEmit`, que es lo que `TS5096` pide. Es el programa del gate `typecheck`                                                                                                                               |
+| `tsconfig.spec.json`      | `allowImportingTsExtensions` + `rewriteRelativeImportExtensions` | Incluye `scripts/**/*.ts` para que Vitest resuelva sus `paths`. **No admite `noEmit`**: con él, el plugin de Angular deja de contar `src/test-setup.ts` como parte del programa y la suite entera falla al cargar |
+
+El raíz queda afuera a propósito: es una config _solution-style_ de la que heredan los proyectos de app, spec, editor, server y Storybook, y **ninguno declara `noEmit`**. Poner el flag arriba obliga a agregárselo a cada proyecto que emite —el de la app entre ellos— o a activar el reescrito de extensiones sobre el emit real.
+
+La habilitación es más amplia que la necesidad: esos dos programas también incluyen `src/`, `e2e/` y `resources/`, y el compilador no tiene cómo distinguir los dos archivos que la precisan del resto. Lo que la acota es **lint**, no la review: la regla `cuentoneta/no-ts-extension-imports` (`tools/eslint/no-ts-extension-imports.js`) marca todo import relativo con extensión `.ts`/`.tsx` y exime la cadena del hook con una allowlist por ruta declarada en la propia regla. Sumar un archivo a esa cadena es una decisión visible en el diff, no un efecto de ampliar un glob.

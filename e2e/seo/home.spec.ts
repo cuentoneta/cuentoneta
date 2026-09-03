@@ -6,14 +6,16 @@
  *       link canonical, robots indexable y keywords.
  *  - B+C. Datos estructurados sitewide: bloques JSON-LD Organization y WebSite (la home no
  *         tiene una entidad propia, solo los sitewide del app initializer).
- *  - E. Enlaces a los hubs del catálogo (/story y /authors), que son la vía por la que el
- *       crawler alcanza el corpus.
+ *  - E. Enlaces a los hubs del catálogo (/literary-work y /authors), que son la vía por la que
+ *       el crawler alcanza el corpus.
  *
  * Sobre el DOM hidratado, vía navegación in-app (router):
- *  - D. Al navegar de la home a una story, los bloques sitewide persisten y aparece el Article;
+ *  - D. Al navegar de la home a una obra, los bloques sitewide persisten y aparece el Article;
  *       sin duplicar canonical ni <title>.
  */
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+
+import { test } from '../_utils/test';
 
 import { parseHtml, parseJsonLdBlocks, getMetaContent, getTitleText, getCanonicalHref } from '../_utils/seo';
 import { assertValidJsonLd } from '@testing/json-ld-validation';
@@ -25,6 +27,7 @@ import {
 	checkPrimaryHeading,
 	checkPrimaryContentLength,
 	checkNoSkeletonMarkers,
+	checkInternalLink,
 	checkJsonLdBlocks,
 } from '../_utils/seo-invariants';
 import { SCHEMA_IDS, SITEWIDE_SCHEMA_IDS } from '../_utils/seo-fixtures';
@@ -61,13 +64,14 @@ test('home — B/C: bloques JSON-LD sitewide Organization y WebSite', async () =
 
 // Los hubs concentran los enlaces a todo el corpus, y hasta este cambio ninguna página los
 // enlazaba: el crawler solo los conocía por el sitemap. Se afirma sobre el HTML crudo porque lo
-// que importa es que estén sin ejecutar JS. Igualdad exacta del href: /story/<slug> no cuenta.
+// que importa es que estén sin ejecutar JS. Igualdad exacta del href: el enlace a una obra puntual
+// no cuenta como enlace al hub.
 test('home — E: enlaza los hubs del catálogo en el HTML server-rendered', async () => {
 	const hrefs = parseHtml(html)
 		.querySelectorAll('a')
 		.map((anchor) => anchor.getAttribute('href'));
 
-	expect(hrefs).toContain('/story');
+	expect(hrefs).toContain('/literary-work');
 	expect(hrefs).toContain('/authors');
 });
 
@@ -79,24 +83,24 @@ test('home — invariantes de indexado para crawlers (ssr, h1 real, contenido pr
 		checkRobotsIndexable(html),
 		checkPrimaryHeading(html),
 		checkPrimaryContentLength(html),
+		// Que no haya esqueletos dice que los decks no difieren; que haya un enlace a una obra dice que
+		// además trajeron contenido. Sin esto, una página que sirviera los decks vacíos pasaría igual.
+		checkInternalLink(html, '/literary-work/'),
 		...(await checkJsonLdBlocks(html, SITEWIDE_SCHEMA_IDS)),
 	].filter((violation): violation is SeoInvariantViolation => violation !== null);
 	expect(violations).toEqual([]);
 });
 
-// Bloqueado: los decks most-read/latest/collection-teasers usan @defer, así que el SSR sirve
-// <cuentoneta-*-skeleton data-testid="skeleton"> dentro de <main>. Activar cuando esos decks se
-// server-rendericen sin diferir.
-test.fixme('home — sin markers de skeleton en <main>', () => {
+test('home — sin markers de skeleton en <main>', () => {
 	expect(checkNoSkeletonMarkers(html)).toBeNull();
 });
 
-test('home — D: al navegar a una story aparece el Article y el sitewide persiste', async ({ page }) => {
+test('home — D: al navegar a una obra aparece el Article y el sitewide persiste', async ({ page }) => {
 	await page.goto('/home');
 	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.organization}"]`)).toHaveCount(1);
 
-	await page.locator('a[href^="/story/"]').filter({ visible: true }).first().click();
-	await expect(page).toHaveURL(/\/story\//);
+	await page.locator('a[href^="/literary-work/"]').filter({ visible: true }).first().click();
+	await expect(page).toHaveURL(/\/literary-work\//);
 	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.article}"]`)).toHaveCount(1);
 
 	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.organization}"]`)).toHaveCount(1);

@@ -2,22 +2,18 @@ import { Component, computed, inject, input } from '@angular/core';
 import { map } from 'rxjs';
 
 import { AppRoutes } from '../../app.routes';
-import { StoryApi } from '../../providers/story.provider';
+import { LiteraryWorkApi } from '../../providers/literary-work.provider';
 import { progressiveRxResource } from '@app-utils/ssr-resource';
 import { ReadingSuggestionsListComponent } from './reading-suggestions-list.component';
 import { pickReadingSuggestions } from './pick-reading-suggestions';
 import type { NavigationParams } from '@app-utils/navigation-params';
-import { adaptStoryTeasersToReadingSuggestions } from './story-teaser-to-reading-suggestion.adapter';
 
 /**
  * Sugerencias de otras obras del mismo autor. Es una de las dos variantes que monta
  * ReadingSuggestions: resuelve los datos y delega la presentación en ReadingSuggestionsList.
  *
- * TODO(#2036): cambiar el provider de Story a LiteraryWork cuando la página de lectura integre la tríada.
- *
- * Consume la proyección de teaser y no la de navegación: es la que transporta el cuerpo recortado del
- * que sale el extracto. La de navegación proyecta `body: []` a propósito, porque la comparten la
- * landing y las navegaciones de autor y colección, que no lo necesitan.
+ * Consume la vista de teaser y no la de navegación: es la única que transporta el extracto, que es lo
+ * que la tarjeta pinta bajo el título.
  *
  * El recurso es deliberadamente progresivo (no bloquea el SSR): quien lo consume monta el bloque
  * dentro de un `@defer (on viewport)`, así el fetch ocurre una sola vez y ya en el cliente.
@@ -44,7 +40,7 @@ export class AuthorReadingSuggestionsComponent {
 	public readonly currentWorkSlug = input<string>();
 
 	private readonly appRoutes = AppRoutes;
-	private readonly storyService = inject(StoryApi);
+	private readonly literaryWorkService = inject(LiteraryWorkApi);
 
 	// El sorteo ocurre acá, en el stream, y no en un computed: así se resuelve una sola vez por fetch
 	// y las sugerencias no se rebarajan ante cualquier reevaluación.
@@ -54,13 +50,9 @@ export class AuthorReadingSuggestionsComponent {
 		params: () =>
 			this.authorSlug() ? { slug: this.authorSlug(), currentWorkSlug: this.currentWorkSlug() } : undefined,
 		stream: ({ params }) =>
-			this.storyService
-				.getByAuthorSlug(params.slug)
-				.pipe(
-					map((stories) =>
-						adaptStoryTeasersToReadingSuggestions(pickReadingSuggestions(stories, params.currentWorkSlug)),
-					),
-				),
+			this.literaryWorkService
+				.getTeasers({ author: params.slug })
+				.pipe(map((works) => pickReadingSuggestions(works, params.currentWorkSlug))),
 		defaultValue: [],
 	});
 

@@ -12,6 +12,16 @@ import componentConfigInClass from './tools/eslint/component-config-in-class.js'
 import declareCloseToUse from './tools/eslint/declare-close-to-use.js';
 import zIndexScale from './tools/eslint/z-index-scale.js';
 import noFullZodInBrowser from './tools/eslint/no-full-zod-in-browser.js';
+import noTsExtensionImports from './tools/eslint/no-ts-extension-imports.js';
+
+// Las reglas propias comparten un único objeto de plugin: ESLint rechaza redefinir un namespace
+// entre bloques cuyos scopes se solapan, aunque las reglas sean distintas.
+const cuentonetaPlugin = {
+	rules: {
+		'no-full-zod-in-browser': noFullZodInBrowser,
+		'no-ts-extension-imports': noTsExtensionImports,
+	},
+};
 
 // Restricciones de sintaxis comunes: CommonJS, enums, lifecycle hooks y propiedades estáticas.
 const lifecycleHooks = [
@@ -38,7 +48,7 @@ const readonlyFactoryMessage =
 const singleWorkCorpusImportPattern = {
 	group: ['@mocks/onoff/**', '**/mocks/onoff/**'],
 	message:
-		'No importes una obra puntual del corpus: usá las colecciones de @mocks/onoff-literary-works.mock (onoffLiteraryWorksMock, onoffLiteraryWorkEpigraphsMock) o sus selectores por capacidad (onoffLiteraryWorksWithEpigraphs, onoffLiteraryWorksWithEditorialNote, …), que declaran el shape que el caso necesita y crecen con el canon.',
+		'No importes una pieza puntual del corpus: usá el agregador de la entidad que necesitás — @mocks/onoff-literary-works.mock, @mocks/onoff-literary-work-teasers.mock o @mocks/onoff-collections.mock — por su colección (onoffLiteraryWorksMock, onoffLiteraryWorkTeasersMock, onoffCollectionsMock, onoffCollectionTeasersMock) o por el selector cuya capacidad es la que tu caso afirma (onoffLiteraryWorksWithEpigraphs, onoffLiteraryWorkTeasersWithExcerptMock, onoffCollectionTeasersWithSampleImageryMock, …). Declaran el shape que el caso necesita y crecen con el canon.',
 };
 
 const commonRestrictedSyntax = [
@@ -175,6 +185,32 @@ export default [
 		},
 	},
 	{
+		// El `test` de Playwright trae el navegador sin la intercepción de los assets de Sanity, así que
+		// un spec que lo importe descarga las imágenes del CDN de verdad — el consumo que el fixture de
+		// `e2e/_utils/test.ts` existe para evitar, y que en verde no se nota. La restricción va por
+		// nombre importado: `expect` y los tipos no los toca ningún fixture y siguen saliendo del paquete.
+		name: 'e2e-playwright-fixture',
+		files: ['e2e/**/*.ts'],
+		ignores: ['e2e/_utils/test.ts'],
+		rules: {
+			'no-restricted-imports': 'off',
+			'@typescript-eslint/no-restricted-imports': [
+				'error',
+				{
+					paths: [
+						{
+							name: '@playwright/test',
+							importNames: ['test'],
+							allowTypeImports: true,
+							message:
+								'Importá `test` de `e2e/_utils/test`: ese `test` sustituye los assets del CDN de Sanity por un pixel local en vez de descargarlos. `expect` y los tipos sí salen de @playwright/test.',
+						},
+					],
+				},
+			],
+		},
+	},
+	{
 		name: 'nx',
 		files: ['**/*.ts'],
 		plugins: {
@@ -208,8 +244,8 @@ export default [
 	{
 		// Las restricciones numéricas de CLAUDE.md, verificables por primera vez: hasta acá se sostenían
 		// solo por lectura humana, en todo el repo. Van en un bloque propio y global porque miden tamaño
-		// y forma, no framework: valen igual en la app Angular, en el Studio React, en los scripts, en
-		// los e2e y en resources. Sumarlas al bloque `nx` no serviría — declara `**/*.ts`, que no
+		// y forma, no framework: valen igual en la app Angular, en el Studio React, en los scripts y en
+		// los e2e. Sumarlas al bloque `nx` no serviría — declara `**/*.ts`, que no
 		// matchea el `.tsx` del Studio. Son reglas core, no `no-restricted-syntax`, así que no las
 		// alcanza la trampa de que un bloque posterior reemplace el array en vez de mergearlo.
 		name: 'size-and-complexity',
@@ -312,10 +348,24 @@ export default [
 		name: 'no-full-zod-in-browser',
 		files: ['src/models/**/*.ts', 'src/app/**/*.ts'],
 		plugins: {
-			cuentoneta: { rules: { 'no-full-zod-in-browser': noFullZodInBrowser } },
+			cuentoneta: cuentonetaPlugin,
 		},
 		rules: {
 			'cuentoneta/no-full-zod-in-browser': 'error',
+		},
+	},
+	{
+		// El scope es todo el árbol: `allowImportingTsExtensions` alcanza a todo lo que incluyen los dos
+		// tsconfig que lo declaran, así que la forma queda disponible mucho más allá de los dos archivos
+		// que la necesitan. La excepción vive por ruta dentro de la regla y no como `ignores` acá, para
+		// que sumar un archivo a la cadena del hook sea una decisión visible en el diff.
+		name: 'no-ts-extension-imports',
+		files: ['**/*.{ts,tsx,js,mjs}'],
+		plugins: {
+			cuentoneta: cuentonetaPlugin,
+		},
+		rules: {
+			'cuentoneta/no-ts-extension-imports': 'error',
 		},
 	},
 	{

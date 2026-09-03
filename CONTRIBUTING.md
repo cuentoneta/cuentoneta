@@ -1,9 +1,6 @@
 <div align="center" width="100%">
-    <h1>La Cuentoneta</h1>
-    <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="https://github.com/rolivencia/cuentoneta/assets/32349705/b0ea0659-3c9d-4c4f-9d14-ab60d50dd832">
-        <img width="33%" alt="La Cuentoneta" src="https://github.com/rolivencia/cuentoneta/assets/32349705/b0ea0659-3c9d-4c4f-9d14-ab60d50dd832">
-    </picture>
+    <h2>La Cuentoneta</h2>
+    <img width="33%" alt="" src=".github/assets/cuentoneta-logo.png">
 </div>
 
 ---
@@ -19,7 +16,7 @@ sugerencia de contenidos para sumar a la plataforma.
 
 En la [sección de creación de nuevos issues][crear-issue-cuentoneta] del proyecto pueden agregarse nuevos issues en base a las plantillas que el equipo ha definido.
 
-También puede visualizarse la [lista de issues creados](https://github.com/rolivencia/cuentoneta/issues). Esta lista se actualiza y cura por parte de quienes contribuyen a La Cuentoneta, filtrando, clasificando y detallando lo escrito en cada uno de los issues en los que se trabajará a futuro.
+También puede visualizarse la [lista de issues creados](https://github.com/cuentoneta/cuentoneta/issues). Esta lista se actualiza y cura por parte de quienes contribuyen a La Cuentoneta, filtrando, clasificando y detallando lo escrito en cada uno de los issues en los que se trabajará a futuro.
 
 > 💡 Si tienes alguna consulta, puedes hacerla en nuestro canal [**#🚐 | la-cuentoneta**][dc-channel] en Discord.
 
@@ -39,7 +36,7 @@ La Cuentoneta tiene cuentas oficiales en [Facebook][facebook-cuentoneta], [Insta
 
 ### 📜 Contenidos
 
-Puedes sugerir contenido para sumar a la plataforma, sea en forma de cuentos, poemas, ensayos o temáticas para nuevas storylists.
+Puedes sugerir contenido para sumar a la plataforma, sea en forma de cuentos, poemas, ensayos o temáticas para nuevas colecciones.
 El contenido puede ser escritura propia o de terceros, con previos permisos de publicación o disponibilidad de acceso a este contenido en la web abierta.
 
 Estamos trabajando para, a futuro, ir en busca de autores y autoras de cuentos y poemas de autoría original que deseen publicar sus obras en La Cuentoneta.
@@ -69,9 +66,9 @@ Si eres desarrolladora o desarrollador, puedes contribuir al proyecto mediante l
 <!-- Enlaces a GitHub Issues y a issue templates -->
 
 [github-issues-tutorial]: https://docs.github.com/es/issues/tracking-your-work-with-issues/creating-an-issue
-[crear-issue-cuentoneta]: https://github.com/rolivencia/cuentoneta/issues/new/choose
-[feature-request-template]: https://github.com/rolivencia/cuentoneta/issues/new?assignees=&labels=%F0%9F%8F%8E%EF%B8%8F+mejora&projects=&template=feature.yml
-[bug-report-template]: https://github.com/rolivencia/cuentoneta/issues/new?assignees=&labels=%F0%9F%A6%9F+bug&projects=&template=bug_report.yml
+[crear-issue-cuentoneta]: https://github.com/cuentoneta/cuentoneta/issues/new/choose
+[feature-request-template]: https://github.com/cuentoneta/cuentoneta/issues/new?assignees=&labels=%F0%9F%8F%8E%EF%B8%8F+mejora&projects=&template=feature.yml
+[bug-report-template]: https://github.com/cuentoneta/cuentoneta/issues/new?assignees=&labels=%F0%9F%A6%9F+bug&projects=&template=bug_report.yml
 
 <!-- Enlaces a otros documentos -->
 

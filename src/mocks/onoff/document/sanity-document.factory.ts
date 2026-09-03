@@ -18,9 +18,11 @@ export function slugField(current: string): Slug {
 	return { _type: 'slug', current };
 }
 
-export function withoutKey<T extends object, K extends keyof T>(source: T, key: K): Omit<T, K> {
+export function withoutKey<T extends object, K extends keyof T>(source: T, ...keys: K[]): Omit<T, K> {
 	const clone: Partial<T> = { ...source };
-	delete clone[key];
+	for (const key of keys) {
+		delete clone[key];
+	}
 	return clone as Omit<T, K>;
 }
 

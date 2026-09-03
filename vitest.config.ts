@@ -28,7 +28,6 @@ export default defineConfig({
 		include: [
 			'src/**/*.{test,spec}.ts',
 			'scripts/**/*.{test,spec}.ts',
-			'resources/**/*.{test,spec}.ts',
 			'e2e/_utils/**/*.{test,spec}.ts',
 			'tools/**/*.{test,spec}.ts',
 		],

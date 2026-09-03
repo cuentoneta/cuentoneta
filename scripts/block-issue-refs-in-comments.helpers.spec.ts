@@ -1,4 +1,8 @@
+import { existsSync } from 'node:fs';
+import { resolve } from 'node:path';
+
 import {
+	CONVENTION_SOURCES,
 	findExemptIssueRefs,
 	findIssueRefsInComments,
 	isConventionSource,
@@ -190,5 +194,14 @@ describe('isConventionSource', () => {
 
 	it('no exime a un archivo de scripts/ que no define la convención', () => {
 		expect(isConventionSource('C:/repo/scripts/backfill-reading-time.ts', raiz)).toBe(false);
+	});
+});
+
+describe('la allowlist de archivos que definen la convención', () => {
+	// El gate cubre la dirección peligrosa —un archivo que cita sin estar allowlisted falla—, pero no la
+	// inversa: una entrada que apunta a un archivo movido o renombrado exime a nadie y la lista deja de
+	// decir lo que dice. Mover contenido entre archivos es justamente cuando se rompe.
+	it.each([...CONVENTION_SOURCES])('apunta a un archivo que existe: %s', (ruta) => {
+		expect(existsSync(resolve(process.cwd(), ruta))).toBe(true);
 	});
 });

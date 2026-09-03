@@ -18,6 +18,10 @@
 				[showMultimedia]="true"
 				[excerptLines]="excerptLines()"
 				[tagLabel]="collection.tags[0]?.title"
+				[navigationParams]="{
+					navigation: 'collection',
+					navigationSlug: collection.slug,
+				}"
 			/>
 			}
 		</div>
