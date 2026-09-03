@@ -1,4 +1,5 @@
-import { Meta, moduleMetadata, StoryObj } from '@storybook/angular-vite';
+import type { Meta, StoryObj } from '@storybook/angular-vite';
+import { moduleMetadata } from '@storybook/angular-vite';
 
 import { CollectionTeaserCard } from './collection-teaser-card';
 import { CollectionTeaserCardSkeletonComponent } from './collection-teaser-card-skeleton';

@@ -1,8 +1,8 @@
 // Tipos de Sanity
-import { CollectionBySlugQueryResult, LiteraryWorkBySlugQueryResult } from '@sanity-types';
+import type { CollectionBySlugQueryResult, LiteraryWorkBySlugQueryResult } from '@sanity-types';
 
 // Modelos
-import {
+import type {
 	AudioRecording,
 	Media,
 	MediaTeaser,

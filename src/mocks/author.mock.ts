@@ -1,4 +1,4 @@
-import { Author, AuthorProfile, AuthorTeaser } from '@models/author.model';
+import type { Author, AuthorProfile, AuthorTeaser } from '@models/author.model';
 import { withoutKey } from './onoff/document/sanity-document.factory';
 import { createMarkdown } from '@models/markdown.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';

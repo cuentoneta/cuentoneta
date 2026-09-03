@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { SpaceRecording } from '@models/media.model';
+import type { SpaceRecording } from '@models/media.model';
 
 @Component({
 	selector: 'cuentoneta-space-recording-widget',

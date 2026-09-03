@@ -1,7 +1,8 @@
 import { render, screen, within } from '@testing-library/angular';
 import { provideRouter } from '@angular/router';
 import { RESPONSE_INIT } from '@angular/core';
-import { NEVER, Observable, throwError } from 'rxjs';
+import type { Observable } from 'rxjs';
+import { NEVER, throwError } from 'rxjs';
 import { clearAllMocks, restoreAllMocks } from '@test-utils';
 
 import LiteraryWorksPage from './literary-works.page';

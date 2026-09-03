@@ -1,8 +1,9 @@
-import { argsToTemplate, moduleMetadata, Meta, StoryObj } from '@storybook/angular-vite';
+import type { Meta, StoryObj } from '@storybook/angular-vite';
+import { argsToTemplate, moduleMetadata } from '@storybook/angular-vite';
 
 import { MediaSelectorsComponent } from './media-selectors.component';
 import { SkeletonComponent } from '@components/skeleton/skeleton.component';
-import { MediaTeaser } from '@models/media.model';
+import type { MediaTeaser } from '@models/media.model';
 import { onoffMediaMock, onoffYouTubeVideosMock, toMediaTeaser } from '@mocks/onoff-media.mock';
 
 // Conjunto de medios variado: el canon completo más un video repetido, para que el modo agrupado
