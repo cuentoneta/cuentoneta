@@ -55,12 +55,12 @@ describe('SchemaOrgService', () => {
 	it('should not let one page cleanup remove another page block (per-page ids avoid the navigation race)', () => {
 		// Navegación A→B: la ruta entrante setea su breadcrumb (id propio) antes de que la saliente
 		// se destruya; el cleanup de la saliente solo borra el suyo, nunca el de la entrante.
-		service.setJsonLd('breadcrumb-story', { '@context': CONTEXT, '@type': 'BreadcrumbList' });
+		service.setJsonLd('breadcrumb-literary-work', { '@context': CONTEXT, '@type': 'BreadcrumbList' });
 		service.setJsonLd('breadcrumb-author', { '@context': CONTEXT, '@type': 'BreadcrumbList' });
-		service.removeJsonLd('breadcrumb-story');
+		service.removeJsonLd('breadcrumb-literary-work');
 
 		expect(scriptFor('breadcrumb-author')).not.toBeNull();
-		expect(scriptFor('breadcrumb-story')).toBeNull();
+		expect(scriptFor('breadcrumb-literary-work')).toBeNull();
 	});
 
 	it('should remove the script for the given id', () => {

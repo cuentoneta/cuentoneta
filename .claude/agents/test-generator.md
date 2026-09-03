@@ -54,20 +54,20 @@ Es la **única** referencia que cargás. No asumas convenciones del starter ni d
 import { clearAllMocks, fn } from '@test-utils';
 import { of, type Observable } from 'rxjs';
 
-const getBySlug = fn<[string], Observable<Story>>();
+const getBySlug = fn<[string], Observable<LiteraryWork>>();
 
 beforeEach(() => {
 	clearAllMocks();
 });
 
 // ...
-getBySlug.mockReturnValue(of(storyMock));
-await render(StoryComponent, {
-	providers: [{ provide: StoryApi, useValue: { getBySlug } }],
+getBySlug.mockReturnValue(of(literaryWorkMock));
+await render(LiteraryWorkPage, {
+	providers: [{ provide: LiteraryWorkApi, useValue: { getBySlug } }],
 });
 ```
 
-`fn()` es genérico: `fn<[string], Observable<Story>>()`. Para castear una función auto-mockeada usá `as Mock` importado de `@test-utils` (nunca `vi.mocked()`).
+`fn()` es genérico: `fn<[string], Observable<LiteraryWork>>()`. Para castear una función auto-mockeada usá `as Mock` importado de `@test-utils` (nunca `vi.mocked()`).
 
 ### Timers
 
@@ -131,15 +131,15 @@ describe('SitemapService', () => {
 		process.env['BASE_URL'] = 'https://test.cuentoneta.ar';
 	});
 
-	it('should include story URLs', async () => {
+	it('should include literary work URLs', async () => {
 		(sitemapRepository.fetchSitemapSlugs as Mock).mockResolvedValue({
-			stories: [{ slug: 'el-aleph', lastmod: '2025-01-01' }],
+			literaryWorks: [{ slug: 'el-fin', lastmod: '2025-01-01' }],
 			authors: [],
-			storylists: [],
+			collections: [],
 		});
 
 		const urls = await getSitemapUrls();
-		expect(urls).toContainEqual(expect.objectContaining({ loc: 'https://test.cuentoneta.ar/story/el-aleph' }));
+		expect(urls).toContainEqual(expect.objectContaining({ loc: 'https://test.cuentoneta.ar/literary-work/el-fin' }));
 	});
 });
 ```

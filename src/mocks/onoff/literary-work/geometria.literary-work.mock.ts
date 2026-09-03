@@ -1,3 +1,4 @@
+import { onoffImageAssets } from '../../onoff-image-assets.mock';
 import { embeddedAuthorMock } from '../../author.mock';
 import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
 import { createAttributedText } from '@models/attributed-text.model';
@@ -13,7 +14,6 @@ import { geometriaEpigraphReference, geometriaEpigraphText, geometriaSectionTitl
 import { toDomainTags } from '../../onoff-tags.mock';
 import { geometriaRawLiteraryWork } from './geometria.literary-work.raw.mock';
 import { geometriaMediaMock } from '../media/geometria.media.mock';
-import { geometriaStoryMock } from '../story/geometria.story.mock';
 
 const geometriaBody = createMarkdown(geometriaMdBody);
 
@@ -24,10 +24,10 @@ export const geometriaEpigraphMock = createAttributedText({
 
 export const geometriaLiteraryWorkMock: LiteraryWork = createLiteraryWork({
 	_id: 'onoff-literary-work-geometria',
-	slug: geometriaStoryMock.slug,
-	title: geometriaStoryMock.title,
+	slug: geometriaRawLiteraryWork.slug,
+	title: geometriaRawLiteraryWork.title,
 	authors: [embeddedAuthorMock],
-	coverImage: geometriaStoryMock.coverImage,
+	coverImage: onoffImageAssets.geometriaCover.path,
 	content: [
 		createLiteraryWorkSection({
 			position: 0,
@@ -38,10 +38,10 @@ export const geometriaLiteraryWorkMock: LiteraryWork = createLiteraryWork({
 		}),
 	],
 	mediaSources: geometriaMediaMock,
-	resources: geometriaStoryMock.resources,
-	badLanguage: geometriaStoryMock.badLanguage,
+	resources: [],
+	badLanguage: geometriaRawLiteraryWork.badLanguage,
 	tags: toDomainTags(geometriaRawLiteraryWork.tags),
-	originalPublication: geometriaStoryMock.originalPublication,
+	originalPublication: geometriaRawLiteraryWork.originalPublication,
 	editorialNote: markdownToSanitizedHtml(createMarkdown(geometriaEditorialNoteMd)),
-	publishedAt: createIsoDateTime(geometriaStoryMock.publishedAt),
+	publishedAt: createIsoDateTime(geometriaRawLiteraryWork.publishedAt),
 });

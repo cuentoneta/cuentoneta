@@ -13,6 +13,7 @@ import {
 } from '../../onoff-raw-tags.mock';
 import { geometriaSectionTitle } from '../literary-work/geometria.epigraph';
 import {
+	geometriasDelDesveloSpaceDescription,
 	geometriasDelDesveloSpotifyDescription,
 	geometriasDelDesveloYoutubeDescription,
 } from '../media/geometrias-del-desvelo.media';
@@ -40,6 +41,18 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 			title: 'Las tres geometrías',
 			description: geometriasDelDesveloYoutubeDescription,
 			videoId: 'geometriasDelDesveloVideoId',
+		},
+		{
+			_key: 'geometrias-space',
+			_type: 'spaceRecording',
+			title: 'Mesa de lectura sobre el insomnio',
+			description: geometriasDelDesveloSpaceDescription,
+			audioFile: { _type: 'file', asset: { _type: 'reference', _ref: 'file-geometria-space-ogg' } },
+			hostName: 'Biblioteca del Méridien',
+			hostAvatar: { _type: 'image', asset: { _type: 'reference', _ref: 'image-bibliotecaMeridienAvatar-96x96-png' } },
+			date: '1974-07-03',
+			duration: '52:40',
+			audioUrl: 'https://cdn.example.org/onoff/geometria-space.ogg',
 		},
 	],
 	literaryWorks: [

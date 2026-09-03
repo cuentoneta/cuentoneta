@@ -60,9 +60,9 @@ Regla central: **un campo de componente nunca es `public` por defecto.** Las pla
 | `public`    | **Solo** inputs/outputs/models de signals (`input()`, `output()`, `model()`), **API imperativa** llamada por padres (`open()`, `close()`), y miembros **requeridos por interfaces**. |
 
 ```typescript
-// Miembros de `src/app/components/share-button/share-button.component.ts`
-export class ShareButtonComponent {
-	public readonly platform = input.required<SharingPlatform>();
+// Miembros de `src/app/components/resource/resource.component.ts`
+export class ResourceComponent {
+	public readonly resource = input.required<Resource>();
 
 	protected readonly NgIcon = NgIcon;
 
@@ -81,7 +81,7 @@ protected readonly icon = computed(() => /* … */); // la plantilla lo interpol
 private readonly isExpanded = signal(false); // estado interno, no llega a la plantilla
 ```
 
-`public` queda reservado a las dos excepciones que ya fija la tabla: un miembro **requerido por una interfaz** (p. ej. `story` en `StoryComponent`, exigido por `StoryHost`) o **consumido por otro componente** (p. ej. `hiddenCount` de `TagsOverflowDirective`, que lee `TagsListComponent`). Exponer una signal en `public` "por las dudas" agranda la API del componente sin que nadie la consuma.
+`public` queda reservado a las dos excepciones que ya fija la tabla: un miembro **requerido por una interfaz** (p. ej. `literaryWork` en `LiteraryWorkPage`, exigido por `LiteraryWorkHost`) o **consumido por otro componente** (p. ej. `hiddenCount` de `TagsOverflowDirective`, que lee `TagsListComponent`). Exponer una signal en `public` "por las dudas" agranda la API del componente sin que nadie la consuma.
 
 ---
 
@@ -209,19 +209,19 @@ Todo `effect()` / `afterRenderEffect()` / `afterNextRender()` se declara como **
 
 ```typescript
 // ✅ Correcto — effect nombrado como field, después de lo que referencia
-// (tomado de `share-button.component.ts`)
-export class ShareButtonComponent {
+// (tomado de `resource.component.ts`)
+export class ResourceComponent {
 	private readonly tooltipDirective = inject(TooltipDirective);
-	public readonly platform = input.required<SharingPlatform>();
+	public readonly resource = input.required<Resource>();
 
 	private readonly syncTooltipEffect = effect(() => {
-		this.tooltipDirective.text.set(`Compartir en ${this.platform().name}`);
+		this.tooltipDirective.text.set(this.resource().title);
 		this.tooltipDirective.position.set('bottom');
 	});
 }
 
 // ❌ Incorrecto — effect anónimo dentro del constructor
-export class StoryComponent {
+export class LiteraryWorkPage {
 	constructor() {
 		effect(() => {
 			/* ... */
@@ -244,7 +244,7 @@ Reglas:
 - Marcar las dependencias `private readonly` (o `protected readonly` si la plantilla las usa).
 
 ```typescript
-private readonly storyApi = inject(StoryApi); // token del API provider, no la clase concreta
+private readonly literaryWorkApi = inject(LiteraryWorkApi); // token del API provider, no la clase concreta
 private readonly injector = inject(EnvironmentInjector);
 ```
 
@@ -270,6 +270,7 @@ export function provideFooInitializer() {
 - `@for` **requiere `track`**.
 - **Self-closing tags** para elementos sin contenido proyectado (`<cuentoneta-tag ... />`).
 - **`ngSrc`** (de `NgOptimizedImage`) para imágenes, no `src` crudo; declarar `width`/`height`.
+- **La transformación de una imagen de Sanity no se escribe en el componente.** La resuelve el `IMAGE_LOADER` que `app.config.ts` registra (`src/app/providers/sanity-image-loader.ts`): envolver la URL a mano duplica los parámetros, porque el loader corre igual. Lo que el componente sí controla es de dónde salen los anchos del `srcset` — de `width`/`height`, que producen el tamaño de display y su 2×, o de `sizes`, que produce los breakpoints. Con `fill` y sin `sizes` declarado, Angular asume `100vw`: el `srcset` sale igual, pero pide anchos de viewport completo para una imagen que quizá ocupe una fracción, así que declarar `sizes` sigue siendo lo correcto cuando no lo ocupa entero.
 - Manejar el elemento anfitrión (clases, bindings, eventos) vía la propiedad `host` del decorador, nunca con `@HostBinding`/`@HostListener` ni con `:host { @apply ... }` en `styles` (ver [Host element](#host-element)).
 
 ```html
@@ -285,7 +286,7 @@ export function provideFooInitializer() {
 	} @if (author().nationality.flag) {
 	<img [ngSrc]="author().nationality.flag" [alt]="author().nationality.country" width="21" height="16" />
 	} @if (storyCount() !== undefined) {
-	<span data-testid="story-count"> {{ storyCount() }} {{ storyCount() === 1 ? 'historia' : 'historias' }} </span>
+	<span data-testid="story-count"> {{ storyCount() }} {{ storyCount() === 1 ? 'obra' : 'obras' }} </span>
 	}
 </article>
 ```

@@ -7,7 +7,7 @@ import { CoverImageSkeletonComponent } from '../cover-image/cover-image-skeleton
 	selector: 'cuentoneta-collection-teaser-card-skeleton',
 	imports: [SkeletonComponent, CoverImageSkeletonComponent],
 	template: `
-		<article class="flex items-start gap-5">
+		<article class="flex items-start gap-5" data-testid="skeleton">
 			<section class="flex h-[192px] flex-1 items-end justify-center overflow-hidden rounded-xl bg-neutral-100 px-3">
 				<cuentoneta-cover-image-skeleton />
 			</section>

@@ -66,7 +66,7 @@ Thumbs.db
 # en vivo dispara rebuilds en bucle del dev server (HMR) si no se ignoran.
 .playwright-mcp/
 
-# Generated reference material (re-create with `pnpm exec tsx --env-file=.env scripts/audit/export-authors-bios.ts`)
+# Material de referencia generado, ya no regenerable: el script que lo producía se dio de baja.
 /tools/author-bios/
 
 # Exportaciones de dataset de Sanity

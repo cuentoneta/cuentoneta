@@ -62,11 +62,41 @@ beforeEach(() => {
 
 ---
 
+## Regla dura: en `e2e/`, el `test` sale del fixture del repo
+
+Los specs de Playwright importan `test` de **`e2e/_utils/test.ts`**, nunca de `@playwright/test`. Ese
+`test` intercepta los assets del CDN de Sanity y responde una imagen local del mismo tamaño que el
+original, en vez de descargarlos: el CDN factura ancho de banda y una corrida completa pide las
+mismas portadas muchas veces —un proyecto por browser, contexto nuevo por test, sin cache HTTP entre
+ellos—. Lo verifica el bloque `e2e-playwright-fixture` de `eslint.config.mjs`, porque el olvido no
+tiene otra señal: el spec que sale al CDN pasa igual.
+
+- **`expect` y los tipos** (`Page`, `Locator`, …) siguen saliendo de `@playwright/test`: no los toca
+  ningún fixture.
+- La sustitución se cuelga del fixture `context`, no de uno automático, para que los specs que solo
+  usan `request` no paguen el arranque de un navegador.
+- **`interceptedSanityAssets`** expone las URLs interceptadas del test. Quien lo use para afirmar
+  cobertura tiene que exigirlo **no vacío**: una página que dejara de referenciar imágenes daría
+  verde sin proteger nada.
+- **Opt-out**: `test.use({ interceptSanityAssets: false })`, para los specs que miden **geometría** y
+  no contenido. Sustituir una imagen cambia _cuándo_ llega, y eso corre las carreras que esos specs
+  ya bordean — medido sobre el apilamiento contra la barra de navegación, que empezó a fallar de a
+  ratos. Quien lo tome paga el ancho de banda real, así que la vara es alta.
+
+---
+
 ## Regla dura: el corpus se consume por colecciones, nunca por obra
 
-ESLint (`no-single-work-corpus-imports` en `eslint.config.mjs`) **prohíbe** importar una pieza puntual del corpus desde cualquier archivo fuera de `src/mocks/**` — los agregadores son justamente quienes las importan. El glob es `@mocks/onoff/**`, así que cubre las subcarpetas por entidad —`story/`, `literary-work/`, `collection/`, `storylist/`, `author/`, `media/`, `document/`— a cualquier profundidad.
+ESLint (`no-single-work-corpus-imports` en `eslint.config.mjs`) **prohíbe** importar una pieza puntual del corpus desde cualquier archivo fuera de `src/mocks/**` — los agregadores son justamente quienes las importan. El glob es `@mocks/onoff/**`, así que cubre las subcarpetas por entidad —`literary-work/`, `collection/`, `landing-page/`, `author/`, `media/`, `document/`— a cualquier profundidad.
 
 Un spec o una story que importa una obra concreta queda atado a ella: sus aserciones citan la prosa de esa obra y enriquecer el canon no las alcanza. Las colecciones y los **selectores por capacidad** declaran el shape que el caso necesita y crecen solos.
+
+La prohibición rige **por ruta y por nombre**, y cada vía la cubre un gate distinto:
+
+- **Por ruta** la verifica `lint`, con el glob de arriba. Es la que ejercita `tools/eslint/single-work-corpus-imports.spec.ts`, que corre ESLint contra el config real (la restricción no es una regla propia, así que `RuleTester` no la alcanza).
+- **Por nombre** la sostiene que los agregadores (`@mocks/onoff-*.mock`) expongan **solo** colecciones, derivados y selectores. Los handles nombrados por identidad —`<slugCamelCase>LiteraryWorkTeaserMock`, las dos colecciones de dominio y sus teasers— viven bajo `@mocks/onoff/<entidad>/`, o sea del lado que la restricción de ruta alcanza. No hay regla que los liste: un import por nombre falla porque **el símbolo no existe**, y lo reporta `typecheck`, no `lint`.
+
+De ahí que volver a exportar un handle por identidad desde un agregador reabra el hueco. No lo bloquea ningún gate; queda como una adición visible en el diff, y es de las cosas que una review tiene que mirar.
 
 | Necesitás…                                          | Importá                                                                                                                                                                                           |
 | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -78,15 +108,21 @@ Un spec o una story que importa una obra concreta queda atado a ella: sus aserci
 | Una obra con, sin, o con un solo recurso multimedia | `onoffLiteraryWorksWith(out)MediaSources`, `onoffLiteraryWorksWithSingleMediaSource`, `onoffLiteraryWorksWithMultipleMediaSources` — el umbral de "hay entre qué elegir" separa a los dos últimos |
 | Un texto con atribución (epígrafe o nota)           | `onoffLiteraryWorkEpigraphsMock`; en stories, `corpusAttributedTexts` + `attributedTextSelectArgType`                                                                                             |
 | Un epígrafe cortado en varias líneas                | `onoffRawLiteraryWorksWithMultilineEpigraphs`                                                                                                                                                     |
-| Una story o storylist crudas                        | `onoffRawStoriesMock`, `onoffRawStorylistsMock`, `onoffRawNavTeasersMock`                                                                                                                         |
 | Un dataset para evaluar una query con `groq-js`     | `onoffDatasetMock` — el dataset entero, no un subconjunto: una referencia sin documento resuelve a `null` sin fallar                                                                              |
-| Una story o teaser crudos con multimedia            | `onoffRawStoriesWithMediaSources` / `onoffRawTeasersWithMediaSources`                                                                                                                             |
 | Una obra con o sin etiquetas                        | `onoffRawLiteraryWorksWith(out)Tags`                                                                                                                                                              |
+| Un teaser de obra                                   | `onoffLiteraryWorkTeasersMock`; con extracto no vacío, `onoffLiteraryWorkTeasersWithExcerptMock`                                                                                                  |
+| Un teaser de obra con multimedia                    | `onoffLiteraryWorkTeasersWithMediaSourcesMock` enriquece **todo** el canon; `onoffLiteraryWorkTeasersWithOwnMediaSourcesMock` conserva solo las obras que declaran medios propios                 |
+| Una colección, o su teaser                          | `onoffCollectionsMock` / `onoffCollectionTeasersMock`, y desestructurá la primera                                                                                                                 |
+| Una colección por rama de `imagery`                 | `onoffCollections(Teasers)With(Representative\|Sample)ImageryMock`                                                                                                                                |
+| Una colección con etiquetas                         | `onoffCollectionsWithTagsMock` / `onoffCollectionTeasersWithTagsMock`                                                                                                                             |
+| Una colección que muestra u oculta autores          | `onoffCollections(Showing\|Hiding)AuthorsMock`                                                                                                                                                    |
 | Una etiqueta cualquiera                             | `onoffTagsMock` (o `onoffRawTagsMock` en el backend), y tomá un slice                                                                                                                             |
 | Etiquetas de título corto                           | `onoffTagsWithShortTitles` — para stories donde un título de dos palabras fuerza el recorte por ancho                                                                                             |
 | La página de inicio cruda, o sus campañas           | `onoffRawLandingPageMock` / `onoffRawContentCampaignsMock`, ambos de `@mocks/onoff-raw-landing-page.mock`                                                                                         |
 
-Corolario: **las aserciones se derivan del fixture**, no de prosa clavada. Si el caso necesita una palabra del texto, extraela del propio mock (`bodyHtml.replace(/<[^>]+>/g, ' ')` y tomá una palabra) en vez de escribirla a mano — así sigue pasando cuando el canon cambie. Si falta un selector para el shape que necesitás, **agregalo al agregador** (derivado por predicado, no una lista en paralelo) en vez de importar la obra.
+Corolario: **las aserciones se derivan del fixture**, no de prosa clavada. Si el caso necesita una palabra del texto, extraela del propio mock (`bodyHtml.replace(/<[^>]+>/g, ' ')` y tomá una palabra) en vez de escribirla a mano — así sigue pasando cuando el canon cambie. Si falta un selector para el shape que necesitás, **agregalo al agregador** (derivado por predicado, no una lista en paralelo) en vez de importar la obra, y sumale en el spec del agregador la guarda de que no queda vacío: un selector vacío no rompe a su consumidor, lo deja desestructurando `undefined` o afirmando contra un `arrayContaining([])` que pasa trivialmente.
+
+Al elegir un selector, mirá su **predicado y no su nombre**: dos selectores de nombre parecido pueden filtrar sobre capas distintas y devolver conjuntos distintos.
 
 ### Las tres capas del corpus de Onoff
 
@@ -96,7 +132,7 @@ Corolario: **las aserciones se derivan del fixture**, no de prosa clavada. Si el
 documentos (a mano)  →  (groq-js, query real)  →  raw (generado)  →  (ACL del repository)  →  dominio
 ```
 
-El spec `src/mocks/onoff-documents.mock.spec.ts` es el **gate de frescura**: vuelve a evaluar esas mismas queries y compara, por valor, contra las fixtures raw commiteadas. Corre dentro de `pnpm test` (gate `test`) — no es un gate de CI aparte. `story/` y `storylist/` quedan fuera de esta generación (siguen escribiéndose a mano); el detalle completo —comando, qué se genera, las dos clases de exclusión y la guarda contra referencias colgadas— vive en [`src/mocks/onoff/README.md`](../../src/mocks/onoff/README.md).
+El spec `src/mocks/onoff-documents.mock.spec.ts` es el **gate de frescura**: vuelve a evaluar esas mismas queries y compara, por valor, contra las fixtures raw commiteadas. Corre dentro de `pnpm test` (gate `test`) — no es un gate de CI aparte. El detalle completo —comando, qué se genera y la guarda contra referencias colgadas— vive en [`src/mocks/onoff/README.md`](../../src/mocks/onoff/README.md).
 
 Las **imágenes** del corpus atraviesan las tres capas por una única tabla, `src/mocks/onoff-image-assets.mock.ts`: cada entrada asocia la referencia que declara el documento con la ruta del asset local que declara el dominio. Los specs de cruce contra el ACL (`onoff-*.acl-alignment.spec.ts`, uno por agregado) sustituyen el builder de imágenes de Sanity por un resolutor sobre esa tabla, y por eso comparan portadas, retrato, bandera, avatar y banners de campaña **sin excluir ningún campo**. Un cruce que necesitara volver a excluir una imagen sería la señal de que la tabla quedó incompleta, no de que la comparación pide una excepción.
 
@@ -157,20 +193,25 @@ expect(heading).toBeInTheDocument();
 
 ### Servicios inyectados (mock con `fn()`)
 
-> Ejemplo con `StoryApi`/`StoryComponent`. Cuando el doble no necesita registrar llamadas, se provee la clase `Stub*` del propio provider en vez de `fn()` — es lo que hace `read.page.spec.ts` con `StubLiteraryWorkApi` + `provideLiteraryWorkApiMock()`.
+> Cuando el doble no necesita registrar llamadas, se provee la clase `Stub*` del propio provider en vez de `fn()` — es lo que hace `literary-work.page.spec.ts` con `StubLiteraryWorkApi` + `provideLiteraryWorkApiMock()`. `fn()` sigue siendo la herramienta cuando el test necesita **inspeccionar** la llamada (con qué slug se invocó, cuántas veces).
 
 ```typescript
 import { fn } from '@test-utils';
 import { of, type Observable } from 'rxjs';
+import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
+import type { LiteraryWork } from '@models/literary-work.model';
 
-const getBySlug = fn<[string], Observable<Story>>();
-getBySlug.mockReturnValue(of(storyMock));
+const [literaryWorkMock] = onoffLiteraryWorksMock;
+const getBySlug = fn<[string], Observable<LiteraryWork>>();
+getBySlug.mockReturnValue(of(literaryWorkMock));
 
-await render(StoryComponent, {
-	providers: [{ provide: StoryApi, useValue: { getBySlug } }],
+// El objeto parcial alcanza mientras el test no ejercite el resto de la interfaz. Cuando la ejercite,
+// la forma es una clase completa: así lo hace `literary-work.page.spec.ts`.
+await render(LiteraryWorkPage, {
+	providers: [{ provide: LiteraryWorkApi, useValue: { getBySlug } }],
 });
 
-expect(await screen.findByText(storyMock.title)).toBeInTheDocument();
+expect(await screen.findByText(literaryWorkMock.title)).toBeInTheDocument();
 ```
 
 ---
@@ -316,15 +357,15 @@ describe('SitemapService', () => {
 		process.env['BASE_URL'] = 'https://test.cuentoneta.ar';
 	});
 
-	it('should include story URLs', async () => {
+	it('should include literary work URLs', async () => {
 		(sitemapRepository.fetchSitemapSlugs as Mock).mockResolvedValue({
-			stories: [{ slug: 'el-aleph', lastmod: '2025-01-01' }],
+			literaryWorks: [{ slug: 'el-fin', lastmod: '2025-01-01' }],
 			authors: [],
-			storylists: [],
+			collections: [],
 		});
 
 		const urls = await getSitemapUrls();
-		expect(urls).toContainEqual(expect.objectContaining({ loc: 'https://test.cuentoneta.ar/story/el-aleph' }));
+		expect(urls).toContainEqual(expect.objectContaining({ loc: 'https://test.cuentoneta.ar/literary-work/el-fin' }));
 	});
 });
 ```
@@ -417,14 +458,14 @@ Todo componente nuevo en **`src/app/components/`** lleva su `*.stories.ts` (docu
 
 **La exención de las páginas es un permiso, no una prohibición.** Una página _puede_ catalogarse cuando lo que se quiere mirar es el **ensamblado**: cómo conviven sus bloques a lo largo del scroll, y cómo responde a los parámetros con que la ruta la invoca. Esas entradas van bajo la sección **`Páginas/`**, separadas del catálogo de componentes, y se montan con `applicationConfig` sobre los dobles de sus proveedores, resolviendo **por el mismo parámetro que resuelve la ruta** —el slug— en vez de devolver siempre el mismo dato: así los controles mueven la página de verdad y los estados de borde (una obra inexistente, un contexto ausente) quedan alcanzables desde el propio catálogo.
 
-`ReadPage` es la primera. Lo que la hizo valer el catálogo es que ninguna otra vista permite evaluar el bloque de sugerencias contra los dos contextos de navegación sin levantar la aplicación entera.
+`LiteraryWorkPage` es la primera. Lo que la hizo valer el catálogo es que ninguna otra vista permite evaluar el bloque de sugerencias contra los dos contextos de navegación sin levantar la aplicación entera.
 
 ### Convenciones (según las stories existentes)
 
 - `title` en español bajo `Componentes V3/...` (p. ej. `'Componentes V3/Tag'`).
 - **autodocs es global.** `.storybook/preview.js` exporta `tags = ['autodocs']`, así que **no** hace falta repetir `tags: ['autodocs']` por archivo (es redundante).
 - `parameters.docs.description.component` con descripción en español (HTML, ver reglas abajo).
-- `argTypes` para **cada `input()` público**, con `control`, `options`/`type` y `table` (`type` + `defaultValue`). Aplica también a inputs de tipo objeto complejo (p. ej. `story`, `collection`): aunque no se editen cómodamente en el panel, usar `control: { type: 'object' }` y documentar `table.type`/`table.defaultValue`.
+- `argTypes` para **cada `input()` público**, con `control`, `options`/`type` y `table` (`type` + `defaultValue`). Aplica también a inputs de tipo objeto complejo (p. ej. `literaryWork`, `collection`): aunque no se editen cómodamente en el panel, usar `control: { type: 'object' }` y documentar `table.type`/`table.defaultValue`.
 - Una **story por estado/variante** (`Soft`, `Filled`, `Gray`, …) y opcionalmente un `Showcase` con todas las variantes en simultáneo. Cada story lleva su `docs.description.story` con el **comportamiento** y una línea **`<strong>Usos:</strong>`** que indica en qué páginas/componentes se usa la variante.
 - Render con `argsToTemplate(args)` y el selector real del componente (`cuentoneta-...`).
 

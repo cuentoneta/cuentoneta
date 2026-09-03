@@ -41,7 +41,7 @@ Aplicá esta lente **dentro** de las convenciones del proyecto; un instinto gen�
 
 - el patrón de capas **controller → service → repository** en `src/api/modules/<dominio>/` (es mandatorio; no es "indirección para colapsar");
 - el naming `fetch*()` en repositorios y `get*()`/`update*()` en servicios — no los aplanes en una sola función "para ahorrar una capa";
-- el **ACL central**: los resultados crudos de GROQ se traducen al modelo de dominio (`Story`, `Author`, `Storylist`, `Resource`, `LiteraryWork`, …) vía **mappers puros** (`mapAuthor`, `mapAuthorTeaser`, …); no filtres el shape crudo de Sanity al frontend "porque es más corto";
+- el **ACL central**: los resultados crudos de GROQ se traducen al modelo de dominio (`Author`, `LiteraryWork`, `Collection`, `Resource`, …) vía **mappers puros** (`mapAuthor`, `mapAuthorTeaser`, …); no filtres el shape crudo de Sanity al frontend "porque es más corto";
 - el estilo **signals-first** en `src/app/`: derivar con `computed()`/`toSignal()`, `effect()` como field initializers nombrados, sin promesas sobre observables (`firstValueFrom`/`lastValueFrom`/`toPromise` prohibidos) y `switchMap` como aplanado por defecto;
 - `Object.freeze({...} as const)` en vez de `enum`; campos de componente `protected`/`private` (no `public` implícito); plantillas con `@if`/`@for`, self-closing tags y `ngSrc`.
 

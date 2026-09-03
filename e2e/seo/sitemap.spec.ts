@@ -7,14 +7,17 @@
  *
  * Lo que se verifica:
  *  - A. Se sirve como XML.
- *  - B. Están las páginas estáticas y al menos una URL de cada tipo de contenido.
+ *  - B. Están las páginas estáticas y al menos una URL de cada tipo de contenido, y ninguna de las
+ *       rutas retiradas.
  *  - C. Cada `<url>` respeta la secuencia que exige el esquema de sitemaps.org.
  *  - D. Ninguna ubicación aparece repetida.
  *
  * No es una validación contra el esquema publicado: no cubre cardinalidades, el tipo de dato de la
  * fecha ni los límites de tamaño del documento.
  */
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+
+import { test } from '../_utils/test';
 
 import { childElementSequences, locations } from '@testing/sitemap-xml';
 
@@ -42,16 +45,23 @@ test('sitemap — B: cubre las páginas estáticas y los tres tipos de contenido
 	const locs = locations(xml);
 	// El origen sale de una URL de contenido y no de la primera entrada: derivarlo del orden volvería
 	// la aserción de la raíz una tautología.
-	const contentUrl = locs.find((loc) => loc.includes('/story/'));
+	const contentUrl = locs.find((loc) => loc.includes('/literary-work/'));
 	const origin = new URL(contentUrl ?? '').origin;
 
 	// Piso y no conteo exacto: el dataset del entorno de tests cambia con cada sincronización.
 	expect(locs).toContain(origin);
 	expect(locs).toContain(`${origin}/about`);
 	expect(locs).toContain(`${origin}/dmca`);
-	expect(locs.some((loc) => loc.includes('/story/'))).toBe(true);
+	expect(locs).toContain(`${origin}/collection`);
+	expect(locs).toContain(`${origin}/literary-work`);
+	expect(locs.some((loc) => loc.includes('/literary-work/'))).toBe(true);
 	expect(locs.some((loc) => loc.includes('/author/'))).toBe(true);
-	expect(locs.some((loc) => loc.includes('/storylist/'))).toBe(true);
+	expect(locs.some((loc) => loc.includes('/collection/'))).toBe(true);
+
+	// Sin esto el caso pasaría con las rutas retiradas todavía adentro: anunciar una URL que responde
+	// con un traslado permanente gasta rastreo en algo que ya se sabe que se movió.
+	expect(locs.filter((loc) => loc.includes('/story/'))).toEqual([]);
+	expect(locs.filter((loc) => loc.includes('/storylist/'))).toEqual([]);
 });
 
 test('sitemap — C: cada entrada respeta la secuencia del esquema', () => {

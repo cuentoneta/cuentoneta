@@ -1,54 +1,76 @@
-<main class="content horizontal-layout-spacing vertical-layout-spacing">
-	<!--
-        H1 de contenido de la home, oculto visualmente (sr-only) para mantener un único H1 por página
-        sin desplazar el hero. El texto introductorio sustantivo va en la sección "Sobre La Cuentoneta"
-        al final del main (contenido indexable para buscadores y answer engines).
-    -->
-	<h1 class="sr-only">Cuentos y relatos breves para leer en línea</h1>
+<main>
+	<cuentoneta-home-hero>
+		<!-- La caja se reserva por proporción para que la resolución del recurso no empuje lo que sigue. -->
+		<section class="aspect-[540/220] w-full sm:aspect-[1240/360]">
+			@if (isLoading()) {
+				<cuentoneta-carousel-skeleton />
+			} @else if (campaigns().length > 0) {
+				<cuentoneta-carousel [slides]="campaigns()" />
+			}
+			<!-- Sin campañas no se monta nada: un carrusel de cero diapositivas no es un estado que exista. -->
+		</section>
+	</cuentoneta-home-hero>
 
-	<!--
-        Las alturas fijadas para los elementos hijos de <main> tienen la finalidad de evitar
-        el rebote vertical que puede observarse en el momento de la carga inicial de la página
-    -->
-	<section class="mb-8 aspect-[540/220] sm:aspect-[1240/360]">
-		@defer (when campaigns().length > 0) {
-			<cuentoneta-carousel [slides]="campaigns()" />
-		} @loading (minimum 500ms) {
-			<cuentoneta-carousel-skeleton />
+	<!-- El ritmo vertical entre secciones lo fija la página, no cada deck: es lo que el diseño mide. -->
+	<div class="content horizontal-layout-spacing mt-16 flex flex-col gap-24 pb-20">
+		@if (failed()) {
+			<p class="font-inter text-base text-neutral-700" data-testid="landing-error">
+				No pudimos cargar el contenido de esta semana. Probá de nuevo en un rato.
+			</p>
+		} @else {
+			<section>
+				<cuentoneta-literary-works-card-deck
+					[literaryWorks]="latestReads()"
+					[action]="literaryWorksAction"
+					[loading]="isLoading()"
+					heading="Últimas novedades"
+					subtitle="Descubrí las obras que se sumaron recientemente a La Cuentoneta"
+					emptyMessage="Todavía no hay obras nuevas esta semana."
+				/>
+			</section>
+
+			<section>
+				<cuentoneta-highlighted-authors [authors]="highlightedAuthors()" [loading]="isLoading()" />
+			</section>
+
+			<section>
+				<cuentoneta-literary-works-card-deck
+					[literaryWorks]="mostRead()"
+					[action]="literaryWorksAction"
+					[loading]="isLoading()"
+					[numbered]="true"
+					heading="Obras más leídas"
+					subtitle="Explorá los textos más populares entre los lectores"
+					emptyMessage="Todavía no hay obras más leídas para mostrar."
+				/>
+			</section>
+
+			<section>
+				<cuentoneta-collection-teasers-deck [teasers]="collections()" [loading]="isLoading()" />
+			</section>
 		}
-	</section>
 
-	<section class="mb-8 h-[684px] md:h-[304px]">
-		<cuentoneta-latest-stories-card-deck [stories]="latestReads()" class="flex flex-col gap-8" />
-	</section>
+		<!--
+            Intro descriptiva con texto sustantivo y citable: es lo que le da a buscadores y answer
+            engines contenido indexable más allá de las imágenes del hero. Queda fuera de la rama de
+            error porque no depende del contenido de la semana.
+        -->
+		<section class="flex flex-col gap-8">
+			<cuentoneta-section-header heading="Sobre La Cuentoneta" />
 
-	<section class="mb-8 h-[684px] md:h-[304px]">
-		<cuentoneta-most-read-stories-card-deck [stories]="mostRead()" class="flex flex-col gap-8" />
-	</section>
-
-	<section class="mb-8">
-		<cuentoneta-storylist-teasers-deck [teasers]="collections()" class="flex flex-col gap-8" />
-	</section>
-
-	<!--
-        Intro descriptiva con texto sustantivo y citable, server-rendered (sin @defer), para que
-        buscadores y answer engines tengan contenido indexable más allá de las imágenes del hero.
-    -->
-	<section class="mb-8 flex flex-col gap-8">
-		<h2 class="font-inter text-2xl font-bold">Sobre <em>La Cuentoneta</em></h2>
-
-		<div class="flex flex-col gap-4">
-			<p class="font-inter text-base font-normal">
-				La Cuentoneta es un proyecto abierto, comunitario y sin fines de lucro que busca fomentar y hacer accesible la
-				lectura digital. Publicamos cuentos, poemas y relatos breves organizados en colecciones temáticas —antologías
-				pensadas como las playlists de Spotify o YouTube— para que descubrir y disfrutar literatura se transforme en un
-				proceso simple y entretenido.
-			</p>
-			<p class="font-inter text-base font-normal">
-				Reunimos obras de autores y autoras de distintos géneros, estilos y épocas, con soporte multimedia y foco en la
-				captura de material literario editado con fines educativos y su adaptación a texto accesible. Te invitamos a
-				leer, compartir y aprender con cada historia.
-			</p>
-		</div>
-	</section>
+			<div class="flex flex-col gap-4">
+				<p class="font-inter text-base font-normal">
+					La Cuentoneta es un proyecto abierto, comunitario y sin fines de lucro que busca fomentar y hacer accesible la
+					lectura digital. Publicamos cuentos, poemas y relatos breves organizados en colecciones temáticas —antologías
+					pensadas como las playlists de Spotify o YouTube— para que descubrir y disfrutar literatura se transforme en
+					un proceso simple y entretenido.
+				</p>
+				<p class="font-inter text-base font-normal">
+					Reunimos obras de autores y autoras de distintos géneros, estilos y épocas, con soporte multimedia y foco en
+					la captura de material literario editado con fines educativos y su adaptación a texto accesible. Te invitamos
+					a leer, compartir y aprender con cada historia.
+				</p>
+			</div>
+		</section>
+	</div>
 </main>

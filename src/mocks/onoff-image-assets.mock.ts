@@ -55,8 +55,6 @@ export const onoffImageAssets = Object.freeze({
 		extension: 'png',
 		path: 'flags/fr.png',
 	}),
-	// La portada editorial de la colección y el `featuredImage` de la storylist homónima son el mismo
-	// archivo, así que comparten entrada: sostener dos volvería a meter una mentira en la tabla.
 	geometriasDelDesveloCover: imageAsset({
 		assetId: 'geometriasDelDesveloCover',
 		dimensions: '236x328',

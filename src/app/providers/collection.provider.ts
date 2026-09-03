@@ -13,14 +13,9 @@ import {
 	type Collection,
 	type CollectionTeaser,
 } from '@models/collection.model';
-import { createLiteraryWorkExcerpt } from '@models/literary-work-excerpt.model';
-import type { LiteraryWorkTeaser } from '@models/literary-work.model';
-import { createReadingTime } from '@models/reading-time.model';
 import { createSanitizedHtml } from '@models/sanitized-html.model';
-import { createSectionTitle } from '@models/section-title.model';
-import { createSlug } from '@models/slug.model';
 import { collectionDtoSchema, collectionTeaserListDtoSchema, type CollectionDto } from '@models/collection.dto';
-import type { LiteraryWorkTeaserDto } from '@models/literary-work.dto';
+import { toLiteraryWorkTeaser } from '@models/literary-work.dto';
 import { ApiUrl, Endpoints } from './endpoints';
 
 // El listado devuelve teasers: la vista de catálogo muestra cada colección sin sus obras.
@@ -58,20 +53,8 @@ export class HttpCollectionApi implements CollectionApi {
 		return createCollection({
 			...dto,
 			description: createSanitizedHtml(dto.description),
-			literaryWorks: dto.literaryWorks.map((work) => this.toLiteraryWorkTeaser(work)),
+			literaryWorks: dto.literaryWorks.map(toLiteraryWorkTeaser),
 		});
-	}
-
-	private toLiteraryWorkTeaser(dto: LiteraryWorkTeaserDto): LiteraryWorkTeaser {
-		return {
-			...dto,
-			slug: createSlug(dto.slug),
-			totalReadingTime: createReadingTime(dto.totalReadingTime),
-			excerpt: createLiteraryWorkExcerpt({
-				title: dto.excerpt.title ? createSectionTitle(dto.excerpt.title.value) : undefined,
-				bodyHtml: createSanitizedHtml(dto.excerpt.bodyHtml),
-			}),
-		};
 	}
 }
 

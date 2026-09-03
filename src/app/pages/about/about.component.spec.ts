@@ -1,4 +1,4 @@
-import { render } from '@testing-library/angular';
+import { render, screen } from '@testing-library/angular';
 import { restoreAllMocks, spyOn } from '@test-utils';
 
 import AboutComponent from './about.component';
@@ -28,5 +28,20 @@ describe('AboutComponent', () => {
 		await setup();
 
 		expect(canonicalSpy).toHaveBeenCalledWith(buildCanonicalUrl('about'));
+	});
+
+	// La página es la única superficie de runtime que enlaza al repositorio. Las URLs del repositorio
+	// previo a la organización resuelven por redirección, así que una regresión acá no se vería
+	// navegando: solo se nota el día que GitHub deje de redirigir.
+	it('no enlaza al repositorio previo a la organización', async () => {
+		await setup();
+
+		const destinos = screen
+			.getAllByRole('link')
+			.map((enlace) => enlace.getAttribute('href') ?? '')
+			.filter((destino) => destino.includes('github.com'));
+
+		expect(destinos.length).toBeGreaterThan(0);
+		expect(destinos.every((destino) => destino.startsWith('https://github.com/cuentoneta/cuentoneta'))).toBe(true);
 	});
 });

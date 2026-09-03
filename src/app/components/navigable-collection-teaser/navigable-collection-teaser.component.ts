@@ -8,7 +8,7 @@ import { TagComponent } from '../tag/tag.component';
 
 /**
  * Item compacto y navegable de una colección (Design System v3): ícono de biblioteca, nombre, categoría y
- * cantidad de historias. Pensado para listas como «Otras colecciones sugeridas» del sidebar de la CollectionPage.
+ * cantidad de obras. Pensado para listas como «Otras colecciones sugeridas» del sidebar de la CollectionPage.
  *
  * Se modela como un `<article>` con un único enlace real sobre el nombre, estirado con un pseudo-elemento
  * (`after:absolute after:inset-0`) para que toda la tarjeta sea clickeable sin inflar el nombre accesible del
@@ -35,7 +35,7 @@ import { TagComponent } from '../tag/tag.component';
 						<span class="font-inter text-xxs font-medium text-neutral-600" aria-hidden="true">•</span>
 					}
 					<span class="font-inter text-xs font-medium text-neutral-600">
-						{{ collection().count }} {{ collection().count === 1 ? 'historia' : 'historias' }}
+						{{ collection().count }} {{ collection().count === 1 ? 'obra' : 'obras' }}
 					</span>
 				</div>
 			</div>

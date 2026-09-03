@@ -1,75 +1,11 @@
+import { createCollectionTeaser, type Collection, type CollectionTeaser } from '@models/collection.model';
+
+// Import permitido: la restricción de ruta exime a `src/mocks/**`.
 import {
-	createCollection,
-	createCollectionTeaser,
-	type Collection,
-	type CollectionImagery,
-	type CollectionTeaser,
-} from '@models/collection.model';
-import type { LiteraryWorkTeaser } from '@models/literary-work.model';
-import { createMarkdown } from '@models/markdown.model';
-import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
-
-import { onoffImageAssets } from './onoff-image-assets.mock';
-import { colaborativaTagMock } from './onoff-tags.mock';
-import { geometriasDelDesveloMediaMock } from './onoff/media/geometrias-del-desvelo.media.mock';
-import geometriasDescriptionMd from './onoff/collection/geometrias-del-desvelo.collection.md?raw';
-import inventarioDescriptionMd from './onoff/collection/inventario-de-las-pasiones.collection.md?raw';
-import {
-	elOdioLiteraryWorkTeaserMock,
-	elTratadoDeLosPlaceresLiteraryWorkTeaserMock,
-	geometriaLiteraryWorkTeaserMock,
-	lasDosAntorchasLiteraryWorkTeaserMock,
-	lasEscalerasLiteraryWorkTeaserMock,
-	losPeldanosLiteraryWorkTeaserMock,
-} from './onoff-literary-work-teasers.mock';
-
-// Cada colección se cura con las obras que su propia prosa nombra, no con un corte arbitrario del
-// agregador: así las dos son distinguibles por contenido y no solo por la rama de `imagery`.
-const geometriasWorks = [
-	geometriaLiteraryWorkTeaserMock,
-	losPeldanosLiteraryWorkTeaserMock,
-	lasEscalerasLiteraryWorkTeaserMock,
-] as const;
-
-const inventarioWorks = [
-	elTratadoDeLosPlaceresLiteraryWorkTeaserMock,
-	elOdioLiteraryWorkTeaserMock,
-	lasDosAntorchasLiteraryWorkTeaserMock,
-] as const;
-
-// Las tres portadas salen de las propias obras, no escritas a mano: es lo que el mapper deriva
-// cuando la colección no tiene portada editorial. La firma exige exactamente tres para que el largo
-// sea una garantía del tipo y no un fallback que tape en silencio un corpus mal curado.
-function sampleFrom(works: readonly [LiteraryWorkTeaser, LiteraryWorkTeaser, LiteraryWorkTeaser]): CollectionImagery {
-	const [first, second, third] = works;
-	return { kind: 'sample', images: [first.coverImage, second.coverImage, third.coverImage] };
-}
-
-/** Colección con portada editorial propia — la rama `representative` de `imagery`. */
-export const geometriasDelDesveloCollectionMock: Collection = createCollection({
-	_id: 'onoff-collection-geometrias-del-desvelo',
-	slug: 'geometrias-del-desvelo',
-	title: 'Geometrías del desvelo',
-	description: markdownToSanitizedHtml(createMarkdown(geometriasDescriptionMd)),
-	imagery: { kind: 'representative', image: onoffImageAssets.geometriasDelDesveloCover.path },
-	tags: [colaborativaTagMock],
-	config: { showAuthors: true },
-	mediaSources: geometriasDelDesveloMediaMock,
-	literaryWorks: geometriasWorks,
-});
-
-/** Colección sin portada propia — la rama `sample`, derivada de las portadas de sus obras. */
-export const inventarioDeLasPasionesCollectionMock: Collection = createCollection({
-	_id: 'onoff-collection-inventario-de-las-pasiones',
-	slug: 'inventario-de-las-pasiones',
-	title: 'El inventario de las pasiones',
-	description: markdownToSanitizedHtml(createMarkdown(inventarioDescriptionMd)),
-	imagery: sampleFrom(inventarioWorks),
-	tags: [colaborativaTagMock],
-	config: { showAuthors: false },
-	mediaSources: [],
-	literaryWorks: inventarioWorks,
-});
+	geometriasDelDesveloCollectionMock,
+	inventarioDeLasPasionesCollectionMock,
+	toTeaser,
+} from './onoff/collection/collections.mock';
 
 export const onoffCollectionsMock: Collection[] = [
 	geometriasDelDesveloCollectionMock,
@@ -99,25 +35,44 @@ export const onoffCollectionsWithMediaSourcesMock: Collection[] = onoffCollectio
 	(collection) => collection.mediaSources.length > 0,
 );
 
-// Pasa por la factory del teaser, igual que el repository: si el corpus lo armara por spread, sería
-// el único productor que se saltea las invariantes que esa factory existe para hacer cumplir.
-function toTeaser(collection: Collection): CollectionTeaser {
-	return createCollectionTeaser({
-		_id: collection._id,
-		slug: collection.slug,
-		title: collection.title,
-		description: collection.description,
-		imagery: collection.imagery,
-		tags: collection.tags,
-		config: collection.config,
-		mediaSources: collection.mediaSources,
-		count: collection.count,
-	});
-}
-
-export const geometriasDelDesveloCollectionTeaserMock: CollectionTeaser = toTeaser(geometriasDelDesveloCollectionMock);
-export const inventarioDeLasPasionesCollectionTeaserMock: CollectionTeaser = toTeaser(
-	inventarioDeLasPasionesCollectionMock,
+export const onoffCollectionsWithTagsMock: Collection[] = onoffCollectionsMock.filter(
+	(collection) => collection.tags.length > 0,
 );
 
 export const onoffCollectionTeasersMock: CollectionTeaser[] = onoffCollectionsMock.map(toTeaser);
+
+// Cada selector de teaser proyecta el de colección homónimo en vez de repetir su predicado: la
+// capacidad queda definida en un solo lugar, y las dos vistas no pueden divergir sobre qué colección
+// la cumple.
+export const onoffCollectionTeasersWithRepresentativeImageryMock: CollectionTeaser[] =
+	onoffCollectionsWithRepresentativeImageryMock.map(toTeaser);
+
+export const onoffCollectionTeasersWithSampleImageryMock: CollectionTeaser[] =
+	onoffCollectionsWithSampleImageryMock.map(toTeaser);
+
+export const onoffCollectionTeasersWithTagsMock: CollectionTeaser[] = onoffCollectionsWithTagsMock.map(toTeaser);
+
+// Los teasers extra se derivan del primero del canon y pasan uno a uno por la factory del teaser:
+// el agregado está congelado, así que armarlos por spread saltearía las invariantes que esa
+// factory existe para hacer cumplir.
+//
+// TODO(#2333): tomar colecciones reales del corpus en vez de repetir una.
+// Al salir todos del mismo canónico comparten portada, prosa, etiqueta y conteo de obras, y sólo se
+// distinguen por un título correlativo. Una grilla así se ve homogénea de un modo que ningún catálogo
+// real es: no muestra portadas dispares, ni descripciones de largo distinto, ni el recorte del título.
+export function onoffCollectionTeasersOfLength(count: number): CollectionTeaser[] {
+	const [base] = onoffCollectionTeasersMock;
+	return Array.from({ length: count }, (_, index) =>
+		createCollectionTeaser({
+			_id: `${base._id}-${index + 1}`,
+			slug: `${base.slug}-${index + 1}`,
+			title: `Colección ${index + 1}`,
+			description: base.description,
+			imagery: base.imagery,
+			tags: base.tags,
+			config: base.config,
+			mediaSources: base.mediaSources,
+			count: base.count,
+		}),
+	);
+}

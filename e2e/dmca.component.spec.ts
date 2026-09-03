@@ -1,4 +1,6 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+
+import { test } from './_utils/test';
 
 test.describe('DMCA Component', () => {
 	test.beforeEach(async ({ page }) => {

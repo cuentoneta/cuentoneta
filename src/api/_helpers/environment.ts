@@ -12,7 +12,7 @@ try {
 export interface EnvironmentConfig {
 	production: boolean;
 	basePath: string;
-	// Interruptor del `s-maxage` (en segundos) de la caché de borde de `/read`: es la ventana de
+	// Interruptor del `s-maxage` (en segundos) de la caché de borde de la página de lectura: es la ventana de
 	// propagación de una edición, no un límite de disponibilidad — el `stale-while-revalidate`
 	// cubre el servido mientras el borde revalida.
 	readCacheSMaxAge: number;
@@ -27,7 +27,7 @@ export interface EnvironmentConfig {
 	};
 }
 
-// Default conservador (5 minutos) del `s-maxage` de `/read`: acota la staleness sin depender de
+// Default conservador (5 minutos) del `s-maxage` de la página de lectura: acota la staleness sin depender de
 // que el interruptor esté seteado. Se sube por entorno con `READ_CACHE_S_MAXAGE`.
 export const CONSERVATIVE_READ_CACHE_S_MAXAGE = 300;
 

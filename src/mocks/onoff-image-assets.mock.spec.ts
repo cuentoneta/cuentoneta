@@ -11,8 +11,6 @@ import { onoffDatasetMock } from './onoff-documents.mock';
 import { rawOnoffAuthor, rawOnoffAuthorTeaser } from './onoff-raw-author.mock';
 import { onoffRawCollectionsMock, onoffRawCollectionTeasersMock } from './onoff-raw-collections.mock';
 import { onoffRawLiteraryWorksMock } from './onoff-raw-literary-works.mock';
-import { onoffRawStoriesMock } from './onoff-raw-stories.mock';
-import { onoffRawStorylistsMock } from './onoff-raw-storylists.mock';
 import { onoffRawContentCampaignsMock } from './onoff-raw-landing-page.mock';
 
 const assets: [string, OnoffImageAsset][] = Object.entries(onoffImageAssets);
@@ -71,7 +69,6 @@ describe('la tabla de assets de imagen del corpus', () => {
 		['el dataset de documentos', onoffDatasetMock],
 		['el corpus crudo de obras', onoffRawLiteraryWorksMock],
 		['el corpus crudo de colecciones', [onoffRawCollectionsMock, onoffRawCollectionTeasersMock]],
-		['el corpus crudo de historias', [onoffRawStoriesMock, onoffRawStorylistsMock]],
 		['el autor crudo', [rawOnoffAuthor, rawOnoffAuthorTeaser]],
 		['las campañas de contenido crudas', onoffRawContentCampaignsMock],
 	])('covers every image reference declared by %s', (_source, corpus) => {

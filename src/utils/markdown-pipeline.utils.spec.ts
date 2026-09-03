@@ -1,4 +1,4 @@
-import { markdownToSanitizedHtml } from './markdown-pipeline.utils';
+import { markdownToLinklessSanitizedHtml, markdownToSanitizedHtml } from './markdown-pipeline.utils';
 import { createMarkdown } from '@models/markdown.model';
 
 describe('markdownToSanitizedHtml', () => {
@@ -197,5 +197,37 @@ describe('markdownToSanitizedHtml', () => {
 		expect(() => markdownToSanitizedHtml(createMarkdown('<!-- solo un comentario -->'))).toThrow(
 			'SanitizedHtml inválido: contenido vacío',
 		);
+	});
+});
+
+describe('markdownToLinklessSanitizedHtml', () => {
+	it('drops the anchor and keeps the text it wrapped', () => {
+		const html = markdownToLinklessSanitizedHtml(
+			createMarkdown('Una colección con [un enlace propio](https://www.cuentoneta.ar/about) en la prosa.'),
+		);
+
+		expect(html).not.toContain('<a');
+		expect(html).toContain('un enlace propio');
+	});
+
+	// Desanidar no puede costar el formato de lo que el enlace envolvía: si lo descartara, la prosa
+	// perdería énfasis en vez de perder navegación.
+	it('keeps the markup nested inside the link', () => {
+		const html = markdownToLinklessSanitizedHtml(createMarkdown('Con [**énfasis** adentro](https://x.test) y más.'));
+
+		expect(html).toContain('<strong>énfasis</strong>');
+		expect(html).not.toContain('<a');
+	});
+
+	it('leaves autolinks unclickable too', () => {
+		const html = markdownToLinklessSanitizedHtml(createMarkdown('Escribinos a <https://www.cuentoneta.ar>.'));
+
+		expect(html).not.toContain('<a');
+	});
+
+	it('converts everything else exactly like the shared pipeline', () => {
+		const markdown = createMarkdown('## Título\n\nUn párrafo con **negrita**.');
+
+		expect(markdownToLinklessSanitizedHtml(markdown)).toBe(markdownToSanitizedHtml(markdown));
 	});
 });

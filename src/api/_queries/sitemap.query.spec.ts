@@ -1,17 +1,16 @@
 import { evaluate, parse } from 'groq-js';
 import {
-	legacyStoryDocument,
-	legacyStorylistDocument,
 	onoffAuthorDocumentsMock,
-	undatedLegacyStoryDocument,
+	onoffCollectionDocumentsMock,
+	onoffLiteraryWorkDocumentsMock,
 } from '@mocks/onoff-documents.mock';
 
 import { sitemapSlugsQuery } from './sitemap.query';
 
 interface SitemapSlugs {
-	stories: { slug: string; lastmod: string }[];
+	literaryWorks: { slug: string; lastmod: string }[];
 	authors: { slug: string; lastmod: string }[];
-	storylists: { slug: string; lastmod: string }[];
+	collections: { slug: string; lastmod: string }[];
 }
 
 async function run(dataset: unknown[]): Promise<SitemapSlugs> {
@@ -20,17 +19,23 @@ async function run(dataset: unknown[]): Promise<SitemapSlugs> {
 }
 
 const [canonAuthor] = onoffAuthorDocumentsMock;
+const [canonLiteraryWork] = onoffLiteraryWorkDocumentsMock;
+const [canonCollection] = onoffCollectionDocumentsMock;
 
-// Los tres tipos que el sitemap publica, con su fecha de escritura distinta de la de creación.
-const touchedAuthorDocument = { ...canonAuthor, _updatedAt: legacyStoryDocument._updatedAt };
+// Las dos condiciones que estos casos necesitan y que el corpus no tiene por qué traer: una fecha de
+// escritura distinta de la de creación, y una obra sin fecha de publicación. `coalesce` saltea el nulo
+// igual que la ausencia del campo, así que alcanza con anularlo.
+const WRITE_DATE = '2026-08-13T06:07:43Z';
+const touched = <T extends object>(document: T): T => ({ ...document, _updatedAt: WRITE_DATE });
+const unpublished = <T extends object>(document: T): T => ({ ...document, publishedAt: null });
 
 describe('sitemapSlugsQuery', () => {
 	// Una escritura operativa —un backfill, una migración, una copia de dataset— mueve la fecha de
 	// escritura de todo el corpus a la vez. El sitemap no debe reflejarla.
 	it.each([
-		['stories' as const, undatedLegacyStoryDocument],
-		['authors' as const, touchedAuthorDocument],
-		['storylists' as const, legacyStorylistDocument],
+		['literaryWorks' as const, touched(unpublished(canonLiteraryWork))],
+		['authors' as const, touched(canonAuthor)],
+		['collections' as const, touched(canonCollection)],
 	])('derives the %s lastmod from the creation date, not the write date', async (type, document) => {
 		const [entry] = (await run([document]))[type];
 
@@ -38,16 +43,27 @@ describe('sitemapSlugsQuery', () => {
 		expect(entry?.lastmod).not.toBe(document._updatedAt);
 	});
 
-	it('prefers the publication date over the creation date for a story', async () => {
-		const [entry] = (await run([legacyStoryDocument])).stories;
+	it('prefers the publication date over the creation date for a literary work', async () => {
+		const [entry] = (await run([canonLiteraryWork])).literaryWorks;
 
-		expect(entry?.lastmod).toBe(legacyStoryDocument.publishedAt);
+		expect(entry?.lastmod).toBe(canonLiteraryWork.publishedAt);
+	});
+
+	// El dataset no guarda la fecha en nulo: guarda el documento sin el campo. `coalesce` trata los dos
+	// casos igual, y este los mantiene a los dos afirmados.
+	it('falls back to the creation date when the publication date is absent', async () => {
+		const { publishedAt, ...withoutPublishedAt } = canonLiteraryWork;
+		void publishedAt;
+
+		const [entry] = (await run([withoutPublishedAt])).literaryWorks;
+
+		expect(entry?.lastmod).toBe(canonLiteraryWork._createdAt);
 	});
 
 	it.each([
-		['stories' as const, legacyStoryDocument],
+		['literaryWorks' as const, canonLiteraryWork],
 		['authors' as const, canonAuthor],
-		['storylists' as const, legacyStorylistDocument],
+		['collections' as const, canonCollection],
 	])('leaves %s drafts out', async (type, document) => {
 		const draft = { ...document, _id: `drafts.${document?._id}` };
 
@@ -55,9 +71,9 @@ describe('sitemapSlugsQuery', () => {
 	});
 
 	it.each([
-		['stories' as const, legacyStoryDocument],
+		['literaryWorks' as const, canonLiteraryWork],
 		['authors' as const, canonAuthor],
-		['storylists' as const, legacyStorylistDocument],
+		['collections' as const, canonCollection],
 	])('projects the %s slug flat', async (type, document) => {
 		const [entry] = (await run([document]))[type];
 

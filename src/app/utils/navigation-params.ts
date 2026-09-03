@@ -11,18 +11,17 @@ export type NavigationParams = {
 	readonly navigationSlug: string;
 };
 
-// El contexto de colección se llamó `storylist` mientras ese era el nombre del dominio, y quedó
-// escrito en enlaces ya compartidos hacia afuera. Se sigue aceptando para que esos enlaces no caigan
-// en silencio a las sugerencias de autor, que es lo que haría el valor desconocido.
-// TODO(#2269): retirar el valor legado junto con el resto de `storylist`.
-const LEGACY_COLLECTION_CONTEXT = 'storylist';
-
 /**
  * Normaliza el valor crudo de un query param al contexto de navegación.
  *
  * Acepta `undefined` porque el router lo asigna explícitamente cuando el query param desaparece al
  * navegar: sin ese caso, el binding del input rompe la navegación del lado del cliente.
+ *
+ * Cualquier otro valor cae al contexto de autor. No es solo una defensa contra un query param
+ * inventado: el 301 de las rutas retiradas preserva la query string, así que un enlace compartido
+ * puede traer el nombre con el que ese contexto viajaba antes, y el slug que lo acompaña se
+ * interpreta entonces como el de un autor.
  */
 export function toNavigationContext(value: string | undefined): NavigationContext {
-	return value === 'collection' || value === LEGACY_COLLECTION_CONTEXT ? 'collection' : 'author';
+	return value === 'collection' ? 'collection' : 'author';
 }

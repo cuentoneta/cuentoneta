@@ -17,7 +17,7 @@ const section = defineArrayMember({
 		defineField({
 			name: 'epigraphs',
 			title: 'Epígrafes de la sección',
-			description: 'Una sección puede tener más de un epígrafe (análogo a los epígrafes de una Story).',
+			description: 'Una sección puede tener más de un epígrafe.',
 			type: 'array',
 			of: [
 				defineArrayMember({
@@ -103,7 +103,7 @@ export default defineType({
 		defineField({
 			name: 'content',
 			title: 'Contenido (secciones / capítulos)',
-			description: 'Array de secciones. Con un único elemento, equivale a la lectura de una Story.',
+			description: 'Array de secciones. Con un único elemento, la obra se lee de corrido.',
 			type: 'array',
 			of: [section],
 			validation: (Rule) => Rule.required().min(1),

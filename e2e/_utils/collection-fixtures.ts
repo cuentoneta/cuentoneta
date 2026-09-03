@@ -8,12 +8,6 @@
 import type { APIRequestContext } from '@playwright/test';
 
 import { collectionTeaserListDtoSchema, type CollectionTeaserDto } from '@models/collection.dto';
-import { VIEWPORT_WIDTHS_NUMERIC } from '@utils/screen.utils';
-
-// La columna lateral y el panel deslizable viven tras `hidden lg:flex`, así que hace falta superar el
-// breakpoint `lg`. Se toma el ancho de `xl` y no el borde exacto porque `setViewportSize` fija el tamaño
-// de la ventana con la barra de scroll incluida: al ras del breakpoint, el ancho útil queda por debajo.
-export const DESKTOP_VIEWPORT = Object.freeze({ width: VIEWPORT_WIDTHS_NUMERIC.xl, height: 900 });
 
 const CATALOG_ROUTE = '/api/collection';
 

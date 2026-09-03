@@ -11,9 +11,9 @@ interface SlugEntry {
 }
 
 interface SitemapSlugsResult {
-	stories: SlugEntry[];
+	literaryWorks: SlugEntry[];
 	authors: SlugEntry[];
-	storylists: SlugEntry[];
+	collections: SlugEntry[];
 }
 
 /**
@@ -57,8 +57,8 @@ export async function fetchSitemapSlugs(): Promise<SitemapSlugsResult> {
 	const result = await client.fetch(sitemapSlugsQuery);
 
 	return {
-		stories: processSlugEntries(result.stories),
+		literaryWorks: processSlugEntries(result.literaryWorks),
 		authors: processSlugEntries(result.authors),
-		storylists: processSlugEntries(result.storylists),
+		collections: processSlugEntries(result.collections),
 	};
 }

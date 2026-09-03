@@ -11,7 +11,7 @@ import { CoverImageSkeletonComponent } from '../cover-image/cover-image-skeleton
 @Component({
 	selector: 'cuentoneta-literary-work-home-card-teaser-skeleton',
 	imports: [SkeletonComponent, CoverImageSkeletonComponent],
-	host: { class: 'block' },
+	host: { class: 'block', 'data-testid': 'skeleton' },
 	template: `
 		<article class="flex w-full max-w-82.75 flex-col items-center gap-4">
 			<div class="flex w-full items-center justify-center rounded-xl bg-neutral-100 py-5">

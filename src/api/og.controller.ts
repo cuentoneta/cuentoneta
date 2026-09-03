@@ -1,3 +1,6 @@
+// TODO(#2458): satori está acotado a la línea 0.32 en package.json. Desde 0.33 arrastra harfbuzzjs,
+// que resuelve su WASM con __dirname y rompe la extracción de rutas al empaquetarse en el bundle ESM
+// de servidor. Levantar el pin exige que eso deje de pasar, o tratar el paquete como externo.
 import { html } from 'satori-html';
 import satori from 'satori';
 import { readFileSync } from 'fs';
@@ -5,26 +8,16 @@ import { Hono } from 'hono';
 
 import type { ReactNode } from 'react';
 
+import { resolveOgText } from './_helpers/og-text';
 import Logo from './_utils/Logo';
 
 const ogController = new Hono();
 
 // Route
 ogController.get('/og', async (c) => {
-	const author = c.req.query('author');
-	const title = c.req.query('title');
 	const rrss = c.req.query('rrss');
-	const storylist = c.req.query('storylist');
 
-	let text: string;
-
-	if (storylist) {
-		text = String(storylist);
-	} else if (author && title) {
-		text = `${title} - ${author}`;
-	} else {
-		text = 'La Cuentoneta';
-	}
+	const text = resolveOgText((name) => c.req.query(name));
 
 	let width: number;
 	let height: number;

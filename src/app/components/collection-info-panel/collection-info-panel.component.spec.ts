@@ -35,11 +35,6 @@ describe('CollectionInfoPanelComponent', () => {
 		installResizeObserverStub();
 	});
 
-	afterEach(() => {
-		Reflect.deleteProperty(HTMLDivElement.prototype, 'scrollHeight');
-		Reflect.deleteProperty(HTMLDivElement.prototype, 'clientHeight');
-	});
-
 	describe('sin colección', () => {
 		it('should render its skeleton', async () => {
 			await render(CollectionInfoPanelComponent);

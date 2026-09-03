@@ -33,7 +33,8 @@ function sourceFileForRoute(path: string): string {
 	return srcIndex >= 0 ? captured.slice(srcIndex) : captured.replace(/^\//, '');
 }
 
-// Agrupa por archivo fuente (storylist y storylist/:slug comparten componente) las rutas indexable-mode.
+// Agrupa por archivo fuente las rutas indexable-mode: dos rutas distintas pueden cargar el mismo
+// componente, y las directivas se declaran una sola vez por archivo.
 const pagesByFile = new Map<string, string[]>();
 for (const serverRoute of serverRoutes) {
 	if (serverRoute.path === '**' || !INDEXABLE_MODES.includes(serverRoute.renderMode)) {
