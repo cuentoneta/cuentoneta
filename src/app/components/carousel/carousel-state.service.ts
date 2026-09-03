@@ -1,4 +1,5 @@
-import { effect, Service, Signal, signal } from '@angular/core';
+import type { Signal } from '@angular/core';
+import { effect, Service, signal } from '@angular/core';
 
 /**
  * Servicio que maneja el estado de navegación del carousel.

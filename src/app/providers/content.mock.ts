@@ -1,9 +1,11 @@
 // Core
-import { EnvironmentProviders, makeEnvironmentProviders } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import type { EnvironmentProviders } from '@angular/core';
+import { makeEnvironmentProviders } from '@angular/core';
+import type { Observable } from 'rxjs';
+import { of } from 'rxjs';
 
 // Models
-import { LandingPageContent } from '@models/landing-page-content.model';
+import type { LandingPageContent } from '@models/landing-page-content.model';
 import { ContentApi } from './content.provider';
 
 // Entrega la landing vacía: cada caso superpone solo las secciones que ejercita, y así lo que no

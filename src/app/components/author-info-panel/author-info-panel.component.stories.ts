@@ -1,4 +1,5 @@
-import { argsToTemplate, componentWrapperDecorator, Meta, StoryObj } from '@storybook/angular-vite';
+import type { Meta, StoryObj } from '@storybook/angular-vite';
+import { argsToTemplate, componentWrapperDecorator } from '@storybook/angular-vite';
 import { AuthorInfoPanelComponent } from './author-info-panel.component';
 import { authorMock } from '@mocks/author.mock';
 import {

@@ -1,8 +1,9 @@
 import { Component, computed, input, inject } from '@angular/core';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import type { SafeResourceUrl } from '@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
 
 // Models
-import { SpotifyPodcastEpisode } from '@models/media.model';
+import type { SpotifyPodcastEpisode } from '@models/media.model';
 
 @Component({
 	selector: 'cuentoneta-spotify-audio-widget',

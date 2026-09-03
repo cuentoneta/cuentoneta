@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/angular-vite';
+import type { Meta, StoryObj } from '@storybook/angular-vite';
 import { SpotifyPodcastEpisodeWidget } from './spotify-podcast-episode-widget';
 import { onoffSpotifyPodcastEpisodesMock } from '@mocks/onoff-media.mock';
 
