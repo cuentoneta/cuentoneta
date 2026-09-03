@@ -18,6 +18,8 @@
 		"build": "nx run @cuentoneta/app:build:production --skip-nx-cache",
 		"config": "node --import tsx ./scripts/set-environment.ts",
 		"backfill:reading-time": "node --import tsx --env-file=.env ./scripts/backfill-reading-time.ts",
+		"normalize:bare-published-at": "node --import tsx --env-file=.env ./scripts/normalize-bare-published-at.ts",
+		"sanitize:resources-without-url": "node --import tsx --env-file=.env ./scripts/sanitize-resources-without-url.ts",
 		"delete-unused-assets": "node --import tsx --env-file=.env ./scripts/delete-unused-assets.ts",
 		"storybook": "nx run @cuentoneta/app:storybook",
 		"storybook:build": "nx run @cuentoneta/app:build-storybook",
