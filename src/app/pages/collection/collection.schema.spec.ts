@@ -1,4 +1,6 @@
 import { onoffCollectionsMock } from '@mocks/onoff-collections.mock';
+import { createSanitizedHtml } from '@models/sanitized-html.model';
+import { htmlToPlainText } from '@utils/html-to-text.utils';
 
 import { assertValidJsonLd } from '@testing/json-ld-validation';
 import { buildCollectionBreadcrumb, buildCollectionPageSchema } from './collection.schema';
@@ -31,6 +33,42 @@ describe('buildCollectionPageSchema', () => {
 				})),
 			},
 		});
+	});
+
+	it('should emit the description derived from the collection prose', () => {
+		const schema = buildCollectionPageSchema(canon, websiteUrl);
+
+		expect(schema).toMatchObject({ description: htmlToPlainText(canon.description) });
+	});
+
+	it('should truncate a long description at a word boundary with an ellipsis', () => {
+		const fitsBeforeLimit = 'a'.repeat(295);
+		const collection = { ...canon, description: createSanitizedHtml(`<p>${fitsBeforeLimit} palabraDescartada</p>`) };
+
+		const schema = buildCollectionPageSchema(collection, websiteUrl);
+
+		expect(schema).toMatchObject({ description: `${fitsBeforeLimit}…` });
+	});
+
+	it('should hard-cut at the max length when there is no space within the limit', () => {
+		const singleLongWord = 'b'.repeat(350);
+		const collection = { ...canon, description: createSanitizedHtml(`<p>${singleLongWord}</p>`) };
+
+		const schema = buildCollectionPageSchema(collection, websiteUrl);
+
+		expect(schema).toMatchObject({ description: `${'b'.repeat(300)}…` });
+	});
+
+	it('should omit the description when the collection HTML carries no prose', async () => {
+		const collection = {
+			...canon,
+			description: createSanitizedHtml('<p><img src="https://cdn.sanity.io/foto.jpg" alt="Foto"/></p>'),
+		};
+
+		const schema = buildCollectionPageSchema(collection, websiteUrl);
+
+		expect(schema).not.toHaveProperty('description');
+		await expect(assertValidJsonLd(schema)).resolves.toBeUndefined();
 	});
 });
 
