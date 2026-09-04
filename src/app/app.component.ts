@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 
 import { HeaderComponent } from '@components/header/header.component';
 import { FooterComponent } from '@components/footer/footer.component';
-import { RouterModule } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 import { environment } from './environments/environment';
 
 // Services
@@ -14,9 +14,13 @@ import { LayoutService } from './providers/layout.interface';
 	template: `
 		<cuentoneta-header [isVisible]="isHeaderVisible()" />
 		<router-outlet />
-		<cuentoneta-footer />
+		@defer (hydrate on viewport) {
+			<cuentoneta-footer />
+		} @placeholder {
+			<div></div>
+		}
 	`,
-	imports: [FooterComponent, HeaderComponent, RouterModule],
+	imports: [FooterComponent, HeaderComponent, RouterOutlet],
 	providers: [AnalyticsService],
 })
 export class AppComponent {
