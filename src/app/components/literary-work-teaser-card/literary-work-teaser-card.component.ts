@@ -10,33 +10,33 @@ import type {
 import { AppRoutes } from '../../app.routes';
 import type { NavigationParams } from '@app-utils/navigation-params';
 import { MediaSelectorsComponent, type MediaSelectorsTheme } from '../media-selectors/media-selectors.component';
-import { LiteraryWorkCardTeaserSkeletonComponent } from './literary-work-card-teaser-skeleton.component';
+import { LiteraryWorkTeaserCardSkeletonComponent } from './literary-work-teaser-card-skeleton.component';
 import { ImageProfileComponent } from '../image-profile/image-profile.component';
 import { CoverImageComponent } from '../cover-image/cover-image.component';
 
 /**
- * Variantes visuales del componente LiteraryWorkCardTeaser definidas en el Design System v3.
+ * Variantes visuales del componente LiteraryWorkTeaserCard definidas en el Design System v3.
  *
  * - `on-white`: layout horizontal con imagen a la izquierda, pensado para fondos blancos.
  * - `on-gray`: idéntico a `on-white` pero con los selectores de multimedia en blanco, para fondos grises.
  * - `highlighted`: tarjeta destacada con borde y fondo, con la imagen a la derecha.
  */
-export type LiteraryWorkCardTeaserVariant = 'on-white' | 'on-gray' | 'highlighted';
+export type LiteraryWorkTeaserCardVariant = 'on-white' | 'on-gray' | 'highlighted';
 
 /**
  * Proyecciones de obra que la tarjeta sabe renderizar. El extracto solo existe en `LiteraryWorkTeaser`;
  * las vistas de navegación aportan el resto de los campos y la tarjeta las degrada sola.
  */
-export type LiteraryWorkCardTeaserContent =
+export type LiteraryWorkTeaserCardContent =
 	LiteraryWorkTeaser | LiteraryWorkNavigationTeaserWithAuthors | LiteraryWorkNavigationTeaser;
 
 @Component({
-	selector: 'cuentoneta-literary-work-card-teaser',
+	selector: 'cuentoneta-literary-work-teaser-card',
 	imports: [
 		NgTemplateOutlet,
 		RouterLink,
 		MediaSelectorsComponent,
-		LiteraryWorkCardTeaserSkeletonComponent,
+		LiteraryWorkTeaserCardSkeletonComponent,
 		ImageProfileComponent,
 		CoverImageComponent,
 	],
@@ -86,7 +86,7 @@ export type LiteraryWorkCardTeaserContent =
 				</div>
 			</article>
 		} @else {
-			<cuentoneta-literary-work-card-teaser-skeleton
+			<cuentoneta-literary-work-teaser-card-skeleton
 				[variant]="variant()"
 				[order]="order()"
 				[showAuthor]="showAuthor()"
@@ -108,7 +108,7 @@ export type LiteraryWorkCardTeaserContent =
 		</ng-template>
 
 		<!-- Autor: avatar pequeño + nombre. Implementación propia del card (Design System v3): no usa
-			 AuthorCardTeaser. Es un enlace propio al perfil del autor, elevado a z-content para quedar por
+			 AuthorTeaserCard. Es un enlace propio al perfil del autor, elevado a z-content para quedar por
 			 encima del enlace de la obra (que se estira sobre toda la tarjeta). -->
 		<ng-template #author let-author>
 			<a
@@ -142,12 +142,12 @@ export type LiteraryWorkCardTeaserContent =
 		class: 'isolate block',
 	},
 })
-export class LiteraryWorkCardTeaserComponent {
+export class LiteraryWorkTeaserCardComponent {
 	protected readonly appRoutes = AppRoutes;
 
 	// Inputs
-	public readonly literaryWork = input<LiteraryWorkCardTeaserContent>();
-	public readonly variant = input<LiteraryWorkCardTeaserVariant>('on-white');
+	public readonly literaryWork = input<LiteraryWorkTeaserCardContent>();
+	public readonly variant = input<LiteraryWorkTeaserCardVariant>('on-white');
 	public readonly order = input<number>();
 	// Marca el cover como prioritario (above-the-fold, p. ej. en la variante highlighted como hero).
 	public readonly priority = input<boolean>(false);

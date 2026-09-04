@@ -1,20 +1,20 @@
 import { argsToTemplate, Meta, moduleMetadata, StoryObj } from '@storybook/angular-vite';
 
-import { LiteraryWorkHomeCardTeaserComponent } from './literary-work-home-card-teaser.component';
-import { LiteraryWorkHomeCardTeaserSkeletonComponent } from './literary-work-home-card-teaser-skeleton.component';
+import { LiteraryWorkTeaserHomeCardComponent } from './literary-work-teaser-home-card.component';
+import { LiteraryWorkTeaserHomeCardSkeletonComponent } from './literary-work-teaser-home-card-skeleton.component';
 import { onoffLiteraryWorkTeasersWithMediaSourcesMock } from '@mocks/onoff-literary-work-teasers.mock';
 import { corpusLiteraryWorkTeasers, literaryWorkSelectArgType } from '@mocks/onoff-corpus.storybook';
 
 const [teaser] = onoffLiteraryWorkTeasersWithMediaSourcesMock;
 
-const meta: Meta<LiteraryWorkHomeCardTeaserComponent> = {
-	component: LiteraryWorkHomeCardTeaserComponent,
-	title: 'Componentes V3/LiteraryWorkHomeCardTeaser',
+const meta: Meta<LiteraryWorkTeaserHomeCardComponent> = {
+	component: LiteraryWorkTeaserHomeCardComponent,
+	title: 'Componentes V3/LiteraryWorkTeaserHomeCard',
 	parameters: {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>Utilizado para representar una vista previa de una obra en la Home. Resume la información principal del contenido, incluyendo autor, título, categoría, tiempo estimado de lectura, imagen asociada y accesos a archivos multimediales como video, X o Spotify.</p><p>Su objetivo es facilitar un vistazo rápido del contenido disponible y ayudar al usuario a decidir si quiere profundizar en la obra.</p><p>Derivada de <a href="./?path=/docs/componentes-v3-literaryworkcardteaser--docs" target="_top"><strong>LiteraryWorkCardTeaser</strong></a>, presenta un layout vertical angosto con la imagen, la numeración y los selectores de multimedia apilados sobre un contenedor gris.</p><ul><li>El título de la obra se trunca siempre a una sola línea.</li><li>Los selectores de multimedia usan siempre la variante <code>Filled</code> del MediaTag (recuadros blancos sobre el gris).</li><li>El avatar y el nombre del autor son elementos clickeables que enlazan al perfil del autor; en estado hover, el nombre se subraya.</li></ul><p>Se compone de <a href="./?path=/docs/componentes-v3-coverimage--docs" target="_top"><strong>CoverImage</strong></a> (portada), <a href="./?path=/docs/componentes-v3-imageprofile--docs" target="_top"><strong>ImageProfile</strong></a> (avatar del autor) y <a href="./?path=/docs/componentes-v3-mediaselectors--docs" target="_top"><strong>MediaSelectors</strong></a> (accesos multimedia); el skeleton es <strong>LiteraryWorkHomeCardTeaserSkeleton</strong>.</p></div>`,
+				component: `<div><p>Utilizado para representar una vista previa de una obra en la Home. Resume la información principal del contenido, incluyendo autor, título, categoría, tiempo estimado de lectura, imagen asociada y accesos a archivos multimediales como video, X o Spotify.</p><p>Su objetivo es facilitar un vistazo rápido del contenido disponible y ayudar al usuario a decidir si quiere profundizar en la obra.</p><p>Derivada de <a href="./?path=/docs/componentes-v3-literaryworkteasercard--docs" target="_top"><strong>LiteraryWorkTeaserCard</strong></a>, presenta un layout vertical angosto con la imagen, la numeración y los selectores de multimedia apilados sobre un contenedor gris.</p><ul><li>El título de la obra se trunca siempre a una sola línea.</li><li>Los selectores de multimedia usan siempre la variante <code>Filled</code> del MediaTag (recuadros blancos sobre el gris).</li><li>El avatar y el nombre del autor son elementos clickeables que enlazan al perfil del autor; en estado hover, el nombre se subraya.</li></ul><p>Se compone de <a href="./?path=/docs/componentes-v3-coverimage--docs" target="_top"><strong>CoverImage</strong></a> (portada), <a href="./?path=/docs/componentes-v3-imageprofile--docs" target="_top"><strong>ImageProfile</strong></a> (avatar del autor) y <a href="./?path=/docs/componentes-v3-mediaselectors--docs" target="_top"><strong>MediaSelectors</strong></a> (accesos multimedia); el skeleton es <strong>LiteraryWorkTeaserHomeCardSkeleton</strong>.</p></div>`,
 			},
 		},
 		layout: 'padded',
@@ -60,9 +60,9 @@ const meta: Meta<LiteraryWorkHomeCardTeaserComponent> = {
 };
 
 export default meta;
-type Story = StoryObj<LiteraryWorkHomeCardTeaserComponent>;
+type Story = StoryObj<LiteraryWorkTeaserHomeCardComponent>;
 
-export const Interactiva: StoryObj<LiteraryWorkHomeCardTeaserComponent & { literaryWorkIndex: number }> = {
+export const Interactiva: StoryObj<LiteraryWorkTeaserHomeCardComponent & { literaryWorkIndex: number }> = {
 	argTypes: {
 		literaryWorkIndex: {
 			...literaryWorkSelectArgType,
@@ -72,7 +72,7 @@ export const Interactiva: StoryObj<LiteraryWorkHomeCardTeaserComponent & { liter
 	render: (args) => ({
 		props: { ...args, literaryWorks: corpusLiteraryWorkTeasers },
 		template: `
-			<cuentoneta-literary-work-home-card-teaser
+			<cuentoneta-literary-work-teaser-home-card
 				[literaryWork]="literaryWorks[literaryWorkIndex]"
 				[order]="order"
 				[tagLabel]="tagLabel"
@@ -100,7 +100,7 @@ export const Interactiva: StoryObj<LiteraryWorkHomeCardTeaserComponent & { liter
 export const Default: Story = {
 	render: (args) => ({
 		props: args,
-		template: `<cuentoneta-literary-work-home-card-teaser ${argsToTemplate(args)} />`,
+		template: `<cuentoneta-literary-work-teaser-home-card ${argsToTemplate(args)} />`,
 	}),
 	args: {
 		literaryWork: teaser,
@@ -118,21 +118,21 @@ export const Default: Story = {
 };
 
 export const Skeleton: StoryObj = {
-	decorators: [moduleMetadata({ imports: [LiteraryWorkHomeCardTeaserSkeletonComponent] })],
-	render: () => ({ template: `<cuentoneta-literary-work-home-card-teaser-skeleton />` }),
+	decorators: [moduleMetadata({ imports: [LiteraryWorkTeaserHomeCardSkeletonComponent] })],
+	render: () => ({ template: `<cuentoneta-literary-work-teaser-home-card-skeleton />` }),
 	parameters: {
 		docs: { description: { story: 'Skeleton de carga de la tarjeta.' } },
 	},
 };
 
 // La tarjeta renderiza su propio skeleton cuando no recibe story.
-export const Estados: StoryObj<LiteraryWorkHomeCardTeaserComponent & { loading: boolean }> = {
+export const Estados: StoryObj<LiteraryWorkTeaserHomeCardComponent & { loading: boolean }> = {
 	argTypes: { loading: { control: 'boolean', name: 'Cargando' } },
 	render: (args) => ({
 		props: args,
 		template: `
 			<div class="w-[331px]">
-				<cuentoneta-literary-work-home-card-teaser
+				<cuentoneta-literary-work-teaser-home-card
 					[literaryWork]="loading ? undefined : literaryWork"
 					[order]="order"
 					[tagLabel]="tagLabel"

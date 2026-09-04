@@ -8,7 +8,7 @@
 			@for (literaryWork of collection.literaryWorks; track literaryWork._id; let index = $index) { @if (index >= 2) {
 			<cuentoneta-divider />
 			}
-			<cuentoneta-literary-work-card-teaser
+			<cuentoneta-literary-work-teaser-card
 				[literaryWork]="literaryWork"
 				[variant]="index === 0 ? 'highlighted' : 'on-white'"
 				[order]="index + 1"
@@ -75,7 +75,7 @@
 		<cuentoneta-skeleton appearance="line" class="h-9 w-72 bg-neutral-300" />
 		<div class="flex flex-col gap-8">
 			@for (placeholder of [1, 2, 3]; track placeholder) {
-			<cuentoneta-literary-work-card-teaser [showExcerpt]="true" [showMultimedia]="true" />
+			<cuentoneta-literary-work-teaser-card [showExcerpt]="true" [showMultimedia]="true" />
 			}
 		</div>
 	</div>

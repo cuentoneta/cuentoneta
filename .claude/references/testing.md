@@ -525,10 +525,10 @@ Todo archivo de la app que el preview importe debe estar en el `include` de `.st
 - **Enlace navegable a otros componentes.** Cuando la descripción menciona otro componente documentado, su nombre debe ser un enlace que navegue a la story de ese componente. Como la doc se renderiza dentro de `iframe.html`, usá un enlace relativo a la raíz del Storybook (robusto ante subpaths de deploy) con `target="_top"`:
 
   ```html
-  <a href="./?path=/docs/<kind-id>--docs" target="_top"><strong>LiteraryWorkCardTeaser</strong></a>
+  <a href="./?path=/docs/<kind-id>--docs" target="_top"><strong>LiteraryWorkTeaserCard</strong></a>
   ```
 
-  El `<kind-id>` se deriva del `title` (minúsculas; espacios y `/` → `-`): `Componentes V3/LiteraryWorkCardTeaser` → `componentes-v3-literaryworkcardteaser`. El sufijo `--docs` apunta a la página de autodocs.
+  El `<kind-id>` se deriva del `title` (minúsculas; espacios y `/` → `-`): `Componentes V3/LiteraryWorkTeaserCard` → `componentes-v3-literaryworkteasercard`. El sufijo `--docs` apunta a la página de autodocs.
 
 ### Estado de carga (skeleton) → story intercambiable (obligatoria)
 
