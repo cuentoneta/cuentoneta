@@ -1,6 +1,6 @@
 import { Component, computed, effect, input, signal } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { InternalLink } from '@models/link.model';
 import { AppRoutes } from '../../app.routes';
 
@@ -78,7 +78,7 @@ type VisibilityState = (typeof VisibilityState)[keyof typeof VisibilityState];
 			></div>
 		}
 	`,
-	imports: [RouterModule, NgOptimizedImage],
+	imports: [RouterLink, NgOptimizedImage],
 })
 export class HeaderComponent {
 	protected readonly appRoutes = AppRoutes;
