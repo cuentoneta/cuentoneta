@@ -18,7 +18,7 @@ const meta: Meta<MediaSelectorsComponent> = {
 				sourceState: 'shown',
 			},
 			description: {
-				component: `<div><p>El componente <strong>MediaSelectorsComponent</strong> renderiza los selectores de los recursos multimedia (YouTube, X, Spotify, audio) asociados a una obra. Es un componente de presentación: no monta los widgets, solo emite cuál quedó elegido vía el output <code>selected</code>. Consume la vista de teaser del medio (<code>MediaTeaser</code>): el tag, para elegir el ícono de la plataforma, y el título, que identifica al recurso entre varios de la misma. No alcanza para montar un reproductor.</p><ul><li><code>selectable = false</code> (por defecto): agrupa por plataforma con un contador (badge). Decorativo.</li><li><code>selectable = true</code>: un selector clickeable por recurso; al click emite el <code>MediaTeaser</code> vía <code>selected</code>.</li></ul><p>Los inputs <code>theme</code> (<code>subtle</code> / <code>solid</code> / <code>bordered</code>) y <code>orientation</code> (<code>horizontal</code> / <code>vertical</code>) controlan la presentación.</p><p>Se consume desde <a href="./?path=/docs/componentes-v3-literaryworkcardteaser--docs" target="_top"><strong>LiteraryWorkCardTeaser</strong></a> y <a href="./?path=/docs/componentes-v3-literaryworkhomecardteaser--docs" target="_top"><strong>LiteraryWorkHomeCardTeaser</strong></a> (modo agrupado). El modo seleccionable todavía no tiene consumidor.</p></div>`,
+				component: `<div><p>El componente <strong>MediaSelectorsComponent</strong> renderiza los selectores de los recursos multimedia (YouTube, X, Spotify, audio) asociados a una obra. Es un componente de presentación: no monta los widgets, solo emite cuál quedó elegido vía el output <code>selected</code>. Consume la vista de teaser del medio (<code>MediaTeaser</code>): el tag, para elegir el ícono de la plataforma, y el título, que identifica al recurso entre varios de la misma. No alcanza para montar un reproductor.</p><ul><li><code>selectable = false</code> (por defecto): agrupa por plataforma con un contador (badge). Decorativo.</li><li><code>selectable = true</code>: un selector clickeable por recurso; al click emite el <code>MediaTeaser</code> vía <code>selected</code>.</li></ul><p>Los inputs <code>theme</code> (<code>subtle</code> / <code>solid</code> / <code>bordered</code>) y <code>orientation</code> (<code>horizontal</code> / <code>vertical</code>) controlan la presentación.</p><p>Se consume desde <a href="./?path=/docs/componentes-v3-literaryworkteasercard--docs" target="_top"><strong>LiteraryWorkTeaserCard</strong></a> y <a href="./?path=/docs/componentes-v3-literaryworkteaserhomecard--docs" target="_top"><strong>LiteraryWorkTeaserHomeCard</strong></a> (modo agrupado). El modo seleccionable todavía no tiene consumidor.</p></div>`,
 			},
 		},
 		layout: 'padded',
@@ -59,7 +59,7 @@ export const Grouped: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Modo agrupado (decorativo): un selector por plataforma con contador. Tema <code>subtle</code> (OnWhite).</p><p><strong>Usos:</strong> <a href="./?path=/docs/componentes-v3-literaryworkcardteaser--docs" target="_top"><strong>LiteraryWorkCardTeaser</strong></a> y <a href="./?path=/docs/componentes-v3-literaryworkhomecardteaser--docs" target="_top"><strong>LiteraryWorkHomeCardTeaser</strong></a>, como resumen de los recursos disponibles.</p>`,
+				story: `<p>Modo agrupado (decorativo): un selector por plataforma con contador. Tema <code>subtle</code> (OnWhite).</p><p><strong>Usos:</strong> <a href="./?path=/docs/componentes-v3-literaryworkteasercard--docs" target="_top"><strong>LiteraryWorkTeaserCard</strong></a> y <a href="./?path=/docs/componentes-v3-literaryworkteaserhomecard--docs" target="_top"><strong>LiteraryWorkTeaserHomeCard</strong></a>, como resumen de los recursos disponibles.</p>`,
 			},
 		},
 	},
@@ -139,7 +139,7 @@ export const Estados: StoryObj<MediaSelectorsComponent & { loading: boolean }> =
 		docs: {
 			description: {
 				story:
-					'Este componente <strong>no tiene skeleton propio</strong>: el estado de carga lo gestiona el padre (ver <a href="./?path=/docs/componentes-v3-literaryworkcardteaser--docs" target="_top"><strong>LiteraryWorkCardTeaser</strong></a>). El placeholder de arriba replica el del skeleton del padre (barras 34×38) como referencia visual.',
+					'Este componente <strong>no tiene skeleton propio</strong>: el estado de carga lo gestiona el padre (ver <a href="./?path=/docs/componentes-v3-literaryworkteasercard--docs" target="_top"><strong>LiteraryWorkTeaserCard</strong></a>). El placeholder de arriba replica el del skeleton del padre (barras 34×38) como referencia visual.',
 			},
 		},
 	},
