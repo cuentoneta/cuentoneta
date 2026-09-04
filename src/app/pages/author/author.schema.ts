@@ -3,41 +3,8 @@ import { type BreadcrumbList, type PersonLeaf, type ProfilePage, type WithContex
 
 import { type Author, type AuthorProfile } from '@models/author.model';
 import { type SanitizedHtml } from '@models/sanitized-html.model';
+import { htmlToPlainText } from '@utils/html-to-text.utils';
 import { buildBreadcrumbSchema, buildPersonSchema } from '@utils/schema-org.builders';
-
-// Tags que separan texto: al desaparecer dejan un espacio, o la última palabra de un bloque quedaría
-// pegada a la primera del siguiente. Los inline (`em`, `strong`, `a`, `code`) se quitan sin espacio,
-// porque abren y cierran dentro de la oración y un espacio ahí despega la puntuación que los sigue.
-const BLOCK_LEVEL_TAG = /<\/?(?:p|div|br|hr|h[1-6]|ul|ol|li|blockquote|pre|figure|figcaption|table|tr|td|th)\b[^>]*>/gi;
-
-// El pipeline emite referencias **numéricas** (`rehype-stringify` no usa referencias con nombre), pero
-// se aceptan las dos formas para no depender de esa configuración. Una única pasada, no una por
-// entidad: así `&amp;#x26;` se resuelve a `&#x26;` y no se decodifica dos veces hasta `&`.
-const HTML_REFERENCE = /&(?:#[xX]([0-9a-fA-F]+)|#(\d+)|(amp|lt|gt|quot|apos));/g;
-
-const NAMED_REFERENCES: Readonly<Record<string, string>> = Object.freeze({
-	amp: '&',
-	lt: '<',
-	gt: '>',
-	quot: '"',
-	apos: "'",
-});
-
-function decodeReferences(text: string): string {
-	return text.replace(HTML_REFERENCE, (match, hex?: string, decimal?: string, name?: string) => {
-		if (hex !== undefined) return String.fromCodePoint(Number.parseInt(hex, 16));
-		if (decimal !== undefined) return String.fromCodePoint(Number.parseInt(decimal, 10));
-		return name !== undefined ? (NAMED_REFERENCES[name] ?? match) : match;
-	});
-}
-
-// Reduce el HTML saneado a texto plano. No usa `DOMParser`: esto corre también en el SSR de Node, donde
-// no existe. Las referencias se decodifican después de quitar los tags, para que un `<` del texto no se
-// reinterprete como marcado.
-function toPlainText(html: SanitizedHtml): string {
-	const withoutTags = html.replace(BLOCK_LEVEL_TAG, ' ').replace(/<[^>]*>/g, '');
-	return decodeReferences(withoutTags).replace(/\s+/g, ' ').trim();
-}
 
 /**
  * Aplana y recorta la biografía a texto plano para el `description` del Person, recortado en el último
@@ -46,7 +13,7 @@ function toPlainText(html: SanitizedHtml): string {
  */
 function buildBiographyDescription(biography: SanitizedHtml): string | undefined {
 	const maxLength = 300;
-	const plainText = toPlainText(biography);
+	const plainText = htmlToPlainText(biography);
 	if (!plainText) {
 		return undefined;
 	}
