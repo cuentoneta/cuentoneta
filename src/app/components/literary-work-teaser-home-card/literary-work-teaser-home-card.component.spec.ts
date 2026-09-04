@@ -1,4 +1,4 @@
-import { LiteraryWorkHomeCardTeaserComponent } from './literary-work-home-card-teaser.component';
+import { LiteraryWorkTeaserHomeCardComponent } from './literary-work-teaser-home-card.component';
 import { DefaultUrlSerializer, UrlTree } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
 import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
@@ -11,7 +11,7 @@ import type { NavigationParams } from '@app-utils/navigation-params';
 const [teaser] = onoffLiteraryWorkTeasersMock;
 const [teaserAuthor] = teaser.authors;
 
-describe('LiteraryWorkHomeCardTeaserComponent', () => {
+describe('LiteraryWorkTeaserHomeCardComponent', () => {
 	const literaryWorkUrl = `/literary-work/${teaser.slug}?navigation=author&navigationSlug=${teaserAuthor.slug}`;
 	const authorUrl = `/author/${teaserAuthor.slug}`;
 
@@ -25,28 +25,28 @@ describe('LiteraryWorkHomeCardTeaserComponent', () => {
 	});
 
 	it('should render the component', async () => {
-		const { container } = await render(LiteraryWorkHomeCardTeaserComponent, {
+		const { container } = await render(LiteraryWorkTeaserHomeCardComponent, {
 			inputs: { literaryWork: teaser, navigationParams },
 		});
 		expect(container).toBeTruthy();
 	});
 
 	it('should display the literary work title', async () => {
-		await render(LiteraryWorkHomeCardTeaserComponent, {
+		await render(LiteraryWorkTeaserHomeCardComponent, {
 			inputs: { literaryWork: teaser, navigationParams },
 		});
 		expect(screen.getByText(teaser.title)).toBeInTheDocument();
 	});
 
 	it('should display the total reading time', async () => {
-		await render(LiteraryWorkHomeCardTeaserComponent, {
+		await render(LiteraryWorkTeaserHomeCardComponent, {
 			inputs: { literaryWork: teaser, navigationParams },
 		});
 		expect(screen.getByText(`${teaser.totalReadingTime} minutos de lectura`)).toBeInTheDocument();
 	});
 
 	it('should link to the literary work', async () => {
-		await render(LiteraryWorkHomeCardTeaserComponent, {
+		await render(LiteraryWorkTeaserHomeCardComponent, {
 			inputs: { literaryWork: teaser, navigationParams },
 		});
 		const link = screen.getAllByRole('link').find((l) => l.getAttribute('href')?.includes('/literary-work/'));
@@ -55,7 +55,7 @@ describe('LiteraryWorkHomeCardTeaserComponent', () => {
 
 	describe('Author', () => {
 		it('should always display the author name and avatar', async () => {
-			await render(LiteraryWorkHomeCardTeaserComponent, {
+			await render(LiteraryWorkTeaserHomeCardComponent, {
 				inputs: { literaryWork: teaser, navigationParams },
 			});
 			expect(screen.getByText(teaser.authors[0].name)).toBeInTheDocument();
@@ -63,7 +63,7 @@ describe('LiteraryWorkHomeCardTeaserComponent', () => {
 		});
 
 		it('should link the author photo and name to the author profile', async () => {
-			await render(LiteraryWorkHomeCardTeaserComponent, {
+			await render(LiteraryWorkTeaserHomeCardComponent, {
 				inputs: { literaryWork: teaser, navigationParams },
 			});
 			// La foto y el nombre del autor son un enlace propio a /author/:slug, elevado por encima del
@@ -73,7 +73,7 @@ describe('LiteraryWorkHomeCardTeaserComponent', () => {
 		});
 
 		it('should expose the author name as the accessible name of the author link', async () => {
-			await render(LiteraryWorkHomeCardTeaserComponent, {
+			await render(LiteraryWorkTeaserHomeCardComponent, {
 				inputs: { literaryWork: teaser, navigationParams },
 			});
 			// El avatar es decorativo (alt vacío): el nombre accesible del enlace es solo el nombre del autor.
@@ -83,21 +83,21 @@ describe('LiteraryWorkHomeCardTeaserComponent', () => {
 
 	describe('Order', () => {
 		it('should display the order when provided', async () => {
-			await render(LiteraryWorkHomeCardTeaserComponent, {
+			await render(LiteraryWorkTeaserHomeCardComponent, {
 				inputs: { literaryWork: teaser, navigationParams, order: 7 },
 			});
 			expect(screen.getByTestId('order')).toHaveTextContent('7');
 		});
 
 		it('should display an order of 0 (not treated as absent)', async () => {
-			await render(LiteraryWorkHomeCardTeaserComponent, {
+			await render(LiteraryWorkTeaserHomeCardComponent, {
 				inputs: { literaryWork: teaser, navigationParams, order: 0 },
 			});
 			expect(screen.getByTestId('order')).toHaveTextContent('0');
 		});
 
 		it('should not display the order when not provided', async () => {
-			await render(LiteraryWorkHomeCardTeaserComponent, {
+			await render(LiteraryWorkTeaserHomeCardComponent, {
 				inputs: { literaryWork: teaser, navigationParams },
 			});
 			expect(screen.queryByTestId('order')).not.toBeInTheDocument();
@@ -106,7 +106,7 @@ describe('LiteraryWorkHomeCardTeaserComponent', () => {
 
 	describe('Cover image', () => {
 		it('should render the cover image when the literary work has a cover', async () => {
-			await render(LiteraryWorkHomeCardTeaserComponent, {
+			await render(LiteraryWorkTeaserHomeCardComponent, {
 				inputs: {
 					literaryWork: { ...teaser, coverImage: 'https://example.com/cover.jpg' },
 					navigationParams,
@@ -116,7 +116,7 @@ describe('LiteraryWorkHomeCardTeaserComponent', () => {
 		});
 
 		it('should render a placeholder when the literary work has no cover', async () => {
-			await render(LiteraryWorkHomeCardTeaserComponent, {
+			await render(LiteraryWorkTeaserHomeCardComponent, {
 				inputs: {
 					literaryWork: { ...teaser, coverImage: '' },
 					navigationParams,
@@ -136,21 +136,21 @@ describe('LiteraryWorkHomeCardTeaserComponent', () => {
 		};
 
 		it('should display the multimedia selectors when showMultimedia is true and there is media', async () => {
-			await render(LiteraryWorkHomeCardTeaserComponent, {
+			await render(LiteraryWorkTeaserHomeCardComponent, {
 				inputs: { literaryWork: literaryWorkWithMedia, showMultimedia: true },
 			});
 			expect(screen.getByTestId('media')).toBeInTheDocument();
 		});
 
 		it('should not display the multimedia selectors when showMultimedia is false', async () => {
-			await render(LiteraryWorkHomeCardTeaserComponent, {
+			await render(LiteraryWorkTeaserHomeCardComponent, {
 				inputs: { literaryWork: literaryWorkWithMedia, showMultimedia: false },
 			});
 			expect(screen.queryByTestId('media')).not.toBeInTheDocument();
 		});
 
 		it('should not display the multimedia selectors when the literary work has no media', async () => {
-			await render(LiteraryWorkHomeCardTeaserComponent, {
+			await render(LiteraryWorkTeaserHomeCardComponent, {
 				inputs: { literaryWork: { ...literaryWorkWithMedia, mediaSources: [] }, showMultimedia: true },
 			});
 			expect(screen.queryByTestId('media')).not.toBeInTheDocument();
@@ -159,14 +159,14 @@ describe('LiteraryWorkHomeCardTeaserComponent', () => {
 
 	describe('Tag label', () => {
 		it('should display the tag label when provided', async () => {
-			await render(LiteraryWorkHomeCardTeaserComponent, {
+			await render(LiteraryWorkTeaserHomeCardComponent, {
 				inputs: { literaryWork: teaser, navigationParams, tagLabel: 'Cuento' },
 			});
 			expect(screen.getByText('Cuento')).toBeInTheDocument();
 		});
 
 		it('should not display the tag label when not provided', async () => {
-			await render(LiteraryWorkHomeCardTeaserComponent, {
+			await render(LiteraryWorkTeaserHomeCardComponent, {
 				inputs: { literaryWork: teaser, navigationParams },
 			});
 			expect(screen.queryByText('Cuento')).not.toBeInTheDocument();
@@ -175,14 +175,14 @@ describe('LiteraryWorkHomeCardTeaserComponent', () => {
 
 	describe('Loading state', () => {
 		it('should render the skeleton when no literary work is provided', async () => {
-			await render(LiteraryWorkHomeCardTeaserComponent, {
+			await render(LiteraryWorkTeaserHomeCardComponent, {
 				inputs: { literaryWork: undefined },
 			});
 			expect(screen.getByTestId('skeleton')).toBeInTheDocument();
 		});
 
 		it('should not render the skeleton when a literary work is provided', async () => {
-			await render(LiteraryWorkHomeCardTeaserComponent, {
+			await render(LiteraryWorkTeaserHomeCardComponent, {
 				inputs: { literaryWork: teaser, navigationParams },
 			});
 			expect(screen.queryByTestId('skeleton')).not.toBeInTheDocument();
@@ -194,7 +194,7 @@ describe('LiteraryWorkHomeCardTeaserComponent', () => {
 		beforeEach(() => clearAllMocks());
 
 		it.each(onoffLiteraryWorkTeasersMock)('should render title and reading time for "$title"', async (teaser) => {
-			await render(LiteraryWorkHomeCardTeaserComponent, {
+			await render(LiteraryWorkTeaserHomeCardComponent, {
 				inputs: { literaryWork: teaser },
 			});
 
