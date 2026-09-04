@@ -415,7 +415,7 @@ Esta sección describe el origen del mecanismo, que nació para la página de le
 
 Tres cosas que la extensión no cambia y una que sí:
 
-- **El TTL sigue siendo único** para todas las rutas. Parametrizarlo por módulo se evaluó y se descartó por ahora: haría falta cuando alguna ruta necesite una ventana de propagación distinta de las demás, y hoy ninguna la pide.
+- **El TTL es único para todas las rutas, salvo la landing.** `GET /api/content/landing-page` comparte el `s-maxage` pero declara un `stale-while-revalidate` propio de 1 día en su handler, que el middleware respeta en vez de pisar: la landing rota cada semana con el mismo path, así que la ventana larga de lectura sobreviviría a la rotación sirviendo la semana anterior como vigente ([#2367](https://github.com/cuentoneta/cuentoneta/issues/2367)).
 - **Sigue sin haber invalidación explícita**, con el mismo razonamiento de arriba.
 - **El corte por entorno y la guarda anti-CSR son los mismos**, y esta última pesa más que antes: la home es justamente donde el deopt a CSR ya ocurrió en producción.
 - **Lo que sí cambia es el alcance del trade-off de frescura.** La ventana de propagación de una edición ahora también aplica al contenido rotativo de la home y a las colecciones, que se editan con más frecuencia que una obra ya publicada — a diferencia del contenido de una obra, que es inmutable una vez creada.
