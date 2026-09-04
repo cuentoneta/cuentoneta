@@ -1,6 +1,6 @@
 import { argsToTemplate, Meta, StoryObj } from '@storybook/angular-vite';
 
-import { LiteraryWorkCardTeaserComponent } from './literary-work-card-teaser.component';
+import { LiteraryWorkTeaserCardComponent } from './literary-work-teaser-card.component';
 import {
 	onoffLiteraryWorkNavigationTeasersMock,
 	onoffLiteraryWorkTeasersWithMediaSourcesMock,
@@ -11,9 +11,9 @@ import { corpusLiteraryWorkTeasers, literaryWorkSelectArgType } from '@mocks/ono
 // dispares en vez de la misma tarjeta tres veces.
 const [firstTeaser, secondTeaser, thirdTeaser] = onoffLiteraryWorkTeasersWithMediaSourcesMock;
 
-const meta: Meta<LiteraryWorkCardTeaserComponent> = {
-	component: LiteraryWorkCardTeaserComponent,
-	title: 'Componentes V3/LiteraryWorkCardTeaser',
+const meta: Meta<LiteraryWorkTeaserCardComponent> = {
+	component: LiteraryWorkTeaserCardComponent,
+	title: 'Componentes V3/LiteraryWorkTeaserCard',
 	tags: ['autodocs'],
 	parameters: {
 		docs: {
@@ -76,9 +76,9 @@ const meta: Meta<LiteraryWorkCardTeaserComponent> = {
 };
 
 export default meta;
-type Story = StoryObj<LiteraryWorkCardTeaserComponent>;
+type Story = StoryObj<LiteraryWorkTeaserCardComponent>;
 
-export const Interactiva: StoryObj<LiteraryWorkCardTeaserComponent & { literaryWorkIndex: number }> = {
+export const Interactiva: StoryObj<LiteraryWorkTeaserCardComponent & { literaryWorkIndex: number }> = {
 	argTypes: {
 		literaryWorkIndex: {
 			...literaryWorkSelectArgType,
@@ -88,7 +88,7 @@ export const Interactiva: StoryObj<LiteraryWorkCardTeaserComponent & { literaryW
 	render: (args) => ({
 		props: { ...args, literaryWorks: corpusLiteraryWorkTeasers },
 		template: `
-			<cuentoneta-literary-work-card-teaser
+			<cuentoneta-literary-work-teaser-card
 				[literaryWork]="literaryWorks[literaryWorkIndex]"
 				[variant]="variant"
 				[order]="order"
@@ -123,7 +123,7 @@ export const Interactiva: StoryObj<LiteraryWorkCardTeaserComponent & { literaryW
 export const OnWhite: Story = {
 	render: (args) => ({
 		props: args,
-		template: `<cuentoneta-literary-work-card-teaser ${argsToTemplate(args)} />`,
+		template: `<cuentoneta-literary-work-teaser-card ${argsToTemplate(args)} />`,
 	}),
 	args: {
 		literaryWork: firstTeaser,
@@ -147,7 +147,7 @@ export const OnWhite: Story = {
 export const OnGray: Story = {
 	render: (args) => ({
 		props: args,
-		template: `<div class="rounded-lg bg-neutral-100 p-6"><cuentoneta-literary-work-card-teaser ${argsToTemplate(args)} /></div>`,
+		template: `<div class="rounded-lg bg-neutral-100 p-6"><cuentoneta-literary-work-teaser-card ${argsToTemplate(args)} /></div>`,
 	}),
 	args: {
 		literaryWork: secondTeaser,
@@ -171,7 +171,7 @@ export const OnGray: Story = {
 export const Highlighted: Story = {
 	render: (args) => ({
 		props: args,
-		template: `<cuentoneta-literary-work-card-teaser ${argsToTemplate(args)} />`,
+		template: `<cuentoneta-literary-work-teaser-card ${argsToTemplate(args)} />`,
 	}),
 	args: {
 		literaryWork: thirdTeaser,
@@ -204,7 +204,7 @@ export const AllVariants: Story = {
 			<div class="flex flex-col gap-10">
 				<div class="space-y-2">
 					<h3 class="text-sm font-semibold text-neutral-600">OnWhite</h3>
-					<cuentoneta-literary-work-card-teaser
+					<cuentoneta-literary-work-teaser-card
 						variant="on-white"
 						[literaryWork]="literaryWorks[0]"
 						[order]="order"
@@ -218,7 +218,7 @@ export const AllVariants: Story = {
 				<div class="space-y-2">
 					<h3 class="text-sm font-semibold text-neutral-600">OnGray</h3>
 					<div class="rounded-lg bg-neutral-100 p-6">
-						<cuentoneta-literary-work-card-teaser
+						<cuentoneta-literary-work-teaser-card
 							variant="on-gray"
 							[literaryWork]="literaryWorks[1]"
 							[order]="order"
@@ -232,7 +232,7 @@ export const AllVariants: Story = {
 				</div>
 				<div class="space-y-2">
 					<h3 class="text-sm font-semibold text-neutral-600">Highlighted</h3>
-					<cuentoneta-literary-work-card-teaser
+					<cuentoneta-literary-work-teaser-card
 						variant="highlighted"
 						[literaryWork]="literaryWorks[2]"
 						[order]="order"
@@ -264,14 +264,14 @@ export const AllVariants: Story = {
 };
 
 // La tarjeta renderiza su propio skeleton cuando no recibe una obra.
-export const Estados: StoryObj<LiteraryWorkCardTeaserComponent & { loading: boolean }> = {
+export const Estados: StoryObj<LiteraryWorkTeaserCardComponent & { loading: boolean }> = {
 	argTypes: { loading: { control: 'boolean', name: 'Cargando' } },
 	render: (args) => ({
 		props: args,
 		template: `
 			<div class="w-[680px]">
 				@if (loading) {
-					<cuentoneta-literary-work-card-teaser
+					<cuentoneta-literary-work-teaser-card
 						[variant]="variant"
 						[order]="order"
 						[showAuthor]="showAuthor"
@@ -280,7 +280,7 @@ export const Estados: StoryObj<LiteraryWorkCardTeaserComponent & { loading: bool
 						[excerptLines]="excerptLines"
 					/>
 				} @else {
-					<cuentoneta-literary-work-card-teaser
+					<cuentoneta-literary-work-teaser-card
 						[literaryWork]="literaryWork"
 						[variant]="variant"
 						[order]="order"
