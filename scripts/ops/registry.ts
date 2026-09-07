@@ -1,0 +1,40 @@
+export type OpsTaskArgs = {
+	readonly apply: boolean;
+};
+
+export type OpsTask = {
+	readonly run: (args: OpsTaskArgs) => Promise<void>;
+};
+
+export type OpsTaskDescriptor = {
+	readonly description: string;
+	// Sin corrida en seco posible: el dispatcher la rechaza sin --no-dry-run, antes de cargarla.
+	readonly destructive: boolean;
+	// Diferido a propósito: cada módulo de tarea abre la conexión a Sanity al importarse, y listar el
+	// catálogo no puede pagar ese costo.
+	readonly load: () => Promise<OpsTask>;
+};
+
+export type OpsCatalog = Readonly<Record<string, OpsTaskDescriptor>>;
+
+export const EXIT_CODES = Object.freeze({ success: 0, failure: 1 } as const);
+
+export type ExitCode = (typeof EXIT_CODES)[keyof typeof EXIT_CODES];
+
+export const OPS_TASKS = Object.freeze({
+	'reading-time:backfill': {
+		description: 'Persiste el reading time faltante de las obras (dry-run por defecto; --no-dry-run aplica)',
+		destructive: false,
+		load: () => import('./tasks/backfill-reading-time').then((m) => m.task),
+	},
+	'assets:delete-unused': {
+		description: 'Borra los assets de Sanity sin ninguna referencia (destructivo; requiere --no-dry-run)',
+		destructive: true,
+		load: () => import('./tasks/delete-unused-assets').then((m) => m.task),
+	},
+	'drafts:remove-unpublished': {
+		description: 'Borra TODOS los borradores no publicados de Sanity (destructivo; requiere --no-dry-run)',
+		destructive: true,
+		load: () => import('./tasks/remove-unpublished-drafts').then((m) => m.task),
+	},
+} as const satisfies Record<string, OpsTaskDescriptor>);
