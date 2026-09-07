@@ -203,7 +203,7 @@ export function sumReadingTimes(times: readonly ReadingTime[]): ReadingTime;
 // suma por sección → total del agregado; mínimo 1
 ```
 
-**Implementado** (`reading-time.model.ts`, sobre `unified`/`remark-parse`):
+**Implementado** (`reading-time-derivation.model.ts`, sobre `unified`/`remark-parse`; vive aparte del value object para que quien solo consume la aritmética pura no arrastre el parser al bundle del navegador):
 
 ```typescript
 export function countWords(markdown: Markdown): WordCount;

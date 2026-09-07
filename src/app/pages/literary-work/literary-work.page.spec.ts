@@ -12,7 +12,7 @@ import { of, Subject, throwError, type Observable } from 'rxjs';
 import { createLiteraryWork, type LiteraryWork, type LiteraryWorkTeaser } from '@models/literary-work.model';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';
 import { createMarkdown } from '@models/markdown.model';
-import { deriveSectionReadingTime } from '@models/reading-time.model';
+import { createReadingTime } from '@models/reading-time.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import {
 	onoffLiteraryWorksMock,
@@ -121,7 +121,7 @@ const literaryWorkWithMaliciousBody = (base: LiteraryWork): LiteraryWork => {
 			createLiteraryWorkSection({
 				position: 0,
 				bodyHtml: markdownToSanitizedHtml(body),
-				readingTime: deriveSectionReadingTime(body),
+				readingTime: createReadingTime(1),
 			}),
 		],
 		mediaSources: [...base.mediaSources],
