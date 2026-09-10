@@ -4,6 +4,7 @@ import {
 	fingerprint,
 	formatConsoleReport,
 	formatReportBody,
+	remediationHints,
 } from './field-shape-sweep.report';
 
 const breach = (label: string, published = 1, drafts = 0) => ({ label, published, drafts });
@@ -73,5 +74,31 @@ describe('formatConsoleReport', () => {
 		const output = formatConsoleReport({ breaches: [breach('literaryWork.publishedAt', 26, 1)], scannedFields: 2 });
 
 		expect(output).toContain('literaryWork.publishedAt — 26 publicados, 1 borradores');
+	});
+});
+
+describe('remediationHints', () => {
+	it('indica la remediación del campo con fecha desnuda', () => {
+		const hints = remediationHints([breach('literaryWork.publishedAt', 26)]);
+
+		expect(hints).toHaveLength(1);
+		expect(hints[0]).toContain('pnpm normalize:bare-published-at --no-dry-run');
+	});
+
+	it('no promete remediación para un campo sin una asignada', () => {
+		expect(remediationHints([breach('otro.campo', 3)])).toEqual([]);
+	});
+
+	it('el cuerpo del seguimiento incluye la remediación del campo incumplido', () => {
+		const body = formatReportBody({ breaches: [breach('literaryWork.publishedAt', 26)], scannedFields: 2 });
+
+		expect(body).toContain('### Remediación');
+		expect(body).toContain('pnpm normalize:bare-published-at --no-dry-run');
+	});
+
+	it('el cuerpo omite la sección cuando ningún campo tiene remediación', () => {
+		const body = formatReportBody({ breaches: [breach('otro.campo', 3)], scannedFields: 2 });
+
+		expect(body).not.toContain('### Remediación');
 	});
 });

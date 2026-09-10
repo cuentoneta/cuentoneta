@@ -62,6 +62,9 @@ export function formatReportBody(report: SweepReport): string {
 					...report.uncovered.map((path) => `- \`${path.documentType}.${path.segments.join('.')}\` — ${path.reason}`),
 				];
 
+	const remediation = remediationHints(report.breaches);
+	const remediationSection = remediation.length === 0 ? [] : ['', '### Remediación', '', ...remediation];
+
 	return [
 		'Los siguientes campos se declaran requeridos en el schema, pero hay documentos persistidos que no los cumplen.',
 		'',
@@ -73,9 +76,25 @@ export function formatReportBody(report: SweepReport): string {
 		'| --- | ---: | ---: |',
 		...breachRows(report.breaches),
 		...uncoveredSection,
+		...remediationSection,
 		'',
 		`${FINGERPRINT_PREFIX} ${fingerprint(report.breaches, report.uncovered)} -->`,
 	].join('\n');
+}
+
+// La remediación recurrente de cada campo conocido, para que el seguimiento pase de solo reportar
+// a indicar cómo remediar. Solo los labels de esta tabla llevan hint: un campo nuevo sin
+// remediación asignada se reporta igual, sin prometer una.
+const REMEDIATION_BY_LABEL: Readonly<Record<string, string>> = {
+	'author.resources.url': 'pnpm sanitize:resources-without-url --no-dry-run',
+	'literaryWork.resources.url': 'pnpm sanitize:resources-without-url --no-dry-run',
+};
+
+export function remediationHints(breaches: readonly FieldBreach[]): string[] {
+	return breaches.flatMap((breach) => {
+		const command: string | null = REMEDIATION_BY_LABEL[breach.label] ?? null;
+		return command === null ? [] : [`\`${breach.label}\` se remedia con \`${command}\` (corrida en seco por defecto).`];
+	});
 }
 
 /**

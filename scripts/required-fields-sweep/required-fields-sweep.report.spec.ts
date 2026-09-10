@@ -4,6 +4,7 @@ import {
 	fingerprint,
 	formatConsoleReport,
 	formatReportBody,
+	remediationHints,
 	type FieldBreach,
 	type SweepReport,
 } from './required-fields-sweep.report';
@@ -130,5 +131,29 @@ describe('formatConsoleReport', () => {
 		expect(formatConsoleReport(reportOf([breach('literaryWork.badLanguage', 155, 4)]))).toContain(
 			'literaryWork.badLanguage — 155 publicados, 4 borradores',
 		);
+	});
+});
+
+describe('remediationHints', () => {
+	it('indica la remediación de los recursos sin URL de autores y obras', () => {
+		const hints = remediationHints([breach('author.resources.url', 17), breach('literaryWork.resources.url', 100)]);
+
+		expect(hints).toHaveLength(2);
+		expect(hints[0]).toContain('pnpm sanitize:resources-without-url --no-dry-run');
+	});
+
+	it('no promete remediación para un campo sin una asignada', () => {
+		expect(remediationHints([breach('literaryWork.badLanguage', 155)])).toEqual([]);
+	});
+
+	it('el cuerpo del seguimiento incluye la remediación del campo incumplido', () => {
+		const body = formatReportBody(reportOf([breach('author.resources.url', 17)]));
+
+		expect(body).toContain('### Remediación');
+		expect(body).toContain('pnpm sanitize:resources-without-url --no-dry-run');
+	});
+
+	it('el cuerpo omite la sección cuando ningún campo tiene remediación', () => {
+		expect(formatReportBody(reportOf([breach('a', 1)]))).not.toContain('### Remediación');
 	});
 });

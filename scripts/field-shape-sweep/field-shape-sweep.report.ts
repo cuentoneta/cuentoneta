@@ -39,6 +39,9 @@ export function fingerprint(breaches: readonly ShapeBreach[]): string {
 }
 
 export function formatReportBody(report: SweepReport): string {
+	const remediation = remediationHints(report.breaches);
+	const remediationSection = remediation.length === 0 ? [] : ['', '### Remediación', '', ...remediation];
+
 	return [
 		'Los siguientes campos guardan, en algún documento, un valor con una forma que su schema no declara.',
 		'',
@@ -49,9 +52,24 @@ export function formatReportBody(report: SweepReport): string {
 		'| Campo | Publicados | Borradores |',
 		'| --- | ---: | ---: |',
 		...report.breaches.map((breach) => `| \`${breach.label}\` | ${breach.published} | ${breach.drafts} |`),
+		...remediationSection,
 		'',
 		`${FINGERPRINT_PREFIX} ${fingerprint(report.breaches)} -->`,
 	].join('\n');
+}
+
+// La remediación recurrente de cada forma conocida, para que el seguimiento pase de solo reportar
+// a indicar cómo remediar. Solo los labels de esta tabla llevan hint: un campo nuevo sin
+// remediación asignada se reporta igual, sin prometer una.
+const REMEDIATION_BY_LABEL: Readonly<Record<string, string>> = {
+	'literaryWork.publishedAt': 'pnpm normalize:bare-published-at --no-dry-run',
+};
+
+export function remediationHints(breaches: readonly ShapeBreach[]): string[] {
+	return breaches.flatMap((breach) => {
+		const command: string | null = REMEDIATION_BY_LABEL[breach.label] ?? null;
+		return command === null ? [] : [`\`${breach.label}\` se remedia con \`${command}\` (corrida en seco por defecto).`];
+	});
 }
 
 /**
