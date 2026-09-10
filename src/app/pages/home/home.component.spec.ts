@@ -153,6 +153,8 @@ describe('HomeComponent', () => {
 		// contar cuatro se cumpliría igual con cualquier otro criterio que devolviera cuatro.
 		it('should cap the grid at four, however many the week brings', async () => {
 			const manyCollections = onoffCollectionTeasersMock;
+			// Sin más colecciones que el tope no habría descarte que observar, y el caso duplicaría al anterior.
+			expect(manyCollections.length).toBeGreaterThan(4);
 
 			await renderHome({ collections: manyCollections });
 

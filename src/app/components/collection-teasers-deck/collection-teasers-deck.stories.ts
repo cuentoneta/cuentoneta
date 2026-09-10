@@ -1,11 +1,17 @@
 import { argsToTemplate, Meta, StoryObj } from '@storybook/angular-vite';
 
 import { CollectionTeasersDeck } from './collection-teasers-deck';
-import { onoffCollectionTeasersMock } from '@mocks/onoff-collections.mock';
+import { onoffCollectionTeasersMock, onoffCollectionTeasersWithLongTitlesMock } from '@mocks/onoff-collections.mock';
 
 // Un solo dataset compartido por todas las stories: mismas colecciones en cada estado hace que el
 // switch del catálogo compare siempre lo mismo.
-const deckTeasers = onoffCollectionTeasersMock.slice(0, 4);
+// El título largo entra por el selector que lo garantiza, no por el orden en que el agregador declara
+// las colecciones: de él depende que la descripción de la grilla siga siendo cierta.
+const [conTituloLargo] = onoffCollectionTeasersWithLongTitlesMock;
+const deckTeasers = [
+	conTituloLargo,
+	...onoffCollectionTeasersMock.filter(({ slug }) => slug !== conTituloLargo.slug),
+].slice(0, 4);
 
 const meta: Meta<CollectionTeasersDeck> = {
 	component: CollectionTeasersDeck,

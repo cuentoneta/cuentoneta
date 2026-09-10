@@ -1,17 +1,26 @@
 import { argsToTemplate, type Meta, type StoryObj } from '@storybook/angular-vite';
 
 import type { CollectionTeaser } from '@models/collection.model';
+import type { Tag } from '@models/tag.model';
 import { onoffCollectionTeasersMock, onoffCollectionTeasersWithoutTagsMock } from '@mocks/onoff-collections.mock';
-import { colaborativaTagMock, ensayoTagMock, teatroTagMock } from '@mocks/onoff-tags.mock';
+import { colaborativaTagMock, ensayoTagMock } from '@mocks/onoff-tags.mock';
 
 import { CollectionFiltersComponent } from './collection-filters.component';
 
 const catalogo: readonly CollectionTeaser[] = onoffCollectionTeasersMock;
 
-// El resultado de elegir una etiqueta que no convive con ninguna otra, calculado como lo calcula la
-// página: filtrar el catálogo. Escribirlo a mano lo dejaría afirmando una convivencia que el corpus
-// podría dejar de tener.
-const soloTeatro = catalogo.filter((collection) => collection.tags.some((tag) => tag.slug === teatroTagMock.slug));
+const countFor = (tag: Tag) =>
+	catalogo.filter((collection) => collection.tags.some((candidate) => candidate.slug === tag.slug)).length;
+
+// La etiqueta menos frecuente del catálogo, y el resultado de elegirla, calculados como los calcula la
+// página. Nombrar una etiqueta puntual ataría la entrada a un reparto que el elenco puede cambiar.
+const etiquetaMenosFrecuente = catalogo
+	.flatMap((collection) => collection.tags)
+	.reduce((scarcest, tag) => (countFor(tag) < countFor(scarcest) ? tag : scarcest));
+
+const conLaMenosFrecuente = catalogo.filter((collection) =>
+	collection.tags.some((tag) => tag.slug === etiquetaMenosFrecuente.slug),
+);
 
 const meta: Meta<CollectionFiltersComponent> = {
 	component: CollectionFiltersComponent,
@@ -73,11 +82,11 @@ export const ConFiltrosElegidos: Story = {
 };
 
 export const UnaSolaColeccionALaVista: Story = {
-	args: { collections: soloTeatro, selected: [teatroTagMock.slug] },
+	args: { collections: conLaMenosFrecuente, selected: [etiquetaMenosFrecuente.slug] },
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Al que se llega filtrando por una etiqueta que lleva una sola colección: quedan su faceta y las de esa colección, y nada más. Es el estado que hace visible por qué elegir filtros no puede vaciar el listado.</p>`,
+				story: `<p>Al que se llega filtrando por la etiqueta menos frecuente del catálogo: quedan su faceta y las de las colecciones que sobreviven, y nada más. Es el estado que hace visible por qué elegir filtros no puede vaciar el listado.</p>`,
 			},
 		},
 	},

@@ -104,6 +104,19 @@ describe('onoff collections mock', () => {
 		});
 	});
 
+	// De esto depende que los abanicos de portadas se distingan entre sí, que es lo que el deck y el
+	// catálogo muestran. Vive como caso y no solo como criterio de curaduría escrito al lado del elenco.
+	it('curates a distinct set of works for every collection', () => {
+		const sets = onoffCollectionsMock.map((collection) =>
+			collection.literaryWorks
+				.map(({ slug }) => slug)
+				.sort()
+				.join(),
+		);
+
+		expect(new Set(sets).size).toBe(sets.length);
+	});
+
 	it('exposes a teaser that carries a single work', () => {
 		expect(singleLiteraryWorkCollectionTeaserMock.count).toBe(1);
 		expect(Object.isFrozen(singleLiteraryWorkCollectionTeaserMock)).toBe(true);

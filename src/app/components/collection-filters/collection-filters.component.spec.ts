@@ -52,6 +52,9 @@ describe('CollectionFiltersComponent', () => {
 	});
 
 	it('should offer each tag once, however many collections carry it', async () => {
+		// La deduplicación solo se ejercita si alguna etiqueta la llevan varias colecciones.
+		expect(countFor(tragediaTagMock)).toBeGreaterThan(1);
+
 		await renderFilters();
 
 		expect(within(screen.getByRole('group')).getAllByRole('checkbox')).toHaveLength(distinctTagCount);

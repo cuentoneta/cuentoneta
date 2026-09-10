@@ -17,7 +17,7 @@ import {
 	onoffCollectionTeasersMock,
 	onoffCollectionTeasersWithNonAsciiInitialMock,
 } from '@mocks/onoff-collections.mock';
-import { colaborativaTagMock, ensayoTagMock } from '@mocks/onoff-tags.mock';
+import { colaborativaTagMock, ensayoTagMock, tragediaTagMock } from '@mocks/onoff-tags.mock';
 
 import { clearAllMocks } from '@test-utils';
 
@@ -98,8 +98,16 @@ describe('CollectionsPage', () => {
 
 		await renderPage(new StubCatalogCollectionApi(porPuntoDeCodigo));
 
+		// El orden relativo, y no la primera posición: que la acentuada quede primera es cierto por el
+		// elenco de hoy, y una colección que empezara con "A" lo volvería falso sin que la página falle.
+		const porColacion = [...porPuntoDeCodigo].sort((one, other) => one.title.localeCompare(other.title, 'es'));
+		const siguiente = porColacion[porColacion.findIndex(({ slug }) => slug === conAcentoInicial.slug) + 1];
+
 		expect(porPuntoDeCodigo.at(-1)?.slug).toBe(conAcentoInicial.slug);
-		expect(hrefsOf(screen.getByTestId('collections'))[0]).toBe(`/collection/${conAcentoInicial.slug}`);
+		const hrefs = hrefsOf(screen.getByTestId('collections'));
+		expect(hrefs.indexOf(`/collection/${conAcentoInicial.slug}`)).toBeLessThan(
+			hrefs.indexOf(`/collection/${siguiente.slug}`),
+		);
 	});
 
 	it('should keep the heading when the catalogue comes back empty', async () => {
@@ -166,11 +174,17 @@ describe('CollectionsPage', () => {
 		});
 
 		it('should drop the facets that no longer apply and recount the rest', async () => {
-			await renderCatalogo();
+			const conLaEtiqueta = carrying(colaborativaTagMock);
+			// `ensayo` la llevan colecciones de los dos lados del filtro, así que su conteo tiene que bajar;
+			// `tragedia` no convive con `colaborativa` y su faceta tiene que desaparecer. Sin la primera
+			// condición el caso pasaría con una página que no recontara nada.
+			expect(facetFor(ensayoTagMock, conLaEtiqueta)).not.toBe(facetFor(ensayoTagMock));
 
+			await renderCatalogo();
 			await userEvent.click(screen.getByLabelText(facetFor(colaborativaTagMock)));
 
-			expect(screen.getByLabelText(facetFor(ensayoTagMock, carrying(colaborativaTagMock)))).toBeInTheDocument();
+			expect(screen.getByLabelText(facetFor(ensayoTagMock, conLaEtiqueta))).toBeInTheDocument();
+			expect(screen.queryByLabelText(facetFor(tragediaTagMock))).not.toBeInTheDocument();
 		});
 
 		it('should offer a chip that removes the filter it names', async () => {
