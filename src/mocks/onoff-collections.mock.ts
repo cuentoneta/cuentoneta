@@ -59,8 +59,8 @@ export const onoffCollectionsWithMultipleTagsMock: Collection[] = onoffCollectio
 	(collection) => collection.tags.length > 1,
 );
 
-// El ancho al que el teaser navegable recorta el nombre a una línea: un título por debajo de eso entra
-// entero y no muestra el recorte, que es justo lo que el consumidor necesita ver.
+// Criterio de curaduría: a partir de este largo un título deja de entrar en una línea en la caja
+// angosta donde se pinta el teaser navegable, que es lo que su consumidor necesita ver recortado.
 const LONG_TITLE_LENGTH = 40;
 
 export const onoffCollectionsWithLongTitlesMock: Collection[] = onoffCollectionsMock.filter(
@@ -114,7 +114,9 @@ export const onoffCollectionTeasersWithNonAsciiInitialMock: CollectionTeaser[] =
 // El contador de la tarjeta distingue "1 obra" de "N obras", y ninguna colección del elenco cae de ese
 // lado: las que se curaron agrupan varias obras. El escenario existe para que quien renderiza esa rama
 // tenga con qué probarla, y por eso no sale de un documento como el resto del corpus.
+// Sale de una colección con portada editorial propia, no de la primera del agregador: una colección de
+// una obra no podría exhibir el abanico de tres portadas que la rama `sample` deriva de las suyas.
 export const singleLiteraryWorkCollectionTeaserMock: CollectionTeaser = createCollectionTeaser({
-	...onoffCollectionTeasersMock[0],
+	...onoffCollectionTeasersWithRepresentativeImageryMock[0],
 	count: 1,
 });

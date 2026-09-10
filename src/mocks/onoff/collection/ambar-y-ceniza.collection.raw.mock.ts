@@ -4,6 +4,7 @@ import type { CollectionBySlugQueryResult } from '@sanity-types';
 import {
 	dramaHistoricoRawTag,
 	dramaPsicologicoRawTag,
+	ensayoRawTag,
 	experimentalRawTag,
 	metaficcionRawTag,
 	novelaRawTag,
@@ -20,7 +21,7 @@ export const ambarYCenizaRawCollection: NonNullable<CollectionBySlugQueryResult>
 	description: ambarYCenizaCollectionMd,
 	featuredImage: null,
 	config: { showAuthors: false },
-	tags: [tragediaRawTag, dramaHistoricoRawTag],
+	tags: [tragediaRawTag, dramaHistoricoRawTag, ensayoRawTag],
 	mediaSources: [],
 	literaryWorks: [
 		{

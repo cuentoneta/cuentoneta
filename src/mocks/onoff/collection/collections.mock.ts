@@ -50,9 +50,10 @@ const inventarioWorks = [
 	lasDosAntorchasLiteraryWorkTeaserMock,
 ] as const;
 
-// Las cuatro colecciones siguientes comparten obras con las dos de arriba y entre sí. Es fiel al
-// dominio: una obra entra en cada colección por el ángulo de curaduría que su prosa nombra, y ningún
-// trío se repite, así que los abanicos de portadas se distinguen entre sí.
+// Las colecciones siguientes comparten obras con las dos de arriba y entre sí. Es fiel al dominio: una
+// obra entra en cada colección por el ángulo de curaduría que su prosa nombra. Ningún par de
+// colecciones repite el mismo conjunto, que es de lo que depende que los abanicos de portadas se
+// distingan entre sí; lo verifica el spec del agregador.
 const ambarYCenizaWorks = [
 	lasDosAntorchasLiteraryWorkTeaserMock,
 	neronLiteraryWorkTeaserMock,
@@ -85,12 +86,26 @@ function sampleFrom(works: readonly [LiteraryWorkTeaser, LiteraryWorkTeaser, Lit
 	return { kind: 'sample', images: [first.coverImage, second.coverImage, third.coverImage] };
 }
 
+type CollectionFromOptions = Omit<Parameters<typeof createCollection>[0], 'description'> & { descriptionMd: string };
+
+const rawDescriptionsBySlug = new Map<string, string>();
+
+/**
+ * Construye la colección y **registra su prosa cruda**, que es de donde `toTeaser` rehace la
+ * descripción del teaser. Las dos caras se toman del mismo Markdown por construcción: una colección no
+ * puede quedarse sin la suya, porque la registra el mismo llamado que la crea.
+ */
+function collectionFrom({ descriptionMd, ...options }: CollectionFromOptions): Collection {
+	rawDescriptionsBySlug.set(options.slug, descriptionMd);
+	return createCollection({ ...options, description: markdownToSanitizedHtml(createMarkdown(descriptionMd)) });
+}
+
 /** Colección con portada editorial propia — la rama `representative` de `imagery`. */
-export const geometriasDelDesveloCollectionMock: Collection = createCollection({
+export const geometriasDelDesveloCollectionMock: Collection = collectionFrom({
 	_id: 'onoff-collection-geometrias-del-desvelo',
 	slug: 'geometrias-del-desvelo',
 	title: 'Geometrías del desvelo',
-	description: markdownToSanitizedHtml(createMarkdown(geometriasDescriptionMd)),
+	descriptionMd: geometriasDescriptionMd,
 	imagery: { kind: 'representative', image: onoffImageAssets.geometriasDelDesveloCover.path },
 	tags: [colaborativaTagMock],
 	config: { showAuthors: true },
@@ -99,11 +114,11 @@ export const geometriasDelDesveloCollectionMock: Collection = createCollection({
 });
 
 /** Colección sin portada propia — la rama `sample`, derivada de las portadas de sus obras. */
-export const inventarioDeLasPasionesCollectionMock: Collection = createCollection({
+export const inventarioDeLasPasionesCollectionMock: Collection = collectionFrom({
 	_id: 'onoff-collection-inventario-de-las-pasiones',
 	slug: 'inventario-de-las-pasiones',
 	title: 'El inventario de las pasiones',
-	description: markdownToSanitizedHtml(createMarkdown(inventarioDescriptionMd)),
+	descriptionMd: inventarioDescriptionMd,
 	imagery: sampleFrom(inventarioWorks),
 	tags: [colaborativaTagMock],
 	config: { showAuthors: false },
@@ -111,24 +126,24 @@ export const inventarioDeLasPasionesCollectionMock: Collection = createCollectio
 	literaryWorks: inventarioWorks,
 });
 
-export const ambarYCenizaCollectionMock: Collection = createCollection({
+export const ambarYCenizaCollectionMock: Collection = collectionFrom({
 	_id: 'onoff-collection-ambar-y-ceniza',
 	slug: 'ambar-y-ceniza',
 	title: 'Ámbar y ceniza',
-	description: markdownToSanitizedHtml(createMarkdown(ambarYCenizaDescriptionMd)),
+	descriptionMd: ambarYCenizaDescriptionMd,
 	imagery: sampleFrom(ambarYCenizaWorks),
-	tags: [tragediaTagMock, dramaHistoricoTagMock],
+	tags: [tragediaTagMock, dramaHistoricoTagMock, ensayoTagMock],
 	config: { showAuthors: false },
 	mediaSources: [],
 	literaryWorks: ambarYCenizaWorks,
 });
 
-/** La única colección cuya prosa trae un enlace propio, que el teaser sanea y la vista completa conserva. */
-export const cuadernosDelMeridienCollectionMock: Collection = createCollection({
+/** Su prosa trae un enlace propio, que el teaser descarta y la vista completa conserva. */
+export const cuadernosDelMeridienCollectionMock: Collection = collectionFrom({
 	_id: 'onoff-collection-cuadernos-del-meridien',
 	slug: 'cuadernos-del-meridien',
 	title: 'Cuadernos del Méridien: los años de taller y las obras corregidas a posteriori',
-	description: markdownToSanitizedHtml(createMarkdown(cuadernosDelMeridienDescriptionMd)),
+	descriptionMd: cuadernosDelMeridienDescriptionMd,
 	imagery: sampleFrom(cuadernosDelMeridienWorks),
 	tags: [colaborativaTagMock, ensayoTagMock, metaficcionTagMock],
 	config: { showAuthors: true },
@@ -137,11 +152,11 @@ export const cuadernosDelMeridienCollectionMock: Collection = createCollection({
 });
 
 /** Colección sin etiquetas: su documento omite `tags` y `config`, y las queries resuelven los defaults. */
-export const bitacoraDelInsomnioCollectionMock: Collection = createCollection({
+export const bitacoraDelInsomnioCollectionMock: Collection = collectionFrom({
 	_id: 'onoff-collection-bitacora-del-insomnio',
 	slug: 'bitacora-del-insomnio',
 	title: 'Bitácora del insomnio',
-	description: markdownToSanitizedHtml(createMarkdown(bitacoraDelInsomnioDescriptionMd)),
+	descriptionMd: bitacoraDelInsomnioDescriptionMd,
 	imagery: sampleFrom(bitacoraDelInsomnioWorks),
 	tags: [],
 	config: { showAuthors: false },
@@ -149,28 +164,17 @@ export const bitacoraDelInsomnioCollectionMock: Collection = createCollection({
 	literaryWorks: bitacoraDelInsomnioWorks,
 });
 
-export const reyesDeUtileriaCollectionMock: Collection = createCollection({
+export const reyesDeUtileriaCollectionMock: Collection = collectionFrom({
 	_id: 'onoff-collection-reyes-de-utileria',
 	slug: 'reyes-de-utileria',
 	title: 'Reyes de utilería',
-	description: markdownToSanitizedHtml(createMarkdown(reyesDeUtileriaDescriptionMd)),
+	descriptionMd: reyesDeUtileriaDescriptionMd,
 	imagery: sampleFrom(reyesDeUtileriaWorks),
 	tags: [teatroTagMock, tragediaTagMock],
 	config: { showAuthors: true },
 	mediaSources: [],
 	literaryWorks: reyesDeUtileriaWorks,
 });
-
-// La prosa cruda de cada colección, indexada por slug, porque el teaser la sanea con un pipeline
-// distinto del que ya aplicó la vista completa y necesita partir del Markdown original.
-const collectionDescriptionsBySlug = new Map<string, string>([
-	['geometrias-del-desvelo', geometriasDescriptionMd],
-	['inventario-de-las-pasiones', inventarioDescriptionMd],
-	['ambar-y-ceniza', ambarYCenizaDescriptionMd],
-	['cuadernos-del-meridien', cuadernosDelMeridienDescriptionMd],
-	['bitacora-del-insomnio', bitacoraDelInsomnioDescriptionMd],
-	['reyes-de-utileria', reyesDeUtileriaDescriptionMd],
-]);
 
 // Pasa por la factory del teaser, igual que el repository: si el corpus lo armara por spread, sería
 // el único productor que se saltea las invariantes que esa factory existe para hacer cumplir.
@@ -179,16 +183,16 @@ const collectionDescriptionsBySlug = new Map<string, string>([
 // teaser sin enlaces y la vista completa con ellos, así que copiarla haría coincidir las dos caras
 // por construcción y el corpus dejaría de tener con qué probar a quien las distingue.
 export function toTeaser(collection: Collection): CollectionTeaser {
-	const description = collectionDescriptionsBySlug.get(collection.slug);
-	if (!description) {
-		throw new Error(`Corpus incompleto: falta la prosa cruda de la colección "${collection.slug}"`);
+	const descriptionMd = rawDescriptionsBySlug.get(collection.slug);
+	if (!descriptionMd) {
+		throw new Error(`Collection ajena al corpus: "${collection.slug}" no se construyó con collectionFrom`);
 	}
 
 	return createCollectionTeaser({
 		_id: collection._id,
 		slug: collection.slug,
 		title: collection.title,
-		description: markdownToLinklessSanitizedHtml(createMarkdown(description)),
+		description: markdownToLinklessSanitizedHtml(createMarkdown(descriptionMd)),
 		imagery: collection.imagery,
 		tags: collection.tags,
 		config: collection.config,

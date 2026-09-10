@@ -139,7 +139,7 @@ export const onoffRawCollectionTeasersMock: CollectionsQueryResult = [
 		description: ambarYCenizaCollectionMd,
 		featuredImage: null,
 		config: { showAuthors: false },
-		tags: [tragediaRawTag, dramaHistoricoRawTag],
+		tags: [tragediaRawTag, dramaHistoricoRawTag, ensayoRawTag],
 		mediaSources: [],
 		count: 3,
 		literaryWorkCoverImages: [

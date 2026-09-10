@@ -25,6 +25,7 @@ export const ambarYCenizaCollectionDocument: Collection = {
 	tags: [
 		{ _key: 'tragedia', _type: 'reference', _ref: 'tag-tragedia' },
 		{ _key: 'drama-historico', _type: 'reference', _ref: 'tag-drama-historico' },
+		{ _key: 'ensayo', _type: 'reference', _ref: 'tag-ensayo' },
 	],
 	mediaSources: [],
 };

@@ -1,8 +1,8 @@
 import type { Collection } from '@sanity-types';
 import cuadernosDelMeridienCollectionMd from './cuadernos-del-meridien.collection.md?raw';
 
-// La única colección del elenco cuya prosa trae un enlace propio, que es lo que distingue las dos caras
-// de la descripción: el ACL las sanea con pipelines distintos y el teaser sale sin él.
+// Su prosa trae un enlace propio, que es lo que distingue las dos caras de la descripción: el ACL las
+// sanea con pipelines distintos y el teaser sale sin él.
 export const cuadernosDelMeridienCollectionDocument: Collection = {
 	_id: 'onoff-collection-cuadernos-del-meridien',
 	_createdAt: '1991-11-08T00:00:00Z',
