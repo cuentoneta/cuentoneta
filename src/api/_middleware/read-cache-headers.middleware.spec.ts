@@ -19,6 +19,10 @@ describe('readCacheHeaders', () => {
 			c.header('Cache-Control', 'no-store');
 			return c.json({ done: true });
 		});
+		app.get('/obra/declarada', (c) => {
+			c.header('Vercel-CDN-Cache-Control', 'public, s-maxage=900, stale-while-revalidate=86400');
+			return c.json({ slug: 'declarada' });
+		});
 		app.get('/obra/:slug', (c) => c.json({ slug: c.req.param('slug') }));
 		return app;
 	}
@@ -60,6 +64,15 @@ describe('readCacheHeaders', () => {
 
 		expect(response.headers.get('Vercel-CDN-Cache-Control')).toBeNull();
 		expect(response.headers.get('Cache-Control')).toBe('no-store');
+	});
+
+	// Una ruta con ventana propia la declara en su handler y el default del módulo no la pisa.
+	it('respeta la ventana de borde que el handler ya declaró', async () => {
+		environment.production = true;
+
+		const response = await appUnderTest().request('/obra/declarada');
+
+		expect(response.headers.get('Vercel-CDN-Cache-Control')).toBe('public, s-maxage=900, stale-while-revalidate=86400');
 	});
 
 	// Un preview comparte el CDN y serviría contenido de un dataset que no es el público.

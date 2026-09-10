@@ -10,6 +10,11 @@ import { environment } from './environment';
 // espera al origen, y una edición se propaga en la visita siguiente al vencimiento.
 const READ_CACHE_STALE_WHILE_REVALIDATE = 604800; // 7 días
 
+// La landing rota de semana con el mismo path, así que una copia servida más allá de la rotación es
+// la semana anterior pasando por la vigente: su revalidación vive muy por debajo de ese ciclo, a
+// diferencia de la obra ya publicada, que es inmutable y admite la ventana larga de arriba.
+const LANDING_PAGE_STALE_WHILE_REVALIDATE = 86400; // 1 día
+
 // El browser no cachea la página: el TTL vive solo en `Vercel-CDN-Cache-Control`, que Vercel no
 // reenvía. Así la revalidación ocurre en un único lugar; con un TTL propio en el browser, una
 // edición ya revalidada por el CDN seguiría sin verse hasta que venciera el del navegador.
@@ -30,7 +35,8 @@ export function isReadCacheEnabled(): boolean {
  * `environment.readCacheSMaxAge`) con `stale-while-revalidate` largo, efectivos solo en el CDN de
  * Vercel, más un `Cache-Control` que mantiene fresco al browser.
  *
- * El TTL es único para todas las rutas cacheadas. La frescura la da su vencimiento, no una
+ * El TTL es único para todas las rutas cacheadas, salvo la landing (ver
+ * `applyLandingPageCacheHeaders`). La frescura la da su vencimiento, no una
  * invalidación explícita: una edición del CMS se ve en la visita siguiente al vencimiento.
  * Ver LITERARY_WORK_DESIGN.md §8.
  */
@@ -49,4 +55,27 @@ export function applyReadCacheHeaders(c: Context): void {
 	// idéntico a todos los hits durante el TTL, lo que rompe la correlación de logs en vez de
 	// ayudarla. Un id ausente es más honesto que uno que miente.
 	c.header('x-request-id', undefined);
+}
+
+/**
+ * Declara la ventana de borde propia de la landing sobre una respuesta ya producida: el mismo
+ * `s-maxage` que el resto —el interruptor sigue siendo único—, con el `stale-while-revalidate`
+ * corto de arriba.
+ *
+ * Recibe la respuesta y no el contexto porque solo un 200 la lleva: una copia de error cacheada
+ * serviría un 404 o un 500 como si fuera la semana vigente. Fuera de producción no emite nada,
+ * igual que `applyReadCacheHeaders`.
+ */
+export function applyLandingPageCacheHeaders(response: Response): Response {
+	if (!isReadCacheEnabled() || response.status !== 200) {
+		return response;
+	}
+
+	response.headers.set(
+		'Vercel-CDN-Cache-Control',
+		`public, s-maxage=${environment.readCacheSMaxAge}, stale-while-revalidate=${LANDING_PAGE_STALE_WHILE_REVALIDATE}`,
+	);
+	response.headers.set('Cache-Control', BROWSER_CACHE_CONTROL);
+	response.headers.delete('x-request-id');
+	return response;
 }
