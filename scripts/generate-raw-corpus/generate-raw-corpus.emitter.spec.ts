@@ -1,9 +1,13 @@
-import { buildSubstitutionTable, emitModule, type Substitution } from './generate-raw-corpus.emitter';
+import { buildSubstitutionTable, emitModule, type Derivation, type Substitution } from './generate-raw-corpus.emitter';
 
 const prose: Substitution = { binding: 'geometriaMdBody', specifier: './geometria.md?raw', kind: 'default' };
 const tag: Substitution = { binding: 'cuentoRawTag', specifier: '../../onoff-raw-tags.mock', kind: 'named' };
 
-function emit(value: unknown, entries: { value: unknown; substitution: Substitution }[] = []) {
+function emit(
+	value: unknown,
+	entries: { value: unknown; substitution: Substitution }[] = [],
+	derivations: Derivation[] = [],
+) {
 	return emitModule({
 		banner: '// generado',
 		exportName: 'fixture',
@@ -12,6 +16,7 @@ function emit(value: unknown, entries: { value: unknown; substitution: Substitut
 		typeSpecifier: '@sanity-types',
 		value,
 		table: buildSubstitutionTable(entries),
+		derivations,
 	});
 }
 
@@ -97,5 +102,38 @@ describe('emitModule', () => {
 
 		expect(output).toContain(String.raw`title:"El odio\r\ncontinúa"`);
 		expect(output).not.toMatch(/[\r\n]continúa/);
+	});
+});
+
+// Una derivación cubre parte de un objeto: el emisor escribe la expresión con spread y deja escritos
+// solo los campos que la derivación no produce. Es lo que evita que una fixture repita lo que otra ya
+// declara, sin ocultar lo que la query calcula y el recorte no puede reproducir.
+describe('derivaciones', () => {
+	const derivation: Derivation = {
+		fields: { slug: 'geometria', title: 'Geometría' },
+		expression: 'teaserFrom(geometriaRawLiteraryWork)',
+		imports: [{ binding: 'teaserFrom', specifier: '../derive-raw', kind: 'named' }],
+	};
+
+	it('emits the derivation as a spread and writes only what it does not cover', () => {
+		const output = emit({ slug: 'geometria', title: 'Geometría', excerpt: 'un fragmento' }, [], [derivation]);
+
+		expect(output).toContain('{...teaserFrom(geometriaRawLiteraryWork),excerpt:"un fragmento"}');
+		expect(output).toContain("import { teaserFrom } from '../derive-raw';");
+	});
+
+	// La coincidencia es por valor: un objeto que traiga distinto uno de los campos que la derivación
+	// declara no la acepta, y vuelve a escribirse entero. Es el modo de falla que el spec del corpus vigila.
+	it('leaves the object written out when a covered field differs', () => {
+		const output = emit({ slug: 'geometria', title: 'Otro título' }, [], [derivation]);
+
+		expect(output).not.toContain('teaserFrom');
+		expect(output).toContain('{slug:"geometria",title:"Otro título"}');
+	});
+
+	it('leaves the object written out when a covered field is missing', () => {
+		const output = emit({ slug: 'geometria' }, [], [derivation]);
+
+		expect(output).not.toContain('teaserFrom');
 	});
 });

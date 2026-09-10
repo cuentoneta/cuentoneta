@@ -1,0 +1,1 @@
+Ascensos al poder que resultan ser escenografía. Un emperador que sólo sabe gobernar frente a un público, un palacio que promete nueve fronteras y no custodia ninguna, y unos peldaños que se suben creyendo que llevan a alguna parte. Onoff vuelve tres veces sobre la misma sospecha: que el trono es utilería y todos lo saben menos quien se sienta.

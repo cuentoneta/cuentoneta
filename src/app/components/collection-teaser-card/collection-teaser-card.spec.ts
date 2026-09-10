@@ -7,38 +7,19 @@ import { CollectionTeaserCard } from './collection-teaser-card';
 
 // Mocks
 import {
+	onoffCollectionTeasersWithLinkedDescriptionMock,
+	onoffCollectionTeasersWithMultipleTagsMock,
 	onoffCollectionTeasersWithRepresentativeImageryMock,
 	onoffCollectionTeasersWithSampleImageryMock,
+	onoffCollectionTeasersWithSingleTagMock,
+	singleLiteraryWorkCollectionTeaserMock,
 } from '@mocks/onoff-collections.mock';
-
-// Modelos
-import { createCollectionTeaser, type CollectionTeaser } from '@models/collection.model';
-import { absurdoTagMock, colaborativaTagMock, surrealismoTagMock } from '@mocks/onoff-tags.mock';
-import { createMarkdown } from '@models/markdown.model';
-import { markdownToLinklessSanitizedHtml } from '@utils/markdown-pipeline.utils';
 
 // Utilidades de test
 import { clearAllMocks } from '@test-utils';
 
 const [representativeMock] = onoffCollectionTeasersWithRepresentativeImageryMock;
 const [sampleMock] = onoffCollectionTeasersWithSampleImageryMock;
-
-// Deriva una variante del canon pasando por la factory, no por spread: el agregado está congelado y
-// armarlo a mano saltearía las invariantes que la factory existe para hacer cumplir.
-function teaserFrom(base: CollectionTeaser, overrides: Partial<Parameters<typeof createCollectionTeaser>[0]>) {
-	return createCollectionTeaser({
-		_id: base._id,
-		slug: base.slug,
-		title: base.title,
-		description: base.description,
-		imagery: base.imagery,
-		tags: base.tags,
-		config: base.config,
-		mediaSources: base.mediaSources,
-		count: base.count,
-		...overrides,
-	});
-}
 
 describe('CollectionTeaserCard', () => {
 	const defaultProviders = [provideRouter([])];
@@ -93,16 +74,15 @@ describe('CollectionTeaserCard', () => {
 		// Que la prosa no traiga enlaces lo garantiza el ACL, y lo cubre su propio spec: acá se afirma la
 		// consecuencia, que es el único destino de la tarjeta.
 		it('should leave the card with a single destination', async () => {
-			const conProsa = teaserFrom(representativeMock, {
-				description: markdownToLinklessSanitizedHtml(
-					createMarkdown('Una colección con [un enlace propio](https://www.cuentoneta.ar/about) en la prosa.'),
-				),
+			const [withLinkedDescription] = onoffCollectionTeasersWithLinkedDescriptionMock;
+
+			await render(CollectionTeaserCard, {
+				inputs: { collection: withLinkedDescription },
+				providers: defaultProviders,
 			});
 
-			await render(CollectionTeaserCard, { inputs: { collection: conProsa }, providers: defaultProviders });
-
 			expect(screen.getAllByRole('link')).toHaveLength(1);
-			expect(screen.getByRole('link')).toHaveAttribute('href', `/collection/${representativeMock.slug}`);
+			expect(screen.getByRole('link')).toHaveAttribute('href', `/collection/${withLinkedDescription.slug}`);
 		});
 	});
 
@@ -144,7 +124,7 @@ describe('CollectionTeaserCard', () => {
 
 		it('should say "obra" for a collection of a single work', async () => {
 			await render(CollectionTeaserCard, {
-				inputs: { collection: teaserFrom(representativeMock, { count: 1 }) },
+				inputs: { collection: singleLiteraryWorkCollectionTeaserMock },
 				providers: defaultProviders,
 			});
 
@@ -152,23 +132,24 @@ describe('CollectionTeaserCard', () => {
 		});
 
 		it('should display the tag', async () => {
+			const [withSingleTag] = onoffCollectionTeasersWithSingleTagMock;
+
 			await render(CollectionTeaserCard, {
-				inputs: { collection: teaserFrom(representativeMock, { tags: [colaborativaTagMock] }) },
+				inputs: { collection: withSingleTag },
 				providers: defaultProviders,
 			});
 
-			expect(screen.getByText(colaborativaTagMock.title)).toBeInTheDocument();
+			expect(screen.getByText(withSingleTag.tags[0].title)).toBeInTheDocument();
 			expect(screen.queryByText(/\+\d/)).not.toBeInTheDocument();
 		});
 
 		it('should announce the tags it does not name with a counter', async () => {
-			const conVariasEtiquetas = teaserFrom(representativeMock, {
-				tags: [colaborativaTagMock, surrealismoTagMock, absurdoTagMock],
-			});
+			const [withMultipleTags] = onoffCollectionTeasersWithMultipleTagsMock;
+			const [firstTag, ...remainingTags] = withMultipleTags.tags;
 
-			await render(CollectionTeaserCard, { inputs: { collection: conVariasEtiquetas }, providers: defaultProviders });
+			await render(CollectionTeaserCard, { inputs: { collection: withMultipleTags }, providers: defaultProviders });
 
-			expect(screen.getByText(new RegExp(`${colaborativaTagMock.title}\\s*\\+2`))).toBeInTheDocument();
+			expect(screen.getByText(new RegExp(`${firstTag.title}\\s*\\+${remainingTags.length}`))).toBeInTheDocument();
 		});
 	});
 

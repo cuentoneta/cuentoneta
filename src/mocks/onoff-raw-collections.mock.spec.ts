@@ -4,8 +4,10 @@ import {
 	emptyRawCollection,
 	onoffRawCollectionsMock,
 	onoffRawCollectionsWithFeaturedImage,
+	onoffRawCollectionsWithLinkedDescription,
 	onoffRawCollectionsWithoutFeaturedImage,
 	onoffRawCollectionTeasersMock,
+	onoffRawCollectionTeasersWithLinkedDescription,
 	sectionlessWorkRawCollection,
 	shortSampleRawCollection,
 } from './onoff-raw-collections.mock';
@@ -42,8 +44,18 @@ describe('onoff raw collections mock', () => {
 	it('covers both branches of the featured image', () => {
 		expect(geometriasDelDesveloRawCollection.featuredImage).not.toBeNull();
 		expect(inventarioDeLasPasionesRawCollection.featuredImage).toBeNull();
-		expect(onoffRawCollectionsWithFeaturedImage).toHaveLength(1);
-		expect(onoffRawCollectionsWithoutFeaturedImage).toHaveLength(1);
+		expect(onoffRawCollectionsWithFeaturedImage).not.toHaveLength(0);
+		expect(onoffRawCollectionsWithoutFeaturedImage).not.toHaveLength(0);
+		expect(onoffRawCollectionsWithFeaturedImage.length + onoffRawCollectionsWithoutFeaturedImage.length).toBe(
+			onoffRawCollectionsMock.length,
+		);
+	});
+
+	// Sin esta guarda, el caso del repository que afirma que el teaser sale sin enlaces pasaría con el
+	// selector vacío: no habría descripción que revisar y el recorrido no correría.
+	it('exposes a non-empty fixture for the linked description selectors', () => {
+		expect(onoffRawCollectionsWithLinkedDescription).not.toHaveLength(0);
+		expect(onoffRawCollectionTeasersWithLinkedDescription).not.toHaveLength(0);
 	});
 
 	it('derives teasers that carry the count and the first three covers', () => {

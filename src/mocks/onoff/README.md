@@ -45,10 +45,11 @@ Antes de esta capa de documentos el flujo corría al revés: el raw se escribía
 
 `pnpm corpus:generate` → `node --import tsx ./scripts/generate-raw-corpus/generate-raw-corpus.ts`. Por cada obra, cada colección, la página de inicio y el contenido rotativo, evalúa la query GROQ real (`literaryWorkBySlugQuery`, `collectionBySlugQuery`, `collectionsQuery` para el listado, `landingPageContentQuery` para la landing —que va con su semana como parámetro— y `rotatingContentQuery` para lo más leído) con `groq-js` sobre `onoffDatasetMock` — el dataset plano de todos los documentos del corpus — y escribe el resultado en su fixture `*.raw.mock.ts`.
 
-**Archivos generados (13):**
+**Archivos generados:**
 
-- Las 8 `literary-work/<slug>.literary-work.raw.mock.ts`.
-- Las 2 `collection/<slug>.collection.raw.mock.ts`.
+- Una `literary-work/<slug>.literary-work.raw.mock.ts` por obra.
+- Una `literary-work/<slug>.literary-work-teaser.raw.mock.ts` por obra: el resultado de `literaryWorkTeasers` acotada a esa obra con `$slugs`. Es la proyección con la que las colecciones embeben obras, así que la referencian en vez de repetirla.
+- Una `collection/<slug>.collection.raw.mock.ts` por colección.
 - `collection/collection-teasers.raw.mock.ts` (resultado de `collectionsQuery`, el listado).
 - `landing-page/landing-page.raw.mock.ts` (resultado de `landingPageContentQuery`).
 - `landing-page/rotating-content.raw.mock.ts` (resultado de `rotatingContentQuery`, lo más leído).
@@ -117,15 +118,49 @@ El autor embebido sí está anclado, aunque su raw sea a mano: las fixtures gene
 
 ## Corpus de dominio: `Collection`
 
-Corpus mínimo de dos colecciones de `LiteraryWork`, una por cada rama de `imagery`.
+Un elenco de colecciones de `LiteraryWork` curado para cubrir, entre todas, cada estado que un consumidor necesita mirar: las dos ramas de `imagery`, medios propios, colecciones con etiquetas y sin ellas, un título que no entra en una línea y una prosa con enlace propio. El reparto de etiquetas es parte de la curaduría: sostiene facetas de conteos distintos, etiquetas que conviven entre colecciones y otras que no, que es lo que ejercita el filtrado del catálogo. Un título con inicial acentuada es lo que distingue el orden con colación española del orden por punto de código, que es el que devuelve la query.
 
 - **Descripciones:** Markdown plano por colección — `collection/<slug>.collection.md`, importados con `?raw` y saneados con `markdownToSanitizedHtml`, misma convención que `<slug>.editorial-note.md` de `LiteraryWork`.
-- **Colecciones:** `collection/collections.mock.ts`, export `geometriasDelDesveloCollectionMock` (rama `representative`, con portada editorial propia) e `inventarioDeLasPasionesCollectionMock` (rama `sample`, sin portada propia) — ambas construidas vía `createCollection`, junto a `toTeaser`. Viven acá por lo mismo que los teasers por obra: son handles nombrados por identidad.
-- **Obras:** cada colección se cura con las obras que su propia prosa nombra —`geometria`/`losPeldanos`/`lasEscaleras` y `elTratadoDeLosPlaceres`/`elOdio`/`lasDosAntorchas`—, tomadas por nombre de `literary-work/literary-work-teasers.mock.ts`. No cortar el agregador por índice: las dos colecciones quedarían indistinguibles por contenido.
+- **Colecciones:** `collection/collections.mock.ts`, un export por colección —`geometriasDelDesveloCollectionMock` es la de la rama `representative`, con portada editorial propia; el resto resuelve `sample` con las portadas de sus obras—, todas construidas vía `createCollection`, junto a `toTeaser`. Viven acá por lo mismo que los teasers por obra: son handles nombrados por identidad.
+- **Obras:** cada colección se cura con las obras que su propia prosa nombra, tomadas por nombre de `literary-work/literary-work-teasers.mock.ts`. No cortar el agregador por índice: las colecciones quedarían indistinguibles por contenido. Una obra puede pertenecer a más de una colección —el dominio lo admite y el contenido real lo hace—, siempre que cada colección la tome por un ángulo de curaduría distinto y ningún par de colecciones repita el mismo trío: de eso depende que los abanicos de portadas se distingan entre sí.
+- **La cara de teaser de la prosa:** `toTeaser` **rehace** la descripción desde el Markdown con `markdownToLinklessSanitizedHtml`, en vez de copiar la que ya construyó la colección. Es lo que hace el ACL, que sanea el teaser sin enlaces y la vista completa con ellos; copiarla haría coincidir las dos caras por construcción y el corpus dejaría de tener con qué probar a quien las distingue.
 - **Agregador:** `../onoff-collections.mock.ts` → `onoffCollectionsMock: Collection[]`.
-- **Selectores por capacidad:** sobre las colecciones, `onoffCollectionsWith(Representative|Sample)ImageryMock`, `onoffCollectionsWithMediaSourcesMock`, `onoffCollectionsWithTagsMock` y `onoffCollections(Showing|Hiding)AuthorsMock`; sobre los teasers, `onoffCollectionTeasersWith(Representative|Sample)ImageryMock` y `onoffCollectionTeasersWithTagsMock`. Todos derivados por predicado, y los de teaser proyectando el de colección homónimo para que la capacidad quede definida una sola vez.
+- **Selectores por capacidad:** sobre las colecciones, `onoffCollectionsWith(Representative|Sample)ImageryMock`, `onoffCollectionsWithMediaSourcesMock`, `onoffCollections(Showing|Hiding)AuthorsMock`, `onoffCollectionsWith(out)?TagsMock`, `onoffCollectionsWith(Single|Multiple)TagsMock`, `onoffCollectionsWithLongTitlesMock`, `onoffCollectionsWithLinkedDescriptionMock` y `onoffCollectionsWithNonAsciiInitialMock`; sobre los teasers, el homónimo de cada uno. Todos derivados por predicado, y los de teaser proyectando el de colección homónimo para que la capacidad quede definida una sola vez.
 - **Teasers derivados:** `toTeaser` (vacía `literaryWorks`) → `onoffCollectionTeasersMock: CollectionTeaser[]`.
+- **El único teaser que no proviene de un documento** es `singleLiteraryWorkCollectionTeaserMock`, que declara una sola obra. La tarjeta de colección distingue el singular del plural en su contador, y esa rama es alcanzable para cualquier dato que el modelo admita; el elenco, en cambio, quedó curado con colecciones que agrupan varias obras. El handle existe para que quien renderiza esa rama tenga con qué probarla.
 - **Nada se escribe a mano:** las obras (`literaryWorks`), los tags y las tres portadas de la rama `sample` se **derivan** del canon existente — `literary-work/literary-work-teasers.mock.ts` y `onoff-tags.mock.ts` — en vez de hardcodearse.
+
+### Qué no se repite en lo generado
+
+Una fixture generada **referencia** las piezas que el corpus ya declara en vez de volver a escribirlas: la prosa, las etiquetas, el autor y el teaser de cada obra. La sustitución la decide el emisor por **igualdad de valores**, así que aplica cuando la proyección coincide y no aplica cuando no.
+
+Del autor hay **tres caras crudas**, una por proyección, y las dos angostas leen sus valores de la completa para que no puedan divergir:
+
+| Handle                   | Qué agrega sobre los nueve campos comunes | Quién la devuelve                                     |
+| ------------------------ | ----------------------------------------- | ----------------------------------------------------- |
+| `rawOnoffAuthor`         | `biography` y `resources` poblado         | las dos queries de detalle de obra                    |
+| `rawOnoffAuthorTeaser`   | `resources` siempre vacío                 | `authorsQuery` y los autores destacados de la landing |
+| `rawOnoffEmbeddedAuthor` | nada                                      | colección, contenido rotativo y el listado de obras   |
+
+La obra embebida en una colección sale de la misma proyección que su teaser generado, así que la colección lo referencia. **La landing es la excepción**: proyecta la obra sin `excerpt`, de modo que lo que escribe no es el teaser y referenciarlo afirmaría que la query devuelve un campo que no devuelve.
+
+Que la sustitución siga ocurriendo lo verifica `../onoff-raw-corpus.spec.ts`. Es la señal que falta por diseño: cuando una proyección se aparta, el valor deja de coincidir y el literal vuelve a escribirse entero sin que falle nada.
+
+### Derivaciones: una fixture que sale de otra
+
+Varias queries proyectan un subconjunto de lo que otra devuelve. Donde eso pasa, la fixture no repite los campos compartidos: los produce con una función de `derive-raw.ts` y declara solo lo que la query **calcula** y ningún recorte puede reproducir.
+
+| Fixture                      | Deriva de                | Qué declara igual                                                    |
+| ---------------------------- | ------------------------ | -------------------------------------------------------------------- |
+| Teaser de obra               | su raw completo          | el extracto, que GROQ arma partiendo el cuerpo de la primera sección |
+| Listado de colecciones       | el raw de cada colección | el conteo de obras y el abanico de portadas                          |
+| Landing y contenido rotativo | el teaser de cada obra   | nada: la proyección es el teaser sin su extracto                     |
+
+El generador aplica una derivación **por igualdad de valor**, igual que una sustitución: computa lo que la función produce y lo compara contra lo que devolvió la query. Si coincide, emite la llamada con spread; si no, escribe el objeto entero. Esa comparación es lo que impide que la derivación afirme algo que la query no devuelve.
+
+De ahí que las funciones de `derive-raw.ts` **enumeren** los campos en vez de quitarlos por resto: enumerándolos, un campo nuevo en la proyección ancha no se cuela en la angosta, porque la firma deja de tipar.
+
+El orden de generación es el de esas dependencias: primero los raws completos de obra, después sus teasers, después las colecciones, su listado, y por último la landing y el contenido rotativo.
 
 ## Corpus raw: `Collection` (generado)
 

@@ -1,34 +1,26 @@
 import { argsToTemplate, type Meta, type StoryObj } from '@storybook/angular-vite';
 
-import { createCollectionTeaser, type CollectionTeaser } from '@models/collection.model';
+import type { CollectionTeaser } from '@models/collection.model';
 import type { Tag } from '@models/tag.model';
-import { onoffCollectionTeasersMock } from '@mocks/onoff-collections.mock';
-import { absurdoTagMock, colaborativaTagMock, cuentoTagMock, surrealismoTagMock } from '@mocks/onoff-tags.mock';
+import { onoffCollectionTeasersMock, onoffCollectionTeasersWithoutTagsMock } from '@mocks/onoff-collections.mock';
+import { colaborativaTagMock, ensayoTagMock } from '@mocks/onoff-tags.mock';
 
 import { CollectionFiltersComponent } from './collection-filters.component';
 
-// El corpus no reparte sus etiquetas de forma que se vean conteos distintos entre facetas, así que
-// las colecciones se derivan del canon con la combinación que hace falta mirar.
-const [canonical] = onoffCollectionTeasersMock;
-const conEtiquetas = (slug: string, tags: readonly Tag[]): CollectionTeaser =>
-	createCollectionTeaser({
-		_id: `${canonical._id}-${slug}`,
-		slug,
-		title: slug,
-		description: canonical.description,
-		imagery: canonical.imagery,
-		tags,
-		config: canonical.config,
-		mediaSources: canonical.mediaSources,
-		count: canonical.count,
-	});
+const catalogue: readonly CollectionTeaser[] = onoffCollectionTeasersMock;
 
-const catalogo: readonly CollectionTeaser[] = [
-	conEtiquetas('una', [colaborativaTagMock, surrealismoTagMock]),
-	conEtiquetas('otra', [colaborativaTagMock, cuentoTagMock]),
-	conEtiquetas('tercera', [colaborativaTagMock]),
-	conEtiquetas('cuarta', [cuentoTagMock, absurdoTagMock]),
-];
+const countFor = (tag: Tag) =>
+	catalogue.filter((collection) => collection.tags.some((candidate) => candidate.slug === tag.slug)).length;
+
+// La etiqueta menos frecuente del catálogo, y el resultado de elegirla, calculados como los calcula la
+// página. Nombrar una etiqueta puntual ataría la entrada a un reparto que el elenco puede cambiar.
+const scarcestTag = catalogue
+	.flatMap((collection) => collection.tags)
+	.reduce((scarcest, tag) => (countFor(tag) < countFor(scarcest) ? tag : scarcest));
+
+const carryingScarcestTag = catalogue.filter((collection) =>
+	collection.tags.some((tag) => tag.slug === scarcestTag.slug),
+);
 
 const meta: Meta<CollectionFiltersComponent> = {
 	component: CollectionFiltersComponent,
@@ -57,7 +49,7 @@ export default meta;
 type Story = StoryObj<CollectionFiltersComponent>;
 
 export const Playground: Story = {
-	args: { collections: catalogo, selected: [] },
+	args: { collections: catalogue, selected: [] },
 	parameters: {
 		docs: {
 			description: {
@@ -68,7 +60,7 @@ export const Playground: Story = {
 };
 
 export const SinFiltrosElegidos: Story = {
-	args: { collections: catalogo, selected: [] },
+	args: { collections: catalogue, selected: [] },
 	parameters: {
 		docs: {
 			description: {
@@ -79,7 +71,7 @@ export const SinFiltrosElegidos: Story = {
 };
 
 export const ConFiltrosElegidos: Story = {
-	args: { collections: catalogo, selected: [colaborativaTagMock.slug, cuentoTagMock.slug] },
+	args: { collections: catalogue, selected: [colaborativaTagMock.slug, ensayoTagMock.slug] },
 	parameters: {
 		docs: {
 			description: {
@@ -90,17 +82,28 @@ export const ConFiltrosElegidos: Story = {
 };
 
 export const UnaSolaColeccionALaVista: Story = {
-	args: { collections: [catalogo[2]], selected: [colaborativaTagMock.slug] },
+	args: { collections: carryingScarcestTag, selected: [scarcestTag.slug] },
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Al que se llega filtrando por una etiqueta que no convive con ninguna otra: queda su propia faceta y nada más. Es el estado que hace visible por qué elegir filtros no puede vaciar el listado.</p>`,
+				story: `<p>Al que se llega filtrando por la etiqueta menos frecuente del catálogo: quedan su faceta y las de las colecciones que sobreviven, y nada más. Es el estado que hace visible por qué elegir filtros no puede vaciar el listado.</p>`,
 			},
 		},
 	},
 };
 
-export const CatalogoSinEtiquetas: Story = {
+export const ColeccionesSinEtiquetar: Story = {
+	args: { collections: onoffCollectionTeasersWithoutTagsMock, selected: [] },
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>Colecciones que existen pero no llevan ninguna etiqueta cargada: hay catálogo y no hay facetas que ofrecer. Se distingue del catálogo vacío en que las colecciones sí están; lo que falta es con qué clasificarlas.</p>`,
+			},
+		},
+	},
+};
+
+export const SinColeccionesALaVista: Story = {
 	args: { collections: [], selected: [] },
 	parameters: {
 		docs: {

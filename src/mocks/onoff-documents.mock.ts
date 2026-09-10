@@ -7,8 +7,12 @@ import type {
 	SanityFileAsset,
 } from '@sanity-types';
 import { onoffAuthorDocument } from './onoff/author/author.document.projection';
+import { ambarYCenizaCollectionDocument } from './onoff/collection/ambar-y-ceniza.collection.document';
+import { bitacoraDelInsomnioCollectionDocument } from './onoff/collection/bitacora-del-insomnio.collection.document';
+import { cuadernosDelMeridienCollectionDocument } from './onoff/collection/cuadernos-del-meridien.collection.document';
 import { geometriasDelDesveloCollectionDocument } from './onoff/collection/geometrias-del-desvelo.collection.document';
 import { inventarioDeLasPasionesCollectionDocument } from './onoff/collection/inventario-de-las-pasiones.collection.document';
+import { reyesDeUtileriaCollectionDocument } from './onoff/collection/reyes-de-utileria.collection.document';
 import {
 	onoffNationalityDocumentsMock,
 	onoffResourceTypeDocumentsMock,
@@ -54,6 +58,10 @@ export const onoffLiteraryWorkDocumentsMock: LiteraryWork[] = [
 export const onoffCollectionDocumentsMock: Collection[] = [
 	geometriasDelDesveloCollectionDocument,
 	inventarioDeLasPasionesCollectionDocument,
+	ambarYCenizaCollectionDocument,
+	cuadernosDelMeridienCollectionDocument,
+	bitacoraDelInsomnioCollectionDocument,
+	reyesDeUtileriaCollectionDocument,
 ];
 
 // `geometria` es la única obra con grabación, así que su asset es el único que el corpus necesita: sin

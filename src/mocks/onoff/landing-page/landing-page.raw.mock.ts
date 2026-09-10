@@ -1,17 +1,13 @@
 // Este archivo lo escribe `pnpm corpus:generate` evaluando la query GROQ real sobre los documentos del
 // corpus. No se edita a mano: cualquier cambio se pierde en la próxima corrida.
 import type { LandingPageContentQueryResult } from '@sanity-types';
-import {
-	colaborativaRawTag,
-	cuentoRawTag,
-	dramaHistoricoRawTag,
-	dramaPsicologicoRawTag,
-	filosoficoRawTag,
-	teatroRawTag,
-	tragediaRawTag,
-} from '../../onoff-raw-tags.mock';
+import { rawOnoffAuthorTeaser } from '../../onoff-raw-author.mock';
+import { colaborativaRawTag, cuentoRawTag, dramaPsicologicoRawTag } from '../../onoff-raw-tags.mock';
 import geometriasDelDesveloCollectionMd from '../collection/geometrias-del-desvelo.collection.md?raw';
 import inventarioDeLasPasionesCollectionMd from '../collection/inventario-de-las-pasiones.collection.md?raw';
+import { landingLiteraryWorkFrom } from '../derive-raw';
+import { geometriaRawLiteraryWorkTeaser } from '../literary-work/geometria.literary-work-teaser.raw.mock';
+import { neronRawLiteraryWorkTeaser } from '../literary-work/neron.literary-work-teaser.raw.mock';
 import {
 	geometriasDelDesveloSpaceDescription,
 	geometriasDelDesveloSpotifyDescription,
@@ -132,99 +128,8 @@ export const onoffRawLandingPageMock: NonNullable<LandingPageContentQueryResult>
 		},
 	],
 	latestLiteraryWorks: [
-		{
-			_id: 'onoff-literary-work-geometria',
-			slug: 'geometria',
-			title: 'Geometría',
-			coverImage: { _type: 'image', asset: { _type: 'reference', _ref: 'image-geometriaCover-236x328-png' } },
-			totalReadingTime: 7,
-			sectionCount: 1,
-			tags: [cuentoRawTag, dramaPsicologicoRawTag, filosoficoRawTag],
-			mediaSources: [
-				{ _type: 'audioRecording', title: 'Lectura de "Geometría" por su autor' },
-				{ _type: 'spaceRecording', title: 'Conversación sobre el insomnio y la medida del tiempo' },
-				{ _type: 'spotifyPodcastEpisode', title: 'Episodio dedicado a "Geometría"' },
-				{ _type: 'youTubeVideo', title: 'Video ensayo sobre las coordenadas del desvelo' },
-				{ _type: 'pdfLink', title: 'Facsímil de la primera edición' },
-			],
-			authors: [
-				{
-					_id: 'author_1',
-					slug: 'francois-onoff',
-					name: 'François Onoff',
-					image: { _type: 'image', asset: { _type: 'reference', _ref: 'image-francoisOnoffPortrait-1254x1254-png' } },
-					nationality: {
-						_id: 'nationality-francia',
-						_type: 'nationality',
-						_createdAt: '2021-12-28T00:00:00Z',
-						_updatedAt: '2021-12-28T00:00:00Z',
-						_rev: 'rev-francia',
-						country: 'Francia',
-						flag: { _type: 'image', asset: { _type: 'reference', _ref: 'image-franceFlag-30x20-png' } },
-					},
-					bornOn: '1948-01-01',
-					bornOnYear: 1948,
-					diedOn: '1994-12-31',
-					diedOnYear: 1994,
-				},
-			],
-		},
-		{
-			_id: 'onoff-literary-work-neron',
-			slug: 'neron',
-			title: 'Nerón',
-			coverImage: { _type: 'image', asset: { _type: 'reference', _ref: 'image-neronCover-236x328-png' } },
-			totalReadingTime: 7,
-			sectionCount: 1,
-			tags: [teatroRawTag, tragediaRawTag, dramaHistoricoRawTag],
-			mediaSources: [],
-			authors: [
-				{
-					_id: 'author_1',
-					slug: 'francois-onoff',
-					name: 'François Onoff',
-					image: { _type: 'image', asset: { _type: 'reference', _ref: 'image-francoisOnoffPortrait-1254x1254-png' } },
-					nationality: {
-						_id: 'nationality-francia',
-						_type: 'nationality',
-						_createdAt: '2021-12-28T00:00:00Z',
-						_updatedAt: '2021-12-28T00:00:00Z',
-						_rev: 'rev-francia',
-						country: 'Francia',
-						flag: { _type: 'image', asset: { _type: 'reference', _ref: 'image-franceFlag-30x20-png' } },
-					},
-					bornOn: '1948-01-01',
-					bornOnYear: 1948,
-					diedOn: '1994-12-31',
-					diedOnYear: 1994,
-				},
-			],
-		},
+		{ ...landingLiteraryWorkFrom(geometriaRawLiteraryWorkTeaser) },
+		{ ...landingLiteraryWorkFrom(neronRawLiteraryWorkTeaser) },
 	],
-	highlightedAuthors: [
-		{
-			author: {
-				_id: 'author_1',
-				slug: 'francois-onoff',
-				name: 'François Onoff',
-				image: { _type: 'image', asset: { _type: 'reference', _ref: 'image-francoisOnoffPortrait-1254x1254-png' } },
-				nationality: {
-					_id: 'nationality-francia',
-					_type: 'nationality',
-					_createdAt: '2021-12-28T00:00:00Z',
-					_updatedAt: '2021-12-28T00:00:00Z',
-					_rev: 'rev-francia',
-					country: 'Francia',
-					flag: { _type: 'image', asset: { _type: 'reference', _ref: 'image-franceFlag-30x20-png' } },
-				},
-				bornOn: '1948-01-01',
-				bornOnYear: 1948,
-				diedOn: '1994-12-31',
-				diedOnYear: 1994,
-				resources: [],
-			},
-			tags: [cuentoRawTag, dramaPsicologicoRawTag],
-			storyCount: 8,
-		},
-	],
+	highlightedAuthors: [{ author: rawOnoffAuthorTeaser, tags: [cuentoRawTag, dramaPsicologicoRawTag], storyCount: 8 }],
 };
