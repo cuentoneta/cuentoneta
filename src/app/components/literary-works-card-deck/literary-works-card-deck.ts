@@ -2,8 +2,8 @@ import { Component, input } from '@angular/core';
 
 import { SectionHeaderComponent, type SectionHeaderAction } from '@components/section-header/section-header.component';
 import { EmptyStateComponent } from '@components/empty-state/empty-state.component';
-import { LiteraryWorkHomeCardTeaserComponent } from '../literary-work-home-card-teaser/literary-work-home-card-teaser.component';
-import { LiteraryWorkHomeCardTeaserSkeletonComponent } from '../literary-work-home-card-teaser/literary-work-home-card-teaser-skeleton.component';
+import { LiteraryWorkTeaserHomeCardComponent } from '../literary-work-teaser-home-card/literary-work-teaser-home-card.component';
+import { LiteraryWorkTeaserHomeCardSkeletonComponent } from '../literary-work-teaser-home-card/literary-work-teaser-home-card-skeleton.component';
 import type { LiteraryWorkNavigationTeaserWithAuthors } from '@models/literary-work.model';
 
 /**
@@ -19,8 +19,8 @@ import type { LiteraryWorkNavigationTeaserWithAuthors } from '@models/literary-w
 	imports: [
 		SectionHeaderComponent,
 		EmptyStateComponent,
-		LiteraryWorkHomeCardTeaserComponent,
-		LiteraryWorkHomeCardTeaserSkeletonComponent,
+		LiteraryWorkTeaserHomeCardComponent,
+		LiteraryWorkTeaserHomeCardSkeletonComponent,
 	],
 	template: `
 		@if (heading() || subtitle()) {
@@ -33,11 +33,11 @@ import type { LiteraryWorkNavigationTeaserWithAuthors } from '@models/literary-w
 			<section class="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-8">
 				@if (loading()) {
 					@for (_ of [].constructor(skeletonCount); track $index) {
-						<cuentoneta-literary-work-home-card-teaser-skeleton />
+						<cuentoneta-literary-work-teaser-home-card-skeleton />
 					}
 				} @else {
 					@for (literaryWork of literaryWorks(); track literaryWork.slug) {
-						<cuentoneta-literary-work-home-card-teaser
+						<cuentoneta-literary-work-teaser-home-card
 							[literaryWork]="literaryWork"
 							[order]="numbered() ? $index + 1 : undefined"
 							[navigationParams]="{

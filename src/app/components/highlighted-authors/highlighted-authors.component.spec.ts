@@ -4,8 +4,8 @@ import { provideRouter } from '@angular/router';
 import { HighlightedAuthorsComponent } from './highlighted-authors.component';
 import { SectionHeaderComponent } from '@components/section-header/section-header.component';
 import { EmptyStateComponent } from '@components/empty-state/empty-state.component';
-import { AuthorCardTeaserComponent } from '@components/author-card-teaser/author-card-teaser.component';
-import { AuthorCardTeaserSkeletonComponent } from '@components/author-card-teaser/author-card-teaser-skeleton.component';
+import { AuthorTeaserCardComponent } from '@components/author-teaser-card/author-teaser-card.component';
+import { AuthorTeaserCardSkeletonComponent } from '@components/author-teaser-card/author-teaser-card-skeleton.component';
 
 import { onoffHighlightedAuthorsOfLength, onoffUntaggedHighlightedAuthor } from '@mocks/onoff-highlighted-authors.mock';
 
@@ -18,8 +18,8 @@ describe('HighlightedAuthorsComponent', () => {
 		HighlightedAuthorsComponent,
 		SectionHeaderComponent,
 		EmptyStateComponent,
-		AuthorCardTeaserComponent,
-		AuthorCardTeaserSkeletonComponent,
+		AuthorTeaserCardComponent,
+		AuthorTeaserCardSkeletonComponent,
 	];
 
 	describe('Renderizado del componente', () => {
