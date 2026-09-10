@@ -94,7 +94,7 @@ Un spec o una story que importa una obra concreta queda atado a ella: sus aserci
 La prohibición rige **por ruta y por nombre**, y cada vía la cubre un gate distinto:
 
 - **Por ruta** la verifica `lint`, con el glob de arriba. Es la que ejercita `tools/eslint/single-work-corpus-imports.spec.ts`, que corre ESLint contra el config real (la restricción no es una regla propia, así que `RuleTester` no la alcanza).
-- **Por nombre** la sostiene que los agregadores (`@mocks/onoff-*.mock`) expongan **solo** colecciones, derivados y selectores. Los handles nombrados por identidad —`<slugCamelCase>LiteraryWorkTeaserMock`, las dos colecciones de dominio y sus teasers— viven bajo `@mocks/onoff/<entidad>/`, o sea del lado que la restricción de ruta alcanza. No hay regla que los liste: un import por nombre falla porque **el símbolo no existe**, y lo reporta `typecheck`, no `lint`.
+- **Por nombre** la sostiene que los agregadores (`@mocks/onoff-*.mock`) expongan **solo** colecciones, derivados y selectores. Los handles nombrados por identidad —`<slugCamelCase>LiteraryWorkTeaserMock`, las colecciones de dominio y sus teasers— viven bajo `@mocks/onoff/<entidad>/`, o sea del lado que la restricción de ruta alcanza. No hay regla que los liste: un import por nombre falla porque **el símbolo no existe**, y lo reporta `typecheck`, no `lint`.
 
 De ahí que volver a exportar un handle por identidad desde un agregador reabra el hueco. No lo bloquea ningún gate; queda como una adición visible en el diff, y es de las cosas que una review tiene que mirar.
 

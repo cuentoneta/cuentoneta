@@ -45,10 +45,10 @@ Antes de esta capa de documentos el flujo corría al revés: el raw se escribía
 
 `pnpm corpus:generate` → `node --import tsx ./scripts/generate-raw-corpus/generate-raw-corpus.ts`. Por cada obra, cada colección, la página de inicio y el contenido rotativo, evalúa la query GROQ real (`literaryWorkBySlugQuery`, `collectionBySlugQuery`, `collectionsQuery` para el listado, `landingPageContentQuery` para la landing —que va con su semana como parámetro— y `rotatingContentQuery` para lo más leído) con `groq-js` sobre `onoffDatasetMock` — el dataset plano de todos los documentos del corpus — y escribe el resultado en su fixture `*.raw.mock.ts`.
 
-**Archivos generados (13):**
+**Archivos generados:**
 
-- Las 8 `literary-work/<slug>.literary-work.raw.mock.ts`.
-- Las 2 `collection/<slug>.collection.raw.mock.ts`.
+- Una `literary-work/<slug>.literary-work.raw.mock.ts` por obra.
+- Una `collection/<slug>.collection.raw.mock.ts` por colección.
 - `collection/collection-teasers.raw.mock.ts` (resultado de `collectionsQuery`, el listado).
 - `landing-page/landing-page.raw.mock.ts` (resultado de `landingPageContentQuery`).
 - `landing-page/rotating-content.raw.mock.ts` (resultado de `rotatingContentQuery`, lo más leído).

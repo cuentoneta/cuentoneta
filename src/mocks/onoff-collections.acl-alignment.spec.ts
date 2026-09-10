@@ -8,8 +8,8 @@
  *
  * Y `imagery` solo existe acá: es el único campo del corpus que el ACL **deriva** en vez de transportar.
  * Cuando la colección no trae portada editorial, el mapper la arma con las portadas de sus obras, así que
- * es la única pieza cuyo valor esperado depende de otras entidades del corpus. Las dos colecciones del
- * elenco están curadas para cubrir una rama cada una.
+ * es la única pieza cuyo valor esperado depende de otras entidades del corpus. El elenco está curado para
+ * cubrir las dos ramas.
  *
  * El repository resuelve una colección por dos caminos —`fetchBySlug` para la vista de detalle y `fetchAll`
  * para el listado—, y los dos se cruzan acá. Comparten `mapShared`, pero el listado arma su `imagery` desde
@@ -63,7 +63,7 @@ describe('el corpus de dominio de Collection coincide con el mapeo del ACL', () 
 });
 
 describe('el corpus de teasers de Collection coincide con el mapeo del listado', () => {
-	// El cruce va por `_id` y no por posición: el listado llega ordenado por título, y el agregador
+	// El cruce va por slug y no por posición: el listado llega ordenado por título, y el agregador
 	// declara las colecciones en el orden en que se sumaron al elenco.
 	it.each(onoffRawCollectionTeasersMock.map((raw) => raw.slug))('maps the raw teaser of "%s"', async (slug) => {
 		const expected = onoffCollectionTeasersMock.find((teaser) => teaser.slug === slug);
