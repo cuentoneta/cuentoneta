@@ -1,19 +1,11 @@
 // Este archivo lo escribe `pnpm corpus:generate` evaluando la query GROQ real sobre los documentos del
 // corpus. No se edita a mano: cualquier cambio se pierde en la próxima corrida.
 import type { LiteraryWorkTeasersResult } from '@sanity-types';
-import { rawOnoffEmbeddedAuthor } from '../../onoff-raw-author.mock';
-import { experimentalRawTag, metaficcionRawTag, novelaRawTag } from '../../onoff-raw-tags.mock';
+import { literaryWorkTeaserFrom } from '../derive-raw';
+import { lasDosAntorchasRawLiteraryWork } from './las-dos-antorchas.literary-work.raw.mock';
 
 export const lasDosAntorchasRawLiteraryWorkTeaser: LiteraryWorkTeasersResult[number] = {
-	_id: 'onoff-literary-work-las-dos-antorchas',
-	slug: 'las-dos-antorchas',
-	title: 'Las dos antorchas',
-	coverImage: { _type: 'image', asset: { _type: 'reference', _ref: 'image-lasDosAntorchasCover-236x328-png' } },
-	totalReadingTime: 8,
-	sectionCount: 1,
-	tags: [novelaRawTag, metaficcionRawTag, experimentalRawTag],
-	mediaSources: [],
-	authors: [rawOnoffEmbeddedAuthor],
+	...literaryWorkTeaserFrom(lasDosAntorchasRawLiteraryWork),
 	excerpt: [
 		{
 			_key: 'section-1',

@@ -1,23 +1,12 @@
 // Este archivo lo escribe `pnpm corpus:generate` evaluando la query GROQ real sobre los documentos del
 // corpus. No se edita a mano: cualquier cambio se pierde en la próxima corrida.
 import type { LiteraryWorkTeasersResult } from '@sanity-types';
-import { rawOnoffEmbeddedAuthor } from '../../onoff-raw-author.mock';
-import { dramaPsicologicoRawTag, metaficcionRawTag, novelaRawTag } from '../../onoff-raw-tags.mock';
+import { literaryWorkTeaserFrom } from '../derive-raw';
 import { palacioNueveFronterasSectionTitle } from './el-palacio-de-las-nueve-fronteras.epigraph';
+import { palacioNueveFronterasRawLiteraryWork } from './el-palacio-de-las-nueve-fronteras.literary-work.raw.mock';
 
 export const palacioNueveFronterasRawLiteraryWorkTeaser: LiteraryWorkTeasersResult[number] = {
-	_id: 'onoff-literary-work-el-palacio-de-las-nueve-fronteras',
-	slug: 'el-palacio-de-las-nueve-fronteras',
-	title: 'El palacio de las nueve fronteras',
-	coverImage: {
-		_type: 'image',
-		asset: { _type: 'reference', _ref: 'image-elPalacioDeLasNueveFronterasCover-236x328-png' },
-	},
-	totalReadingTime: 11,
-	sectionCount: 1,
-	tags: [novelaRawTag, dramaPsicologicoRawTag, metaficcionRawTag],
-	mediaSources: [],
-	authors: [rawOnoffEmbeddedAuthor],
+	...literaryWorkTeaserFrom(palacioNueveFronterasRawLiteraryWork),
 	excerpt: [
 		{
 			_key: 'section-1',

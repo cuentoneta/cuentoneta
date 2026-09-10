@@ -146,6 +146,22 @@ La obra embebida en una colección sale de la misma proyección que su teaser ge
 
 Que la sustitución siga ocurriendo lo verifica `../onoff-raw-corpus.spec.ts`. Es la señal que falta por diseño: cuando una proyección se aparta, el valor deja de coincidir y el literal vuelve a escribirse entero sin que falle nada.
 
+### Derivaciones: una fixture que sale de otra
+
+Varias queries proyectan un subconjunto de lo que otra devuelve. Donde eso pasa, la fixture no repite los campos compartidos: los produce con una función de `derive-raw.ts` y declara solo lo que la query **calcula** y ningún recorte puede reproducir.
+
+| Fixture                      | Deriva de                | Qué declara igual                                                    |
+| ---------------------------- | ------------------------ | -------------------------------------------------------------------- |
+| Teaser de obra               | su raw completo          | el extracto, que GROQ arma partiendo el cuerpo de la primera sección |
+| Listado de colecciones       | el raw de cada colección | el conteo de obras y el abanico de portadas                          |
+| Landing y contenido rotativo | el teaser de cada obra   | nada: la proyección es el teaser sin su extracto                     |
+
+El generador aplica una derivación **por igualdad de valor**, igual que una sustitución: computa lo que la función produce y lo compara contra lo que devolvió la query. Si coincide, emite la llamada con spread; si no, escribe el objeto entero. Esa comparación es lo que impide que la derivación afirme algo que la query no devuelve.
+
+De ahí que las funciones de `derive-raw.ts` **enumeren** los campos en vez de quitarlos por resto: enumerándolos, un campo nuevo en la proyección ancha no se cuela en la angosta, porque la firma deja de tipar.
+
+El orden de generación es el de esas dependencias: primero los raws completos de obra, después sus teasers, después las colecciones, su listado, y por último la landing y el contenido rotativo.
+
 ## Corpus raw: `Collection` (generado)
 
 `../onoff-raw-collections.mock.ts` consolida las fixtures generadas de `collection/<slug>.collection.raw.mock.ts` (`onoffRawCollectionsMock`) y el listado generado `collection/collection-teasers.raw.mock.ts` (`onoffRawCollectionTeasersMock`, resultado real de `collectionsQuery`, ya ordenado como en producción) y deriva de ahí los selectores por capacidad y los escenarios de borde por `spread` sobre el canon generado.

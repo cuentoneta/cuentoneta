@@ -12,8 +12,8 @@
  * sistema de archivos, así que las decisiones se ejercitan contra la estructura de directorios vigente.
  */
 import { readdir, readFile } from 'node:fs/promises';
-import { join, relative } from 'node:path';
-import type { Substitution } from './generate-raw-corpus.emitter';
+import { basename, dirname, join, relative } from 'node:path';
+import type { Derivation, Substitution } from './generate-raw-corpus.emitter';
 
 export type LoadModule = (path: string) => Promise<unknown>;
 
@@ -144,4 +144,104 @@ async function literaryWorkTeaserEntries(
 	);
 
 	return entries.flat();
+}
+
+const DERIVE_MODULE = join(CORPUS_ROOT, 'onoff/derive-raw.ts');
+const LITERARY_WORK_DIRECTORY = join(CORPUS_ROOT, 'onoff/literary-work');
+const COLLECTION_DIRECTORY = join(CORPUS_ROOT, 'onoff/collection');
+
+type DeriveFunctions = Record<string, (value: never) => Record<string, unknown>>;
+
+// El único export de una fixture generada, con su binding. Cada una declara uno solo, que es lo que
+// permite tomarla sin saber cómo se llama.
+async function soleExportOf(load: LoadModule, modulePath: string): Promise<[string, unknown] | undefined> {
+	try {
+		const loaded = (await load(`/${modulePath}`)) as Record<string, unknown>;
+		return Object.entries(loaded)[0];
+	} catch {
+		// Todavía no existe: es la primera corrida sobre un corpus sin generar. La siguiente la aplica.
+		return undefined;
+	}
+}
+
+async function derivationFrom(
+	load: LoadModule,
+	sourcePath: string,
+	deriveName: string,
+	derive: DeriveFunctions,
+	fromDirectory: string,
+): Promise<Derivation | undefined> {
+	const sole = await soleExportOf(load, sourcePath);
+	const narrow = derive[deriveName];
+	if (!sole || !narrow) {
+		return undefined;
+	}
+
+	const [binding, value] = sole;
+	return {
+		fields: narrow(value as never),
+		expression: `${deriveName}(${binding})`,
+		imports: [
+			{ binding, specifier: specifierFor(fromDirectory, sourcePath.replace(/\.ts$/, '')), kind: 'named' },
+			{
+				binding: deriveName,
+				specifier: specifierFor(fromDirectory, DERIVE_MODULE.replace(/\.ts$/, '')),
+				kind: 'named',
+			},
+		],
+	};
+}
+
+async function derivationsFromDirectory(
+	load: LoadModule,
+	directory: string,
+	suffix: string,
+	deriveName: string,
+	derive: DeriveFunctions,
+	fromDirectory: string,
+): Promise<Derivation[]> {
+	const files = (await readdir(directory)).filter((file) => file.endsWith(suffix));
+	const derivations = await Promise.all(
+		files.map((file) => derivationFrom(load, join(directory, file), deriveName, derive, fromDirectory)),
+	);
+
+	return derivations.filter((derivation) => derivation !== undefined);
+}
+
+/**
+ * Qué fixture ya declara parte de lo que el destino está por escribir. Es conocimiento del corpus, igual
+ * que la tabla de sustituciones, y por eso vive acá y no en el emisor.
+ *
+ * El orden de generación lo hace posible: cada destino se escribe después de aquello de lo que deriva.
+ */
+export async function collectDerivations(load: LoadModule, targetFile: string): Promise<Derivation[]> {
+	const derive = ((await load(`/${DERIVE_MODULE}`)) ?? {}) as DeriveFunctions;
+	const fromDirectory = dirname(targetFile);
+	const file = basename(targetFile);
+
+	if (file.endsWith('.literary-work-teaser.raw.mock.ts')) {
+		const slug = file.replace('.literary-work-teaser.raw.mock.ts', '');
+		const source = join(LITERARY_WORK_DIRECTORY, `${slug}.literary-work.raw.mock.ts`);
+		const derivation = await derivationFrom(load, source, 'literaryWorkTeaserFrom', derive, fromDirectory);
+		return derivation ? [derivation] : [];
+	}
+
+	if (file === 'collection-teasers.raw.mock.ts') {
+		const suffix = '.collection.raw.mock.ts';
+		return derivationsFromDirectory(load, COLLECTION_DIRECTORY, suffix, 'collectionTeaserFrom', derive, fromDirectory);
+	}
+
+	if (file === 'landing-page.raw.mock.ts' || file === 'rotating-content.raw.mock.ts') {
+		const suffix = '.literary-work-teaser.raw.mock.ts';
+		return derivationsFromDirectory(
+			load,
+			LITERARY_WORK_DIRECTORY,
+			suffix,
+			'landingLiteraryWorkFrom',
+			derive,
+			fromDirectory,
+		);
+	}
+
+	return [];
 }

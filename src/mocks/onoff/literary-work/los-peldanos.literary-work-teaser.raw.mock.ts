@@ -1,19 +1,11 @@
 // Este archivo lo escribe `pnpm corpus:generate` evaluando la query GROQ real sobre los documentos del
 // corpus. No se edita a mano: cualquier cambio se pierde en la próxima corrida.
 import type { LiteraryWorkTeasersResult } from '@sanity-types';
-import { rawOnoffEmbeddedAuthor } from '../../onoff-raw-author.mock';
-import { absurdoRawTag, cuentoRawTag, surrealismoRawTag } from '../../onoff-raw-tags.mock';
+import { literaryWorkTeaserFrom } from '../derive-raw';
+import { losPeldanosRawLiteraryWork } from './los-peldanos.literary-work.raw.mock';
 
 export const losPeldanosRawLiteraryWorkTeaser: LiteraryWorkTeasersResult[number] = {
-	_id: 'onoff-literary-work-los-peldanos',
-	slug: 'los-peldanos',
-	title: 'Los peldaños',
-	coverImage: { _type: 'image', asset: { _type: 'reference', _ref: 'image-losPeldanosCover-236x328-png' } },
-	totalReadingTime: 8,
-	sectionCount: 1,
-	tags: [cuentoRawTag, absurdoRawTag, surrealismoRawTag],
-	mediaSources: [],
-	authors: [rawOnoffEmbeddedAuthor],
+	...literaryWorkTeaserFrom(losPeldanosRawLiteraryWork),
 	excerpt: [
 		{
 			_key: 'section-1',

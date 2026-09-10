@@ -1,26 +1,12 @@
 // Este archivo lo escribe `pnpm corpus:generate` evaluando la query GROQ real sobre los documentos del
 // corpus. No se edita a mano: cualquier cambio se pierde en la próxima corrida.
 import type { LiteraryWorkTeasersResult } from '@sanity-types';
-import { rawOnoffEmbeddedAuthor } from '../../onoff-raw-author.mock';
-import { cuentoRawTag, dramaPsicologicoRawTag, filosoficoRawTag } from '../../onoff-raw-tags.mock';
+import { literaryWorkTeaserFrom } from '../derive-raw';
 import { geometriaSectionTitle } from './geometria.epigraph';
+import { geometriaRawLiteraryWork } from './geometria.literary-work.raw.mock';
 
 export const geometriaRawLiteraryWorkTeaser: LiteraryWorkTeasersResult[number] = {
-	_id: 'onoff-literary-work-geometria',
-	slug: 'geometria',
-	title: 'Geometría',
-	coverImage: { _type: 'image', asset: { _type: 'reference', _ref: 'image-geometriaCover-236x328-png' } },
-	totalReadingTime: 7,
-	sectionCount: 1,
-	tags: [cuentoRawTag, dramaPsicologicoRawTag, filosoficoRawTag],
-	mediaSources: [
-		{ _type: 'audioRecording', title: 'Lectura de "Geometría" por su autor' },
-		{ _type: 'spaceRecording', title: 'Conversación sobre el insomnio y la medida del tiempo' },
-		{ _type: 'spotifyPodcastEpisode', title: 'Episodio dedicado a "Geometría"' },
-		{ _type: 'youTubeVideo', title: 'Video ensayo sobre las coordenadas del desvelo' },
-		{ _type: 'pdfLink', title: 'Facsímil de la primera edición' },
-	],
-	authors: [rawOnoffEmbeddedAuthor],
+	...literaryWorkTeaserFrom(geometriaRawLiteraryWork),
 	excerpt: [
 		{
 			_key: 'section-1',

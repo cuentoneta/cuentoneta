@@ -22,7 +22,7 @@ import { evaluate, parse } from 'groq-js';
 import { format, resolveConfig } from 'prettier';
 import { assertEveryReferenceResolves } from './generate-raw-corpus.helpers';
 import { buildSubstitutionTable, emitModule } from './generate-raw-corpus.emitter';
-import { collectSubstitutions, type LoadModule } from './generate-raw-corpus.table';
+import { collectDerivations, collectSubstitutions, type LoadModule } from './generate-raw-corpus.table';
 import { withCorpus } from './generate-raw-corpus.loader';
 
 type Target = {
@@ -127,8 +127,10 @@ function targetsFor(queries: Record<string, string>, landingPageSlug: string): T
 			params: { slug },
 		}));
 
+	// El orden es el de las dependencias: cada destino se escribe después de aquello de lo que deriva o a
+	// lo que referencia. El teaser sale del raw completo, la colección embebe teasers, el listado sale de
+	// la colección, y la landing y el contenido rotativo salen del teaser.
 	return [
-		...literaryWorkTeaserTargets(queries),
 		...bySlug(
 			LITERARY_WORK_EXPORTS,
 			'src/mocks/onoff/literary-work',
@@ -136,6 +138,7 @@ function targetsFor(queries: Record<string, string>, landingPageSlug: string): T
 			'LiteraryWorkBySlugQueryResult',
 			'literaryWorkBySlugQuery',
 		),
+		...literaryWorkTeaserTargets(queries),
 		...bySlug(
 			COLLECTION_EXPORTS,
 			'src/mocks/onoff/collection',
@@ -175,7 +178,9 @@ async function evaluateTarget(target: Target, dataset: Record<string, unknown>[]
 
 async function writeTarget(target: Target, value: unknown, load: LoadModule): Promise<void> {
 	const entries = await collectSubstitutions(load, dirname(target.file), target.file);
+	const derivations = await collectDerivations(load, target.file);
 	const source = emitModule({
+		derivations,
 		banner: BANNER,
 		exportName: target.exportName,
 		typeImport: target.typeImport,

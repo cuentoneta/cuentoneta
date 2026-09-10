@@ -37,19 +37,29 @@ describe('fixtures generadas del corpus', () => {
 		});
 	});
 
-	// La obra que embebe una colección sale de la misma proyección que su teaser generado, así que la
-	// fixture la referencia. El discriminante es `sectionCount`: lo proyecta el teaser de obra y nada más,
-	// así que su presencia dice que hay una obra escrita entera, sin confundirse con un título que se
-	// repita por otro motivo —una campaña de la landing lleva el de la obra que promociona—.
-	//
-	// La landing queda afuera a propósito: proyecta la obra **sin** `excerpt`, así que lo que escribe no
-	// es el teaser y referenciarlo afirmaría que la query devuelve un campo que no devuelve.
-	it('references the literary work teaser instead of embedding the work', async () => {
-		const fixtures = await generatedFixturesIn('collection');
+	// Ninguna fixture que embeba obras escribe sus campos: la colección referencia el teaser generado, y
+	// la landing y el contenido rotativo lo estrechan con `landingLiteraryWorkFrom`, porque proyectan la
+	// obra sin su extracto. El discriminante es `sectionCount`, que solo aparece en esa proyección.
+	it('derives the embedded literary works instead of writing them out', async () => {
+		const fixtures = await generatedFixturesIn('collection', 'landing-page');
 
 		expect(fixtures).not.toHaveLength(0);
 		fixtures.forEach(({ file, source }) => {
 			expect(source, file).not.toContain('sectionCount:');
 		});
+	});
+
+	// Cada derivación que el generador declara tiene que haberse aplicado. La coincidencia es por valor,
+	// así que una proyección que se aparta no rompe nada: deja de coincidir y el objeto vuelve a escribirse
+	// entero. Estos casos son la única señal de que eso pasó.
+	it.each([
+		['literary-work', 'literaryWorkTeaserFrom'],
+		['collection', 'collectionTeaserFrom'],
+		['landing-page', 'landingLiteraryWorkFrom'],
+	])('derives every generated fixture of %s with %s', async (directory, derivation) => {
+		const fixtures = (await generatedFixturesIn(directory)).filter(({ source }) => source.includes('derive-raw'));
+
+		expect(fixtures).not.toHaveLength(0);
+		fixtures.forEach(({ file, source }) => expect(source, file).toContain(`${derivation}(`));
 	});
 });
