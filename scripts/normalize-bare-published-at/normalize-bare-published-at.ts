@@ -14,8 +14,8 @@
  *   pnpm normalize:bare-published-at                 # corrida en seco: reporta qué se completaría
  *   pnpm normalize:bare-published-at --no-dry-run    # persiste
  */
-import { client } from '../src/api/_helpers/sanity-connector';
-import { environment } from '../src/api/_helpers/environment';
+import { client } from '../../src/api/_helpers/sanity-connector';
+import { environment } from '../../src/api/_helpers/environment';
 import {
 	formatPublishedAtNormalizationReport,
 	PUBLISHED_AT_NORMALIZATION_PAGE_SIZE,

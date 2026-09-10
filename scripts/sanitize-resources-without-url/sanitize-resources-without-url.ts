@@ -14,8 +14,8 @@
  *   pnpm sanitize:resources-without-url                 # corrida en seco: reporta qué se sanearía
  *   pnpm sanitize:resources-without-url --no-dry-run    # persiste
  */
-import { client } from '../src/api/_helpers/sanity-connector';
-import { environment } from '../src/api/_helpers/environment';
+import { client } from '../../src/api/_helpers/sanity-connector';
+import { environment } from '../../src/api/_helpers/environment';
 import {
 	formatResourceSanitizationReport,
 	RESOURCE_SANITIZATION_PAGE_SIZE,
