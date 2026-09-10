@@ -11,16 +11,16 @@
  * es la única pieza cuyo valor esperado depende de otras entidades del corpus. Las dos colecciones del
  * elenco están curadas para cubrir una rama cada una.
  *
- * **Qué no cubre:** el repository resuelve una colección por dos caminos —`fetchBySlug` para la vista de
- * detalle y `fetchAll` para el listado— y este cruce ejercita el primero. El listado comparte `mapShared`
- * pero arma su `imagery` desde otra proyección, así que una regresión que viva solo ahí pasa en verde.
+ * El repository resuelve una colección por dos caminos —`fetchBySlug` para la vista de detalle y `fetchAll`
+ * para el listado—, y los dos se cruzan acá. Comparten `mapShared`, pero el listado arma su `imagery` desde
+ * otra proyección y sanea la prosa sin enlaces, así que una regresión puede vivir en uno solo de los dos.
  */
-import type { Collection } from '@models/collection.model';
+import type { Collection, CollectionTeaser } from '@models/collection.model';
 import type { SanityClient } from '@sanity/client';
 import { fn } from '@test-utils';
 import { SanityCollectionRepository } from '../api/modules/collection/collection.repository.sanity';
-import { onoffCollectionsMock } from './onoff-collections.mock';
-import { onoffRawCollectionsMock } from './onoff-raw-collections.mock';
+import { onoffCollectionsMock, onoffCollectionTeasersMock } from './onoff-collections.mock';
+import { onoffRawCollectionsMock, onoffRawCollectionTeasersMock } from './onoff-raw-collections.mock';
 
 // Ver el spec homónimo de `LiteraryWork` para el porqué de sustituir el builder de imágenes.
 /* eslint-disable no-restricted-syntax -- vi.mock: el builder de imágenes de Sanity no tiene punto de inyección */
@@ -59,5 +59,17 @@ describe('el corpus de dominio de Collection coincide con el mapeo del ACL', () 
 		expect(mapped).toBeDefined();
 		expect(expected).toBeDefined();
 		expect(comparable(mapped as Collection)).toEqual(comparable(expected as Collection));
+	});
+});
+
+describe('el corpus de teasers de Collection coincide con el mapeo del listado', () => {
+	// El cruce va por `_id` y no por posición: el listado llega ordenado por título, y el agregador
+	// declara las colecciones en el orden en que se sumaron al elenco.
+	it.each(onoffRawCollectionTeasersMock.map((raw) => raw.slug))('maps the raw teaser of "%s"', async (slug) => {
+		const expected = onoffCollectionTeasersMock.find((teaser) => teaser.slug === slug);
+		const mapped = await repoReturning(onoffRawCollectionTeasersMock).fetchAll();
+
+		expect(expected).toBeDefined();
+		expect(mapped.find((teaser) => teaser.slug === slug)).toEqual(expected as CollectionTeaser);
 	});
 });
