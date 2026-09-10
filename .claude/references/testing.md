@@ -522,13 +522,21 @@ Todo archivo de la app que el preview importe debe estar en el `include` de `.st
 
 - **Una sola línea por descripción.** El render de Markdown trata cualquier línea con indentación (tab / ≥ 4 espacios) como bloque de código, así que un HTML multilínea indentado se muestra dentro de un recuadro de código. Escribí el HTML de la descripción en una sola línea (sin saltos ni indentación interna).
 - **Negrita para nombres de componentes.** El nombre del componente documentado y el de cualquier otro componente mencionado van en `<strong>…</strong>`.
-- **Enlace navegable a otros componentes.** Cuando la descripción menciona otro componente documentado, su nombre debe ser un enlace que navegue a la story de ese componente. Como la doc se renderiza dentro de `iframe.html`, usá un enlace relativo a la raíz del Storybook (robusto ante subpaths de deploy) con `target="_top"`:
+- **La referencia sale de la entrada, no del teclado.** Cada story tiene su módulo `*.docs.ts` al lado, que declara el `title` del catálogo. La prosa que nombra o enlaza otra entrada la importa y la pasa por un helper de [`@testing/storybook-docs`](../../src/testing/storybook-docs.ts), en vez de escribir el nombre y el `kind-id` a mano:
 
-  ```html
-  <a href="./?path=/docs/<kind-id>--docs" target="_top"><strong>LiteraryWorkTeaserCard</strong></a>
+  ```typescript
+  import { literaryWorkTeaserCardDocs } from '@components/literary-work-teaser-card/literary-work-teaser-card.component.docs';
+  import { docsMention, docsRef } from '@testing/storybook-docs';
+
+  // docsRef → nombre resaltado y enlazado · docsMention → solo el nombre · docsLink → texto propio
+  component: `<p>La portada la resuelve ${docsRef(literaryWorkTeaserCardDocs)}.</p>`;
   ```
 
-  El `<kind-id>` se deriva del `title` (minúsculas; espacios y `/` → `-`): `Componentes V3/LiteraryWorkTeaserCard` → `componentes-v3-literaryworkteasercard`. El sufijo `--docs` apunta a la página de autodocs.
+  El nombre visible y el `kind-id` salen los dos del mismo `title`, así que no pueden discrepar, y borrar una entrada rompe el `typecheck` de cada story que la referenciaba. El módulo aparte existe para romper el ciclo: hay pares de stories que se referencian mutuamente, y un módulo que no importa nada no puede formar un ciclo ESM.
+
+  El `title` del `meta` sigue siendo un **literal** porque el indexador CSF lo exige (leerlo de la entrada falla el build con `unexpected dynamic title`). Que ese literal siga igual al de su entrada lo verifica la regla de ESLint `storybook-docs-refs`, que además rechaza un `kind-id` escrito a mano y un nombre del catálogo puesto como texto.
+
+  Un componente **sin story propia** —un sub-componente, un skeleton— no tiene entrada que lo publique con nombre corto, así que la prosa lo nombra por su clase (`CollectionTeaserCardSkeletonComponent`) y la story declara un `export type DocsSymbols` con los símbolos que nombra: el import type-only rompe el `typecheck` si alguno deja de existir.
 
 ### Estado de carga (skeleton) → story intercambiable (obligatoria)
 
