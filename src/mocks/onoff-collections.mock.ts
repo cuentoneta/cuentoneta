@@ -47,6 +47,40 @@ export const onoffCollectionsWithTagsMock: Collection[] = onoffCollectionsMock.f
 	(collection) => collection.tags.length > 0,
 );
 
+export const onoffCollectionsWithoutTagsMock: Collection[] = onoffCollectionsMock.filter(
+	(collection) => collection.tags.length === 0,
+);
+
+export const onoffCollectionsWithSingleTagMock: Collection[] = onoffCollectionsMock.filter(
+	(collection) => collection.tags.length === 1,
+);
+
+export const onoffCollectionsWithMultipleTagsMock: Collection[] = onoffCollectionsMock.filter(
+	(collection) => collection.tags.length > 1,
+);
+
+// El ancho al que el teaser navegable recorta el nombre a una línea: un título por debajo de eso entra
+// entero y no muestra el recorte, que es justo lo que el consumidor necesita ver.
+const LONG_TITLE_LENGTH = 40;
+
+export const onoffCollectionsWithLongTitlesMock: Collection[] = onoffCollectionsMock.filter(
+	(collection) => collection.title.length >= LONG_TITLE_LENGTH,
+);
+
+// La prosa con un enlace propio se predica sobre la colección y no sobre el teaser: el teaser sale sin
+// enlaces por diseño, así que el predicado sobre él no encontraría ninguna.
+export const onoffCollectionsWithLinkedDescriptionMock: Collection[] = onoffCollectionsMock.filter((collection) =>
+	collection.description.includes('<a '),
+);
+
+// Un título que no empieza con un carácter ASCII es lo que distingue el orden con colación española del
+// orden por punto de código, donde queda detrás de todo el alfabeto.
+const LAST_ASCII_CODE_POINT = 127;
+
+export const onoffCollectionsWithNonAsciiInitialMock: Collection[] = onoffCollectionsMock.filter(
+	(collection) => collection.title.charCodeAt(0) > LAST_ASCII_CODE_POINT,
+);
+
 export const onoffCollectionTeasersMock: CollectionTeaser[] = onoffCollectionsMock.map(toTeaser);
 
 // Cada selector de teaser proyecta el de colección homónimo en vez de repetir su predicado: la
@@ -60,14 +94,35 @@ export const onoffCollectionTeasersWithSampleImageryMock: CollectionTeaser[] =
 
 export const onoffCollectionTeasersWithTagsMock: CollectionTeaser[] = onoffCollectionsWithTagsMock.map(toTeaser);
 
-// Los teasers extra se derivan del primero del canon y pasan uno a uno por la factory del teaser:
-// el agregado está congelado, así que armarlos por spread saltearía las invariantes que esa
-// factory existe para hacer cumplir.
-//
-// TODO(#2333): tomar colecciones reales del corpus en vez de repetir una.
-// Al salir todos del mismo canónico comparten portada, prosa, etiqueta y conteo de obras, y sólo se
-// distinguen por un título correlativo. Una grilla así se ve homogénea de un modo que ningún catálogo
-// real es: no muestra portadas dispares, ni descripciones de largo distinto, ni el recorte del título.
+export const onoffCollectionTeasersWithoutTagsMock: CollectionTeaser[] = onoffCollectionsWithoutTagsMock.map(toTeaser);
+
+export const onoffCollectionTeasersWithSingleTagMock: CollectionTeaser[] =
+	onoffCollectionsWithSingleTagMock.map(toTeaser);
+
+export const onoffCollectionTeasersWithMultipleTagsMock: CollectionTeaser[] =
+	onoffCollectionsWithMultipleTagsMock.map(toTeaser);
+
+export const onoffCollectionTeasersWithLongTitlesMock: CollectionTeaser[] =
+	onoffCollectionsWithLongTitlesMock.map(toTeaser);
+
+export const onoffCollectionTeasersWithLinkedDescriptionMock: CollectionTeaser[] =
+	onoffCollectionsWithLinkedDescriptionMock.map(toTeaser);
+
+export const onoffCollectionTeasersWithNonAsciiInitialMock: CollectionTeaser[] =
+	onoffCollectionsWithNonAsciiInitialMock.map(toTeaser);
+
+// El contador de la tarjeta distingue "1 obra" de "N obras", y ninguna colección del elenco cae de ese
+// lado: las que se curaron agrupan varias obras. El escenario existe para que quien renderiza esa rama
+// tenga con qué probarla, y por eso no sale de un documento como el resto del corpus.
+export const singleLiteraryWorkCollectionTeaserMock: CollectionTeaser = createCollectionTeaser({
+	...onoffCollectionTeasersMock[0],
+	count: 1,
+});
+
+// TODO(#2333): darlo de baja junto con el deck y la página de inicio, sus últimos consumidores.
+// Los teasers salen todos del primero del canon, así que comparten portada, prosa, etiqueta y conteo
+// de obras, y sólo se distinguen por un título correlativo. Una grilla así se ve homogénea de un modo
+// que ningún catálogo real es. El elenco ampliado ya alcanza para poblarla con colecciones distintas.
 export function onoffCollectionTeasersOfLength(count: number): CollectionTeaser[] {
 	const [base] = onoffCollectionTeasersMock;
 	return Array.from({ length: count }, (_, index) =>

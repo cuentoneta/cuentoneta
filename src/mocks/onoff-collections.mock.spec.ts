@@ -9,11 +9,24 @@ import {
 	onoffCollectionsWithMediaSourcesMock,
 	onoffCollectionsWithRepresentativeImageryMock,
 	onoffCollectionsWithSampleImageryMock,
+	onoffCollectionsWithLinkedDescriptionMock,
+	onoffCollectionsWithLongTitlesMock,
+	onoffCollectionsWithMultipleTagsMock,
+	onoffCollectionsWithNonAsciiInitialMock,
+	onoffCollectionsWithoutTagsMock,
+	onoffCollectionsWithSingleTagMock,
 	onoffCollectionsWithTagsMock,
 	onoffCollectionTeasersMock,
+	onoffCollectionTeasersWithLinkedDescriptionMock,
+	onoffCollectionTeasersWithLongTitlesMock,
+	onoffCollectionTeasersWithMultipleTagsMock,
+	onoffCollectionTeasersWithNonAsciiInitialMock,
+	onoffCollectionTeasersWithoutTagsMock,
 	onoffCollectionTeasersWithRepresentativeImageryMock,
 	onoffCollectionTeasersWithSampleImageryMock,
+	onoffCollectionTeasersWithSingleTagMock,
 	onoffCollectionTeasersWithTagsMock,
+	singleLiteraryWorkCollectionTeaserMock,
 } from './onoff-collections.mock';
 import geometriasDescriptionMd from './onoff/collection/geometrias-del-desvelo.collection.md?raw';
 import inventarioDescriptionMd from './onoff/collection/inventario-de-las-pasiones.collection.md?raw';
@@ -69,14 +82,31 @@ describe('onoff collections mock', () => {
 			onoffCollectionsHidingAuthorsMock,
 			onoffCollectionsWithMediaSourcesMock,
 			onoffCollectionsWithTagsMock,
+			onoffCollectionsWithoutTagsMock,
+			onoffCollectionsWithSingleTagMock,
+			onoffCollectionsWithMultipleTagsMock,
+			onoffCollectionsWithLongTitlesMock,
+			onoffCollectionsWithLinkedDescriptionMock,
+			onoffCollectionsWithNonAsciiInitialMock,
 			onoffCollectionTeasersWithRepresentativeImageryMock,
 			onoffCollectionTeasersWithSampleImageryMock,
 			onoffCollectionTeasersWithTagsMock,
+			onoffCollectionTeasersWithoutTagsMock,
+			onoffCollectionTeasersWithSingleTagMock,
+			onoffCollectionTeasersWithMultipleTagsMock,
+			onoffCollectionTeasersWithLongTitlesMock,
+			onoffCollectionTeasersWithLinkedDescriptionMock,
+			onoffCollectionTeasersWithNonAsciiInitialMock,
 		};
 
 		Object.entries(selectorsByName).forEach(([name, selector]) => {
 			expect(selector, name).not.toHaveLength(0);
 		});
+	});
+
+	it('exposes a teaser that carries a single work', () => {
+		expect(singleLiteraryWorkCollectionTeaserMock.count).toBe(1);
+		expect(Object.isFrozen(singleLiteraryWorkCollectionTeaserMock)).toBe(true);
 	});
 
 	it('projects teasers that carry no works', () => {

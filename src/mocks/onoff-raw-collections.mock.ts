@@ -40,6 +40,18 @@ export const onoffRawCollectionTeasersWithFeaturedImage: CollectionsQueryResult 
 export const onoffRawCollectionTeasersWithoutFeaturedImage: CollectionsQueryResult =
 	onoffRawCollectionTeasersMock.filter((teaser) => teaser.featuredImage === null);
 
+// La prosa cruda con un enlace Markdown propio, que es lo que distingue las dos vistas: el teaser lo
+// descarta y la vista completa lo conserva. El predicado mira el crudo porque acá el enlace todavía
+// es Markdown; después del saneado, el teaser ya no lo tiene con qué reconocerse.
+const carriesMarkdownLink = (description: string) => /\]\(https?:\/\//.test(description);
+
+export const onoffRawCollectionsWithLinkedDescription: RawCollection[] = onoffRawCollectionsMock.filter((collection) =>
+	carriesMarkdownLink(collection.description),
+);
+
+export const onoffRawCollectionTeasersWithLinkedDescription: CollectionsQueryResult =
+	onoffRawCollectionTeasersMock.filter((teaser) => carriesMarkdownLink(teaser.description));
+
 // Las obras embebidas que declaran multimedia, que son las que ejercitan el mapeo de la vista de
 // teaser. Su proyección solo trae el tag, así que el shape difiere del de las obras de nivel documento.
 export const onoffRawCollectionWorksWithMediaSources: RawCollection['literaryWorks'] = onoffRawCollectionsMock
@@ -60,20 +72,6 @@ export const descriptionlessRawCollection: RawCollection = {
 	...geometriasDelDesveloRawCollection,
 	description: '',
 };
-
-// El canon no ejercita el caso: hace falta un escenario cuyo Markdown traiga enlaces para poder
-// afirmar qué hace cada vista con ellos.
-const linkedDescriptionMd = 'Una colección con [un enlace propio](https://www.cuentoneta.ar/about) en la prosa.';
-
-export const linkedDescriptionRawCollection: RawCollection = {
-	...geometriasDelDesveloRawCollection,
-	description: linkedDescriptionMd,
-};
-
-export const linkedDescriptionRawCollectionTeasers: CollectionsQueryResult = generatedTeasers.map((teaser) => ({
-	...teaser,
-	description: linkedDescriptionMd,
-}));
 
 export const sectionlessWorkRawCollection: RawCollection = {
 	...geometriasDelDesveloRawCollection,
