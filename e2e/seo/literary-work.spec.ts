@@ -11,6 +11,8 @@
  *  - D. Bloques sitewide Organization y WebSite.
  *  - E. La tanda completa de invariantes de una página indexable, H1 único y cuerpo saneado.
  *  - F. Un único enlace al perfil del autor.
+ *  - G. Exclusión del extracto: los epígrafes y la nota editorial se sirven dentro de un bloque
+ *       `data-nosnippet`, y el cuerpo de la obra queda fuera de esa exclusión.
  *
  * El contenido de prueba lo cura el equipo en los datasets (development local / staging CI).
  */
@@ -18,14 +20,16 @@ import { expect } from '@playwright/test';
 
 import { test } from '../_utils/test';
 import type { Article, BreadcrumbList, WithContext } from 'schema-dts';
+import type { HTMLElement } from 'node-html-parser';
 
-import { parseJsonLdBlocks, getMetaContent, getTitleText, getCanonicalHref } from '../_utils/seo';
+import { parseHtml, parseJsonLdBlocks, getMetaContent, getTitleText, getCanonicalHref } from '../_utils/seo';
 import { assertValidJsonLd } from '@testing/json-ld-validation';
 import { collectIndexableHtmlViolations, getInternalLinkHrefs } from '../_utils/seo-invariants';
 import { STABLE_SLUGS, SCHEMA_IDS, SITEWIDE_SCHEMA_IDS } from '../_utils/seo-fixtures';
 import { fetchLiteraryWork } from '../_utils/literary-work-fixtures';
 
 const literaryWorkPath = `/literary-work/${STABLE_SLUGS.literaryWork}`;
+const literaryWorkWithEpigraphsPath = `/literary-work/${STABLE_SLUGS.literaryWorkWithEpigraphs}`;
 const requiredJsonLdIds = [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.article, SCHEMA_IDS.breadcrumbLiteraryWork];
 
 test('literary-work — A: una obra inexistente responde 404 real en SSR', async ({ request }) => {
@@ -120,5 +124,71 @@ test.describe('literary-work — HTML server-rendered de una obra existente', ()
 		).toBeDefined();
 
 		expect(getInternalLinkHrefs(html, '/author/')).toEqual([`/author/${primaryAuthorSlug}`]);
+	});
+});
+
+// Google solo reconoce el atributo en estos tags; Bing lo acepta en cualquiera, así que el
+// subconjunto documentado por ambos es el que se exige.
+const SNIPPET_ELEMENT_TAGS = Object.freeze(['DIV', 'SPAN', 'SECTION']);
+
+test.describe('literary-work — bloques editoriales excluidos del extracto de búsqueda', () => {
+	let root: HTMLElement;
+	let epigraphCount: number;
+	let epigraphReferenceCount: number;
+	let expectedEditorialBlockCount: number;
+
+	test.beforeAll(async ({ request }) => {
+		const response = await request.get(literaryWorkWithEpigraphsPath);
+		expect(
+			response.status(),
+			`No existe literaryWork con slug "${STABLE_SLUGS.literaryWorkWithEpigraphs}" en el dataset`,
+		).toBe(200);
+		root = parseHtml(await response.text());
+
+		const literaryWork = await fetchLiteraryWork(request, STABLE_SLUGS.literaryWorkWithEpigraphs);
+		expect(
+			literaryWork,
+			`el API no sirve "${STABLE_SLUGS.literaryWorkWithEpigraphs}": no habría con qué comparar`,
+		).toBeDefined();
+
+		const epigraphs = (literaryWork?.content ?? []).flatMap((section) => section.epigraphs ?? []);
+		epigraphCount = epigraphs.length;
+		epigraphReferenceCount = epigraphs.filter((epigraph) => Boolean(epigraph.reference)).length;
+		const hasEditorialNote = Boolean(literaryWork?.editorialNote);
+		expectedEditorialBlockCount = epigraphCount + Number(hasEditorialNote);
+
+		// Si la curaduría pierde el epígrafe, su fuente o la nota, los casos de abajo pasarían sin
+		// cubrir nada: se afirma en vez de saltearse, como en el resto del archivo.
+		expect(epigraphCount, `"${STABLE_SLUGS.literaryWorkWithEpigraphs}" no trae epígrafes`).toBeGreaterThan(0);
+		expect(
+			epigraphReferenceCount,
+			`"${STABLE_SLUGS.literaryWorkWithEpigraphs}" no trae epígrafe con fuente`,
+		).toBeGreaterThan(0);
+		expect(hasEditorialNote, `"${STABLE_SLUGS.literaryWorkWithEpigraphs}" no trae nota editorial`).toBe(true);
+	});
+
+	test('G: cada bloque editorial se sirve dentro de un ancestro excluido del extracto', () => {
+		expect(root.querySelectorAll('cuentoneta-editorial-note')).toHaveLength(expectedEditorialBlockCount);
+
+		const exclusions = root.querySelectorAll('cuentoneta-editorial-note [data-nosnippet]');
+		expect(exclusions).toHaveLength(expectedEditorialBlockCount);
+		expect(exclusions.filter((exclusion) => !SNIPPET_ELEMENT_TAGS.includes(exclusion.tagName))).toEqual([]);
+		expect(exclusions.filter((exclusion) => exclusion.querySelector('[data-testid="content"]') === null)).toEqual([]);
+
+		// El pie de la figura —la atribución del epígrafe— también es texto ajeno a la obra.
+		const references = root.querySelectorAll('cuentoneta-editorial-note [data-testid="reference"]');
+		expect(references).toHaveLength(epigraphReferenceCount);
+		expect(references.filter((reference) => reference.closest('[data-nosnippet]') === null)).toEqual([]);
+	});
+
+	test('G: el cuerpo de la obra queda fuera de esa exclusión', () => {
+		// Cubre el atributo tanto en el propio cuerpo como en cualquier ancestro suyo.
+		expect(
+			root.querySelector(
+				'[data-testid="literary-work-section-body"][data-nosnippet], [data-nosnippet] [data-testid="literary-work-section-body"]',
+			),
+		).toBeNull();
+		// La exclusión no se desparrama: los bloques editoriales son los únicos que la declaran.
+		expect(root.querySelectorAll('[data-nosnippet]')).toHaveLength(expectedEditorialBlockCount);
 	});
 });
