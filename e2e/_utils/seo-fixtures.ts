@@ -7,6 +7,10 @@ export const STABLE_SLUGS = Object.freeze({
 	// tenga qué elegir, y de un autor con más de una obra, para que las sugerencias del pie no salgan
 	// vacías. `el-fin` no puede cubrir ninguna de las dos cosas.
 	literaryWorkWithMedia: 'a-la-deriva',
+	// La obra estable que encabeza sus secciones con un epígrafe con fuente y cierra con nota
+	// editorial: la superficie donde el texto ajeno a la obra puede quedar como extracto. `el-fin`
+	// tiene nota pero ningún epígrafe, y `a-la-deriva` tampoco, así que ninguna de las dos cubre el caso.
+	literaryWorkWithEpigraphs: 'la-morada-del-hombre',
 	collection: 'verano-2022',
 } as const);
 
