@@ -7,10 +7,10 @@ import { onoffCollectionTeasersMock, onoffCollectionTeasersWithLongTitlesMock } 
 // switch del catálogo compare siempre lo mismo.
 // El título largo entra por el selector que lo garantiza, no por el orden en que el agregador declara
 // las colecciones: de él depende que la descripción de la grilla siga siendo cierta.
-const [conTituloLargo] = onoffCollectionTeasersWithLongTitlesMock;
+const [withLongTitle] = onoffCollectionTeasersWithLongTitlesMock;
 const deckTeasers = [
-	conTituloLargo,
-	...onoffCollectionTeasersMock.filter(({ slug }) => slug !== conTituloLargo.slug),
+	withLongTitle,
+	...onoffCollectionTeasersMock.filter(({ slug }) => slug !== withLongTitle.slug),
 ].slice(0, 4);
 
 const meta: Meta<CollectionTeasersDeck> = {

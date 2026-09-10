@@ -74,12 +74,15 @@ describe('CollectionTeaserCard', () => {
 		// Que la prosa no traiga enlaces lo garantiza el ACL, y lo cubre su propio spec: acá se afirma la
 		// consecuencia, que es el único destino de la tarjeta.
 		it('should leave the card with a single destination', async () => {
-			const [conProsaEnlazada] = onoffCollectionTeasersWithLinkedDescriptionMock;
+			const [withLinkedDescription] = onoffCollectionTeasersWithLinkedDescriptionMock;
 
-			await render(CollectionTeaserCard, { inputs: { collection: conProsaEnlazada }, providers: defaultProviders });
+			await render(CollectionTeaserCard, {
+				inputs: { collection: withLinkedDescription },
+				providers: defaultProviders,
+			});
 
 			expect(screen.getAllByRole('link')).toHaveLength(1);
-			expect(screen.getByRole('link')).toHaveAttribute('href', `/collection/${conProsaEnlazada.slug}`);
+			expect(screen.getByRole('link')).toHaveAttribute('href', `/collection/${withLinkedDescription.slug}`);
 		});
 	});
 
@@ -129,24 +132,24 @@ describe('CollectionTeaserCard', () => {
 		});
 
 		it('should display the tag', async () => {
-			const [conUnaEtiqueta] = onoffCollectionTeasersWithSingleTagMock;
+			const [withSingleTag] = onoffCollectionTeasersWithSingleTagMock;
 
 			await render(CollectionTeaserCard, {
-				inputs: { collection: conUnaEtiqueta },
+				inputs: { collection: withSingleTag },
 				providers: defaultProviders,
 			});
 
-			expect(screen.getByText(conUnaEtiqueta.tags[0].title)).toBeInTheDocument();
+			expect(screen.getByText(withSingleTag.tags[0].title)).toBeInTheDocument();
 			expect(screen.queryByText(/\+\d/)).not.toBeInTheDocument();
 		});
 
 		it('should announce the tags it does not name with a counter', async () => {
-			const [conVariasEtiquetas] = onoffCollectionTeasersWithMultipleTagsMock;
-			const [primera, ...resto] = conVariasEtiquetas.tags;
+			const [withMultipleTags] = onoffCollectionTeasersWithMultipleTagsMock;
+			const [firstTag, ...remainingTags] = withMultipleTags.tags;
 
-			await render(CollectionTeaserCard, { inputs: { collection: conVariasEtiquetas }, providers: defaultProviders });
+			await render(CollectionTeaserCard, { inputs: { collection: withMultipleTags }, providers: defaultProviders });
 
-			expect(screen.getByText(new RegExp(`${primera.title}\\s*\\+${resto.length}`))).toBeInTheDocument();
+			expect(screen.getByText(new RegExp(`${firstTag.title}\\s*\\+${remainingTags.length}`))).toBeInTheDocument();
 		});
 	});
 

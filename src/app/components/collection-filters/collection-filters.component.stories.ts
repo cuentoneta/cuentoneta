@@ -7,19 +7,19 @@ import { colaborativaTagMock, ensayoTagMock } from '@mocks/onoff-tags.mock';
 
 import { CollectionFiltersComponent } from './collection-filters.component';
 
-const catalogo: readonly CollectionTeaser[] = onoffCollectionTeasersMock;
+const catalogue: readonly CollectionTeaser[] = onoffCollectionTeasersMock;
 
 const countFor = (tag: Tag) =>
-	catalogo.filter((collection) => collection.tags.some((candidate) => candidate.slug === tag.slug)).length;
+	catalogue.filter((collection) => collection.tags.some((candidate) => candidate.slug === tag.slug)).length;
 
 // La etiqueta menos frecuente del catálogo, y el resultado de elegirla, calculados como los calcula la
 // página. Nombrar una etiqueta puntual ataría la entrada a un reparto que el elenco puede cambiar.
-const etiquetaMenosFrecuente = catalogo
+const scarcestTag = catalogue
 	.flatMap((collection) => collection.tags)
 	.reduce((scarcest, tag) => (countFor(tag) < countFor(scarcest) ? tag : scarcest));
 
-const conLaMenosFrecuente = catalogo.filter((collection) =>
-	collection.tags.some((tag) => tag.slug === etiquetaMenosFrecuente.slug),
+const carryingScarcestTag = catalogue.filter((collection) =>
+	collection.tags.some((tag) => tag.slug === scarcestTag.slug),
 );
 
 const meta: Meta<CollectionFiltersComponent> = {
@@ -49,7 +49,7 @@ export default meta;
 type Story = StoryObj<CollectionFiltersComponent>;
 
 export const Playground: Story = {
-	args: { collections: catalogo, selected: [] },
+	args: { collections: catalogue, selected: [] },
 	parameters: {
 		docs: {
 			description: {
@@ -60,7 +60,7 @@ export const Playground: Story = {
 };
 
 export const SinFiltrosElegidos: Story = {
-	args: { collections: catalogo, selected: [] },
+	args: { collections: catalogue, selected: [] },
 	parameters: {
 		docs: {
 			description: {
@@ -71,7 +71,7 @@ export const SinFiltrosElegidos: Story = {
 };
 
 export const ConFiltrosElegidos: Story = {
-	args: { collections: catalogo, selected: [colaborativaTagMock.slug, ensayoTagMock.slug] },
+	args: { collections: catalogue, selected: [colaborativaTagMock.slug, ensayoTagMock.slug] },
 	parameters: {
 		docs: {
 			description: {
@@ -82,7 +82,7 @@ export const ConFiltrosElegidos: Story = {
 };
 
 export const UnaSolaColeccionALaVista: Story = {
-	args: { collections: conLaMenosFrecuente, selected: [etiquetaMenosFrecuente.slug] },
+	args: { collections: carryingScarcestTag, selected: [scarcestTag.slug] },
 	parameters: {
 		docs: {
 			description: {
