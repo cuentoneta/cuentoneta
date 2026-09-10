@@ -22,7 +22,7 @@
 		"sanity"
 	],
 	"dependencies": {
-		"@sanity/cli": "^8.5.0",
+		"@sanity/cli": "^8.9.1",
 		"@sanity/export": "^6.2.1",
 		"@sanity/icons": "^5.2.1",
 		"@sanity/import": "^6.0.4",
@@ -44,9 +44,9 @@
 	"devDependencies": {
 		"@types/node": "^24.13.3",
 		"@types/react": "^19.2.18",
-		"@types/react-dom": "^19.2.5",
+		"@types/react-dom": "^19.2.7",
 		"groq-js": "^2.0.0",
-		"tsx": "^4.23.12",
+		"tsx": "^4.23.13",
 		"typescript": "6.0.3",
 		"vitest": "^5.0.0"
 	},
