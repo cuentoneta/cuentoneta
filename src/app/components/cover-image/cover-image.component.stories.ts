@@ -1,4 +1,5 @@
-import { argsToTemplate, Meta, moduleMetadata, StoryObj } from '@storybook/angular-vite';
+import type { Meta, StoryObj } from '@storybook/angular-vite';
+import { argsToTemplate, moduleMetadata } from '@storybook/angular-vite';
 
 import { CoverImageComponent } from './cover-image.component';
 import { CoverImageSkeletonComponent } from './cover-image-skeleton.component';

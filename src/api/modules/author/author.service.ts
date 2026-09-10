@@ -1,5 +1,5 @@
 // Interfaces
-import { AuthorProfile, AuthorTeaser } from '@models/author.model';
+import type { AuthorProfile, AuthorTeaser } from '@models/author.model';
 
 // Funciones de mapeo
 import { mapAuthorProfile, mapAuthorTeaser } from '../../_utils/functions';

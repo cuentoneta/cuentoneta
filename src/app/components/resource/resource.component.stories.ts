@@ -1,4 +1,5 @@
-import { argsToTemplate, Meta, StoryObj } from '@storybook/angular-vite';
+import type { Meta, StoryObj } from '@storybook/angular-vite';
+import { argsToTemplate } from '@storybook/angular-vite';
 import { ResourceComponent } from './resource.component';
 import { authorMock } from '@mocks/author.mock';
 import { resourceMock } from '@mocks/resource.mock';

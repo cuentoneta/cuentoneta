@@ -1,5 +1,5 @@
 import type { CollectionTeaser } from '@models/collection.model';
-import { ContentCampaign } from '@models/content-campaign.model';
+import type { ContentCampaign } from '@models/content-campaign.model';
 import type { LiteraryWorkNavigationTeaserWithAuthors } from '@models/literary-work.model';
 import type { AuthorTeaser } from '@models/author.model';
 import type { Tag } from '@models/tag.model';

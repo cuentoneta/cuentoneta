@@ -1,7 +1,7 @@
 import { NgOptimizedImage } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { InternalLink, UrlLink } from '@models/link.model';
+import type { InternalLink, UrlLink } from '@models/link.model';
 import {
 	faBrandFacebook,
 	faBrandGithub,

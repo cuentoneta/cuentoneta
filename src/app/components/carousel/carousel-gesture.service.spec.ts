@@ -1,6 +1,8 @@
 import { fn, spyOn } from '@test-utils';
-import { DestroyRef, ElementRef, signal } from '@angular/core';
-import { CarouselGestureService, NavigationCommand } from './carousel-gesture.service';
+import type { DestroyRef, ElementRef } from '@angular/core';
+import { signal } from '@angular/core';
+import type { NavigationCommand } from './carousel-gesture.service';
+import { CarouselGestureService } from './carousel-gesture.service';
 
 describe('CarouselGestureService', () => {
 	let service: CarouselGestureService;

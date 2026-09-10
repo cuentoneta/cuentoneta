@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/angular-vite';
+import type { Meta, StoryObj } from '@storybook/angular-vite';
 
 import { ReadingSuggestionsListComponent } from './reading-suggestions-list.component';
 import { corpusLiteraryWorkTeasers } from '@mocks/onoff-corpus.storybook';

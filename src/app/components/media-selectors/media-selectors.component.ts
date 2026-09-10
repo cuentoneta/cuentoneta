@@ -3,7 +3,7 @@ import { NgIcon, provideIcons } from '@ng-icons/core';
 import { simpleSpotify, simpleX, simpleYoutube } from '@ng-icons/simple-icons';
 import { faSolidFileAudio } from '@ng-icons/font-awesome/solid';
 
-import { MediaTeaser, MediaTypeKey } from '@models/media.model';
+import type { MediaTeaser, MediaTypeKey } from '@models/media.model';
 
 /**
  * Tema visual de los selectores, desacoplado de las variantes de las tarjetas consumidoras:

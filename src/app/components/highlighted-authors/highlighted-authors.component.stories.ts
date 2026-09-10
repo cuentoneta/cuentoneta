@@ -1,4 +1,5 @@
-import { argsToTemplate, Meta, StoryObj } from '@storybook/angular-vite';
+import type { Meta, StoryObj } from '@storybook/angular-vite';
+import { argsToTemplate } from '@storybook/angular-vite';
 
 import { HighlightedAuthorsComponent } from './highlighted-authors.component';
 import { onoffHighlightedAuthorsOfLength, onoffUntaggedHighlightedAuthor } from '@mocks/onoff-highlighted-authors.mock';

@@ -2,7 +2,8 @@ import { render, screen, within } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { provideRouter } from '@angular/router';
 import { RESPONSE_INIT } from '@angular/core';
-import { Observable, of, throwError } from 'rxjs';
+import type { Observable } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 import CollectionsPage from './collections.page';
 

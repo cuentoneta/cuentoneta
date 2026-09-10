@@ -1,4 +1,5 @@
-import { argsToTemplate, Meta, StoryObj } from '@storybook/angular-vite';
+import type { Meta, StoryObj } from '@storybook/angular-vite';
+import { argsToTemplate } from '@storybook/angular-vite';
 
 import { LiteraryWorksCardDeck } from './literary-works-card-deck';
 import { onoffLiteraryWorkNavigationTeasersWithAuthorsMock } from '@mocks/onoff-literary-work-teasers.mock';

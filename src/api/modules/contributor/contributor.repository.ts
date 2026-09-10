@@ -3,7 +3,8 @@ import { client } from '../../_helpers/sanity-connector';
 import { allContributorsQuery } from '@queries/contributor.query';
 
 // Interfaces
-import { Contributor, CONTRIBUTOR_AREA_LABELS } from '@models/contributor.model';
+import type { Contributor } from '@models/contributor.model';
+import { CONTRIBUTOR_AREA_LABELS } from '@models/contributor.model';
 
 /**
  * Obtiene todos los colaboradores ordenados alfabéticamente por nombre
