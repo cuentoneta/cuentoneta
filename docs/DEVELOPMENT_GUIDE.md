@@ -366,7 +366,7 @@ El proyecto utiliza [git](https://git-scm.com) como herramienta de control de ve
   _pull request_ desde tu _fork_ al repositorio principal, generando el fork tal como se detalla en la sección
   [Clonar el repositorio](#clonar-el-repositorio).
 - Las ramas de trabajo se nomenclan de la siguiente manera: `feat/<numero-de-incidencia>-<nombre-de-la-funcionalidad>`,
-  con el nombre en _kebab-case_. Por ejemplo: `feat/469-implementar-nuevo-componente-literary-work-card-teaser`. Si generás
+  con el nombre en _kebab-case_. Por ejemplo: `feat/469-implementar-nuevo-componente-literary-work-teaser-card`. Si generás
   la rama desde la incidencia en la interfaz de Github, tené en cuenta que el nombre que propone viene sin el prefijo
   `feat/`: hay que agregárselo antes de empezar a trabajar.
 - Todos los commits deben ser nomenclados de la siguiente manera, referenciando el commit de manera navegable desde

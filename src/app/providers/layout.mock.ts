@@ -1,7 +1,9 @@
 import { Service, signal, type WritableSignal } from '@angular/core';
-import { EMPTY, Observable } from 'rxjs';
-import { Viewport, compareViewports } from '@utils/screen.utils';
-import { Direction, LayoutService } from './layout.interface';
+import type { Observable } from 'rxjs';
+import { EMPTY } from 'rxjs';
+import type { Viewport } from '@utils/screen.utils';
+import { compareViewports } from '@utils/screen.utils';
+import type { Direction, LayoutService } from './layout.interface';
 
 /**
  * Doble de test de `LayoutService`: el viewport lo fija el test con `simulateViewport()`

@@ -3,17 +3,17 @@ import { NgTemplateOutlet } from '@angular/common';
 
 import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 import { CoverImageSkeletonComponent } from '../cover-image/cover-image-skeleton.component';
-import type { LiteraryWorkCardTeaserVariant } from './literary-work-card-teaser.component';
+import type { LiteraryWorkTeaserCardVariant } from './literary-work-teaser-card.component';
 
 /**
- * Estado de carga (esqueleto) de LiteraryWorkCardTeaserComponent. Replica la estructura de la tarjeta
+ * Estado de carga (esqueleto) de LiteraryWorkTeaserCardComponent. Replica la estructura de la tarjeta
  * con placeholders de cuentoneta-skeleton para evitar saltos de layout mientras la obra carga.
  *
  * Recibe los mismos flags de presentación que la tarjeta (variante, orden, autor, descripción,
  * multimedia y líneas del extracto) para que el esqueleto coincida con lo que se va a renderizar.
  */
 @Component({
-	selector: 'cuentoneta-literary-work-card-teaser-skeleton',
+	selector: 'cuentoneta-literary-work-teaser-card-skeleton',
 	imports: [SkeletonComponent, NgTemplateOutlet, CoverImageSkeletonComponent],
 	host: { class: 'block' },
 	template: `
@@ -56,9 +56,9 @@ import type { LiteraryWorkCardTeaserVariant } from './literary-work-card-teaser.
 		</ng-template>
 	`,
 })
-export class LiteraryWorkCardTeaserSkeletonComponent {
-	// Inputs (espejo de LiteraryWorkCardTeaserComponent)
-	public readonly variant = input<LiteraryWorkCardTeaserVariant>('on-white');
+export class LiteraryWorkTeaserCardSkeletonComponent {
+	// Inputs (espejo de LiteraryWorkTeaserCardComponent)
+	public readonly variant = input<LiteraryWorkTeaserCardVariant>('on-white');
 	public readonly order = input<number>();
 	public readonly showAuthor = input<boolean>(false);
 	public readonly showExcerpt = input<boolean>(false);

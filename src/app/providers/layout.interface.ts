@@ -1,6 +1,7 @@
-import { InjectionToken, Signal } from '@angular/core';
-import { Observable } from 'rxjs';
-import { Viewport } from '@utils/screen.utils';
+import type { Signal } from '@angular/core';
+import { InjectionToken } from '@angular/core';
+import type { Observable } from 'rxjs';
+import type { Viewport } from '@utils/screen.utils';
 
 export const Direction = Object.freeze({ Up: 'Up', Down: 'Down' } as const);
 export type Direction = (typeof Direction)[keyof typeof Direction];

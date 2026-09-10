@@ -1,4 +1,4 @@
-import { Resource } from '@models/resource.model';
+import type { Resource } from '@models/resource.model';
 
 export const resourceMock: Resource = {
 	title: 'Recurso original',

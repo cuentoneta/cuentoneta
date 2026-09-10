@@ -2,8 +2,8 @@ import { Component, input } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
-import { AuthorTeaser } from '@models/author.model';
-import { Tag } from '@models/tag.model';
+import type { AuthorTeaser } from '@models/author.model';
+import type { Tag } from '@models/tag.model';
 import { AppRoutes } from '../../app.routes';
 import { ImageProfileComponent } from '../image-profile/image-profile.component';
 import { TagsListComponent } from '../tags-list/tags-list.component';
@@ -19,7 +19,7 @@ import { TagComponent } from '../tag/tag.component';
  * sin inflar el nombre accesible del link. El avatar lo resuelve `ImageProfile` y los tags `TagsList`.
  */
 @Component({
-	selector: 'cuentoneta-author-card-teaser',
+	selector: 'cuentoneta-author-teaser-card',
 	imports: [NgOptimizedImage, RouterLink, ImageProfileComponent, TagsListComponent, TagComponent],
 	template: `
 		<article class="relative flex items-start gap-4" data-testid="author">
@@ -68,7 +68,7 @@ import { TagComponent } from '../tag/tag.component';
 		class: 'block',
 	},
 })
-export class AuthorCardTeaserComponent {
+export class AuthorTeaserCardComponent {
 	protected readonly appRoutes = AppRoutes;
 
 	// Inputs

@@ -1,8 +1,10 @@
-import { componentWrapperDecorator, Meta, moduleMetadata, StoryObj } from '@storybook/angular-vite';
+import type { Meta, StoryObj } from '@storybook/angular-vite';
+import { componentWrapperDecorator, moduleMetadata } from '@storybook/angular-vite';
 
 import { TagsListComponent } from './tags-list.component';
-import { TagComponent, TagVariant } from '../tag/tag.component';
-import { Tag } from '@models/tag.model';
+import type { TagVariant } from '../tag/tag.component';
+import { TagComponent } from '../tag/tag.component';
+import type { Tag } from '@models/tag.model';
 import { onoffTagsWithShortTitles } from '@mocks/onoff-tags.mock';
 
 type Args = TagsListComponent & { tags: Tag[]; variant: TagVariant; maxVisible?: number };
@@ -62,7 +64,7 @@ export const Default: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Con espacio de sobra, los 5 tags se muestran sin contador.</p><p><strong>Usos:</strong> <a href="./?path=/docs/componentes-v3-authorcardteaser--docs" target="_top"><strong>AuthorCardTeaser</strong></a>, en columnas anchas donde la fila de tags entra completa.</p>`,
+				story: `<p>Con espacio de sobra, los 5 tags se muestran sin contador.</p><p><strong>Usos:</strong> <a href="./?path=/docs/componentes-v3-authorteasercard--docs" target="_top"><strong>AuthorTeaserCard</strong></a>, en columnas anchas donde la fila de tags entra completa.</p>`,
 			},
 		},
 	},
@@ -75,7 +77,7 @@ export const WidthOverflow: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>En 240px no entran los 5 tags: los que sobran se colapsan tras un "+N" después del último visible.</p><p><strong>Usos:</strong> <a href="./?path=/docs/componentes-v3-authorcardteaser--docs" target="_top"><strong>AuthorCardTeaser</strong></a> en anchos intermedios.</p>`,
+				story: `<p>En 240px no entran los 5 tags: los que sobran se colapsan tras un "+N" después del último visible.</p><p><strong>Usos:</strong> <a href="./?path=/docs/componentes-v3-authorteasercard--docs" target="_top"><strong>AuthorTeaserCard</strong></a> en anchos intermedios.</p>`,
 			},
 		},
 	},
