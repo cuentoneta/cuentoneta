@@ -4,6 +4,13 @@ import { EditorialNoteComponent } from './editorial-note.component';
 import { attributedTextSelectArgType, corpusAttributedTexts } from '@mocks/onoff-corpus.storybook';
 import { onoffLiteraryWorkEpigraphsMock } from '@mocks/onoff-literary-works.mock';
 import { createAttributedText } from '@models/attributed-text.model';
+import { editorialNoteDocs } from './editorial-note.component.docs';
+import { docsMention } from '@testing/storybook-docs';
+import type { LiteraryWork } from '../../../sanity/types';
+
+// Los símbolos que la prosa de esta story nombra sin enlazar. La tupla no se usa en runtime:
+// existe para que el import type-only rompa el `typecheck` si alguno deja de estar declarado.
+export type DocsSymbols = [LiteraryWork];
 
 // Del canon: un epígrafe cualquiera trae texto y referencia; la variante sin atribución reusa su texto.
 const [noteWithReference] = onoffLiteraryWorkEpigraphsMock;
@@ -16,7 +23,7 @@ const meta: Meta<EditorialNoteComponent> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>Bloque de texto editorial del Design System v3 para el contenido de <strong>LiteraryWork</strong>, <strong>EditorialNote</strong>: recibe un <code>AttributedText</code> —un texto ya saneado por el backend con su atribución opcional— en el input <code>note</code>, y lo pinta con <code>[innerHTML]</code> con el estilo de la variante elegida (input <code>variant</code>).</p><ul><li><strong>note</strong> (default): tarjeta neutra con borde, pensada como nota editorial de la obra; rinde <code>&lt;aside&gt;</code>, porque comenta la obra desde afuera.</li><li><strong>highlight</strong>: callout con tinte de marca y barra de acento, para el epígrafe de una sección; rinde <code>&lt;blockquote&gt;</code>, porque cita a un tercero.</li></ul><p>El contenido y su referencia se emparejan dentro de una <code>&lt;figure&gt;</code>, con el pie como <code>&lt;figcaption&gt;</code> que cita la fuente en un <code>&lt;cite&gt;</code>. El pie (cuando existe) se conserva alineado a la derecha, en contraposición al diseño de Figma.</p></div>`,
+				component: `<div><p>Bloque de texto editorial del Design System v3 para el contenido de <strong>LiteraryWork</strong>, ${docsMention(editorialNoteDocs)}: recibe un <code>AttributedText</code> —un texto ya saneado por el backend con su atribución opcional— en el input <code>note</code>, y lo pinta con <code>[innerHTML]</code> con el estilo de la variante elegida (input <code>variant</code>).</p><ul><li><strong>note</strong> (default): tarjeta neutra con borde, pensada como nota editorial de la obra; rinde <code>&lt;aside&gt;</code>, porque comenta la obra desde afuera.</li><li><strong>highlight</strong>: callout con tinte de marca y barra de acento, para el epígrafe de una sección; rinde <code>&lt;blockquote&gt;</code>, porque cita a un tercero.</li></ul><p>El contenido y su referencia se emparejan dentro de una <code>&lt;figure&gt;</code>, con el pie como <code>&lt;figcaption&gt;</code> que cita la fuente en un <code>&lt;cite&gt;</code>. El pie (cuando existe) se conserva alineado a la derecha, en contraposición al diseño de Figma.</p></div>`,
 			},
 		},
 		layout: 'padded',

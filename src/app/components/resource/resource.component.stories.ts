@@ -3,6 +3,10 @@ import { ResourceComponent } from './resource.component';
 import { authorMock } from '@mocks/author.mock';
 import { resourceMock } from '@mocks/resource.mock';
 
+// Los símbolos que la prosa de esta story nombra sin enlazar. La tupla no se usa en runtime:
+// existe para que el import type-only rompa el `typecheck` si alguno deja de estar declarado.
+export type DocsSymbols = [ResourceComponent];
+
 const [wikipediaResource] = authorMock.resources;
 
 // El corpus solo trae tipos que el mapa de íconos conoce, así que el caso se deriva con un slug que no

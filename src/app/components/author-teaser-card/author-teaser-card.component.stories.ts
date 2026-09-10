@@ -4,6 +4,15 @@ import { AuthorTeaserCardComponent } from './author-teaser-card.component';
 import { AuthorTeaserCardSkeletonComponent } from './author-teaser-card-skeleton.component';
 import { authorTeaserMock } from '@mocks/author.mock';
 import { onoffTagsMock } from '@mocks/onoff-tags.mock';
+import { highlightedAuthorsDocs } from '../highlighted-authors/highlighted-authors.component.docs';
+import { imageProfileDocs } from '../image-profile/image-profile.component.docs';
+import { tagDocs } from '../tag/tag.component.docs';
+import { tagsListDocs } from '../tags-list/tags-list.component.docs';
+import { docsRef } from '@testing/storybook-docs';
+
+// Los símbolos que la prosa de esta story nombra sin enlazar. La tupla no se usa en runtime:
+// existe para que el import type-only rompa el `typecheck` si alguno deja de estar declarado.
+export type DocsSymbols = [AuthorTeaserCardComponent];
 
 const tags = onoffTagsMock.slice(0, 2);
 
@@ -19,7 +28,7 @@ const meta: Meta<AuthorTeaserCardComponent> = {
 				sourceState: 'shown',
 			},
 			description: {
-				component: `<div><p>El componente <strong>AuthorTeaserCardComponent</strong> muestra una vista previa de un autor enlazada a su perfil, según el Design System v3. Está pensado para listar y visualizar perfiles de autores, mostrando el avatar, los tags, el nombre con la bandera de nacionalidad y la cantidad de obras.</p><p>Se modela como un <code>&lt;article&gt;</code> con un único enlace real sobre el nombre del autor, estirado con un pseudo-elemento para que toda la tarjeta sea clickeable sin inflar el nombre accesible del link.</p><p>Se compone de <a href="./?path=/docs/componentes-v3-imageprofile--docs" target="_top"><strong>ImageProfile</strong></a> (avatar) y <a href="./?path=/docs/componentes-v3-tagslist--docs" target="_top"><strong>TagsList</strong></a> con instancias de <a href="./?path=/docs/componentes-v3-tag--docs" target="_top"><strong>Tag</strong></a> (etiquetas del autor).</p></div>`,
+				component: `<div><p>El componente <strong>AuthorTeaserCardComponent</strong> muestra una vista previa de un autor enlazada a su perfil, según el Design System v3. Está pensado para listar y visualizar perfiles de autores, mostrando el avatar, los tags, el nombre con la bandera de nacionalidad y la cantidad de obras.</p><p>Se modela como un <code>&lt;article&gt;</code> con un único enlace real sobre el nombre del autor, estirado con un pseudo-elemento para que toda la tarjeta sea clickeable sin inflar el nombre accesible del link.</p><p>Se compone de ${docsRef(imageProfileDocs)} (avatar) y ${docsRef(tagsListDocs)} con instancias de ${docsRef(tagDocs)} (etiquetas del autor).</p></div>`,
 			},
 		},
 		layout: 'padded',
@@ -53,7 +62,7 @@ export const Default: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Teaser completo del autor: avatar, fila de tags, nombre con bandera de nacionalidad y cantidad de obras. Toda la tarjeta es clickeable y navega al perfil del autor.</p><p><strong>Usos:</strong> la sección <a href="./?path=/docs/componentes-v3-highlightedauthors--docs" target="_top"><strong>HighlightedAuthors</strong></a> de la página de inicio, y el listado de autores.</p>`,
+				story: `<p>Teaser completo del autor: avatar, fila de tags, nombre con bandera de nacionalidad y cantidad de obras. Toda la tarjeta es clickeable y navega al perfil del autor.</p><p><strong>Usos:</strong> la sección ${docsRef(highlightedAuthorsDocs)} de la página de inicio, y el listado de autores.</p>`,
 			},
 		},
 	},
@@ -80,7 +89,7 @@ export const WithoutImage: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Autor sin imagen: el avatar cae al placeholder circular del Design System que resuelve <a href="./?path=/docs/componentes-v3-imageprofile--docs" target="_top"><strong>ImageProfile</strong></a>.</p><p><strong>Usos:</strong> Author List, para autores cuyo perfil todavía no tiene retrato cargado en el CMS.</p>`,
+				story: `<p>Autor sin imagen: el avatar cae al placeholder circular del Design System que resuelve ${docsRef(imageProfileDocs)}.</p><p><strong>Usos:</strong> Author List, para autores cuyo perfil todavía no tiene retrato cargado en el CMS.</p>`,
 			},
 		},
 	},

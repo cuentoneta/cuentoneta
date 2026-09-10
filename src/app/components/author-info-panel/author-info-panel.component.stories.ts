@@ -11,6 +11,15 @@ import {
 } from '@mocks/onoff-tags.mock';
 import { createMarkdown } from '@models/markdown.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
+import { imageProfileDocs } from '../image-profile/image-profile.component.docs';
+import { tagDocs } from '../tag/tag.component.docs';
+import { tagsListDocs } from '../tags-list/tags-list.component.docs';
+import { docsRef } from '@testing/storybook-docs';
+import type { AuthorInfoPanelSkeletonComponent } from '@components/author-info-panel/author-info-panel-skeleton.component';
+
+// Los símbolos que la prosa de esta story nombra sin enlazar. La tupla no se usa en runtime:
+// existe para que el import type-only rompa el `typecheck` si alguno deja de estar declarado.
+export type DocsSymbols = [AuthorInfoPanelComponent, AuthorInfoPanelSkeletonComponent];
 
 // El corpus trae una etiqueta por autor: sin varias, el recorte de TagsList no se puede mirar.
 const authorWithManyTags = {
@@ -36,7 +45,7 @@ const meta: Meta<AuthorInfoPanelComponent> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>El <strong>AuthorInfoPanelComponent</strong> del Design System v3 muestra el perfil de un autor en una columna: retrato, nombre, país, etiquetas y biografía.</p><p>Existe porque la página de autor monta ese mismo bloque en <strong>dos lugares</strong> —la barra lateral y el panel deslizable de la biografía—, y tenerlo escrito dos veces garantiza que diverjan. Las diferencias entre los dos montajes se expresan como inputs: el deslizable oculta el nombre, que su etiqueta accesible ya anuncia, y no recorta la biografía.</p><p>Se compone de <a href="./?path=/docs/componentes-v3-imageprofile--docs" target="_top"><strong>ImageProfile</strong></a> (el retrato, en tamaño <code>xl</code>), <a href="./?path=/docs/componentes-v3-tagslist--docs" target="_top"><strong>TagsList</strong></a> y <a href="./?path=/docs/componentes-v3-tag--docs" target="_top"><strong>Tag</strong></a> (etiquetas en variante <code>filled</code>).</p><p>El nombre se emite como encabezado de primer nivel: es el <code>h1</code> de la página de autor. Cuántas líneas se muestran de la biografía lo decide quien lo monta, porque depende del alto disponible en su columna; sin ese dato el panel no recorta. La biografía llega saneada desde el backend y se pinta como HTML. Sin autor, dibuja su propio esqueleto, <strong>AuthorInfoPanelSkeleton</strong>.</p></div>`,
+				component: `<div><p>El <strong>AuthorInfoPanelComponent</strong> del Design System v3 muestra el perfil de un autor en una columna: retrato, nombre, país, etiquetas y biografía.</p><p>Existe porque la página de autor monta ese mismo bloque en <strong>dos lugares</strong> —la barra lateral y el panel deslizable de la biografía—, y tenerlo escrito dos veces garantiza que diverjan. Las diferencias entre los dos montajes se expresan como inputs: el deslizable oculta el nombre, que su etiqueta accesible ya anuncia, y no recorta la biografía.</p><p>Se compone de ${docsRef(imageProfileDocs)} (el retrato, en tamaño <code>xl</code>), ${docsRef(tagsListDocs)} y ${docsRef(tagDocs)} (etiquetas en variante <code>filled</code>).</p><p>El nombre se emite como encabezado de primer nivel: es el <code>h1</code> de la página de autor. Cuántas líneas se muestran de la biografía lo decide quien lo monta, porque depende del alto disponible en su columna; sin ese dato el panel no recorta. La biografía llega saneada desde el backend y se pinta como HTML. Sin autor, dibuja su propio esqueleto, <strong>AuthorInfoPanelSkeletonComponent</strong>.</p></div>`,
 			},
 		},
 	},
@@ -138,7 +147,7 @@ export const VariasEtiquetas: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Con varias etiquetas se ve el recorte de <a href="./?path=/docs/componentes-v3-tagslist--docs" target="_top"><strong>TagsList</strong></a>: en esta columna angosta las que no entran se colapsan detrás de un contador. Es la única superficie donde ese comportamiento se puede mirar — depende de medidas reales y el entorno de tests no las computa.</p><p><strong>Usos:</strong> autores clasificados con más de una etiqueta.</p>`,
+				story: `<p>Con varias etiquetas se ve el recorte de ${docsRef(tagsListDocs)}: en esta columna angosta las que no entran se colapsan detrás de un contador. Es la única superficie donde ese comportamiento se puede mirar — depende de medidas reales y el entorno de tests no las computa.</p><p><strong>Usos:</strong> autores clasificados con más de una etiqueta.</p>`,
 			},
 		},
 	},

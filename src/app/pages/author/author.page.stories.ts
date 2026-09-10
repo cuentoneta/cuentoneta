@@ -16,6 +16,12 @@ import { provideLiteraryWorkApiMock } from '../../providers/literary-work.mock';
 import type { AuthorApi } from '../../providers/author.provider';
 import type { LiteraryWorkApi, LiteraryWorkTeaserFilter } from '../../providers/literary-work.provider';
 import AuthorPage from './author.page';
+import { authorPageDocs } from './author.page.docs';
+import { authorInfoPanelDocs } from '../../components/author-info-panel/author-info-panel.component.docs';
+import { drawerDocs } from '../../components/drawer/drawer.component.docs';
+import { literaryWorkTeaserCardDocs } from '../../components/literary-work-teaser-card/literary-work-teaser-card.component.docs';
+import { resourceDocs } from '../../components/resource/resource.component.docs';
+import { docsMention, docsRef } from '@testing/storybook-docs';
 
 const [literaryWork] = onoffLiteraryWorksMock;
 
@@ -90,7 +96,7 @@ const meta: Meta<AuthorPageArgs> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>La ficha de un autor, <strong>AuthorPage</strong>, montada sobre el corpus de Onoff. Como el resto de las entradas bajo <strong>Páginas</strong>, no cataloga un componente sino el ensamblado completo: las dos columnas, el listado de obras del autor y la columna de perfil con su acceso a la biografía entera.</p><p>El único control reproduce lo que la ruta le entrega: <code>slug</code>, qué autor se abre. Un slug que no existe cae en el estado de autor inexistente.</p><p>Se compone de <a href="./?path=/docs/componentes-v3-literaryworkteasercard--docs" target="_top"><strong>LiteraryWorkTeaserCard</strong></a> (el listado), <a href="./?path=/docs/componentes-v3-authorinfopanel--docs" target="_top"><strong>AuthorInfoPanel</strong></a> (la columna y el contenido del panel deslizable), <strong>Resource</strong> (los enlaces web) y <a href="./?path=/docs/componentes-v3-drawer--docs" target="_top"><strong>Drawer</strong></a>.</p><p>Dos cosas solo se ven acá, porque dependen de medidas reales: el acceso <strong>"Leer más"</strong> aparece únicamente si la biografía desborda su recorte de ocho líneas, y la columna de perfil acompaña el scroll del listado en lugar de irse con el flujo.</p><p>El encabezado fijo de la aplicación no se monta en el catálogo, así que el margen superior de la página se ve como espacio en blanco.</p></div>`,
+				component: `<div><p>La ficha de un autor, ${docsMention(authorPageDocs)}, montada sobre el corpus de Onoff. Como el resto de las entradas bajo <strong>Páginas</strong>, no cataloga un componente sino el ensamblado completo: las dos columnas, el listado de obras del autor y la columna de perfil con su acceso a la biografía entera.</p><p>El único control reproduce lo que la ruta le entrega: <code>slug</code>, qué autor se abre. Un slug que no existe cae en el estado de autor inexistente.</p><p>Se compone de ${docsRef(literaryWorkTeaserCardDocs)} (el listado), ${docsRef(authorInfoPanelDocs)} (la columna y el contenido del panel deslizable), ${docsMention(resourceDocs)} (los enlaces web) y ${docsRef(drawerDocs)}.</p><p>Dos cosas solo se ven acá, porque dependen de medidas reales: el acceso <strong>"Leer más"</strong> aparece únicamente si la biografía desborda su recorte de ocho líneas, y la columna de perfil acompaña el scroll del listado en lugar de irse con el flujo.</p><p>El encabezado fijo de la aplicación no se monta en el catálogo, así que el margen superior de la página se ve como espacio en blanco.</p></div>`,
 			},
 		},
 	},

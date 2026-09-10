@@ -4,6 +4,13 @@ import { NavigableCollectionTeaserComponent } from './navigable-collection-tease
 import { NavigableCollectionTeaserSkeletonComponent } from './navigable-collection-teaser-skeleton.component';
 import { onoffCollectionTeasersWithTagsMock } from '@mocks/onoff-collections.mock';
 import { createCollectionTeaser } from '@models/collection.model';
+import { imageProfileDocs } from '../image-profile/image-profile.component.docs';
+import { tagDocs } from '../tag/tag.component.docs';
+import { docsRef } from '@testing/storybook-docs';
+
+// Los símbolos que la prosa de esta story nombra sin enlazar. La tupla no se usa en runtime:
+// existe para que el import type-only rompa el `typecheck` si alguno deja de estar declarado.
+export type DocsSymbols = [NavigableCollectionTeaserComponent];
 
 // Con etiquetas, porque la story «Sin categoría» es el contracaso: vaciarlas solo muestra algo si el
 // punto de partida las traía.
@@ -16,7 +23,7 @@ const meta: Meta<NavigableCollectionTeaserComponent> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>El componente <strong>NavigableCollectionTeaserComponent</strong> es el item compacto y navegable de una colección (Design System v3): ícono de biblioteca, nombre, categoría y cantidad de obras. Pensado para listas como «Otras colecciones sugeridas» del sidebar de la página de una colección.</p><p>Se modela como un <code>&lt;article&gt;</code> con un único enlace real sobre el nombre, estirado con un pseudo-elemento para que toda la tarjeta sea clickeable sin inflar el nombre accesible del link.</p><p>Se compone de <a href="./?path=/docs/componentes-v3-imageprofile--docs" target="_top"><strong>ImageProfile</strong></a> (ícono de colección, variante <code>collection</code>) y <a href="./?path=/docs/componentes-v3-tag--docs" target="_top"><strong>Tag</strong></a> (categoría, variante <code>soft</code>).</p></div>`,
+				component: `<div><p>El componente <strong>NavigableCollectionTeaserComponent</strong> es el item compacto y navegable de una colección (Design System v3): ícono de biblioteca, nombre, categoría y cantidad de obras. Pensado para listas como «Otras colecciones sugeridas» del sidebar de la página de una colección.</p><p>Se modela como un <code>&lt;article&gt;</code> con un único enlace real sobre el nombre, estirado con un pseudo-elemento para que toda la tarjeta sea clickeable sin inflar el nombre accesible del link.</p><p>Se compone de ${docsRef(imageProfileDocs)} (ícono de colección, variante <code>collection</code>) y ${docsRef(tagDocs)} (categoría, variante <code>soft</code>).</p></div>`,
 			},
 		},
 		layout: 'padded',

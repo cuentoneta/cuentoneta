@@ -6,6 +6,9 @@ import { onoffCollectionTeasersMock } from '@mocks/onoff-collections.mock';
 import { absurdoTagMock, colaborativaTagMock, cuentoTagMock, surrealismoTagMock } from '@mocks/onoff-tags.mock';
 
 import { CollectionFiltersComponent } from './collection-filters.component';
+import { collectionFiltersDocs } from './collection-filters.component.docs';
+import { collectionsPageDocs } from '../../pages/collections/collections.page.docs';
+import { docsMention, docsRef } from '@testing/storybook-docs';
 
 // El corpus no reparte sus etiquetas de forma que se vean conteos distintos entre facetas, así que
 // las colecciones se derivan del canon con la combinación que hace falta mirar.
@@ -41,7 +44,7 @@ const meta: Meta<CollectionFiltersComponent> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>La columna de filtros del catálogo, <strong>CollectionFilters</strong>. Cuenta las etiquetas de las colecciones que recibe y ofrece una faceta por cada una, con cuántas la llevan.</p><p>No decide nada sobre el filtrado: avisa qué etiqueta se tocó y quién lo consume resuelve qué hacer. La selección entra como dato, así que el panel nunca discrepa de lo que la página está mostrando.</p><p>Recibe las colecciones <strong>a la vista</strong>, no el catálogo entero: de ahí que al elegir una etiqueta las demás bajen su número y las que no conviven con ella desaparezcan. Como toda faceta ofrecida tiene al menos una colección detrás, no hay forma de vaciar el listado eligiendo filtros.</p><p>Los chips de lo elegido salen de las mismas facetas, y lo único que resuelve por su cuenta es si el grupo está plegado.</p><p>Se usa en <a href="./?path=/docs/páginas-collectionspage--docs" target="_top"><strong>CollectionsPage</strong></a>.</p></div>`,
+				component: `<div><p>La columna de filtros del catálogo, ${docsMention(collectionFiltersDocs)}. Cuenta las etiquetas de las colecciones que recibe y ofrece una faceta por cada una, con cuántas la llevan.</p><p>No decide nada sobre el filtrado: avisa qué etiqueta se tocó y quién lo consume resuelve qué hacer. La selección entra como dato, así que el panel nunca discrepa de lo que la página está mostrando.</p><p>Recibe las colecciones <strong>a la vista</strong>, no el catálogo entero: de ahí que al elegir una etiqueta las demás bajen su número y las que no conviven con ella desaparezcan. Como toda faceta ofrecida tiene al menos una colección detrás, no hay forma de vaciar el listado eligiendo filtros.</p><p>Los chips de lo elegido salen de las mismas facetas, y lo único que resuelve por su cuenta es si el grupo está plegado.</p><p>Se usa en ${docsRef(collectionsPageDocs)}.</p></div>`,
 			},
 		},
 	},

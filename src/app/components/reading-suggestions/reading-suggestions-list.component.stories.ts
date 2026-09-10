@@ -3,6 +3,21 @@ import { Meta, StoryObj } from '@storybook/angular-vite';
 import { ReadingSuggestionsListComponent } from './reading-suggestions-list.component';
 import { corpusLiteraryWorkTeasers } from '@mocks/onoff-corpus.storybook';
 import type { NavigationContext } from '@app-utils/navigation-params';
+import { buttonDocs } from '../button/button.component.docs';
+import { dividerDocs } from '../divider/divider.component.docs';
+import { literaryWorkTeaserCardDocs } from '../literary-work-teaser-card/literary-work-teaser-card.component.docs';
+import { docsRef } from '@testing/storybook-docs';
+import type { AuthorReadingSuggestionsComponent } from '@components/reading-suggestions/author-reading-suggestions.component';
+import type { CollectionReadingSuggestionsComponent } from '@components/reading-suggestions/collection-reading-suggestions.component';
+import type { ReadingSuggestionsComponent } from '@components/reading-suggestions/reading-suggestions.component';
+
+// Los símbolos que la prosa de esta story nombra sin enlazar. La tupla no se usa en runtime:
+// existe para que el import type-only rompa el `typecheck` si alguno deja de estar declarado.
+export type DocsSymbols = [
+	AuthorReadingSuggestionsComponent,
+	CollectionReadingSuggestionsComponent,
+	ReadingSuggestionsComponent,
+];
 
 const meta: Meta<ReadingSuggestionsListComponent> = {
 	component: ReadingSuggestionsListComponent,
@@ -11,7 +26,7 @@ const meta: Meta<ReadingSuggestionsListComponent> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>Bloque de sugerencias de lectura que cierra la lectura de una obra: un encabezado, una tríada de obras sugeridas y un acceso al listado completo. Reemplaza al rail lateral de navegación, cambiando la navegación in-situ por una invitación a seguir leyendo.</p><p>Es presentacional puro: recibe las obras ya resueltas mediante el input <code>teasers</code> y no conoce ningún provider. Quienes las consiguen son los envoltorios conectados <strong>AuthorReadingSuggestions</strong> (más obras del mismo autor) y <strong>CollectionReadingSuggestions</strong> (más obras de la misma colección), que elige <strong>ReadingSuggestions</strong> según el contexto de navegación. Esos tres no tienen catálogo propio: delegan acá toda su vista, así que lo que hay para evaluar visualmente se ve en esta story.</p><p>Cada sugerencia se renderiza con <a href="./?path=/docs/componentes-v3-literaryworkteasercard--docs" target="_top"><strong>LiteraryWorkTeaserCard</strong></a> en su variante <code>OnGray</code>, separadas por <a href="./?path=/docs/componentes-v3-divider--docs" target="_top"><strong>Divider</strong></a> en su forma decorativa —la lista ya delimita sus ítems, así que la línea no se anuncia además como separador—; el acceso al listado usa <a href="./?path=/docs/componentes-v3-button--docs" target="_top"><strong>Button</strong></a> en su variante <code>Outline</code>. Los controles <code>navigation</code> y <code>navigationSlug</code> son los query params que cada tarjeta arrastra a la obra destino: al cambiarlos se ve cómo se reescribe el <code>href</code> de cada enlace.</p></div>`,
+				component: `<div><p>Bloque de sugerencias de lectura que cierra la lectura de una obra: un encabezado, una tríada de obras sugeridas y un acceso al listado completo. Reemplaza al rail lateral de navegación, cambiando la navegación in-situ por una invitación a seguir leyendo.</p><p>Es presentacional puro: recibe las obras ya resueltas mediante el input <code>teasers</code> y no conoce ningún provider. Quienes las consiguen son los envoltorios conectados <strong>AuthorReadingSuggestionsComponent</strong> (más obras del mismo autor) y <strong>CollectionReadingSuggestionsComponent</strong> (más obras de la misma colección), que elige <strong>ReadingSuggestionsComponent</strong> según el contexto de navegación. Esos tres no tienen catálogo propio: delegan acá toda su vista, así que lo que hay para evaluar visualmente se ve en esta story.</p><p>Cada sugerencia se renderiza con ${docsRef(literaryWorkTeaserCardDocs)} en su variante <code>OnGray</code>, separadas por ${docsRef(dividerDocs)} en su forma decorativa —la lista ya delimita sus ítems, así que la línea no se anuncia además como separador—; el acceso al listado usa ${docsRef(buttonDocs)} en su variante <code>Outline</code>. Los controles <code>navigation</code> y <code>navigationSlug</code> son los query params que cada tarjeta arrastra a la obra destino: al cambiarlos se ve cómo se reescribe el <code>href</code> de cada enlace.</p></div>`,
 			},
 		},
 		layout: 'padded',

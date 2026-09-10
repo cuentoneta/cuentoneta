@@ -4,6 +4,12 @@ import { CarouselComponent } from './carousel.component';
 import { CarouselSkeletonComponent } from './carousel-skeleton.component';
 import { contentCampaignMock } from '@mocks/content-campaign.mock';
 import { ContentCampaign } from '@models/content-campaign.model';
+import type { CarouselControlsComponent } from '@components/carousel/carousel-controls.component';
+import type { CarouselIndicatorComponent } from '@components/carousel/carousel-indicator.component';
+
+// Los símbolos que la prosa de esta story nombra sin enlazar. La tupla no se usa en runtime:
+// existe para que el import type-only rompa el `typecheck` si alguno deja de estar declarado.
+export type DocsSymbols = [CarouselComponent, CarouselControlsComponent, CarouselIndicatorComponent];
 
 const meta: Meta<CarouselComponent> = {
 	component: CarouselComponent,
@@ -24,7 +30,7 @@ const meta: Meta<CarouselComponent> = {
 				sourceState: 'shown',
 			},
 			description: {
-				component: `<div><p>El componente <strong>CarouselComponent</strong> es un carousel de contenido interactivo que muestra campañas de contenido destacado con navegación automática y manual. Compone <strong>CarouselIndicator</strong> (indicadores de progreso clickeables) y <strong>CarouselControls</strong> (controles de navegación, solo en desktop).</p><p><strong>Características:</strong> reproducción automática con pausa al hacer hover o durante interacción táctil; navegación por gestos táctiles (swipe) y por teclado (flechas ← →); indicadores de progreso clickeables; controles de navegación solo en desktop; imágenes responsive (mobile/desktop); respeta <code>prefers-reduced-motion</code>.</p><p><strong>Accesibilidad:</strong> atributos ARIA completos para lectores de pantalla, navegación por teclado y focus visible.</p></div>`,
+				component: `<div><p>El componente <strong>CarouselComponent</strong> es un carousel de contenido interactivo que muestra campañas de contenido destacado con navegación automática y manual. Compone <strong>CarouselIndicatorComponent</strong> (indicadores de progreso clickeables) y <strong>CarouselControlsComponent</strong> (controles de navegación, solo en desktop).</p><p><strong>Características:</strong> reproducción automática con pausa al hacer hover o durante interacción táctil; navegación por gestos táctiles (swipe) y por teclado (flechas ← →); indicadores de progreso clickeables; controles de navegación solo en desktop; imágenes responsive (mobile/desktop); respeta <code>prefers-reduced-motion</code>.</p><p><strong>Accesibilidad:</strong> atributos ARIA completos para lectores de pantalla, navegación por teclado y focus visible.</p></div>`,
 			},
 		},
 		layout: 'padded',

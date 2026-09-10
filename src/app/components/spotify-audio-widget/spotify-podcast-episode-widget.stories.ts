@@ -1,6 +1,12 @@
 import { Meta, StoryObj } from '@storybook/angular-vite';
 import { SpotifyPodcastEpisodeWidget } from './spotify-podcast-episode-widget';
 import { onoffSpotifyPodcastEpisodesMock } from '@mocks/onoff-media.mock';
+import { mediaWidgetSelectorDocs } from '../media-widget-selector/media-widget-selector.component.docs';
+import { docsRef } from '@testing/storybook-docs';
+
+// Los símbolos que la prosa de esta story nombra sin enlazar. La tupla no se usa en runtime:
+// existe para que el import type-only rompa el `typecheck` si alguno deja de estar declarado.
+export type DocsSymbols = [SpotifyPodcastEpisodeWidget];
 
 const meta: Meta<SpotifyPodcastEpisodeWidget> = {
 	title: 'Widgets/SpotifyPodcastEpisode',
@@ -11,7 +17,7 @@ const meta: Meta<SpotifyPodcastEpisodeWidget> = {
 				sourceState: 'shown',
 			},
 			description: {
-				component: `<div><p>El componente <strong>SpotifyPodcastEpisodeWidget</strong> muestra un episodio de podcast de Spotify asociado a una obra: el embed y la descripción del recurso.</p><p>La descripción llega desde el backend como HTML ya saneado (<code>SanitizedHtml</code>, derivado del Markdown que carga el CMS) y se pinta con <code>[innerHTML]</code> dentro de un <code>&lt;div&gt;</code>, porque el HTML que produce el pipeline ya trae su propio <code>&lt;p&gt;</code>.</p><p>Quien monta este widget es <a href="./?path=/docs/componentes-v3-mediawidgetselector--docs" target="_top"><strong>MediaWidgetSelector</strong></a>, que lo resuelve contra el registry de medios según el tipo de media y le delega toda la vista.</p></div>`,
+				component: `<div><p>El componente <strong>SpotifyPodcastEpisodeWidget</strong> muestra un episodio de podcast de Spotify asociado a una obra: el embed y la descripción del recurso.</p><p>La descripción llega desde el backend como HTML ya saneado (<code>SanitizedHtml</code>, derivado del Markdown que carga el CMS) y se pinta con <code>[innerHTML]</code> dentro de un <code>&lt;div&gt;</code>, porque el HTML que produce el pipeline ya trae su propio <code>&lt;p&gt;</code>.</p><p>Quien monta este widget es ${docsRef(mediaWidgetSelectorDocs)}, que lo resuelve contra el registry de medios según el tipo de media y le delega toda la vista.</p></div>`,
 			},
 		},
 	},

@@ -11,6 +11,10 @@ import {
 import { provideLiteraryWorkApiMock } from '../../providers/literary-work.mock';
 import type { LiteraryWorkApi } from '../../providers/literary-work.provider';
 import LiteraryWorksPage from './literary-works.page';
+import { literaryWorksPageDocs } from './literary-works.page.docs';
+import { literaryWorkPageDocs } from '../literary-work/literary-work.page.docs';
+import { skeletonDocs } from '../../components/skeleton/skeleton.component.docs';
+import { docsMention, docsRef } from '@testing/storybook-docs';
 
 // Ninguna obra del canon declara multimedia, así que el catálogo enriquecido es el único escenario
 // donde los selectores de formato de las tarjetas tienen algo que dibujar.
@@ -62,7 +66,7 @@ const meta: Meta<LiteraryWorksPageArgs> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>El catálogo de obras, <strong>LiteraryWorksPage</strong>, montado sobre el corpus de Onoff. Como el resto de las entradas bajo <strong>Páginas</strong>, no cataloga un componente sino el ensamblado completo: el encabezado con el conteo y la tabla de obras, con su título enlazado a la lectura, su autoría enlazada al perfil y su tiempo de lectura.</p><p>El único control elige el escenario del catálogo, que es lo único que mueve la página desde afuera: no recibe parámetros de ruta ni tiene estado propio.</p><p>La tabla es la misma que sirve hoy el listado que este catálogo reemplaza: se conserva a propósito, porque el rediseño de esta pantalla todavía no existe. Los títulos enlazan a <a href="./?path=/docs/páginas-literaryworkpage--docs" target="_top"><strong>LiteraryWorkPage</strong></a>. La única pieza del sistema de diseño que monta es <a href="./?path=/docs/componentes-v3-skeleton--docs" target="_top"><strong>Skeleton</strong></a>, en las filas de carga.</p><p>El orden no es el que entrega el backend: se resuelve en la página con colación en español, porque la base compara por punto de código y mandaría al final del catálogo todo título que empiece con acento o eñe.</p><p>El encabezado fijo de la aplicación no se monta en el catálogo, así que el margen superior de la página se ve como espacio en blanco.</p></div>`,
+				component: `<div><p>El catálogo de obras, ${docsMention(literaryWorksPageDocs)}, montado sobre el corpus de Onoff. Como el resto de las entradas bajo <strong>Páginas</strong>, no cataloga un componente sino el ensamblado completo: el encabezado con el conteo y la tabla de obras, con su título enlazado a la lectura, su autoría enlazada al perfil y su tiempo de lectura.</p><p>El único control elige el escenario del catálogo, que es lo único que mueve la página desde afuera: no recibe parámetros de ruta ni tiene estado propio.</p><p>La tabla es la misma que sirve hoy el listado que este catálogo reemplaza: se conserva a propósito, porque el rediseño de esta pantalla todavía no existe. Los títulos enlazan a ${docsRef(literaryWorkPageDocs)}. La única pieza del sistema de diseño que monta es ${docsRef(skeletonDocs)}, en las filas de carga.</p><p>El orden no es el que entrega el backend: se resuelve en la página con colación en español, porque la base compara por punto de código y mandaría al final del catálogo todo título que empiece con acento o eñe.</p><p>El encabezado fijo de la aplicación no se monta en el catálogo, así que el margen superior de la página se ve como espacio en blanco.</p></div>`,
 			},
 		},
 	},

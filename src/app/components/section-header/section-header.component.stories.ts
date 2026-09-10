@@ -1,6 +1,9 @@
 import { argsToTemplate, Meta, StoryObj } from '@storybook/angular-vite';
 
 import { SectionHeaderComponent } from './section-header.component';
+import { sectionHeaderDocs } from './section-header.component.docs';
+import { buttonDocs } from '../button/button.component.docs';
+import { docsMention, docsRef } from '@testing/storybook-docs';
 
 const meta: Meta<SectionHeaderComponent> = {
 	component: SectionHeaderComponent,
@@ -9,7 +12,7 @@ const meta: Meta<SectionHeaderComponent> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>El <strong>SectionHeader</strong> es el encabezado que abre cada sección de la página de inicio en el Design System v3: título de nivel 2, bajada opcional y una acción opcional hacia el índice completo de la sección, resuelta por <a href="./?path=/docs/componentes-v3-button--docs" target="_top"><strong>Button</strong></a> en su variante <code>outline</code>.</p><p>El texto visible de la acción es siempre "Ver todo" y no se parametriza: el diseño lo repite idéntico en todas las secciones, y abrirlo solo habilitaría que las copias diverjan. Lo que sí recibe de cada consumidor es el nombre accesible, porque cuatro enlaces llamados "Ver todo" no distinguen destinos para quien navega por la lista de enlaces. Omitir el destino deja el encabezado sin enlace alguno.</p></div>`,
+				component: `<div><p>El ${docsMention(sectionHeaderDocs)} es el encabezado que abre cada sección de la página de inicio en el Design System v3: título de nivel 2, bajada opcional y una acción opcional hacia el índice completo de la sección, resuelta por ${docsRef(buttonDocs)} en su variante <code>outline</code>.</p><p>El texto visible de la acción es siempre "Ver todo" y no se parametriza: el diseño lo repite idéntico en todas las secciones, y abrirlo solo habilitaría que las copias diverjan. Lo que sí recibe de cada consumidor es el nombre accesible, porque cuatro enlaces llamados "Ver todo" no distinguen destinos para quien navega por la lista de enlaces. Omitir el destino deja el encabezado sin enlace alguno.</p></div>`,
 			},
 		},
 	},

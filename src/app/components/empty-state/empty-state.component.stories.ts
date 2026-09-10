@@ -1,6 +1,8 @@
 import { argsToTemplate, Meta, StoryObj } from '@storybook/angular-vite';
 
 import { EmptyStateComponent } from './empty-state.component';
+import { emptyStateDocs } from './empty-state.component.docs';
+import { docsMention } from '@testing/storybook-docs';
 
 const meta: Meta<EmptyStateComponent> = {
 	component: EmptyStateComponent,
@@ -9,7 +11,7 @@ const meta: Meta<EmptyStateComponent> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>El <strong>EmptyState</strong> avisa que una sección no tiene nada que mostrar. Ocupa el lugar de la grilla, con el mismo ancho que ella, para que la sección no quede en blanco debajo de su encabezado.</p><p>Solo recibe el mensaje: sin ícono ni acción, porque todavía no hay un caso que los pida. El texto no se anuncia como alerta ni como estado — es texto de la página, que se lee en su lugar y no interrumpe.</p></div>`,
+				component: `<div><p>El ${docsMention(emptyStateDocs)} avisa que una sección no tiene nada que mostrar. Ocupa el lugar de la grilla, con el mismo ancho que ella, para que la sección no quede en blanco debajo de su encabezado.</p><p>Solo recibe el mensaje: sin ícono ni acción, porque todavía no hay un caso que los pida. El texto no se anuncia como alerta ni como estado — es texto de la página, que se lee en su lugar y no interrumpe.</p></div>`,
 			},
 		},
 	},

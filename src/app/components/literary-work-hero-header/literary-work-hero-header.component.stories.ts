@@ -3,6 +3,10 @@ import { argsToTemplate, Meta, StoryObj } from '@storybook/angular-vite';
 import { LiteraryWorkHeroHeaderComponent } from './literary-work-hero-header.component';
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 import { literaryWorkSelectArgType } from '@mocks/onoff-corpus.storybook';
+import { coverImageDocs } from '../cover-image/cover-image.component.docs';
+import { imageProfileDocs } from '../image-profile/image-profile.component.docs';
+import { tagsListDocs } from '../tags-list/tags-list.component.docs';
+import { docsRef } from '@testing/storybook-docs';
 
 // Obra representativa del canon para las stories que solo necesitan una cualquiera.
 const [literaryWorkMock] = onoffLiteraryWorksMock;
@@ -15,7 +19,7 @@ const meta: Meta<LiteraryWorkHeroHeaderComponent> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>Banda superior (hero) de la página de una obra. Usa la misma portada de la obra como fondo difuminado con una capa de opacidad y, en primer plano, presenta la portada nítida, los tags, el autor, el título y la colección/año de publicación originales.</p><p>El fondo no es otra imagen: es la misma <code>coverImage</code> pedida al CDN en una talla mayor (1920px de ancho) para cubrir el ancho completo del hero.</p><p>Recibe la <code>LiteraryWork</code> completa como único input; cuando no se provee, renderiza su propio estado de carga (skeleton).</p><p>Se compone de <a href="./?path=/docs/componentes-v3-coverimage--docs" target="_top"><strong>CoverImage</strong></a> (portada en primer plano), <a href="./?path=/docs/componentes-v3-tagslist--docs" target="_top"><strong>TagsList</strong></a> (tags de la obra, variante <code>gray</code>) e <a href="./?path=/docs/componentes-v3-imageprofile--docs" target="_top"><strong>ImageProfile</strong></a> (avatar del autor).</p></div>`,
+				component: `<div><p>Banda superior (hero) de la página de una obra. Usa la misma portada de la obra como fondo difuminado con una capa de opacidad y, en primer plano, presenta la portada nítida, los tags, el autor, el título y la colección/año de publicación originales.</p><p>El fondo no es otra imagen: es la misma <code>coverImage</code> pedida al CDN en una talla mayor (1920px de ancho) para cubrir el ancho completo del hero.</p><p>Recibe la <code>LiteraryWork</code> completa como único input; cuando no se provee, renderiza su propio estado de carga (skeleton).</p><p>Se compone de ${docsRef(coverImageDocs)} (portada en primer plano), ${docsRef(tagsListDocs)} (tags de la obra, variante <code>gray</code>) e ${docsRef(imageProfileDocs)} (avatar del autor).</p></div>`,
 			},
 		},
 		layout: 'fullscreen',
