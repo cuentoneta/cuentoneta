@@ -11,18 +11,22 @@ export type EditorialNoteVariant = 'note' | 'highlight';
 		@if (variant() === 'highlight') {
 			<div class="w-1 self-stretch rounded-full bg-brand-400" data-testid="accent-bar"></div>
 		}
-		<figure [class]="bodyClasses()" data-testid="body">
-			@if (variant() === 'highlight') {
-				<blockquote [innerHTML]="safeContent()" data-testid="content"></blockquote>
-			} @else {
-				<aside [innerHTML]="safeContent()" [attr.aria-label]="label()" data-testid="content"></aside>
-			}
-			@if (safeReference(); as reference) {
-				<figcaption class="text-end italic" data-testid="reference">
-					<cite [innerHTML]="reference" data-testid="reference-source"></cite>
-				</figcaption>
-			}
-		</figure>
+		<!-- contents deja al figure como ítem flex del host: el wrapper existe solo para colgar el
+		     data-nosnippet, que Google solo reconoce en div/span/section. -->
+		<div class="contents" data-nosnippet data-testid="snippet-exclusion">
+			<figure [class]="bodyClasses()" data-testid="body">
+				@if (variant() === 'highlight') {
+					<blockquote [innerHTML]="safeContent()" data-testid="content"></blockquote>
+				} @else {
+					<aside [innerHTML]="safeContent()" [attr.aria-label]="label()" data-testid="content"></aside>
+				}
+				@if (safeReference(); as reference) {
+					<figcaption class="text-end italic" data-testid="reference">
+						<cite [innerHTML]="reference" data-testid="reference-source"></cite>
+					</figcaption>
+				}
+			</figure>
+		</div>
 	`,
 	host: {
 		'[class]': 'hostClasses()',
