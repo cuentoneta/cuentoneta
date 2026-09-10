@@ -58,6 +58,10 @@ const LITERARY_WORK_EXPORTS: Record<string, string> = {
 const COLLECTION_EXPORTS: Record<string, string> = {
 	'geometrias-del-desvelo': 'geometriasDelDesveloRawCollection',
 	'inventario-de-las-pasiones': 'inventarioDeLasPasionesRawCollection',
+	'ambar-y-ceniza': 'ambarYCenizaRawCollection',
+	'cuadernos-del-meridien': 'cuadernosDelMeridienRawCollection',
+	'bitacora-del-insomnio': 'bitacoraDelInsomnioRawCollection',
+	'reyes-de-utileria': 'reyesDeUtileriaRawCollection',
 };
 
 function queryNamed(queries: Record<string, string>, name: string): string {

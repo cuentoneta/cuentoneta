@@ -1,16 +1,59 @@
 // Este archivo lo escribe `pnpm corpus:generate` evaluando la query GROQ real sobre los documentos del
 // corpus. No se edita a mano: cualquier cambio se pierde en la próxima corrida.
 import type { CollectionsQueryResult } from '@sanity-types';
-import { colaborativaRawTag } from '../../onoff-raw-tags.mock';
+import {
+	colaborativaRawTag,
+	dramaHistoricoRawTag,
+	ensayoRawTag,
+	metaficcionRawTag,
+	teatroRawTag,
+	tragediaRawTag,
+} from '../../onoff-raw-tags.mock';
 import {
 	geometriasDelDesveloSpaceDescription,
 	geometriasDelDesveloSpotifyDescription,
 	geometriasDelDesveloYoutubeDescription,
 } from '../media/geometrias-del-desvelo.media';
+import ambarYCenizaCollectionMd from './ambar-y-ceniza.collection.md?raw';
+import bitacoraDelInsomnioCollectionMd from './bitacora-del-insomnio.collection.md?raw';
+import cuadernosDelMeridienCollectionMd from './cuadernos-del-meridien.collection.md?raw';
 import geometriasDelDesveloCollectionMd from './geometrias-del-desvelo.collection.md?raw';
 import inventarioDeLasPasionesCollectionMd from './inventario-de-las-pasiones.collection.md?raw';
+import reyesDeUtileriaCollectionMd from './reyes-de-utileria.collection.md?raw';
 
 export const onoffRawCollectionTeasersMock: CollectionsQueryResult = [
+	{
+		_id: 'onoff-collection-bitacora-del-insomnio',
+		slug: 'bitacora-del-insomnio',
+		title: 'Bitácora del insomnio',
+		description: bitacoraDelInsomnioCollectionMd,
+		featuredImage: null,
+		config: { showAuthors: false },
+		tags: [],
+		mediaSources: [],
+		count: 3,
+		literaryWorkCoverImages: [
+			{ _type: 'image', asset: { _type: 'reference', _ref: 'image-geometriaCover-236x328-png' } },
+			{ _type: 'image', asset: { _type: 'reference', _ref: 'image-elOdioCover-236x328-png' } },
+			{ _type: 'image', asset: { _type: 'reference', _ref: 'image-elPalacioDeLasNueveFronterasCover-236x328-png' } },
+		],
+	},
+	{
+		_id: 'onoff-collection-cuadernos-del-meridien',
+		slug: 'cuadernos-del-meridien',
+		title: 'Cuadernos del Méridien: los años de taller y las obras corregidas a posteriori',
+		description: cuadernosDelMeridienCollectionMd,
+		featuredImage: null,
+		config: { showAuthors: true },
+		tags: [colaborativaRawTag, ensayoRawTag, metaficcionRawTag],
+		mediaSources: [],
+		count: 3,
+		literaryWorkCoverImages: [
+			{ _type: 'image', asset: { _type: 'reference', _ref: 'image-elPalacioDeLasNueveFronterasCover-236x328-png' } },
+			{ _type: 'image', asset: { _type: 'reference', _ref: 'image-elTratadoDeLosPlaceresCover-236x328-png' } },
+			{ _type: 'image', asset: { _type: 'reference', _ref: 'image-lasEscalerasCover-236x328-png' } },
+		],
+	},
 	{
 		_id: 'onoff-collection-inventario-de-las-pasiones',
 		slug: 'inventario-de-las-pasiones',
@@ -71,6 +114,38 @@ export const onoffRawCollectionTeasersMock: CollectionsQueryResult = [
 			{ _type: 'image', asset: { _type: 'reference', _ref: 'image-geometriaCover-236x328-png' } },
 			{ _type: 'image', asset: { _type: 'reference', _ref: 'image-losPeldanosCover-236x328-png' } },
 			{ _type: 'image', asset: { _type: 'reference', _ref: 'image-lasEscalerasCover-236x328-png' } },
+		],
+	},
+	{
+		_id: 'onoff-collection-reyes-de-utileria',
+		slug: 'reyes-de-utileria',
+		title: 'Reyes de utilería',
+		description: reyesDeUtileriaCollectionMd,
+		featuredImage: null,
+		config: { showAuthors: true },
+		tags: [teatroRawTag, tragediaRawTag],
+		mediaSources: [],
+		count: 3,
+		literaryWorkCoverImages: [
+			{ _type: 'image', asset: { _type: 'reference', _ref: 'image-neronCover-236x328-png' } },
+			{ _type: 'image', asset: { _type: 'reference', _ref: 'image-elPalacioDeLasNueveFronterasCover-236x328-png' } },
+			{ _type: 'image', asset: { _type: 'reference', _ref: 'image-losPeldanosCover-236x328-png' } },
+		],
+	},
+	{
+		_id: 'onoff-collection-ambar-y-ceniza',
+		slug: 'ambar-y-ceniza',
+		title: 'Ámbar y ceniza',
+		description: ambarYCenizaCollectionMd,
+		featuredImage: null,
+		config: { showAuthors: false },
+		tags: [tragediaRawTag, dramaHistoricoRawTag],
+		mediaSources: [],
+		count: 3,
+		literaryWorkCoverImages: [
+			{ _type: 'image', asset: { _type: 'reference', _ref: 'image-lasDosAntorchasCover-236x328-png' } },
+			{ _type: 'image', asset: { _type: 'reference', _ref: 'image-neronCover-236x328-png' } },
+			{ _type: 'image', asset: { _type: 'reference', _ref: 'image-elOdioCover-236x328-png' } },
 		],
 	},
 ];

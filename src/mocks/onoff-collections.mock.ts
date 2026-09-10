@@ -2,14 +2,22 @@ import { createCollectionTeaser, type Collection, type CollectionTeaser } from '
 
 // Import permitido: la restricción de ruta exime a `src/mocks/**`.
 import {
+	ambarYCenizaCollectionMock,
+	bitacoraDelInsomnioCollectionMock,
+	cuadernosDelMeridienCollectionMock,
 	geometriasDelDesveloCollectionMock,
 	inventarioDeLasPasionesCollectionMock,
+	reyesDeUtileriaCollectionMock,
 	toTeaser,
 } from './onoff/collection/collections.mock';
 
 export const onoffCollectionsMock: Collection[] = [
 	geometriasDelDesveloCollectionMock,
 	inventarioDeLasPasionesCollectionMock,
+	ambarYCenizaCollectionMock,
+	cuadernosDelMeridienCollectionMock,
+	bitacoraDelInsomnioCollectionMock,
+	reyesDeUtileriaCollectionMock,
 ];
 
 // Selectores por capacidad: un consumidor que necesita una rama concreta de `imagery` la pide por lo

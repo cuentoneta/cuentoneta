@@ -1,14 +1,22 @@
 import type { CollectionBySlugQueryResult, CollectionsQueryResult } from '@sanity-types';
 
+import { ambarYCenizaRawCollection } from './onoff/collection/ambar-y-ceniza.collection.raw.mock';
+import { bitacoraDelInsomnioRawCollection } from './onoff/collection/bitacora-del-insomnio.collection.raw.mock';
 import { onoffRawCollectionTeasersMock as generatedTeasers } from './onoff/collection/collection-teasers.raw.mock';
+import { cuadernosDelMeridienRawCollection } from './onoff/collection/cuadernos-del-meridien.collection.raw.mock';
 import { geometriasDelDesveloRawCollection } from './onoff/collection/geometrias-del-desvelo.collection.raw.mock';
 import { inventarioDeLasPasionesRawCollection } from './onoff/collection/inventario-de-las-pasiones.collection.raw.mock';
+import { reyesDeUtileriaRawCollection } from './onoff/collection/reyes-de-utileria.collection.raw.mock';
 
 type RawCollection = NonNullable<CollectionBySlugQueryResult>;
 
 export const onoffRawCollectionsMock: RawCollection[] = [
 	geometriasDelDesveloRawCollection,
 	inventarioDeLasPasionesRawCollection,
+	ambarYCenizaRawCollection,
+	cuadernosDelMeridienRawCollection,
+	bitacoraDelInsomnioRawCollection,
+	reyesDeUtileriaRawCollection,
 ];
 
 // Llega ordenado por título, que es el criterio de `collectionsQuery` y no el orden en que este módulo

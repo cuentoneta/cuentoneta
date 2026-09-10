@@ -10,7 +10,14 @@ import { createMarkdown } from '@models/markdown.model';
 import { markdownToLinklessSanitizedHtml, markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 
 import { onoffImageAssets } from '../../onoff-image-assets.mock';
-import { colaborativaTagMock } from '../../onoff-tags.mock';
+import {
+	colaborativaTagMock,
+	dramaHistoricoTagMock,
+	ensayoTagMock,
+	metaficcionTagMock,
+	teatroTagMock,
+	tragediaTagMock,
+} from '../../onoff-tags.mock';
 import { geometriasDelDesveloMediaMock } from '../media/geometrias-del-desvelo.media.mock';
 import {
 	elOdioLiteraryWorkTeaserMock,
@@ -19,9 +26,15 @@ import {
 	lasDosAntorchasLiteraryWorkTeaserMock,
 	lasEscalerasLiteraryWorkTeaserMock,
 	losPeldanosLiteraryWorkTeaserMock,
+	neronLiteraryWorkTeaserMock,
+	palacioNueveFronterasLiteraryWorkTeaserMock,
 } from '../literary-work/literary-work-teasers.mock';
+import ambarYCenizaDescriptionMd from './ambar-y-ceniza.collection.md?raw';
+import bitacoraDelInsomnioDescriptionMd from './bitacora-del-insomnio.collection.md?raw';
+import cuadernosDelMeridienDescriptionMd from './cuadernos-del-meridien.collection.md?raw';
 import geometriasDescriptionMd from './geometrias-del-desvelo.collection.md?raw';
 import inventarioDescriptionMd from './inventario-de-las-pasiones.collection.md?raw';
+import reyesDeUtileriaDescriptionMd from './reyes-de-utileria.collection.md?raw';
 
 // Cada colección se cura con las obras que su propia prosa nombra, no con un corte arbitrario del
 // agregador: así las dos son distinguibles por contenido y no solo por la rama de `imagery`.
@@ -35,6 +48,33 @@ const inventarioWorks = [
 	elTratadoDeLosPlaceresLiteraryWorkTeaserMock,
 	elOdioLiteraryWorkTeaserMock,
 	lasDosAntorchasLiteraryWorkTeaserMock,
+] as const;
+
+// Las cuatro colecciones siguientes comparten obras con las dos de arriba y entre sí. Es fiel al
+// dominio: una obra entra en cada colección por el ángulo de curaduría que su prosa nombra, y ningún
+// trío se repite, así que los abanicos de portadas se distinguen entre sí.
+const ambarYCenizaWorks = [
+	lasDosAntorchasLiteraryWorkTeaserMock,
+	neronLiteraryWorkTeaserMock,
+	elOdioLiteraryWorkTeaserMock,
+] as const;
+
+const cuadernosDelMeridienWorks = [
+	palacioNueveFronterasLiteraryWorkTeaserMock,
+	elTratadoDeLosPlaceresLiteraryWorkTeaserMock,
+	lasEscalerasLiteraryWorkTeaserMock,
+] as const;
+
+const bitacoraDelInsomnioWorks = [
+	geometriaLiteraryWorkTeaserMock,
+	elOdioLiteraryWorkTeaserMock,
+	palacioNueveFronterasLiteraryWorkTeaserMock,
+] as const;
+
+const reyesDeUtileriaWorks = [
+	neronLiteraryWorkTeaserMock,
+	palacioNueveFronterasLiteraryWorkTeaserMock,
+	losPeldanosLiteraryWorkTeaserMock,
 ] as const;
 
 // Las tres portadas salen de las propias obras, no escritas a mano: es lo que el mapper deriva
@@ -71,11 +111,65 @@ export const inventarioDeLasPasionesCollectionMock: Collection = createCollectio
 	literaryWorks: inventarioWorks,
 });
 
+export const ambarYCenizaCollectionMock: Collection = createCollection({
+	_id: 'onoff-collection-ambar-y-ceniza',
+	slug: 'ambar-y-ceniza',
+	title: 'Ámbar y ceniza',
+	description: markdownToSanitizedHtml(createMarkdown(ambarYCenizaDescriptionMd)),
+	imagery: sampleFrom(ambarYCenizaWorks),
+	tags: [tragediaTagMock, dramaHistoricoTagMock],
+	config: { showAuthors: false },
+	mediaSources: [],
+	literaryWorks: ambarYCenizaWorks,
+});
+
+/** La única colección cuya prosa trae un enlace propio, que el teaser sanea y la vista completa conserva. */
+export const cuadernosDelMeridienCollectionMock: Collection = createCollection({
+	_id: 'onoff-collection-cuadernos-del-meridien',
+	slug: 'cuadernos-del-meridien',
+	title: 'Cuadernos del Méridien: los años de taller y las obras corregidas a posteriori',
+	description: markdownToSanitizedHtml(createMarkdown(cuadernosDelMeridienDescriptionMd)),
+	imagery: sampleFrom(cuadernosDelMeridienWorks),
+	tags: [colaborativaTagMock, ensayoTagMock, metaficcionTagMock],
+	config: { showAuthors: true },
+	mediaSources: [],
+	literaryWorks: cuadernosDelMeridienWorks,
+});
+
+/** Colección sin etiquetas: su documento omite `tags` y `config`, y las queries resuelven los defaults. */
+export const bitacoraDelInsomnioCollectionMock: Collection = createCollection({
+	_id: 'onoff-collection-bitacora-del-insomnio',
+	slug: 'bitacora-del-insomnio',
+	title: 'Bitácora del insomnio',
+	description: markdownToSanitizedHtml(createMarkdown(bitacoraDelInsomnioDescriptionMd)),
+	imagery: sampleFrom(bitacoraDelInsomnioWorks),
+	tags: [],
+	config: { showAuthors: false },
+	mediaSources: [],
+	literaryWorks: bitacoraDelInsomnioWorks,
+});
+
+export const reyesDeUtileriaCollectionMock: Collection = createCollection({
+	_id: 'onoff-collection-reyes-de-utileria',
+	slug: 'reyes-de-utileria',
+	title: 'Reyes de utilería',
+	description: markdownToSanitizedHtml(createMarkdown(reyesDeUtileriaDescriptionMd)),
+	imagery: sampleFrom(reyesDeUtileriaWorks),
+	tags: [teatroTagMock, tragediaTagMock],
+	config: { showAuthors: true },
+	mediaSources: [],
+	literaryWorks: reyesDeUtileriaWorks,
+});
+
 // La prosa cruda de cada colección, indexada por slug, porque el teaser la sanea con un pipeline
 // distinto del que ya aplicó la vista completa y necesita partir del Markdown original.
 const collectionDescriptionsBySlug = new Map<string, string>([
 	['geometrias-del-desvelo', geometriasDescriptionMd],
 	['inventario-de-las-pasiones', inventarioDescriptionMd],
+	['ambar-y-ceniza', ambarYCenizaDescriptionMd],
+	['cuadernos-del-meridien', cuadernosDelMeridienDescriptionMd],
+	['bitacora-del-insomnio', bitacoraDelInsomnioDescriptionMd],
+	['reyes-de-utileria', reyesDeUtileriaDescriptionMd],
 ]);
 
 // Pasa por la factory del teaser, igual que el repository: si el corpus lo armara por spread, sería

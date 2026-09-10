@@ -22,7 +22,7 @@ describe('onoff collections mock', () => {
 	// Que la factory los construya sin lanzar es la prueba de que el contrato es satisfacible con
 	// datos del canon, no solo que compila.
 	it('builds every collection through the factory', () => {
-		expect(onoffCollectionsMock).toHaveLength(2);
+		expect(onoffCollectionsMock).not.toHaveLength(0);
 		onoffCollectionsMock.forEach((collection) => {
 			expect(Object.isFrozen(collection)).toBe(true);
 			expect(collection.count).toBe(collection.literaryWorks.length);
@@ -80,7 +80,7 @@ describe('onoff collections mock', () => {
 	});
 
 	it('projects teasers that carry no works', () => {
-		expect(onoffCollectionTeasersMock).toHaveLength(2);
+		expect(onoffCollectionTeasersMock).toHaveLength(onoffCollectionsMock.length);
 		onoffCollectionTeasersMock.forEach((teaser, index) => {
 			expect(teaser.literaryWorks).toEqual([]);
 			expect(teaser.count).toBe(onoffCollectionsMock[index]?.count);

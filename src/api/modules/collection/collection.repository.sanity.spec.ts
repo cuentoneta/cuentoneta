@@ -233,7 +233,7 @@ describe('SanityCollectionRepository.fetchAll', () => {
 	it('resolves both branches of imagery from the projected covers', async () => {
 		const teasers = await repoReturning(onoffRawCollectionTeasersMock).fetchAll();
 
-		expect([...teasers.map(({ imagery }) => imagery.kind)].sort()).toEqual(['representative', 'sample']);
+		expect(new Set(teasers.map(({ imagery }) => imagery.kind))).toEqual(new Set(['representative', 'sample']));
 	});
 
 	// Es la invariante "al menos una obra" sobre lo único que el teaser transporta.

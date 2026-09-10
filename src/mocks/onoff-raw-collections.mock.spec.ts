@@ -42,8 +42,11 @@ describe('onoff raw collections mock', () => {
 	it('covers both branches of the featured image', () => {
 		expect(geometriasDelDesveloRawCollection.featuredImage).not.toBeNull();
 		expect(inventarioDeLasPasionesRawCollection.featuredImage).toBeNull();
-		expect(onoffRawCollectionsWithFeaturedImage).toHaveLength(1);
-		expect(onoffRawCollectionsWithoutFeaturedImage).toHaveLength(1);
+		expect(onoffRawCollectionsWithFeaturedImage).not.toHaveLength(0);
+		expect(onoffRawCollectionsWithoutFeaturedImage).not.toHaveLength(0);
+		expect(onoffRawCollectionsWithFeaturedImage.length + onoffRawCollectionsWithoutFeaturedImage.length).toBe(
+			onoffRawCollectionsMock.length,
+		);
 	});
 
 	it('derives teasers that carry the count and the first three covers', () => {
