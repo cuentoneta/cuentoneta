@@ -9,11 +9,15 @@ import CollectionsPage from './collections.page';
 import type { CollectionApi } from '../../providers/collection.provider';
 import { provideCollectionApiMock } from '../../providers/collection.mock';
 
-import { createCollectionTeaser, type Collection, type CollectionTeaser } from '@models/collection.model';
+import type { Collection, CollectionTeaser } from '@models/collection.model';
 import type { Tag } from '@models/tag.model';
 
-import { onoffCollectionsMock, onoffCollectionTeasersMock } from '@mocks/onoff-collections.mock';
-import { colaborativaTagMock, surrealismoTagMock } from '@mocks/onoff-tags.mock';
+import {
+	onoffCollectionsMock,
+	onoffCollectionTeasersMock,
+	onoffCollectionTeasersWithNonAsciiInitialMock,
+} from '@mocks/onoff-collections.mock';
+import { colaborativaTagMock, ensayoTagMock } from '@mocks/onoff-tags.mock';
 
 import { clearAllMocks } from '@test-utils';
 
@@ -44,20 +48,12 @@ const renderPage = (api: CollectionApi) =>
 		providers: [provideRouter([]), provideCollectionApiMock(api)],
 	});
 
-// El corpus no tiene títulos con acento inicial, que es lo que el orden tiene que resolver.
 const [canonical] = onoffCollectionTeasersMock;
-const withTitle = (title: string, slug: string): CollectionTeaser =>
-	createCollectionTeaser({
-		_id: `${canonical._id}-${slug}`,
-		slug,
-		title,
-		description: canonical.description,
-		imagery: canonical.imagery,
-		tags: canonical.tags,
-		config: canonical.config,
-		mediaSources: canonical.mediaSources,
-		count: canonical.count,
-	});
+
+const hrefsOf = (container: HTMLElement) =>
+	within(container)
+		.getAllByRole('link')
+		.map((link) => link.getAttribute('href'));
 
 describe('CollectionsPage', () => {
 	beforeEach(() => {
@@ -89,26 +85,21 @@ describe('CollectionsPage', () => {
 	it('should link every card to the collection detail route', async () => {
 		await renderPage(new StubCatalogCollectionApi(onoffCollectionTeasersMock));
 
-		const hrefs = within(screen.getByTestId('collections'))
-			.getAllByRole('link')
-			.map((link) => link.getAttribute('href'));
-		expect(hrefs).toEqual(expect.arrayContaining(onoffCollectionsMock.map(({ slug }) => `/collection/${slug}`)));
+		expect(hrefsOf(screen.getByTestId('collections'))).toEqual(
+			expect.arrayContaining(onoffCollectionsMock.map(({ slug }) => `/collection/${slug}`)),
+		);
 	});
 
-	// La colación de la base pondría `Ámbar` detrás de `Zoológico`.
+	// El catálogo llega como lo ordena la base, por punto de código, que manda los títulos acentuados
+	// detrás de todo el alfabeto. La colación española los devuelve a su lugar.
 	it('should order titles with accent folding, not by code point', async () => {
-		const desordenadas = [
-			withTitle('Zoológico', 'zoologico'),
-			withTitle('Ámbar', 'ambar'),
-			withTitle('Bruma', 'bruma'),
-		];
+		const porPuntoDeCodigo = [...onoffCollectionTeasersMock].sort((one, other) => (one.title < other.title ? -1 : 1));
+		const [conAcentoInicial] = onoffCollectionTeasersWithNonAsciiInitialMock;
 
-		await renderPage(new StubCatalogCollectionApi(desordenadas));
+		await renderPage(new StubCatalogCollectionApi(porPuntoDeCodigo));
 
-		const hrefs = within(screen.getByTestId('collections'))
-			.getAllByRole('link')
-			.map((link) => link.getAttribute('href'));
-		expect(hrefs).toEqual(['/collection/ambar', '/collection/bruma', '/collection/zoologico']);
+		expect(porPuntoDeCodigo.at(-1)?.slug).toBe(conAcentoInicial.slug);
+		expect(hrefsOf(screen.getByTestId('collections'))[0]).toBe(`/collection/${conAcentoInicial.slug}`);
 	});
 
 	it('should keep the heading when the catalogue comes back empty', async () => {
@@ -134,83 +125,83 @@ describe('CollectionsPage', () => {
 	});
 
 	describe('filtros', () => {
-		const conEtiquetas = (slug: string, tags: readonly Tag[]): CollectionTeaser =>
-			createCollectionTeaser({
-				_id: `${canonical._id}-${slug}`,
-				slug,
-				title: slug,
-				description: canonical.description,
-				imagery: canonical.imagery,
-				tags,
-				config: canonical.config,
-				mediaSources: canonical.mediaSources,
-				count: canonical.count,
-			});
+		const catalogo = onoffCollectionTeasersMock;
 
-		const catalogo = [
-			conEtiquetas('ambas', [colaborativaTagMock, surrealismoTagMock]),
-			conEtiquetas('solo-colaborativa', [colaborativaTagMock]),
-			conEtiquetas('solo-surrealismo', [surrealismoTagMock]),
-		];
+		// Las etiquetas del elenco se reparten para que haya facetas de conteos distintos y grupos que no
+		// conviven, así que todo lo que estos casos esperan se deriva del catálogo en vez de escribirse:
+		// enriquecerlo mueve los números sin volver falso ningún caso.
+		const carrying = (...tags: readonly Tag[]) =>
+			catalogo.filter((collection) =>
+				tags.every((tag) => collection.tags.some((candidate) => candidate.slug === tag.slug)),
+			);
+
+		const facetFor = (tag: Tag, over: readonly CollectionTeaser[] = catalogo) => {
+			const count = over.filter((collection) =>
+				collection.tags.some((candidate) => candidate.slug === tag.slug),
+			).length;
+			return `${tag.title} (${count})`;
+		};
+
+		const headingFor = (collections: readonly CollectionTeaser[]) =>
+			`${collections.length} ${collections.length === 1 ? 'Colección' : 'Colecciones'}`;
 
 		const renderCatalogo = () => renderPage(new StubCatalogCollectionApi(catalogo));
 
 		it('should count each facet over the catalogue', async () => {
 			await renderCatalogo();
 
-			expect(
-				within(screen.getByTestId('filters')).getByLabelText(`${colaborativaTagMock.title} (2)`),
-			).toBeInTheDocument();
-			expect(
-				within(screen.getByTestId('filters')).getByLabelText(`${surrealismoTagMock.title} (2)`),
-			).toBeInTheDocument();
+			const filters = within(screen.getByTestId('filters'));
+			expect(filters.getByLabelText(facetFor(colaborativaTagMock))).toBeInTheDocument();
+			expect(filters.getByLabelText(facetFor(ensayoTagMock))).toBeInTheDocument();
 		});
 
 		it('should narrow the listing to the collections carrying the chosen tag', async () => {
 			await renderCatalogo();
 
-			await userEvent.click(screen.getByLabelText(`${colaborativaTagMock.title} (2)`));
+			await userEvent.click(screen.getByLabelText(facetFor(colaborativaTagMock)));
 
-			expect(within(screen.getByTestId('collections')).getAllByRole('link')).toHaveLength(2);
-			expect(screen.getByRole('heading', { level: 1, name: '2 Colecciones' })).toBeInTheDocument();
+			const conLaEtiqueta = carrying(colaborativaTagMock);
+			expect(hrefsOf(screen.getByTestId('collections'))).toHaveLength(conLaEtiqueta.length);
+			expect(screen.getByRole('heading', { level: 1, name: headingFor(conLaEtiqueta) })).toBeInTheDocument();
 		});
 
 		it('should drop the facets that no longer apply and recount the rest', async () => {
 			await renderCatalogo();
 
-			await userEvent.click(screen.getByLabelText(`${colaborativaTagMock.title} (2)`));
+			await userEvent.click(screen.getByLabelText(facetFor(colaborativaTagMock)));
 
-			expect(screen.getByLabelText(`${surrealismoTagMock.title} (1)`)).toBeInTheDocument();
+			expect(screen.getByLabelText(facetFor(ensayoTagMock, carrying(colaborativaTagMock)))).toBeInTheDocument();
 		});
 
 		it('should offer a chip that removes the filter it names', async () => {
 			await renderCatalogo();
-			await userEvent.click(screen.getByLabelText(`${colaborativaTagMock.title} (2)`));
+			await userEvent.click(screen.getByLabelText(facetFor(colaborativaTagMock)));
 
 			await userEvent.click(screen.getByRole('button', { name: `Quitar el filtro ${colaborativaTagMock.title}` }));
 
-			expect(screen.getByRole('heading', { level: 1, name: '3 Colecciones' })).toBeInTheDocument();
+			expect(screen.getByRole('heading', { level: 1, name: headingFor(catalogo) })).toBeInTheDocument();
 		});
 
 		it('should collapse the category group without dropping the filters in effect', async () => {
 			await renderCatalogo();
-			await userEvent.click(screen.getByLabelText(`${colaborativaTagMock.title} (2)`));
+			await userEvent.click(screen.getByLabelText(facetFor(colaborativaTagMock)));
 
 			await userEvent.click(screen.getByRole('button', { name: /Categoría/ }));
 
+			const conLaEtiqueta = carrying(colaborativaTagMock);
 			expect(screen.getByRole('button', { name: /Categoría/ })).toHaveAttribute('aria-expanded', 'false');
-			expect(screen.queryByLabelText(`${colaborativaTagMock.title} (2)`)).not.toBeInTheDocument();
-			expect(screen.getByRole('heading', { level: 1, name: '2 Colecciones' })).toBeInTheDocument();
+			expect(screen.queryByLabelText(facetFor(colaborativaTagMock, conLaEtiqueta))).not.toBeInTheDocument();
+			expect(screen.getByRole('heading', { level: 1, name: headingFor(conLaEtiqueta) })).toBeInTheDocument();
 			expect(screen.getByTestId('active-filters')).toBeInTheDocument();
 		});
 
 		it('should clear every filter at once', async () => {
 			await renderCatalogo();
-			await userEvent.click(screen.getByLabelText(`${colaborativaTagMock.title} (2)`));
+			await userEvent.click(screen.getByLabelText(facetFor(colaborativaTagMock)));
 
 			await userEvent.click(screen.getByRole('button', { name: 'Limpiar filtros' }));
 
-			expect(screen.getByRole('heading', { level: 1, name: '3 Colecciones' })).toBeInTheDocument();
+			expect(screen.getByRole('heading', { level: 1, name: headingFor(catalogo) })).toBeInTheDocument();
 			expect(screen.queryByTestId('active-filters')).not.toBeInTheDocument();
 		});
 
@@ -218,12 +209,15 @@ describe('CollectionsPage', () => {
 		// «ninguna coincide» — sería inalcanzable.
 		it('should never let a combination of offered facets empty the listing', async () => {
 			await renderCatalogo();
-			await userEvent.click(screen.getByLabelText(`${colaborativaTagMock.title} (2)`));
+			const conLaPrimera = carrying(colaborativaTagMock);
+			await userEvent.click(screen.getByLabelText(facetFor(colaborativaTagMock)));
 
-			await userEvent.click(screen.getByLabelText(`${surrealismoTagMock.title} (1)`));
+			await userEvent.click(screen.getByLabelText(facetFor(ensayoTagMock, conLaPrimera)));
 
-			expect(within(screen.getByTestId('collections')).getAllByRole('link')).toHaveLength(1);
-			expect(screen.getByRole('heading', { level: 1, name: '1 Colección' })).toBeInTheDocument();
+			const conLasDos = carrying(colaborativaTagMock, ensayoTagMock);
+			expect(conLasDos).not.toHaveLength(0);
+			expect(hrefsOf(screen.getByTestId('collections'))).toHaveLength(conLasDos.length);
+			expect(screen.getByRole('heading', { level: 1, name: headingFor(conLasDos) })).toBeInTheDocument();
 		});
 	});
 
