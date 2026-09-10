@@ -36,9 +36,15 @@ describe('la restricción de imports del corpus', () => {
 			'src/api/probe.ts',
 		],
 		['por ruta relativa', '../../mocks/onoff/literary-work/geometria.literary-work.mock', 'src/app/pages/probe.ts'],
-	])('marca el import de una obra puntual %s', async (_caso, source, filePath) => {
-		expect(await restrictionErrors(importFrom(source), filePath)).toHaveLength(1);
-	});
+	])(
+		'marca el import de una obra puntual %s',
+		async (_caso, source, filePath) => {
+			expect(await restrictionErrors(importFrom(source), filePath)).toHaveLength(1);
+		},
+		// El primer caso paga el arranque en frío de ESLint: resolver el flat config real es lo caro, y su
+		// costo no depende de lo que el caso afirme. Con la suite entera en paralelo, el default no alcanza.
+		20_000,
+	);
 
 	// Los handles por identidad viven bajo `@mocks/onoff/<entidad>/`. Sin este caso, lo único verificado
 	// sería el glob genérico, y una reubicación a otra carpeta pasaría inadvertida.

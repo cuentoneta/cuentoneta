@@ -69,7 +69,11 @@ async function namedExportEntries(
  * Reúne las piezas del corpus que se escriben a mano y que el archivo generado tiene que seguir
  * importando: la prosa de cada obra, los títulos y epígrafes de sección, las etiquetas y el autor.
  */
-export async function collectSubstitutions(load: LoadModule, fromDirectory: string): Promise<Entry[]> {
+export async function collectSubstitutions(
+	load: LoadModule,
+	fromDirectory: string,
+	targetFile?: string,
+): Promise<Entry[]> {
 	const literaryWorkDirectory = join(CORPUS_ROOT, 'onoff/literary-work');
 	const mediaDirectory = join(CORPUS_ROOT, 'onoff/media');
 
@@ -103,7 +107,41 @@ export async function collectSubstitutions(load: LoadModule, fromDirectory: stri
 			load,
 			join(CORPUS_ROOT, 'onoff-raw-author.mock.ts'),
 			fromDirectory,
-			(binding) => binding === 'rawOnoffAuthor',
+			// Las tres caras crudas del autor entran juntas: cada query proyecta la suya, y cuál aplica lo
+			// decide la igualdad de valores, no el nombre del handle.
+			(binding) => binding.startsWith('rawOnoff') && binding.includes('Author'),
 		)),
+		...(await literaryWorkTeaserEntries(load, literaryWorkDirectory, fromDirectory, targetFile)),
 	];
+}
+
+/**
+ * Los teasers de obra, que son a su vez archivos generados. Una obra embebida en una colección, en la
+ * página de inicio o en el contenido rotativo sale de la misma proyección, así que el generado la
+ * referencia en vez de volver a escribirla entera con su autor adentro.
+ *
+ * Los teasers se generan **antes** que quienes los embeben, así que para esos targets ya están en disco.
+ * En la primera corrida sobre un corpus sin generar todavía no existen, y ahí la sustitución simplemente
+ * no aplica: la corrida siguiente la aplica. Por eso la ausencia no es un error.
+ */
+async function literaryWorkTeaserEntries(
+	load: LoadModule,
+	directory: string,
+	fromDirectory: string,
+	targetFile?: string,
+): Promise<Entry[]> {
+	// El propio destino queda afuera: si no, el teaser que se está por escribir se sustituiría por un
+	// import de sí mismo, y el módulo quedaría referenciándose antes de estar inicializado.
+	const files = (await readdir(directory))
+		.filter((file) => file.endsWith('.literary-work-teaser.raw.mock.ts'))
+		.filter((file) => join(directory, file) !== targetFile);
+	const entries = await Promise.all(
+		// Solo el objeto del teaser, por el mismo motivo que las etiquetas: un escalar no identifica nada y
+		// enrolarlo haría que cualquier valor igual del corpus se emitiera como esa constante.
+		files.map((file) =>
+			namedExportEntries(load, join(directory, file), fromDirectory, (_, value) => typeof value === 'object'),
+		),
+	);
+
+	return entries.flat();
 }

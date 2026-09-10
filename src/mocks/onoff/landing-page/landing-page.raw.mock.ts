@@ -1,6 +1,7 @@
 // Este archivo lo escribe `pnpm corpus:generate` evaluando la query GROQ real sobre los documentos del
 // corpus. No se edita a mano: cualquier cambio se pierde en la próxima corrida.
 import type { LandingPageContentQueryResult } from '@sanity-types';
+import { rawOnoffAuthorTeaser, rawOnoffEmbeddedAuthor } from '../../onoff-raw-author.mock';
 import {
 	colaborativaRawTag,
 	cuentoRawTag,
@@ -147,27 +148,7 @@ export const onoffRawLandingPageMock: NonNullable<LandingPageContentQueryResult>
 				{ _type: 'youTubeVideo', title: 'Video ensayo sobre las coordenadas del desvelo' },
 				{ _type: 'pdfLink', title: 'Facsímil de la primera edición' },
 			],
-			authors: [
-				{
-					_id: 'author_1',
-					slug: 'francois-onoff',
-					name: 'François Onoff',
-					image: { _type: 'image', asset: { _type: 'reference', _ref: 'image-francoisOnoffPortrait-1254x1254-png' } },
-					nationality: {
-						_id: 'nationality-francia',
-						_type: 'nationality',
-						_createdAt: '2021-12-28T00:00:00Z',
-						_updatedAt: '2021-12-28T00:00:00Z',
-						_rev: 'rev-francia',
-						country: 'Francia',
-						flag: { _type: 'image', asset: { _type: 'reference', _ref: 'image-franceFlag-30x20-png' } },
-					},
-					bornOn: '1948-01-01',
-					bornOnYear: 1948,
-					diedOn: '1994-12-31',
-					diedOnYear: 1994,
-				},
-			],
+			authors: [rawOnoffEmbeddedAuthor],
 		},
 		{
 			_id: 'onoff-literary-work-neron',
@@ -178,53 +159,8 @@ export const onoffRawLandingPageMock: NonNullable<LandingPageContentQueryResult>
 			sectionCount: 1,
 			tags: [teatroRawTag, tragediaRawTag, dramaHistoricoRawTag],
 			mediaSources: [],
-			authors: [
-				{
-					_id: 'author_1',
-					slug: 'francois-onoff',
-					name: 'François Onoff',
-					image: { _type: 'image', asset: { _type: 'reference', _ref: 'image-francoisOnoffPortrait-1254x1254-png' } },
-					nationality: {
-						_id: 'nationality-francia',
-						_type: 'nationality',
-						_createdAt: '2021-12-28T00:00:00Z',
-						_updatedAt: '2021-12-28T00:00:00Z',
-						_rev: 'rev-francia',
-						country: 'Francia',
-						flag: { _type: 'image', asset: { _type: 'reference', _ref: 'image-franceFlag-30x20-png' } },
-					},
-					bornOn: '1948-01-01',
-					bornOnYear: 1948,
-					diedOn: '1994-12-31',
-					diedOnYear: 1994,
-				},
-			],
+			authors: [rawOnoffEmbeddedAuthor],
 		},
 	],
-	highlightedAuthors: [
-		{
-			author: {
-				_id: 'author_1',
-				slug: 'francois-onoff',
-				name: 'François Onoff',
-				image: { _type: 'image', asset: { _type: 'reference', _ref: 'image-francoisOnoffPortrait-1254x1254-png' } },
-				nationality: {
-					_id: 'nationality-francia',
-					_type: 'nationality',
-					_createdAt: '2021-12-28T00:00:00Z',
-					_updatedAt: '2021-12-28T00:00:00Z',
-					_rev: 'rev-francia',
-					country: 'Francia',
-					flag: { _type: 'image', asset: { _type: 'reference', _ref: 'image-franceFlag-30x20-png' } },
-				},
-				bornOn: '1948-01-01',
-				bornOnYear: 1948,
-				diedOn: '1994-12-31',
-				diedOnYear: 1994,
-				resources: [],
-			},
-			tags: [cuentoRawTag, dramaPsicologicoRawTag],
-			storyCount: 8,
-		},
-	],
+	highlightedAuthors: [{ author: rawOnoffAuthorTeaser, tags: [cuentoRawTag, dramaPsicologicoRawTag], storyCount: 8 }],
 };

@@ -48,6 +48,7 @@ Antes de esta capa de documentos el flujo corría al revés: el raw se escribía
 **Archivos generados:**
 
 - Una `literary-work/<slug>.literary-work.raw.mock.ts` por obra.
+- Una `literary-work/<slug>.literary-work-teaser.raw.mock.ts` por obra: el resultado de `literaryWorkTeasers` acotada a esa obra con `$slugs`. Se generan **primero**, porque los raws de colección embeben obras con exactamente esa proyección y los referencian en vez de repetirlos.
 - Una `collection/<slug>.collection.raw.mock.ts` por colección.
 - `collection/collection-teasers.raw.mock.ts` (resultado de `collectionsQuery`, el listado).
 - `landing-page/landing-page.raw.mock.ts` (resultado de `landingPageContentQuery`).
@@ -128,6 +129,22 @@ Un elenco de colecciones de `LiteraryWork` curado para cubrir, entre todas, cada
 - **Teasers derivados:** `toTeaser` (vacía `literaryWorks`) → `onoffCollectionTeasersMock: CollectionTeaser[]`.
 - **El único teaser que no proviene de un documento** es `singleLiteraryWorkCollectionTeaserMock`, que declara una sola obra. La tarjeta de colección distingue el singular del plural en su contador, y esa rama es alcanzable para cualquier dato que el modelo admita; el elenco, en cambio, quedó curado con colecciones que agrupan varias obras. El handle existe para que quien renderiza esa rama tenga con qué probarla.
 - **Nada se escribe a mano:** las obras (`literaryWorks`), los tags y las tres portadas de la rama `sample` se **derivan** del canon existente — `literary-work/literary-work-teasers.mock.ts` y `onoff-tags.mock.ts` — en vez de hardcodearse.
+
+### Qué no se repite en lo generado
+
+Una fixture generada **referencia** las piezas que el corpus ya declara en vez de volver a escribirlas: la prosa, las etiquetas, el autor y el teaser de cada obra. La sustitución la decide el emisor por **igualdad de valores**, así que aplica cuando la proyección coincide y no aplica cuando no.
+
+Del autor hay **tres caras crudas**, una por proyección, y las dos angostas leen sus valores de la completa para que no puedan divergir:
+
+| Handle                   | Qué agrega sobre los nueve campos comunes | Quién la devuelve                                     |
+| ------------------------ | ----------------------------------------- | ----------------------------------------------------- |
+| `rawOnoffAuthor`         | `biography` y `resources` poblado         | las dos queries de detalle de obra                    |
+| `rawOnoffAuthorTeaser`   | `resources` siempre vacío                 | `authorsQuery` y los autores destacados de la landing |
+| `rawOnoffEmbeddedAuthor` | nada                                      | colección, contenido rotativo y el listado de obras   |
+
+La obra embebida en una colección sale de la misma proyección que su teaser generado, así que la colección lo referencia. **La landing es la excepción**: proyecta la obra sin `excerpt`, de modo que lo que escribe no es el teaser y referenciarlo afirmaría que la query devuelve un campo que no devuelve.
+
+Que la sustitución siga ocurriendo lo verifica `../onoff-raw-corpus.spec.ts`. Es la señal que falta por diseño: cuando una proyección se aparta, el valor deja de coincidir y el literal vuelve a escribirse entero sin que falle nada.
 
 ## Corpus raw: `Collection` (generado)
 
