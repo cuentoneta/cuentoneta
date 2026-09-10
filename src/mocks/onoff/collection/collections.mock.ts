@@ -7,7 +7,7 @@ import {
 } from '@models/collection.model';
 import type { LiteraryWorkTeaser } from '@models/literary-work.model';
 import { createMarkdown } from '@models/markdown.model';
-import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
+import { markdownToLinklessSanitizedHtml, markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 
 import { onoffImageAssets } from '../../onoff-image-assets.mock';
 import { colaborativaTagMock } from '../../onoff-tags.mock';
@@ -71,14 +71,30 @@ export const inventarioDeLasPasionesCollectionMock: Collection = createCollectio
 	literaryWorks: inventarioWorks,
 });
 
+// La prosa cruda de cada colección, indexada por slug, porque el teaser la sanea con un pipeline
+// distinto del que ya aplicó la vista completa y necesita partir del Markdown original.
+const collectionDescriptionsBySlug = new Map<string, string>([
+	['geometrias-del-desvelo', geometriasDescriptionMd],
+	['inventario-de-las-pasiones', inventarioDescriptionMd],
+]);
+
 // Pasa por la factory del teaser, igual que el repository: si el corpus lo armara por spread, sería
 // el único productor que se saltea las invariantes que esa factory existe para hacer cumplir.
+//
+// La descripción se rehace desde el Markdown en vez de copiarse de la colección: el ACL sanea el
+// teaser sin enlaces y la vista completa con ellos, así que copiarla haría coincidir las dos caras
+// por construcción y el corpus dejaría de tener con qué probar a quien las distingue.
 export function toTeaser(collection: Collection): CollectionTeaser {
+	const description = collectionDescriptionsBySlug.get(collection.slug);
+	if (!description) {
+		throw new Error(`Corpus incompleto: falta la prosa cruda de la colección "${collection.slug}"`);
+	}
+
 	return createCollectionTeaser({
 		_id: collection._id,
 		slug: collection.slug,
 		title: collection.title,
-		description: collection.description,
+		description: markdownToLinklessSanitizedHtml(createMarkdown(description)),
 		imagery: collection.imagery,
 		tags: collection.tags,
 		config: collection.config,
