@@ -48,7 +48,7 @@ Antes de esta capa de documentos el flujo corría al revés: el raw se escribía
 **Archivos generados:**
 
 - Una `literary-work/<slug>.literary-work.raw.mock.ts` por obra.
-- Una `literary-work/<slug>.literary-work-teaser.raw.mock.ts` por obra: el resultado de `literaryWorkTeasers` acotada a esa obra con `$slugs`. Se generan **primero**, porque los raws de colección embeben obras con exactamente esa proyección y los referencian en vez de repetirlos.
+- Una `literary-work/<slug>.literary-work-teaser.raw.mock.ts` por obra: el resultado de `literaryWorkTeasers` acotada a esa obra con `$slugs`. Es la proyección con la que las colecciones embeben obras, así que la referencian en vez de repetirla.
 - Una `collection/<slug>.collection.raw.mock.ts` por colección.
 - `collection/collection-teasers.raw.mock.ts` (resultado de `collectionsQuery`, el listado).
 - `landing-page/landing-page.raw.mock.ts` (resultado de `landingPageContentQuery`).
