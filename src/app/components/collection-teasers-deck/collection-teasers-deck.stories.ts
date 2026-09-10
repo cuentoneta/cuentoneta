@@ -1,11 +1,11 @@
 import { argsToTemplate, Meta, StoryObj } from '@storybook/angular-vite';
 
 import { CollectionTeasersDeck } from './collection-teasers-deck';
-import { onoffCollectionTeasersOfLength } from '@mocks/onoff-collections.mock';
+import { onoffCollectionTeasersMock } from '@mocks/onoff-collections.mock';
 
 // Un solo dataset compartido por todas las stories: mismas colecciones en cada estado hace que el
 // switch del catálogo compare siempre lo mismo.
-const deckTeasers = onoffCollectionTeasersOfLength(4);
+const deckTeasers = onoffCollectionTeasersMock.slice(0, 4);
 
 const meta: Meta<CollectionTeasersDeck> = {
 	component: CollectionTeasersDeck,
@@ -45,7 +45,7 @@ export const Primary: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Colecciones derivadas del canon de Onoff mediante el selector del agregador de mocks; la grilla arma una fila por cada dos tarjetas desde viewport <code>sm</code>.</p><p>Las cuatro salen de la misma colección canónica, así que comparten portada, prosa y etiqueta: la grilla se ve más pareja de lo que se verá con contenido real, y no ejercita portadas dispares ni descripciones de largo distinto. Se corrige al ampliar el corpus con colecciones propias.</p><p><strong>Usos:</strong> la sección de colecciones de la página de inicio.</p>`,
+				story: `<p>Cuatro colecciones del corpus de Onoff; la grilla arma una fila por cada dos tarjetas desde viewport <code>sm</code>.</p><p>Cada una trae su propia portada, su prosa y sus etiquetas, así que la grilla ejercita lo que la vuelve difícil: abanicos de portadas distintos, descripciones de largo desparejo y un título que no entra en una línea.</p><p><strong>Usos:</strong> la sección de colecciones de la página de inicio.</p>`,
 			},
 		},
 	},

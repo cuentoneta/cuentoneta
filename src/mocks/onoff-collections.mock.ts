@@ -118,24 +118,3 @@ export const singleLiteraryWorkCollectionTeaserMock: CollectionTeaser = createCo
 	...onoffCollectionTeasersMock[0],
 	count: 1,
 });
-
-// TODO(#2333): darlo de baja junto con el deck y la página de inicio, sus últimos consumidores.
-// Los teasers salen todos del primero del canon, así que comparten portada, prosa, etiqueta y conteo
-// de obras, y sólo se distinguen por un título correlativo. Una grilla así se ve homogénea de un modo
-// que ningún catálogo real es. El elenco ampliado ya alcanza para poblarla con colecciones distintas.
-export function onoffCollectionTeasersOfLength(count: number): CollectionTeaser[] {
-	const [base] = onoffCollectionTeasersMock;
-	return Array.from({ length: count }, (_, index) =>
-		createCollectionTeaser({
-			_id: `${base._id}-${index + 1}`,
-			slug: `${base.slug}-${index + 1}`,
-			title: `Colección ${index + 1}`,
-			description: base.description,
-			imagery: base.imagery,
-			tags: base.tags,
-			config: base.config,
-			mediaSources: base.mediaSources,
-			count: base.count,
-		}),
-	);
-}
