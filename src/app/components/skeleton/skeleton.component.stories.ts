@@ -2,6 +2,10 @@ import { Meta, StoryObj } from '@storybook/angular-vite';
 
 import { SkeletonComponent } from './skeleton.component';
 
+// Los símbolos que la prosa de esta story nombra sin enlazar. La tupla no se usa en runtime:
+// existe para que el import type-only rompa el `typecheck` si alguno deja de estar declarado.
+export type DocsSymbols = [SkeletonComponent];
+
 const meta: Meta<SkeletonComponent> = {
 	component: SkeletonComponent,
 	title: 'Componentes V3/Skeleton',

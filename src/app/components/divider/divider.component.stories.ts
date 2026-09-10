@@ -4,6 +4,10 @@ import { corpusLiteraryWorkTeasers } from '@mocks/onoff-corpus.storybook';
 
 import { DividerComponent } from './divider.component';
 
+// Los símbolos que la prosa de esta story nombra sin enlazar. La tupla no se usa en runtime:
+// existe para que el import type-only rompa el `typecheck` si alguno deja de estar declarado.
+export type DocsSymbols = [DividerComponent];
+
 const meta: Meta<DividerComponent> = {
 	component: DividerComponent,
 	title: 'Componentes V3/Divider',

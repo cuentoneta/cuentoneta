@@ -1,5 +1,7 @@
 import { Meta, StoryObj } from '@storybook/angular-vite';
 import { HeaderComponent } from './header.component';
+import { headerComponentDocs } from './header.component.docs';
+import { docsMention } from '@testing/storybook-docs';
 
 export default {
 	title: 'HeaderComponent',
@@ -7,7 +9,7 @@ export default {
 	parameters: {
 		docs: {
 			description: {
-				component: `<div><p>El <strong>HeaderComponent</strong> es el encabezado del sitio: logo, navegación principal y menú desplegable en viewports angostos. El input <code>isVisible</code> lo oculta al hacer scroll hacia abajo, colapsando alto, opacidad y desplazamiento en una transición que respeta <code>prefers-reduced-motion</code>. Al ocultarse deja además de recibir foco y clics, para que la barra que la interfaz declara ausente tampoco exista para el teclado ni para el puntero.</p></div>`,
+				component: `<div><p>El ${docsMention(headerComponentDocs)} es el encabezado del sitio: logo, navegación principal y menú desplegable en viewports angostos. El input <code>isVisible</code> lo oculta al hacer scroll hacia abajo, colapsando alto, opacidad y desplazamiento en una transición que respeta <code>prefers-reduced-motion</code>. Al ocultarse deja además de recibir foco y clics, para que la barra que la interfaz declara ausente tampoco exista para el teclado ni para el puntero.</p></div>`,
 			},
 		},
 	},

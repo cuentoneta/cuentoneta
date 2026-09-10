@@ -4,6 +4,14 @@ import { LiteraryWorkSectionBodyComponent } from './literary-work-section-body.c
 import { onoffLiteraryWorksMock, onoffLiteraryWorksWithBlockquotes } from '@mocks/onoff-literary-works.mock';
 import { createMarkdown } from '@models/markdown.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
+import { literaryWorkSectionBodyDocs } from './literary-work-section-body.component.docs';
+import { editorialNoteDocs } from '../editorial-note/editorial-note.component.docs';
+import { docsMention, docsRef } from '@testing/storybook-docs';
+import type { LiteraryWork } from '../../../sanity/types';
+
+// Los símbolos que la prosa de esta story nombra sin enlazar. La tupla no se usa en runtime:
+// existe para que el import type-only rompa el `typecheck` si alguno deja de estar declarado.
+export type DocsSymbols = [LiteraryWork];
 
 const [{ content: plainContent }] = onoffLiteraryWorksMock;
 const [{ content: contentWithQuote }] = onoffLiteraryWorksWithBlockquotes;
@@ -44,7 +52,7 @@ const meta: Meta<LiteraryWorkSectionBodyComponent> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>Cuerpo de una sección de obra (<strong>LiteraryWork</strong>) del Design System v3, <strong>LiteraryWorkSectionBody</strong>: pinta el campo <code>body</code> que el CMS declara dentro de cada sección, sea la obra en verso, en prosa, un ensayo o teatro. Recibe en el input <code>body</code> el HTML que el pipeline de Markdown ya saneó en el backend, y lo pinta con <code>[innerHTML]</code>, aportando la tipografía del contenedor (Source Serif Pro 20/34 sobre <code>neutral-800</code>).</p><p>Es el dueño de ese HTML: el <code>bypassSecurityTrustHtml</code> vive acá —sin él Angular recorta los atributos de carga que el propio pipeline inyecta en las imágenes— y las reglas tipográficas de los nodos que el pipeline emite, que no llevan clases y por eso ninguna utilidad alcanza, se anclan a su selector de elemento desde una hoja global. Por eso viajan con el componente y no con la página que lo consume.</p><p>No cubre la nota editorial ni el epígrafe de una sección, que resuelve <a href="./?path=/docs/componentes-v3-editorialnote--docs" target="_top"><strong>EditorialNote</strong></a> con su propio tratamiento. El componente no renderiza estado de carga: la página no lo monta hasta tener la obra.</p></div>`,
+				component: `<div><p>Cuerpo de una sección de obra (<strong>LiteraryWork</strong>) del Design System v3, ${docsMention(literaryWorkSectionBodyDocs)}: pinta el campo <code>body</code> que el CMS declara dentro de cada sección, sea la obra en verso, en prosa, un ensayo o teatro. Recibe en el input <code>body</code> el HTML que el pipeline de Markdown ya saneó en el backend, y lo pinta con <code>[innerHTML]</code>, aportando la tipografía del contenedor (Source Serif Pro 20/34 sobre <code>neutral-800</code>).</p><p>Es el dueño de ese HTML: el <code>bypassSecurityTrustHtml</code> vive acá —sin él Angular recorta los atributos de carga que el propio pipeline inyecta en las imágenes— y las reglas tipográficas de los nodos que el pipeline emite, que no llevan clases y por eso ninguna utilidad alcanza, se anclan a su selector de elemento desde una hoja global. Por eso viajan con el componente y no con la página que lo consume.</p><p>No cubre la nota editorial ni el epígrafe de una sección, que resuelve ${docsRef(editorialNoteDocs)} con su propio tratamiento. El componente no renderiza estado de carga: la página no lo monta hasta tener la obra.</p></div>`,
 			},
 		},
 		layout: 'padded',

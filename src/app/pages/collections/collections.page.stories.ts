@@ -17,6 +17,11 @@ import {
 import { provideCollectionApiMock } from '../../providers/collection.mock';
 import type { CollectionApi } from '../../providers/collection.provider';
 import CollectionsPage from './collections.page';
+import { collectionsPageDocs } from './collections.page.docs';
+import { collectionPageDocs } from '../collection/collection.page.docs';
+import { collectionTeaserCardDocs } from '../../components/collection-teaser-card/collection-teaser-card.docs';
+import { dividerDocs } from '../../components/divider/divider.component.docs';
+import { docsMention, docsRef } from '@testing/storybook-docs';
 
 // Las dos colecciones del corpus llevan la misma etiqueta, así que con ellas el panel ofrece una sola
 // faceta y no hay nada que filtrar. Las entradas derivadas reparten las etiquetas a propósito para que
@@ -90,7 +95,7 @@ const meta: Meta<CollectionsPageArgs> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>El catálogo de colecciones, <strong>CollectionsPage</strong>, montado sobre el corpus de Onoff. Como el resto de las entradas bajo <strong>Páginas</strong>, no cataloga un componente sino el ensamblado completo: la columna de filtros, el encabezado con el conteo y la lista de tarjetas que llevan al detalle.</p><p>El único control elige el escenario del catálogo, que es lo único que mueve la página desde afuera: no recibe parámetros de ruta. Los filtros son estado propio y se manejan desde la columna izquierda.</p><p>Las facetas se cuentan sobre lo que está a la vista, así que al elegir una etiqueta las demás ajustan su número y las que no conviven con ella desaparecen. De ahí se sigue que no hay forma de vaciar el listado eligiendo filtros: toda faceta ofrecida tiene al menos una colección detrás.</p><p>Se compone de <a href="./?path=/docs/componentes-v3-collectionteasercard--docs" target="_top"><strong>CollectionTeaserCard</strong></a>, la misma tarjeta que enlaza a <a href="./?path=/docs/páginas-collectionpage--docs" target="_top"><strong>CollectionPage</strong></a>, y de su esqueleto, más <a href="./?path=/docs/componentes-v3-divider--docs" target="_top"><strong>Divider</strong></a> entre las dos columnas.</p><p>El orden no es el que entrega el backend: se resuelve en la página con colación en español, porque la base compara por punto de código y mandaría al final del catálogo todo título que empiece con acento o eñe. El escenario <strong>extended</strong> es el que lo hace visible.</p><p>El encabezado fijo de la aplicación no se monta en el catálogo, así que el margen superior de la página se ve como espacio en blanco.</p></div>`,
+				component: `<div><p>El catálogo de colecciones, ${docsMention(collectionsPageDocs)}, montado sobre el corpus de Onoff. Como el resto de las entradas bajo <strong>Páginas</strong>, no cataloga un componente sino el ensamblado completo: la columna de filtros, el encabezado con el conteo y la lista de tarjetas que llevan al detalle.</p><p>El único control elige el escenario del catálogo, que es lo único que mueve la página desde afuera: no recibe parámetros de ruta. Los filtros son estado propio y se manejan desde la columna izquierda.</p><p>Las facetas se cuentan sobre lo que está a la vista, así que al elegir una etiqueta las demás ajustan su número y las que no conviven con ella desaparecen. De ahí se sigue que no hay forma de vaciar el listado eligiendo filtros: toda faceta ofrecida tiene al menos una colección detrás.</p><p>Se compone de ${docsRef(collectionTeaserCardDocs)}, la misma tarjeta que enlaza a ${docsRef(collectionPageDocs)}, y de su esqueleto, más ${docsRef(dividerDocs)} entre las dos columnas.</p><p>El orden no es el que entrega el backend: se resuelve en la página con colación en español, porque la base compara por punto de código y mandaría al final del catálogo todo título que empiece con acento o eñe. El escenario <strong>extended</strong> es el que lo hace visible.</p><p>El encabezado fijo de la aplicación no se monta en el catálogo, así que el margen superior de la página se ve como espacio en blanco.</p></div>`,
 			},
 		},
 	},

@@ -1,6 +1,8 @@
 import { Meta, StoryObj } from '@storybook/angular-vite';
 
 import { HomeHeroComponent } from './home-hero.component';
+import { homeHeroDocs } from './home-hero.component.docs';
+import { docsMention } from '@testing/storybook-docs';
 
 const meta: Meta<HomeHeroComponent> = {
 	component: HomeHeroComponent,
@@ -11,7 +13,7 @@ const meta: Meta<HomeHeroComponent> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>El <strong>HomeHero</strong> es la banda que abre la página de inicio en el Design System v3: fondo <code>brand-200</code> a todo el ancho, con el trazo del diseño detrás, el <code>&lt;h1&gt;</code> de la página y su bajada, y el carrusel de campañas proyectado debajo.</p><p>El fondo es full-bleed y el contenido va enmarcado adentro, así que el host vive fuera del contenedor angosto de la página. La muestra de portadas que el diseño ubica a la derecha del título está retirada hasta resolver su tratamiento visual.</p></div>`,
+				component: `<div><p>El ${docsMention(homeHeroDocs)} es la banda que abre la página de inicio en el Design System v3: fondo <code>brand-200</code> a todo el ancho, con el trazo del diseño detrás, el <code>&lt;h1&gt;</code> de la página y su bajada, y el carrusel de campañas proyectado debajo.</p><p>El fondo es full-bleed y el contenido va enmarcado adentro, así que el host vive fuera del contenedor angosto de la página. La muestra de portadas que el diseño ubica a la derecha del título está retirada hasta resolver su tratamiento visual.</p></div>`,
 			},
 		},
 	},

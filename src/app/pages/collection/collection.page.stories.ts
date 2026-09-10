@@ -11,6 +11,12 @@ import { onoffCollectionsMock, onoffCollectionTeasersMock } from '@mocks/onoff-c
 import { provideCollectionApiMock } from '../../providers/collection.mock';
 import type { CollectionApi } from '../../providers/collection.provider';
 import CollectionPage from './collection.page';
+import { collectionPageDocs } from './collection.page.docs';
+import { collectionInfoPanelDocs } from '../../components/collection-info-panel/collection-info-panel.component.docs';
+import { drawerDocs } from '../../components/drawer/drawer.component.docs';
+import { literaryWorkTeaserCardDocs } from '../../components/literary-work-teaser-card/literary-work-teaser-card.component.docs';
+import { navigableCollectionTeaserDocs } from '../../components/navigable-collection-teaser/navigable-collection-teaser.component.docs';
+import { docsMention, docsRef } from '@testing/storybook-docs';
 
 // Las descripciones del corpus entran en el recorte de ocho líneas, así que con ellas el acceso a la
 // descripción completa no aparece nunca. Esta variante lo hace visible, con el texto pasando por el
@@ -69,7 +75,7 @@ const meta: Meta<CollectionPageArgs> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>La página de una colección, <strong>CollectionPage</strong>, montada sobre el corpus de Onoff. Como el resto de las entradas bajo <strong>Páginas</strong>, no cataloga un componente sino el ensamblado completo: las dos columnas, el listado de obras y la información de la colección con su acceso a la descripción entera.</p><p>El único control reproduce lo que la ruta le entrega: <code>slug</code>, qué colección se abre. Un slug que no existe cae en el estado de colección inexistente.</p><p>Se compone de <a href="./?path=/docs/componentes-v3-literaryworkteasercard--docs" target="_top"><strong>LiteraryWorkTeaserCard</strong></a> (el listado), <a href="./?path=/docs/componentes-v3-collectioninfopanel--docs" target="_top"><strong>CollectionInfoPanel</strong></a> (la columna y el contenido del panel deslizable), <a href="./?path=/docs/componentes-v3-navigablecollectionteaser--docs" target="_top"><strong>NavigableCollectionTeaser</strong></a> (las sugeridas) y <a href="./?path=/docs/componentes-v3-drawer--docs" target="_top"><strong>Drawer</strong></a>.</p><p>Dos cosas solo se ven acá, porque dependen de medidas reales: el acceso <strong>"Leer más"</strong> aparece únicamente si la descripción desborda su recorte de ocho líneas, y el recorte del extracto de cada obra cambia según la colección muestre o no a sus autores.</p><p>El encabezado fijo de la aplicación no se monta en el catálogo, así que el margen superior de la página se ve como espacio en blanco.</p></div>`,
+				component: `<div><p>La página de una colección, ${docsMention(collectionPageDocs)}, montada sobre el corpus de Onoff. Como el resto de las entradas bajo <strong>Páginas</strong>, no cataloga un componente sino el ensamblado completo: las dos columnas, el listado de obras y la información de la colección con su acceso a la descripción entera.</p><p>El único control reproduce lo que la ruta le entrega: <code>slug</code>, qué colección se abre. Un slug que no existe cae en el estado de colección inexistente.</p><p>Se compone de ${docsRef(literaryWorkTeaserCardDocs)} (el listado), ${docsRef(collectionInfoPanelDocs)} (la columna y el contenido del panel deslizable), ${docsRef(navigableCollectionTeaserDocs)} (las sugeridas) y ${docsRef(drawerDocs)}.</p><p>Dos cosas solo se ven acá, porque dependen de medidas reales: el acceso <strong>"Leer más"</strong> aparece únicamente si la descripción desborda su recorte de ocho líneas, y el recorte del extracto de cada obra cambia según la colección muestre o no a sus autores.</p><p>El encabezado fijo de la aplicación no se monta en el catálogo, así que el margen superior de la página se ve como espacio en blanco.</p></div>`,
 			},
 		},
 	},

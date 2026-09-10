@@ -8,6 +8,10 @@ import {
 	onoffLiteraryWorksWithoutMediaSources,
 	onoffLiteraryWorksWithSingleMediaSource,
 } from '@mocks/onoff-literary-works.mock';
+import { mediaWidgetSelectorDocs } from './media-widget-selector.component.docs';
+import { buttonGroupDocs } from '../button-group/button-group.component.docs';
+import { mediaSelectorsDocs } from '../media-selectors/media-selectors.component.docs';
+import { docsMention, docsRef } from '@testing/storybook-docs';
 
 // Las dos obras se toman por capacidad y no por slug: el selector reparte el corpus por el umbral que el
 // componente decide (hay entre qué elegir o no), así que enriquecer otra obra no obliga a tocar esto.
@@ -22,7 +26,7 @@ const meta: Meta<MediaWidgetSelector> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>El componente <strong>MediaWidgetSelector</strong> ofrece los formatos alternativos en los que se puede consumir una obra —audio, espacio grabado, episodio de podcast, video— y monta el widget del que está elegido.</p><ul><li><strong>Título:</strong> visible siempre que la obra traiga al menos un medio; su texto cambia según haya o no elección.</li><li><strong>Botonera:</strong> solo cuando hay <strong>más de un</strong> medio. Con uno solo no hay entre qué elegir y el widget se monta directo. La fila la pone <a href="./?path=/docs/componentes-v3-buttongroup--docs" target="_top"><strong>ButtonGroup</strong></a> en su geometría chica; el vocabulario de la pantalla —qué ícono y qué etiqueta le toca a cada tipo— lo aporta este componente.</li><li><strong>Widget:</strong> lo resuelve el catálogo <code>mediaWidgetRegistry</code>, que aparea cada tipo de medio con su componente.</li></ul><p>Hay <strong>un botón por recurso</strong>, no por formato: una obra con dos videos ofrece los dos. Cuando un tipo se repite, el nombre del formato dejaría de distinguir un botón del otro, así que la etiqueta pasa a ser el título del medio — es una decisión de este componente, no del diseño, que no modela ese caso.</p><p>Los widgets pintan su propia descripción, así que el componente no la repite. Comparar con <a href="./?path=/docs/componentes-v3-mediaselectors--docs" target="_top"><strong>MediaSelectors</strong></a>, que resume los recursos de una tarjeta agrupándolos por plataforma sin montar nada.</p></div>`,
+				component: `<div><p>El componente ${docsMention(mediaWidgetSelectorDocs)} ofrece los formatos alternativos en los que se puede consumir una obra —audio, espacio grabado, episodio de podcast, video— y monta el widget del que está elegido.</p><ul><li><strong>Título:</strong> visible siempre que la obra traiga al menos un medio; su texto cambia según haya o no elección.</li><li><strong>Botonera:</strong> solo cuando hay <strong>más de un</strong> medio. Con uno solo no hay entre qué elegir y el widget se monta directo. La fila la pone ${docsRef(buttonGroupDocs)} en su geometría chica; el vocabulario de la pantalla —qué ícono y qué etiqueta le toca a cada tipo— lo aporta este componente.</li><li><strong>Widget:</strong> lo resuelve el catálogo <code>mediaWidgetRegistry</code>, que aparea cada tipo de medio con su componente.</li></ul><p>Hay <strong>un botón por recurso</strong>, no por formato: una obra con dos videos ofrece los dos. Cuando un tipo se repite, el nombre del formato dejaría de distinguir un botón del otro, así que la etiqueta pasa a ser el título del medio — es una decisión de este componente, no del diseño, que no modela ese caso.</p><p>Los widgets pintan su propia descripción, así que el componente no la repite. Comparar con ${docsRef(mediaSelectorsDocs)}, que resume los recursos de una tarjeta agrupándolos por plataforma sin montar nada.</p></div>`,
 			},
 		},
 		layout: 'padded',

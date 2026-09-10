@@ -4,6 +4,13 @@ import { TagsListComponent } from './tags-list.component';
 import { TagComponent, TagVariant } from '../tag/tag.component';
 import { Tag } from '@models/tag.model';
 import { onoffTagsWithShortTitles } from '@mocks/onoff-tags.mock';
+import { authorTeaserCardDocs } from '../author-teaser-card/author-teaser-card.component.docs';
+import { tagDocs } from '../tag/tag.component.docs';
+import { docsRef } from '@testing/storybook-docs';
+
+// Los símbolos que la prosa de esta story nombra sin enlazar. La tupla no se usa en runtime:
+// existe para que el import type-only rompa el `typecheck` si alguno deja de estar declarado.
+export type DocsSymbols = [TagsListComponent];
 
 type Args = TagsListComponent & { tags: Tag[]; variant: TagVariant; maxVisible?: number };
 
@@ -32,7 +39,7 @@ const meta: Meta<Args> = {
 				sourceState: 'shown',
 			},
 			description: {
-				component: `<div><p>El componente <strong>TagsListComponent</strong> recibe instancias de <a href="./?path=/docs/componentes-v3-tag--docs" target="_top"><strong>Tag</strong></a> por <strong>content projection</strong> (<code>&lt;ng-content&gt;</code>) y, cuando <strong>no entran en el ancho del contenedor</strong>, colapsa el excedente detrás de un contador <strong>"+N"</strong> de ancho fijo ubicado justo después del último tag visible.</p><p>El recorte es <strong>por ancho real</strong> (vía <code>IntersectionObserver</code>, sin <code>ResizeObserver</code>), no por cantidad, y vive en <code>TagsOverflowDirective</code> aplicada como <code>hostDirective</code>. <code>maxVisible</code> es un <strong>tope duro opcional</strong>.</p><p>Probá el <em>Playground</em> para arrastrar el ancho y ver el contador aparecer/desaparecer en vivo.</p></div>`,
+				component: `<div><p>El componente <strong>TagsListComponent</strong> recibe instancias de ${docsRef(tagDocs)} por <strong>content projection</strong> (<code>&lt;ng-content&gt;</code>) y, cuando <strong>no entran en el ancho del contenedor</strong>, colapsa el excedente detrás de un contador <strong>"+N"</strong> de ancho fijo ubicado justo después del último tag visible.</p><p>El recorte es <strong>por ancho real</strong> (vía <code>IntersectionObserver</code>, sin <code>ResizeObserver</code>), no por cantidad, y vive en <code>TagsOverflowDirective</code> aplicada como <code>hostDirective</code>. <code>maxVisible</code> es un <strong>tope duro opcional</strong>.</p><p>Probá el <em>Playground</em> para arrastrar el ancho y ver el contador aparecer/desaparecer en vivo.</p></div>`,
 			},
 		},
 		layout: 'padded',
@@ -62,7 +69,7 @@ export const Default: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Con espacio de sobra, los 5 tags se muestran sin contador.</p><p><strong>Usos:</strong> <a href="./?path=/docs/componentes-v3-authorteasercard--docs" target="_top"><strong>AuthorTeaserCard</strong></a>, en columnas anchas donde la fila de tags entra completa.</p>`,
+				story: `<p>Con espacio de sobra, los 5 tags se muestran sin contador.</p><p><strong>Usos:</strong> ${docsRef(authorTeaserCardDocs)}, en columnas anchas donde la fila de tags entra completa.</p>`,
 			},
 		},
 	},
@@ -75,7 +82,7 @@ export const WidthOverflow: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>En 240px no entran los 5 tags: los que sobran se colapsan tras un "+N" después del último visible.</p><p><strong>Usos:</strong> <a href="./?path=/docs/componentes-v3-authorteasercard--docs" target="_top"><strong>AuthorTeaserCard</strong></a> en anchos intermedios.</p>`,
+				story: `<p>En 240px no entran los 5 tags: los que sobran se colapsan tras un "+N" después del último visible.</p><p><strong>Usos:</strong> ${docsRef(authorTeaserCardDocs)} en anchos intermedios.</p>`,
 			},
 		},
 	},
@@ -127,7 +134,7 @@ export const Variants: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>soft / filled / gray recortando por ancho en contenedores de 240px.</p><p><strong>Usos:</strong> referencia visual de cómo afecta la variante de <a href="./?path=/docs/componentes-v3-tag--docs" target="_top"><strong>Tag</strong></a> a la fila completa.</p>`,
+				story: `<p>soft / filled / gray recortando por ancho en contenedores de 240px.</p><p><strong>Usos:</strong> referencia visual de cómo afecta la variante de ${docsRef(tagDocs)} a la fila completa.</p>`,
 			},
 		},
 	},

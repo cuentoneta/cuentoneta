@@ -4,6 +4,15 @@ import { LiteraryWorkTeaserHomeCardComponent } from './literary-work-teaser-home
 import { LiteraryWorkTeaserHomeCardSkeletonComponent } from './literary-work-teaser-home-card-skeleton.component';
 import { onoffLiteraryWorkTeasersWithMediaSourcesMock } from '@mocks/onoff-literary-work-teasers.mock';
 import { corpusLiteraryWorkTeasers, literaryWorkSelectArgType } from '@mocks/onoff-corpus.storybook';
+import { coverImageDocs } from '../cover-image/cover-image.component.docs';
+import { imageProfileDocs } from '../image-profile/image-profile.component.docs';
+import { literaryWorkTeaserCardDocs } from '../literary-work-teaser-card/literary-work-teaser-card.component.docs';
+import { mediaSelectorsDocs } from '../media-selectors/media-selectors.component.docs';
+import { docsRef } from '@testing/storybook-docs';
+
+// Los símbolos que la prosa de esta story nombra sin enlazar. La tupla no se usa en runtime:
+// existe para que el import type-only rompa el `typecheck` si alguno deja de estar declarado.
+export type DocsSymbols = [LiteraryWorkTeaserHomeCardSkeletonComponent];
 
 const [teaser] = onoffLiteraryWorkTeasersWithMediaSourcesMock;
 
@@ -14,7 +23,7 @@ const meta: Meta<LiteraryWorkTeaserHomeCardComponent> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>Utilizado para representar una vista previa de una obra en la Home. Resume la información principal del contenido, incluyendo autor, título, categoría, tiempo estimado de lectura, imagen asociada y accesos a archivos multimediales como video, X o Spotify.</p><p>Su objetivo es facilitar un vistazo rápido del contenido disponible y ayudar al usuario a decidir si quiere profundizar en la obra.</p><p>Derivada de <a href="./?path=/docs/componentes-v3-literaryworkteasercard--docs" target="_top"><strong>LiteraryWorkTeaserCard</strong></a>, presenta un layout vertical angosto con la imagen, la numeración y los selectores de multimedia apilados sobre un contenedor gris.</p><ul><li>El título de la obra se trunca siempre a una sola línea.</li><li>Los selectores de multimedia usan siempre la variante <code>Filled</code> del MediaTag (recuadros blancos sobre el gris).</li><li>El avatar y el nombre del autor son elementos clickeables que enlazan al perfil del autor; en estado hover, el nombre se subraya.</li></ul><p>Se compone de <a href="./?path=/docs/componentes-v3-coverimage--docs" target="_top"><strong>CoverImage</strong></a> (portada), <a href="./?path=/docs/componentes-v3-imageprofile--docs" target="_top"><strong>ImageProfile</strong></a> (avatar del autor) y <a href="./?path=/docs/componentes-v3-mediaselectors--docs" target="_top"><strong>MediaSelectors</strong></a> (accesos multimedia); el skeleton es <strong>LiteraryWorkTeaserHomeCardSkeleton</strong>.</p></div>`,
+				component: `<div><p>Utilizado para representar una vista previa de una obra en la Home. Resume la información principal del contenido, incluyendo autor, título, categoría, tiempo estimado de lectura, imagen asociada y accesos a archivos multimediales como video, X o Spotify.</p><p>Su objetivo es facilitar un vistazo rápido del contenido disponible y ayudar al usuario a decidir si quiere profundizar en la obra.</p><p>Derivada de ${docsRef(literaryWorkTeaserCardDocs)}, presenta un layout vertical angosto con la imagen, la numeración y los selectores de multimedia apilados sobre un contenedor gris.</p><ul><li>El título de la obra se trunca siempre a una sola línea.</li><li>Los selectores de multimedia usan siempre la variante <code>Filled</code> del MediaTag (recuadros blancos sobre el gris).</li><li>El avatar y el nombre del autor son elementos clickeables que enlazan al perfil del autor; en estado hover, el nombre se subraya.</li></ul><p>Se compone de ${docsRef(coverImageDocs)} (portada), ${docsRef(imageProfileDocs)} (avatar del autor) y ${docsRef(mediaSelectorsDocs)} (accesos multimedia); el skeleton es <strong>LiteraryWorkTeaserHomeCardSkeletonComponent</strong>.</p></div>`,
 			},
 		},
 		layout: 'padded',

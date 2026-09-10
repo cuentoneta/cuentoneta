@@ -2,6 +2,11 @@ import { argsToTemplate, Meta, StoryObj } from '@storybook/angular-vite';
 
 import { LiteraryWorksCardDeck } from './literary-works-card-deck';
 import { onoffLiteraryWorkNavigationTeasersWithAuthorsMock } from '@mocks/onoff-literary-work-teasers.mock';
+import { literaryWorksCardDeckDocs } from './literary-works-card-deck.docs';
+import { emptyStateDocs } from '../empty-state/empty-state.component.docs';
+import { literaryWorkTeaserHomeCardDocs } from '../literary-work-teaser-home-card/literary-work-teaser-home-card.component.docs';
+import { sectionHeaderDocs } from '../section-header/section-header.component.docs';
+import { docsMention, docsRef } from '@testing/storybook-docs';
 
 // Un solo dataset compartido por todas las stories: las mismas obras en cada estado hacen que el switch
 // del catálogo compare siempre lo mismo.
@@ -14,7 +19,7 @@ const meta: Meta<LiteraryWorksCardDeck> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>El <strong>LiteraryWorksCardDeck</strong> es la grilla de una tirada de obras en el Design System v3: un <a href="./?path=/docs/componentes-v3-sectionheader--docs" target="_top"><strong>SectionHeader</strong></a> opcional sobre una grilla responsiva de una columna en mobile y tres desde <code>md</code>, con una vista previa por obra resuelta por <a href="./?path=/docs/componentes-v3-literaryworkteaserhomecard--docs" target="_top"><strong>LiteraryWorkTeaserHomeCard</strong></a>.</p><p>Todo lo que distingue a una tirada de otra —su título, su bajada y a dónde lleva su acción— entra por input, así que una misma página puede montar varias y cualquier otra puede reusarlo. Con título, el host se expone como región con ese nombre, que es lo que permite localizar cada instancia sin depender de su posición; sin título ni bajada queda la grilla sola y el host no se anuncia como región. El estado de carga entra por input, porque el dueño del recurso es la página: cargando dibuja esqueletos, con obras la grilla, y sin obras el aviso de <a href="./?path=/docs/componentes-v3-emptystate--docs" target="_top"><strong>EmptyState</strong></a>.</p></div>`,
+				component: `<div><p>El ${docsMention(literaryWorksCardDeckDocs)} es la grilla de una tirada de obras en el Design System v3: un ${docsRef(sectionHeaderDocs)} opcional sobre una grilla responsiva de una columna en mobile y tres desde <code>md</code>, con una vista previa por obra resuelta por ${docsRef(literaryWorkTeaserHomeCardDocs)}.</p><p>Todo lo que distingue a una tirada de otra —su título, su bajada y a dónde lleva su acción— entra por input, así que una misma página puede montar varias y cualquier otra puede reusarlo. Con título, el host se expone como región con ese nombre, que es lo que permite localizar cada instancia sin depender de su posición; sin título ni bajada queda la grilla sola y el host no se anuncia como región. El estado de carga entra por input, porque el dueño del recurso es la página: cargando dibuja esqueletos, con obras la grilla, y sin obras el aviso de ${docsRef(emptyStateDocs)}.</p></div>`,
 			},
 		},
 	},

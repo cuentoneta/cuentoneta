@@ -2,6 +2,12 @@ import { Meta, StoryObj, moduleMetadata } from '@storybook/angular-vite';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { SpaceRecordingWidgetComponent } from './space-recording-widget.component';
 import { onoffSpaceRecordingsMock } from '@mocks/onoff-media.mock';
+import { mediaWidgetSelectorDocs } from '../media-widget-selector/media-widget-selector.component.docs';
+import { docsRef } from '@testing/storybook-docs';
+
+// Los símbolos que la prosa de esta story nombra sin enlazar. La tupla no se usa en runtime:
+// existe para que el import type-only rompa el `typecheck` si alguno deja de estar declarado.
+export type DocsSymbols = [SpaceRecordingWidgetComponent];
 
 const meta: Meta<SpaceRecordingWidgetComponent> = {
 	title: 'Widgets/SpaceRecording',
@@ -17,7 +23,7 @@ const meta: Meta<SpaceRecordingWidgetComponent> = {
 				sourceState: 'shown',
 			},
 			description: {
-				component: `<div><p>El componente <strong>SpaceRecordingWidgetComponent</strong> muestra la grabación de un Space de X asociado a una obra: título, anfitrión con su avatar, fecha, duración, reproductor y la descripción del recurso.</p><p>Cuando la grabación no trae URL —porque la proyección embebida no la resuelve, o porque el Space no tiene audio adjunto en el CMS— el reproductor se reemplaza por un placeholder visible en vez de renderizar un control roto.</p><p>La descripción llega desde el backend como HTML ya saneado (<code>SanitizedHtml</code>, derivado del Markdown que carga el CMS) y se pinta con <code>[innerHTML]</code> dentro de un <code>&lt;div&gt;</code>, porque el HTML que produce el pipeline ya trae su propio <code>&lt;p&gt;</code>.</p><p>Quien monta este widget es <a href="./?path=/docs/componentes-v3-mediawidgetselector--docs" target="_top"><strong>MediaWidgetSelector</strong></a>, que lo resuelve contra el registry de medios según el tipo de media y le delega toda la vista.</p></div>`,
+				component: `<div><p>El componente <strong>SpaceRecordingWidgetComponent</strong> muestra la grabación de un Space de X asociado a una obra: título, anfitrión con su avatar, fecha, duración, reproductor y la descripción del recurso.</p><p>Cuando la grabación no trae URL —porque la proyección embebida no la resuelve, o porque el Space no tiene audio adjunto en el CMS— el reproductor se reemplaza por un placeholder visible en vez de renderizar un control roto.</p><p>La descripción llega desde el backend como HTML ya saneado (<code>SanitizedHtml</code>, derivado del Markdown que carga el CMS) y se pinta con <code>[innerHTML]</code> dentro de un <code>&lt;div&gt;</code>, porque el HTML que produce el pipeline ya trae su propio <code>&lt;p&gt;</code>.</p><p>Quien monta este widget es ${docsRef(mediaWidgetSelectorDocs)}, que lo resuelve contra el registry de medios según el tipo de media y le delega toda la vista.</p></div>`,
 			},
 		},
 	},

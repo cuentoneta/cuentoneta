@@ -1,6 +1,12 @@
 import { Meta, StoryObj } from '@storybook/angular-vite';
 import { YoutubeVideoWidgetComponent } from './youtube-video-widget.component';
 import { onoffYouTubeVideosMock } from '@mocks/onoff-media.mock';
+import { mediaWidgetSelectorDocs } from '../media-widget-selector/media-widget-selector.component.docs';
+import { docsRef } from '@testing/storybook-docs';
+
+// Los símbolos que la prosa de esta story nombra sin enlazar. La tupla no se usa en runtime:
+// existe para que el import type-only rompa el `typecheck` si alguno deja de estar declarado.
+export type DocsSymbols = [YoutubeVideoWidgetComponent];
 
 const meta: Meta<YoutubeVideoWidgetComponent> = {
 	title: 'Widgets/YoutubeVideo',
@@ -11,7 +17,7 @@ const meta: Meta<YoutubeVideoWidgetComponent> = {
 				sourceState: 'shown',
 			},
 			description: {
-				component: `<div><p>El componente <strong>YoutubeVideoWidgetComponent</strong> muestra un video de YouTube asociado a una obra: el embed y la descripción del recurso.</p><p>La descripción llega desde el backend como HTML ya saneado (<code>SanitizedHtml</code>, derivado del Markdown que carga el CMS) y se pinta con <code>[innerHTML]</code> dentro de un <code>&lt;div&gt;</code>, porque el HTML que produce el pipeline ya trae su propio <code>&lt;p&gt;</code>.</p><p>Quien monta este widget es <a href="./?path=/docs/componentes-v3-mediawidgetselector--docs" target="_top"><strong>MediaWidgetSelector</strong></a>, que lo resuelve contra el registry de medios según el tipo de media y le delega toda la vista.</p></div>`,
+				component: `<div><p>El componente <strong>YoutubeVideoWidgetComponent</strong> muestra un video de YouTube asociado a una obra: el embed y la descripción del recurso.</p><p>La descripción llega desde el backend como HTML ya saneado (<code>SanitizedHtml</code>, derivado del Markdown que carga el CMS) y se pinta con <code>[innerHTML]</code> dentro de un <code>&lt;div&gt;</code>, porque el HTML que produce el pipeline ya trae su propio <code>&lt;p&gt;</code>.</p><p>Quien monta este widget es ${docsRef(mediaWidgetSelectorDocs)}, que lo resuelve contra el registry de medios según el tipo de media y le delega toda la vista.</p></div>`,
 			},
 		},
 	},

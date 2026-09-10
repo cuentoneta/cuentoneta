@@ -10,6 +10,15 @@ import {
 	onoffCollectionsWithRepresentativeImageryMock,
 	onoffCollectionTeasersMock,
 } from '@mocks/onoff-collections.mock';
+import { collectionInfoPanelDocs } from '@components/collection-info-panel/collection-info-panel.component.docs';
+import { dividerDocs } from '@components/divider/divider.component.docs';
+import { navigableCollectionTeaserDocs } from '@components/navigable-collection-teaser/navigable-collection-teaser.component.docs';
+import { collectionPageDocs } from '../../pages/collection/collection.page.docs';
+import { docsMention, docsRef } from '@testing/storybook-docs';
+
+// Los símbolos que la prosa de esta story nombra sin enlazar. La tupla no se usa en runtime:
+// existe para que el import type-only rompa el `typecheck` si alguno deja de estar declarado.
+export type DocsSymbols = [DrawerComponent];
 
 type DrawerArgs = DrawerComponent & { direction: DrawerDirection };
 
@@ -148,7 +157,7 @@ export const ComposicionCollectionPage: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Réplica del contenido real del drawer de la CollectionPage: <strong><a href="./?path=/docs/componentes-v3-collectioninfopanel--docs" target="_top">CollectionInfoPanel</a></strong> con la descripción completa, <strong><a href="./?path=/docs/componentes-v3-divider--docs" target="_top">Divider</a></strong> y las <strong><a href="./?path=/docs/componentes-v3-navigablecollectionteaser--docs" target="_top">NavigableCollectionTeaser</a></strong> sugeridas — todo por <code>ng-content</code> plano.</p><p><strong>Usos:</strong> el "Leer más" de la descripción de una colección.</p>`,
+				story: `<p>Réplica del contenido real del drawer de la ${docsMention(collectionPageDocs)}: ${docsRef(collectionInfoPanelDocs)} con la descripción completa, ${docsRef(dividerDocs)} y las ${docsRef(navigableCollectionTeaserDocs)} sugeridas — todo por <code>ng-content</code> plano.</p><p><strong>Usos:</strong> el "Leer más" de la descripción de una colección.</p>`,
 			},
 		},
 	},

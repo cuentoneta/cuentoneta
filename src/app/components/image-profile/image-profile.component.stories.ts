@@ -3,6 +3,14 @@ import { argsToTemplate, moduleMetadata, Meta, StoryObj } from '@storybook/angul
 import { ImageProfileComponent, type ImageProfileSize } from './image-profile.component';
 import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 import { authorTeaserMock } from '@mocks/author.mock';
+import { authorTeaserCardDocs } from '../author-teaser-card/author-teaser-card.component.docs';
+import { literaryWorkTeaserCardDocs } from '../literary-work-teaser-card/literary-work-teaser-card.component.docs';
+import { literaryWorkTeaserHomeCardDocs } from '../literary-work-teaser-home-card/literary-work-teaser-home-card.component.docs';
+import { docsRef } from '@testing/storybook-docs';
+
+// Los símbolos que la prosa de esta story nombra sin enlazar. La tupla no se usa en runtime:
+// existe para que el import type-only rompa el `typecheck` si alguno deja de estar declarado.
+export type DocsSymbols = [ImageProfileComponent];
 
 // Foto de muestra: François Onoff, nuestro "autor de stock" para Storybook, mocks y tests
 // (misma foto que usa AuthorTeaser, tomada del mock para mantener una única fuente de verdad).
@@ -18,7 +26,7 @@ const meta: Meta<ImageProfileComponent> = {
 				sourceState: 'shown',
 			},
 			description: {
-				component: `<div><p>El componente <strong>ImageProfileComponent</strong> es la foto de perfil circular del Design System v3, usada para mostrar la imagen de autores (y, a futuro, de usuarios logueados). Es el componente más anidado del árbol de teasers v3. Encapsula el recorte circular, el placeholder y el redimensionado de la imagen (solicita al CDN 2× del tamaño de display).</p><ul><li><code>size</code>: small (24px), medium (40px), lg (80px), xl (120px).</li><li><code>src</code>/<code>alt</code>: foto del perfil. Sin <code>src</code> se muestra el placeholder de persona.</li><li><code>variant</code>: <code>profile</code> (default) o <code>collection</code> (fondo brand-100 + ícono de biblioteca).</li></ul><p>Se consume desde <a href="./?path=/docs/componentes-v3-authorteasercard--docs" target="_top"><strong>AuthorTeaserCard</strong></a>, <a href="./?path=/docs/componentes-v3-literaryworkteaserhomecard--docs" target="_top"><strong>LiteraryWorkTeaserHomeCard</strong></a> y <a href="./?path=/docs/componentes-v3-literaryworkteasercard--docs" target="_top"><strong>LiteraryWorkTeaserCard</strong></a> como avatar del autor.</p></div>`,
+				component: `<div><p>El componente <strong>ImageProfileComponent</strong> es la foto de perfil circular del Design System v3, usada para mostrar la imagen de autores (y, a futuro, de usuarios logueados). Es el componente más anidado del árbol de teasers v3. Encapsula el recorte circular, el placeholder y el redimensionado de la imagen (solicita al CDN 2× del tamaño de display).</p><ul><li><code>size</code>: small (24px), medium (40px), lg (80px), xl (120px).</li><li><code>src</code>/<code>alt</code>: foto del perfil. Sin <code>src</code> se muestra el placeholder de persona.</li><li><code>variant</code>: <code>profile</code> (default) o <code>collection</code> (fondo brand-100 + ícono de biblioteca).</li></ul><p>Se consume desde ${docsRef(authorTeaserCardDocs)}, ${docsRef(literaryWorkTeaserHomeCardDocs)} y ${docsRef(literaryWorkTeaserCardDocs)} como avatar del autor.</p></div>`,
 			},
 		},
 		layout: 'padded',

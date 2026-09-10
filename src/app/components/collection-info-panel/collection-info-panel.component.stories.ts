@@ -15,6 +15,15 @@ import {
 import { createCollection } from '@models/collection.model';
 import { createMarkdown } from '@models/markdown.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
+import { collectionCoverDocs } from '../collection-cover/collection-cover.component.docs';
+import { tagDocs } from '../tag/tag.component.docs';
+import { tagsListDocs } from '../tags-list/tags-list.component.docs';
+import { docsRef } from '@testing/storybook-docs';
+import type { CollectionInfoPanelSkeletonComponent } from '@components/collection-info-panel/collection-info-panel-skeleton.component';
+
+// Los símbolos que la prosa de esta story nombra sin enlazar. La tupla no se usa en runtime:
+// existe para que el import type-only rompa el `typecheck` si alguno deja de estar declarado.
+export type DocsSymbols = [CollectionInfoPanelComponent, CollectionInfoPanelSkeletonComponent];
 
 const [representativeCollection] = onoffCollectionsWithRepresentativeImageryMock;
 const [sampleCollection] = onoffCollectionsWithSampleImageryMock;
@@ -49,7 +58,7 @@ const meta: Meta<CollectionInfoPanelComponent> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>El <strong>CollectionInfoPanelComponent</strong> del Design System v3 muestra la información de una colección en una columna: portada, título, etiquetas y descripción.</p><p>Existe porque la página de colección monta ese mismo bloque en <strong>dos lugares</strong> —la barra lateral y el panel deslizable de la descripción—, y tenerlo escrito dos veces garantiza que diverjan. Las diferencias entre los dos montajes se expresan como inputs: el deslizable oculta el título, que su encabezado ya nombra, y no recorta la descripción.</p><p>Se compone de <a href="./?path=/docs/componentes-v3-collectioncover--docs" target="_top"><strong>CollectionCover</strong></a> (la portada, en cualquiera de sus dos formas), <a href="./?path=/docs/componentes-v3-tagslist--docs" target="_top"><strong>TagsList</strong></a> y <a href="./?path=/docs/componentes-v3-tag--docs" target="_top"><strong>Tag</strong></a> (etiquetas en variante <code>filled</code>).</p><p>Cuántas líneas se muestran de la descripción lo decide quien lo monta, porque depende del alto disponible en su columna; sin ese dato el panel no recorta. La descripción llega saneada desde el backend y se pinta como HTML. Sin colección, dibuja su propio esqueleto, <strong>CollectionInfoPanelSkeleton</strong>.</p></div>`,
+				component: `<div><p>El <strong>CollectionInfoPanelComponent</strong> del Design System v3 muestra la información de una colección en una columna: portada, título, etiquetas y descripción.</p><p>Existe porque la página de colección monta ese mismo bloque en <strong>dos lugares</strong> —la barra lateral y el panel deslizable de la descripción—, y tenerlo escrito dos veces garantiza que diverjan. Las diferencias entre los dos montajes se expresan como inputs: el deslizable oculta el título, que su encabezado ya nombra, y no recorta la descripción.</p><p>Se compone de ${docsRef(collectionCoverDocs)} (la portada, en cualquiera de sus dos formas), ${docsRef(tagsListDocs)} y ${docsRef(tagDocs)} (etiquetas en variante <code>filled</code>).</p><p>Cuántas líneas se muestran de la descripción lo decide quien lo monta, porque depende del alto disponible en su columna; sin ese dato el panel no recorta. La descripción llega saneada desde el backend y se pinta como HTML. Sin colección, dibuja su propio esqueleto, <strong>CollectionInfoPanelSkeletonComponent</strong>.</p></div>`,
 			},
 		},
 	},
@@ -150,7 +159,7 @@ export const VariasEtiquetas: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Con varias etiquetas se ve el recorte de <a href="./?path=/docs/componentes-v3-tagslist--docs" target="_top"><strong>TagsList</strong></a>: en esta columna angosta las que no entran se colapsan detrás de un contador. Es la única superficie donde ese comportamiento se puede mirar — depende de medidas reales y el entorno de tests no las computa.</p><p><strong>Usos:</strong> colecciones clasificadas con más de una etiqueta.</p>`,
+				story: `<p>Con varias etiquetas se ve el recorte de ${docsRef(tagsListDocs)}: en esta columna angosta las que no entran se colapsan detrás de un contador. Es la única superficie donde ese comportamiento se puede mirar — depende de medidas reales y el entorno de tests no las computa.</p><p><strong>Usos:</strong> colecciones clasificadas con más de una etiqueta.</p>`,
 			},
 		},
 	},
