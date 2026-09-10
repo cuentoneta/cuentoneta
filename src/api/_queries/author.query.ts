@@ -45,3 +45,12 @@ export const authorsQuery = defineQuery(`
     diedOnYear,
     'resources': []
 }|order(name asc)`);
+
+// Insumo del script de reconciliación de tags de autor (`pnpm reconcile-author-tags`): los tags
+// actuales de cada autor con su `_key`, para reescribir la unión preservando las claves existentes
+// y acuñando solo las de los tags nuevos. Mismo motivo que la query de obras para vivir acá.
+export const reconcileAuthorTagsAuthorsQuery = defineQuery(`
+*[_type == 'author' && !(_id in path('drafts.**'))] {
+    _id,
+    'tags': coalesce(tags[]{ _key, _ref }, [])
+}`);
