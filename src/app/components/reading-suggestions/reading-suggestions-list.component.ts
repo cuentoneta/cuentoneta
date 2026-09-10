@@ -1,7 +1,7 @@
 import { Component, computed, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { LiteraryWorkCardTeaserComponent } from '@components/literary-work-card-teaser/literary-work-card-teaser.component';
+import { LiteraryWorkTeaserCardComponent } from '@components/literary-work-teaser-card/literary-work-teaser-card.component';
 import { ButtonComponent } from '@components/button/button.component';
 import { DividerComponent } from '@components/divider/divider.component';
 import { SkeletonComponent } from '@components/skeleton/skeleton.component';
@@ -18,7 +18,7 @@ import type { NavigationParams } from '@app-utils/navigation-params';
  */
 @Component({
 	selector: 'cuentoneta-reading-suggestions-list',
-	imports: [RouterLink, LiteraryWorkCardTeaserComponent, ButtonComponent, DividerComponent, SkeletonComponent],
+	imports: [RouterLink, LiteraryWorkTeaserCardComponent, ButtonComponent, DividerComponent, SkeletonComponent],
 	host: { class: 'block' },
 	template: `
 		<!-- Sin sugerencias que ofrecer no hay bloque: un encabezado y un botón sobre una lista vacía
@@ -42,7 +42,7 @@ import type { NavigationParams } from '@app-utils/navigation-params';
 						<li class="flex flex-col gap-7">
 							<!-- La etiqueta es el tipo literario de la obra. Que sea el primer tag es convención editorial del
 								 catálogo, no algo que el schema garantice: si el orden cambiara, cambiaría la etiqueta. -->
-							<cuentoneta-literary-work-card-teaser
+							<cuentoneta-literary-work-teaser-card
 								[literaryWork]="suggestion"
 								[navigationParams]="navigationParams()"
 								[showAuthor]="showAuthor()"

@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/angular';
 import { provideRouter } from '@angular/router';
-import { Observable, of, Subject, throwError } from 'rxjs';
+import type { Observable } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 
 import { AuthorReadingSuggestionsComponent } from './author-reading-suggestions.component';
 import { READING_SUGGESTIONS_COUNT } from './pick-reading-suggestions';

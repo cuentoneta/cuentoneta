@@ -1,12 +1,5 @@
-import {
-	EnvironmentProviders,
-	inject,
-	makeEnvironmentProviders,
-	PLATFORM_ID,
-	Service,
-	signal,
-	type WritableSignal,
-} from '@angular/core';
+import type { EnvironmentProviders } from '@angular/core';
+import { inject, makeEnvironmentProviders, PLATFORM_ID, Service, signal, type WritableSignal } from '@angular/core';
 import { WINDOW } from './window';
 import {
 	combineLatest,
@@ -21,7 +14,8 @@ import {
 } from 'rxjs';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { isPlatformBrowser, isPlatformServer } from '@angular/common';
-import { Viewport, VIEWPORT_WIDTHS_NUMERIC, compareViewports } from '@utils/screen.utils';
+import type { Viewport } from '@utils/screen.utils';
+import { VIEWPORT_WIDTHS_NUMERIC, compareViewports } from '@utils/screen.utils';
 import { Direction, LayoutService } from './layout.interface';
 
 @Service()

@@ -1,4 +1,5 @@
-import { argsToTemplate, Meta, StoryObj } from '@storybook/angular-vite';
+import type { Meta, StoryObj } from '@storybook/angular-vite';
+import { argsToTemplate } from '@storybook/angular-vite';
 
 import { CollectionTeasersDeck } from './collection-teasers-deck';
 import { onoffCollectionTeasersOfLength } from '@mocks/onoff-collections.mock';

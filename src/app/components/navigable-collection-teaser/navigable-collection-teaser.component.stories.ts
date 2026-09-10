@@ -1,4 +1,5 @@
-import { argsToTemplate, componentWrapperDecorator, Meta, moduleMetadata, StoryObj } from '@storybook/angular-vite';
+import type { Meta, StoryObj } from '@storybook/angular-vite';
+import { argsToTemplate, componentWrapperDecorator, moduleMetadata } from '@storybook/angular-vite';
 
 import { NavigableCollectionTeaserComponent } from './navigable-collection-teaser.component';
 import { NavigableCollectionTeaserSkeletonComponent } from './navigable-collection-teaser-skeleton.component';

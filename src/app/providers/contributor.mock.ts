@@ -1,9 +1,11 @@
 // Core
-import { EnvironmentProviders, makeEnvironmentProviders } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import type { EnvironmentProviders } from '@angular/core';
+import { makeEnvironmentProviders } from '@angular/core';
+import type { Observable } from 'rxjs';
+import { of } from 'rxjs';
 
 // Models
-import { Contributor, ContributorArea } from '@models/contributor.model';
+import type { Contributor, ContributorArea } from '@models/contributor.model';
 import { ContributorApi } from './contributor.provider';
 
 export class StubContributorApi implements ContributorApi {

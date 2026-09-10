@@ -18,7 +18,7 @@ import { CollectionStructuredDataDirective } from './collection-structured-data.
 import { CollectionInfoPanelComponent } from '@components/collection-info-panel/collection-info-panel.component';
 import { DividerComponent } from '@components/divider/divider.component';
 import { DrawerComponent } from '@components/drawer/drawer.component';
-import { LiteraryWorkCardTeaserComponent } from '@components/literary-work-card-teaser/literary-work-card-teaser.component';
+import { LiteraryWorkTeaserCardComponent } from '@components/literary-work-teaser-card/literary-work-teaser-card.component';
 import { NavigableCollectionTeaserComponent } from '@components/navigable-collection-teaser/navigable-collection-teaser.component';
 import { NavigableCollectionTeaserSkeletonComponent } from '@components/navigable-collection-teaser/navigable-collection-teaser-skeleton.component';
 import { SkeletonComponent } from '@components/skeleton/skeleton.component';
@@ -33,7 +33,7 @@ import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 		DrawerComponent,
 		NgTemplateOutlet,
 		DividerComponent,
-		LiteraryWorkCardTeaserComponent,
+		LiteraryWorkTeaserCardComponent,
 		NavigableCollectionTeaserComponent,
 		NavigableCollectionTeaserSkeletonComponent,
 		SkeletonComponent,

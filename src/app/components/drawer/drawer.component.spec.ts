@@ -3,7 +3,8 @@ import { TestBed } from '@angular/core/testing';
 import { render, screen } from '@testing-library/angular';
 import userEvent, { type UserEvent } from '@testing-library/user-event';
 
-import { DrawerComponent, DrawerDirection } from './drawer.component';
+import type { DrawerDirection } from './drawer.component';
+import { DrawerComponent } from './drawer.component';
 import { DrawerHeaderDirective } from './drawer-header.directive';
 import { DrawerFooterDirective } from './drawer-footer.directive';
 import { DrawerTrackerService } from './drawer-tracker.service';

@@ -1,7 +1,7 @@
 import { SpaceRecordingWidgetComponent } from './space-recording-widget.component';
 import { render, screen, within } from '@testing-library/angular';
 import { CommonModule, DatePipe, NgOptimizedImage } from '@angular/common';
-import { SpaceRecording } from '@models/media.model';
+import type { SpaceRecording } from '@models/media.model';
 import { mediaDescriptionText, onoffSpaceRecordingsMock } from '@mocks/onoff-media.mock';
 
 describe('SpaceRecordingWidgetComponent', () => {
