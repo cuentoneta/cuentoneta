@@ -11,6 +11,8 @@ const templateRuleTester = new RuleTester({ languageOptions: { parser: angular.t
 
 const HEADER_FILE = 'src/app/components/header/header.component.ts';
 const allowHeader = [{ allowGlobalLayersIn: [HEADER_FILE] }];
+const SHELL_FILE = 'src/app/app.component.ts';
+const allowShell = [{ allowGlobalLayersIn: [SHELL_FILE] }];
 
 const decorate = (hostClass: string) =>
 	`import { Component } from '@angular/core';\n@Component({ selector: 'x', template: '', host: { class: '${hostClass}' } })\nexport class Probe {}`;
@@ -116,6 +118,13 @@ templateRuleTester.run('z-index-scale (plantillas)', rule, {
 		{ code: `<div class="relative z-content"></div>`, filename: 'a.html' },
 		{ code: `<div class="z-auto"></div>`, filename: 'a.html' },
 		{ code: `<div [class]="wrapperClasses()"></div>`, filename: 'a.html' },
+		// La plantilla inline de un fuente habilitado llega con el nombre virtual que le pone el procesador
+		// de Angular. Sin recortarlo al `.ts`, la allowlist solo cubriría la metadata de host del archivo.
+		{
+			code: `<a class="focus:z-floating"></a>`,
+			filename: `${SHELL_FILE}/1_inline-template-app.component.ts-1.component.html`,
+			options: allowShell,
+		},
 	],
 	invalid: [
 		{ code: `<div class="z-10"></div>`, filename: 'a.html', errors: [{ messageId: 'utility' }] },
