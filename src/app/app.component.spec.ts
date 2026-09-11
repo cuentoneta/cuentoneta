@@ -11,7 +11,7 @@ import { LayoutService } from './providers/layout.interface';
 import { ControllableLayoutService } from './providers/layout.mock';
 
 describe('AppComponent', () => {
-	const setup = async () => {
+	const renderShell = async () => {
 		return await render(AppComponent, {
 			componentImports: [HeaderComponent, FooterComponent, NgOptimizedImage, RouterOutlet],
 			providers: [
@@ -23,13 +23,13 @@ describe('AppComponent', () => {
 	};
 
 	it('should create the app', async () => {
-		const view = setup();
+		const view = renderShell();
 		expect(view).toBeTruthy();
 	});
 
 	describe('landmark principal', () => {
 		it('should declare exactly one main landmark for the whole application', async () => {
-			await setup();
+			await renderShell();
 
 			expect(screen.getAllByRole('main')).toHaveLength(1);
 		});
@@ -37,7 +37,7 @@ describe('AppComponent', () => {
 		// El `tabindex` es lo que hace que el foco acompañe al salto: sin él el navegador desplaza la
 		// página pero deja el foco donde estaba, y la próxima tabulación vuelve a la barra.
 		it('should let the skip link move focus into it', async () => {
-			await setup();
+			await renderShell();
 
 			const main = screen.getByRole('main');
 			expect(main).toHaveAttribute('id', 'main-content');
@@ -47,7 +47,7 @@ describe('AppComponent', () => {
 
 	describe('skip link', () => {
 		it('should point at the main landmark', async () => {
-			await setup();
+			await renderShell();
 
 			expect(screen.getByRole('link', { name: 'Saltar al contenido principal' })).toHaveAttribute(
 				'href',
@@ -58,7 +58,7 @@ describe('AppComponent', () => {
 		// La aserción que discrimina el defecto real: un skip link declarado después del encabezado pasa
 		// las dos anteriores y no le ahorra una sola tabulación a nadie.
 		it('should be the first tabbable element of the page', async () => {
-			await setup();
+			await renderShell();
 			const user = userEvent.setup();
 
 			await user.tab();
