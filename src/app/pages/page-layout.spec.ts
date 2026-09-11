@@ -4,15 +4,11 @@ import { join } from 'path';
 import { collectPageLayoutViolations } from './page-layout.util';
 import { routedPagePaths, sourceFileForRoute, templateSourcesFor } from './page-sources.util';
 
-// Guardrail estructural: el landmark principal y el despeje del encabezado fijo son del shell, y una página
-// no vuelve a declararlos. Es lo que convierte esa convención en algo verificable, en lugar de un comentario
-// repetido en cada plantilla. Descubre las páginas desde las rutas y afirma sobre su fuente, sin registro ni
-// imports de componentes. No usa Angular Testing Library a propósito: no hay UI que ejercitar.
+// Guardrail estructural de la convención de layout — ver angular-components.md, "Layout del shell".
+// Descubre las páginas desde las rutas y afirma sobre su fuente, sin registro ni imports de componentes.
 
 const SHELL_FILE = 'src/app/app.component.ts';
-// Barre las dos carpetas y no solo el catálogo: un componente auxiliar bajo `pages/` que no sea una página
-// ruteada —un skeleton, una columna de filtros— no lo ve el recorrido por rutas de arriba, y un `<main>`
-// declarado ahí terminaría igual de anidado dentro del del shell.
+// Las dos carpetas: un auxiliar bajo `pages/` que no sea página ruteada no lo ve el recorrido por rutas.
 const SWEPT_DIRS = ['src/app/components', 'src/app/pages'];
 
 const read = (file: string) => readFileSync(join(process.cwd(), file), 'utf-8');
@@ -36,8 +32,7 @@ describe('guardrail de layout de páginas', () => {
 	});
 });
 
-// La contracara positiva: sin esto, borrar el `<main>` del shell dejaría el guardrail de arriba en verde y la
-// aplicación sin landmark principal.
+// Sin esto, borrar el landmark del shell dejaría el guardrail de arriba en verde.
 describe('landmark principal del shell', () => {
 	const shell = read(SHELL_FILE);
 
@@ -54,11 +49,9 @@ describe('landmark principal del shell', () => {
 	});
 });
 
-// Cierra la vía por la que el landmark podría reaparecer fuera de una página ruteada: un componente que lo
-// declare termina anidado dentro del `<main>` del shell.
+// La otra vía por la que el landmark podría reaparecer: un componente que lo declare queda anidado.
 describe('componentes montados bajo una página', () => {
-	// El util que define la convención queda fuera: su mensaje nombra el elemento que el barrido busca, así
-	// que sin la excepción el checker se reportaría a sí mismo.
+	// El util que define la convención nombra el elemento en su mensaje: sin la excepción se reporta a sí mismo.
 	const definesTheConvention = (file: string) => file.endsWith('page-layout.util.ts');
 
 	const componentFiles = SWEPT_DIRS.flatMap((directory) =>

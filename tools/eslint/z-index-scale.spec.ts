@@ -118,8 +118,7 @@ templateRuleTester.run('z-index-scale (plantillas)', rule, {
 		{ code: `<div class="relative z-content"></div>`, filename: 'a.html' },
 		{ code: `<div class="z-auto"></div>`, filename: 'a.html' },
 		{ code: `<div [class]="wrapperClasses()"></div>`, filename: 'a.html' },
-		// La plantilla inline de un fuente habilitado llega con el nombre virtual que le pone el procesador
-		// de Angular. Sin recortarlo al `.ts`, la allowlist solo cubriría la metadata de host del archivo.
+		// Sin recortar el nombre virtual al `.ts`, la allowlist solo cubriría la metadata de host.
 		{
 			code: `<a class="focus:z-floating"></a>`,
 			filename: `${SHELL_FILE}/1_inline-template-app.component.ts-1.component.html`,
@@ -135,8 +134,7 @@ templateRuleTester.run('z-index-scale (plantillas)', rule, {
 			options: allowHeader,
 			errors: [{ messageId: 'globalLayer' }],
 		},
-		// La contracara del recorte: el nombre virtual no habilita nada por sí solo. Sin este caso, un
-		// recorte más agresivo podría empezar a habilitar archivos fuera de la allowlist sin romper nada.
+		// La contracara: el nombre virtual no habilita nada por sí solo.
 		{
 			code: `<a class="focus:z-floating"></a>`,
 			filename: 'src/app/pages/x.component.ts/1_inline-template-x.component.ts-1.component.html',

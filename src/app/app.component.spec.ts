@@ -34,8 +34,7 @@ describe('AppComponent', () => {
 			expect(screen.getAllByRole('main')).toHaveLength(1);
 		});
 
-		// El `tabindex` es lo que hace que el foco acompañe al salto: sin él el navegador desplaza la
-		// página pero deja el foco donde estaba, y la próxima tabulación vuelve a la barra.
+		// Sin `tabindex` el navegador desplaza la página pero deja el foco en la barra.
 		it('should expose the landmark as a focusable skip target', async () => {
 			await renderShell();
 
@@ -55,8 +54,7 @@ describe('AppComponent', () => {
 			);
 		});
 
-		// La aserción que discrimina el defecto real: un skip link declarado después del encabezado pasa
-		// las dos anteriores y no le ahorra una sola tabulación a nadie.
+		// La que discrimina el defecto real: uno declarado tras el encabezado pasa las dos anteriores igual.
 		it('should be the first tabbable element of the page', async () => {
 			await renderShell();
 			const user = userEvent.setup();

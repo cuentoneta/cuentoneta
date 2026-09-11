@@ -12,8 +12,7 @@ describe('collectPageLayoutViolations', () => {
 		expect(collectPageLayoutViolations(`<main></main>`)).toHaveLength(1);
 	});
 
-	// El falso positivo más probable del patrón: `mainEntity` aparece en los datos estructurados de varias
-	// páginas y no tiene nada que ver con el landmark.
+	// El falso positivo más probable: `mainEntity` aparece en los datos estructurados de varias páginas.
 	it('should not mistake an identifier that starts with "main" for the landmark', () => {
 		expect(collectPageLayoutViolations(`const schema = { mainEntity: { '@type': 'Person' } };`)).toEqual([]);
 		expect(collectPageLayoutViolations(`// el contenido principal de la página`)).toEqual([]);
@@ -25,14 +24,14 @@ describe('collectPageLayoutViolations', () => {
 		expect(collectPageLayoutViolations(`<div class="md:mt-header-height"></div>`)).toHaveLength(1);
 	});
 
-	// El opt-out es la contracara del despeje y tiene que pasar: una página que pinta a sangre lo cancela.
+	// El opt-out es la contracara del despeje y tiene que pasar.
 	it('should allow the opt-out that cancels the clearance', () => {
 		expect(collectPageLayoutViolations(`<article class="-mt-header-height"></article>`)).toEqual([]);
 		expect(collectPageLayoutViolations(`<article class="md:-mt-header-height"></article>`)).toEqual([]);
 		expect(collectPageLayoutViolations(`<article class="bleeds-under-header w-full"></article>`)).toEqual([]);
 	});
 
-	// El token se usa para otras cosas además del despeje, y esas no son violaciones.
+	// El token se usa para otras cosas, y esas no son violaciones.
 	it('should allow other uses of the header height token', () => {
 		expect(collectPageLayoutViolations(`<aside class="lg:top-header-height sticky"></aside>`)).toEqual([]);
 		expect(collectPageLayoutViolations(`<div class="h-header-height"></div>`)).toEqual([]);

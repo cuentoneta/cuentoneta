@@ -124,11 +124,9 @@ export default {
 	},
 	create(context) {
 		const allowedGlobalFiles = context.options[0]?.allowGlobalLayersIn ?? [];
-		// La comparación es por sufijo de ruta para no depender de si ESLint entrega la ruta absoluta o
-		// relativa, ni del separador de directorios del sistema operativo. El procesador de plantillas
-		// inline entrega un nombre virtual que cuelga del `.ts` (`app.component.ts/1_inline-….html`), así
-		// que se recorta hasta el archivo real: la allowlist nombra un fuente, y su plantilla inline es
-		// parte de ese fuente tanto como su metadata de host.
+		// Por sufijo, para no depender de si ESLint entrega la ruta absoluta o relativa ni del separador del
+		// sistema operativo. El recorte resuelve el nombre virtual de una plantilla inline a su `.ts`: la
+		// allowlist nombra un fuente, y su plantilla es parte de él tanto como su metadata de host.
 		const normalizedFilename = context.filename.replaceAll('\\', '/').replace(/\.ts\/.*$/, '.ts');
 		const allowGlobals = allowedGlobalFiles.some((allowed) => normalizedFilename.endsWith(allowed));
 		const sourceCode = context.sourceCode ?? context.getSourceCode();

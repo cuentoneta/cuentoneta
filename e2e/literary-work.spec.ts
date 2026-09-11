@@ -26,7 +26,7 @@ let work: LiteraryWorkDto | undefined;
 // Los casos de multimedia y de sugerencias anclan en la obra curada para eso: `el-fin` no declara
 // recursos y su autor tiene una sola obra, así que ninguno de los dos frentes se puede afirmar sobre él.
 let mediaWork: LiteraryWorkDto | undefined;
-// La obra que titula sus secciones es la única que emite anclas, y sin anclas el caso del salto no mide nada.
+// Sin anclas el caso del salto no mide nada.
 let titledSectionsWork: LiteraryWorkDto | undefined;
 let stableCollection: CollectionCatalogEntry | undefined;
 
@@ -262,16 +262,14 @@ test('literary-work — llegar desde una colección cambia la fuente de las suge
 	await settleSuggestions(page, `Más obras de ${stableCollection?.title}`);
 });
 
-// El encabezado es fijo, así que un salto a un ancla sin `scroll-padding-top` deja el título debajo de la
-// barra. Es un defecto que solo se ve en un navegador real: el offset lo aplica el motor de scroll.
+// Solo se ve en un navegador real: el offset lo aplica el motor de scroll.
 test('literary-work — saltar a una sección deja su título por debajo del encabezado fijo', async ({ page }) => {
 	await page.setViewportSize(DESKTOP_VIEWPORT);
 	await page.goto(`/literary-work/${STABLE_SLUGS.literaryWorkWithTitledSections}`);
 	await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 
-	// La última sección, no la primera: una sección temprana puede quedar bajo el encabezado sin que el
-	// navegador tenga que scrollear, y entonces la medición pasaría por la disposición natural de la
-	// página en vez de por el `scroll-padding-top` que el caso viene a verificar.
+	// La última y no la primera: una sección temprana puede quedar despejada sin scrollear, y entonces la
+	// medición pasaría por la disposición natural de la página.
 	const section = page.locator('h2[id]').last();
 	await expect(section).toBeVisible();
 	const anchor = await section.getAttribute('id');
@@ -282,8 +280,7 @@ test('literary-work — saltar a una sección deja su título por debajo del enc
 		.poll(() => page.evaluate(() => window.scrollY), { message: 'el salto al ancla no desplazó la página' })
 		.toBeGreaterThan(0);
 
-	// El valor esperado sale del token y no de un literal, para que el caso también atrape un desfasaje
-	// entre el `scroll-padding-top` y el alto real de la barra.
+	// Del token y no de un literal, para atrapar también un desfasaje entre el offset y el alto real.
 	const headerHeight = await page.evaluate(() =>
 		parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--spacing-header-height')),
 	);
@@ -295,9 +292,8 @@ test('literary-work — saltar a una sección deja su título por debajo del enc
 	);
 });
 
-// La rama de obra no encontrada cambió de aspecto a propósito con el `<main>` del shell: antes su título
-// quedaba tapado por la barra. Sin este caso, ponerle el opt-out "por simetría" con la rama de la obra
-// devolvería el defecto sin ninguna señal.
+// Esta rama antes quedaba tapada por la barra. Sin el caso, ponerle el opt-out "por simetría" con la rama
+// de la obra devolvería el defecto sin señal.
 test('literary-work — el aviso de obra inexistente no queda tapado por el encabezado fijo', async ({ page }) => {
 	await page.setViewportSize(DESKTOP_VIEWPORT);
 	await page.goto('/literary-work/obra-inexistente-e2e');

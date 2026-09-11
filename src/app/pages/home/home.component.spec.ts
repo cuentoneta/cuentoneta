@@ -63,8 +63,7 @@ describe('HomeComponent', () => {
 	});
 
 	describe('encabezado de la página', () => {
-		// El H1 de la página lo aporta el hero. La suite de indexado exige un H1 con texto real dentro del
-		// <main> del shell, así que la banda no puede quedar fuera del contenido primario.
+		// El H1 lo aporta el hero, y la suite de indexado lo exige dentro del landmark que declara el shell.
 		it('should carry a visible level 1 heading', async () => {
 			await renderHome();
 

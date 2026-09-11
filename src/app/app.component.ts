@@ -12,11 +12,8 @@ import { LayoutService } from './providers/layout.interface';
 @Component({
 	selector: 'cuentoneta-root',
 	template: `
-		<!--
-			Primero en el DOM para ser el primer foco tabulable: después del encabezado, los enlaces de la
-			barra irían antes y el salto dejaría de ahorrar nada. Se eleva a la capa floating y no a nav
-			porque ante empate con la barra perdería por orden de documento, justamente por estar antes.
-		-->
+		<!-- Primero en el DOM para ser el primer foco tabulable, y por eso mismo en floating y no en nav:
+		     ante empate con la barra perdería por orden de documento. -->
 		<a
 			class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-floating focus:rounded-md focus:bg-neutral-900 focus:px-4 focus:py-2 focus:font-inter focus:text-sm focus:text-white"
 			href="#main-content"
@@ -24,11 +21,8 @@ import { LayoutService } from './providers/layout.interface';
 			Saltar al contenido principal
 		</a>
 		<cuentoneta-header [isVisible]="isHeaderVisible()" />
-		<!--
-			El único landmark principal de la aplicación, y el único lugar donde se despeja el encabezado
-			fijo. Padding y no margen: el opt-out de una página depende de eso — ver angular-components.md,
-			sección "Layout del shell".
-		-->
+		<!-- Padding y no margen: el opt-out de una página depende de eso — ver angular-components.md,
+		     "Layout del shell". -->
 		<main id="main-content" class="pt-header-height" tabindex="-1">
 			<router-outlet />
 		</main>
