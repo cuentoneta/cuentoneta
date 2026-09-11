@@ -10,10 +10,6 @@ html {
 	@apply my-0 min-h-screen max-w-screen-lg lg:m-auto;
 }
 
-.vertical-layout-spacing {
-	@apply mt-24 md:mt-36;
-}
-
 .horizontal-layout-spacing {
 	@apply mx-5 lg:mx-auto;
 }

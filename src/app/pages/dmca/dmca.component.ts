@@ -8,9 +8,7 @@ import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 	imports: [],
 	hostDirectives: [HeadMetadataDirective],
 	template: `
-		<main
-			class="content horizontal-layout-spacing vertical-layout-spacing bg-neutral-50 p-5 shadow-lg md:rounded-xl md:p-16"
-		>
+		<div class="content horizontal-layout-spacing mt-8 bg-neutral-50 p-5 shadow-lg md:mt-20 md:rounded-xl md:p-16">
 			<h1 class="h1 mb-5">Disclaimer for La Cuentoneta</h1>
 
 			<section class="mb-8">
@@ -111,7 +109,7 @@ import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 					easily accessible link to its original source.
 				</p>
 			</section>
-		</main>
+		</div>
 	`,
 })
 export default class DmcaComponent {
