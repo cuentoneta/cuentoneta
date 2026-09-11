@@ -135,6 +135,14 @@ templateRuleTester.run('z-index-scale (plantillas)', rule, {
 			options: allowHeader,
 			errors: [{ messageId: 'globalLayer' }],
 		},
+		// La contracara del recorte: el nombre virtual no habilita nada por sí solo. Sin este caso, un
+		// recorte más agresivo podría empezar a habilitar archivos fuera de la allowlist sin romper nada.
+		{
+			code: `<a class="focus:z-floating"></a>`,
+			filename: 'src/app/pages/x.component.ts/1_inline-template-x.component.ts-1.component.html',
+			options: allowShell,
+			errors: [{ messageId: 'globalLayer' }],
+		},
 		// Dos violaciones en la misma plantilla se reportan por separado, cada una en su posición.
 		{
 			code: `<div class="z-10">\n\t<span class="z-20"></span>\n</div>`,

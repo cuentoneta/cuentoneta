@@ -127,8 +127,9 @@
 
 /*
 	Cancela el despeje del encabezado que el `<main>` del shell reserva, para una página cuyo primer
-	elemento pinta a sangre desde el borde superior del viewport. Se aplica a un hijo directo de ese
-	`<main>`: más adentro, el margen negativo pasa a interactuar con el contenedor que lo envuelva.
+	elemento pinta a sangre desde el borde superior del viewport. Se aplica a un elemento raíz de la
+	plantilla de la página: más adentro, el margen negativo pasa a interactuar con el contenedor que lo
+	envuelva en vez de desplazar el bloque entero.
 */
 @utility bleeds-under-header {
 	margin-top: calc(var(--spacing-header-height) * -1);

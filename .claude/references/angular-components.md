@@ -343,7 +343,7 @@ De ahí se siguen tres reglas para una página:
 
 - **No declara `<main>`.** El landmark ya existe; uno propio quedaría anidado dentro del del shell.
 - **No declara su despeje** (`mt-header-height`, `pt-header-height` ni una medida que lo aproxime). El aire de diseño que la página sí quiera va como utilidad de Tailwind en su envoltorio interno, y expresa **solo** el aire.
-- **Si su primer elemento pinta a sangre desde el borde superior** —un héroe con fondo a rango completo—, cancela el despeje con la utilidad `bleeds-under-header`, aplicada a un **elemento raíz de la plantilla**, es decir a un hijo directo del `<main>`. Más adentro el margen negativo pasa a interactuar con el contenedor que lo envuelva, y el resultado deja de ser un desplazamiento simple. En una plantilla con ramas, la marca va en cada rama que dibuje el héroe y **no** en las que sirvan texto plano, que sí tienen que despejar.
+- **Si su primer elemento pinta a sangre desde el borde superior** —un héroe con fondo a rango completo—, cancela el despeje con la utilidad `bleeds-under-header`, aplicada a un **elemento raíz de la plantilla** de la página. Más adentro el margen negativo pasa a interactuar con el contenedor que lo envuelva, y el resultado deja de ser un desplazamiento simple. En una plantilla con ramas, la marca va en cada rama que dibuje el héroe y **no** en las que sirvan texto plano, que sí tienen que despejar.
 
 El `<main>` despeja con **padding** y no con margen: con margen, el margen negativo del opt-out funcionaría por colapso de márgenes, que es un mecanismo correcto por accidente.
 

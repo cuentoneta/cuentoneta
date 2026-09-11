@@ -10,7 +10,10 @@ import { routedPagePaths, sourceFileForRoute, templateSourcesFor } from './page-
 // imports de componentes. No usa Angular Testing Library a propósito: no hay UI que ejercitar.
 
 const SHELL_FILE = 'src/app/app.component.ts';
-const COMPONENTS_DIR = 'src/app/components';
+// Barre las dos carpetas y no solo el catálogo: un componente auxiliar bajo `pages/` que no sea una página
+// ruteada —un skeleton, una columna de filtros— no lo ve el recorrido por rutas de arriba, y un `<main>`
+// declarado ahí terminaría igual de anidado dentro del del shell.
+const SWEPT_DIRS = ['src/app/components', 'src/app/pages'];
 
 const read = (file: string) => readFileSync(join(process.cwd(), file), 'utf-8');
 
@@ -51,12 +54,19 @@ describe('landmark principal del shell', () => {
 	});
 });
 
-// Cierra la vía por la que el landmark podría reaparecer fuera de `pages/`: un componente que lo declare
-// termina anidado dentro del `<main>` del shell.
-describe('componentes del catálogo', () => {
-	const componentFiles = readdirSync(join(process.cwd(), COMPONENTS_DIR), { recursive: true, encoding: 'utf-8' })
-		.filter((file) => /\.(ts|html)$/.test(file) && !/\.spec\.ts$/.test(file))
-		.map((file) => `${COMPONENTS_DIR}/${file.replaceAll('\\', '/')}`);
+// Cierra la vía por la que el landmark podría reaparecer fuera de una página ruteada: un componente que lo
+// declare termina anidado dentro del `<main>` del shell.
+describe('componentes montados bajo una página', () => {
+	// El util que define la convención queda fuera: su mensaje nombra el elemento que el barrido busca, así
+	// que sin la excepción el checker se reportaría a sí mismo.
+	const definesTheConvention = (file: string) => file.endsWith('page-layout.util.ts');
+
+	const componentFiles = SWEPT_DIRS.flatMap((directory) =>
+		readdirSync(join(process.cwd(), directory), { recursive: true, encoding: 'utf-8' })
+			.filter((file) => /\.(ts|html)$/.test(file) && !/\.spec\.ts$/.test(file))
+			.map((file) => `${directory}/${file.replaceAll('\\', '/')}`)
+			.filter((file) => !definesTheConvention(file)),
+	);
 
 	it('should find the component sources', () => {
 		expect(componentFiles.length).toBeGreaterThan(0);

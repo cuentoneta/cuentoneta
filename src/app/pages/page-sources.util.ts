@@ -8,7 +8,7 @@ import { appRoutes } from '../app.routes';
 export function sourceFileForRoute(path: string): string {
 	const appRoute = appRoutes.find((route) => route.path === path);
 	if (!appRoute?.loadComponent) {
-		throw new Error(`Ruta '${path}' está en app.routes.server.ts pero no tiene un loadComponent en app.routes.ts`);
+		throw new Error(`Ruta '${path}' no declara un loadComponent en app.routes.ts`);
 	}
 	const reference = appRoute.loadComponent.toString();
 	const match = reference.match(/["']([^"']*pages\/[^"']+\.(?:component|page)\.ts)["']/);

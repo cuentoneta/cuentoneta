@@ -25,9 +25,9 @@ import { LayoutService } from './providers/layout.interface';
 		</a>
 		<cuentoneta-header [isVisible]="isHeaderVisible()" />
 		<!--
-			El encabezado es fijo, así que el contenido lo despeja acá y ninguna página vuelve a hacerlo. Es
-			padding y no margen para que el margen negativo con el que una página opta por salirse del despeje
-			no dependa del colapso de márgenes.
+			El único landmark principal de la aplicación, y el único lugar donde se despeja el encabezado
+			fijo. Padding y no margen: el opt-out de una página depende de eso — ver angular-components.md,
+			sección "Layout del shell".
 		-->
 		<main id="main-content" class="pt-header-height" tabindex="-1">
 			<router-outlet />

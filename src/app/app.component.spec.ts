@@ -36,7 +36,7 @@ describe('AppComponent', () => {
 
 		// El `tabindex` es lo que hace que el foco acompañe al salto: sin él el navegador desplaza la
 		// página pero deja el foco donde estaba, y la próxima tabulación vuelve a la barra.
-		it('should let the skip link move focus into it', async () => {
+		it('should expose the landmark as a focusable skip target', async () => {
 			await renderShell();
 
 			const main = screen.getByRole('main');

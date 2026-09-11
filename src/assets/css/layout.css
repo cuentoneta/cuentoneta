@@ -3,7 +3,7 @@
 	sobre el alto de la barra evita que el título quede pegado a su borde inferior.
 */
 html {
-	scroll-padding-top: calc(var(--spacing-header-height) + var(--spacing) * 4);
+	scroll-padding-top: calc(var(--spacing-header-height) + 1rem);
 }
 
 .content {

@@ -13,7 +13,7 @@ describe('page-sources.util', () => {
 		});
 
 		it('should reject a path that no route declares', () => {
-			expect(() => sourceFileForRoute('no-existe')).toThrow(/no tiene un loadComponent/);
+			expect(() => sourceFileForRoute('no-existe')).toThrow(/no declara un loadComponent/);
 		});
 	});
 
