@@ -124,3 +124,12 @@
 	--z-index-nav: 50;
 	--z-index-floating: 60;
 }
+
+/*
+	Cancela el despeje del encabezado que el `<main>` del shell reserva, para una página cuyo primer
+	elemento pinta a sangre desde el borde superior del viewport. Se aplica a un hijo directo de ese
+	`<main>`: más adentro, el margen negativo pasa a interactuar con el contenedor que lo envuelva.
+*/
+@utility bleeds-under-header {
+	margin-top: calc(var(--spacing-header-height) * -1);
+}

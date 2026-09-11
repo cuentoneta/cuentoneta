@@ -1,3 +1,11 @@
+/*
+	El encabezado es fijo, así que un salto a un ancla dejaría el destino debajo de él. El aire extra
+	sobre el alto de la barra evita que el título quede pegado a su borde inferior.
+*/
+html {
+	scroll-padding-top: calc(var(--spacing-header-height) + var(--spacing) * 4);
+}
+
 .content {
 	@apply my-0 min-h-screen max-w-screen-lg lg:m-auto;
 }
