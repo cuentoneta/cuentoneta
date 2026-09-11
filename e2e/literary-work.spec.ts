@@ -26,12 +26,15 @@ let work: LiteraryWorkDto | undefined;
 // Los casos de multimedia y de sugerencias anclan en la obra curada para eso: `el-fin` no declara
 // recursos y su autor tiene una sola obra, así que ninguno de los dos frentes se puede afirmar sobre él.
 let mediaWork: LiteraryWorkDto | undefined;
+// Sin anclas el caso del salto no mide nada.
+let titledSectionsWork: LiteraryWorkDto | undefined;
 let stableCollection: CollectionCatalogEntry | undefined;
 
 test.beforeAll(async ({ request }) => {
 	status = (await request.get(ROUTE)).status();
 	work = await fetchLiteraryWork(request, STABLE_SLUGS.literaryWork);
 	mediaWork = await fetchLiteraryWork(request, STABLE_SLUGS.literaryWorkWithMedia);
+	titledSectionsWork = await fetchLiteraryWork(request, STABLE_SLUGS.literaryWorkWithTitledSections);
 	stableCollection = (await fetchCollectionCatalog(request)).find((entry) => entry.slug === STABLE_SLUGS.collection);
 });
 
@@ -40,6 +43,17 @@ test.beforeAll(async ({ request }) => {
 test('literary-work — la obra estable existe en el dataset y cumple el contrato', () => {
 	expect(status, `"${ROUTE}" no responde 200: nada de esta suite verifica la página real`).toBe(200);
 	expect(work, `el API no sirve "${STABLE_SLUGS.literaryWork}": no habría con qué comparar`).toBeDefined();
+});
+
+test('literary-work — la obra con secciones tituladas existe y emite anclas', () => {
+	expect(
+		titledSectionsWork,
+		`el API no sirve "${STABLE_SLUGS.literaryWorkWithTitledSections}": el caso del salto a un ancla no mediría nada`,
+	).toBeDefined();
+	expect(
+		titledSectionsWork?.content.some((section) => section.title),
+		`"${STABLE_SLUGS.literaryWorkWithTitledSections}" dejó de titular sus secciones: sin título no hay ancla`,
+	).toBe(true);
 });
 
 /** Abre una obra con su contenido ya resuelto: el recurso bloquea el SSR, así que el h1 llega con el documento. */
@@ -246,4 +260,54 @@ test('literary-work — llegar desde una colección cambia la fuente de las suge
 
 	await expect(page).toHaveURL(/navigation=collection/);
 	await settleSuggestions(page, `Más obras de ${stableCollection?.title}`);
+});
+
+// Solo se ve en un navegador real: el offset lo aplica el motor de scroll.
+test('literary-work — saltar a una sección deja su título por debajo del encabezado fijo', async ({ page }) => {
+	await page.setViewportSize(DESKTOP_VIEWPORT);
+	await page.goto(`/literary-work/${STABLE_SLUGS.literaryWorkWithTitledSections}`);
+	await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+
+	// La última y no la primera: una sección temprana puede quedar despejada sin scrollear, y entonces la
+	// medición pasaría por la disposición natural de la página.
+	const section = page.locator('h2[id]').last();
+	await expect(section).toBeVisible();
+	const anchor = await section.getAttribute('id');
+
+	await page.goto(`/literary-work/${STABLE_SLUGS.literaryWorkWithTitledSections}#${anchor}`);
+	await expect(section).toBeVisible();
+	await expect
+		.poll(() => page.evaluate(() => window.scrollY), { message: 'el salto al ancla no desplazó la página' })
+		.toBeGreaterThan(0);
+
+	// Del token y no de un literal, para atrapar también un desfasaje entre el offset y el alto real.
+	const headerHeight = await page.evaluate(() =>
+		parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--spacing-header-height')),
+	);
+	expect(headerHeight, 'el token del alto del encabezado no resuelve a un número').toBeGreaterThan(0);
+
+	const box = await section.boundingBox();
+	expect(box?.y, `el título de la sección "${anchor}" quedó tapado por el encabezado fijo`).toBeGreaterThanOrEqual(
+		headerHeight,
+	);
+});
+
+// Esta rama antes quedaba tapada por la barra. Sin el caso, ponerle el opt-out "por simetría" con la rama
+// de la obra devolvería el defecto sin señal.
+test('literary-work — el aviso de obra inexistente no queda tapado por el encabezado fijo', async ({ page }) => {
+	await page.setViewportSize(DESKTOP_VIEWPORT);
+	await page.goto('/literary-work/obra-inexistente-e2e');
+
+	const heading = page.getByRole('heading', { level: 1, name: 'No encontramos esta obra' });
+	await expect(heading).toBeVisible();
+
+	const headerHeight = await page.evaluate(() =>
+		parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--spacing-header-height')),
+	);
+	expect(headerHeight, 'el token del alto del encabezado no resuelve a un número').toBeGreaterThan(0);
+
+	const box = await heading.boundingBox();
+	expect(box?.y, 'el aviso de obra inexistente quedó tapado por el encabezado fijo').toBeGreaterThanOrEqual(
+		headerHeight,
+	);
 });

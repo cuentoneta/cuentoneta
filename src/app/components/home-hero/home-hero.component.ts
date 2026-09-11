@@ -20,7 +20,7 @@ import { NgOptimizedImage } from '@angular/common';
 		-->
 		<img ngSrc="./assets/svg/home-hero-weave.svg" fill priority alt="" class="object-fill" data-testid="hero-weave" />
 
-		<div class="relative z-content mx-auto flex w-full max-w-screen-lg flex-col items-center gap-20 px-5 pt-44 pb-16">
+		<div class="relative z-content mx-auto flex w-full max-w-screen-lg flex-col items-center gap-20 px-5 pt-28 pb-16">
 			<div class="flex w-full flex-col items-center justify-between gap-10 lg:flex-row lg:gap-8">
 				<div class="flex flex-col gap-4">
 					<h1 class="font-source-serif text-4xl font-semibold text-neutral-900 lg:text-6xl">
@@ -52,7 +52,7 @@ import { NgOptimizedImage } from '@angular/common';
 	host: {
 		// El color de fondo se conserva bajo la imagen: cubre la banda mientras el trazo no cargó, y evita
 		// un destello blanco en la primera pantalla.
-		class: 'relative isolate block overflow-hidden bg-brand-200',
+		class: 'relative isolate block overflow-hidden bg-brand-200 pt-header-height',
 	},
 })
 export class HomeHeroComponent {

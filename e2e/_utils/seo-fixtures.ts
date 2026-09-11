@@ -11,6 +11,8 @@ export const STABLE_SLUGS = Object.freeze({
 	// editorial: la superficie donde el texto ajeno a la obra puede quedar como extracto. `el-fin`
 	// tiene nota pero ningún epígrafe, y `a-la-deriva` tampoco, así que ninguna de las dos cubre el caso.
 	literaryWorkWithEpigraphs: 'la-morada-del-hombre',
+	// La única obra estable que titula sus secciones, y por eso la única que emite anclas.
+	literaryWorkWithTitledSections: 'el-camino-de-las-nutrias',
 	collection: 'verano-2022',
 } as const);
 

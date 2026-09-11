@@ -335,6 +335,22 @@ Notas:
 
 ---
 
+## Layout del shell: el landmark principal y el despeje del encabezado
+
+El encabezado es `fixed top-0` y mide `--spacing-header-height`. Que el contenido despeje su alto es un invariante global, no una decisión de cada pantalla, así que **lo resuelve el shell una sola vez**: `AppComponent` declara el único `<main>` de la aplicación, envolviendo el `router-outlet`, con `pt-header-height`.
+
+De ahí se siguen tres reglas para una página:
+
+- **No declara `<main>`.** El landmark ya existe; uno propio quedaría anidado dentro del del shell.
+- **No declara su despeje** (`mt-header-height`, `pt-header-height` ni una medida que lo aproxime). El aire de diseño que la página sí quiera va como utilidad de Tailwind en su envoltorio interno, y expresa **solo** el aire.
+- **Si su primer elemento pinta a sangre desde el borde superior** —un héroe con fondo a rango completo—, cancela el despeje con la utilidad `bleeds-under-header`, aplicada a un **elemento raíz de la plantilla** de la página. Más adentro el margen negativo pasa a interactuar con el contenedor que lo envuelva, y el resultado deja de ser un desplazamiento simple. En una plantilla con ramas, la marca va en cada rama que dibuje el héroe y **no** en las que sirvan texto plano, que sí tienen que despejar.
+
+El `<main>` despeja con **padding** y no con margen: con margen, el margen negativo del opt-out funcionaría por colapso de márgenes, que es un mecanismo correcto por accidente.
+
+Lo verifica el guardrail `src/app/pages/page-layout.spec.ts`, que recorre las páginas desde las rutas y falla ante cualquiera de las tres reglas, más la contracara sobre el shell y un barrido del catálogo de componentes.
+
+---
+
 ## Escala de apilamiento (z-index)
 
 Todo apilamiento sale de la escala del Design System, declarada como tokens `--z-index-*` en el `@theme` de `src/tailwind.css`. Nunca un número crudo (`z-10`, `z-[999]`, `z-index: 2`).
