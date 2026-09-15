@@ -68,7 +68,9 @@ export default {
 						context.report({
 							node: specifier,
 							messageId: 'namedNamespace',
-							data: { source, name: specifier.imported.name },
+							// `imported` es un Identifier salvo en la forma con nombre arbitrario de módulo
+							// (`import { "z" as z }`), donde el nombre viaja en `value`.
+							data: { source, name: specifier.imported.name ?? specifier.imported.value },
 						});
 					}
 				}
