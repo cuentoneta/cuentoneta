@@ -23,7 +23,7 @@ export default {
 		},
 	},
 	create(context) {
-		const filename = context.filename ?? context.getFilename();
+		const filename = context.filename;
 		if (!filename.endsWith('.stories.ts')) return {};
 
 		function findProperty(objectExpression, key) {
@@ -95,7 +95,7 @@ export default {
 
 		return {
 			ExportDefaultDeclaration(node) {
-				const scope = context.sourceCode?.getScope?.(node) ?? context.getScope?.();
+				const scope = context.sourceCode.getScope(node);
 				const meta = resolveToObjectExpression(node.declaration, scope);
 				if (!meta) return;
 				checkMeta(meta, node);

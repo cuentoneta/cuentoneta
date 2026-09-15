@@ -13,7 +13,7 @@ export default {
 		},
 	},
 	create(context) {
-		const filename = context.filename ?? context.getFilename();
+		const filename = context.filename;
 		const isProviderFile = filename.endsWith('.provider.ts');
 		const isMockFile = filename.endsWith('.mock.ts');
 

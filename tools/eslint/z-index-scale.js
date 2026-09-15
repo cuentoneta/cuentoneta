@@ -129,7 +129,7 @@ export default {
 		// allowlist nombra un fuente, y su plantilla es parte de él tanto como su metadata de host.
 		const normalizedFilename = context.filename.replaceAll('\\', '/').replace(/\.ts\/.*$/, '.ts');
 		const allowGlobals = allowedGlobalFiles.some((allowed) => normalizedFilename.endsWith(allowed));
-		const sourceCode = context.sourceCode ?? context.getSourceCode();
+		const sourceCode = context.sourceCode;
 
 		if (context.filename.endsWith('.html')) {
 			return {
