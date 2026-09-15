@@ -29,9 +29,15 @@ const CSS_WIDE_KEYWORDS = new Set(['auto', 'inherit', 'initial', 'unset', 'rever
 // valor: cuál es global es una decisión de diseño, no una consecuencia de ser el número más alto.
 const GLOBAL_LAYERS = new Set(['nav', 'floating']);
 
+/** @type {Map<string, number> | undefined} */
 let cachedScale;
 
+/**
+ * @param {string} css
+ * @returns {Map<string, number>}
+ */
 function parseScale(css) {
+	/** @type {Map<string, number>} */
 	const scale = new Map();
 	for (const [, token, value] of css.matchAll(TOKEN_DECLARATION)) {
 		scale.set(token, Number(value.trim()));
@@ -71,17 +77,17 @@ export function globalTokens() {
  * Las capas que un archivo puede usar. Es lo que va en el mensaje de error: ofrecer una capa global a un
  * archivo que no puede declararla sugeriría una salida que la regla misma rechaza en el paso siguiente.
  */
-export function allowedTokensFor(allowGlobals) {
+export function allowedTokensFor(/** @type {boolean} */ allowGlobals) {
 	return allowGlobals ? scaleTokens() : scaleTokens().filter((token) => !GLOBAL_LAYERS.has(token));
 }
 
 /** ¿`z-<suffix>` es una utilidad admitida — un token de la escala o la nativa `z-auto`? */
-export function isAllowedUtility(suffix) {
+export function isAllowedUtility(/** @type {string} */ suffix) {
 	return NATIVE_UTILITIES.has(suffix) || zIndexScale().has(suffix);
 }
 
 /** ¿`z-<suffix>` nombra una capa global (la franja reservada a barra y capa flotante)? */
-export function isGlobalUtility(suffix) {
+export function isGlobalUtility(/** @type {string} */ suffix) {
 	return GLOBAL_LAYERS.has(suffix) && zIndexScale().has(suffix);
 }
 
@@ -90,7 +96,7 @@ export function isGlobalUtility(suffix) {
  * que la reserva de la franja alta rija también en esta forma: sin ella, lo que `z-nav` prohíbe lo
  * concedería `z-index: var(--z-index-nav)`.
  */
-export function declaredLayer(value) {
+export function declaredLayer(/** @type {string} */ value) {
 	const reference = value.trim().match(/^var\(\s*--z-index-([a-z][a-z0-9-]*)\s*\)$/);
 	return reference === null ? null : reference[1];
 }
@@ -99,7 +105,7 @@ export function declaredLayer(value) {
  * ¿El valor de una declaración `z-index` es admitido? Solo lo son una palabra clave de CSS y un
  * `var(--z-index-<token>)` cuyo token exista en la escala. Un número crudo nunca lo es.
  */
-export function isAllowedDeclarationValue(value) {
+export function isAllowedDeclarationValue(/** @type {string} */ value) {
 	if (CSS_WIDE_KEYWORDS.has(value.trim().toLowerCase())) {
 		return true;
 	}
