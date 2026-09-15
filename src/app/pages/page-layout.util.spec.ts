@@ -37,8 +37,16 @@ describe('collectPageLayoutViolations', () => {
 		expect(collectPageLayoutViolations(`<div class="h-header-height"></div>`)).toEqual([]);
 	});
 
-	it('should reject the retired shared spacing class', () => {
-		expect(collectPageLayoutViolations(`<div class="content vertical-layout-spacing"></div>`)).toHaveLength(1);
+	it.each(['vertical-layout-spacing', 'horizontal-layout-spacing', 'content'])(
+		'should reject the retired layout class %s',
+		(retired) => {
+			expect(collectPageLayoutViolations(`<div class="${retired}"></div>`)).toHaveLength(1);
+		},
+	);
+
+	// `contents` es la utilidad de display, y `mainEntity` empieza igual que el landmark: ninguna es la clase.
+	it('should not mistake a longer class name for a retired one', () => {
+		expect(collectPageLayoutViolations(`<div class="contents"></div>`)).toEqual([]);
 	});
 
 	it('should report every violation a page accumulates', () => {

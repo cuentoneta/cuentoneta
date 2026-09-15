@@ -8,7 +8,8 @@ export function collectPageLayoutViolations(source: string): string[] {
 	// Admite `:` por los variantes de breakpoint y excluye `-`, que es el opt-out. `top-` y `h-` quedan
 	// fuera: son la columna sticky y el alto de la barra, no el despeje.
 	const headerClearance = /(^|[\s"'`:])(mt|pt)-header-height/m;
-	const retiredSpacingClass = /vertical-layout-spacing/;
+	// Las clases de layout retiradas ya no emiten CSS, así que escribirlas falla en silencio.
+	const retiredLayoutClass = /(?:horizontal|vertical)-layout-spacing|class="content[\s"]/;
 
 	const violations: string[] = [];
 
@@ -18,8 +19,11 @@ export function collectPageLayoutViolations(source: string): string[] {
 	if (headerClearance.test(source)) {
 		violations.push('despeja el encabezado por su cuenta; el shell ya reserva su alto');
 	}
-	if (retiredSpacingClass.test(source)) {
-		violations.push('usa vertical-layout-spacing, que ya no existe; el aire propio va como utilidad local');
+	const retired = source.match(retiredLayoutClass);
+	if (retired) {
+		violations.push(
+			`usa '${retired[0]}', una clase de layout retirada; el contenedor va como utilidades sobre max-w-310`,
+		);
 	}
 
 	return violations;

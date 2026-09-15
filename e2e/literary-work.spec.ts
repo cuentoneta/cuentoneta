@@ -52,7 +52,7 @@ test('literary-work — la obra con secciones tituladas existe y emite anclas', 
 	).toBeDefined();
 	expect(
 		titledSectionsWork?.content.some((section) => section.title),
-		`"${STABLE_SLUGS.literaryWorkWithTitledSections}" dejó de titular sus secciones: sin título no hay ancla`,
+		`"${STABLE_SLUGS.literaryWorkWithTitledSections}" no titula ninguna sección: sin título no hay ancla`,
 	).toBe(true);
 });
 

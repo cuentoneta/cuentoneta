@@ -2,11 +2,3 @@
 html {
 	scroll-padding-top: calc(var(--spacing-header-height) + 1rem);
 }
-
-.content {
-	@apply my-0 min-h-screen max-w-screen-lg lg:m-auto;
-}
-
-.horizontal-layout-spacing {
-	@apply mx-5 lg:mx-auto;
-}

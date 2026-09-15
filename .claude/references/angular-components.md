@@ -345,6 +345,8 @@ De ahí se siguen tres reglas para una página:
 - **No declara su despeje** (`mt-header-height`, `pt-header-height` ni una medida que lo aproxime). El aire de diseño que la página sí quiera va como utilidad de Tailwind en su envoltorio interno, y expresa **solo** el aire.
 - **Si su primer elemento pinta a sangre desde el borde superior** —un héroe con fondo a rango completo—, cancela el despeje con la utilidad `bleeds-under-header`, aplicada a un **elemento raíz de la plantilla** de la página. Más adentro el margen negativo pasa a interactuar con el contenedor que lo envuelva, y el resultado deja de ser un desplazamiento simple. En una plantilla con ramas, la marca va en cada rama que dibuje el héroe y **no** en las que sirvan texto plano, que sí tienen que despejar.
 
+El contenedor de una página es el patrón de utilidades `mx-auto w-full max-w-310 px-4`. Las clases `.content`, `.horizontal-layout-spacing` y `.vertical-layout-spacing` están retiradas y ya no emiten CSS.
+
 El `<main>` despeja con **padding** y no con margen: con margen, el margen negativo del opt-out funcionaría por colapso de márgenes, que es un mecanismo correcto por accidente.
 
 Lo verifica el guardrail `src/app/pages/page-layout.spec.ts`, que recorre las páginas desde las rutas y falla ante cualquiera de las tres reglas, más la contracara sobre el shell y un barrido del catálogo de componentes.

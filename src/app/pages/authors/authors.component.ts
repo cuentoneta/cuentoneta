@@ -14,7 +14,7 @@ import { AppRoutes } from '../../app.routes';
 	imports: [RouterLink, NgOptimizedImage],
 	hostDirectives: [HeadMetadataDirective],
 	template: `
-		<div class="content horizontal-layout-spacing mt-8 md:mt-20">
+		<div class="mx-auto mt-8 w-full max-w-310 px-4 pb-16 md:mt-20">
 			<article class="grid grid-cols-1 gap-8">
 				<section class="flex flex-col gap-4">
 					<h1 class="font-inter text-xl font-bold">Índice de autores</h1>
