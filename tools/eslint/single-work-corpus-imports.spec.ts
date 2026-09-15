@@ -25,7 +25,11 @@ async function restrictionErrors(code: string, filePath: string): Promise<string
 
 const importFrom = (source: string) => `import { x } from '${source}';\nexport const y = x;\n`;
 
-describe('la restricción de imports del corpus', () => {
+// El primer `lintText` del proceso paga la resolución del flat config y la carga perezosa del parser
+// de TypeScript y los plugins; los siguientes cuestan órdenes de magnitud menos. Ese costo es del
+// proceso, no del caso que le toque ir primero, así que el timeout se declara para la suite entera:
+// con los specs del repo repartidos en paralelo y coverage encendido, el default de Vitest no alcanza.
+describe('la restricción de imports del corpus', { timeout: 20_000 }, () => {
 	// Las dos mitades del patrón: el alias y la forma relativa, que es por donde se colaría un archivo
 	// que no usa `@mocks`.
 	it.each([
@@ -36,15 +40,9 @@ describe('la restricción de imports del corpus', () => {
 			'src/api/probe.ts',
 		],
 		['por ruta relativa', '../../mocks/onoff/literary-work/geometria.literary-work.mock', 'src/app/pages/probe.ts'],
-	])(
-		'marca el import de una obra puntual %s',
-		async (_caso, source, filePath) => {
-			expect(await restrictionErrors(importFrom(source), filePath)).toHaveLength(1);
-		},
-		// El primer caso paga el arranque en frío de ESLint: resolver el flat config real es lo caro, y su
-		// costo no depende de lo que el caso afirme. Con la suite entera en paralelo, el default no alcanza.
-		20_000,
-	);
+	])('marca el import de una obra puntual %s', async (_caso, source, filePath) => {
+		expect(await restrictionErrors(importFrom(source), filePath)).toHaveLength(1);
+	});
 
 	// Los handles por identidad viven bajo `@mocks/onoff/<entidad>/`. Sin este caso, lo único verificado
 	// sería el glob genérico, y una reubicación a otra carpeta pasaría inadvertida.
