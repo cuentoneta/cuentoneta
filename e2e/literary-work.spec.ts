@@ -289,8 +289,9 @@ test('literary-work — llegar a una sección por su ancla la deja debajo del en
 
 	// La última y no la primera: una sección temprana puede quedar despejada sin scrollear, y entonces la
 	// medición pasaría por la disposición natural de la página.
-	const anchor = await page.locator('h2[id]').last().getAttribute('id');
-	expect(anchor, 'la obra con secciones tituladas no emitió ninguna ancla').toBeTruthy();
+	const lastSection = page.locator('h2[id]').last();
+	await expect(lastSection, 'la obra con secciones tituladas no emitió ninguna ancla').toHaveAttribute('id', /.+/);
+	const anchor = await lastSection.getAttribute('id');
 
 	// Sale del documento para que volver con el fragmento sea una navegación real y no un salto interno.
 	await page.goto('about:blank');
