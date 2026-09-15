@@ -259,9 +259,7 @@ export default [
 		// `meta` de una story son funciones por sintaxis y no por lógica, así que medir su largo mide
 		// el tamaño de la suite y del catálogo. `complexity` y `max-depth` siguen rigiendo ahí, porque
 		// un test enrevesado es tan difícil de leer como cualquier otro código. `src/sanity/types.ts`
-		// lo emite el typegen de Sanity: su largo no lo decide nadie. Nota de alcance: `tools/**` está
-		// en el ignore global de más arriba, así que las reglas custom de ESLint y sus specs quedan
-		// fuera de todo esto.
+		// lo emite el typegen de Sanity: su largo no lo decide nadie.
 		name: 'size-limits',
 		files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.mjs'],
 		ignores: ['**/*.spec.ts', '**/*.stories.ts', 'src/sanity/types.ts'],

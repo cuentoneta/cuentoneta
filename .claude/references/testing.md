@@ -21,7 +21,7 @@
 
 Archivos clave:
 
-- **`vitest.config.ts`** — `globals: true`, `environment: 'happy-dom'`, `setupFiles: ['src/test-setup.ts']`, y un `include` que además de `src/**` alcanza los specs de `scripts/`, de `e2e/_utils/` y de `tools/`. Los de `tools/` cubren las reglas propias de ESLint y de Stylelint —cada módulo tiene el suyo— y el gate `typecheck` los alcanza también, junto con los `.js` de las reglas que ejercitan. Inlina `@sanity` y bundles `fesm` para que Vite los transforme. Coverage solo en CI (`CI=true`/`COVERAGE=true`).
+- **`vitest.config.ts`** — `globals: true`, `environment: 'happy-dom'`, `setupFiles: ['src/test-setup.ts']`, y un `include` que además de `src/**` alcanza los specs de `scripts/`, de `e2e/_utils/` y de `tools/`. Los de `tools/` cubren las reglas propias de ESLint y de Stylelint —cada módulo tiene el suyo— y los alcanzan además los gates `typecheck` —junto con los `.js` de las reglas que ejercitan— y `lint`. Inlina `@sanity` y bundles `fesm` para que Vite los transforme. Coverage solo en CI (`CI=true`/`COVERAGE=true`).
 - **`src/test-setup.ts`** — inicializa el `TestBed` zoneless (Angular 22 corre zoneless por defecto cuando `zone.js` no está presente; no se llama a `provideZonelessChangeDetection()`). El `ErrorHandler` **relanza** cualquier error no manejado para que falle el test. Instala los stubs globales de `IntersectionObserver`, de `ResizeObserver` y de `document.fonts`.
 - **`src/test-utils.ts`** — los wrappers obligatorios (ver abajo).
 
