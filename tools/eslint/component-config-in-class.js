@@ -11,10 +11,17 @@
  * `@Service`: en un archivo sin decorador, un `const` de módulo es lo correcto.
  */
 
+/** @type {Set<string | null>} */
 const DECORATORS = new Set(['Component', 'Directive', 'Injectable', 'Service']);
 const CONFIG_INITIALIZERS = new Set(['ObjectExpression', 'ArrayExpression']);
 
-/** El nombre del decorador de una expresión `@X(...)` o `@X`. */
+/** @typedef {import('@typescript-eslint/utils').TSESTree.Node} TsNode */
+
+/**
+ * El nombre del decorador de una expresión `@X(...)` o `@X`.
+ *
+ * @param {import('@typescript-eslint/utils').TSESTree.Decorator} decorator
+ */
 function decoratorName(decorator) {
 	const expression = decorator.expression;
 	if (expression.type === 'CallExpression' && expression.callee.type === 'Identifier') {
@@ -23,7 +30,12 @@ function decoratorName(decorator) {
 	return expression.type === 'Identifier' ? expression.name : null;
 }
 
-/** La declaración que envuelve un `export`, si lo hay. Cubre nombrado y default. */
+/**
+ * La declaración que envuelve un `export`, si lo hay. Cubre nombrado y default.
+ *
+ * @param {TsNode} statement
+ * @returns {TsNode | null | undefined}
+ */
 function unwrapExport(statement) {
 	if (statement.type === 'ExportNamedDeclaration' || statement.type === 'ExportDefaultDeclaration') {
 		return statement.declaration;
@@ -31,6 +43,7 @@ function unwrapExport(statement) {
 	return statement;
 }
 
+/** @param {import('@typescript-eslint/utils').TSESTree.Program} program */
 function hasClassDecorator(program) {
 	return program.body.some((statement) => {
 		const declaration = unwrapExport(statement);
@@ -45,6 +58,9 @@ function hasClassDecorator(program) {
  * El literal que hay debajo de los envoltorios que no cambian su naturaleza:
  * `Object.freeze(...)`, `as const`, `as Foo` y `satisfies Foo`. Sin desenvolverlos,
  * cualquiera de ellos alcanzaría para eludir la regla.
+ *
+ * @param {TsNode | null | undefined} node
+ * @returns {TsNode | null}
  */
 function unwrapConfig(node) {
 	if (!node) {
@@ -72,8 +88,12 @@ function unwrapConfig(node) {
  * `enum` que exigen las restricciones duras (`Object.freeze({...} as const)` más
  * su tipo homónimo), y **no puede** vivir en la instancia: un alias de tipo no
  * puede derivarse de un campo, así que el `const` debe estar a nivel de módulo.
+ *
+ * @param {import('@typescript-eslint/utils').TSESTree.Program} program
+ * @param {import('@typescript-eslint/utils').TSESLint.SourceCode} sourceCode
  */
 function namesUsedByTypeAliases(program, sourceCode) {
+	/** @type {Set<string>} */
 	const derived = new Set();
 	for (const statement of program.body) {
 		const declaration = unwrapExport(statement);
@@ -104,10 +124,19 @@ export default {
 		},
 	},
 	create(context) {
-		const sourceCode = context.sourceCode;
+		// Los tipos de `eslint` describen ESTree, que no conoce los nodos propios de TypeScript
+		// (`TSAsExpression`, `TSTypeAliasDeclaration`, los decoradores) sobre los que esta regla decide.
+		// Las dos conversiones al AST que el parser realmente entrega se concentran acá, para que el
+		// resto del archivo trabaje sobre un solo universo de tipos.
+		const sourceCode = /** @type {import('@typescript-eslint/utils').TSESLint.SourceCode} */ (
+			/** @type {unknown} */ (context.sourceCode)
+		);
 
 		return {
-			Program(program) {
+			Program(node) {
+				const program = /** @type {import('@typescript-eslint/utils').TSESTree.Program} */ (
+					/** @type {unknown} */ (node)
+				);
 				if (!hasClassDecorator(program)) {
 					return;
 				}
