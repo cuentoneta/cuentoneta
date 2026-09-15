@@ -26,33 +26,53 @@ export default {
 		const filename = context.filename;
 		if (!filename.endsWith('.stories.ts')) return {};
 
+		/**
+		 * @param {import('estree').Node | undefined} objectExpression
+		 * @param {string} key
+		 * @returns {import('estree').Property | undefined}
+		 */
 		function findProperty(objectExpression, key) {
 			if (!objectExpression || objectExpression.type !== 'ObjectExpression') return undefined;
-			return objectExpression.properties.find(
+			const found = objectExpression.properties.find(
 				(prop) =>
-					prop.type === 'Property' && !prop.computed && prop.key && (prop.key.name === key || prop.key.value === key),
+					prop.type === 'Property' &&
+					!prop.computed &&
+					((prop.key.type === 'Identifier' && prop.key.name === key) ||
+						(prop.key.type === 'Literal' && prop.key.value === key)),
 			);
+			return found?.type === 'Property' ? found : undefined;
 		}
 
+		/**
+		 * @param {import('estree').ExportDefaultDeclaration['declaration'] | null | undefined} node
+		 * @param {import('eslint').Scope.Scope | undefined} scope
+		 * @returns {import('estree').ObjectExpression | undefined}
+		 */
 		function resolveToObjectExpression(node, scope) {
 			if (!node) return undefined;
 			if (node.type === 'ObjectExpression') return node;
 			if (node.type === 'Identifier' && scope) {
-				// Cross-module imports (e.g. `import meta from './meta.config'; export default meta`) are
-				// not resolved — the ImportBinding has no `init` value in the local file, so this returns
-				// undefined and the rule silently skips. Skipping is safer than false-positives.
+				// Un import de otro módulo (`import meta from './meta.config'; export default meta`) no se
+				// resuelve: en el archivo local su binding no tiene declarador con inicializador, así que
+				// el meta queda sin resolver y la regla se saltea. Saltear es más seguro que marcar de más.
 				const variable = scope.references.find((ref) => ref.identifier === node)?.resolved;
 				const definition = variable?.defs?.[0];
-				const init = definition?.node?.init;
+				const declarator = definition?.node;
+				if (declarator?.type !== 'VariableDeclarator') return undefined;
+				const init = declarator.init;
 				if (init && init.type === 'ObjectExpression') return init;
 			}
 			return undefined;
 		}
 
-		// Each nested value below is checked for `type === 'ObjectExpression'` before recursing.
-		// A non-ObjectExpression value (e.g. a spread, a function call, a variable reference) is
-		// skipped silently to avoid false-positives on dynamically-built parameters. The trade-off
-		// is that those constructions also escape enforcement; see PLAN.md Risk #2.
+		// Cada valor anidado se verifica como ObjectExpression antes de descender. Un valor que no lo
+		// es —un spread, una llamada, una referencia a variable— se saltea en silencio para no marcar
+		// de más sobre parámetros construidos dinámicamente; el costo aceptado es que esas mismas
+		// construcciones quedan fuera del enforcement.
+		/**
+		 * @param {import('estree').ObjectExpression} meta
+		 * @param {import('estree').Node} reportNode
+		 */
 		function checkMeta(meta, reportNode) {
 			const parameters = findProperty(meta, 'parameters');
 			if (!parameters) {
