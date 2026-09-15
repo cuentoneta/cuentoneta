@@ -21,7 +21,7 @@
 
 Archivos clave:
 
-- **`vitest.config.ts`** — `globals: true`, `environment: 'happy-dom'`, `setupFiles: ['src/test-setup.ts']`, `include: ['src/**/*.{test,spec}.ts']`. Inlina `@sanity` y bundles `fesm` para que Vite los transforme. Coverage solo en CI (`CI=true`/`COVERAGE=true`).
+- **`vitest.config.ts`** — `globals: true`, `environment: 'happy-dom'`, `setupFiles: ['src/test-setup.ts']`, y un `include` que además de `src/**` alcanza los specs de `scripts/`, de `e2e/_utils/` y de `tools/`. Inlina `@sanity` y bundles `fesm` para que Vite los transforme. Coverage solo en CI (`CI=true`/`COVERAGE=true`).
 - **`src/test-setup.ts`** — inicializa el `TestBed` zoneless (Angular 22 corre zoneless por defecto cuando `zone.js` no está presente; no se llama a `provideZonelessChangeDetection()`). El `ErrorHandler` **relanza** cualquier error no manejado para que falle el test. Instala los stubs globales de `IntersectionObserver`, de `ResizeObserver` y de `document.fonts`.
 - **`src/test-utils.ts`** — los wrappers obligatorios (ver abajo).
 
@@ -93,7 +93,7 @@ Un spec o una story que importa una obra concreta queda atado a ella: sus aserci
 
 La prohibición rige **por ruta y por nombre**, y cada vía la cubre un gate distinto:
 
-- **Por ruta** la verifica `lint`, con el glob de arriba. Es la que ejercita `tools/eslint/single-work-corpus-imports.spec.ts`, que corre ESLint contra el config real (la restricción no es una regla propia, así que `RuleTester` no la alcanza).
+- **Por ruta** la verifica `lint`, con el glob de arriba. Es la que ejercita `tools/eslint/single-work-corpus-imports.spec.ts`, que corre ESLint contra el config real (la restricción no es una regla propia, así que `RuleTester` no la alcanza). Arrancar ESLint cuesta lo bastante como para que sea el único spec de `tools/eslint/` al que no le alcanza el `testTimeout` por default de Vitest: declara el suyo como opción de su `describe`, y el archivo comenta de dónde sale ese costo.
 - **Por nombre** la sostiene que los agregadores (`@mocks/onoff-*.mock`) expongan **solo** colecciones, derivados y selectores. Los handles nombrados por identidad —`<slugCamelCase>LiteraryWorkTeaserMock`, las colecciones de dominio y sus teasers— viven bajo `@mocks/onoff/<entidad>/`, o sea del lado que la restricción de ruta alcanza. No hay regla que los liste: un import por nombre falla porque **el símbolo no existe**, y lo reporta `typecheck`, no `lint`.
 
 De ahí que volver a exportar un handle por identidad desde un agregador reabra el hueco. No lo bloquea ningún gate; queda como una adición visible en el diff, y es de las cosas que una review tiene que mirar.
