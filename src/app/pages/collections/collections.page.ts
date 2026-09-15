@@ -16,8 +16,7 @@ import { DividerComponent } from '@components/divider/divider.component';
 @Component({
 	selector: 'cuentoneta-collections',
 	template: `
-		<!-- TODO(#2348): el despeje del encabezado fijo pasa al shell; hoy cada página lo repite. -->
-		<main class="mx-auto mt-header-height flex w-full max-w-310 items-stretch gap-8 px-4 pt-8 pb-16">
+		<div class="mx-auto flex w-full max-w-310 items-stretch gap-8 px-4 pt-8 pb-16">
 			<cuentoneta-collection-filters
 				(cleared)="clearFilters()"
 				(toggled)="toggleTag($event.slug)"
@@ -56,7 +55,7 @@ import { DividerComponent } from '@components/divider/divider.component';
 					</p>
 				}
 			</div>
-		</main>
+		</div>
 	`,
 	providers: [{ provide: COLLECTIONS_HOST, useExisting: forwardRef(() => CollectionsPage) }],
 	hostDirectives: [CollectionsMetaTagsDirective, CollectionsStructuredDataDirective],

@@ -3,9 +3,9 @@ import { join } from 'path';
 
 import { RenderMode } from '@angular/ssr';
 
-import { appRoutes } from '../app.routes';
 import { serverRoutes } from '../app.routes.server';
 import { collectSeoViolations } from './seo-host-directives.util';
+import { sourceFileForRoute } from './page-sources.util';
 
 // Guardrail estructural: garantiza que toda página con una ruta indexable (RenderMode.Server/Prerender, sin
 // noindex) declare sus directivas de SEO. Cruza app.routes.server.ts (RenderMode) × app.routes.ts (ruta→fuente)
@@ -14,24 +14,6 @@ import { collectSeoViolations } from './seo-host-directives.util';
 // propósito: no hay UI que ejercitar, es un test de convención de código. Ver `angular-state.md` §8.
 
 const INDEXABLE_MODES: readonly RenderMode[] = [RenderMode.Server, RenderMode.Prerender];
-
-// Extrae el archivo fuente del componente desde el `loadComponent` de la ruta. El bundler resuelve el
-// `import(...)` a un string con la ruta del módulo (p. ej. `/src/app/pages/home/home.component.ts`), del que se
-// toma la parte relativa a la raíz del repo.
-function sourceFileForRoute(path: string): string {
-	const appRoute = appRoutes.find((route) => route.path === path);
-	if (!appRoute?.loadComponent) {
-		throw new Error(`Ruta '${path}' está en app.routes.server.ts pero no tiene un loadComponent en app.routes.ts`);
-	}
-	const reference = appRoute.loadComponent.toString();
-	const match = reference.match(/["']([^"']*pages\/[^"']+\.(?:component|page)\.ts)["']/);
-	if (!match) {
-		throw new Error(`No se pudo extraer el archivo fuente del loadComponent de la ruta '${path}': ${reference}`);
-	}
-	const captured = match[1];
-	const srcIndex = captured.indexOf('src/');
-	return srcIndex >= 0 ? captured.slice(srcIndex) : captured.replace(/^\//, '');
-}
 
 // Agrupa por archivo fuente las rutas indexable-mode: dos rutas distintas pueden cargar el mismo
 // componente, y las directivas se declaran una sola vez por archivo.
