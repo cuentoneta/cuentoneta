@@ -27,6 +27,7 @@ const isRelative = (source) => source.startsWith('./') || source.startsWith('../
 
 const isHookChain = (filename) => HOOK_CHAIN.some((allowed) => filename.endsWith(allowed.split('/').join(sep)));
 
+/** @type {import('eslint').Rule.RuleModule} */
 export default {
 	meta: {
 		type: 'problem',

@@ -30,6 +30,7 @@ const bringsFullPackage = (source) =>
 	source === FULL_PACKAGE_SPECIFIER ||
 	FULL_PACKAGE_SUBPATHS.some((subpath) => source === subpath || source.startsWith(`${subpath}/`));
 
+/** @type {import('eslint').Rule.RuleModule} */
 export default {
 	meta: {
 		type: 'problem',
