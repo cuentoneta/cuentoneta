@@ -8,7 +8,7 @@
  * Las aserciones se derivan del DTO que entrega el API (`_utils/literary-work-fixtures.ts`), no de prosa clavada:
  * el spec afirma que la página muestra la obra que el API dice que es.
  */
-import { expect, type Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 
 import type { LiteraryWorkDto } from '@models/literary-work.dto';
 
@@ -262,34 +262,47 @@ test('literary-work — llegar desde una colección cambia la fuente de las suge
 	await settleSuggestions(page, `Más obras de ${stableCollection?.title}`);
 });
 
-// Solo se ve en un navegador real: el offset lo aplica el motor de scroll.
-test('literary-work — saltar a una sección deja su título por debajo del encabezado fijo', async ({ page }) => {
-	await page.setViewportSize(DESKTOP_VIEWPORT);
-	await page.goto(`/literary-work/${STABLE_SLUGS.literaryWorkWithTitledSections}`);
-	await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-
-	// La última y no la primera: una sección temprana puede quedar despejada sin scrollear, y entonces la
-	// medición pasaría por la disposición natural de la página.
-	const section = page.locator('h2[id]').last();
-	await expect(section).toBeVisible();
-	const anchor = await section.getAttribute('id');
-
-	await page.goto(`/literary-work/${STABLE_SLUGS.literaryWorkWithTitledSections}#${anchor}`);
-	await expect(section).toBeVisible();
-	await expect
-		.poll(() => page.evaluate(() => window.scrollY), { message: 'el salto al ancla no desplazó la página' })
-		.toBeGreaterThan(0);
-
-	// Del token y no de un literal, para atrapar también un desfasaje entre el offset y el alto real.
+/**
+ * Afirma que el elemento queda por debajo del encabezado fijo, leyendo su alto del token y no de un literal
+ * para atrapar también un desfasaje entre el offset y la barra real. Sondea la caja en vez de medirla una
+ * vez: la hidratación puede desprender el nodo entre la comprobación de visibilidad y la medición.
+ */
+async function expectClearOfHeader(page: Page, target: Locator, message: string): Promise<void> {
 	const headerHeight = await page.evaluate(() =>
 		parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--spacing-header-height')),
 	);
 	expect(headerHeight, 'el token del alto del encabezado no resuelve a un número').toBeGreaterThan(0);
 
-	const box = await section.boundingBox();
-	expect(box?.y, `el título de la sección "${anchor}" quedó tapado por el encabezado fijo`).toBeGreaterThanOrEqual(
-		headerHeight,
-	);
+	await expect
+		.poll(async () => (await target.boundingBox())?.y ?? -1, { message })
+		.toBeGreaterThanOrEqual(headerHeight);
+}
+
+// El offset lo aplica el motor de scroll al resolver el fragmento, así que solo se ve en un navegador real.
+// Se mide sobre una carga fresca porque es la única forma en que se llega a un ancla: el router no declara
+// `anchorScrolling`, así que un fragmento navegado dentro del documento no desplaza nada.
+test('literary-work — llegar a una sección por su ancla la deja debajo del encabezado fijo', async ({ page }) => {
+	const route = `/literary-work/${STABLE_SLUGS.literaryWorkWithTitledSections}`;
+	await page.setViewportSize(DESKTOP_VIEWPORT);
+	await page.goto(route);
+	await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+
+	// La última y no la primera: una sección temprana puede quedar despejada sin scrollear, y entonces la
+	// medición pasaría por la disposición natural de la página.
+	const anchor = await page.locator('h2[id]').last().getAttribute('id');
+	expect(anchor, 'la obra con secciones tituladas no emitió ninguna ancla').toBeTruthy();
+
+	// Sale del documento para que volver con el fragmento sea una navegación real y no un salto interno.
+	await page.goto('about:blank');
+	await page.goto(`${route}#${anchor}`);
+
+	const section = page.locator(`h2[id="${anchor}"]`);
+	await expect(section).toBeVisible();
+	await expect
+		.poll(() => page.evaluate(() => window.scrollY), { message: 'el salto al ancla no desplazó la página' })
+		.toBeGreaterThan(0);
+
+	await expectClearOfHeader(page, section, `el título de la sección "${anchor}" quedó tapado por el encabezado fijo`);
 });
 
 // Esta rama antes quedaba tapada por la barra. Sin el caso, ponerle el opt-out "por simetría" con la rama
@@ -301,13 +314,5 @@ test('literary-work — el aviso de obra inexistente no queda tapado por el enca
 	const heading = page.getByRole('heading', { level: 1, name: 'No encontramos esta obra' });
 	await expect(heading).toBeVisible();
 
-	const headerHeight = await page.evaluate(() =>
-		parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--spacing-header-height')),
-	);
-	expect(headerHeight, 'el token del alto del encabezado no resuelve a un número').toBeGreaterThan(0);
-
-	const box = await heading.boundingBox();
-	expect(box?.y, 'el aviso de obra inexistente quedó tapado por el encabezado fijo').toBeGreaterThanOrEqual(
-		headerHeight,
-	);
+	await expectClearOfHeader(page, heading, 'el aviso de obra inexistente quedó tapado por el encabezado fijo');
 });
