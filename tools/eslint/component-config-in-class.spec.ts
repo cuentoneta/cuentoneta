@@ -59,6 +59,11 @@ ruleTester.run('component-config-in-class', rule, {
 			errors: [{ messageId: 'moduleConfig' }],
 		},
 		{
+			code: decorate(`const sizeMap = { sm: 'h-4' } as Record<string, string>;`),
+			filename: 'a.ts',
+			errors: [{ messageId: 'moduleConfig' }],
+		},
+		{
 			code: decorate(`const sizeMap = { sm: 'h-4' } satisfies Record<string, string>;`),
 			filename: 'a.ts',
 			errors: [{ messageId: 'moduleConfig' }],
