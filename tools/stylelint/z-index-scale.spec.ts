@@ -11,6 +11,7 @@ const config = {
 	// El config no extiende los presets del repo a propósito: con esta regla como única activa, todo
 	// warning que llegue es suyo, y contarlos alcanza para afirmar.
 	// REASON: la forma de un config de Stylelint no vale tiparla acá; el spec solo lo pasa como dato.
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 } as any;
 
 async function warningsFor(code: string, codeFilename = 'src/app/components/probe/probe.component.css') {
