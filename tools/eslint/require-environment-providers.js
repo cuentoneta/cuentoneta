@@ -13,7 +13,7 @@ export default {
 		},
 	},
 	create(context) {
-		const filename = context.filename ?? context.getFilename();
+		const filename = context.filename;
 		const isProviderFile = filename.endsWith('.provider.ts');
 		const isMockFile = filename.endsWith('.mock.ts');
 
@@ -21,6 +21,10 @@ export default {
 			return {};
 		}
 
+		/**
+		 * @param {import('estree').Node | null | undefined} node
+		 * @returns {boolean}
+		 */
 		function containsMakeEnvironmentProviders(node) {
 			if (!node) return false;
 			if (node.type === 'CallExpression') {
@@ -38,10 +42,15 @@ export default {
 			return false;
 		}
 
+		/** @param {string} name */
 		function isProviderFunction(name) {
 			return name.startsWith('provide');
 		}
 
+		/**
+		 * @param {import('estree').Function} node
+		 * @param {string} name
+		 */
 		function checkFunction(node, name) {
 			if (!isProviderFunction(name)) return;
 			const body = node.body;
@@ -57,12 +66,14 @@ export default {
 
 		return {
 			// export function provideX() { ... }
+			/** @param {import('estree').FunctionDeclaration} node */
 			'ExportNamedDeclaration > FunctionDeclaration'(node) {
 				if (node.id) {
 					checkFunction(node, node.id.name);
 				}
 			},
 			// export const provideX = () => ...
+			/** @param {import('estree').VariableDeclarator} node */
 			'ExportNamedDeclaration > VariableDeclaration > VariableDeclarator'(node) {
 				if (
 					node.id.type === 'Identifier' &&

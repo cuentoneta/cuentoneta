@@ -4,9 +4,22 @@
 		"outDir": "./dist/out-tsc",
 		"noEmit": true,
 		"allowImportingTsExtensions": true,
+		// Las reglas de ESLint y de Stylelint son `.js`, y sus specs las importan: sin esto el compilador
+		// no puede sumarlas al programa y el import queda como una declaración faltante. Se chequean
+		// además de admitirse, porque una regla que decide mal vuelve permisivo al gate `lint` en silencio.
+		"allowJs": true,
+		"checkJs": true,
 		"types": ["node", "vitest/globals"],
 		"rootDir": "."
 	},
-	"include": ["src/**/*.ts", "scripts/**/*.ts", "e2e/**/*.ts", "playwright.config.ts", "vitest.config.ts"],
+	"include": [
+		"src/**/*.ts",
+		"scripts/**/*.ts",
+		"e2e/**/*.ts",
+		"tools/**/*.ts",
+		"tools/**/*.js",
+		"playwright.config.ts",
+		"vitest.config.ts"
+	],
 	"exclude": ["node_modules", "tmp", "dist"]
 }

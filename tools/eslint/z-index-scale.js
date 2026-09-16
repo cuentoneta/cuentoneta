@@ -34,6 +34,18 @@ const DECLARATION_PATTERN = /(?<![\w-])z-index\s*:\s*([^;}"'`]+)/g;
 // patrón. Sin esta exclusión, cada `z-index: …` se reportaría además como utilidad inválida.
 const NOT_A_UTILITY = new Set(['index']);
 
+/**
+ * Una violación localizada dentro del texto examinado. `value` solo lo produce la forma declaración:
+ * el mensaje que lo interpola es el único que esa forma emite.
+ *
+ * @typedef {{ index: number; length: number; messageId: string; utility: string; value?: string }} Violation
+ */
+
+/**
+ * @param {string} text
+ * @param {boolean} allowGlobals
+ * @returns {Violation[]}
+ */
 function utilityViolations(text, allowGlobals) {
 	const violations = [];
 	for (const match of text.matchAll(UTILITY_PATTERN)) {
@@ -52,6 +64,11 @@ function utilityViolations(text, allowGlobals) {
 	return violations;
 }
 
+/**
+ * @param {string} text
+ * @param {boolean} allowGlobals
+ * @returns {Violation[]}
+ */
 function declarationViolations(text, allowGlobals) {
 	const violations = [];
 	for (const match of text.matchAll(DECLARATION_PATTERN)) {
@@ -76,6 +93,13 @@ function declarationViolations(text, allowGlobals) {
  * La posición se traduce con `getLocFromIndex`, que cuenta sobre el archivo entero: derivarla del texto
  * del nodo haría colapsar toda violación de un `.ts` a la primera línea, porque el índice es absoluto y
  * el texto es un fragmento.
+ *
+ * @param {import('eslint').Rule.RuleContext} context
+ * @param {import('eslint').SourceCode} sourceCode
+ * @param {string} text
+ * @param {number} offset
+ * @param {import('eslint').Rule.Node | import('eslint').AST.Program | undefined} node
+ * @param {boolean} allowGlobals
  */
 function reportInText(context, sourceCode, text, offset, node, allowGlobals) {
 	const violations = [...utilityViolations(text, allowGlobals), ...declarationViolations(text, allowGlobals)];
@@ -128,8 +152,10 @@ export default {
 		// sistema operativo. El recorte resuelve el nombre virtual de una plantilla inline a su `.ts`: la
 		// allowlist nombra un fuente, y su plantilla es parte de él tanto como su metadata de host.
 		const normalizedFilename = context.filename.replaceAll('\\', '/').replace(/\.ts\/.*$/, '.ts');
-		const allowGlobals = allowedGlobalFiles.some((allowed) => normalizedFilename.endsWith(allowed));
-		const sourceCode = context.sourceCode ?? context.getSourceCode();
+		const allowGlobals = allowedGlobalFiles.some((/** @type {string} */ allowed) =>
+			normalizedFilename.endsWith(allowed),
+		);
+		const sourceCode = context.sourceCode;
 
 		if (context.filename.endsWith('.html')) {
 			return {
@@ -142,7 +168,7 @@ export default {
 		// El literal de la plantilla inline: lo lintea la rama `.html` sobre el texto que extrae el
 		// procesador de Angular, así que mirarlo también acá duplicaría cada reporte. Un `TemplateElement`
 		// cuelga de su `TemplateLiteral`, y es ese el que la propiedad `template` tiene por valor.
-		const isInlineTemplate = (expression) =>
+		const isInlineTemplate = (/** @type {import('eslint').Rule.Node} */ expression) =>
 			expression.parent?.type === 'Property' &&
 			expression.parent.value === expression &&
 			expression.parent.key.type === 'Identifier' &&
@@ -150,11 +176,14 @@ export default {
 
 		// Se recorre el texto **fuente** del nodo, no su valor: así los índices de cada coincidencia caen
 		// directamente sobre el archivo y la posición reportada no necesita traducción.
-		const visitLiteral = (node, expression) => {
+		const visitLiteral = (
+			/** @type {import('eslint').Rule.Node} */ node,
+			/** @type {import('eslint').Rule.Node} */ expression,
+		) => {
 			if (isInlineTemplate(expression)) {
 				return;
 			}
-			reportInText(context, sourceCode, sourceCode.getText(node), node.range[0], node, allowGlobals);
+			reportInText(context, sourceCode, sourceCode.getText(node), sourceCode.getRange(node)[0], node, allowGlobals);
 		};
 
 		return {

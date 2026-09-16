@@ -20,24 +20,26 @@ const meta = {
 	url: 'https://github.com/cuentoneta/cuentoneta/blob/develop/.claude/references/angular-components.md#host-element',
 };
 
-function isBareHost(selector) {
+function isBareHost(/** @type {string} */ selector) {
 	return String(selector)
 		.split(',')
 		.map((part) => part.trim())
 		.some((part) => part === ':host');
 }
 
-const ruleFunction = (primary) => (root, result) => {
-	if (!utils.validateOptions(result, ruleName, { actual: primary, possible: [true] })) {
-		return;
-	}
-	root.walkAtRules(/^apply$/i, (atRule) => {
-		const parent = atRule.parent;
-		if (parent && parent.type === 'rule' && isBareHost(parent.selector)) {
-			utils.report({ message: messages.rejected, node: atRule, result, ruleName });
+const ruleFunction =
+	(/** @type {unknown} */ primary) =>
+	(/** @type {import('postcss').Root} */ root, /** @type {import('stylelint').PostcssResult} */ result) => {
+		if (!utils.validateOptions(result, ruleName, { actual: primary, possible: [true] })) {
+			return;
 		}
-	});
-};
+		root.walkAtRules(/^apply$/i, (/** @type {import('postcss').AtRule} */ atRule) => {
+			const parent = atRule.parent;
+			if (parent && parent.type === 'rule' && isBareHost(parent.selector)) {
+				utils.report({ message: messages.rejected, node: atRule, result, ruleName });
+			}
+		});
+	};
 
 ruleFunction.ruleName = ruleName;
 ruleFunction.messages = messages;

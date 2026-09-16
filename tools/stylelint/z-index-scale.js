@@ -27,11 +27,11 @@ const ruleName = 'cuentoneta/z-index-scale';
 const messages = utils.ruleMessages(ruleName, {
 	// El listado de capas sale de `allowedTokensFor`, no de la escala entera: ofrecerle una capa global a un
 	// archivo que no puede declararla sugeriría una salida que la regla rechaza en el paso siguiente.
-	rejectedDeclaration: (value, allowed) =>
+	rejectedDeclaration: (/** @type {string} */ value, /** @type {string[]} */ allowed) =>
 		`"z-index: ${value}" is outside the stacking scale. Reference a layer with var(--z-index-<layer>) (${allowed.join(', ')}) — see angular-components.md#escala-de-apilamiento-z-index.`,
-	rejectedUtility: (utility, allowed) =>
+	rejectedUtility: (/** @type {string} */ utility, /** @type {string[]} */ allowed) =>
 		`"${utility}" is not part of the stacking scale. Use one of its layers (${allowed.join(', ')}) or z-auto — see angular-components.md#escala-de-apilamiento-z-index.`,
-	rejectedGlobalLayer: (utility) =>
+	rejectedGlobalLayer: (/** @type {string} */ utility) =>
 		`"${utility}" is a global layer, reserved for the fixed navigation bar and the floating layer. Raise with an internal layer and confine the component's stacking with isolate — see angular-components.md#escala-de-apilamiento-z-index.`,
 });
 const meta = {
@@ -43,7 +43,7 @@ const meta = {
 const UTILITY_PATTERN = /(?:^|\s)((?:[\w-]+:)*-?z-[^\s]+)/g;
 
 /** La capa que nombra la utilidad, o `null` si el negativo la deja fuera de la escala por definición. */
-function utilitySuffix(utility) {
+function utilitySuffix(/** @type {string} */ utility) {
 	// Descarta la variante (`md:z-nav` → `z-nav`) para quedarse con la capa que nombra. El negativo se
 	// evalúa después de descartarla, porque `md:-z-content` no empieza con el guion.
 	const withoutVariants = utility.slice(utility.lastIndexOf(':') + 1);
@@ -53,10 +53,15 @@ function utilitySuffix(utility) {
 	return withoutSign.startsWith('z-') ? withoutSign.slice(2) : null;
 }
 
-function isNegative(utility) {
+function isNegative(/** @type {string} */ utility) {
 	return utility.slice(utility.lastIndexOf(':') + 1).startsWith('-');
 }
 
+/**
+ * @param {import('postcss').AtRule} atRule
+ * @param {import('stylelint').PostcssResult} result
+ * @param {boolean} allowGlobals
+ */
 function checkApply(atRule, result, allowGlobals) {
 	for (const [, utility] of atRule.params.matchAll(UTILITY_PATTERN)) {
 		const suffix = utilitySuffix(utility);
@@ -78,39 +83,43 @@ function checkApply(atRule, result, allowGlobals) {
 	}
 }
 
-const ruleFunction = (primary, secondary) => (root, result) => {
-	if (!utils.validateOptions(result, ruleName, { actual: primary, possible: [true] })) {
-		return;
-	}
-
-	const allowedGlobalFiles = secondary?.allowGlobalLayersIn ?? [];
-	const filename = String(root.source?.input?.from ?? '').replaceAll('\\', '/');
-	const allowGlobals = allowedGlobalFiles.some((allowed) => filename.endsWith(allowed));
-
-	root.walkDecls(/^z-index$/i, (declaration) => {
-		if (!isAllowedDeclarationValue(declaration.value)) {
-			utils.report({
-				message: messages.rejectedDeclaration(declaration.value, allowedTokensFor(allowGlobals)),
-				node: declaration,
-				result,
-				ruleName,
-			});
+const ruleFunction =
+	(/** @type {unknown} */ primary, /** @type {{ allowGlobalLayersIn?: string[] } | undefined} */ secondary) =>
+	(/** @type {import('postcss').Root} */ root, /** @type {import('stylelint').PostcssResult} */ result) => {
+		if (!utils.validateOptions(result, ruleName, { actual: primary, possible: [true] })) {
 			return;
 		}
-		// La franja alta se reserva también en esta forma: de lo contrario, lo que `z-nav` prohíbe lo
-		// concedería la declaración equivalente.
-		if (!allowGlobals && isGlobalUtility(declaredLayer(declaration.value) ?? '')) {
-			utils.report({
-				message: messages.rejectedGlobalLayer(declaration.value),
-				node: declaration,
-				result,
-				ruleName,
-			});
-		}
-	});
 
-	root.walkAtRules(/^apply$/i, (atRule) => checkApply(atRule, result, allowGlobals));
-};
+		const allowedGlobalFiles = secondary?.allowGlobalLayersIn ?? [];
+		const filename = String(root.source?.input?.from ?? '').replaceAll('\\', '/');
+		const allowGlobals = allowedGlobalFiles.some((/** @type {string} */ allowed) => filename.endsWith(allowed));
+
+		root.walkDecls(/^z-index$/i, (/** @type {import('postcss').Declaration} */ declaration) => {
+			if (!isAllowedDeclarationValue(declaration.value)) {
+				utils.report({
+					message: messages.rejectedDeclaration(declaration.value, allowedTokensFor(allowGlobals)),
+					node: declaration,
+					result,
+					ruleName,
+				});
+				return;
+			}
+			// La franja alta se reserva también en esta forma: de lo contrario, lo que `z-nav` prohíbe lo
+			// concedería la declaración equivalente.
+			if (!allowGlobals && isGlobalUtility(declaredLayer(declaration.value) ?? '')) {
+				utils.report({
+					message: messages.rejectedGlobalLayer(declaration.value),
+					node: declaration,
+					result,
+					ruleName,
+				});
+			}
+		});
+
+		root.walkAtRules(/^apply$/i, (/** @type {import('postcss').AtRule} */ atRule) =>
+			checkApply(atRule, result, allowGlobals),
+		);
+	};
 
 ruleFunction.ruleName = ruleName;
 ruleFunction.messages = messages;

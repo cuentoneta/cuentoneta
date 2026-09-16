@@ -23,10 +23,12 @@ const HOOK_CHAIN = ['scripts/block-issue-refs-in-comments.ts', 'scripts/block-is
 
 const TS_EXTENSION = /\.tsx?$/;
 
-const isRelative = (source) => source.startsWith('./') || source.startsWith('../');
+const isRelative = (/** @type {string} */ source) => source.startsWith('./') || source.startsWith('../');
 
-const isHookChain = (filename) => HOOK_CHAIN.some((allowed) => filename.endsWith(allowed.split('/').join(sep)));
+const isHookChain = (/** @type {string} */ filename) =>
+	HOOK_CHAIN.some((allowed) => filename.endsWith(allowed.split('/').join(sep)));
 
+/** @type {import('eslint').Rule.RuleModule} */
 export default {
 	meta: {
 		type: 'problem',

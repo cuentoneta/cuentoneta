@@ -159,6 +159,15 @@ En el repo esa forma la necesita **una sola cadena**: la del hook `PreToolUse`, 
 | `tsconfig.typecheck.json` | `allowImportingTsExtensions`                                     | Ya tiene `noEmit`, que es lo que `TS5096` pide. Es el programa del gate `typecheck`                                                                                                                               |
 | `tsconfig.spec.json`      | `allowImportingTsExtensions` + `rewriteRelativeImportExtensions` | Incluye `scripts/**/*.ts` para que Vitest resuelva sus `paths`. **No admite `noEmit`**: con él, el plugin de Angular deja de contar `src/test-setup.ts` como parte del programa y la suite entera falla al cargar |
 
+### `allowJs` en `tsconfig.typecheck.json`: por qué el gate mira `.js`
+
+El programa del gate `typecheck` incluye `tools/**/*.js` además de los `.ts`, con `allowJs` y `checkJs` activos. Los `.js` de `tools/` son las reglas propias de ESLint y de Stylelint, y las cubre el mismo gate que a sus specs por dos razones:
+
+- **Sin `allowJs` los specs no tipan.** Un spec de regla importa su regla, y un `.js` que no puede entrar al programa se reporta como un módulo sin declaración — el JSDoc que tenga adentro no lo lee nadie.
+- **Sin `checkJs` las reglas quedan sin verificar.** Es código del que depende el linteo de todo el repo, y su modo de falla es el peor: una regla que deja de marcar lo que marcaba vuelve permisivo al gate `lint` sin que nada avise. Las reglas se anotan con JSDoc —`@type {import('eslint').Rule.RuleModule}` y `@param`—, que es la vía que el repo ya usaba en la mayoría de ellas.
+
+El `include` nombra los `.js` explícitamente en vez de apoyarse en que `allowJs` los arrastre: `allowJs` suma al programa **solo lo que un spec importa**, así que la cobertura de una regla quedaría atada a que alguien le hubiera escrito un spec — el mismo punto ciego un nivel más abajo, y con un criterio invisible desde la config.
+
 El raíz queda afuera a propósito: es una config _solution-style_ de la que heredan los proyectos de app, spec, editor, server y Storybook, y **ninguno declara `noEmit`**. Poner el flag arriba obliga a agregárselo a cada proyecto que emite —el de la app entre ellos— o a activar el reescrito de extensiones sobre el emit real.
 
 La habilitación es más amplia que la necesidad: esos dos programas también incluyen `src/`, `e2e/` y `resources/`, y el compilador no tiene cómo distinguir los dos archivos que la precisan del resto. Lo que la acota es **lint**, no la review: la regla `cuentoneta/no-ts-extension-imports` (`tools/eslint/no-ts-extension-imports.js`) marca todo import relativo con extensión `.ts`/`.tsx` y exime la cadena del hook con una allowlist por ruta declarada en la propia regla. Sumar un archivo a esa cadena es una decisión visible en el diff, no un efecto de ampliar un glob.

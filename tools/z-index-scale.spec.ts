@@ -31,8 +31,18 @@ describe('escala de apilamiento del Design System', () => {
 		const globals = globalTokens();
 		const internals = scaleTokens().filter((token: string) => !globals.includes(token));
 
-		const highestInternal = Math.max(...internals.map((token: string) => scale.get(token)));
-		const lowestGlobal = Math.min(...globals.map((token: string) => scale.get(token)));
+		// Los tokens salen de la escala misma, así que una ausencia sería un defecto del lector y no del
+		// tema. Se enuncia acá para que falle nombrando el token, en vez de propagar un NaN.
+		const valueOf = (token: string) => {
+			const value = scale.get(token);
+			if (value === undefined) {
+				throw new Error(`La escala no declara un valor para ${token}.`);
+			}
+			return value;
+		};
+
+		const highestInternal = Math.max(...internals.map(valueOf));
+		const lowestGlobal = Math.min(...globals.map(valueOf));
 
 		expect(highestInternal).toBeLessThan(lowestGlobal);
 		// Franja libre: deja lugar para una capa interna futura sin renumerar las globales.

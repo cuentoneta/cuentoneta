@@ -55,5 +55,17 @@ ruleTester.run('no-full-zod-in-browser', rule, {
 			code: "import { object, string } from 'zod/mini';",
 			errors: [{ messageId: 'namedNamespace' }, { messageId: 'namedNamespace' }],
 		},
+		// La forma con nombre arbitrario de módulo guarda el nombre en `value` y no en `name`.
+		// El caso afirma el texto del mensaje, no el `messageId`: la detección nunca estuvo
+		// rota, así que con el id solo pasaría igual nombrando `undefined`.
+		{
+			code: `import { "z" as z } from 'zod/mini';`,
+			errors: [
+				{
+					message:
+						'Importar `z` por nombre desde `zod/mini` anula el tree-shaking: el specifier reexporta un objeto namespace y traerlo así lo materializa entero. Usá `import * as z from "zod/mini"`.',
+				},
+			],
+		},
 	],
 });
