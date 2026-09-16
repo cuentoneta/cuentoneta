@@ -133,6 +133,10 @@ const DEFAULT_INTERVAL = 24 * 60 * 60 * 1000;
 
 **Rationale:** una constante declarada 50 líneas lejos de su único uso obliga al lector a saltar entre dos lugares. Co-locarla con su uso (cuando es único) hace el código autocontenido.
 
+**Enforcement parcial:** la regla `unicorn/prefer-smaller-scope` (bloque `prefer-smaller-scope` de [`eslint.config.mjs`](../../eslint.config.mjs), en `error` sobre todo el árbol, con autofix) cubre **un solo eje**: la declaración cuyas lecturas viven todas dentro de un mismo bloque anidado —un `if`, un `while`— va declarada adentro de ese bloque. `eslint-plugin-unicorn` se adopta por esa regla sola: su config `recommended` no está evaluado.
+
+El otro eje —la constante de módulo cuyo único consumidor es una **función**— **no lo verifica nada**, y se sostiene en review. No es un olvido: mover una declaración inicializada adentro de una función cambia cuántas veces se evalúa su inicializador y cuándo, lo que la expone a los efectos que ocurran en el medio. Decidir si esa traslación preserva el comportamiento es una aproximación de pureza y no un análisis de scope, y las reglas que lo intentaron en el ecosistema se retiraron por sus falsos positivos. Por eso la regla adoptada tampoco reporta un inicializador que contenga una llamada.
+
 ## `eslint.config.mjs`: reglas por-scope reemplazan, no mergean
 
 En ESLint flat config, cuando **dos config objects aplican al mismo archivo** y ambos setean la **misma** regla (p. ej. `no-restricted-syntax`), el bloque que matchea **último gana por completo**: su array de opciones **reemplaza** el del bloque anterior, no lo concatena. Un bloque acotado (`files: ['src/app/pages/**/*.ts']`) que redeclara `no-restricted-syntax` con solo sus restricciones nuevas **pierde silenciosamente** las del bloque global (`files: ['**/*.ts']`) para esos archivos.
