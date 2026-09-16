@@ -1,0 +1,87 @@
+# Materializa el reading time faltante de las obras publicadas, una vez por día.
+#
+# `readingTime` por sección y `totalReadingTime` son write-once y el script de backfill es su única
+# vía de persistencia: el read path del repository deriva un fallback puro cuando el campo viene
+# vacío, pero lo recomputa en CADA lectura. Sin este schedule, una obra recién publicada paga ese
+# costo hasta que alguien se acuerde de correr el backfill a mano.
+#
+# Diaria alcanza, y es la frecuencia que el issue pide: el campo no caduca y el fallback de lectura
+# cubre la ventana intermedia sin servir la obra rota.
+#
+# A diferencia de los barridos programados vecinos (`required-fields-sweep`, `field-shape-sweep`),
+# éste **escribe** contenido. Lo que lo hace seguro es que el script patchea con `setIfMissing`: no
+# pisa un `totalReadingTime` cargado a mano, que es como se declara la duración editorial de los
+# recitados y los audiovisuales.
+#
+# Tampoco es un gate, por la misma razón que ellos: lo que dispara este job es una propiedad del
+# **dato**, que se vuelve falsa sin que nadie toque el repositorio. Su id **no debe sumarse a los
+# required status checks** de `develop`.
+#
+# Prerequisito (secret del repo — ya configurado, lo usan `sync-datasets` y `required-fields-sweep`):
+#   - SANITY_AUTH_TOKEN: robot token con permiso de lectura y escritura sobre `production`.
+name: Backfill reading time
+
+on:
+  schedule:
+    # Diario a las 4:35 UTC (~01:35 ART), horario valle: después del cron de Vercel (03:15) y lejos
+    # del racimo de barridos de los lunes (06:00–07:23), para no competir por runners. Minuto ≠ 0
+    # para esquivar el pico de carga de las :00. GitHub desactiva un `schedule` tras 60 días sin
+    # actividad en el repo; el `workflow_dispatch` permite re-dispararlo a mano cuando eso pasa.
+    - cron: '35 4 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: backfill-reading-time
+  # No cancelar una corrida en progreso: cortarla a mitad de patchear dejaría obras a medio
+  # materializar, y la siguiente tendría que redescubrirlas.
+  cancel-in-progress: false
+
+jobs:
+  backfill-reading-time:
+    runs-on: ubuntu-latest
+    # El backfill pagina sobre las obras a las que les falta el campo; en régimen son unas pocas por
+    # corrida. El margen absorbe el install y una acumulación puntual sin dejar que un cuelgue
+    # consuma minutos de runner.
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+
+      - name: Setup workspace
+        uses: ./.github/actions/setup-workspace
+
+      # A diferencia del resto de los jobs programados, acá el rojo SÍ significa que la herramienta
+      # falló: el script sale con 1 solo si falta el token de escritura o si un patch erró. Una obra
+      # sin materializar no es un hallazgo que reportar — es trabajo que la corrida no hizo.
+      - name: Materializar el reading time faltante
+        env:
+          # Producción es el único dataset donde el dato importa: `staging` y `development` se
+          # sobrescriben con su copia cada domingo (`sync-datasets`).
+          SANITY_STUDIO_DATASET: production
+          SANITY_STUDIO_PROJECT_ID: ${{ secrets.SANITY_STUDIO_PROJECT_ID || 's4dbqkc5' }}
+          # `production` es privado y este job escribe, así que necesita el token de administración.
+          # El secret `SANITY_STUDIO_TOKEN` no sirve acá: `ci.yml` lo usa contra `staging`, que es
+          # público, y no alcanza producción.
+          SANITY_STUDIO_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+        run: |
+          set -uo pipefail
+          # El script se invoca con `node --env-file=.env`, y el `.env` que genera `pnpm run config`
+          # (dentro de `setup-workspace`) apunta a `development`. Node le da precedencia a la
+          # variable del entorno por sobre la del archivo, así que el bloque `env:` de arriba es el
+          # que decide el dataset.
+          status=0
+          pnpm backfill:reading-time --no-dry-run > report.txt 2>&1 || status=$?
+          # El reporte va al resumen de la corrida además del log: un schedule diario que hay que
+          # abrir para saber qué hizo termina sin que nadie lo abra.
+          {
+            echo '## Backfill de reading time'
+            echo '```'
+            cat report.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          cat report.txt
+          exit "$status"
