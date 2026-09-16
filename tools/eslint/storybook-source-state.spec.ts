@@ -18,9 +18,16 @@ ruleTester.run('storybook-source-state', rule, {
 		// El meta por referencia obliga a resolver el identificador contra el scope, que es
 		// una vía distinta de la del objeto literal inline.
 		{ code: `const meta = ${shown};\nexport default meta;`, filename: STORIES },
-		// Un valor que no es objeto literal se saltea a propósito, para no marcar de más
-		// sobre parámetros construidos dinámicamente.
+		// Un valor que no es objeto literal se saltea a propósito, para no marcar de más sobre
+		// parámetros construidos dinámicamente. Los cuatro niveles lo hacen, y cada uno necesita
+		// su caso: son salidas silenciosas, así que una que dejara de saltear no se vería.
 		{ code: `export default { parameters: buildParams() };`, filename: STORIES },
+		{ code: `export default { parameters: { docs: buildDocs() } };`, filename: STORIES },
+		{ code: `export default { parameters: { docs: { canvas: buildCanvas() } } };`, filename: STORIES },
+		{
+			code: `export default { parameters: { docs: { canvas: { sourceState: shownValue } } } };`,
+			filename: STORIES,
+		},
 		// La regla se aplica por nombre de archivo: fuera de `.stories.ts` no opina.
 		{ code: `export default {};`, filename: 'a.ts' },
 		{ code: `export default {};`, filename: 'a.spec.ts' },
@@ -42,6 +49,13 @@ ruleTester.run('storybook-source-state', rule, {
 			code: `export default { parameters: { docs: { canvas: { sourceState: 'hidden' } } } };`,
 			filename: STORIES,
 			errors: [{ messageId: 'wrongSourceState' }],
+		},
+		// La clave entrecomillada es un Literal y no un Identifier: sin este caso, perder esa
+		// rama del matcheo dejaría de marcar un meta perfectamente válido para Storybook.
+		{
+			code: `export default { 'parameters': { 'docs': { 'canvas': {} } } };`,
+			filename: STORIES,
+			errors: [{ messageId: 'missingSourceState' }],
 		},
 		// Por referencia también debe marcar: si la resolución de scope se rompiera, la
 		// regla dejaría de ver el meta y este caso pasaría en verde sin reportar nada.

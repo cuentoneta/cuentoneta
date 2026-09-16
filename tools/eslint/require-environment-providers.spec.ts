@@ -32,6 +32,13 @@ ruleTester.run('require-environment-providers', rule, {
 			filename: 'a.provider.ts',
 			errors: [{ messageId: 'missingMakeEnvironmentProviders' }],
 		},
+		// La otra forma que el predicado admite para un `const` exportado. Sin caso propio,
+		// perderla dejaría de marcar una función que la regla sí debe mirar.
+		{
+			code: `export const provideX = function () { return []; };`,
+			filename: 'a.provider.ts',
+			errors: [{ messageId: 'missingMakeEnvironmentProviders' }],
+		},
 		// El segundo sufijo que la regla reconoce; sin este caso, perderlo pasaría inadvertido.
 		{
 			code: `export function provideXMock() { return []; }`,
