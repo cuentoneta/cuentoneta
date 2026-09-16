@@ -294,7 +294,7 @@ const clarityMockResponse: ClarityApiResponse = [
 				sessionsCount: '13',
 			},
 			{
-				name: 'https://www.cuentoneta.ar/storylist/ciudades-campos-pueblos-islas',
+				name: 'https://www.cuentoneta.ar/collection/ciudades-campos-pueblos-islas',
 				sessionsCount: '9',
 			},
 			{
@@ -302,11 +302,11 @@ const clarityMockResponse: ClarityApiResponse = [
 				sessionsCount: '4',
 			},
 			{
-				name: 'http://localhost:4200/storylist/borges-en-twitter-spaces',
+				name: 'http://localhost:4200/collection/borges-en-twitter-spaces',
 				sessionsCount: '2',
 			},
 			{
-				name: 'https://www.cuentoneta.ar/story/yuki-onna-la-mujer-de-nieve?navigation=storylist&navigationSlug=cuentos-de-terror-de-alberto-laiseca',
+				name: 'https://www.cuentoneta.ar/story/yuki-onna-la-mujer-de-nieve?navigation=collection&navigationSlug=cuentos-de-terror-de-alberto-laiseca',
 				sessionsCount: '2',
 			},
 			{
@@ -314,11 +314,11 @@ const clarityMockResponse: ClarityApiResponse = [
 				sessionsCount: '2',
 			},
 			{
-				name: 'https://www.cuentoneta.ar/story/algunas-peculiaridades-de-los-ojos?navigation=storylist&navigationSlug=verano-2022',
+				name: 'https://www.cuentoneta.ar/story/algunas-peculiaridades-de-los-ojos?navigation=collection&navigationSlug=verano-2022',
 				sessionsCount: '1',
 			},
 			{
-				name: 'http://localhost:4200/storylist/textos-de-primavera',
+				name: 'http://localhost:4200/collection/textos-de-primavera',
 				sessionsCount: '1',
 			},
 		],
@@ -363,7 +363,7 @@ const clarityMockResponse: ClarityApiResponse = [
 				visitsCount: '8',
 			},
 			{
-				url: 'https://www.cuentoneta.ar/storylist/verano-2022',
+				url: 'https://www.cuentoneta.ar/collection/verano-2022',
 				visitsCount: '7',
 			},
 		],
