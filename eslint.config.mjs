@@ -5,6 +5,7 @@ import storybook from 'eslint-plugin-storybook';
 import vitest from '@vitest/eslint-plugin';
 import testingLibrary from 'eslint-plugin-testing-library';
 import noBarrelFiles from 'eslint-plugin-no-barrel-files';
+import unicorn from 'eslint-plugin-unicorn';
 import requireEnvironmentProviders from './tools/eslint/require-environment-providers.js';
 import storybookSourceState from './tools/eslint/storybook-source-state.js';
 import noApplyInHostStyles from './tools/eslint/no-apply-in-host-styles.js';
@@ -266,6 +267,18 @@ export default [
 		rules: {
 			'max-lines': ['error', { max: 500, skipBlankLines: true, skipComments: true }],
 			'max-lines-per-function': ['error', { max: 50, skipBlankLines: true, skipComments: true }],
+		},
+	},
+	{
+		// El plugin entra por esta única regla: su config `recommended` no está adoptado, y registrar el
+		// namespace no enciende nada por sí solo. El scope es todo el árbol porque la regla mide forma
+		// del código y no framework ni capa — incluye el `.tsx` del Studio, que el `**/*.ts` del bloque
+		// `nx` no matchea, y los `.js` de `tools/`.
+		name: 'prefer-smaller-scope',
+		files: ['**/*.{ts,tsx,js,mjs}'],
+		plugins: { unicorn },
+		rules: {
+			'unicorn/prefer-smaller-scope': 'error',
 		},
 	},
 	{

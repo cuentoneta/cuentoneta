@@ -12,9 +12,10 @@ if (!fs.existsSync(filePath)) {
 let content = fs.readFileSync(filePath, 'utf8');
 
 const oldString = 'index.csr.html';
-const newString = 'indexFile.html';
 
 if (content.includes(oldString)) {
+	const newString = 'indexFile.html';
+
 	content = content.replace(new RegExp(oldString, 'g'), newString);
 	fs.writeFileSync(filePath, content, 'utf8');
 	console.log(`✅ Reemplazada cadena "${oldString}" por "${newString}" in main.server.mjs`);
