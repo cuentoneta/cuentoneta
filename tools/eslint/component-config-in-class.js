@@ -76,8 +76,6 @@ function unwrapConfig(node) {
 }
 
 /**
- * ¿La expresión es una llamada a `Object.freeze(...)` con al menos un argumento?
- *
  * @param {TsNode} node
  * @returns {node is import('@typescript-eslint/utils').TSESTree.CallExpression}
  */

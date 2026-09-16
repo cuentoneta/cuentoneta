@@ -34,9 +34,7 @@ function isProviderFunction(name) {
  */
 function checkFunction(context, node, name) {
 	if (!isProviderFunction(name)) return;
-	const body = node.body;
-	if (!body) return;
-	if (!containsMakeEnvironmentProviders(body)) {
+	if (!containsMakeEnvironmentProviders(node.body)) {
 		context.report({
 			node,
 			messageId: 'missingMakeEnvironmentProviders',
