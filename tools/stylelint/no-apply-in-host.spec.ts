@@ -1,16 +1,15 @@
 // @vitest-environment node
 import stylelint from 'stylelint';
+import type { Config } from 'stylelint';
 
+// El config no extiende los presets del repo a propósito: con esta regla como única activa, todo
+// warning que llegue es suyo, y contarlos alcanza para afirmar.
 const config = {
 	plugins: ['./tools/stylelint/no-apply-in-host.js'],
 	rules: {
 		'cuentoneta/no-apply-in-host': true,
 	},
-	// El config no extiende los presets del repo a propósito: con esta regla como única activa, todo
-	// warning que llegue es suyo, y contarlos alcanza para afirmar.
-	// REASON: la forma de un config de Stylelint no vale tiparla acá; el spec solo lo pasa como dato.
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-} as any;
+} satisfies Config;
 
 async function warningsFor(code: string, codeFilename = 'src/app/components/probe/probe.component.css') {
 	const result = await stylelint.lint({ code, codeFilename, config });
