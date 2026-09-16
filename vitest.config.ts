@@ -25,11 +25,30 @@ export default defineConfig({
 			},
 		},
 		setupFiles: ['src/test-setup.ts'],
-		include: [
-			'src/**/*.{test,spec}.ts',
-			'scripts/**/*.{test,spec}.ts',
-			'e2e/_utils/**/*.{test,spec}.ts',
-			'tools/**/*.{test,spec}.ts',
+		projects: [
+			{
+				extends: true,
+				test: {
+					name: 'app',
+					include: ['src/**/*.{test,spec}.ts', 'scripts/**/*.{test,spec}.ts', 'e2e/_utils/**/*.{test,spec}.ts'],
+				},
+			},
+			{
+				extends: true,
+				test: {
+					// Un spec que carga el `eslint.config.mjs` real no puede correr bajo un pool de `vm`: el
+					// plugin de Analog fija `vmThreads` salvo que el config declare `pool`, y un módulo JSON
+					// importado con `with { type: 'json' }` —la forma que usa el índice de
+					// `eslint-plugin-unicorn`— no enlaza entre el contexto de `vm` y el grafo nativo. El
+					// costo del pool más lento queda acotado a estos specs, que no son de Angular y no
+					// necesitan ni el DOM ni el setup de TestBed.
+					name: 'tools',
+					include: ['tools/**/*.{test,spec}.ts'],
+					pool: 'forks',
+					environment: 'node',
+					setupFiles: [],
+				},
+			},
 		],
 		// @sanity y los bundles fesm de Angular se inlinan para que Vite los transforme.
 		server: {
