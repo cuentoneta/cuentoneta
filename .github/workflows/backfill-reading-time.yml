@@ -18,7 +18,14 @@
 # required status checks** de `develop`.
 #
 # Prerequisito (secret del repo — ya configurado, lo usan `sync-datasets` y `required-fields-sweep`):
-#   - SANITY_AUTH_TOKEN: robot token con permiso de lectura y escritura sobre `production`.
+#   - SANITY_AUTH_TOKEN: robot token de administración de manage.sanity.io. Alcanza `production`, que
+#     es privado, y puede administrar datasets enteros — crearlos, borrarlos, importarlos.
+#
+#     Este job necesita mucho menos que eso: escribir dos campos de `literaryWork`. Conviene
+#     reemplazarlo por un token de escritura acotado en cuanto exista, por el mismo motivo por el que
+#     `required-fields-sweep` anota su propia deuda (allí, de solo lectura): el alcance de una
+#     corrida desatendida y diaria conviene sostenerlo con el permiso del secret antes que con la
+#     disciplina de quien edite el script.
 name: Backfill reading time
 
 on:
@@ -29,6 +36,11 @@ on:
     # actividad en el repo; el `workflow_dispatch` permite re-dispararlo a mano cuando eso pasa.
     - cron: '35 4 * * *'
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Reportar qué se llenaría, sin escribir. El default en seco es deliberado: un disparo manual suele ser para mirar, y aplicar sobre production tiene que costar un clic más.'
+        type: boolean
+        default: true
 
 permissions:
   contents: read
@@ -55,10 +67,14 @@ jobs:
         uses: ./.github/actions/setup-workspace
 
       # A diferencia del resto de los jobs programados, acá el rojo SÍ significa que la herramienta
-      # falló: el script sale con 1 solo si falta el token de escritura o si un patch erró. Una obra
-      # sin materializar no es un hallazgo que reportar — es trabajo que la corrida no hizo.
+      # falló. La regla: el script sale con 1 cuando no pudo hacer su trabajo —le falta la
+      # credencial, no pudo leer, un patch erró—, nunca por algo que haya encontrado en el dato. Una
+      # obra sin materializar no es un hallazgo que reportar: es trabajo que la corrida no hizo.
       - name: Materializar el reading time faltante
         env:
+          # En `schedule` no hay inputs y la expresión resuelve a string vacío, así que la corrida
+          # programada aplica. Solo un disparo manual puede pedir el modo seco.
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
           # Producción es el único dataset donde el dato importa: `staging` y `development` se
           # sobrescriben con su copia cada domingo (`sync-datasets`).
           SANITY_STUDIO_DATASET: production
@@ -73,15 +89,25 @@ jobs:
           # (dentro de `setup-workspace`) apunta a `development`. Node le da precedencia a la
           # variable del entorno por sobre la del archivo, así que el bloque `env:` de arriba es el
           # que decide el dataset.
+          # Sin comillas a propósito: en modo seco la variable está vacía y debe desaparecer de la
+          # línea, no pasarse como un argumento vacío.
+          apply_flag=''
+          if [ "$DRY_RUN" != 'true' ]; then
+            apply_flag='--no-dry-run'
+          fi
+          # Por `tee` y no por redirección: así el log del step sale en vivo. Con una redirección, un
+          # corte por `timeout-minutes` mata el step antes del volcado y deja la corrida en rojo sin
+          # una sola línea de qué obras alcanzó a tocar — que es justo cuando ese rastro es lo único
+          # que hay para diagnosticar, con escrituras ya aplicadas. `pipefail` conserva el código de
+          # salida de `pnpm`, que `tee` de otro modo taparía con su propio 0.
           status=0
-          pnpm backfill:reading-time --no-dry-run > report.txt 2>&1 || status=$?
-          # El reporte va al resumen de la corrida además del log: un schedule diario que hay que
-          # abrir para saber qué hizo termina sin que nadie lo abra.
+          pnpm backfill:reading-time $apply_flag 2>&1 | tee report.txt || status=$?
+          # El reporte va además al resumen de la corrida: un schedule diario que hay que abrir para
+          # saber qué hizo termina sin que nadie lo abra.
           {
             echo '## Backfill de reading time'
             echo '```'
             cat report.txt
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
-          cat report.txt
           exit "$status"
