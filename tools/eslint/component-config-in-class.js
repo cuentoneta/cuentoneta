@@ -126,8 +126,8 @@ export default {
 	create(context) {
 		// Los tipos de `eslint` describen ESTree, que no conoce los nodos propios de TypeScript
 		// (`TSAsExpression`, `TSTypeAliasDeclaration`, los decoradores) sobre los que esta regla decide.
-		// Las dos conversiones al AST que el parser realmente entrega se concentran acá, para que el
-		// resto del archivo trabaje sobre un solo universo de tipos.
+		// La conversión al AST que el parser realmente entrega se concentra acá, para que el resto del
+		// archivo trabaje sobre un solo universo de tipos.
 		const sourceCode = /** @type {import('@typescript-eslint/utils').TSESLint.SourceCode} */ (
 			/** @type {unknown} */ (context.sourceCode)
 		);

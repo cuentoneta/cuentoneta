@@ -1,10 +1,11 @@
 /**
- * Require every Storybook `*.stories.ts` default-export meta to set
- * parameters.docs.canvas.sourceState = 'shown'.
+ * Exige que el meta exportado por defecto de toda `*.stories.ts` declare
+ * `parameters.docs.canvas.sourceState: 'shown'`.
  *
- * Showing source by default keeps the docs canvas useful for consumers
- * who want a runnable snippet alongside the rendered story.
+ * Mostrar el código por defecto es lo que vuelve útil el canvas de la documentación para quien busca
+ * un fragmento ejecutable junto a la story renderizada.
  */
+
 /** @type {import('eslint').Rule.RuleModule} */
 export default {
 	meta: {
@@ -65,11 +66,14 @@ export default {
 			return undefined;
 		}
 
-		// Cada valor anidado se verifica como ObjectExpression antes de descender. Un valor que no lo
-		// es —un spread, una llamada, una referencia a variable— se saltea en silencio para no marcar
-		// de más sobre parámetros construidos dinámicamente; el costo aceptado es que esas mismas
-		// construcciones quedan fuera del enforcement.
 		/**
+		 * Reporta el primer nivel que falte en `parameters.docs.canvas.sourceState`.
+		 *
+		 * Cada nivel se verifica como objeto literal antes de descender; un valor que no lo es —un
+		 * spread, una llamada, una referencia a variable— se saltea en silencio para no marcar de más
+		 * sobre parámetros construidos dinámicamente. El costo aceptado es que esas mismas
+		 * construcciones quedan fuera del enforcement.
+		 *
 		 * @param {import('estree').ObjectExpression} meta
 		 * @param {import('estree').Node} reportNode
 		 */

@@ -34,7 +34,7 @@ const bringsFullPackage = (/** @type {string} */ source) =>
  * El nombre del binding importado. Un ImportSpecifier lo guarda en `name` salvo en la forma con
  * nombre arbitrario de módulo (`import { "z" as z }`), donde el nodo es un Literal y viaja en `value`.
  *
- * @param {{ type: 'Identifier'; name: string } | { type: 'Literal'; value?: unknown }} imported
+ * @param {import('estree').ImportSpecifier['imported']} imported
  */
 const importedName = (imported) => (imported.type === 'Identifier' ? imported.name : String(imported.value));
 
