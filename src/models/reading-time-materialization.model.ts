@@ -1,5 +1,6 @@
 import type { Markdown } from './markdown.model';
-import { createReadingTime, deriveSectionReadingTime, sumReadingTimes, type ReadingTime } from './reading-time.model';
+import { deriveSectionReadingTime } from './reading-time-derivation.model';
+import { createReadingTime, sumReadingTimes, type ReadingTime } from './reading-time.model';
 
 // Proyección estructural mínima de una sección para materializar su reading time: su `_key` (para
 // direccionar el patch), el cuerpo Markdown (para computar) y el valor persistido actual (o `null`).
