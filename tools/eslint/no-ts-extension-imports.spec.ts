@@ -2,8 +2,6 @@ import { RuleTester } from 'eslint';
 import tsParser from '@typescript-eslint/parser';
 import { join } from 'node:path';
 
-// REASON: la regla es un `.js` sin tipos propios; el RuleTester solo necesita el módulo.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 import rule from './no-ts-extension-imports.js';
 
 const ruleTester = new RuleTester({ languageOptions: { parser: tsParser } });

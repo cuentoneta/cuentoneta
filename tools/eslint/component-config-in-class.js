@@ -69,7 +69,18 @@ function unwrapConfig(node) {
 	if (node.type === 'TSAsExpression' || node.type === 'TSSatisfiesExpression') {
 		return unwrapConfig(node.expression);
 	}
-	if (
+	if (isObjectFreezeCall(node)) {
+		return unwrapConfig(node.arguments[0]);
+	}
+	return node;
+}
+
+/**
+ * @param {TsNode} node
+ * @returns {node is import('@typescript-eslint/utils').TSESTree.CallExpression}
+ */
+function isObjectFreezeCall(node) {
+	return (
 		node.type === 'CallExpression' &&
 		node.callee.type === 'MemberExpression' &&
 		node.callee.object.type === 'Identifier' &&
@@ -77,10 +88,7 @@ function unwrapConfig(node) {
 		node.callee.property.type === 'Identifier' &&
 		node.callee.property.name === 'freeze' &&
 		node.arguments.length > 0
-	) {
-		return unwrapConfig(node.arguments[0]);
-	}
-	return node;
+	);
 }
 
 /**

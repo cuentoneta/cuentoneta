@@ -1,8 +1,6 @@
 import { RuleTester } from 'eslint';
 import tsParser from '@typescript-eslint/parser';
 
-// REASON: la regla es un `.js` sin tipos propios; el RuleTester solo necesita el módulo.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 import rule from './component-config-in-class.js';
 
 const ruleTester = new RuleTester({ languageOptions: { parser: tsParser } });
@@ -55,6 +53,11 @@ ruleTester.run('component-config-in-class', rule, {
 		},
 		{
 			code: decorate(`const sizeMap = { sm: 'h-4' } as const;`),
+			filename: 'a.ts',
+			errors: [{ messageId: 'moduleConfig' }],
+		},
+		{
+			code: decorate(`const sizeMap = { sm: 'h-4' } as Record<string, string>;`),
 			filename: 'a.ts',
 			errors: [{ messageId: 'moduleConfig' }],
 		},
