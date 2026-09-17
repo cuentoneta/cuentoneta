@@ -10,6 +10,11 @@ export type OnoffAudioFileAsset = OnoffAudioAsset & {
 
 const AUDIO_EXTENSION = 'ogg';
 
+// Los formatos que un `<audio>` puede servir. El corpus produce un solo formato, pero el recorrido
+// reconoce todos: con uno solo, un medio que declarara otra extensión quedaría fuera de la cobertura en
+// silencio, que es el modo de falla que la tabla existe para cerrar.
+const RECOGNIZED_AUDIO_EXTENSIONS = Object.freeze(['ogg', 'oga', 'opus', 'mp3', 'm4a', 'aac', 'wav', 'flac'] as const);
+
 function audioAsset(slug: string): OnoffAudioAsset {
 	return Object.freeze({ path: `assets/audio/mocks/${slug}.${AUDIO_EXTENSION}` });
 }
@@ -44,11 +49,11 @@ function servedEntriesOf(value: object): unknown[] {
 
 /**
  * Toda ruta de audio **servida** que aparezca en una estructura, a cualquier profundidad, reconocida por
- * la extensión del formato. No deduplica: un mismo clip usado por dos medios sale dos veces.
+ * su extensión. No deduplica: un mismo clip usado por dos medios sale dos veces.
  */
 export function audioPathsIn(value: unknown): string[] {
 	if (typeof value === 'string') {
-		return value.endsWith(`.${AUDIO_EXTENSION}`) ? [value] : [];
+		return RECOGNIZED_AUDIO_EXTENSIONS.some((extension) => value.endsWith(`.${extension}`)) ? [value] : [];
 	}
 	if (typeof value !== 'object' || value === null) {
 		return [];

@@ -1,11 +1,21 @@
-import { audioPathsIn, isDeclaredAudioPath, onoffAudioAssets, type OnoffAudioAsset } from './onoff-audio-assets.mock';
+import {
+	audioPathsIn,
+	isDeclaredAudioPath,
+	onoffAudioAssets,
+	type OnoffAudioAsset,
+	type OnoffAudioFileAsset,
+} from './onoff-audio-assets.mock';
 import { onoffDatasetMock } from './onoff-documents.mock';
 import { onoffRawCollectionsMock } from './onoff-raw-collections.mock';
 import { onoffRawLiteraryWorksMock } from './onoff-raw-literary-works.mock';
 import { onoffMediaMock } from './onoff-media.mock';
 import { onoffCollectionsMock } from './onoff-collections.mock';
 
-const assets: [string, OnoffAudioAsset][] = Object.entries(onoffAudioAssets);
+const assets: [string, OnoffAudioAsset | OnoffAudioFileAsset][] = Object.entries(onoffAudioAssets);
+
+function hasReference(asset: OnoffAudioAsset | OnoffAudioFileAsset): asset is OnoffAudioFileAsset {
+	return 'ref' in asset;
+}
 
 function slugOf(asset: OnoffAudioAsset): string {
 	const [slug] = (asset.path.split('/').at(-1) ?? '').split('.');
@@ -14,10 +24,6 @@ function slugOf(asset: OnoffAudioAsset): string {
 
 function toCamelCase(slug: string): string {
 	return slug.replace(/-(.)/g, (_, letter: string) => letter.toUpperCase());
-}
-
-function refOf(asset: OnoffAudioAsset): string | undefined {
-	return (asset as { ref?: string }).ref;
 }
 
 describe('la tabla de assets de audio del corpus', () => {
@@ -34,10 +40,10 @@ describe('la tabla de assets de audio del corpus', () => {
 
 	// El `_ref` es lo que el documento declara y la ruta es lo que el dominio sirve: si dejan de nombrar al
 	// mismo archivo, el cruce contra el ACL compara dos clips distintos y nadie lo nota.
-	it.each(assets.filter(([, asset]) => refOf(asset) !== undefined))(
+	it.each(assets.filter((entry): entry is [string, OnoffAudioFileAsset] => hasReference(entry[1])))(
 		'derives the reference of "%s" from its own clip',
 		(_key, asset) => {
-			expect(refOf(asset)).toBe(`file-${slugOf(asset)}-ogg`);
+			expect(asset.ref).toBe(`file-${slugOf(asset)}-ogg`);
 		},
 	);
 

@@ -12,6 +12,6 @@ export const geometriaAudioAssetDocument: SanityFileAsset = {
 	extension: 'ogg',
 	mimeType: 'audio/ogg',
 	size: 1024,
-	path: 'files/onoff/file-geometria-space-ogg.ogg',
+	path: `files/onoff/${onoffAudioAssets.geometriaSpace.ref}.ogg`,
 	url: onoffAudioAssets.geometriaSpace.path,
 };
