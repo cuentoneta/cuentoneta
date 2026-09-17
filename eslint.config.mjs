@@ -271,11 +271,12 @@ export default [
 	},
 	{
 		// El plugin entra por esta única regla: su config `recommended` no está adoptado, y registrar el
-		// namespace no enciende nada por sí solo. El scope es todo el árbol porque la regla mide forma
-		// del código y no framework ni capa — incluye el `.tsx` del Studio, que el `**/*.ts` del bloque
-		// `nx` no matchea, y los `.js` de `tools/`.
+		// namespace no enciende nada por sí solo. El scope nombra todas las extensiones que el gate
+		// lintea, no solo el `**/*.ts` del bloque `nx`: la regla mide forma del código y no framework ni
+		// capa, así que rige igual en el Studio React, en los scripts y en las reglas de las que depende
+		// el linteo del repo.
 		name: 'prefer-smaller-scope',
-		files: ['**/*.{ts,tsx,js,mjs}'],
+		files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.mjs'],
 		plugins: { unicorn },
 		rules: {
 			'unicorn/prefer-smaller-scope': 'error',
