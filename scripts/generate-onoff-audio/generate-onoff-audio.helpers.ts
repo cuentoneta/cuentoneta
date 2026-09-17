@@ -68,14 +68,13 @@ function quoteForPowerShell(value: string): string {
  *
  * El texto viaja por archivo y no inline: pasar prosa acentuada por la línea de comandos la corrompe.
  */
-export function synthesisScript(params: { textFile: string; wavFile: string; rate: number }): string {
+export function synthesisScript(params: { textFile: string; wavFile: string }): string {
 	return [
 		'Add-Type -AssemblyName System.Speech',
 		'$synthesizer = New-Object System.Speech.Synthesis.SpeechSynthesizer',
 		"$voice = $synthesizer.GetInstalledVoices() | Where-Object { $_.VoiceInfo.Culture.TwoLetterISOLanguageName -eq 'es' } | Select-Object -First 1",
 		'if ($null -eq $voice) { Write-Error "No hay ninguna voz SAPI en espanol instalada."; exit 1 }',
 		'$synthesizer.SelectVoice($voice.VoiceInfo.Name)',
-		`$synthesizer.Rate = ${params.rate}`,
 		`$synthesizer.SetOutputToWaveFile(${quoteForPowerShell(params.wavFile)})`,
 		`$synthesizer.Speak([IO.File]::ReadAllText(${quoteForPowerShell(params.textFile)}, [Text.Encoding]::UTF8))`,
 		'$synthesizer.Dispose()',

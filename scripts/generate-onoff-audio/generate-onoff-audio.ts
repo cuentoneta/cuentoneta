@@ -4,9 +4,6 @@
  *
  * Existe para que los `.ogg` versionados se puedan volver a producir, no para correr en CI: depende de
  * una voz SAPI en español y de ffmpeg en el `PATH`, y ninguna de las dos cosas hay en un runner de Linux.
- *
- * El criterio de qué se lee vive en `generate-onoff-audio.helpers.ts` y la tabla de producción en
- * `generate-onoff-audio.clips.ts`; acá están el disco, los procesos y los argumentos.
  */
 import { spawnSync } from 'node:child_process';
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
@@ -17,9 +14,6 @@ import { parseArgs } from 'node:util';
 import { onoffAudioAssets } from '../../src/mocks/onoff-audio-assets.mock';
 import { MAX_SECONDS, audioClips, excerptOptions } from './generate-onoff-audio.clips';
 import { encodeArgs, selectExcerpt, synthesisScript } from './generate-onoff-audio.helpers';
-
-/** Cuánto se acelera la voz respecto de su ritmo natural, en la escala de SAPI (-10 a 10). */
-const SPEECH_RATE = 0;
 
 const { values } = parseArgs({ options: { force: { type: 'boolean', default: false } } });
 
@@ -67,7 +61,7 @@ try {
 		const wavFile = join(workDirectory, `${clip.asset}.wav`);
 		const scriptFile = join(workDirectory, `${clip.asset}.ps1`);
 		writeFileSync(textFile, excerpt, 'utf8');
-		writeFileSync(scriptFile, synthesisScript({ textFile, wavFile, rate: SPEECH_RATE }), 'utf8');
+		writeFileSync(scriptFile, synthesisScript({ textFile, wavFile }), 'utf8');
 
 		run('powershell', ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', scriptFile]);
 		mkdirSync(dirname(destination), { recursive: true });

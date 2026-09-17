@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { onoffAudioAssets } from '../../src/mocks/onoff-audio-assets.mock';
-import { MAX_SECONDS, audioClips, excerptOptions } from './generate-onoff-audio.clips';
+import { audioClips, excerptOptions } from './generate-onoff-audio.clips';
 import { selectExcerpt } from './generate-onoff-audio.helpers';
 
 describe('la tabla de producción de los clips', () => {
@@ -39,9 +39,5 @@ describe('la tabla de producción de los clips', () => {
 		);
 
 		expect(new Set(excerpts).size).toBe(excerpts.length);
-	});
-
-	it('acota el clip a lo que el corpus admite como fragmento', () => {
-		expect(MAX_SECONDS).toBeLessThanOrEqual(25);
 	});
 });

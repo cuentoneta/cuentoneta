@@ -49,7 +49,7 @@ describe('selectExcerpt', () => {
 });
 
 describe('synthesisScript', () => {
-	const script = synthesisScript({ textFile: "C:\\tmp\\o'neiras.txt", wavFile: 'C:\\tmp\\x.wav', rate: 0 });
+	const script = synthesisScript({ textFile: "C:\\tmp\\o'neiras.txt", wavFile: 'C:\\tmp\\x.wav' });
 
 	it('elige la voz por cultura, no por nombre', () => {
 		expect(script).toContain("TwoLetterISOLanguageName -eq 'es'");
