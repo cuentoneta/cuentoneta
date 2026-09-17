@@ -5,6 +5,7 @@ import storybook from 'eslint-plugin-storybook';
 import vitest from '@vitest/eslint-plugin';
 import testingLibrary from 'eslint-plugin-testing-library';
 import noBarrelFiles from 'eslint-plugin-no-barrel-files';
+import unicorn from 'eslint-plugin-unicorn';
 import requireEnvironmentProviders from './tools/eslint/require-environment-providers.js';
 import storybookSourceState from './tools/eslint/storybook-source-state.js';
 import noApplyInHostStyles from './tools/eslint/no-apply-in-host-styles.js';
@@ -266,6 +267,19 @@ export default [
 		rules: {
 			'max-lines': ['error', { max: 500, skipBlankLines: true, skipComments: true }],
 			'max-lines-per-function': ['error', { max: 50, skipBlankLines: true, skipComments: true }],
+		},
+	},
+	{
+		// El plugin entra por esta única regla: su config `recommended` no está adoptado, y registrar el
+		// namespace no enciende nada por sí solo. El scope nombra todas las extensiones que el gate
+		// lintea, no solo el `**/*.ts` del bloque `nx`: la regla mide forma del código y no framework ni
+		// capa, así que rige igual en el Studio React, en los scripts y en las reglas de las que depende
+		// el linteo del repo.
+		name: 'prefer-smaller-scope',
+		files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.mjs'],
+		plugins: { unicorn },
+		rules: {
+			'unicorn/prefer-smaller-scope': 'error',
 		},
 	},
 	{

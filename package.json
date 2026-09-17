@@ -132,6 +132,7 @@
 		"eslint-plugin-playwright": "^2.11.0",
 		"eslint-plugin-storybook": "10.6.0",
 		"eslint-plugin-testing-library": "^7.16.2",
+		"eslint-plugin-unicorn": "^75.0.0",
 		"groq-js": "^2.0.0",
 		"happy-dom": "^20.14.0",
 		"husky": "^9.1.7",
