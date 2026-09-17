@@ -228,6 +228,35 @@ El resto de los assets del corpus vive junto a estas portadas, todos bajo `src/a
 
 **Las banderas son la excepción, y no son del corpus.** El set completo por código ISO vive en `public/flags/`, que la app publica en la raíz: es un recurso general, no una fixture, y ponerlo bajo `mocks/` lo habría etiquetado como lo que no es. Por eso su entrada en la tabla es la única cuya ruta no empieza con `assets/` — el prefijo es lo que distingue las dos raíces publicadas, y de eso depende que el spec sepa dónde buscar el archivo en disco.
 
+## Audio: el puente a los clips locales
+
+Los cuatro medios del corpus apuntaban a destinos deliberadamente falsos, y cada uno rompía distinto en el navegador. Los dos **reproductores nativos** —`audioRecording` y `spaceRecording`— ya no: suenan de verdad, contra clips cortos versionados junto al corpus. **La tabla `../onoff-audio-assets.mock.ts` (`onoffAudioAssets`) es lo que une las puntas**, con el mismo criterio que la de imágenes: una entrada por clip, y nadie escribe una ruta a mano.
+
+La diferencia con las imágenes está en cuántas caras tiene cada entrada. El ACL pasa la URL del audio **tal cual**, así que el documento y el corpus de dominio declaran el **mismo** valor —la ruta servida— y no dos distintos. La segunda cara, el `_ref`, existe solo donde Sanity modela un asset: la grabación de espacio, que dereferencia un `sanity.fileAsset`.
+
+```
+documento (url)      →  onoffAudioAssets.<clave>.path
+documento (audioFile) →  onoffAudioAssets.<clave>.ref
+dominio              →  onoffAudioAssets.<clave>.path
+```
+
+**Formato de la referencia:** `file-<slug>-<ext>`. A diferencia de la de imágenes conserva los guiones del slug: el `_ref` de un archivo no lo parsea nadie —`@sanity/image-url` no interviene y el dereferenciado va por igualdad contra el `_id` del asset—, así que no hay un parser que exija camelCase.
+
+`../onoff-audio-assets.mock.spec.ts` lo hace cumplir: que la clave nombre a su propio clip, que cada entrada declare un archivo distinto, que el `_ref` se derive de esa misma ruta, que el archivo exista y sea un Ogg real, que su duración caiga en el rango de un fragmento y no de una lectura completa, y que **ninguna ruta de audio del corpus quede fuera de la tabla**. El recorrido saltea el `path` de un `sanity.fileAsset`: es la ubicación interna del archivo en el almacenamiento de Sanity, no algo que el navegador pida.
+
+### Convención de clips
+
+- **Directorio:** `src/assets/audio/mocks/`
+- **Nombre:** `<slug>.ogg`
+- **Path en el mock:** `assets/audio/mocks/<slug>.ogg` (sin `./` ni `/` inicial), declarado por la tabla
+- **Formato:** Vorbis mono, de a lo sumo veinte segundos
+
+**Son fragmentos, no lecturas completas.** Una obra entera son megabytes por archivo, y el corpus los cargaría en cada checkout para siempre. Lo que el catálogo necesita mostrar es que el reproductor funciona, y para eso alcanza con que suene.
+
+Los produce `pnpm corpus:audio` (`scripts/generate-onoff-audio/`): recorta un fragmento de la prosa propia de la obra, lo sintetiza con el TTS de Windows y lo encodea con ffmpeg. **No corre en CI** —depende de una voz del sistema y de ffmpeg en el `PATH`— y existe para que los binarios versionados se puedan volver a producir. El recorte descarta las oraciones entrecomilladas, que es como este corpus marca lo único ajeno que declara: las citas de los diálogos del film.
+
+**Los embeds de terceros son otra cosa.** `youTubeVideo` y `spotifyPodcastEpisode` conservan su URL y su identificador de plataforma: son la forma que producción tiene, y hay specs que la afirman. Lo que se sustituye es lo que **el catálogo monta** — `../../testing/storybook-embed-placeholders.ts` aporta un decorator que apaga la carga de la IFrame API de YouTube y reapunta la URL del episodio a una ilustración local. Subir el contenido a una cuenta real se evaluó y se descartó: un video que se cae, se bloquea por región o queda privado rompe el catálogo sin que ningún gate lo note.
+
 ## Obras
 
 | Obra                              | Slug                              | Publicación original        |
