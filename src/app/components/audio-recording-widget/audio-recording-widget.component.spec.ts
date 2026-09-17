@@ -16,13 +16,16 @@ describe('AudioRecordingWidgetComponent', () => {
 		expect(container).toBeInTheDocument();
 	});
 
+	// Se afirma sobre el atributo y no sobre `currentSrc`: el corpus declara la ruta relativa del clip
+	// versionado, y `currentSrc` la devuelve ya resuelta contra la base del documento.
 	it('should render the audio player', async () => {
 		await render(AudioRecordingWidgetComponent, {
 			inputs: { media: onoffAudioRecordingsMock[0] },
 		});
 
-		const audioRecordingElement = screen.getByTestId('audio-recording') as HTMLElement & { currentSrc: string };
-		expect(audioRecordingElement.currentSrc === onoffAudioRecordingsMock[0].data.url).toBeTruthy();
+		const audioRecordingElement = screen.getByTestId('audio-recording');
+
+		expect(audioRecordingElement.getAttribute('src')).toBe(onoffAudioRecordingsMock[0].data.url);
 	});
 
 	// El contenedor no puede ser un p: el pipeline emite <p>…</p> y anidar un párrafo dentro de otro es
