@@ -1,4 +1,9 @@
 import { audioPathsIn, isDeclaredAudioPath, onoffAudioAssets, type OnoffAudioAsset } from './onoff-audio-assets.mock';
+import { onoffDatasetMock } from './onoff-documents.mock';
+import { onoffRawCollectionsMock } from './onoff-raw-collections.mock';
+import { onoffRawLiteraryWorksMock } from './onoff-raw-literary-works.mock';
+import { onoffMediaMock } from './onoff-media.mock';
+import { onoffCollectionsMock } from './onoff-collections.mock';
 
 const assets: [string, OnoffAudioAsset][] = Object.entries(onoffAudioAssets);
 
@@ -43,6 +48,12 @@ describe('la tabla de assets de audio del corpus', () => {
 			expect(audioPathsIn(corpus).sort()).toEqual(['x/one.ogg', 'x/one.ogg', 'x/two.ogg']);
 		});
 
+		it('ignores the internal storage path of a file asset, which is not what gets served', () => {
+			const asset = { _type: 'sanity.fileAsset', path: 'files/onoff/x.ogg', url: 'assets/audio/mocks/x.ogg' };
+
+			expect(audioPathsIn(asset)).toEqual(['assets/audio/mocks/x.ogg']);
+		});
+
 		it('ignores values that are not clips', () => {
 			expect(audioPathsIn({ url: 'https://open.spotify.com/embed/episode/x', videoId: null, n: 1 })).toEqual([]);
 		});
@@ -56,5 +67,20 @@ describe('la tabla de assets de audio del corpus', () => {
 		it('rejects a path the table does not declare', () => {
 			expect(isDeclaredAudioPath('assets/audio/mocks/inventado.ogg')).toBe(false);
 		});
+	});
+
+	// Sin esta cobertura la tabla sería un mapa parcial: un medio nuevo que apuntara a un destino inventado
+	// serviría un reproductor roto, que es exactamente lo que los clips versionados vienen a cerrar.
+	it.each([
+		['el dataset de documentos', onoffDatasetMock],
+		['el corpus crudo de obras', onoffRawLiteraryWorksMock],
+		['el corpus crudo de colecciones', onoffRawCollectionsMock],
+		['los medios de dominio', onoffMediaMock],
+		['las colecciones de dominio', onoffCollectionsMock],
+	])('covers every audio path declared by %s', (_source, corpus) => {
+		const paths = [...new Set(audioPathsIn(corpus))];
+
+		expect(paths.length).toBeGreaterThan(0);
+		expect(paths.filter((path) => !isDeclaredAudioPath(path))).toEqual([]);
 	});
 });

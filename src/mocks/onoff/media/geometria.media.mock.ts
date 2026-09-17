@@ -7,6 +7,7 @@ import {
 	geometriaSpotifyDescription,
 	geometriaYoutubeDescription,
 } from './geometria.media';
+import { onoffAudioAssets } from '../../onoff-audio-assets.mock';
 import { onoffImageAssets } from '../../onoff-image-assets.mock';
 
 // Espeja los mediaSources del fixture raw homónimo, sin el pdfLink que el ACL descarta.
@@ -15,14 +16,14 @@ export const geometriaMediaMock: Media[] = [
 		title: 'Lectura de "Geometría" por su autor',
 		type: 'audioRecording',
 		description: markdownToSanitizedHtml(createMarkdown(geometriaAudioDescription)),
-		data: { url: 'https://cdn.example.org/onoff/geometria.ogg' },
+		data: { url: onoffAudioAssets.geometria.path },
 	},
 	{
 		title: 'Conversación sobre el insomnio y la medida del tiempo',
 		type: 'spaceRecording',
 		description: markdownToSanitizedHtml(createMarkdown(geometriaSpaceDescription)),
 		data: {
-			url: 'https://cdn.example.org/onoff/geometria-space.ogg',
+			url: onoffAudioAssets.geometriaSpace.path,
 			duration: '48:12',
 			hostName: 'Biblioteca del Méridien',
 			hostAvatar: onoffImageAssets.bibliotecaMeridienAvatar.path,

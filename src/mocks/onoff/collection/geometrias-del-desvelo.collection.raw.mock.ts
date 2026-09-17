@@ -45,7 +45,7 @@ export const geometriasDelDesveloRawCollection: NonNullable<CollectionBySlugQuer
 			hostAvatar: { _type: 'image', asset: { _type: 'reference', _ref: 'image-bibliotecaMeridienAvatar-96x96-png' } },
 			date: '1974-07-03',
 			duration: '52:40',
-			audioUrl: 'https://cdn.example.org/onoff/geometria-space.ogg',
+			audioUrl: 'assets/audio/mocks/geometria-space.ogg',
 		},
 	],
 	literaryWorks: [geometriaRawLiteraryWorkTeaser, losPeldanosRawLiteraryWorkTeaser, lasEscalerasRawLiteraryWorkTeaser],

@@ -32,9 +32,19 @@ export const onoffAudioAssets = Object.freeze({
 
 const declaredPaths = new Set(Object.values(onoffAudioAssets).map((asset) => asset.path));
 
+// El `path` de un `sanity.fileAsset` es la ubicación interna del archivo en el almacenamiento de Sanity,
+// no algo que el navegador pida: lo servido es `url`. Recorrerlo reportaría como destino inventado a un
+// campo que ningún reproductor toca.
+function servedEntriesOf(value: object): unknown[] {
+	const isFileAsset = (value as { _type?: unknown })._type === 'sanity.fileAsset';
+	return Object.entries(value)
+		.filter(([key]) => !(isFileAsset && key === 'path'))
+		.map(([, entry]) => entry);
+}
+
 /**
- * Toda ruta de audio que aparezca en una estructura, a cualquier profundidad, reconocida por la extensión
- * del formato. No deduplica: un mismo clip usado por dos medios sale dos veces.
+ * Toda ruta de audio **servida** que aparezca en una estructura, a cualquier profundidad, reconocida por
+ * la extensión del formato. No deduplica: un mismo clip usado por dos medios sale dos veces.
  */
 export function audioPathsIn(value: unknown): string[] {
 	if (typeof value === 'string') {
@@ -43,7 +53,7 @@ export function audioPathsIn(value: unknown): string[] {
 	if (typeof value !== 'object' || value === null) {
 		return [];
 	}
-	return Object.values(value).flatMap(audioPathsIn);
+	return servedEntriesOf(value).flatMap(audioPathsIn);
 }
 
 /** Si la ruta la declara la tabla — o sea, si resuelve a un clip versionado y no a un destino inventado. */

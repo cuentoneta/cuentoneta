@@ -25,7 +25,7 @@ export const lasEscalerasRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryRes
 			_type: 'audioRecording',
 			title: 'Lectura de "Las escaleras" por su autor',
 			description: lasEscalerasAudioDescription,
-			url: 'https://cdn.example.org/onoff/las-escaleras.ogg',
+			url: 'assets/audio/mocks/las-escaleras.ogg',
 		},
 	],
 	resources: [],
