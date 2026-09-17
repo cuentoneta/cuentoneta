@@ -242,7 +242,9 @@ dominio              →  onoffAudioAssets.<clave>.path
 
 **Formato de la referencia:** `file-<slug>-<ext>`. A diferencia de la de imágenes conserva los guiones del slug: el `_ref` de un archivo no lo parsea nadie —`@sanity/image-url` no interviene y el dereferenciado va por igualdad contra el `_id` del asset—, así que no hay un parser que exija camelCase.
 
-`../onoff-audio-assets.mock.spec.ts` lo hace cumplir: que la clave nombre a su propio clip, que cada entrada declare un archivo distinto, que el `_ref` se derive de esa misma ruta, que el archivo exista y sea un Ogg real, que su duración caiga en el rango de un fragmento y no de una lectura completa, y que **ninguna ruta de audio del corpus quede fuera de la tabla**. El recorrido saltea el `path` de un `sanity.fileAsset`: es la ubicación interna del archivo en el almacenamiento de Sanity, no algo que el navegador pida.
+`../onoff-audio-assets.mock.spec.ts` lo hace cumplir en tres frentes: que la clave nombre a su propio clip, que el `_ref` se derive de esa misma ruta, y que **ninguna ruta de audio del corpus quede fuera de la tabla**. El recorrido saltea el `path` de un `sanity.fileAsset`: es la ubicación interna del archivo en el almacenamiento de Sanity, no algo que el navegador pida.
+
+**Lo que todavía no verifica es el binario.** La cobertura compara rutas contra la tabla, no contra el disco, así que un directorio de clips ausente deja todos los gates en verde. Las aserciones que cierran ese hueco —que el archivo exista, que sea un Ogg real, que sea mono y que su duración sea la de un fragmento y no la de una lectura completa— son la contraparte de lo que el spec de imágenes hace con el `IHDR` del PNG, y entran junto con los binarios.
 
 ### Convención de clips
 
