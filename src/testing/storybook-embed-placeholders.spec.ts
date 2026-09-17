@@ -1,7 +1,6 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { YOUTUBE_PLAYER_CONFIG } from '@angular/youtube-player';
 import { render, screen } from '@testing-library/angular';
 
 import { SpotifyPodcastEpisodeWidget } from '@components/spotify-audio-widget/spotify-podcast-episode-widget';
@@ -12,6 +11,7 @@ import {
 	onoffYouTubeVideosMock,
 } from '@mocks/onoff-media.mock';
 import {
+	CatalogEmbedPlaceholders,
 	EMBED_PLACEHOLDERS,
 	embedPlayerProviders,
 	withEmbedPlaceholder,
@@ -21,7 +21,7 @@ import {
 describe('los placeholders de embed del catálogo', () => {
 	// Una ilustración borrada dejaría al catálogo referenciando utilería inexistente, que es el mismo
 	// reproductor roto con otra cara.
-	it.each(Object.entries(EMBED_PLACEHOLDERS))('resolves "%s" to a file that exists', (_key, path) => {
+	it.each(Object.entries(EMBED_PLACEHOLDERS))('resuelve "%s" a un archivo que existe', (_key, path) => {
 		expect(existsSync(join(process.cwd(), 'src', path))).toBe(true);
 	});
 
@@ -68,25 +68,25 @@ describe('los placeholders de embed del catálogo', () => {
 		expect(embed.src).toContain(EMBED_PLACEHOLDERS.spotifyPodcastEpisode);
 	});
 
-	// El player carga la IFrame API una sola vez por proceso, así que observar el DOM no distingue "no la
-	// pidió" de "otro spec ya la pidió". Lo que sí es determinista es con qué configuración se lo monta.
-	it('configura el player para no cargar la IFrame API', () => {
-		const config = embedPlayerProviders.find(
-			(provider): provider is { provide: unknown; useValue: { loadApi: boolean } } =>
-				typeof provider === 'object' && 'provide' in provider && provider.provide === YOUTUBE_PLAYER_CONFIG,
+	// El player difiere la carga del video hasta el clic sobre su placeholder, así que lo que impide que el
+	// catálogo salga a la red no es la configuración —que es la red de contención— sino dejarlo inerte.
+	// Se monta el widget dentro del envoltorio, que es como lo monta una story.
+	it('deja el placeholder del video inerte y repintado', async () => {
+		const { container } = await render(
+			`<cuentoneta-catalog-embed-placeholders><cuentoneta-youtube-video-widget [media]="media" /></cuentoneta-catalog-embed-placeholders>`,
+			{
+				imports: [CatalogEmbedPlaceholders, YoutubeVideoWidgetComponent],
+				providers: embedPlayerProviders,
+				componentProperties: { media: onoffYouTubeVideosMock[0] },
+			},
 		);
 
-		expect(config?.useValue.loadApi).toBe(false);
-	});
+		/* eslint-disable testing-library/no-container, testing-library/no-node-access -- el placeholder del player es de terceros y no expone rol ni testid: solo se lo alcanza por selector */
+		const placeholder = container.querySelector('youtube-player-placeholder');
+		/* eslint-enable testing-library/no-container, testing-library/no-node-access */
+		const applied = placeholder ? getComputedStyle(placeholder) : undefined;
 
-	// Sin la IFrame API el player nunca sustituye su placeholder por el embed, y el botón de reproducción
-	// que el placeholder dibuja es lo único que lo delata desde afuera.
-	it('deja el player en su placeholder', async () => {
-		await render(YoutubeVideoWidgetComponent, {
-			inputs: { media: onoffYouTubeVideosMock[0] },
-			providers: embedPlayerProviders,
-		});
-
-		expect(screen.getByRole('button')).toBeInTheDocument();
+		expect(applied?.pointerEvents).toBe('none');
+		expect(applied?.backgroundImage).toContain(EMBED_PLACEHOLDERS.youTubeVideo);
 	});
 });
