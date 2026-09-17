@@ -97,7 +97,7 @@
 		"@angular/compiler-cli": "22.1.5",
 		"@angular/language-service": "22.1.5",
 		"@eslint/js": "^10.0.1",
-		"@googleapis/searchconsole": "^7.1.0",
+		"@googleapis/searchconsole": "^11.0.0",
 		"@nx/devkit": "23.2.0",
 		"@nx/eslint": "23.2.0",
 		"@nx/eslint-plugin": "23.2.0",
