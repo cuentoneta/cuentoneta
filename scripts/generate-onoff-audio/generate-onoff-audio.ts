@@ -11,8 +11,8 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { parseArgs } from 'node:util';
 
-import { onoffAudioAssets } from '../../src/mocks/onoff-audio-assets.mock';
-import { MAX_SECONDS, audioClips, excerptOptions } from './generate-onoff-audio.clips';
+import { MAX_CLIP_SECONDS, onoffAudioAssets } from '../../src/mocks/onoff-audio-assets.mock';
+import { audioClips, excerptOptions } from './generate-onoff-audio.clips';
 import { encodeArgs, selectExcerpt, synthesisScript } from './generate-onoff-audio.helpers';
 
 const { values } = parseArgs({ options: { force: { type: 'boolean', default: false } } });
@@ -65,7 +65,7 @@ try {
 
 		run('powershell', ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', scriptFile]);
 		mkdirSync(dirname(destination), { recursive: true });
-		run('ffmpeg', encodeArgs({ wavFile, oggFile: destination, maxSeconds: MAX_SECONDS }));
+		run('ffmpeg', encodeArgs({ wavFile, oggFile: destination, maxSeconds: MAX_CLIP_SECONDS }));
 
 		process.stdout.write(`✓ ${clip.asset}: ${onoffAudioAssets[clip.asset].path}\n`);
 	}

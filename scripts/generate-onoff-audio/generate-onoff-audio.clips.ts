@@ -13,9 +13,6 @@ export type AudioClip = {
 // corte real cae en el límite de oración anterior, así que el clip sale igual o más corto que esto.
 const MAX_WORDS = 60;
 
-/** El corte duro del encodeo, en segundos: lo que separa un clip de una lectura completa. */
-export const MAX_SECONDS = 20;
-
 export const excerptOptions = Object.freeze({ maxWords: MAX_WORDS } as const);
 
 // Qué se lee en cada clip. El destino no se declara acá: sale de `onoffAudioAssets`, así que el generador

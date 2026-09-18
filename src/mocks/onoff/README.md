@@ -242,9 +242,9 @@ dominio              →  onoffAudioAssets.<clave>.path
 
 **Formato de la referencia:** `file-<slug>-<ext>`. A diferencia de la de imágenes conserva los guiones del slug: el `_ref` de un archivo no lo parsea nadie —`@sanity/image-url` no interviene y el dereferenciado va por igualdad contra el `_id` del asset—, así que no hay un parser que exija camelCase.
 
-`../onoff-audio-assets.mock.spec.ts` lo hace cumplir en tres frentes: que la clave nombre a su propio clip, que el `_ref` se derive de esa misma ruta, y que **ninguna ruta de audio del corpus quede fuera de la tabla**. El recorrido saltea el `path` de un `sanity.fileAsset`: es la ubicación interna del archivo en el almacenamiento de Sanity, no algo que el navegador pida.
+`../onoff-audio-assets.mock.spec.ts` lo hace cumplir en cinco frentes: que la clave nombre a su propio clip, que cada entrada declare un archivo distinto, que el `_ref` se derive de esa misma ruta, que el archivo exista y sea un Ogg mono de verdad, que su duración caiga dentro de lo que el corpus admite como fragmento, y que **ninguna ruta de audio del corpus quede fuera de la tabla**. El recorrido saltea el `path` de un `sanity.fileAsset`: es la ubicación interna del archivo en el almacenamiento de Sanity, no algo que el navegador pida.
 
-**Lo que todavía no verifica es el binario.** La cobertura compara rutas contra la tabla, no contra el disco, así que un directorio de clips ausente deja todos los gates en verde. Las aserciones que cierran ese hueco —que el archivo exista, que sea un Ogg real, que sea mono y que su duración sea la de un fragmento y no la de una lectura completa— son la contraparte de lo que el spec de imágenes hace con el `IHDR` del PNG, y entran junto con los binarios.
+Las dos que miran el binario son la contraparte de lo que el spec de imágenes hace con el `IHDR` del PNG, y cada una cierra un hueco propio. **La de existencia es la única guarda contra mergear sin binarios**: la cobertura compara rutas contra la tabla y no contra el disco, así que sin ella un directorio de clips ausente dejaría todos los gates en verde. **La de duración** es lo que impide que alguien versione la obra entera: el canal y la frecuencia de muestreo salen de la cabecera de identificación de Vorbis, y la duración del `granulepos` de la última página, que en Vorbis cuenta muestras.
 
 ### Convención de clips
 
