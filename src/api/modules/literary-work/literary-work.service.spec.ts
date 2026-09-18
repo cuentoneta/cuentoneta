@@ -1,4 +1,5 @@
 import { clearAllMocks, type Mock, restoreAllMocks, spyOn } from '@test-utils';
+import type { LandingPageContent } from '@models/landing-page-content.model';
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 import {
 	onoffLiteraryWorkNavigationTeasersWithAuthorsMock,
@@ -98,6 +99,17 @@ describe('getLiteraryWorkTeasers', () => {
 		expect(await getLiteraryWorkTeasers({ author: author.slug }, stub)).toEqual([]);
 	});
 });
+// Registra si el caso de uso pide la landing: solo necesita lo más leído, y pedirla entera
+// arrastraría el conteo por autor destacado que la proyección calcula en caliente.
+class SpyContentRepository extends InMemoryContentRepository {
+	public landingPageFetches = 0;
+
+	public override async fetchLandingPageContent(slug: string): Promise<LandingPageContent | null> {
+		this.landingPageFetches++;
+		return super.fetchLandingPageContent(slug);
+	}
+}
+
 describe('updateMostReadLiteraryWorks', () => {
 	const [first, second] = onoffLiteraryWorkNavigationTeasersWithAuthorsMock;
 	const rotatingContent = {
@@ -239,5 +251,20 @@ describe('updateMostReadLiteraryWorks', () => {
 		await expect(literaryWorkService.updateMostReadLiteraryWorks(new InMemoryContentRepository())).rejects.toThrow(
 			RotatingContentNotFoundError,
 		);
+	});
+
+	// El cron solo necesita lo más leído: si volviera a pedir la landing entera, pagaría el conteo
+	// por autor en caliente para quedarse con una lista que ya tiene su propia query.
+	it('serves the ranking without fetching the landing page content', async () => {
+		(fetchClarityData as Mock).mockResolvedValue(popularPages(`${environment.basePath}/literary-work/${first.slug}`));
+		const content = new SpyContentRepository({
+			rotatingContent,
+			literaryWorks: onoffLiteraryWorkNavigationTeasersWithAuthorsMock,
+		});
+
+		const result = await literaryWorkService.updateMostReadLiteraryWorks(content);
+
+		expect(result.mostRead.map(({ slug }) => slug)).toEqual([first.slug]);
+		expect(content.landingPageFetches).toBe(0);
 	});
 });

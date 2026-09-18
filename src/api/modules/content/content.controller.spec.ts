@@ -131,3 +131,58 @@ describe('contentController — la escritura no es cacheable', () => {
 		expect(response.headers.get('Vercel-CDN-Cache-Control')).toBeNull();
 	});
 });
+
+// La landing rota de semana con el mismo path, así que su revalidación vive muy por debajo del ciclo
+// de rotación: comparte el `s-maxage` del módulo pero declara su ventana corta en el handler, y el
+// middleware la respeta en vez de pisarla con la larga de lectura.
+describe('contentController — la landing declara su ventana de borde', () => {
+	const originalProduction = environment.production;
+	const originalSMaxAge = environment.readCacheSMaxAge;
+
+	afterEach(() => {
+		environment.production = originalProduction;
+		environment.readCacheSMaxAge = originalSMaxAge;
+	});
+
+	function curatedRepository() {
+		return new InMemoryContentRepository({ landingPages: [{ slug: CURRENT_SLUG, content: curatedLandingPage }] });
+	}
+
+	it('declares the short revalidation window on a 200 in production', async () => {
+		environment.production = true;
+		environment.readCacheSMaxAge = 900;
+
+		const response = await appWith(curatedRepository()).request('/content/landing-page');
+
+		expect(response.status).toBe(200);
+		expect(response.headers.get('Vercel-CDN-Cache-Control')).toBe('public, s-maxage=900, stale-while-revalidate=86400');
+		expect(response.headers.get('Cache-Control')).toBe('public, max-age=0, must-revalidate');
+	});
+
+	// Una copia de error cacheada serviría la semana sin curar como si fuera la vigente.
+	it('leaves the uncurated week without edge headers', async () => {
+		environment.production = true;
+
+		const response = await appWith(new InMemoryContentRepository()).request('/content/landing-page');
+
+		expect(response.status).toBe(404);
+		expect(response.headers.get('Vercel-CDN-Cache-Control')).toBeNull();
+	});
+
+	// Y la composición con el middleware, que es lo que la declaración existe para lograr: montada
+	// detrás de él y con la caché habilitada, la respuesta conserva la ventana corta en vez de
+	// recibir la larga del módulo.
+	it('keeps the short window when mounted behind the read cache middleware', async () => {
+		environment.production = true;
+		environment.readCacheSMaxAge = 900;
+
+		const app = new Hono();
+		app.on('GET', ['/content', '/content/*'], readCacheHeaders);
+		app.route('/content', createContentController(curatedRepository()));
+
+		const response = await app.request('/content/landing-page');
+
+		expect(response.status).toBe(200);
+		expect(response.headers.get('Vercel-CDN-Cache-Control')).toBe('public, s-maxage=900, stale-while-revalidate=86400');
+	});
+});
