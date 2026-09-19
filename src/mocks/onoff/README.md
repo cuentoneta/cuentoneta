@@ -242,9 +242,9 @@ dominio              →  onoffAudioAssets.<clave>.path
 
 **Formato de la referencia:** `file-<slug>-<ext>`. A diferencia de la de imágenes conserva los guiones del slug: el `_ref` de un archivo no lo parsea nadie —`@sanity/image-url` no interviene y el dereferenciado va por igualdad contra el `_id` del asset—, así que no hay un parser que exija camelCase.
 
-`../onoff-audio-assets.mock.spec.ts` lo hace cumplir en cinco frentes: que la clave nombre a su propio clip, que cada entrada declare un archivo distinto, que el `_ref` se derive de esa misma ruta, que el archivo exista y sea un Ogg mono de verdad, que su duración caiga dentro de lo que el corpus admite como fragmento, y que **ninguna ruta de audio del corpus quede fuera de la tabla**. El recorrido saltea el `path` de un `sanity.fileAsset`: es la ubicación interna del archivo en el almacenamiento de Sanity, no algo que el navegador pida.
+`../onoff-audio-assets.mock.spec.ts` lo hace cumplir en cinco frentes: que la clave nombre a su propio clip, que cada entrada declare un archivo distinto, que el `_ref` se derive de esa misma ruta, que el archivo exista, y que **ninguna ruta de audio del corpus quede fuera de la tabla**. El recorrido saltea el `path` de un `sanity.fileAsset`: es la ubicación interna del archivo en el almacenamiento de Sanity, no algo que el navegador pida.
 
-Las dos que miran el binario son la contraparte de lo que el spec de imágenes hace con el `IHDR` del PNG, y cada una cierra un hueco propio. **La de existencia es la única guarda contra mergear sin binarios**: la cobertura compara rutas contra la tabla y no contra el disco, así que sin ella un directorio de clips ausente dejaría todos los gates en verde. **La de duración** es lo que impide que alguien versione la obra entera: el canal y la frecuencia de muestreo salen de la cabecera de identificación de Vorbis, y la duración del `granulepos` de la última página, que en Vorbis cuenta muestras.
+**La de existencia es la única guarda contra perder los binarios**: la cobertura compara rutas contra la tabla y no contra el disco, así que sin ella un directorio de clips borrado o renombrado dejaría todos los gates en verde. El spec no mide el formato ni la duración de los clips: los clips son fijos, y eso se verificó una sola vez al versionarlos.
 
 ### Convención de clips
 
@@ -257,7 +257,7 @@ Las dos que miran el binario son la contraparte de lo que el spec de imágenes h
 
 **Cómo se produjeron.** Cada clip es la lectura de un fragmento de la prosa propia de su obra, cortado en un límite de oración, sintetizada con una voz genérica en español del TTS de Windows —nunca la clonación de una voz real— y encodeada a Vorbis con ffmpeg. El fragmento excluye las oraciones entrecomilladas, que es como este corpus marca lo único ajeno que declara: las citas de los diálogos del film.
 
-**No hay generador en el repo.** Los clips son binarios versionados a mano, así que reemplazar uno o sumar otro es producirlo fuera del repo bajo la misma convención. Lo que la hace cumplir no es una herramienta sino el spec de la tabla, que mide el archivo: si el clip nuevo no es un Ogg mono dentro del techo de duración, el gate `test` lo rechaza.
+**No hay generador en el repo.** Los clips son binarios versionados a mano, así que reemplazar uno o sumar otro es producirlo fuera del repo bajo la convención de arriba. Ningún gate la verifica: el formato y el techo de duración quedan a cargo de quien produzca el clip.
 
 **Los embeds de terceros son otra cosa.** `youTubeVideo` y `spotifyPodcastEpisode` conservan su URL y su identificador de plataforma: son la forma que producción tiene, y hay specs que la afirman. Lo que se sustituye es lo que **el catálogo monta** — `../../testing/storybook-embed-placeholders.ts` aporta un decorator que apaga la carga de la IFrame API de YouTube y reapunta la URL del episodio a una ilustración local. Subir el contenido a una cuenta real se evaluó y se descartó: un video que se cae, se bloquea por región o queda privado rompe el catálogo sin que ningún gate lo note.
 

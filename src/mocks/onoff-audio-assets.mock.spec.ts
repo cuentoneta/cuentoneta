@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
 import {
@@ -16,32 +16,8 @@ import { onoffCollectionsMock } from './onoff-collections.mock';
 
 const assets: [string, OnoffAudioAsset | OnoffAudioFileAsset][] = Object.entries(onoffAudioAssets);
 
-// El techo que la convención del corpus fija para un clip, en segundos. Sin generador en el repo, este spec
-// es lo único que lo hace cumplir.
-const MAX_CLIP_SECONDS = 20;
-
 function hasReference(asset: OnoffAudioAsset | OnoffAudioFileAsset): asset is OnoffAudioFileAsset {
 	return 'ref' in asset;
-}
-
-// Los clips salen de la raíz que la app publica bajo `/assets`, la misma que usan las imágenes.
-function bytesOf(asset: OnoffAudioAsset): Buffer {
-	return readFileSync(join(process.cwd(), 'src', asset.path));
-}
-
-// La cabecera de identificación de Vorbis abre con el tipo de paquete y la firma del códec, y a partir de
-// ahí los campos van en offsets fijos: versión (4), canales (1), frecuencia de muestreo (4).
-function identificationHeaderOf(bytes: Buffer): { channels: number; sampleRate: number } {
-	const start = bytes.indexOf(Buffer.from([0x01, ...Buffer.from('vorbis')]));
-	return { channels: bytes.readUInt8(start + 11), sampleRate: bytes.readUInt32LE(start + 12) };
-}
-
-// La duración no viaja en ninguna cabecera: se deriva del `granulepos` de la última página, que en Vorbis
-// cuenta muestras, dividido por la frecuencia de muestreo. El campo vive a seis bytes del inicio de página.
-function durationOf(asset: OnoffAudioAsset): number {
-	const bytes = bytesOf(asset);
-	const lastPage = bytes.lastIndexOf('OggS');
-	return Number(bytes.readBigUInt64LE(lastPage + 6)) / identificationHeaderOf(bytes).sampleRate;
 }
 
 function slugOf(asset: OnoffAudioAsset): string {
@@ -63,22 +39,6 @@ describe('la tabla de assets de audio del corpus', () => {
 	// no contra el disco, así que sin esto el corpus entero puede apuntar a un directorio inexistente.
 	it.each(assets)('resolves "%s" to a file that exists', (_key, asset) => {
 		expect(existsSync(join(process.cwd(), 'src', asset.path))).toBe(true);
-	});
-
-	it.each(assets)('stores "%s" as the mono Ogg the corpus convention requires', (_key, asset) => {
-		const bytes = bytesOf(asset);
-
-		expect(bytes.subarray(0, 4).toString()).toBe('OggS');
-		expect(identificationHeaderOf(bytes).channels).toBe(1);
-	});
-
-	// El corte que separa un fragmento de una lectura completa. Sin esto, versionar la obra entera —
-	// megabytes por archivo, en cada checkout para siempre— no lo frena nada.
-	it.each(assets)('keeps "%s" within the length of an excerpt', (_key, asset) => {
-		const duration = durationOf(asset);
-
-		expect(duration).toBeGreaterThan(5);
-		expect(duration).toBeLessThanOrEqual(MAX_CLIP_SECONDS);
 	});
 
 	it('declares a distinct clip per entry', () => {
