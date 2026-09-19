@@ -28,14 +28,36 @@
 			}
 
 			.cover {
+				display: grid;
 				flex: none;
+				place-items: center;
 				height: 100%;
 				aspect-ratio: 1;
 				border-radius: 8px;
-				background:
-					conic-gradient(from 240deg at 100% 50%, #e4e4e7 0 60deg, transparent 0) 54% 50% / 16% 18% no-repeat,
-					radial-gradient(circle closest-side, #52525b 42%, transparent 43%),
-					#3f3f46;
+				background: #3f3f46;
+			}
+
+			/*
+			 * El botón va con geometría —`border-radius` y `clip-path`— y no con degradados: el navegador suaviza
+			 * los bordes de la geometría, pero evalúa un degradado píxel por píxel y un corte curvo o inclinado
+			 * sale serruchado.
+			 */
+			.play {
+				display: grid;
+				place-items: center;
+				width: 42%;
+				aspect-ratio: 1;
+				border-radius: 50%;
+				background: #52525b;
+			}
+
+			.play::before {
+				content: '';
+				width: 34%;
+				aspect-ratio: 6 / 7;
+				background: #e4e4e7;
+				clip-path: polygon(0 0, 100% 50%, 0 100%);
+				transform: translateX(10%);
 			}
 
 			.details {
@@ -89,7 +111,7 @@
 	</head>
 	<body>
 		<div class="card" aria-hidden="true">
-			<div class="cover"></div>
+			<div class="cover"><div class="play"></div></div>
 			<div class="details">
 				<div class="line title"></div>
 				<div class="line subtitle"></div>

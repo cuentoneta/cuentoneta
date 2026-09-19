@@ -88,6 +88,6 @@ describe('los placeholders de embed del catálogo', () => {
 
 		expect(applied?.pointerEvents).toBe('none');
 		// La miniatura que el player escribe inline pide a `i.ytimg.com` la de un video inexistente.
-		expect(applied?.backgroundImage).toBe('none');
+		expect(applied?.backgroundImage).not.toContain('ytimg');
 	});
 });

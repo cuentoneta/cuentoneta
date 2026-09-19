@@ -40,6 +40,11 @@ export function withEmbedPlaceholders(mediaSources: readonly Media[]): Media[] {
 // El placeholder difiere la carga del video hasta el clic, así que neutralizar los eventos de puntero es lo
 // que de verdad impide que el catálogo salga a la red.
 //
+// El botón de reproducción se dibuja con geometría —`border-radius` para el círculo, `clip-path` para el
+// triángulo— y no con degradados: el navegador suaviza los bordes de la geometría, pero evalúa un degradado
+// píxel por píxel, así que un corte de color inclinado o curvo sale serruchado. La barra de progreso sí va
+// como degradado porque es rectangular: sus bordes caen alineados a los píxeles.
+//
 // El host va en `display: contents` para que el envoltorio no interponga una caja: las stories que
 // aplican este decorator evalúan maquetación, y un elemento custom es `inline` por defecto.
 @Component({
@@ -49,9 +54,13 @@ export function withEmbedPlaceholders(mediaSources: readonly Media[]): Media[] {
 	template: `<ng-content />`,
 	styles: `
 		cuentoneta-catalog-embed-placeholders .youtube-player-placeholder {
+			--play-size: clamp(48px, 14%, 88px);
 			position: relative;
 			background-color: #27272a !important;
-			background-image: none !important;
+			background-image: linear-gradient(to right, #a1a1aa 30%, #3f3f46 30%) !important;
+			background-position: center bottom 7% !important;
+			background-size: 92% 4px !important;
+			background-repeat: no-repeat !important;
 			cursor: default !important;
 			pointer-events: none !important;
 			box-shadow: none !important;
@@ -61,25 +70,26 @@ export function withEmbedPlaceholders(mediaSources: readonly Media[]): Media[] {
 			display: none !important;
 		}
 
-		/* El botón de reproducción: un círculo con el triángulo encima, centrado por el flex del placeholder. */
+		/* El círculo del botón, centrado por el flex del placeholder. */
 		cuentoneta-catalog-embed-placeholders .youtube-player-placeholder::before {
 			content: '';
-			width: clamp(48px, 14%, 88px);
+			width: var(--play-size);
 			aspect-ratio: 1;
-			background:
-				conic-gradient(from 240deg at 100% 50%, #e4e4e7 0 60deg, transparent 0) 56% 50% / 30% 35% no-repeat,
-				radial-gradient(circle closest-side, #52525b 98%, transparent 100%);
+			border-radius: 50%;
+			background: #52525b;
 		}
 
+		/* El triángulo, sobre el centro del círculo y corrido a la derecha para que se lea centrado. */
 		cuentoneta-catalog-embed-placeholders .youtube-player-placeholder::after {
 			content: '';
 			position: absolute;
-			right: 4%;
-			bottom: 7%;
-			left: 4%;
-			height: 4px;
-			border-radius: 2px;
-			background: linear-gradient(to right, #a1a1aa 30%, #3f3f46 30%);
+			top: 50%;
+			left: 50%;
+			width: calc(var(--play-size) * 0.34);
+			aspect-ratio: 6 / 7;
+			background: #e4e4e7;
+			clip-path: polygon(0 0, 100% 50%, 0 100%);
+			transform: translate(-40%, -50%);
 		}
 	`,
 })
