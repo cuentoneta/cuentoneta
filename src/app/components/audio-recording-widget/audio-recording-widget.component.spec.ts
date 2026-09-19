@@ -16,8 +16,6 @@ describe('AudioRecordingWidgetComponent', () => {
 		expect(container).toBeInTheDocument();
 	});
 
-	// Se afirma sobre el atributo y no sobre `currentSrc`: el corpus declara la ruta relativa del clip
-	// versionado, y `currentSrc` la devuelve ya resuelta contra la base del documento.
 	it('should render the audio player', async () => {
 		await render(AudioRecordingWidgetComponent, {
 			inputs: { media: onoffAudioRecordingsMock[0] },

@@ -5,11 +5,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>Reproductor de episodio de podcast (utilería del catálogo)</title>
 		<style>
-			/*
-			 * El iframe del widget fija el alto y deja el ancho libre, así que esta página responde a su propio
-			 * ancho, igual que el embed real. El fondo va en la tarjeta y no en `body`: el de `body` se propaga al
-			 * lienzo del iframe entero y taparía las esquinas redondeadas.
-			 */
+			/* El fondo va en `.card`: el de `body` se propaga al lienzo del iframe y taparía las esquinas. */
 			html,
 			body {
 				margin: 0;
@@ -37,11 +33,7 @@
 				background: #3f3f46;
 			}
 
-			/*
-			 * El botón va con geometría —`border-radius` y `clip-path`— y no con degradados: el navegador suaviza
-			 * los bordes de la geometría, pero evalúa un degradado píxel por píxel y un corte curvo o inclinado
-			 * sale serruchado.
-			 */
+			/* Geometría y no degradados: el navegador no suaviza los bordes de un degradado. */
 			.play {
 				display: grid;
 				place-items: center;

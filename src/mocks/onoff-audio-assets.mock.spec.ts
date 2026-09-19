@@ -30,13 +30,10 @@ function toCamelCase(slug: string): string {
 }
 
 describe('la tabla de assets de audio del corpus', () => {
-	// La clave y el archivo dicen lo mismo, y sin esto podrían dejar de decirlo sin que nada se entere.
 	it.each(assets)('names the entry "%s" after its own clip', (key, asset) => {
 		expect(toCamelCase(slugOf(asset))).toBe(key);
 	});
 
-	// Es la única guarda contra mergear sin binarios: la cobertura de abajo compara rutas contra la tabla,
-	// no contra el disco, así que sin esto el corpus entero puede apuntar a un directorio inexistente.
 	it.each(assets)('resolves "%s" to a file that exists', (_key, asset) => {
 		expect(existsSync(join(process.cwd(), 'src', asset.path))).toBe(true);
 	});
@@ -47,8 +44,6 @@ describe('la tabla de assets de audio del corpus', () => {
 		expect(new Set(paths).size).toBe(paths.length);
 	});
 
-	// El `_ref` es lo que el documento declara y la ruta es lo que el dominio sirve: si dejan de nombrar al
-	// mismo archivo, el cruce contra el ACL compara dos clips distintos y nadie lo nota.
 	it.each(assets.filter((entry): entry is [string, OnoffAudioFileAsset] => hasReference(entry[1])))(
 		'derives the reference of "%s" from its own clip',
 		(_key, asset) => {
@@ -84,8 +79,6 @@ describe('la tabla de assets de audio del corpus', () => {
 		});
 	});
 
-	// Sin esta cobertura la tabla sería un mapa parcial: un medio nuevo que apuntara a un destino inventado
-	// serviría un reproductor roto, que es exactamente lo que los clips versionados vienen a cerrar.
 	it.each([
 		['el dataset de documentos', onoffDatasetMock],
 		['el corpus crudo de obras', onoffRawLiteraryWorksMock],
