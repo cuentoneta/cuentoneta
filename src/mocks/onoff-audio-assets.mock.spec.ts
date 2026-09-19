@@ -4,7 +4,6 @@ import { join } from 'node:path';
 import {
 	audioPathsIn,
 	isDeclaredAudioPath,
-	MAX_CLIP_SECONDS,
 	onoffAudioAssets,
 	type OnoffAudioAsset,
 	type OnoffAudioFileAsset,
@@ -16,6 +15,10 @@ import { onoffMediaMock } from './onoff-media.mock';
 import { onoffCollectionsMock } from './onoff-collections.mock';
 
 const assets: [string, OnoffAudioAsset | OnoffAudioFileAsset][] = Object.entries(onoffAudioAssets);
+
+// El techo que la convención del corpus fija para un clip, en segundos. Sin generador en el repo, este spec
+// es lo único que lo hace cumplir.
+const MAX_CLIP_SECONDS = 20;
 
 function hasReference(asset: OnoffAudioAsset | OnoffAudioFileAsset): asset is OnoffAudioFileAsset {
 	return 'ref' in asset;
@@ -62,7 +65,7 @@ describe('la tabla de assets de audio del corpus', () => {
 		expect(existsSync(join(process.cwd(), 'src', asset.path))).toBe(true);
 	});
 
-	it.each(assets)('stores "%s" as the mono Ogg the generator promises', (_key, asset) => {
+	it.each(assets)('stores "%s" as the mono Ogg the corpus convention requires', (_key, asset) => {
 		const bytes = bytesOf(asset);
 
 		expect(bytes.subarray(0, 4).toString()).toBe('OggS');

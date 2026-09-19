@@ -10,13 +10,6 @@ export type OnoffAudioFileAsset = OnoffAudioAsset & {
 
 const AUDIO_EXTENSION = 'ogg';
 
-/**
- * El techo de duración de un clip del corpus, en segundos: lo que separa un fragmento de una lectura
- * completa, que serían megabytes por obra en cada checkout. El generador corta acá y el spec lo verifica
- * contra el binario, así que el valor vive con la tabla y no con la herramienta.
- */
-export const MAX_CLIP_SECONDS = 20;
-
 // Los formatos que un `<audio>` puede servir. El corpus produce un solo formato, pero el recorrido
 // reconoce todos: con uno solo, un medio que declarara otra extensión quedaría fuera de la cobertura en
 // silencio, que es el modo de falla que la tabla existe para cerrar.

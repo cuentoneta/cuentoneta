@@ -255,7 +255,9 @@ Las dos que miran el binario son la contraparte de lo que el spec de imágenes h
 
 **Son fragmentos, no lecturas completas.** Una obra entera son megabytes por archivo, y el corpus los cargaría en cada checkout para siempre. Lo que el catálogo necesita mostrar es que el reproductor funciona, y para eso alcanza con que suene.
 
-Los produce `pnpm corpus:audio` (`scripts/generate-onoff-audio/`): recorta un fragmento de la prosa propia de la obra, lo sintetiza con el TTS de Windows y lo encodea con ffmpeg. **No corre en CI** —depende de una voz del sistema y de ffmpeg en el `PATH`— y existe para que los binarios versionados se puedan volver a producir. El recorte descarta las oraciones entrecomilladas, que es como este corpus marca lo único ajeno que declara: las citas de los diálogos del film.
+**Cómo se produjeron.** Cada clip es la lectura de un fragmento de la prosa propia de su obra, cortado en un límite de oración, sintetizada con una voz genérica en español del TTS de Windows —nunca la clonación de una voz real— y encodeada a Vorbis con ffmpeg. El fragmento excluye las oraciones entrecomilladas, que es como este corpus marca lo único ajeno que declara: las citas de los diálogos del film.
+
+**No hay generador en el repo.** Los clips son binarios versionados a mano, así que reemplazar uno o sumar otro es producirlo fuera del repo bajo la misma convención. Lo que la hace cumplir no es una herramienta sino el spec de la tabla, que mide el archivo: si el clip nuevo no es un Ogg mono dentro del techo de duración, el gate `test` lo rechaza.
 
 **Los embeds de terceros son otra cosa.** `youTubeVideo` y `spotifyPodcastEpisode` conservan su URL y su identificador de plataforma: son la forma que producción tiene, y hay specs que la afirman. Lo que se sustituye es lo que **el catálogo monta** — `../../testing/storybook-embed-placeholders.ts` aporta un decorator que apaga la carga de la IFrame API de YouTube y reapunta la URL del episodio a una ilustración local. Subir el contenido a una cuenta real se evaluó y se descartó: un video que se cae, se bloquea por región o queda privado rompe el catálogo sin que ningún gate lo note.
 
