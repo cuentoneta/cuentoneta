@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation, type Provider } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { YOUTUBE_PLAYER_CONFIG } from '@angular/youtube-player';
 import { componentWrapperDecorator, moduleMetadata } from '@storybook/angular-vite';
 
@@ -10,7 +10,7 @@ import { isSpotifyPodcastEpisode } from '@models/media.model';
  * dibujado con CSS, que responde al ancho del iframe igual que el embed real. Cuelga de `assets/storybook/`
  * y no de `assets/img/mocks/`, que es territorio del corpus — es utilería del catálogo, no un fixture.
  */
-export const SPOTIFY_EMBED_PLACEHOLDER = 'assets/storybook/spotify-embed-placeholder.html';
+const SPOTIFY_EMBED_PLACEHOLDER = 'assets/storybook/spotify-embed-placeholder.html';
 
 /**
  * El mismo medio, con la URL del episodio de Spotify reapuntada a la página local. Cualquier otro tipo
@@ -93,14 +93,7 @@ export function withEmbedPlaceholders(mediaSources: readonly Media[]): Media[] {
 		}
 	`,
 })
-export class CatalogEmbedPlaceholders {}
-
-/**
- * La red de contención de la salida a la red del player, por si algo llegara a activar el placeholder:
- * sin la IFrame API no hay nada que cargar. Lo que impide que se active es el `pointer-events` de arriba.
- * Se exporta aparte del decorator para que un spec pueda montar el widget en las mismas condiciones.
- */
-export const embedPlayerProviders: Provider[] = [{ provide: YOUTUBE_PLAYER_CONFIG, useValue: { loadApi: false } }];
+class CatalogEmbedPlaceholders {}
 
 /**
  * Sustituye en el catálogo los dos embeds de terceros por un reproductor de utilería: el placeholder del
@@ -113,6 +106,11 @@ export const embedPlayerProviders: Provider[] = [{ provide: YOUTUBE_PLAYER_CONFI
  * necesitar, sino algo que depende de estos componentes en concreto.
  */
 export const embedPlaceholdersDecorator = [
-	moduleMetadata({ imports: [CatalogEmbedPlaceholders], providers: embedPlayerProviders }),
+	moduleMetadata({
+		imports: [CatalogEmbedPlaceholders],
+		// La red de contención por si algo llegara a activar el placeholder: sin la IFrame API no hay nada
+		// que cargar. Lo que impide que se active es el `pointer-events` del envoltorio.
+		providers: [{ provide: YOUTUBE_PLAYER_CONFIG, useValue: { loadApi: false } }],
+	}),
 	componentWrapperDecorator(CatalogEmbedPlaceholders),
 ];
