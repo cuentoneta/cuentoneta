@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="es">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Reproductor de episodio de podcast (utilería del catálogo)</title>
+		<style>
+			/*
+			 * El iframe del widget fija el alto y deja el ancho libre, así que esta página responde a su propio
+			 * ancho, igual que el embed real. El fondo va en la tarjeta y no en `body`: el de `body` se propaga al
+			 * lienzo del iframe entero y taparía las esquinas redondeadas.
+			 */
+			html,
+			body {
+				margin: 0;
+				height: 100%;
+			}
+
+			.card {
+				box-sizing: border-box;
+				display: flex;
+				gap: 16px;
+				align-items: center;
+				height: 100%;
+				padding: 16px;
+				border-radius: 12px;
+				background: #27272a;
+			}
+
+			.cover {
+				flex: none;
+				height: 100%;
+				aspect-ratio: 1;
+				border-radius: 8px;
+				background:
+					conic-gradient(from 240deg at 100% 50%, #e4e4e7 0 60deg, transparent 0) 54% 50% / 16% 18% no-repeat,
+					radial-gradient(circle closest-side, #52525b 42%, transparent 43%),
+					#3f3f46;
+			}
+
+			.details {
+				display: flex;
+				flex: 1;
+				flex-direction: column;
+				gap: 10px;
+				min-width: 0;
+				height: 100%;
+			}
+
+			.line {
+				height: 14px;
+				border-radius: 7px;
+				background: #3f3f46;
+			}
+
+			.title {
+				width: min(300px, 70%);
+				height: 18px;
+			}
+
+			.subtitle {
+				width: min(188px, 45%);
+			}
+
+			.progress {
+				height: 6px;
+				margin-top: auto;
+				border-radius: 3px;
+				background: linear-gradient(to right, #a1a1aa 30%, #3f3f46 30%);
+			}
+
+			.times {
+				display: flex;
+				justify-content: space-between;
+			}
+
+			.times .line {
+				width: 48px;
+				height: 10px;
+			}
+
+			/* Por debajo de este ancho la portada se come el espacio de la barra de progreso. */
+			@media (max-width: 360px) {
+				.cover {
+					display: none;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class="card" aria-hidden="true">
+			<div class="cover"></div>
+			<div class="details">
+				<div class="line title"></div>
+				<div class="line subtitle"></div>
+				<div class="progress"></div>
+				<div class="times">
+					<div class="line"></div>
+					<div class="line"></div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

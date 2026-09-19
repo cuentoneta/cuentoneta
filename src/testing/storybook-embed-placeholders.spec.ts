@@ -12,24 +12,24 @@ import {
 } from '@mocks/onoff-media.mock';
 import {
 	CatalogEmbedPlaceholders,
-	EMBED_PLACEHOLDERS,
 	embedPlayerProviders,
+	SPOTIFY_EMBED_PLACEHOLDER,
 	withEmbedPlaceholder,
 	withEmbedPlaceholders,
 } from './storybook-embed-placeholders';
 
 describe('los placeholders de embed del catálogo', () => {
-	// Una ilustración borrada dejaría al catálogo referenciando utilería inexistente, que es el mismo
+	// Una página borrada dejaría al iframe del catálogo apuntando a utilería inexistente, que es el mismo
 	// reproductor roto con otra cara.
-	it.each(Object.entries(EMBED_PLACEHOLDERS))('resuelve "%s" a un archivo que existe', (_key, path) => {
-		expect(existsSync(join(process.cwd(), 'src', path))).toBe(true);
+	it('resuelve la página del episodio a un archivo que existe', () => {
+		expect(existsSync(join(process.cwd(), 'src', SPOTIFY_EMBED_PLACEHOLDER))).toBe(true);
 	});
 
 	describe('withEmbedPlaceholder', () => {
-		it('reapunta el episodio de podcast a la ilustración local', () => {
+		it('reapunta el episodio de podcast a la página local', () => {
 			const episode = withEmbedPlaceholder(onoffSpotifyPodcastEpisodesMock[0]);
 
-			expect(episode.data.url).toBe(EMBED_PLACEHOLDERS.spotifyPodcastEpisode);
+			expect(episode.data.url).toBe(SPOTIFY_EMBED_PLACEHOLDER);
 		});
 
 		it('conserva el resto del medio', () => {
@@ -65,7 +65,7 @@ describe('los placeholders de embed del catálogo', () => {
 		const embed = screen.getByTestId('spotify-embed') as HTMLIFrameElement;
 
 		expect(embed.src).not.toContain('open.spotify.com');
-		expect(embed.src).toContain(EMBED_PLACEHOLDERS.spotifyPodcastEpisode);
+		expect(embed.src).toContain(SPOTIFY_EMBED_PLACEHOLDER);
 	});
 
 	// El player difiere la carga del video hasta el clic sobre su placeholder, así que lo que impide que el
@@ -87,6 +87,7 @@ describe('los placeholders de embed del catálogo', () => {
 		const applied = placeholder ? getComputedStyle(placeholder) : undefined;
 
 		expect(applied?.pointerEvents).toBe('none');
-		expect(applied?.backgroundImage).toContain(EMBED_PLACEHOLDERS.youTubeVideo);
+		// La miniatura que el player escribe inline pide a `i.ytimg.com` la de un video inexistente.
+		expect(applied?.backgroundImage).toBe('none');
 	});
 });
