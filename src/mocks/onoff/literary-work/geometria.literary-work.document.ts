@@ -1,3 +1,4 @@
+import { onoffAudioAssets } from '../../onoff-audio-assets.mock';
 import { onoffImageAssets } from '../../onoff-image-assets.mock';
 import type { LiteraryWork } from '@sanity-types';
 import geometriaEditorialNoteMd from './geometria.editorial-note.md?raw';
@@ -37,7 +38,7 @@ export const geometriaLiteraryWorkDocument: LiteraryWork = {
 			_type: 'audioRecording',
 			title: 'Lectura de "Geometría" por su autor',
 			description: 'Grabación casera, 1974.',
-			url: 'https://cdn.example.org/onoff/geometria.ogg',
+			url: onoffAudioAssets.geometria.path,
 		},
 		{
 			_key: 'geometria-space',
@@ -45,7 +46,7 @@ export const geometriaLiteraryWorkDocument: LiteraryWork = {
 			title: 'Conversación sobre el insomnio y la medida del tiempo',
 			description:
 				'Espacio grabado con lectores de Onoff, a partir del *cuaderno de 1971* y de la [edición facsimilar](https://cdn.example.org/onoff/geometria.pdf).',
-			audioFile: { _type: 'file', asset: { _type: 'reference', _ref: 'file-geometria-space-ogg' } },
+			audioFile: { _type: 'file', asset: { _type: 'reference', _ref: onoffAudioAssets.geometriaSpace.ref } },
 			hostName: 'Biblioteca del Méridien',
 			hostAvatar: {
 				_type: 'image',

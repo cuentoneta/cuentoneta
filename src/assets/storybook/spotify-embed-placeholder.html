@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="es">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Reproductor de episodio de podcast (utilería del catálogo)</title>
+		<style>
+			/* El fondo va en `.card`: el de `body` se propaga al lienzo del iframe y taparía las esquinas. */
+			html,
+			body {
+				margin: 0;
+				height: 100%;
+			}
+
+			.card {
+				box-sizing: border-box;
+				display: flex;
+				gap: 16px;
+				align-items: center;
+				height: 100%;
+				padding: 16px;
+				border-radius: 12px;
+				background: #27272a;
+			}
+
+			.cover {
+				display: grid;
+				flex: none;
+				place-items: center;
+				height: 100%;
+				aspect-ratio: 1;
+				border-radius: 8px;
+				background: #3f3f46;
+			}
+
+			/* Geometría y no degradados: el navegador no suaviza los bordes de un degradado. */
+			.play {
+				display: grid;
+				place-items: center;
+				width: 42%;
+				aspect-ratio: 1;
+				border-radius: 50%;
+				background: #52525b;
+			}
+
+			.play::before {
+				content: '';
+				width: 34%;
+				aspect-ratio: 6 / 7;
+				background: #e4e4e7;
+				clip-path: polygon(0 0, 100% 50%, 0 100%);
+				transform: translateX(10%);
+			}
+
+			.details {
+				display: flex;
+				flex: 1;
+				flex-direction: column;
+				gap: 10px;
+				min-width: 0;
+				height: 100%;
+			}
+
+			.line {
+				height: 14px;
+				border-radius: 7px;
+				background: #3f3f46;
+			}
+
+			.title {
+				width: min(300px, 70%);
+				height: 18px;
+			}
+
+			.subtitle {
+				width: min(188px, 45%);
+			}
+
+			.progress {
+				height: 6px;
+				margin-top: auto;
+				border-radius: 3px;
+				background: linear-gradient(to right, #a1a1aa 30%, #3f3f46 30%);
+			}
+
+			.times {
+				display: flex;
+				justify-content: space-between;
+			}
+
+			.times .line {
+				width: 48px;
+				height: 10px;
+			}
+
+			/* Por debajo de este ancho la portada se come el espacio de la barra de progreso. */
+			@media (max-width: 360px) {
+				.cover {
+					display: none;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class="card" aria-hidden="true">
+			<div class="cover"><div class="play"></div></div>
+			<div class="details">
+				<div class="line title"></div>
+				<div class="line subtitle"></div>
+				<div class="progress"></div>
+				<div class="times">
+					<div class="line"></div>
+					<div class="line"></div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

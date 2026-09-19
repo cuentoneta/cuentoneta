@@ -58,7 +58,7 @@ export const onoffRawLandingPageMock: NonNullable<LandingPageContentQueryResult>
 					},
 					date: '1974-07-03',
 					duration: '52:40',
-					audioUrl: 'https://cdn.example.org/onoff/geometria-space.ogg',
+					audioUrl: 'assets/audio/mocks/geometria-space.ogg',
 				},
 			],
 			count: 3,

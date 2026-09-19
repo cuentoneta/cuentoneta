@@ -1,3 +1,4 @@
+import { onoffAudioAssets } from '../../onoff-audio-assets.mock';
 import { onoffImageAssets } from '../../onoff-image-assets.mock';
 import type { Collection } from '@sanity-types';
 import {
@@ -52,7 +53,7 @@ export const geometriasDelDesveloCollectionDocument: Collection = {
 			_type: 'spaceRecording',
 			title: 'Mesa de lectura sobre el insomnio',
 			description: geometriasDelDesveloSpaceDescription,
-			audioFile: { _type: 'file', asset: { _type: 'reference', _ref: 'file-geometria-space-ogg' } },
+			audioFile: { _type: 'file', asset: { _type: 'reference', _ref: onoffAudioAssets.geometriaSpace.ref } },
 			hostName: 'Biblioteca del Méridien',
 			hostAvatar: {
 				_type: 'image',
