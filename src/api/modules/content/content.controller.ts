@@ -5,6 +5,7 @@ import { addWeeksSchema } from './content.schema';
 import { LandingPageNotFoundError, MalformedLandingPageError } from './content.errors';
 import type { ContentRepository } from './content.repository';
 import { addNextWeeksLandingPageContent, getLandingPageContent } from './content.service';
+import { applyLandingPageCacheHeaders } from '../../_helpers/cache-control';
 
 /** Traduce los errores del módulo al status que le corresponde a cada uno. */
 async function respond<T>(c: Context, produce: () => Promise<T>) {
@@ -32,7 +33,9 @@ async function respond<T>(c: Context, produce: () => Promise<T>) {
 export function createContentController(repository?: ContentRepository) {
 	const controller = new Hono();
 
-	controller.get('/landing-page', async (c) => respond(c, () => getLandingPageContent(repository)));
+	controller.get('/landing-page', async (c) =>
+		applyLandingPageCacheHeaders(await respond(c, () => getLandingPageContent(repository))),
+	);
 
 	/**
 	 * Endpoint encargado de agregar instancias de documentos landingPage para las próximas semanas, a fin de generar automáticamente
