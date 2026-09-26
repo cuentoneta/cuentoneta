@@ -209,3 +209,14 @@ export const literaryWorkTeasers = defineQuery(`
         'body': string::split(string::split(body, "\r\n\r\n")[0], "\n\n")[@ != ""][0]
     }
 } | order(title asc)`);
+
+// Insumo del script de reconciliación de tags de autor (`pnpm reconcile-author-tags`): por obra,
+// sus autores y sus tags. El `coalesce` normaliza el campo ausente a lista vacía para que el
+// consumidor nunca ramifique sobre null. Vive acá y no junto al script para entrar en el scan de
+// typegen (`cms/sanity.cli.ts` → `../src/api/**/*`): así el shape del resultado lo declara Sanity y
+// un rename de schema rompe el typecheck en vez de aparecer en runtime.
+export const reconcileAuthorTagsWorksQuery = defineQuery(`
+*[_type == 'literaryWork' && !(_id in path('drafts.**'))] {
+    'authorRefs': coalesce(authors[]._ref, []),
+    'tagRefs': coalesce(tags[]._ref, [])
+}`);
