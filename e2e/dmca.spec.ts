@@ -2,12 +2,12 @@ import { expect } from '@playwright/test';
 
 import { test } from './_utils/test';
 
-test.describe('DMCA Component', () => {
+test.describe('DMCA page', () => {
 	test.beforeEach(async ({ page }) => {
 		await page.goto('/dmca');
 	});
 
-	test('should render the DmcaComponent page', async ({ page }) => {
+	test('should render the DMCA page', async ({ page }) => {
 		const mainElement = page.locator('main');
 		await expect(mainElement).toBeVisible();
 	});

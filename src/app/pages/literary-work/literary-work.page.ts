@@ -25,7 +25,7 @@ import { MediaWidgetSelector } from '@components/media-widget-selector/media-wid
 import { MediaWidgetSelectorSkeleton } from '@components/media-widget-selector/media-widget-selector-skeleton.component';
 import { DividerComponent } from '@components/divider/divider.component';
 import { ReadingSuggestionsComponent } from '@components/reading-suggestions/reading-suggestions.component';
-import { LiteraryWorkPageSkeleton } from './literary-work-page-skeleton.component';
+import { LiteraryWorkPageSkeleton } from './literary-work-page-skeleton';
 import { RouterLink } from '@angular/router';
 import { toNavigationContext, type NavigationContext, type NavigationParams } from '@app-utils/navigation-params';
 

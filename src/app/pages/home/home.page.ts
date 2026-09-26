@@ -23,7 +23,7 @@ import { SectionHeaderComponent, type SectionHeaderAction } from '@components/se
 
 @Component({
 	selector: 'cuentoneta-home',
-	templateUrl: './home.component.html',
+	templateUrl: './home.page.html',
 	imports: [
 		CarouselComponent,
 		HomeHeroComponent,
@@ -35,7 +35,7 @@ import { SectionHeaderComponent, type SectionHeaderAction } from '@components/se
 	],
 	hostDirectives: [HomeMetaTagsDirective, HomeStructuredDataDirective],
 })
-export default class HomeComponent {
+export default class HomePage {
 	// Services
 	private readonly contentService = inject(ContentApi);
 	private readonly responseInit = inject(RESPONSE_INIT, { optional: true });

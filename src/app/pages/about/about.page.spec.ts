@@ -1,16 +1,16 @@
 import { render, screen } from '@testing-library/angular';
 import { restoreAllMocks, spyOn } from '@test-utils';
 
-import AboutComponent from './about.component';
+import AboutPage from './about.page';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideContributorApiMock } from '../../providers/contributor.mock';
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 
-describe('AboutComponent', () => {
+describe('AboutPage', () => {
 	const setup = async () => {
-		return await render(AboutComponent, {
+		return await render(AboutPage, {
 			providers: [provideHttpClient(), provideHttpClientTesting(), provideContributorApiMock()],
 		});
 	};

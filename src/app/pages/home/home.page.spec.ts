@@ -1,4 +1,4 @@
-import HomeComponent from './home.component';
+import HomePage from './home.page';
 import { render, screen, within } from '@testing-library/angular';
 import { provideRouter } from '@angular/router';
 import { map, NEVER, throwError, type Observable } from 'rxjs';
@@ -44,7 +44,7 @@ class PendingContentApi implements ContentApi {
 }
 
 const renderWithApi = (api: ContentApi, providers: Provider[] = []) =>
-	render(HomeComponent, {
+	render(HomePage, {
 		providers: [
 			provideRouter([]),
 			provideContentApiMock(api),
@@ -57,7 +57,7 @@ const renderWithApi = (api: ContentApi, providers: Provider[] = []) =>
 
 const renderHome = (content: Partial<LandingPageContent> = {}) => renderWithApi(new StubLandingPageContentApi(content));
 
-describe('HomeComponent', () => {
+describe('HomePage', () => {
 	beforeEach(() => {
 		clearAllMocks();
 	});

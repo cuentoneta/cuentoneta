@@ -133,23 +133,18 @@
 			<h2 class="h2 mb-5 text-neutral-600">Hacemos <em>La Cuentoneta</em></h2>
 
 			@for (area of contributorsPerArea(); track $index) {
-				<section class="mb-3">
-					<h3 class="h3">{{ area.area.name }}</h3>
-					<ul>
-						@for (contributor of area.contributors; track contributor.slug) {
-							<li class="font-inter text-base font-normal">
-								{{ contributor.name }}
-								@if (contributor.link.url) {
-									(<a class="underline" href="{{ contributor.link.url }}">{{ contributor.link.handle }}</a
-									>)
-								}
-								@if (contributor.notes) {
-									- {{ contributor.notes }}
-								}
-							</li>
-						}
-					</ul>
-				</section>
+			<section class="mb-3">
+				<h3 class="h3">{{ area.area.name }}</h3>
+				<ul>
+					@for (contributor of area.contributors; track contributor.slug) {
+					<li class="font-inter text-base font-normal">
+						{{ contributor.name }} @if (contributor.link.url) { (<a class="underline" href="{{ contributor.link.url }}"
+							>{{ contributor.link.handle }}</a
+						>) } @if (contributor.notes) { - {{ contributor.notes }} }
+					</li>
+					}
+				</ul>
+			</section>
 			}
 		</section>
 	</section>

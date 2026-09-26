@@ -10,9 +10,9 @@ import { progressiveRxResource } from '@app-utils/ssr-resource';
 	selector: 'cuentoneta-about',
 	imports: [NgOptimizedImage],
 	hostDirectives: [HeadMetadataDirective],
-	templateUrl: './about.component.html',
+	templateUrl: './about.page.html',
 })
-export default class AboutComponent {
+export default class AboutPage {
 	protected readonly links = {
 		CONTRIBUTING: 'https://github.com/cuentoneta/cuentoneta/blob/master/CONTRIBUTING.md',
 		GITHUB_REPO: 'https://github.com/cuentoneta/cuentoneta',

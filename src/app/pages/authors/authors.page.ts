@@ -61,7 +61,7 @@ import { AppRoutes } from '../../app.routes';
 		</div>
 	`,
 })
-export default class AuthorsComponent {
+export default class AuthorsPage {
 	protected readonly appRoutes = AppRoutes;
 	private readonly authorService = inject(AuthorApi);
 	private readonly metaTagsDirective = inject(HeadMetadataDirective);

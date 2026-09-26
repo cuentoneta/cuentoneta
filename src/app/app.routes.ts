@@ -14,11 +14,11 @@ export type AppRoutes = (typeof AppRoutes)[keyof typeof AppRoutes];
 export const appRoutes: Routes = [
 	{
 		path: AppRoutes.Home,
-		loadComponent: () => import('./pages/home/home.component'),
+		loadComponent: () => import('./pages/home/home.page'),
 	},
 	{
 		path: AppRoutes.Authors,
-		loadComponent: () => import('./pages/authors/authors.component'),
+		loadComponent: () => import('./pages/authors/authors.page'),
 	},
 	{
 		path: `${AppRoutes.Author}/:slug`,
@@ -42,11 +42,11 @@ export const appRoutes: Routes = [
 	},
 	{
 		path: AppRoutes.About,
-		loadComponent: () => import('./pages/about/about.component'),
+		loadComponent: () => import('./pages/about/about.page'),
 	},
 	{
 		path: AppRoutes.Dmca,
-		loadComponent: () => import('./pages/dmca/dmca.component'),
+		loadComponent: () => import('./pages/dmca/dmca.page'),
 	},
 	{
 		path: '',

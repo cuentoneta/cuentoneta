@@ -114,7 +114,7 @@ import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 		</div>
 	`,
 })
-export default class DmcaComponent {
+export default class DmcaPage {
 	private readonly metaTagsDirective = inject(HeadMetadataDirective);
 
 	constructor() {

@@ -9,7 +9,7 @@ describe('page-sources.util', () => {
 
 	describe('sourceFileForRoute', () => {
 		it('should resolve a routed path to a source file under src/app/pages', () => {
-			expect(sourceFileForRoute(routedPagePaths()[0])).toMatch(/^src\/app\/pages\/.+\.(component|page)\.ts$/);
+			expect(sourceFileForRoute(routedPagePaths()[0])).toMatch(/^src\/app\/pages\/.+\.page\.ts$/);
 		});
 
 		it('should reject a path that no route declares', () => {
@@ -30,8 +30,8 @@ describe('page-sources.util', () => {
 		it('should return only the source file when the template is inline', () => {
 			const source = '@Component({ template: `<div></div>` })';
 
-			expect(templateSourcesFor('src/app/pages/dmca/dmca.component.ts', source)).toEqual([
-				'src/app/pages/dmca/dmca.component.ts',
+			expect(templateSourcesFor('src/app/pages/dmca/dmca.page.ts', source)).toEqual([
+				'src/app/pages/dmca/dmca.page.ts',
 			]);
 		});
 	});
