@@ -3,11 +3,9 @@ import { moduleMetadata } from '@storybook/angular-vite';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { SpaceRecordingWidgetComponent } from './space-recording-widget.component';
 import { onoffSpaceRecordingsMock } from '@mocks/onoff-media.mock';
-import { mediaWidgetSelectorDocs } from '../media-widget-selector/media-widget-selector.component.docs';
+import { mediaWidgetSelectorDocs } from '@components/media-widget-selector/media-widget-selector.component.docs';
 import { docsRef } from '@testing/storybook-docs';
 
-// Los símbolos que la prosa de esta story nombra sin enlazar. La tupla no se usa en runtime:
-// existe para que el import type-only rompa el `typecheck` si alguno deja de estar declarado.
 export type DocsSymbols = [SpaceRecordingWidgetComponent];
 
 const meta: Meta<SpaceRecordingWidgetComponent> = {

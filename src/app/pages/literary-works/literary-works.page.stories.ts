@@ -13,7 +13,7 @@ import type { LiteraryWorkApi } from '../../providers/literary-work.provider';
 import LiteraryWorksPage from './literary-works.page';
 import { literaryWorksPageDocs } from './literary-works.page.docs';
 import { literaryWorkPageDocs } from '../literary-work/literary-work.page.docs';
-import { skeletonDocs } from '../../components/skeleton/skeleton.component.docs';
+import { skeletonDocs } from '@components/skeleton/skeleton.component.docs';
 import { docsMention, docsRef } from '@testing/storybook-docs';
 
 // Ninguna obra del canon declara multimedia, así que el catálogo enriquecido es el único escenario

@@ -12,14 +12,12 @@ import {
 } from '@mocks/onoff-tags.mock';
 import { createMarkdown } from '@models/markdown.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
-import { imageProfileDocs } from '../image-profile/image-profile.component.docs';
-import { tagDocs } from '../tag/tag.component.docs';
-import { tagsListDocs } from '../tags-list/tags-list.component.docs';
+import { imageProfileDocs } from '@components/image-profile/image-profile.component.docs';
+import { tagDocs } from '@components/tag/tag.component.docs';
+import { tagsListDocs } from '@components/tags-list/tags-list.component.docs';
 import { docsRef } from '@testing/storybook-docs';
 import type { AuthorInfoPanelSkeletonComponent } from '@components/author-info-panel/author-info-panel-skeleton.component';
 
-// Los símbolos que la prosa de esta story nombra sin enlazar. La tupla no se usa en runtime:
-// existe para que el import type-only rompa el `typecheck` si alguno deja de estar declarado.
 export type DocsSymbols = [AuthorInfoPanelComponent, AuthorInfoPanelSkeletonComponent];
 
 // El corpus trae una etiqueta por autor: sin varias, el recorte de TagsList no se puede mirar.

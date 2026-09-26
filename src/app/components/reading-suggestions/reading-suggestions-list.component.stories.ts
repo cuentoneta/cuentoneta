@@ -3,16 +3,14 @@ import type { Meta, StoryObj } from '@storybook/angular-vite';
 import { ReadingSuggestionsListComponent } from './reading-suggestions-list.component';
 import { corpusLiteraryWorkTeasers } from '@mocks/onoff-corpus.storybook';
 import type { NavigationContext } from '@app-utils/navigation-params';
-import { buttonDocs } from '../button/button.component.docs';
-import { dividerDocs } from '../divider/divider.component.docs';
-import { literaryWorkTeaserCardDocs } from '../literary-work-teaser-card/literary-work-teaser-card.component.docs';
+import { buttonDocs } from '@components/button/button.component.docs';
+import { dividerDocs } from '@components/divider/divider.component.docs';
+import { literaryWorkTeaserCardDocs } from '@components/literary-work-teaser-card/literary-work-teaser-card.component.docs';
 import { docsRef } from '@testing/storybook-docs';
 import type { AuthorReadingSuggestionsComponent } from '@components/reading-suggestions/author-reading-suggestions.component';
 import type { CollectionReadingSuggestionsComponent } from '@components/reading-suggestions/collection-reading-suggestions.component';
 import type { ReadingSuggestionsComponent } from '@components/reading-suggestions/reading-suggestions.component';
 
-// Los símbolos que la prosa de esta story nombra sin enlazar. La tupla no se usa en runtime:
-// existe para que el import type-only rompa el `typecheck` si alguno deja de estar declarado.
 export type DocsSymbols = [
 	AuthorReadingSuggestionsComponent,
 	CollectionReadingSuggestionsComponent,

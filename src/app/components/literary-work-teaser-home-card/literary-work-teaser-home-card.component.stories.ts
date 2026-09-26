@@ -5,14 +5,12 @@ import { LiteraryWorkTeaserHomeCardComponent } from './literary-work-teaser-home
 import { LiteraryWorkTeaserHomeCardSkeletonComponent } from './literary-work-teaser-home-card-skeleton.component';
 import { onoffLiteraryWorkTeasersWithMediaSourcesMock } from '@mocks/onoff-literary-work-teasers.mock';
 import { corpusLiteraryWorkTeasers, literaryWorkSelectArgType } from '@mocks/onoff-corpus.storybook';
-import { coverImageDocs } from '../cover-image/cover-image.component.docs';
-import { imageProfileDocs } from '../image-profile/image-profile.component.docs';
-import { literaryWorkTeaserCardDocs } from '../literary-work-teaser-card/literary-work-teaser-card.component.docs';
-import { mediaSelectorsDocs } from '../media-selectors/media-selectors.component.docs';
+import { coverImageDocs } from '@components/cover-image/cover-image.component.docs';
+import { imageProfileDocs } from '@components/image-profile/image-profile.component.docs';
+import { literaryWorkTeaserCardDocs } from '@components/literary-work-teaser-card/literary-work-teaser-card.component.docs';
+import { mediaSelectorsDocs } from '@components/media-selectors/media-selectors.component.docs';
 import { docsRef } from '@testing/storybook-docs';
 
-// Los símbolos que la prosa de esta story nombra sin enlazar. La tupla no se usa en runtime:
-// existe para que el import type-only rompa el `typecheck` si alguno deja de estar declarado.
 export type DocsSymbols = [LiteraryWorkTeaserHomeCardSkeletonComponent];
 
 const [teaser] = onoffLiteraryWorkTeasersWithMediaSourcesMock;

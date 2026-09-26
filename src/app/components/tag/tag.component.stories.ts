@@ -3,14 +3,12 @@ import { argsToTemplate, moduleMetadata } from '@storybook/angular-vite';
 
 import { TagComponent } from './tag.component';
 import { TagSkeletonComponent } from './tag-skeleton.component';
-import { authorTeaserCardDocs } from '../author-teaser-card/author-teaser-card.component.docs';
-import { collectionTeaserCardDocs } from '../collection-teaser-card/collection-teaser-card.docs';
-import { literaryWorkTeaserCardDocs } from '../literary-work-teaser-card/literary-work-teaser-card.component.docs';
-import { literaryWorkTeaserHomeCardDocs } from '../literary-work-teaser-home-card/literary-work-teaser-home-card.component.docs';
+import { authorTeaserCardDocs } from '@components/author-teaser-card/author-teaser-card.component.docs';
+import { collectionTeaserCardDocs } from '@components/collection-teaser-card/collection-teaser-card.docs';
+import { literaryWorkTeaserCardDocs } from '@components/literary-work-teaser-card/literary-work-teaser-card.component.docs';
+import { literaryWorkTeaserHomeCardDocs } from '@components/literary-work-teaser-home-card/literary-work-teaser-home-card.component.docs';
 import { docsRef } from '@testing/storybook-docs';
 
-// Los símbolos que la prosa de esta story nombra sin enlazar. La tupla no se usa en runtime:
-// existe para que el import type-only rompa el `typecheck` si alguno deja de estar declarado.
 export type DocsSymbols = [TagComponent];
 
 const meta: Meta<TagComponent> = {

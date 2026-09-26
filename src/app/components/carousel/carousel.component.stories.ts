@@ -8,8 +8,6 @@ import type { ContentCampaign } from '@models/content-campaign.model';
 import type { CarouselControlsComponent } from '@components/carousel/carousel-controls.component';
 import type { CarouselIndicatorComponent } from '@components/carousel/carousel-indicator.component';
 
-// Los símbolos que la prosa de esta story nombra sin enlazar. La tupla no se usa en runtime:
-// existe para que el import type-only rompa el `typecheck` si alguno deja de estar declarado.
 export type DocsSymbols = [CarouselComponent, CarouselControlsComponent, CarouselIndicatorComponent];
 
 const meta: Meta<CarouselComponent> = {

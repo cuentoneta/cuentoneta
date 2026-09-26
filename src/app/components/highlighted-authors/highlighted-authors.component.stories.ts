@@ -4,15 +4,13 @@ import { argsToTemplate } from '@storybook/angular-vite';
 import { HighlightedAuthorsComponent } from './highlighted-authors.component';
 import { onoffHighlightedAuthorsOfLength, onoffUntaggedHighlightedAuthor } from '@mocks/onoff-highlighted-authors.mock';
 import { highlightedAuthorsDocs } from './highlighted-authors.component.docs';
-import { authorTeaserCardDocs } from '../author-teaser-card/author-teaser-card.component.docs';
-import { emptyStateDocs } from '../empty-state/empty-state.component.docs';
-import { sectionHeaderDocs } from '../section-header/section-header.component.docs';
+import { authorTeaserCardDocs } from '@components/author-teaser-card/author-teaser-card.component.docs';
+import { emptyStateDocs } from '@components/empty-state/empty-state.component.docs';
+import { sectionHeaderDocs } from '@components/section-header/section-header.component.docs';
 import { docsMention, docsRef } from '@testing/storybook-docs';
 import type { AuthorTeaserCardSkeletonComponent } from '@components/author-teaser-card/author-teaser-card-skeleton.component';
 import type { HighlightedAuthor } from '@models/landing-page-content.model';
 
-// Los símbolos que la prosa de esta story nombra sin enlazar. La tupla no se usa en runtime:
-// existe para que el import type-only rompa el `typecheck` si alguno deja de estar declarado.
 export type DocsSymbols = [AuthorTeaserCardSkeletonComponent, HighlightedAuthor];
 
 // Un solo dataset compartido por todas las stories: los mismos destacados en cada estado hacen que el

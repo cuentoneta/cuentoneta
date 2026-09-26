@@ -5,12 +5,10 @@ import { MediaSelectorsComponent } from './media-selectors.component';
 import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 import type { MediaTeaser } from '@models/media.model';
 import { onoffMediaMock, onoffYouTubeVideosMock, toMediaTeaser } from '@mocks/onoff-media.mock';
-import { literaryWorkTeaserCardDocs } from '../literary-work-teaser-card/literary-work-teaser-card.component.docs';
-import { literaryWorkTeaserHomeCardDocs } from '../literary-work-teaser-home-card/literary-work-teaser-home-card.component.docs';
+import { literaryWorkTeaserCardDocs } from '@components/literary-work-teaser-card/literary-work-teaser-card.component.docs';
+import { literaryWorkTeaserHomeCardDocs } from '@components/literary-work-teaser-home-card/literary-work-teaser-home-card.component.docs';
 import { docsRef } from '@testing/storybook-docs';
 
-// Los símbolos que la prosa de esta story nombra sin enlazar. La tupla no se usa en runtime:
-// existe para que el import type-only rompa el `typecheck` si alguno deja de estar declarado.
 export type DocsSymbols = [MediaSelectorsComponent];
 
 // Conjunto de medios variado: el canon completo más un video repetido, para que el modo agrupado

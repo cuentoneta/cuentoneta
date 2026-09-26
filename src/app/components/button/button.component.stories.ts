@@ -3,11 +3,9 @@ import { argsToTemplate, applicationConfig } from '@storybook/angular-vite';
 import { ButtonComponent } from './button.component';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { faBrandWhatsapp } from '@ng-icons/font-awesome/brands';
-import { buttonGroupDocs } from '../button-group/button-group.component.docs';
+import { buttonGroupDocs } from '@components/button-group/button-group.component.docs';
 import { docsRef } from '@testing/storybook-docs';
 
-// Los símbolos que la prosa de esta story nombra sin enlazar. La tupla no se usa en runtime:
-// existe para que el import type-only rompa el `typecheck` si alguno deja de estar declarado.
 export type DocsSymbols = [ButtonComponent];
 
 const meta: Meta<ButtonComponent> = {

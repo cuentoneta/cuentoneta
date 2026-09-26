@@ -4,9 +4,9 @@ import { argsToTemplate } from '@storybook/angular-vite';
 import { LiteraryWorkHeroHeaderComponent } from './literary-work-hero-header.component';
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 import { literaryWorkSelectArgType } from '@mocks/onoff-corpus.storybook';
-import { coverImageDocs } from '../cover-image/cover-image.component.docs';
-import { imageProfileDocs } from '../image-profile/image-profile.component.docs';
-import { tagsListDocs } from '../tags-list/tags-list.component.docs';
+import { coverImageDocs } from '@components/cover-image/cover-image.component.docs';
+import { imageProfileDocs } from '@components/image-profile/image-profile.component.docs';
+import { tagsListDocs } from '@components/tags-list/tags-list.component.docs';
 import { docsRef } from '@testing/storybook-docs';
 
 // Obra representativa del canon para las stories que solo necesitan una cualquiera.

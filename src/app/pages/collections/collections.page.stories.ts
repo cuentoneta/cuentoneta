@@ -10,8 +10,8 @@ import type { CollectionApi } from '../../providers/collection.provider';
 import CollectionsPage from './collections.page';
 import { collectionsPageDocs } from './collections.page.docs';
 import { collectionPageDocs } from '../collection/collection.page.docs';
-import { collectionTeaserCardDocs } from '../../components/collection-teaser-card/collection-teaser-card.docs';
-import { dividerDocs } from '../../components/divider/divider.component.docs';
+import { collectionTeaserCardDocs } from '@components/collection-teaser-card/collection-teaser-card.docs';
+import { dividerDocs } from '@components/divider/divider.component.docs';
 import { docsMention, docsRef } from '@testing/storybook-docs';
 
 const catalogues = {

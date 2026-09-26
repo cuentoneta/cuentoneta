@@ -7,9 +7,9 @@ import {
 	onoffLiteraryWorkTeasersWithMediaSourcesMock,
 } from '@mocks/onoff-literary-work-teasers.mock';
 import { corpusLiteraryWorkTeasers, literaryWorkSelectArgType } from '@mocks/onoff-corpus.storybook';
-import { coverImageDocs } from '../cover-image/cover-image.component.docs';
-import { imageProfileDocs } from '../image-profile/image-profile.component.docs';
-import { mediaSelectorsDocs } from '../media-selectors/media-selectors.component.docs';
+import { coverImageDocs } from '@components/cover-image/cover-image.component.docs';
+import { imageProfileDocs } from '@components/image-profile/image-profile.component.docs';
+import { mediaSelectorsDocs } from '@components/media-selectors/media-selectors.component.docs';
 import { docsRef } from '@testing/storybook-docs';
 
 // Tres obras distintas, para que el showcase de variantes muestre portadas, títulos y extractos

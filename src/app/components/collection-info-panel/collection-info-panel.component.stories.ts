@@ -16,14 +16,12 @@ import {
 import { createCollection } from '@models/collection.model';
 import { createMarkdown } from '@models/markdown.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
-import { collectionCoverDocs } from '../collection-cover/collection-cover.component.docs';
-import { tagDocs } from '../tag/tag.component.docs';
-import { tagsListDocs } from '../tags-list/tags-list.component.docs';
+import { collectionCoverDocs } from '@components/collection-cover/collection-cover.component.docs';
+import { tagDocs } from '@components/tag/tag.component.docs';
+import { tagsListDocs } from '@components/tags-list/tags-list.component.docs';
 import { docsRef } from '@testing/storybook-docs';
 import type { CollectionInfoPanelSkeletonComponent } from '@components/collection-info-panel/collection-info-panel-skeleton.component';
 
-// Los símbolos que la prosa de esta story nombra sin enlazar. La tupla no se usa en runtime:
-// existe para que el import type-only rompa el `typecheck` si alguno deja de estar declarado.
 export type DocsSymbols = [CollectionInfoPanelComponent, CollectionInfoPanelSkeletonComponent];
 
 const [representativeCollection] = onoffCollectionsWithRepresentativeImageryMock;

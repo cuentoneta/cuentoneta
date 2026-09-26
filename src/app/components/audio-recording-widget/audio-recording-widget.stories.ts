@@ -1,11 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/angular-vite';
 import { AudioRecordingWidgetComponent } from './audio-recording-widget.component';
 import { onoffAudioRecordingsMock } from '@mocks/onoff-media.mock';
-import { mediaWidgetSelectorDocs } from '../media-widget-selector/media-widget-selector.component.docs';
+import { mediaWidgetSelectorDocs } from '@components/media-widget-selector/media-widget-selector.component.docs';
 import { docsRef } from '@testing/storybook-docs';
 
-// Los símbolos que la prosa de esta story nombra sin enlazar. La tupla no se usa en runtime:
-// existe para que el import type-only rompa el `typecheck` si alguno deja de estar declarado.
 export type DocsSymbols = [AudioRecordingWidgetComponent];
 
 const meta: Meta<AudioRecordingWidgetComponent> = {

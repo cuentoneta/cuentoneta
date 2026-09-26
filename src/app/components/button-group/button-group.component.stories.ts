@@ -4,11 +4,9 @@ import { provideIcons } from '@ng-icons/core';
 import { faBrandSpotify, faBrandYoutube } from '@ng-icons/font-awesome/brands';
 import { ButtonGroupComponent, type ButtonGroupOption } from './button-group.component';
 import type { ButtonSize } from '../button/button.component';
-import { buttonDocs } from '../button/button.component.docs';
+import { buttonDocs } from '@components/button/button.component.docs';
 import { docsRef } from '@testing/storybook-docs';
 
-// Los símbolos que la prosa de esta story nombra sin enlazar. La tupla no se usa en runtime:
-// existe para que el import type-only rompa el `typecheck` si alguno deja de estar declarado.
 export type DocsSymbols = [ButtonGroupComponent];
 
 const formats: ButtonGroupOption[] = [

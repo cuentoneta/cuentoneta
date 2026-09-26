@@ -9,8 +9,6 @@ import { editorialNoteDocs } from './editorial-note.component.docs';
 import { docsMention } from '@testing/storybook-docs';
 import type { LiteraryWork } from '../../../sanity/types';
 
-// Los símbolos que la prosa de esta story nombra sin enlazar. La tupla no se usa en runtime:
-// existe para que el import type-only rompa el `typecheck` si alguno deja de estar declarado.
 export type DocsSymbols = [LiteraryWork];
 
 // Del canon: un epígrafe cualquiera trae texto y referencia; la variante sin atribución reusa su texto.

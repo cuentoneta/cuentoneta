@@ -6,12 +6,10 @@ import { onoffLiteraryWorksMock, onoffLiteraryWorksWithBlockquotes } from '@mock
 import { createMarkdown } from '@models/markdown.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import { literaryWorkSectionBodyDocs } from './literary-work-section-body.component.docs';
-import { editorialNoteDocs } from '../editorial-note/editorial-note.component.docs';
+import { editorialNoteDocs } from '@components/editorial-note/editorial-note.component.docs';
 import { docsMention, docsRef } from '@testing/storybook-docs';
 import type { LiteraryWork } from '../../../sanity/types';
 
-// Los símbolos que la prosa de esta story nombra sin enlazar. La tupla no se usa en runtime:
-// existe para que el import type-only rompa el `typecheck` si alguno deja de estar declarado.
 export type DocsSymbols = [LiteraryWork];
 
 const [{ content: plainContent }] = onoffLiteraryWorksMock;

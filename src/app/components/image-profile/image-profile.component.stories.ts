@@ -4,13 +4,11 @@ import { argsToTemplate, moduleMetadata } from '@storybook/angular-vite';
 import { ImageProfileComponent, type ImageProfileSize } from './image-profile.component';
 import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 import { authorTeaserMock } from '@mocks/author.mock';
-import { authorTeaserCardDocs } from '../author-teaser-card/author-teaser-card.component.docs';
-import { literaryWorkTeaserCardDocs } from '../literary-work-teaser-card/literary-work-teaser-card.component.docs';
-import { literaryWorkTeaserHomeCardDocs } from '../literary-work-teaser-home-card/literary-work-teaser-home-card.component.docs';
+import { authorTeaserCardDocs } from '@components/author-teaser-card/author-teaser-card.component.docs';
+import { literaryWorkTeaserCardDocs } from '@components/literary-work-teaser-card/literary-work-teaser-card.component.docs';
+import { literaryWorkTeaserHomeCardDocs } from '@components/literary-work-teaser-home-card/literary-work-teaser-home-card.component.docs';
 import { docsRef } from '@testing/storybook-docs';
 
-// Los símbolos que la prosa de esta story nombra sin enlazar. La tupla no se usa en runtime:
-// existe para que el import type-only rompa el `typecheck` si alguno deja de estar declarado.
 export type DocsSymbols = [ImageProfileComponent];
 
 // Foto de muestra: François Onoff, nuestro "autor de stock" para Storybook, mocks y tests

@@ -3,7 +3,7 @@ import { argsToTemplate } from '@storybook/angular-vite';
 
 import { SectionHeaderComponent } from './section-header.component';
 import { sectionHeaderDocs } from './section-header.component.docs';
-import { buttonDocs } from '../button/button.component.docs';
+import { buttonDocs } from '@components/button/button.component.docs';
 import { docsMention, docsRef } from '@testing/storybook-docs';
 
 const meta: Meta<SectionHeaderComponent> = {

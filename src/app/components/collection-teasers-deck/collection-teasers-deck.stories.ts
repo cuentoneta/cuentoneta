@@ -4,15 +4,13 @@ import { argsToTemplate } from '@storybook/angular-vite';
 import { CollectionTeasersDeck } from './collection-teasers-deck';
 import { onoffCollectionTeasersMock, onoffCollectionTeasersWithLongTitlesMock } from '@mocks/onoff-collections.mock';
 import { collectionTeasersDeckDocs } from './collection-teasers-deck.docs';
-import { collectionTeaserCardDocs } from '../collection-teaser-card/collection-teaser-card.docs';
-import { emptyStateDocs } from '../empty-state/empty-state.component.docs';
-import { sectionHeaderDocs } from '../section-header/section-header.component.docs';
+import { collectionTeaserCardDocs } from '@components/collection-teaser-card/collection-teaser-card.docs';
+import { emptyStateDocs } from '@components/empty-state/empty-state.component.docs';
+import { sectionHeaderDocs } from '@components/section-header/section-header.component.docs';
 import { docsMention, docsRef } from '@testing/storybook-docs';
-import type { Collection } from '../../../sanity/types';
+import type { Collection } from '@models/collection.model';
 import type { CollectionTeaserCardSkeletonComponent } from '@components/collection-teaser-card/collection-teaser-card-skeleton';
 
-// Los símbolos que la prosa de esta story nombra sin enlazar. La tupla no se usa en runtime:
-// existe para que el import type-only rompa el `typecheck` si alguno deja de estar declarado.
 export type DocsSymbols = [Collection, CollectionTeaserCardSkeletonComponent];
 
 // Un solo dataset compartido por todas las stories: mismas colecciones en cada estado hace que el

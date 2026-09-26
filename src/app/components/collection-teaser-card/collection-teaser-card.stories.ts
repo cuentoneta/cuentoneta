@@ -8,14 +8,12 @@ import {
 	onoffCollectionTeasersWithSampleImageryMock,
 } from '@mocks/onoff-collections.mock';
 import { collectionTeaserCardDocs } from './collection-teaser-card.docs';
-import { collectionCoverDocs } from '../collection-cover/collection-cover.component.docs';
-import { collectionTeasersDeckDocs } from '../collection-teasers-deck/collection-teasers-deck.docs';
+import { collectionCoverDocs } from '@components/collection-cover/collection-cover.component.docs';
+import { collectionTeasersDeckDocs } from '@components/collection-teasers-deck/collection-teasers-deck.docs';
 import { collectionsPageDocs } from '../../pages/collections/collections.page.docs';
 import { docsMention, docsRef } from '@testing/storybook-docs';
 import type { Collection } from '../../../sanity/types';
 
-// Los símbolos que la prosa de esta story nombra sin enlazar. La tupla no se usa en runtime:
-// existe para que el import type-only rompa el `typecheck` si alguno deja de estar declarado.
 export type DocsSymbols = [Collection];
 
 const [representativeTeaser] = onoffCollectionTeasersWithRepresentativeImageryMock;

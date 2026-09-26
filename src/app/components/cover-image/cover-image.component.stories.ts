@@ -4,8 +4,8 @@ import { argsToTemplate, moduleMetadata } from '@storybook/angular-vite';
 import { CoverImageComponent } from './cover-image.component';
 import { CoverImageSkeletonComponent } from './cover-image-skeleton.component';
 import { corpusCovers, literaryWorkSelectArgType } from '@mocks/onoff-corpus.storybook';
-import { literaryWorkTeaserCardDocs } from '../literary-work-teaser-card/literary-work-teaser-card.component.docs';
-import { literaryWorkTeaserHomeCardDocs } from '../literary-work-teaser-home-card/literary-work-teaser-home-card.component.docs';
+import { literaryWorkTeaserCardDocs } from '@components/literary-work-teaser-card/literary-work-teaser-card.component.docs';
+import { literaryWorkTeaserHomeCardDocs } from '@components/literary-work-teaser-home-card/literary-work-teaser-home-card.component.docs';
 import { docsRef } from '@testing/storybook-docs';
 
 const coverImageUrl = 'assets/img/mocks/stories/geometria.png';

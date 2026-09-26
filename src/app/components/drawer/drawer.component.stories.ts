@@ -18,8 +18,6 @@ import { navigableCollectionTeaserDocs } from '@components/navigable-collection-
 import { collectionPageDocs } from '../../pages/collection/collection.page.docs';
 import { docsMention, docsRef } from '@testing/storybook-docs';
 
-// Los símbolos que la prosa de esta story nombra sin enlazar. La tupla no se usa en runtime:
-// existe para que el import type-only rompa el `typecheck` si alguno deja de estar declarado.
 export type DocsSymbols = [DrawerComponent];
 
 type DrawerArgs = DrawerComponent & { direction: DrawerDirection };

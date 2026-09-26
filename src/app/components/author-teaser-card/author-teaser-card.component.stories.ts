@@ -5,14 +5,12 @@ import { AuthorTeaserCardComponent } from './author-teaser-card.component';
 import { AuthorTeaserCardSkeletonComponent } from './author-teaser-card-skeleton.component';
 import { authorTeaserMock } from '@mocks/author.mock';
 import { onoffTagsMock } from '@mocks/onoff-tags.mock';
-import { highlightedAuthorsDocs } from '../highlighted-authors/highlighted-authors.component.docs';
-import { imageProfileDocs } from '../image-profile/image-profile.component.docs';
-import { tagDocs } from '../tag/tag.component.docs';
-import { tagsListDocs } from '../tags-list/tags-list.component.docs';
+import { highlightedAuthorsDocs } from '@components/highlighted-authors/highlighted-authors.component.docs';
+import { imageProfileDocs } from '@components/image-profile/image-profile.component.docs';
+import { tagDocs } from '@components/tag/tag.component.docs';
+import { tagsListDocs } from '@components/tags-list/tags-list.component.docs';
 import { docsRef } from '@testing/storybook-docs';
 
-// Los símbolos que la prosa de esta story nombra sin enlazar. La tupla no se usa en runtime:
-// existe para que el import type-only rompa el `typecheck` si alguno deja de estar declarado.
 export type DocsSymbols = [AuthorTeaserCardComponent];
 
 const tags = onoffTagsMock.slice(0, 2);

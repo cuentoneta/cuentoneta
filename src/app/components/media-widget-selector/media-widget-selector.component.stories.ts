@@ -9,8 +9,8 @@ import {
 	onoffLiteraryWorksWithSingleMediaSource,
 } from '@mocks/onoff-literary-works.mock';
 import { mediaWidgetSelectorDocs } from './media-widget-selector.component.docs';
-import { buttonGroupDocs } from '../button-group/button-group.component.docs';
-import { mediaSelectorsDocs } from '../media-selectors/media-selectors.component.docs';
+import { buttonGroupDocs } from '@components/button-group/button-group.component.docs';
+import { mediaSelectorsDocs } from '@components/media-selectors/media-selectors.component.docs';
 import { docsMention, docsRef } from '@testing/storybook-docs';
 import { embedPlaceholdersDecorator, withEmbedPlaceholders } from '@testing/storybook-embed-placeholders';
 
