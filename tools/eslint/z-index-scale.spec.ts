@@ -11,6 +11,8 @@ const templateRuleTester = new RuleTester({ languageOptions: { parser: angular.t
 
 const HEADER_FILE = 'src/app/components/header/header.component.ts';
 const allowHeader = [{ allowGlobalLayersIn: [HEADER_FILE] }];
+const SHELL_FILE = 'src/app/app.component.ts';
+const allowShell = [{ allowGlobalLayersIn: [SHELL_FILE] }];
 
 const decorate = (hostClass: string) =>
 	`import { Component } from '@angular/core';\n@Component({ selector: 'x', template: '', host: { class: '${hostClass}' } })\nexport class Probe {}`;
@@ -116,6 +118,12 @@ templateRuleTester.run('z-index-scale (plantillas)', rule, {
 		{ code: `<div class="relative z-content"></div>`, filename: 'a.html' },
 		{ code: `<div class="z-auto"></div>`, filename: 'a.html' },
 		{ code: `<div [class]="wrapperClasses()"></div>`, filename: 'a.html' },
+		// Sin recortar el nombre virtual al `.ts`, la allowlist solo cubriría la metadata de host.
+		{
+			code: `<a class="focus:z-floating"></a>`,
+			filename: `${SHELL_FILE}/1_inline-template-app.component.ts-1.component.html`,
+			options: allowShell,
+		},
 	],
 	invalid: [
 		{ code: `<div class="z-10"></div>`, filename: 'a.html', errors: [{ messageId: 'utility' }] },
@@ -124,6 +132,13 @@ templateRuleTester.run('z-index-scale (plantillas)', rule, {
 			code: `<div class="z-nav"></div>`,
 			filename: 'a.html',
 			options: allowHeader,
+			errors: [{ messageId: 'globalLayer' }],
+		},
+		// La contracara: el nombre virtual no habilita nada por sí solo.
+		{
+			code: `<a class="focus:z-floating"></a>`,
+			filename: 'src/app/pages/x.component.ts/1_inline-template-x.component.ts-1.component.html',
+			options: allowShell,
 			errors: [{ messageId: 'globalLayer' }],
 		},
 		// Dos violaciones en la misma plantilla se reportan por separado, cada una en su posición.

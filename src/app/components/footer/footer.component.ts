@@ -1,7 +1,7 @@
 import { NgOptimizedImage } from '@angular/common';
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { InternalLink, UrlLink } from '@models/link.model';
+import { RouterLink } from '@angular/router';
+import type { InternalLink, UrlLink } from '@models/link.model';
 import {
 	faBrandFacebook,
 	faBrandGithub,
@@ -14,7 +14,7 @@ import { NgIcon, provideIcons, provideNgIconsConfig } from '@ng-icons/core';
 
 @Component({
 	selector: 'cuentoneta-footer',
-	imports: [RouterModule, NgIcon, NgOptimizedImage],
+	imports: [RouterLink, NgIcon, NgOptimizedImage],
 	providers: [
 		provideIcons({
 			faBrandWhatsapp,

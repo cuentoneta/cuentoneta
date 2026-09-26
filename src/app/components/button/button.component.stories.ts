@@ -1,4 +1,5 @@
-import { argsToTemplate, Meta, StoryObj, applicationConfig } from '@storybook/angular-vite';
+import type { Meta, StoryObj } from '@storybook/angular-vite';
+import { argsToTemplate, applicationConfig } from '@storybook/angular-vite';
 import { ButtonComponent } from './button.component';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { faBrandWhatsapp } from '@ng-icons/font-awesome/brands';

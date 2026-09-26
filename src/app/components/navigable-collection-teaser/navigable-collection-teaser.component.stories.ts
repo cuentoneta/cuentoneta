@@ -1,9 +1,13 @@
-import { argsToTemplate, componentWrapperDecorator, Meta, moduleMetadata, StoryObj } from '@storybook/angular-vite';
+import type { Meta, StoryObj } from '@storybook/angular-vite';
+import { argsToTemplate, componentWrapperDecorator, moduleMetadata } from '@storybook/angular-vite';
 
 import { NavigableCollectionTeaserComponent } from './navigable-collection-teaser.component';
 import { NavigableCollectionTeaserSkeletonComponent } from './navigable-collection-teaser-skeleton.component';
-import { onoffCollectionTeasersWithTagsMock } from '@mocks/onoff-collections.mock';
-import { createCollectionTeaser } from '@models/collection.model';
+import {
+	onoffCollectionTeasersWithLongTitlesMock,
+	onoffCollectionTeasersWithoutTagsMock,
+	onoffCollectionTeasersWithTagsMock,
+} from '@mocks/onoff-collections.mock';
 import { imageProfileDocs } from '../image-profile/image-profile.component.docs';
 import { tagDocs } from '../tag/tag.component.docs';
 import { docsRef } from '@testing/storybook-docs';
@@ -12,9 +16,9 @@ import { docsRef } from '@testing/storybook-docs';
 // existe para que el import type-only rompa el `typecheck` si alguno deja de estar declarado.
 export type DocsSymbols = [NavigableCollectionTeaserComponent];
 
-// Con etiquetas, porque la story «Sin categoría» es el contracaso: vaciarlas solo muestra algo si el
-// punto de partida las traía.
 const [taggedTeaser] = onoffCollectionTeasersWithTagsMock;
+const [untaggedTeaser] = onoffCollectionTeasersWithoutTagsMock;
+const [longTitledTeaser] = onoffCollectionTeasersWithLongTitlesMock;
 
 const meta: Meta<NavigableCollectionTeaserComponent> = {
 	component: NavigableCollectionTeaserComponent,
@@ -56,7 +60,7 @@ export const Default: Story = {
 export const SinCategoria: Story = {
 	name: 'Sin categoría',
 	render: (args) => ({ props: args, template: `<cuentoneta-navigable-collection-teaser ${argsToTemplate(args)} />` }),
-	args: { collection: createCollectionTeaser({ ...taggedTeaser, tags: [] }) },
+	args: { collection: untaggedTeaser },
 	parameters: {
 		docs: {
 			description: {
@@ -69,12 +73,7 @@ export const SinCategoria: Story = {
 export const TituloLargo: Story = {
 	name: 'Título largo',
 	render: (args) => ({ props: args, template: `<cuentoneta-navigable-collection-teaser ${argsToTemplate(args)} />` }),
-	args: {
-		collection: createCollectionTeaser({
-			...taggedTeaser,
-			title: 'Book & Morfi: Especial Michis y Perritos en adopción en el refugio',
-		}),
-	},
+	args: { collection: longTitledTeaser },
 	decorators: [componentWrapperDecorator((story) => `<div style="width:320px">${story}</div>`)],
 	parameters: {
 		docs: {

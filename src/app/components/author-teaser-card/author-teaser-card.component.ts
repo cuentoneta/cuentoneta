@@ -2,8 +2,8 @@ import { Component, input } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
-import { AuthorTeaser } from '@models/author.model';
-import { Tag } from '@models/tag.model';
+import type { AuthorTeaser } from '@models/author.model';
+import type { Tag } from '@models/tag.model';
 import { AppRoutes } from '../../app.routes';
 import { ImageProfileComponent } from '../image-profile/image-profile.component';
 import { TagsListComponent } from '../tags-list/tags-list.component';

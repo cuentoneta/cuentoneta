@@ -1,4 +1,5 @@
-import { argsToTemplate, Meta, moduleMetadata, StoryObj } from '@storybook/angular-vite';
+import type { Meta, StoryObj } from '@storybook/angular-vite';
+import { argsToTemplate, moduleMetadata } from '@storybook/angular-vite';
 
 import { TagComponent } from './tag.component';
 import { TagSkeletonComponent } from './tag-skeleton.component';

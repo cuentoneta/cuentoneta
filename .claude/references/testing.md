@@ -21,7 +21,7 @@
 
 Archivos clave:
 
-- **`vitest.config.ts`** — `globals: true`, `environment: 'happy-dom'`, `setupFiles: ['src/test-setup.ts']`, `include: ['src/**/*.{test,spec}.ts']`. Inlina `@sanity` y bundles `fesm` para que Vite los transforme. Coverage solo en CI (`CI=true`/`COVERAGE=true`).
+- **`vitest.config.ts`** — `globals: true`, `environment: 'happy-dom'`, `setupFiles: ['src/test-setup.ts']`, y un `include` que además de `src/**` alcanza los specs de `scripts/`, de `e2e/_utils/` y de `tools/`. Los de `tools/` cubren las reglas propias de ESLint y de Stylelint —cada módulo tiene el suyo— y los alcanzan además los gates `typecheck` —junto con los `.js` de las reglas que ejercitan— y `lint`. Inlina `@sanity` y bundles `fesm` para que Vite los transforme. Coverage solo en CI (`CI=true`/`COVERAGE=true`).
 - **`src/test-setup.ts`** — inicializa el `TestBed` zoneless (Angular 22 corre zoneless por defecto cuando `zone.js` no está presente; no se llama a `provideZonelessChangeDetection()`). El `ErrorHandler` **relanza** cualquier error no manejado para que falle el test. Instala los stubs globales de `IntersectionObserver`, de `ResizeObserver` y de `document.fonts`.
 - **`src/test-utils.ts`** — los wrappers obligatorios (ver abajo).
 
@@ -93,8 +93,8 @@ Un spec o una story que importa una obra concreta queda atado a ella: sus aserci
 
 La prohibición rige **por ruta y por nombre**, y cada vía la cubre un gate distinto:
 
-- **Por ruta** la verifica `lint`, con el glob de arriba. Es la que ejercita `tools/eslint/single-work-corpus-imports.spec.ts`, que corre ESLint contra el config real (la restricción no es una regla propia, así que `RuleTester` no la alcanza).
-- **Por nombre** la sostiene que los agregadores (`@mocks/onoff-*.mock`) expongan **solo** colecciones, derivados y selectores. Los handles nombrados por identidad —`<slugCamelCase>LiteraryWorkTeaserMock`, las dos colecciones de dominio y sus teasers— viven bajo `@mocks/onoff/<entidad>/`, o sea del lado que la restricción de ruta alcanza. No hay regla que los liste: un import por nombre falla porque **el símbolo no existe**, y lo reporta `typecheck`, no `lint`.
+- **Por ruta** la verifica `lint`, con el glob de arriba. Es la que ejercita `tools/eslint/single-work-corpus-imports.spec.ts`, que corre ESLint contra el config real (la restricción no es una regla propia, así que `RuleTester` no la alcanza). Arrancar ESLint cuesta lo bastante como para que sea el único spec de `tools/eslint/` al que no le alcanza el `testTimeout` por default de Vitest: declara el suyo como opción de su `describe`, y el archivo comenta de dónde sale ese costo.
+- **Por nombre** la sostiene que los agregadores (`@mocks/onoff-*.mock`) expongan **solo** colecciones, derivados y selectores. Los handles nombrados por identidad —`<slugCamelCase>LiteraryWorkTeaserMock`, las colecciones de dominio y sus teasers— viven bajo `@mocks/onoff/<entidad>/`, o sea del lado que la restricción de ruta alcanza. No hay regla que los liste: un import por nombre falla porque **el símbolo no existe**, y lo reporta `typecheck`, no `lint`.
 
 De ahí que volver a exportar un handle por identidad desde un agregador reabra el hueco. No lo bloquea ningún gate; queda como una adición visible en el diff, y es de las cosas que una review tiene que mirar.
 
@@ -115,6 +115,12 @@ De ahí que volver a exportar un handle por identidad desde un agregador reabra 
 | Una colección, o su teaser                          | `onoffCollectionsMock` / `onoffCollectionTeasersMock`, y desestructurá la primera                                                                                                                 |
 | Una colección por rama de `imagery`                 | `onoffCollections(Teasers)With(Representative\|Sample)ImageryMock`                                                                                                                                |
 | Una colección con etiquetas                         | `onoffCollectionsWithTagsMock` / `onoffCollectionTeasersWithTagsMock`                                                                                                                             |
+| Una colección sin etiquetas                         | `onoffCollections(Teasers)WithoutTagsMock`                                                                                                                                                        |
+| Una colección con una sola etiqueta, o con varias   | `onoffCollections(Teasers)With(Single\|Multiple)TagsMock`                                                                                                                                         |
+| Una colección de título largo                       | `onoffCollections(Teasers)WithLongTitlesMock`                                                                                                                                                     |
+| Una colección con un enlace propio en su prosa      | `onoffCollections(Teasers)WithLinkedDescriptionMock` — el teaser llega sin el ancla, que es lo que el selector permite afirmar                                                                    |
+| Una colección cuyo título no empieza en ASCII       | `onoffCollections(Teasers)WithNonAsciiInitialMock` — para el orden con colación española                                                                                                          |
+| Una colección de una sola obra                      | `singleLiteraryWorkCollectionTeaserMock` — el único teaser del corpus que no proviene de un documento                                                                                             |
 | Una colección que muestra u oculta autores          | `onoffCollections(Showing\|Hiding)AuthorsMock`                                                                                                                                                    |
 | Una etiqueta cualquiera                             | `onoffTagsMock` (o `onoffRawTagsMock` en el backend), y tomá un slice                                                                                                                             |
 | Etiquetas de título corto                           | `onoffTagsWithShortTitles` — para stories donde un título de dos palabras fuerza el recorte por ancho                                                                                             |
@@ -513,6 +519,10 @@ Storybook **acumula** los decoradores `applicationConfig`: los providers que dec
 **El catálogo no tiene gate que lo verifique.** `storybook:build` compila sin ejecutar las stories, así que un provider faltante deja el canvas en la pantalla de error y CI pasa en verde. Un spec tampoco lo cubre: Angular Testing Library aporta `ActivatedRoute` por su cuenta, con lo que un caso que monte el componente pasa con y sin el provider en el preview. La única comprobación real es montar cada story en el navegador y mirar el canvas y la consola.
 
 Todo archivo de la app que el preview importe debe estar en el `include` de `.storybook/tsconfig.json`. Si tiene decoradores de Angular y queda fuera del programa, el compilador no lo procesa y el bundle del preview revienta con un `SyntaxError: Unexpected token 'export'` que **tumba el catálogo entero**, no una story.
+
+**Embeds de terceros: el catálogo monta un reproductor de utilería dibujado con CSS.** `src/testing/storybook-embed-placeholders.ts` aporta `embedPlaceholdersDecorator` —que apaga la carga de la IFrame API de YouTube y pinta el reproductor sobre el propio placeholder que el player dibuja— y `withEmbedPlaceholder(s)`, que reapunta la URL del episodio de Spotify a una página HTML servida desde `assets/`. Son dos mecanismos porque hay dos seams distintos: el episodio expone su URL como dato, el video no (su `videoId` no es una URL). Los dos se dibujan en CSS y no con una imagen para que acompañen el ancho: el del video en unidades relativas a su caja, y la página del episodio con media queries que responden al ancho de su iframe.
+
+El **corpus conserva** sus URLs e identificadores de plataforma: son la forma que producción tiene y hay specs que la afirman. Lo que se sustituye es lo que el catálogo monta. Va a la story y no al preview por el discriminante de arriba — depende de esos componentes en concreto, no de cualquiera. Verificar un embed de verdad es un e2e contra el dataset real, no una entrada de catálogo.
 
 **Siempre** actualizá las stories cuando cambien inputs, estados visuales o la API pública del componente.
 

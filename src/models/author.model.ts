@@ -1,7 +1,7 @@
-import { Resource } from '@models/resource.model';
-import { SanitizedHtml } from '@models/sanitized-html.model';
-import { Tag } from '@models/tag.model';
-import { DateString, IsoDateTime } from '@utils/date.utils';
+import type { Resource } from '@models/resource.model';
+import type { SanitizedHtml } from '@models/sanitized-html.model';
+import type { Tag } from '@models/tag.model';
+import type { DateString, IsoDateTime } from '@utils/date.utils';
 
 export type AuthorNationality = { country: string; flag: string };
 

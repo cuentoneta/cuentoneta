@@ -1,15 +1,5 @@
-import {
-	Component,
-	computed,
-	contentChild,
-	effect,
-	ElementRef,
-	inject,
-	input,
-	output,
-	signal,
-	viewChild,
-} from '@angular/core';
+import type { ElementRef } from '@angular/core';
+import { Component, computed, contentChild, effect, inject, input, output, signal, viewChild } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { faSolidXmark } from '@ng-icons/font-awesome/solid';
@@ -169,10 +159,11 @@ export class DrawerComponent {
 		}
 		this.isClosing.set(true);
 		this.tracker.unregister(this);
+		// Primero `closed`: el cierre síncrono resuelve `afterClosed` dentro de `transition.close`.
+		this.closed.emit();
 		this.transition.close(dialog, () => {
 			this.isClosing.set(false);
 			this.afterClosed.emit();
 		});
-		this.closed.emit();
 	}
 }

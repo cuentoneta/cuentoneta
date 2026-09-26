@@ -1,4 +1,5 @@
-import { argsToTemplate, Meta, moduleMetadata, StoryObj } from '@storybook/angular-vite';
+import type { Meta, StoryObj } from '@storybook/angular-vite';
+import { argsToTemplate, moduleMetadata } from '@storybook/angular-vite';
 
 import { LiteraryWorkTeaserHomeCardComponent } from './literary-work-teaser-home-card.component';
 import { LiteraryWorkTeaserHomeCardSkeletonComponent } from './literary-work-teaser-home-card-skeleton.component';

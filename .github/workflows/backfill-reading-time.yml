@@ -1,0 +1,95 @@
+# Materializa el reading time faltante de las obras publicadas.
+#
+# El script de backfill es la única vía de persistencia de `readingTime` y `totalReadingTime`. Sin
+# este schedule, una obra recién publicada recomputa el fallback del repository en cada lectura hasta
+# que alguien corra el backfill a mano. Diaria alcanza: el campo es write-once y el fallback cubre la
+# ventana intermedia.
+#
+# A diferencia de los barridos programados vecinos, éste escribe contenido. Lo que lo hace seguro es
+# el `setIfMissing` del script: no pisa un `totalReadingTime` cargado a mano, que es como se declara
+# la duración editorial de recitados y audiovisuales.
+#
+# Tampoco es un gate, por la misma razón que ellos: su id **no debe sumarse a los required status
+# checks** de `develop`.
+#
+# Prerequisito (secret ya configurado, lo usan `sync-datasets` y `required-fields-sweep`):
+#   - SANITY_AUTH_TOKEN: token de administración de manage.sanity.io — alcanza `production`, que es
+#     privado, y puede crear, borrar e importar datasets enteros. Este job solo necesita escribir dos
+#     campos: conviene acotarlo en cuanto exista un token de escritura dedicado, porque el alcance de
+#     una corrida desatendida se sostiene mejor con el permiso del secret que con la disciplina de
+#     quien edite el script.
+name: Backfill reading time
+
+on:
+  schedule:
+    # Horario valle, lejos del cron de Vercel (03:15) y del racimo de barridos de los lunes
+    # (06:00–07:23), para no competir por runners. GitHub desactiva un `schedule` tras 60 días sin
+    # actividad en el repo; el `workflow_dispatch` permite re-dispararlo cuando eso pasa.
+    - cron: '35 4 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Reportar qué se llenaría, sin escribir. El default en seco hace que aplicar sobre production cueste un clic más.'
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: backfill-reading-time
+  # Cortar una corrida a mitad de patchear dejaría obras a medio materializar.
+  cancel-in-progress: false
+
+jobs:
+  backfill-reading-time:
+    runs-on: ubuntu-latest
+    # En régimen son unas pocas obras por corrida; el margen absorbe el install y una acumulación
+    # puntual sin dejar que un cuelgue consuma minutos de runner.
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+
+      - name: Setup workspace
+        uses: ./.github/actions/setup-workspace
+
+      # A diferencia del resto de los jobs programados, acá el rojo sí significa que la herramienta
+      # falló: el script sale con 1 cuando no pudo hacer su trabajo, nunca por algo que haya
+      # encontrado en el dato.
+      - name: Materializar el reading time faltante
+        env:
+          # En `schedule` no hay inputs y la expresión resuelve vacía, así que la corrida programada
+          # aplica. Solo un disparo manual puede pedir el modo seco.
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
+          # `staging` y `development` se sobrescriben con la copia de `production` cada domingo.
+          SANITY_STUDIO_DATASET: production
+          SANITY_STUDIO_PROJECT_ID: ${{ secrets.SANITY_STUDIO_PROJECT_ID || 's4dbqkc5' }}
+          # El secret `SANITY_STUDIO_TOKEN` no sirve acá: `ci.yml` lo usa contra `staging`, que es
+          # público, y no alcanza producción.
+          SANITY_STUDIO_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+        run: |
+          set -uo pipefail
+          # El script se invoca con `node --env-file=.env`, y ese `.env` apunta a `development`. Node
+          # le da precedencia a la variable del entorno, así que el bloque `env:` decide el dataset.
+          # Sin comillas: en modo seco la variable vacía debe desaparecer, no pasarse como argumento.
+          apply_flag=''
+          if [ "$DRY_RUN" != 'true' ]; then
+            apply_flag='--no-dry-run'
+          fi
+          # Por `tee` y no por redirección, para que el log salga en vivo: un corte por
+          # `timeout-minutes` mataría el step antes del volcado y dejaría la corrida en rojo sin
+          # rastro de qué obras alcanzó a tocar, con escrituras ya aplicadas. `pipefail` conserva el
+          # código de salida de `pnpm`, que `tee` taparía con su propio 0.
+          status=0
+          pnpm backfill:reading-time $apply_flag 2>&1 | tee report.txt || status=$?
+          # También al resumen: un schedule diario que hay que abrir para saber qué hizo termina sin
+          # que nadie lo abra.
+          {
+            echo '## Backfill de reading time'
+            echo '```'
+            cat report.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit "$status"

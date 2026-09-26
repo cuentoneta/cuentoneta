@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 
 // Models
-import { Resource } from '@models/resource.model';
+import type { Resource } from '@models/resource.model';
 
 // Directives
 import { TooltipDirective } from '../../directives/tooltip.directive';

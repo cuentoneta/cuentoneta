@@ -11,7 +11,7 @@ import { ControllableLayoutService } from '../../providers/layout.mock';
 import type { LandingPageContent } from '@models/landing-page-content.model';
 import { onoffHighlightedAuthorsOfLength } from '@mocks/onoff-highlighted-authors.mock';
 import { onoffLiteraryWorkNavigationTeasersWithAuthorsMock } from '@mocks/onoff-literary-work-teasers.mock';
-import { onoffCollectionTeasersMock, onoffCollectionTeasersOfLength } from '@mocks/onoff-collections.mock';
+import { onoffCollectionTeasersMock } from '@mocks/onoff-collections.mock';
 import { contentCampaignMock } from '@mocks/content-campaign.mock';
 import { clearAllMocks } from '@test-utils';
 
@@ -63,8 +63,7 @@ describe('HomeComponent', () => {
 	});
 
 	describe('encabezado de la página', () => {
-		// El H1 de la página lo aporta el hero. La suite de indexado exige un H1 con texto real dentro de
-		// <main>, así que la banda no puede quedar fuera del contenido primario.
+		// El H1 lo aporta el hero, y la suite de indexado lo exige dentro del landmark que declara el shell.
 		it('should carry a visible level 1 heading', async () => {
 			await renderHome();
 
@@ -137,12 +136,10 @@ describe('HomeComponent', () => {
 	});
 
 	describe('colecciones', () => {
-		const collections = onoffCollectionTeasersMock;
-
+		// El caso mide que la página no descarte nada por su cuenta, así que la semana entra recortada al
+		// tope: con más colecciones estaría midiendo el recorte, que es lo que afirma el caso siguiente.
 		it('should render every collection of the week', async () => {
-			// El caso mide que la página no descarte nada por su cuenta, así que solo vale mientras el
-			// corpus quepa bajo el tope; si crece, lo que hay que revisar es el caso, no la página.
-			expect(collections.length).toBeLessThanOrEqual(4);
+			const collections = onoffCollectionTeasersMock.slice(0, 4);
 
 			await renderHome({ collections });
 
@@ -154,7 +151,9 @@ describe('HomeComponent', () => {
 		// Mismo criterio que el recorte a seis de las obras: se afirma cuáles quedaron afuera, porque
 		// contar cuatro se cumpliría igual con cualquier otro criterio que devolviera cuatro.
 		it('should cap the grid at four, however many the week brings', async () => {
-			const manyCollections = onoffCollectionTeasersOfLength(6);
+			const manyCollections = onoffCollectionTeasersMock;
+			// Sin más colecciones que el tope no habría descarte que observar, y el caso duplicaría al anterior.
+			expect(manyCollections.length).toBeGreaterThan(4);
 
 			await renderHome({ collections: manyCollections });
 

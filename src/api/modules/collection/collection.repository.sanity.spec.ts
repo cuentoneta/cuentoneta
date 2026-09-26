@@ -4,9 +4,9 @@ import { collectionBySlugQuery, collectionsQuery } from '../../_queries/collecti
 import {
 	descriptionlessRawCollection,
 	emptyRawCollection,
-	linkedDescriptionRawCollection,
-	linkedDescriptionRawCollectionTeasers,
 	onoffRawCollectionsWithFeaturedImage,
+	onoffRawCollectionsWithLinkedDescription,
+	onoffRawCollectionTeasersWithLinkedDescription,
 	onoffRawCollectionsWithoutFeaturedImage,
 	onoffRawCollectionTeasersMock,
 	sectionlessWorkRawCollection,
@@ -214,16 +214,17 @@ describe('SanityCollectionRepository.fetchAll', () => {
 	// Fija dónde vive la decisión: la prosa del teaser sale sin enlaces desde la traducción, no desde
 	// quien la renderiza.
 	it('strips the links of the description, keeping their text', async () => {
-		const teasers = await repoReturning(linkedDescriptionRawCollectionTeasers).fetchAll();
+		const teasers = await repoReturning(onoffRawCollectionTeasersWithLinkedDescription).fetchAll();
 
 		expect(teasers.map(({ description }) => description).join()).not.toContain('<a');
-		teasers.forEach(({ description }) => expect(description).toContain('un enlace propio'));
+		teasers.forEach(({ description }) => expect(description).toContain('La Cuentoneta'));
 	});
 
 	// La contracara: la vista completa no se pinta dentro de nada, así que ahí el enlace es legítimo y
 	// tiene que sobrevivir. Sin este caso, descartarlo en las dos vistas pasaría inadvertido.
 	it('keeps the links of the description in the full view', async () => {
-		const collection = await repoReturning(linkedDescriptionRawCollection).fetchBySlug('geometrias-del-desvelo');
+		const [raw] = onoffRawCollectionsWithLinkedDescription;
+		const collection = await repoReturning(raw).fetchBySlug(raw.slug);
 
 		expect(collection?.description).toContain('href="https://www.cuentoneta.ar/about"');
 	});
@@ -233,7 +234,7 @@ describe('SanityCollectionRepository.fetchAll', () => {
 	it('resolves both branches of imagery from the projected covers', async () => {
 		const teasers = await repoReturning(onoffRawCollectionTeasersMock).fetchAll();
 
-		expect([...teasers.map(({ imagery }) => imagery.kind)].sort()).toEqual(['representative', 'sample']);
+		expect(new Set(teasers.map(({ imagery }) => imagery.kind))).toEqual(new Set(['representative', 'sample']));
 	});
 
 	// Es la invariante "al menos una obra" sobre lo único que el teaser transporta.

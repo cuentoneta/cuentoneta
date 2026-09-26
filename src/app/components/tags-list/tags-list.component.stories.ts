@@ -1,8 +1,10 @@
-import { componentWrapperDecorator, Meta, moduleMetadata, StoryObj } from '@storybook/angular-vite';
+import type { Meta, StoryObj } from '@storybook/angular-vite';
+import { componentWrapperDecorator, moduleMetadata } from '@storybook/angular-vite';
 
 import { TagsListComponent } from './tags-list.component';
-import { TagComponent, TagVariant } from '../tag/tag.component';
-import { Tag } from '@models/tag.model';
+import type { TagVariant } from '../tag/tag.component';
+import { TagComponent } from '../tag/tag.component';
+import type { Tag } from '@models/tag.model';
 import { onoffTagsWithShortTitles } from '@mocks/onoff-tags.mock';
 import { authorTeaserCardDocs } from '../author-teaser-card/author-teaser-card.component.docs';
 import { tagDocs } from '../tag/tag.component.docs';

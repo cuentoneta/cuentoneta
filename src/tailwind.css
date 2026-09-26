@@ -124,3 +124,9 @@
 	--z-index-nav: 50;
 	--z-index-floating: 60;
 }
+
+/* Cancela el despeje del shell. Va en un elemento raíz de la plantilla: más adentro el margen negativo
+   interactúa con el contenedor que lo envuelva. */
+@utility bleeds-under-header {
+	margin-top: calc(var(--spacing-header-height) * -1);
+}

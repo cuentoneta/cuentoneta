@@ -1,0 +1,1 @@
+Lo que Onoff escribía cuando no podía dormir. Una geometría levantada para medir el tiempo que sobra, un odio que se despierta antes que su motivo y un palacio cuyas fronteras se corren cada vez que alguien intenta contarlas. Tres formas de pasar la noche despierto sin admitir que se está esperando algo.

@@ -1,0 +1,1 @@
+Tres obras donde el fuego llega tarde y no alumbra nada: dos antorchas que se disputan una misma sombra, un emperador que confunde el incendio con una escena y un odio que arde sin haber elegido a quién. Onoff las escribió con quince años de distancia entre sí, y las tres terminan en el mismo sitio: alguien mirando lo que queda.
