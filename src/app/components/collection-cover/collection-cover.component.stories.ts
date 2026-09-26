@@ -7,7 +7,7 @@ import {
 } from '@mocks/onoff-collections.mock';
 import { collectionInfoPanelDocs } from '@components/collection-info-panel/collection-info-panel.component.docs';
 import { collectionTeaserCardDocs } from '@components/collection-teaser-card/collection-teaser-card.docs';
-import { coverImageDocs } from '@components/cover-image/cover-image.component.docs';
+import { coverImageDocs } from '@components/cover-image/cover-image.docs';
 import { docsMention, docsRef } from '@testing/storybook-docs';
 
 export type DocsSymbols = [CollectionCoverComponent];

@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 
 import { Skeleton } from '@components/skeleton/skeleton';
-import { CoverImageSkeletonComponent } from '../cover-image/cover-image-skeleton.component';
+import { CoverImageSkeleton } from '../cover-image/cover-image-skeleton';
 
 @Component({
 	selector: 'cuentoneta-collection-teaser-card-skeleton',
-	imports: [Skeleton, CoverImageSkeletonComponent],
+	imports: [Skeleton, CoverImageSkeleton],
 	template: `
 		<article class="flex items-start gap-5" data-testid="skeleton">
 			<section class="flex h-[192px] flex-1 items-end justify-center overflow-hidden rounded-xl bg-neutral-100 px-3">

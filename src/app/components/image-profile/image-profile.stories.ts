@@ -5,8 +5,8 @@ import { ImageProfile, type ImageProfileSize } from './image-profile';
 import { Skeleton } from '@components/skeleton/skeleton';
 import { authorTeaserMock } from '@mocks/author.mock';
 import { authorTeaserCardDocs } from '@components/author-teaser-card/author-teaser-card.component.docs';
-import { literaryWorkTeaserCardDocs } from '@components/literary-work-teaser-card/literary-work-teaser-card.component.docs';
-import { literaryWorkTeaserHomeCardDocs } from '@components/literary-work-teaser-home-card/literary-work-teaser-home-card.component.docs';
+import { literaryWorkTeaserCardDocs } from '@components/literary-work-teaser-card/literary-work-teaser-card.docs';
+import { literaryWorkTeaserHomeCardDocs } from '@components/literary-work-teaser-home-card/literary-work-teaser-home-card.docs';
 import { docsMention, docsRef } from '@testing/storybook-docs';
 import { imageProfileDocs } from './image-profile.docs';
 

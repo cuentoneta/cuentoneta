@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 import { Divider } from '@components/divider/divider';
-import { LiteraryWorkHeroHeaderComponent } from '@components/literary-work-hero-header/literary-work-hero-header.component';
+import { LiteraryWorkHeroHeader } from '@components/literary-work-hero-header/literary-work-hero-header';
 import { Skeleton } from '@components/skeleton/skeleton';
 
 /**
@@ -14,7 +14,7 @@ import { Skeleton } from '@components/skeleton/skeleton';
  */
 @Component({
 	selector: 'cuentoneta-literary-work-page-skeleton',
-	imports: [Divider, LiteraryWorkHeroHeaderComponent, Skeleton],
+	imports: [Divider, LiteraryWorkHeroHeader, Skeleton],
 	host: { class: 'block w-full' },
 	template: `
 		<header class="flex flex-col gap-2">

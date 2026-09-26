@@ -5,7 +5,7 @@ import { corpusLiteraryWorkTeasers } from '@mocks/onoff-corpus.storybook';
 import type { NavigationContext } from '@app-utils/navigation-params';
 import { buttonDocs } from '@components/button/button.docs';
 import { dividerDocs } from '@components/divider/divider.docs';
-import { literaryWorkTeaserCardDocs } from '@components/literary-work-teaser-card/literary-work-teaser-card.component.docs';
+import { literaryWorkTeaserCardDocs } from '@components/literary-work-teaser-card/literary-work-teaser-card.docs';
 import { docsRef } from '@testing/storybook-docs';
 import type { AuthorReadingSuggestionsComponent } from '@components/reading-suggestions/author-reading-suggestions.component';
 import type { CollectionReadingSuggestionsComponent } from '@components/reading-suggestions/collection-reading-suggestions.component';

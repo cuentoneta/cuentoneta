@@ -14,7 +14,7 @@ import CollectionPage from './collection.page';
 import { collectionPageDocs } from './collection.page.docs';
 import { collectionInfoPanelDocs } from '@components/collection-info-panel/collection-info-panel.component.docs';
 import { drawerDocs } from '@components/drawer/drawer.docs';
-import { literaryWorkTeaserCardDocs } from '@components/literary-work-teaser-card/literary-work-teaser-card.component.docs';
+import { literaryWorkTeaserCardDocs } from '@components/literary-work-teaser-card/literary-work-teaser-card.docs';
 import { navigableCollectionTeaserDocs } from '@components/navigable-collection-teaser/navigable-collection-teaser.component.docs';
 import { docsMention, docsRef } from '@testing/storybook-docs';
 

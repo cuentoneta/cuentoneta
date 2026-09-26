@@ -5,8 +5,8 @@ import { Tag } from './tag';
 import { TagSkeleton } from './tag-skeleton';
 import { authorTeaserCardDocs } from '@components/author-teaser-card/author-teaser-card.component.docs';
 import { collectionTeaserCardDocs } from '@components/collection-teaser-card/collection-teaser-card.docs';
-import { literaryWorkTeaserCardDocs } from '@components/literary-work-teaser-card/literary-work-teaser-card.component.docs';
-import { literaryWorkTeaserHomeCardDocs } from '@components/literary-work-teaser-home-card/literary-work-teaser-home-card.component.docs';
+import { literaryWorkTeaserCardDocs } from '@components/literary-work-teaser-card/literary-work-teaser-card.docs';
+import { literaryWorkTeaserHomeCardDocs } from '@components/literary-work-teaser-home-card/literary-work-teaser-home-card.docs';
 import { docsMention, docsRef } from '@testing/storybook-docs';
 import { tagDocs } from './tag.docs';
 

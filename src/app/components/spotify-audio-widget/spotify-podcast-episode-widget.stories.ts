@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/angular-vite';
 import { SpotifyPodcastEpisodeWidget } from './spotify-podcast-episode-widget';
 import { onoffSpotifyPodcastEpisodesMock } from '@mocks/onoff-media.mock';
-import { mediaWidgetSelectorDocs } from '@components/media-widget-selector/media-widget-selector.component.docs';
+import { mediaWidgetSelectorDocs } from '@components/media-widget-selector/media-widget-selector.docs';
 import { docsRef } from '@testing/storybook-docs';
 
 export type DocsSymbols = [SpotifyPodcastEpisodeWidget];

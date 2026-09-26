@@ -1,7 +1,7 @@
 import { Component, computed, input } from '@angular/core';
 
 import { Skeleton } from '@components/skeleton/skeleton';
-import { CoverImageSkeletonComponent } from '../cover-image/cover-image-skeleton.component';
+import { CoverImageSkeleton } from '../cover-image/cover-image-skeleton';
 
 /**
  * Estado de carga (esqueleto) de CollectionInfoPanelComponent. Replica su columna —portada, título,
@@ -9,7 +9,7 @@ import { CoverImageSkeletonComponent } from '../cover-image/cover-image-skeleton
  */
 @Component({
 	selector: 'cuentoneta-collection-info-panel-skeleton',
-	imports: [Skeleton, CoverImageSkeletonComponent],
+	imports: [Skeleton, CoverImageSkeleton],
 	host: { class: 'flex w-full flex-col gap-4', 'data-testid': 'collection-info-panel-skeleton' },
 	template: `
 		<cuentoneta-cover-image-skeleton />

@@ -1,7 +1,7 @@
 import { Component, input } from '@angular/core';
 
 import type { CollectionImagery } from '@models/collection.model';
-import { CoverImageComponent } from '../cover-image/cover-image.component';
+import { CoverImage } from '../cover-image/cover-image';
 
 /**
  * Portada de una colección del Design System v3. Es a `imagery` lo que CoverImage es a la portada de
@@ -20,7 +20,7 @@ import { CoverImageComponent } from '../cover-image/cover-image.component';
  */
 @Component({
 	selector: 'cuentoneta-collection-cover',
-	imports: [CoverImageComponent],
+	imports: [CoverImage],
 	host: { class: 'block w-fit shrink-0' },
 	template: `
 		@let imagery = this.imagery();

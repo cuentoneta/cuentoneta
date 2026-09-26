@@ -535,7 +535,7 @@ El **corpus conserva** sus URLs e identificadores de plataforma: son la forma qu
 - **La referencia sale de la entrada, no del teclado.** Cada story tiene su módulo `*.docs.ts` al lado, que declara el `title` del catálogo. La prosa que nombra o enlaza otra entrada la importa y la pasa por un helper de [`@testing/storybook-docs`](../../src/testing/storybook-docs.ts), en vez de escribir el nombre y el `kind-id` a mano:
 
   ```typescript
-  import { literaryWorkTeaserCardDocs } from '@components/literary-work-teaser-card/literary-work-teaser-card.component.docs';
+  import { literaryWorkTeaserCardDocs } from '@components/literary-work-teaser-card/literary-work-teaser-card.docs';
   import { docsMention, docsRef } from '@testing/storybook-docs';
 
   // docsRef → nombre resaltado y enlazado · docsMention → solo el nombre · docsLink → texto propio

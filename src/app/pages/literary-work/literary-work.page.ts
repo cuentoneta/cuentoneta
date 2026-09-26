@@ -17,12 +17,12 @@ import { LiteraryWorkStructuredDataDirective } from './literary-work-structured-
 import { LITERARY_WORK_HOST, type LiteraryWorkHost } from './literary-work-host';
 
 // Components
-import { LiteraryWorkHeroHeaderComponent } from '@components/literary-work-hero-header/literary-work-hero-header.component';
+import { LiteraryWorkHeroHeader } from '@components/literary-work-hero-header/literary-work-hero-header';
 import { Button } from '@components/button/button';
-import { EditorialNoteComponent } from '@components/editorial-note/editorial-note.component';
-import { LiteraryWorkSectionBodyComponent } from '@components/literary-work-section-body/literary-work-section-body.component';
-import { MediaWidgetSelector } from '@components/media-widget-selector/media-widget-selector.component';
-import { MediaWidgetSelectorSkeleton } from '@components/media-widget-selector/media-widget-selector-skeleton.component';
+import { EditorialNote } from '@components/editorial-note/editorial-note';
+import { LiteraryWorkSectionBody } from '@components/literary-work-section-body/literary-work-section-body';
+import { MediaWidgetSelector } from '@components/media-widget-selector/media-widget-selector';
+import { MediaWidgetSelectorSkeleton } from '@components/media-widget-selector/media-widget-selector-skeleton';
 import { Divider } from '@components/divider/divider';
 import { ReadingSuggestionsComponent } from '@components/reading-suggestions/reading-suggestions.component';
 import { LiteraryWorkPageSkeleton } from './literary-work-page-skeleton';
@@ -35,11 +35,11 @@ import { toNavigationContext, type NavigationContext, type NavigationParams } fr
 	providers: [{ provide: LITERARY_WORK_HOST, useExisting: forwardRef(() => LiteraryWorkPage) }],
 	hostDirectives: [LiteraryWorkMetaTagsDirective, LiteraryWorkStructuredDataDirective],
 	imports: [
-		LiteraryWorkHeroHeaderComponent,
+		LiteraryWorkHeroHeader,
 		Button,
 		Divider,
-		EditorialNoteComponent,
-		LiteraryWorkSectionBodyComponent,
+		EditorialNote,
+		LiteraryWorkSectionBody,
 		MediaWidgetSelector,
 		MediaWidgetSelectorSkeleton,
 		LiteraryWorkPageSkeleton,
