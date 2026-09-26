@@ -20,7 +20,7 @@ import type { LiteraryWorkApi, LiteraryWorkTeaserFilter } from '../../providers/
 import LiteraryWorkPage from './literary-work.page';
 import { literaryWorkPageDocs } from './literary-work.page.docs';
 import { mediaWidgetSelectorDocs } from '@components/media-widget-selector/media-widget-selector.docs';
-import { readingSuggestionsListDocs } from '@components/reading-suggestions/reading-suggestions-list.component.docs';
+import { readingSuggestionsListDocs } from '@components/reading-suggestions/reading-suggestions-list.docs';
 import { docsLink, docsMention, docsRef } from '@testing/storybook-docs';
 
 // Los dos estados que no son una obra entran al control como una opción más, así que se alternan con

@@ -15,12 +15,12 @@ import { CollectionMetaTagsDirective } from './collection-meta-tags.directive';
 import { CollectionStructuredDataDirective } from './collection-structured-data.directive';
 
 // Components
-import { CollectionInfoPanelComponent } from '@components/collection-info-panel/collection-info-panel.component';
+import { CollectionInfoPanel } from '@components/collection-info-panel/collection-info-panel';
 import { Divider } from '@components/divider/divider';
 import { Drawer } from '@components/drawer/drawer';
 import { LiteraryWorkTeaserCard } from '@components/literary-work-teaser-card/literary-work-teaser-card';
-import { NavigableCollectionTeaserComponent } from '@components/navigable-collection-teaser/navigable-collection-teaser.component';
-import { NavigableCollectionTeaserSkeletonComponent } from '@components/navigable-collection-teaser/navigable-collection-teaser-skeleton.component';
+import { NavigableCollectionTeaser } from '@components/navigable-collection-teaser/navigable-collection-teaser';
+import { NavigableCollectionTeaserSkeleton } from '@components/navigable-collection-teaser/navigable-collection-teaser-skeleton';
 import { Skeleton } from '@components/skeleton/skeleton';
 
 @Component({
@@ -29,13 +29,13 @@ import { Skeleton } from '@components/skeleton/skeleton';
 	providers: [{ provide: COLLECTION_HOST, useExisting: forwardRef(() => CollectionPage) }],
 	hostDirectives: [CollectionMetaTagsDirective, CollectionStructuredDataDirective],
 	imports: [
-		CollectionInfoPanelComponent,
+		CollectionInfoPanel,
 		Drawer,
 		NgTemplateOutlet,
 		Divider,
 		LiteraryWorkTeaserCard,
-		NavigableCollectionTeaserComponent,
-		NavigableCollectionTeaserSkeletonComponent,
+		NavigableCollectionTeaser,
+		NavigableCollectionTeaserSkeleton,
 		Skeleton,
 	],
 })

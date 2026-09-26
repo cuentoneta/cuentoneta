@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/angular-vite';
 import { argsToTemplate, componentWrapperDecorator } from '@storybook/angular-vite';
-import { CollectionInfoPanelComponent } from './collection-info-panel.component';
+import { CollectionInfoPanel } from './collection-info-panel';
 import {
 	onoffCollectionsWithRepresentativeImageryMock,
 	onoffCollectionsWithSampleImageryMock,
@@ -16,13 +16,14 @@ import {
 import { createCollection } from '@models/collection.model';
 import { createMarkdown } from '@models/markdown.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
-import { collectionCoverDocs } from '@components/collection-cover/collection-cover.component.docs';
+import { collectionCoverDocs } from '@components/collection-cover/collection-cover.docs';
 import { tagDocs } from '@components/tag/tag.docs';
 import { tagsListDocs } from '@components/tags-list/tags-list.docs';
-import { docsRef } from '@testing/storybook-docs';
-import type { CollectionInfoPanelSkeletonComponent } from '@components/collection-info-panel/collection-info-panel-skeleton.component';
+import { docsMention, docsRef } from '@testing/storybook-docs';
+import type { CollectionInfoPanelSkeleton } from '@components/collection-info-panel/collection-info-panel-skeleton';
+import { collectionInfoPanelDocs } from './collection-info-panel.docs';
 
-export type DocsSymbols = [CollectionInfoPanelComponent, CollectionInfoPanelSkeletonComponent];
+export type DocsSymbols = [CollectionInfoPanelSkeleton];
 
 const [representativeCollection] = onoffCollectionsWithRepresentativeImageryMock;
 const [sampleCollection] = onoffCollectionsWithSampleImageryMock;
@@ -49,15 +50,15 @@ const collectionWithManyTags = createCollection({
 	tags: [cuentoTagMock, novelaTagMock, ensayoTagMock, teatroTagMock, metaficcionTagMock, absurdoTagMock],
 });
 
-const meta: Meta<CollectionInfoPanelComponent> = {
+const meta: Meta<CollectionInfoPanel> = {
 	title: 'Componentes V3/CollectionInfoPanel',
-	component: CollectionInfoPanelComponent,
+	component: CollectionInfoPanel,
 	parameters: {
 		layout: 'centered',
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>El <strong>CollectionInfoPanelComponent</strong> del Design System v3 muestra la información de una colección en una columna: portada, título, etiquetas y descripción.</p><p>Existe porque la página de colección monta ese mismo bloque en <strong>dos lugares</strong> —la barra lateral y el panel deslizable de la descripción—, y tenerlo escrito dos veces garantiza que diverjan. Las diferencias entre los dos montajes se expresan como inputs: el deslizable oculta el título, que su encabezado ya nombra, y no recorta la descripción.</p><p>Se compone de ${docsRef(collectionCoverDocs)} (la portada, en cualquiera de sus dos formas), ${docsRef(tagsListDocs)} y ${docsRef(tagDocs)} (etiquetas en variante <code>filled</code>).</p><p>Cuántas líneas se muestran de la descripción lo decide quien lo monta, porque depende del alto disponible en su columna; sin ese dato el panel no recorta. La descripción llega saneada desde el backend y se pinta como HTML. Sin colección, dibuja su propio esqueleto, <strong>CollectionInfoPanelSkeletonComponent</strong>.</p></div>`,
+				component: `<div><p>El ${docsMention(collectionInfoPanelDocs)} del Design System v3 muestra la información de una colección en una columna: portada, título, etiquetas y descripción.</p><p>Existe porque la página de colección monta ese mismo bloque en <strong>dos lugares</strong> —la barra lateral y el panel deslizable de la descripción—, y tenerlo escrito dos veces garantiza que diverjan. Las diferencias entre los dos montajes se expresan como inputs: el deslizable oculta el título, que su encabezado ya nombra, y no recorta la descripción.</p><p>Se compone de ${docsRef(collectionCoverDocs)} (la portada, en cualquiera de sus dos formas), ${docsRef(tagsListDocs)} y ${docsRef(tagDocs)} (etiquetas en variante <code>filled</code>).</p><p>Cuántas líneas se muestran de la descripción lo decide quien lo monta, porque depende del alto disponible en su columna; sin ese dato el panel no recorta. La descripción llega saneada desde el backend y se pinta como HTML. Sin colección, dibuja su propio esqueleto, <strong>CollectionInfoPanelSkeleton</strong>.</p></div>`,
 			},
 		},
 	},
@@ -89,7 +90,7 @@ const meta: Meta<CollectionInfoPanelComponent> = {
 };
 
 export default meta;
-type Story = StoryObj<CollectionInfoPanelComponent>;
+type Story = StoryObj<CollectionInfoPanel>;
 
 export const Sidebar: Story = {
 	render: (args) => ({
@@ -182,7 +183,7 @@ export const DescripcionDeVariosParrafos: Story = {
 	},
 };
 
-export const Estados: StoryObj<CollectionInfoPanelComponent & { loading: boolean }> = {
+export const Estados: StoryObj<CollectionInfoPanel & { loading: boolean }> = {
 	argTypes: { loading: { control: 'boolean', name: 'Cargando' } },
 	render: (args) => ({
 		props: args,

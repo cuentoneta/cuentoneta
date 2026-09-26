@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/angular-vite';
 import { argsToTemplate, componentWrapperDecorator } from '@storybook/angular-vite';
-import { AuthorInfoPanelComponent } from './author-info-panel.component';
+import { AuthorInfoPanel } from './author-info-panel';
 import { authorMock } from '@mocks/author.mock';
 import {
 	absurdoTagMock,
@@ -15,10 +15,11 @@ import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import { imageProfileDocs } from '@components/image-profile/image-profile.docs';
 import { tagDocs } from '@components/tag/tag.docs';
 import { tagsListDocs } from '@components/tags-list/tags-list.docs';
-import { docsRef } from '@testing/storybook-docs';
-import type { AuthorInfoPanelSkeletonComponent } from '@components/author-info-panel/author-info-panel-skeleton.component';
+import { docsMention, docsRef } from '@testing/storybook-docs';
+import type { AuthorInfoPanelSkeleton } from '@components/author-info-panel/author-info-panel-skeleton';
+import { authorInfoPanelDocs } from './author-info-panel.docs';
 
-export type DocsSymbols = [AuthorInfoPanelComponent, AuthorInfoPanelSkeletonComponent];
+export type DocsSymbols = [AuthorInfoPanelSkeleton];
 
 // El corpus trae una etiqueta por autor: sin varias, el recorte de TagsList no se puede mirar.
 const authorWithManyTags = {
@@ -36,15 +37,15 @@ const authorWithShortBiography = {
 	),
 };
 
-const meta: Meta<AuthorInfoPanelComponent> = {
+const meta: Meta<AuthorInfoPanel> = {
 	title: 'Componentes V3/AuthorInfoPanel',
-	component: AuthorInfoPanelComponent,
+	component: AuthorInfoPanel,
 	parameters: {
 		layout: 'centered',
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>El <strong>AuthorInfoPanelComponent</strong> del Design System v3 muestra el perfil de un autor en una columna: retrato, nombre, país, etiquetas y biografía.</p><p>Existe porque la página de autor monta ese mismo bloque en <strong>dos lugares</strong> —la barra lateral y el panel deslizable de la biografía—, y tenerlo escrito dos veces garantiza que diverjan. Las diferencias entre los dos montajes se expresan como inputs: el deslizable oculta el nombre, que su etiqueta accesible ya anuncia, y no recorta la biografía.</p><p>Se compone de ${docsRef(imageProfileDocs)} (el retrato, en tamaño <code>xl</code>), ${docsRef(tagsListDocs)} y ${docsRef(tagDocs)} (etiquetas en variante <code>filled</code>).</p><p>El nombre se emite como encabezado de primer nivel: es el <code>h1</code> de la página de autor. Cuántas líneas se muestran de la biografía lo decide quien lo monta, porque depende del alto disponible en su columna; sin ese dato el panel no recorta. La biografía llega saneada desde el backend y se pinta como HTML. Sin autor, dibuja su propio esqueleto, <strong>AuthorInfoPanelSkeletonComponent</strong>.</p></div>`,
+				component: `<div><p>El ${docsMention(authorInfoPanelDocs)} del Design System v3 muestra el perfil de un autor en una columna: retrato, nombre, país, etiquetas y biografía.</p><p>Existe porque la página de autor monta ese mismo bloque en <strong>dos lugares</strong> —la barra lateral y el panel deslizable de la biografía—, y tenerlo escrito dos veces garantiza que diverjan. Las diferencias entre los dos montajes se expresan como inputs: el deslizable oculta el nombre, que su etiqueta accesible ya anuncia, y no recorta la biografía.</p><p>Se compone de ${docsRef(imageProfileDocs)} (el retrato, en tamaño <code>xl</code>), ${docsRef(tagsListDocs)} y ${docsRef(tagDocs)} (etiquetas en variante <code>filled</code>).</p><p>El nombre se emite como encabezado de primer nivel: es el <code>h1</code> de la página de autor. Cuántas líneas se muestran de la biografía lo decide quien lo monta, porque depende del alto disponible en su columna; sin ese dato el panel no recorta. La biografía llega saneada desde el backend y se pinta como HTML. Sin autor, dibuja su propio esqueleto, <strong>AuthorInfoPanelSkeleton</strong>.</p></div>`,
 			},
 		},
 	},
@@ -76,7 +77,7 @@ const meta: Meta<AuthorInfoPanelComponent> = {
 };
 
 export default meta;
-type Story = StoryObj<AuthorInfoPanelComponent>;
+type Story = StoryObj<AuthorInfoPanel>;
 
 export const Sidebar: Story = {
 	render: (args) => ({
@@ -152,7 +153,7 @@ export const VariasEtiquetas: Story = {
 	},
 };
 
-export const Estados: StoryObj<AuthorInfoPanelComponent & { loading: boolean }> = {
+export const Estados: StoryObj<AuthorInfoPanel & { loading: boolean }> = {
 	argTypes: { loading: { control: 'boolean', name: 'Cargando' } },
 	render: (args) => ({
 		props: args,

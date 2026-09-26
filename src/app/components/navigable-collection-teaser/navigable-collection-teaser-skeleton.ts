@@ -17,4 +17,4 @@ import { Skeleton } from '@components/skeleton/skeleton';
 		</div>
 	`,
 })
-export class NavigableCollectionTeaserSkeletonComponent {}
+export class NavigableCollectionTeaserSkeleton {}

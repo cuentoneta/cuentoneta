@@ -3,7 +3,7 @@ import { provideRouter } from '@angular/router';
 import type { Observable } from 'rxjs';
 import { of, Subject, throwError } from 'rxjs';
 
-import { AuthorReadingSuggestionsComponent } from './author-reading-suggestions.component';
+import { AuthorReadingSuggestions } from './author-reading-suggestions';
 import { READING_SUGGESTIONS_COUNT } from './pick-reading-suggestions';
 import { LiteraryWorkApi, type LiteraryWorkTeaserFilter } from '../../providers/literary-work.provider';
 import type { LiteraryWorkTeaser } from '@models/literary-work.model';
@@ -17,7 +17,7 @@ const setup = async (
 	getTeasers: (filter: LiteraryWorkTeaserFilter) => Observable<LiteraryWorkTeaser[]>,
 	inputs: { authorSlug?: string; currentWorkSlug?: string } = {},
 ) => {
-	const view = await render(AuthorReadingSuggestionsComponent, {
+	const view = await render(AuthorReadingSuggestions, {
 		inputs: {
 			authorSlug: authorTeaserMock.slug,
 			authorName: authorTeaserMock.name,
@@ -29,7 +29,7 @@ const setup = async (
 	return view;
 };
 
-describe('AuthorReadingSuggestionsComponent', () => {
+describe('AuthorReadingSuggestions', () => {
 	beforeEach(() => {
 		clearAllMocks();
 		// Azar determinista: el barajado toma siempre el primer candidato disponible, así las

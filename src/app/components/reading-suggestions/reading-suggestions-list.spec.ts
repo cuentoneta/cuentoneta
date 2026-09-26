@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/angular';
 import { provideRouter } from '@angular/router';
 import { clearAllMocks } from '@test-utils';
 
-import { ReadingSuggestionsListComponent } from './reading-suggestions-list.component';
+import { ReadingSuggestionsList } from './reading-suggestions-list';
 import { READING_SUGGESTIONS_COUNT } from './pick-reading-suggestions';
 import type { LiteraryWorkTeaser } from '@models/literary-work.model';
 import { firstProseWord } from '@testing/corpus-prose';
@@ -25,7 +25,7 @@ type ReadingSuggestionsInputs = Partial<{
 }>;
 
 const setup = (inputs: ReadingSuggestionsInputs = {}) =>
-	render(ReadingSuggestionsListComponent, {
+	render(ReadingSuggestionsList, {
 		inputs: {
 			heading: 'Más obras de François Onoff',
 			teasers,
@@ -36,7 +36,7 @@ const setup = (inputs: ReadingSuggestionsInputs = {}) =>
 		providers: [provideRouter([])],
 	});
 
-describe('ReadingSuggestionsListComponent', () => {
+describe('ReadingSuggestionsList', () => {
 	beforeEach(() => {
 		clearAllMocks();
 	});

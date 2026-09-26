@@ -2,13 +2,13 @@ import type { Meta, StoryObj } from '@storybook/angular-vite';
 import { moduleMetadata } from '@storybook/angular-vite';
 
 import { CollectionTeaserCard } from './collection-teaser-card';
-import { CollectionTeaserCardSkeletonComponent } from './collection-teaser-card-skeleton';
+import { CollectionTeaserCardSkeleton } from './collection-teaser-card-skeleton';
 import {
 	onoffCollectionTeasersWithRepresentativeImageryMock,
 	onoffCollectionTeasersWithSampleImageryMock,
 } from '@mocks/onoff-collections.mock';
 import { collectionTeaserCardDocs } from './collection-teaser-card.docs';
-import { collectionCoverDocs } from '@components/collection-cover/collection-cover.component.docs';
+import { collectionCoverDocs } from '@components/collection-cover/collection-cover.docs';
 import { collectionTeasersDeckDocs } from '@components/collection-teasers-deck/collection-teasers-deck.docs';
 import { collectionsPageDocs } from '../../pages/collections/collections.page.docs';
 import { docsMention, docsRef } from '@testing/storybook-docs';
@@ -24,7 +24,7 @@ const meta: Meta<CollectionTeaserCard> = {
 	title: 'Componentes V3/CollectionTeaserCard',
 	decorators: [
 		moduleMetadata({
-			imports: [CollectionTeaserCardSkeletonComponent],
+			imports: [CollectionTeaserCardSkeleton],
 		}),
 	],
 	parameters: {

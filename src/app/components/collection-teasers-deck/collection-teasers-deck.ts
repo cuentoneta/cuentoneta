@@ -4,11 +4,11 @@ import { AppRoutes } from '../../app.routes';
 import { SectionHeader, type SectionHeaderAction } from '@components/section-header/section-header';
 import { EmptyState } from '@components/empty-state/empty-state';
 import { CollectionTeaserCard } from '@components/collection-teaser-card/collection-teaser-card';
-import { CollectionTeaserCardSkeletonComponent } from '@components/collection-teaser-card/collection-teaser-card-skeleton';
+import { CollectionTeaserCardSkeleton } from '@components/collection-teaser-card/collection-teaser-card-skeleton';
 
 @Component({
 	selector: 'cuentoneta-collection-teasers-deck',
-	imports: [SectionHeader, EmptyState, CollectionTeaserCard, CollectionTeaserCardSkeletonComponent],
+	imports: [SectionHeader, EmptyState, CollectionTeaserCard, CollectionTeaserCardSkeleton],
 	template: `
 		<cuentoneta-section-header
 			[heading]="sectionHeading"

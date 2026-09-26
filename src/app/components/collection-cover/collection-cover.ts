@@ -40,7 +40,7 @@ import { CoverImage } from '../cover-image/cover-image';
 		}
 	`,
 })
-export class CollectionCoverComponent {
+export class CollectionCover {
 	public readonly imagery = input.required<CollectionImagery>();
 
 	/** Marca la portada del frente como prioritaria; las laterales nunca compiten por ser el LCP. */

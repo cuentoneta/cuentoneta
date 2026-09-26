@@ -4,14 +4,14 @@ import { argsToTemplate } from '@storybook/angular-vite';
 import { HighlightedAuthors } from './highlighted-authors';
 import { onoffHighlightedAuthorsOfLength, onoffUntaggedHighlightedAuthor } from '@mocks/onoff-highlighted-authors.mock';
 import { highlightedAuthorsDocs } from './highlighted-authors.docs';
-import { authorTeaserCardDocs } from '@components/author-teaser-card/author-teaser-card.component.docs';
+import { authorTeaserCardDocs } from '@components/author-teaser-card/author-teaser-card.docs';
 import { emptyStateDocs } from '@components/empty-state/empty-state.docs';
 import { sectionHeaderDocs } from '@components/section-header/section-header.docs';
 import { docsMention, docsRef } from '@testing/storybook-docs';
-import type { AuthorTeaserCardSkeletonComponent } from '@components/author-teaser-card/author-teaser-card-skeleton.component';
+import type { AuthorTeaserCardSkeleton } from '@components/author-teaser-card/author-teaser-card-skeleton';
 import type { HighlightedAuthor } from '@models/landing-page-content.model';
 
-export type DocsSymbols = [AuthorTeaserCardSkeletonComponent, HighlightedAuthor];
+export type DocsSymbols = [AuthorTeaserCardSkeleton, HighlightedAuthor];
 
 // Un solo dataset compartido por todas las stories: los mismos destacados en cada estado hacen que el
 // switch del catálogo compare siempre lo mismo.
@@ -31,7 +31,7 @@ const meta: Meta<HighlightedAuthors> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>El ${docsMention(highlightedAuthorsDocs)} es la sección de autores destacados de la página de inicio en el Design System v3: un ${docsRef(sectionHeaderDocs)} con el título "Autores/as destacados/as", su bajada y el enlace al índice de autores, más una grilla responsiva de una columna en mobile, dos desde <code>sm</code> y tres desde <code>lg</code>, con una vista previa por autor resuelta por ${docsRef(authorTeaserCardDocs)}.</p><p>Está tipado contra <strong>HighlightedAuthor</strong>, la proyección de curación semanal del contenido de la página de inicio, que compone el teaser del autor con las etiquetas de la tirada y su cantidad de obras. La curaduría y el tope de seis los decide el backend: el componente presenta lo que recibe, sin recortar ni ordenar. El estado de carga entra por input, porque el dueño del recurso es la página: cargando dibuja los skeletons de <strong>AuthorTeaserCardSkeletonComponent</strong>, con destacados la grilla, y sin destacados el aviso de ${docsRef(emptyStateDocs)}.</p></div>`,
+				component: `<div><p>El ${docsMention(highlightedAuthorsDocs)} es la sección de autores destacados de la página de inicio en el Design System v3: un ${docsRef(sectionHeaderDocs)} con el título "Autores/as destacados/as", su bajada y el enlace al índice de autores, más una grilla responsiva de una columna en mobile, dos desde <code>sm</code> y tres desde <code>lg</code>, con una vista previa por autor resuelta por ${docsRef(authorTeaserCardDocs)}.</p><p>Está tipado contra <strong>HighlightedAuthor</strong>, la proyección de curación semanal del contenido de la página de inicio, que compone el teaser del autor con las etiquetas de la tirada y su cantidad de obras. La curaduría y el tope de seis los decide el backend: el componente presenta lo que recibe, sin recortar ni ordenar. El estado de carga entra por input, porque el dueño del recurso es la página: cargando dibuja los skeletons de <strong>AuthorTeaserCardSkeleton</strong>, con destacados la grilla, y sin destacados el aviso de ${docsRef(emptyStateDocs)}.</p></div>`,
 			},
 		},
 	},

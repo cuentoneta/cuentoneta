@@ -45,7 +45,7 @@ import { Tag } from '../tag/tag';
 		class: 'block',
 	},
 })
-export class NavigableCollectionTeaserComponent {
+export class NavigableCollectionTeaser {
 	protected readonly appRoutes = AppRoutes;
 
 	public readonly collection = input.required<CollectionTeaser>();

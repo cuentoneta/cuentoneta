@@ -4,7 +4,7 @@ import { map } from 'rxjs';
 import { AppRoutes } from '../../app.routes';
 import { LiteraryWorkApi } from '../../providers/literary-work.provider';
 import { progressiveRxResource } from '@app-utils/ssr-resource';
-import { ReadingSuggestionsListComponent } from './reading-suggestions-list.component';
+import { ReadingSuggestionsList } from './reading-suggestions-list';
 import { pickReadingSuggestions } from './pick-reading-suggestions';
 import type { NavigationParams } from '@app-utils/navigation-params';
 
@@ -20,7 +20,7 @@ import type { NavigationParams } from '@app-utils/navigation-params';
  */
 @Component({
 	selector: 'cuentoneta-author-reading-suggestions',
-	imports: [ReadingSuggestionsListComponent],
+	imports: [ReadingSuggestionsList],
 	host: { class: 'block' },
 	template: `
 		<cuentoneta-reading-suggestions-list
@@ -33,7 +33,7 @@ import type { NavigationParams } from '@app-utils/navigation-params';
 		/>
 	`,
 })
-export class AuthorReadingSuggestionsComponent {
+export class AuthorReadingSuggestions {
 	// Inputs
 	public readonly authorSlug = input.required<string>();
 	public readonly authorName = input.required<string>();

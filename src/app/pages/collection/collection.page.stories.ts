@@ -12,10 +12,10 @@ import { provideCollectionApiMock } from '../../providers/collection.mock';
 import type { CollectionApi } from '../../providers/collection.provider';
 import CollectionPage from './collection.page';
 import { collectionPageDocs } from './collection.page.docs';
-import { collectionInfoPanelDocs } from '@components/collection-info-panel/collection-info-panel.component.docs';
+import { collectionInfoPanelDocs } from '@components/collection-info-panel/collection-info-panel.docs';
 import { drawerDocs } from '@components/drawer/drawer.docs';
 import { literaryWorkTeaserCardDocs } from '@components/literary-work-teaser-card/literary-work-teaser-card.docs';
-import { navigableCollectionTeaserDocs } from '@components/navigable-collection-teaser/navigable-collection-teaser.component.docs';
+import { navigableCollectionTeaserDocs } from '@components/navigable-collection-teaser/navigable-collection-teaser.docs';
 import { docsMention, docsRef } from '@testing/storybook-docs';
 
 // Las descripciones del corpus entran en el recorte de ocho líneas, así que con ellas el acceso a la

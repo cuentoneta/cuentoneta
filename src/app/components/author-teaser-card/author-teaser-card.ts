@@ -68,7 +68,7 @@ import { Tag } from '../tag/tag';
 		class: 'block',
 	},
 })
-export class AuthorTeaserCardComponent {
+export class AuthorTeaserCard {
 	protected readonly appRoutes = AppRoutes;
 
 	// Inputs

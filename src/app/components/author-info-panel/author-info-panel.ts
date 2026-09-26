@@ -14,7 +14,7 @@ import { Button } from '../button/button';
 import { ImageProfile } from '../image-profile/image-profile';
 import { Tag } from '../tag/tag';
 import { TagsList } from '../tags-list/tags-list';
-import { AuthorInfoPanelSkeletonComponent } from './author-info-panel-skeleton.component';
+import { AuthorInfoPanelSkeleton } from './author-info-panel-skeleton';
 
 /**
  * Panel de perfil de un autor del Design System v3: retrato, nombre, país, etiquetas y biografía, en una
@@ -29,15 +29,7 @@ import { AuthorInfoPanelSkeletonComponent } from './author-info-panel-skeleton.c
  */
 @Component({
 	selector: 'cuentoneta-author-info-panel',
-	imports: [
-		Button,
-		ClampOverflowDirective,
-		ImageProfile,
-		NgOptimizedImage,
-		Tag,
-		TagsList,
-		AuthorInfoPanelSkeletonComponent,
-	],
+	imports: [Button, ClampOverflowDirective, ImageProfile, NgOptimizedImage, Tag, TagsList, AuthorInfoPanelSkeleton],
 	host: { class: 'flex w-full flex-col gap-4' },
 	template: `
 		@if (author(); as author) {
@@ -87,7 +79,7 @@ import { AuthorInfoPanelSkeletonComponent } from './author-info-panel-skeleton.c
 		}
 	`,
 })
-export class AuthorInfoPanelComponent {
+export class AuthorInfoPanel {
 	public readonly author = input<Author>();
 
 	/**

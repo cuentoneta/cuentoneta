@@ -1,16 +1,15 @@
 import type { Meta, StoryObj } from '@storybook/angular-vite';
 import { argsToTemplate } from '@storybook/angular-vite';
-import { CollectionCoverComponent } from './collection-cover.component';
+import { CollectionCover } from './collection-cover';
 import {
 	onoffCollectionsWithRepresentativeImageryMock,
 	onoffCollectionsWithSampleImageryMock,
 } from '@mocks/onoff-collections.mock';
-import { collectionInfoPanelDocs } from '@components/collection-info-panel/collection-info-panel.component.docs';
+import { collectionInfoPanelDocs } from '@components/collection-info-panel/collection-info-panel.docs';
 import { collectionTeaserCardDocs } from '@components/collection-teaser-card/collection-teaser-card.docs';
 import { coverImageDocs } from '@components/cover-image/cover-image.docs';
 import { docsMention, docsRef } from '@testing/storybook-docs';
-
-export type DocsSymbols = [CollectionCoverComponent];
+import { collectionCoverDocs } from './collection-cover.docs';
 
 const [representativeCollection] = onoffCollectionsWithRepresentativeImageryMock;
 const [sampleCollection] = onoffCollectionsWithSampleImageryMock;
@@ -19,15 +18,15 @@ const representativeImagery = representativeCollection.imagery;
 const sampleImagery = sampleCollection.imagery;
 const sampleImages = sampleImagery.kind === 'sample' ? sampleImagery.images : ['', '', ''];
 
-const meta: Meta<CollectionCoverComponent> = {
+const meta: Meta<CollectionCover> = {
 	title: 'Componentes V3/CollectionCover',
-	component: CollectionCoverComponent,
+	component: CollectionCover,
 	parameters: {
 		layout: 'centered',
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>El <strong>CollectionCoverComponent</strong> del Design System v3 es a la portada de una colección lo que ${docsRef(coverImageDocs)} es a la de una obra: resuelve las dos formas que declara el dominio y produce una caja de alto constante.</p><ul><li><code>representative</code>: la imagen editorial de la colección, en la caja de una portada (118×164).</li><li><code>sample</code>: el abanico de tres portadas de obras que contiene, sobre una caja de 270×164 — la del frente es la primera, elevada respecto de las laterales, que se apoyan más abajo y sangran por el borde inferior.</li></ul><p>Las dos formas <strong>miden lo mismo de alto</strong>, que es lo que permite intercambiarlas —y sustituirlas por un esqueleto— sin mover lo que sigue en la columna.</p><p>El marco es del consumidor: el componente no aporta fondo, radio exterior ni recorte. ${docsMention(collectionTeaserCardDocs)} lo monta dentro de su caja gris; ${docsMention(collectionInfoPanelDocs)}, pelado.</p></div>`,
+				component: `<div><p>El ${docsMention(collectionCoverDocs)} del Design System v3 es a la portada de una colección lo que ${docsRef(coverImageDocs)} es a la de una obra: resuelve las dos formas que declara el dominio y produce una caja de alto constante.</p><ul><li><code>representative</code>: la imagen editorial de la colección, en la caja de una portada (118×164).</li><li><code>sample</code>: el abanico de tres portadas de obras que contiene, sobre una caja de 270×164 — la del frente es la primera, elevada respecto de las laterales, que se apoyan más abajo y sangran por el borde inferior.</li></ul><p>Las dos formas <strong>miden lo mismo de alto</strong>, que es lo que permite intercambiarlas —y sustituirlas por un esqueleto— sin mover lo que sigue en la columna.</p><p>El marco es del consumidor: el componente no aporta fondo, radio exterior ni recorte. ${docsMention(collectionTeaserCardDocs)} lo monta dentro de su caja gris; ${docsMention(collectionInfoPanelDocs)}, pelado.</p></div>`,
 			},
 		},
 	},
@@ -46,7 +45,7 @@ const meta: Meta<CollectionCoverComponent> = {
 };
 
 export default meta;
-type Story = StoryObj<CollectionCoverComponent>;
+type Story = StoryObj<CollectionCover>;
 
 const render: Story['render'] = (args) => ({
 	props: args,

@@ -3,7 +3,7 @@ import { provideRouter } from '@angular/router';
 import type { Observable } from 'rxjs';
 import { of, Subject, throwError } from 'rxjs';
 
-import { CollectionReadingSuggestionsComponent } from './collection-reading-suggestions.component';
+import { CollectionReadingSuggestions } from './collection-reading-suggestions';
 import { READING_SUGGESTIONS_COUNT } from './pick-reading-suggestions';
 import { CollectionApi } from '../../providers/collection.provider';
 import type { Collection } from '@models/collection.model';
@@ -20,7 +20,7 @@ const setup = async (
 	get: (slug: string) => Observable<Collection>,
 	inputs: { collectionSlug?: string; currentWorkSlug?: string } = {},
 ) => {
-	const view = await render(CollectionReadingSuggestionsComponent, {
+	const view = await render(CollectionReadingSuggestions, {
 		inputs: {
 			collectionSlug: collectionMock.slug,
 			...inputs,
@@ -31,7 +31,7 @@ const setup = async (
 	return view;
 };
 
-describe('CollectionReadingSuggestionsComponent', () => {
+describe('CollectionReadingSuggestions', () => {
 	beforeEach(() => {
 		clearAllMocks();
 		// Azar determinista: el barajado toma siempre el primer candidato disponible, así las

@@ -71,7 +71,7 @@ import type { NavigationParams } from '@app-utils/navigation-params';
 		}
 	`,
 })
-export class ReadingSuggestionsListComponent {
+export class ReadingSuggestionsList {
 	// Inputs
 	public readonly heading = input<string>('');
 	public readonly teasers = input<readonly LiteraryWorkTeaser[]>([]);

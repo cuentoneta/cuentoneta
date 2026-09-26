@@ -4,7 +4,7 @@ import { Skeleton } from '@components/skeleton/skeleton';
 import { CoverImageSkeleton } from '../cover-image/cover-image-skeleton';
 
 /**
- * Estado de carga (esqueleto) de CollectionInfoPanelComponent. Replica su columna —portada, título,
+ * Estado de carga (esqueleto) de CollectionInfoPanel. Replica su columna —portada, título,
  * etiqueta y las líneas de la descripción— para que la sustitución por el panel real no mueva el layout.
  */
 @Component({
@@ -27,7 +27,7 @@ import { CoverImageSkeleton } from '../cover-image/cover-image-skeleton';
 		</div>
 	`,
 })
-export class CollectionInfoPanelSkeletonComponent {
+export class CollectionInfoPanelSkeleton {
 	/**
 	 * Cuántas líneas de descripción dibuja. Acotado a [1, 10] para coincidir con el recorte que admite
 	 * el panel real.

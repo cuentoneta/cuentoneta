@@ -5,8 +5,8 @@ import type { Tag } from '@models/tag.model';
 import { onoffCollectionTeasersMock, onoffCollectionTeasersWithoutTagsMock } from '@mocks/onoff-collections.mock';
 import { colaborativaTagMock, ensayoTagMock } from '@mocks/onoff-tags.mock';
 
-import { CollectionFiltersComponent } from './collection-filters.component';
-import { collectionFiltersDocs } from './collection-filters.component.docs';
+import { CollectionFilters } from './collection-filters';
+import { collectionFiltersDocs } from './collection-filters.docs';
 import { collectionsPageDocs } from '../../pages/collections/collections.page.docs';
 import { docsMention, docsRef } from '@testing/storybook-docs';
 
@@ -25,8 +25,8 @@ const carryingScarcestTag = catalogue.filter((collection) =>
 	collection.tags.some((tag) => tag.slug === scarcestTag.slug),
 );
 
-const meta: Meta<CollectionFiltersComponent> = {
-	component: CollectionFiltersComponent,
+const meta: Meta<CollectionFilters> = {
+	component: CollectionFilters,
 	title: 'Componentes V3/CollectionFilters',
 	render: (args) => ({
 		props: args,
@@ -49,7 +49,7 @@ const meta: Meta<CollectionFiltersComponent> = {
 };
 
 export default meta;
-type Story = StoryObj<CollectionFiltersComponent>;
+type Story = StoryObj<CollectionFilters>;
 
 export const Playground: Story = {
 	args: { collections: catalogue, selected: [] },

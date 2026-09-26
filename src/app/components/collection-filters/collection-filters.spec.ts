@@ -6,7 +6,7 @@ import { onoffCollectionTeasersMock } from '@mocks/onoff-collections.mock';
 import { colaborativaTagMock, teatroTagMock, tragediaTagMock } from '@mocks/onoff-tags.mock';
 import { clearAllMocks, fn } from '@test-utils';
 
-import { CollectionFiltersComponent } from './collection-filters.component';
+import { CollectionFilters } from './collection-filters';
 
 const collections = onoffCollectionTeasersMock;
 
@@ -20,7 +20,7 @@ const distinctTagCount = new Set(collections.flatMap((collection) => collection.
 const renderFilters = async (selected: readonly string[] = []) => {
 	const toggled = fn();
 	const cleared = fn();
-	const view = await render(CollectionFiltersComponent, {
+	const view = await render(CollectionFilters, {
 		inputs: { collections, selected },
 		on: { toggled, cleared },
 	});
@@ -29,7 +29,7 @@ const renderFilters = async (selected: readonly string[] = []) => {
 
 const facetFor = (tag: Tag) => screen.getByLabelText(`${tag.title} (${countFor(tag)})`);
 
-describe('CollectionFiltersComponent', () => {
+describe('CollectionFilters', () => {
 	beforeEach(() => {
 		clearAllMocks();
 	});
@@ -119,7 +119,7 @@ describe('CollectionFiltersComponent', () => {
 	});
 
 	it('should keep its heading when there are no tags to offer', async () => {
-		await render(CollectionFiltersComponent, { inputs: { collections: [], selected: [] } });
+		await render(CollectionFilters, { inputs: { collections: [], selected: [] } });
 
 		expect(screen.getByRole('heading', { name: 'Filtros' })).toBeInTheDocument();
 		expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();

@@ -109,7 +109,7 @@ interface CollectionFacet {
 		</fieldset>
 	`,
 })
-export class CollectionFiltersComponent {
+export class CollectionFilters {
 	/** Las colecciones sobre las que se cuentan las facetas: las que están a la vista, no el catálogo. */
 	public readonly collections = input.required<readonly CollectionTeaser[]>();
 	public readonly selected = input.required<readonly string[]>();

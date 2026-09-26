@@ -1,13 +1,13 @@
 import { render, screen } from '@testing-library/angular';
 import { provideRouter } from '@angular/router';
 
-import { NavigableCollectionTeaserComponent } from './navigable-collection-teaser.component';
+import { NavigableCollectionTeaser } from './navigable-collection-teaser';
 import { onoffCollectionTeasersWithTagsMock } from '@mocks/onoff-collections.mock';
 
-describe('NavigableCollectionTeaserComponent', () => {
+describe('NavigableCollectionTeaser', () => {
 	const [collection] = onoffCollectionTeasersWithTagsMock;
 	const setup = (teaser = collection) =>
-		render(NavigableCollectionTeaserComponent, { inputs: { collection: teaser }, providers: [provideRouter([])] });
+		render(NavigableCollectionTeaser, { inputs: { collection: teaser }, providers: [provideRouter([])] });
 
 	it('should render the collection title', async () => {
 		await setup();

@@ -26,4 +26,4 @@ import { CoverImageSkeleton } from '../cover-image/cover-image-skeleton';
 		</article>
 	`,
 })
-export class CollectionTeaserCardSkeletonComponent {}
+export class CollectionTeaserCardSkeleton {}

@@ -1,7 +1,7 @@
 import { Component, input } from '@angular/core';
 
-import { AuthorReadingSuggestionsComponent } from './author-reading-suggestions.component';
-import { CollectionReadingSuggestionsComponent } from './collection-reading-suggestions.component';
+import { AuthorReadingSuggestions } from './author-reading-suggestions';
+import { CollectionReadingSuggestions } from './collection-reading-suggestions';
 import type { NavigationParams } from '@app-utils/navigation-params';
 
 /**
@@ -14,7 +14,7 @@ import type { NavigationParams } from '@app-utils/navigation-params';
  */
 @Component({
 	selector: 'cuentoneta-reading-suggestions',
-	imports: [AuthorReadingSuggestionsComponent, CollectionReadingSuggestionsComponent],
+	imports: [AuthorReadingSuggestions, CollectionReadingSuggestions],
 	host: { class: 'block' },
 	template: `
 		@switch (navigationParams().navigation) {
@@ -42,7 +42,7 @@ import type { NavigationParams } from '@app-utils/navigation-params';
 		}
 	`,
 })
-export class ReadingSuggestionsComponent {
+export class ReadingSuggestions {
 	// Inputs
 	public readonly navigationParams = input.required<NavigationParams>();
 	// Requerido aunque la variante de colección no lo use: la de autor es la rama por defecto, así que

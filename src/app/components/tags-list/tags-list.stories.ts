@@ -6,7 +6,7 @@ import type { TagVariant } from '../tag/tag';
 import { Tag } from '../tag/tag';
 import type { Tag as TagModel } from '@models/tag.model';
 import { onoffTagsWithShortTitles } from '@mocks/onoff-tags.mock';
-import { authorTeaserCardDocs } from '@components/author-teaser-card/author-teaser-card.component.docs';
+import { authorTeaserCardDocs } from '@components/author-teaser-card/author-teaser-card.docs';
 import { tagDocs } from '@components/tag/tag.docs';
 import { docsMention, docsRef } from '@testing/storybook-docs';
 import type { TagsOverflowDirective } from '@components/tags-list/tags-overflow.directive';

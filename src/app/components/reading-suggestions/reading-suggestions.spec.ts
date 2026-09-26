@@ -3,7 +3,7 @@ import { provideRouter } from '@angular/router';
 import { renderDeferBlocks } from '@testing/defer-blocks';
 import { of } from 'rxjs';
 
-import { ReadingSuggestionsComponent } from './reading-suggestions.component';
+import { ReadingSuggestions } from './reading-suggestions';
 import { LiteraryWorkApi } from '../../providers/literary-work.provider';
 import { CollectionApi } from '../../providers/collection.provider';
 import type { NavigationParams } from '@app-utils/navigation-params';
@@ -15,7 +15,7 @@ import { clearAllMocks, restoreAllMocks, spyOn } from '@test-utils';
 const [collectionMock] = onoffCollectionsMock;
 
 const setup = async (navigationParams: NavigationParams) =>
-	render(ReadingSuggestionsComponent, {
+	render(ReadingSuggestions, {
 		inputs: { navigationParams, authorName: authorTeaserMock.name, currentWorkSlug: 'una-obra-cualquiera' },
 		providers: [
 			provideRouter([]),
@@ -24,7 +24,7 @@ const setup = async (navigationParams: NavigationParams) =>
 		],
 	});
 
-describe('ReadingSuggestionsComponent', () => {
+describe('ReadingSuggestions', () => {
 	beforeEach(() => {
 		clearAllMocks();
 		spyOn(Math, 'random').mockReturnValue(0);
@@ -86,7 +86,7 @@ describe('ReadingSuggestionsComponent', () => {
 
 	it('should exclude the work being read from whichever variant renders', async () => {
 		const [current] = onoffLiteraryWorkTeasersMock;
-		const { fixture } = await render(ReadingSuggestionsComponent, {
+		const { fixture } = await render(ReadingSuggestions, {
 			inputs: {
 				navigationParams: { navigation: 'author', navigationSlug: authorTeaserMock.slug },
 				authorName: authorTeaserMock.name,

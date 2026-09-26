@@ -9,9 +9,9 @@ import { emptyStateDocs } from '@components/empty-state/empty-state.docs';
 import { sectionHeaderDocs } from '@components/section-header/section-header.docs';
 import { docsMention, docsRef } from '@testing/storybook-docs';
 import type { Collection } from '@models/collection.model';
-import type { CollectionTeaserCardSkeletonComponent } from '@components/collection-teaser-card/collection-teaser-card-skeleton';
+import type { CollectionTeaserCardSkeleton } from '@components/collection-teaser-card/collection-teaser-card-skeleton';
 
-export type DocsSymbols = [Collection, CollectionTeaserCardSkeletonComponent];
+export type DocsSymbols = [Collection, CollectionTeaserCardSkeleton];
 
 // Un solo dataset compartido por todas las stories: mismas colecciones en cada estado hace que el
 // switch del catálogo compare siempre lo mismo.
@@ -30,7 +30,7 @@ const meta: Meta<CollectionTeasersDeck> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>El ${docsMention(collectionTeasersDeckDocs)} es el bloque de sección que agrupa colecciones en el Design System v3: un ${docsRef(sectionHeaderDocs)} con el título "Colecciones", su bajada y el enlace al índice de colecciones, sobre una grilla responsiva de una columna en mobile y dos desde <code>sm</code>, con una tarjeta por colección resuelta por ${docsRef(collectionTeaserCardDocs)}.</p><p>Está tipado contra el modelo de dominio <strong>Collection</strong> vía su proyección <code>CollectionTeaser</code>; el estado de carga entra por input, porque el dueño del recurso es la página: cargando dibuja los skeletons de <strong>CollectionTeaserCardSkeletonComponent</strong>, con colecciones la grilla, y sin colecciones el aviso de ${docsRef(emptyStateDocs)}.</p></div>`,
+				component: `<div><p>El ${docsMention(collectionTeasersDeckDocs)} es el bloque de sección que agrupa colecciones en el Design System v3: un ${docsRef(sectionHeaderDocs)} con el título "Colecciones", su bajada y el enlace al índice de colecciones, sobre una grilla responsiva de una columna en mobile y dos desde <code>sm</code>, con una tarjeta por colección resuelta por ${docsRef(collectionTeaserCardDocs)}.</p><p>Está tipado contra el modelo de dominio <strong>Collection</strong> vía su proyección <code>CollectionTeaser</code>; el estado de carga entra por input, porque el dueño del recurso es la página: cargando dibuja los skeletons de <strong>CollectionTeaserCardSkeleton</strong>, con colecciones la grilla, y sin colecciones el aviso de ${docsRef(emptyStateDocs)}.</p></div>`,
 			},
 		},
 	},

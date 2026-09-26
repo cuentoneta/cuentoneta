@@ -8,9 +8,9 @@ import { COLLECTIONS_HOST, type CollectionsHost } from './collections-host';
 import { CollectionsMetaTagsDirective } from './collections-meta-tags.directive';
 import { CollectionsStructuredDataDirective } from './collections-structured-data.directive';
 
-import { CollectionFiltersComponent } from '@components/collection-filters/collection-filters.component';
+import { CollectionFilters } from '@components/collection-filters/collection-filters';
 import { CollectionTeaserCard } from '@components/collection-teaser-card/collection-teaser-card';
-import { CollectionTeaserCardSkeletonComponent } from '@components/collection-teaser-card/collection-teaser-card-skeleton';
+import { CollectionTeaserCardSkeleton } from '@components/collection-teaser-card/collection-teaser-card-skeleton';
 import { Divider } from '@components/divider/divider';
 
 @Component({
@@ -59,7 +59,7 @@ import { Divider } from '@components/divider/divider';
 	`,
 	providers: [{ provide: COLLECTIONS_HOST, useExisting: forwardRef(() => CollectionsPage) }],
 	hostDirectives: [CollectionsMetaTagsDirective, CollectionsStructuredDataDirective],
-	imports: [CollectionFiltersComponent, CollectionTeaserCard, CollectionTeaserCardSkeletonComponent, Divider],
+	imports: [CollectionFilters, CollectionTeaserCard, CollectionTeaserCardSkeleton, Divider],
 })
 export default class CollectionsPage implements CollectionsHost {
 	// Providers

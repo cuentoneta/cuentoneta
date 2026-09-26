@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/angular-vite';
 import { argsToTemplate, componentWrapperDecorator, moduleMetadata } from '@storybook/angular-vite';
 
-import { NavigableCollectionTeaserComponent } from './navigable-collection-teaser.component';
-import { NavigableCollectionTeaserSkeletonComponent } from './navigable-collection-teaser-skeleton.component';
+import { NavigableCollectionTeaser } from './navigable-collection-teaser';
+import { NavigableCollectionTeaserSkeleton } from './navigable-collection-teaser-skeleton';
 import {
 	onoffCollectionTeasersWithLongTitlesMock,
 	onoffCollectionTeasersWithoutTagsMock,
@@ -10,22 +10,21 @@ import {
 } from '@mocks/onoff-collections.mock';
 import { imageProfileDocs } from '@components/image-profile/image-profile.docs';
 import { tagDocs } from '@components/tag/tag.docs';
-import { docsRef } from '@testing/storybook-docs';
-
-export type DocsSymbols = [NavigableCollectionTeaserComponent];
+import { docsMention, docsRef } from '@testing/storybook-docs';
+import { navigableCollectionTeaserDocs } from './navigable-collection-teaser.docs';
 
 const [taggedTeaser] = onoffCollectionTeasersWithTagsMock;
 const [untaggedTeaser] = onoffCollectionTeasersWithoutTagsMock;
 const [longTitledTeaser] = onoffCollectionTeasersWithLongTitlesMock;
 
-const meta: Meta<NavigableCollectionTeaserComponent> = {
-	component: NavigableCollectionTeaserComponent,
+const meta: Meta<NavigableCollectionTeaser> = {
+	component: NavigableCollectionTeaser,
 	title: 'Componentes V3/NavigableCollectionTeaser',
 	parameters: {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>El componente <strong>NavigableCollectionTeaserComponent</strong> es el item compacto y navegable de una colección (Design System v3): ícono de biblioteca, nombre, categoría y cantidad de obras. Pensado para listas como «Otras colecciones sugeridas» del sidebar de la página de una colección.</p><p>Se modela como un <code>&lt;article&gt;</code> con un único enlace real sobre el nombre, estirado con un pseudo-elemento para que toda la tarjeta sea clickeable sin inflar el nombre accesible del link.</p><p>Se compone de ${docsRef(imageProfileDocs)} (ícono de colección, variante <code>collection</code>) y ${docsRef(tagDocs)} (categoría, variante <code>soft</code>).</p></div>`,
+				component: `<div><p>El componente ${docsMention(navigableCollectionTeaserDocs)} es el item compacto y navegable de una colección (Design System v3): ícono de biblioteca, nombre, categoría y cantidad de obras. Pensado para listas como «Otras colecciones sugeridas» del sidebar de la página de una colección.</p><p>Se modela como un <code>&lt;article&gt;</code> con un único enlace real sobre el nombre, estirado con un pseudo-elemento para que toda la tarjeta sea clickeable sin inflar el nombre accesible del link.</p><p>Se compone de ${docsRef(imageProfileDocs)} (ícono de colección, variante <code>collection</code>) y ${docsRef(tagDocs)} (categoría, variante <code>soft</code>).</p></div>`,
 			},
 		},
 		layout: 'padded',
@@ -40,7 +39,7 @@ const meta: Meta<NavigableCollectionTeaserComponent> = {
 };
 
 export default meta;
-type Story = StoryObj<NavigableCollectionTeaserComponent>;
+type Story = StoryObj<NavigableCollectionTeaser>;
 
 export const Default: Story = {
 	name: 'Por defecto',
@@ -82,8 +81,8 @@ export const TituloLargo: Story = {
 	},
 };
 
-export const Estados: StoryObj<NavigableCollectionTeaserComponent & { loading: boolean }> = {
-	decorators: [moduleMetadata({ imports: [NavigableCollectionTeaserSkeletonComponent] })],
+export const Estados: StoryObj<NavigableCollectionTeaser & { loading: boolean }> = {
+	decorators: [moduleMetadata({ imports: [NavigableCollectionTeaserSkeleton] })],
 	argTypes: { loading: { control: 'boolean', name: 'Cargando' } },
 	render: (args) => ({
 		props: args,

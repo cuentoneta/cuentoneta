@@ -2,7 +2,7 @@
 import { render, screen, within } from '@testing-library/angular';
 
 // Componentes
-import { AuthorInfoPanelComponent } from './author-info-panel.component';
+import { AuthorInfoPanel } from './author-info-panel';
 
 // Mocks
 import { authorMock } from '@mocks/author.mock';
@@ -21,7 +21,7 @@ function authorWithTags(count: number): Author {
 	return { ...authorMock, tags: availableTags.slice(0, count) };
 }
 
-describe('AuthorInfoPanelComponent', () => {
+describe('AuthorInfoPanel', () => {
 	beforeEach(() => {
 		clearAllMocks();
 		installResizeObserverStub();
@@ -29,7 +29,7 @@ describe('AuthorInfoPanelComponent', () => {
 
 	describe('sin autor', () => {
 		it('should render its skeleton', async () => {
-			await render(AuthorInfoPanelComponent);
+			await render(AuthorInfoPanel);
 
 			expect(screen.getByTestId('author-info-panel-skeleton')).toBeInTheDocument();
 			expect(screen.queryByTestId('biography')).not.toBeInTheDocument();
@@ -40,20 +40,20 @@ describe('AuthorInfoPanelComponent', () => {
 		// El nombre es el encabezado de primer nivel de la página: la afirmación va por rol y nivel, no por
 		// texto, porque lo que importa es la jerarquía que leen los crawlers y los lectores de pantalla.
 		it('should render the name as the first level heading', async () => {
-			await render(AuthorInfoPanelComponent, { inputs: { author: authorMock } });
+			await render(AuthorInfoPanel, { inputs: { author: authorMock } });
 
 			expect(screen.getByRole('heading', { level: 1, name: authorMock.name })).toBeInTheDocument();
 		});
 
 		// El panel deslizable ya nombra al autor en su etiqueta accesible: repetirlo daría dos h1 iguales.
 		it('should omit the name when the consumer already shows it', async () => {
-			await render(AuthorInfoPanelComponent, { inputs: { author: authorMock, showName: false } });
+			await render(AuthorInfoPanel, { inputs: { author: authorMock, showName: false } });
 
 			expect(screen.queryByRole('heading', { level: 1 })).not.toBeInTheDocument();
 		});
 
 		it('should render the country of the author', async () => {
-			await render(AuthorInfoPanelComponent, { inputs: { author: authorMock } });
+			await render(AuthorInfoPanel, { inputs: { author: authorMock } });
 
 			expect(screen.getByText(authorMock.nationality.country)).toBeInTheDocument();
 		});
@@ -61,7 +61,7 @@ describe('AuthorInfoPanelComponent', () => {
 		// La marcación tiene que sobrevivir: sin el bypass, el sanitizer de Angular recorta un HTML que el
 		// backend ya acotó a su allow-list, y el énfasis de la prosa se pierde sin que nada falle.
 		it('should preserve the markup of the sanitized biography', async () => {
-			await render(AuthorInfoPanelComponent, { inputs: { author: authorMock } });
+			await render(AuthorInfoPanel, { inputs: { author: authorMock } });
 
 			const biography = screen.getByTestId('biography');
 			expect(biography).not.toBeEmptyDOMElement();
@@ -74,7 +74,7 @@ describe('AuthorInfoPanelComponent', () => {
 		// que pintara `tags[0]` pasaría igual y el test no probaría nada.
 		it('should render every tag of the author', async () => {
 			const author = authorWithTags(3);
-			await render(AuthorInfoPanelComponent, { inputs: { author } });
+			await render(AuthorInfoPanel, { inputs: { author } });
 
 			const tags = screen.getByTestId('tags');
 			expect(author.tags).toHaveLength(3);
@@ -82,7 +82,7 @@ describe('AuthorInfoPanelComponent', () => {
 		});
 
 		it('should omit the tag list when the author has none', async () => {
-			await render(AuthorInfoPanelComponent, { inputs: { author: authorWithTags(0) } });
+			await render(AuthorInfoPanel, { inputs: { author: authorWithTags(0) } });
 
 			expect(screen.queryByTestId('tags')).not.toBeInTheDocument();
 		});
@@ -92,20 +92,20 @@ describe('AuthorInfoPanelComponent', () => {
 		// Cuántas líneas se muestran depende del alto de la columna que lo hospeda, así que lo decide el
 		// consumidor: sin ese dato el panel no recorta.
 		it('should not clamp when the consumer does not ask for it', async () => {
-			await render(AuthorInfoPanelComponent, { inputs: { author: authorMock } });
+			await render(AuthorInfoPanel, { inputs: { author: authorMock } });
 
 			expect(screen.getByTestId('biography').className).not.toMatch(/line-clamp-/);
 		});
 
 		it('should clamp to the requested number of lines', async () => {
-			await render(AuthorInfoPanelComponent, { inputs: { author: authorMock, biographyLines: 8 } });
+			await render(AuthorInfoPanel, { inputs: { author: authorMock, biographyLines: 8 } });
 
 			expect(screen.getByTestId('biography')).toHaveClass('line-clamp-8');
 		});
 
 		// El safelist de Tailwind llega hasta 10: pedir más produciría una clase que no existe.
 		it('should cap the clamp at the highest safelisted value', async () => {
-			await render(AuthorInfoPanelComponent, { inputs: { author: authorMock, biographyLines: 40 } });
+			await render(AuthorInfoPanel, { inputs: { author: authorMock, biographyLines: 40 } });
 
 			expect(screen.getByTestId('biography')).toHaveClass('line-clamp-10');
 		});
@@ -113,13 +113,13 @@ describe('AuthorInfoPanelComponent', () => {
 		// Un decimal produciría `line-clamp-8.5`, una clase que no existe: el recorte desaparecería sin que
 		// nada falle.
 		it('should truncate a fractional number of lines', async () => {
-			await render(AuthorInfoPanelComponent, { inputs: { author: authorMock, biographyLines: 8.5 } });
+			await render(AuthorInfoPanel, { inputs: { author: authorMock, biographyLines: 8.5 } });
 
 			expect(screen.getByTestId('biography')).toHaveClass('line-clamp-8');
 		});
 
 		it('should floor the clamp at the lowest safelisted value', async () => {
-			await render(AuthorInfoPanelComponent, { inputs: { author: authorMock, biographyLines: 0 } });
+			await render(AuthorInfoPanel, { inputs: { author: authorMock, biographyLines: 0 } });
 
 			expect(screen.getByTestId('biography')).toHaveClass('line-clamp-1');
 		});
@@ -134,7 +134,7 @@ describe('AuthorInfoPanelComponent', () => {
 		const readMoreButton = () => screen.queryByRole('button', { name: 'Leer más' });
 
 		it('should offer the access when the biography overflows its clamp', async () => {
-			const { detectChanges } = await render(AuthorInfoPanelComponent, {
+			const { detectChanges } = await render(AuthorInfoPanel, {
 				inputs: { author: authorMock, biographyLines: 8, showReadMore: true },
 			});
 
@@ -146,7 +146,7 @@ describe('AuthorInfoPanelComponent', () => {
 
 		it('should report the request without applying it', async () => {
 			const readMore = fn();
-			const { detectChanges } = await render(AuthorInfoPanelComponent, {
+			const { detectChanges } = await render(AuthorInfoPanel, {
 				inputs: { author: authorMock, biographyLines: 8, showReadMore: true },
 				on: { readMore },
 			});
@@ -160,7 +160,7 @@ describe('AuthorInfoPanelComponent', () => {
 
 		// El montaje del panel deslizable muestra la biografía entera: ahí no hay nada más que leer.
 		it('should not offer the access when the consumer does not ask for it', async () => {
-			const { detectChanges } = await render(AuthorInfoPanelComponent, {
+			const { detectChanges } = await render(AuthorInfoPanel, {
 				inputs: { author: authorMock, biographyLines: 8 },
 			});
 
@@ -171,7 +171,7 @@ describe('AuthorInfoPanelComponent', () => {
 		});
 
 		it('should not offer the access when the biography fits', async () => {
-			const { detectChanges } = await render(AuthorInfoPanelComponent, {
+			const { detectChanges } = await render(AuthorInfoPanel, {
 				inputs: { author: authorMock, biographyLines: 8, showReadMore: true },
 			});
 
@@ -185,7 +185,7 @@ describe('AuthorInfoPanelComponent', () => {
 		// Precondición de la directiva de medición: el control dentro del elemento observado cambiaría
 		// justamente lo que se mide.
 		it('should keep the access outside the measured element', async () => {
-			const { detectChanges } = await render(AuthorInfoPanelComponent, {
+			const { detectChanges } = await render(AuthorInfoPanel, {
 				inputs: { author: authorMock, biographyLines: 8, showReadMore: true },
 			});
 			overflowing();

@@ -3,7 +3,7 @@ import { argsToTemplate, moduleMetadata } from '@storybook/angular-vite';
 
 import { Tag } from './tag';
 import { TagSkeleton } from './tag-skeleton';
-import { authorTeaserCardDocs } from '@components/author-teaser-card/author-teaser-card.component.docs';
+import { authorTeaserCardDocs } from '@components/author-teaser-card/author-teaser-card.docs';
 import { collectionTeaserCardDocs } from '@components/collection-teaser-card/collection-teaser-card.docs';
 import { literaryWorkTeaserCardDocs } from '@components/literary-work-teaser-card/literary-work-teaser-card.docs';
 import { literaryWorkTeaserHomeCardDocs } from '@components/literary-work-teaser-home-card/literary-work-teaser-home-card.docs';

@@ -16,7 +16,7 @@ import { AuthorMetaTagsDirective } from './author-meta-tags.directive';
 import { AuthorStructuredDataDirective } from './author-structured-data.directive';
 
 // Components
-import { AuthorInfoPanelComponent } from '@components/author-info-panel/author-info-panel.component';
+import { AuthorInfoPanel } from '@components/author-info-panel/author-info-panel';
 import { Divider } from '@components/divider/divider';
 import { Drawer } from '@components/drawer/drawer';
 import { LiteraryWorkTeaserCard } from '@components/literary-work-teaser-card/literary-work-teaser-card';
@@ -28,7 +28,7 @@ import { Skeleton } from '@components/skeleton/skeleton';
 	templateUrl: './author.page.html',
 	providers: [{ provide: AUTHOR_HOST, useExisting: forwardRef(() => AuthorPage) }],
 	hostDirectives: [AuthorMetaTagsDirective, AuthorStructuredDataDirective],
-	imports: [AuthorInfoPanelComponent, Divider, Drawer, LiteraryWorkTeaserCard, NgTemplateOutlet, Resource, Skeleton],
+	imports: [AuthorInfoPanel, Divider, Drawer, LiteraryWorkTeaserCard, NgTemplateOutlet, Resource, Skeleton],
 })
 export default class AuthorPage implements AuthorHost {
 	public readonly slug = input.required<string>();

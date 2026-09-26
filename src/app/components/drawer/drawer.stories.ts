@@ -5,16 +5,16 @@ import type { DrawerDirection } from './drawer';
 import { Drawer } from './drawer';
 import { DrawerHeaderDirective } from './drawer-header.directive';
 import { DrawerFooterDirective } from './drawer-footer.directive';
-import { CollectionInfoPanelComponent } from '@components/collection-info-panel/collection-info-panel.component';
-import { NavigableCollectionTeaserComponent } from '@components/navigable-collection-teaser/navigable-collection-teaser.component';
+import { CollectionInfoPanel } from '@components/collection-info-panel/collection-info-panel';
+import { NavigableCollectionTeaser } from '@components/navigable-collection-teaser/navigable-collection-teaser';
 import { Divider } from '@components/divider/divider';
 import {
 	onoffCollectionsWithRepresentativeImageryMock,
 	onoffCollectionTeasersMock,
 } from '@mocks/onoff-collections.mock';
-import { collectionInfoPanelDocs } from '@components/collection-info-panel/collection-info-panel.component.docs';
+import { collectionInfoPanelDocs } from '@components/collection-info-panel/collection-info-panel.docs';
 import { dividerDocs } from '@components/divider/divider.docs';
-import { navigableCollectionTeaserDocs } from '@components/navigable-collection-teaser/navigable-collection-teaser.component.docs';
+import { navigableCollectionTeaserDocs } from '@components/navigable-collection-teaser/navigable-collection-teaser.docs';
 import { collectionPageDocs } from '../../pages/collection/collection.page.docs';
 import { docsMention, docsRef } from '@testing/storybook-docs';
 import { drawerDocs } from './drawer.docs';
@@ -130,7 +130,7 @@ export const ComposicionCollectionPage: Story = {
 	name: 'Composición CollectionPage',
 	decorators: [
 		moduleMetadata({
-			imports: [CollectionInfoPanelComponent, NavigableCollectionTeaserComponent, Divider],
+			imports: [CollectionInfoPanel, NavigableCollectionTeaser, Divider],
 		}),
 	],
 	render: (args) => ({

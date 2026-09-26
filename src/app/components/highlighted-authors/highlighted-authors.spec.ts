@@ -4,8 +4,8 @@ import { provideRouter } from '@angular/router';
 import { HighlightedAuthors } from './highlighted-authors';
 import { SectionHeader } from '@components/section-header/section-header';
 import { EmptyState } from '@components/empty-state/empty-state';
-import { AuthorTeaserCardComponent } from '@components/author-teaser-card/author-teaser-card.component';
-import { AuthorTeaserCardSkeletonComponent } from '@components/author-teaser-card/author-teaser-card-skeleton.component';
+import { AuthorTeaserCard } from '@components/author-teaser-card/author-teaser-card';
+import { AuthorTeaserCardSkeleton } from '@components/author-teaser-card/author-teaser-card-skeleton';
 
 import { onoffHighlightedAuthorsOfLength, onoffUntaggedHighlightedAuthor } from '@mocks/onoff-highlighted-authors.mock';
 
@@ -14,13 +14,7 @@ describe('HighlightedAuthors', () => {
 	// `componentImports` reemplaza los imports del componente bajo prueba, no los suma. Sin
 	// `SectionHeader` el encabezado se renderiza como un elemento desconocido y la sección
 	// pierde título, bajada y enlace.
-	const defaultImports = [
-		HighlightedAuthors,
-		SectionHeader,
-		EmptyState,
-		AuthorTeaserCardComponent,
-		AuthorTeaserCardSkeletonComponent,
-	];
+	const defaultImports = [HighlightedAuthors, SectionHeader, EmptyState, AuthorTeaserCard, AuthorTeaserCardSkeleton];
 
 	describe('Renderizado del componente', () => {
 		it('should display the section title', async () => {

@@ -3,7 +3,7 @@ import { Component, computed, input } from '@angular/core';
 import { Skeleton } from '@components/skeleton/skeleton';
 
 /**
- * Estado de carga (esqueleto) de AuthorInfoPanelComponent. Replica su columna —retrato, nombre, país,
+ * Estado de carga (esqueleto) de AuthorInfoPanel. Replica su columna —retrato, nombre, país,
  * etiquetas y las líneas de la biografía— para que la sustitución por el panel real no mueva el layout.
  */
 @Component({
@@ -27,7 +27,7 @@ import { Skeleton } from '@components/skeleton/skeleton';
 		</div>
 	`,
 })
-export class AuthorInfoPanelSkeletonComponent {
+export class AuthorInfoPanelSkeleton {
 	/**
 	 * Cuántas líneas de biografía dibuja. Acotado a [1, 10] para coincidir con el recorte que admite el
 	 * panel real.

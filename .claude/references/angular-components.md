@@ -39,7 +39,7 @@ import { TagsList } from '../tags-list/tags-list';
 		class: 'block',
 	},
 })
-export class AuthorTeaserCardComponent {
+export class AuthorTeaserCard {
 	// Inputs
 	public readonly author = input.required<AuthorTeaser>();
 	public readonly tags = input<Tag[]>([]);

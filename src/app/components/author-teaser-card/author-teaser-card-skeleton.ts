@@ -23,4 +23,4 @@ import { Skeleton } from '@components/skeleton/skeleton';
 		</article>
 	`,
 })
-export class AuthorTeaserCardSkeletonComponent {}
+export class AuthorTeaserCardSkeleton {}

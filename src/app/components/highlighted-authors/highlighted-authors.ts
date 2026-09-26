@@ -4,8 +4,8 @@ import type { HighlightedAuthor } from '@models/landing-page-content.model';
 import { AppRoutes } from '../../app.routes';
 import { SectionHeader, type SectionHeaderAction } from '@components/section-header/section-header';
 import { EmptyState } from '@components/empty-state/empty-state';
-import { AuthorTeaserCardComponent } from '@components/author-teaser-card/author-teaser-card.component';
-import { AuthorTeaserCardSkeletonComponent } from '@components/author-teaser-card/author-teaser-card-skeleton.component';
+import { AuthorTeaserCard } from '@components/author-teaser-card/author-teaser-card';
+import { AuthorTeaserCardSkeleton } from '@components/author-teaser-card/author-teaser-card-skeleton';
 
 /**
  * Sección de autores destacados de la página de inicio, según el Design System v3: cabecera con enlace al
@@ -16,7 +16,7 @@ import { AuthorTeaserCardSkeletonComponent } from '@components/author-teaser-car
  */
 @Component({
 	selector: 'cuentoneta-highlighted-authors',
-	imports: [SectionHeader, EmptyState, AuthorTeaserCardComponent, AuthorTeaserCardSkeletonComponent],
+	imports: [SectionHeader, EmptyState, AuthorTeaserCard, AuthorTeaserCardSkeleton],
 	template: `
 		<cuentoneta-section-header
 			[heading]="sectionHeading"

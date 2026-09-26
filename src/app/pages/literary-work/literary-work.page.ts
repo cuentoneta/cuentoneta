@@ -24,7 +24,7 @@ import { LiteraryWorkSectionBody } from '@components/literary-work-section-body/
 import { MediaWidgetSelector } from '@components/media-widget-selector/media-widget-selector';
 import { MediaWidgetSelectorSkeleton } from '@components/media-widget-selector/media-widget-selector-skeleton';
 import { Divider } from '@components/divider/divider';
-import { ReadingSuggestionsComponent } from '@components/reading-suggestions/reading-suggestions.component';
+import { ReadingSuggestions } from '@components/reading-suggestions/reading-suggestions';
 import { LiteraryWorkPageSkeleton } from './literary-work-page-skeleton';
 import { RouterLink } from '@angular/router';
 import { toNavigationContext, type NavigationContext, type NavigationParams } from '@app-utils/navigation-params';
@@ -43,7 +43,7 @@ import { toNavigationContext, type NavigationContext, type NavigationParams } fr
 		MediaWidgetSelector,
 		MediaWidgetSelectorSkeleton,
 		LiteraryWorkPageSkeleton,
-		ReadingSuggestionsComponent,
+		ReadingSuggestions,
 		RouterLink,
 	],
 })

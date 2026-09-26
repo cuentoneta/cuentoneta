@@ -2,7 +2,7 @@
 import { render, screen, within } from '@testing-library/angular';
 
 // Componentes
-import { CollectionCoverComponent } from './collection-cover.component';
+import { CollectionCover } from './collection-cover';
 
 // Mocks
 import {
@@ -19,20 +19,20 @@ const [sampleMock] = onoffCollectionsWithSampleImageryMock;
 const representativeImagery = representativeMock.imagery;
 const sampleImagery = sampleMock.imagery;
 
-describe('CollectionCoverComponent', () => {
+describe('CollectionCover', () => {
 	beforeEach(() => {
 		clearAllMocks();
 	});
 
 	it('should render a single cover for representative imagery', async () => {
-		await render(CollectionCoverComponent, { inputs: { imagery: representativeImagery } });
+		await render(CollectionCover, { inputs: { imagery: representativeImagery } });
 
 		expect(screen.getAllByTestId('cover-image')).toHaveLength(1);
 		expect(screen.queryByTestId('cover-fan')).not.toBeInTheDocument();
 	});
 
 	it('should render the three-cover fan for sample imagery', async () => {
-		await render(CollectionCoverComponent, { inputs: { imagery: sampleImagery } });
+		await render(CollectionCover, { inputs: { imagery: sampleImagery } });
 
 		expect(within(screen.getByTestId('cover-fan')).getAllByTestId('cover-image')).toHaveLength(3);
 	});
@@ -43,7 +43,7 @@ describe('CollectionCoverComponent', () => {
 			kind: 'sample',
 			images: [sampleImagery.kind === 'sample' ? sampleImagery.images[0] : '', '', ''],
 		} as const;
-		await render(CollectionCoverComponent, { inputs: { imagery } });
+		await render(CollectionCover, { inputs: { imagery } });
 
 		expect(screen.getAllByTestId('cover-image')).toHaveLength(1);
 		expect(screen.getAllByTestId('cover-placeholder')).toHaveLength(2);
@@ -53,7 +53,7 @@ describe('CollectionCoverComponent', () => {
 		// Tres candidatas a ser la imagen más grande de la pantalla son ninguna: solo la del frente
 		// se marca, que es la que se ve entera.
 		it('should mark only the front cover of the fan as priority', async () => {
-			await render(CollectionCoverComponent, { inputs: { imagery: sampleImagery, priority: true } });
+			await render(CollectionCover, { inputs: { imagery: sampleImagery, priority: true } });
 
 			// La del frente es la primera, y afirmar cuál —y no cuántas— es lo que distingue este
 			// contrato de marcar cualquiera de las tres.
@@ -63,7 +63,7 @@ describe('CollectionCoverComponent', () => {
 		});
 
 		it('should mark the representative cover as priority', async () => {
-			await render(CollectionCoverComponent, { inputs: { imagery: representativeImagery, priority: true } });
+			await render(CollectionCover, { inputs: { imagery: representativeImagery, priority: true } });
 
 			expect(screen.getByTestId('cover-image')).toHaveAttribute('fetchpriority', 'high');
 		});
@@ -72,7 +72,7 @@ describe('CollectionCoverComponent', () => {
 	// El orden de apilamiento dentro del componente no lo cubre ningún otro gate, y es lo que hace que
 	// la portada del frente se vea al frente.
 	it('should confine its stacking order, with the front cover above the sides', async () => {
-		await render(CollectionCoverComponent, { inputs: { imagery: sampleImagery } });
+		await render(CollectionCover, { inputs: { imagery: sampleImagery } });
 
 		const [front, ...sides] = screen.getAllByTestId('fan-slot');
 

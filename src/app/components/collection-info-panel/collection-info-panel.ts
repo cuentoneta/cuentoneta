@@ -10,10 +10,10 @@ import { ClampOverflowDirective } from '../../directives/clamp-overflow.directiv
 
 // Components
 import { Button } from '../button/button';
-import { CollectionCoverComponent } from '../collection-cover/collection-cover.component';
+import { CollectionCover } from '../collection-cover/collection-cover';
 import { Tag } from '../tag/tag';
 import { TagsList } from '../tags-list/tags-list';
-import { CollectionInfoPanelSkeletonComponent } from './collection-info-panel-skeleton.component';
+import { CollectionInfoPanelSkeleton } from './collection-info-panel-skeleton';
 
 /**
  * Panel de información de una colección del Design System v3: portada, título, etiquetas y descripción,
@@ -31,14 +31,7 @@ import { CollectionInfoPanelSkeletonComponent } from './collection-info-panel-sk
  */
 @Component({
 	selector: 'cuentoneta-collection-info-panel',
-	imports: [
-		Button,
-		ClampOverflowDirective,
-		CollectionCoverComponent,
-		Tag,
-		TagsList,
-		CollectionInfoPanelSkeletonComponent,
-	],
+	imports: [Button, ClampOverflowDirective, CollectionCover, Tag, TagsList, CollectionInfoPanelSkeleton],
 	host: { class: 'flex w-full flex-col gap-4' },
 	template: `
 		@if (collection(); as collection) {
@@ -76,7 +69,7 @@ import { CollectionInfoPanelSkeletonComponent } from './collection-info-panel-sk
 		}
 	`,
 })
-export class CollectionInfoPanelComponent {
+export class CollectionInfoPanel {
 	public readonly collection = input<Collection>();
 
 	/** El panel deslizable ya nombra la colección en su encabezado, y repetirlo sería anunciarlo dos veces. */

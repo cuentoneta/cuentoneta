@@ -1,25 +1,24 @@
 import type { Meta, StoryObj } from '@storybook/angular-vite';
 import { argsToTemplate, componentWrapperDecorator, moduleMetadata } from '@storybook/angular-vite';
 
-import { AuthorTeaserCardComponent } from './author-teaser-card.component';
-import { AuthorTeaserCardSkeletonComponent } from './author-teaser-card-skeleton.component';
+import { AuthorTeaserCard } from './author-teaser-card';
+import { AuthorTeaserCardSkeleton } from './author-teaser-card-skeleton';
 import { authorTeaserMock } from '@mocks/author.mock';
 import { onoffTagsMock } from '@mocks/onoff-tags.mock';
 import { highlightedAuthorsDocs } from '@components/highlighted-authors/highlighted-authors.docs';
 import { imageProfileDocs } from '@components/image-profile/image-profile.docs';
 import { tagDocs } from '@components/tag/tag.docs';
 import { tagsListDocs } from '@components/tags-list/tags-list.docs';
-import { docsRef } from '@testing/storybook-docs';
-
-export type DocsSymbols = [AuthorTeaserCardComponent];
+import { docsMention, docsRef } from '@testing/storybook-docs';
+import { authorTeaserCardDocs } from './author-teaser-card.docs';
 
 const tags = onoffTagsMock.slice(0, 2);
 
 // Autor con más de 2 tags para ejercitar el recorte por ancho de la fila de tags.
 const manyTags = onoffTagsMock.slice(0, 4);
 
-const meta: Meta<AuthorTeaserCardComponent> = {
-	component: AuthorTeaserCardComponent,
+const meta: Meta<AuthorTeaserCard> = {
+	component: AuthorTeaserCard,
 	title: 'Componentes V3/AuthorTeaserCard',
 	parameters: {
 		docs: {
@@ -27,7 +26,7 @@ const meta: Meta<AuthorTeaserCardComponent> = {
 				sourceState: 'shown',
 			},
 			description: {
-				component: `<div><p>El componente <strong>AuthorTeaserCardComponent</strong> muestra una vista previa de un autor enlazada a su perfil, según el Design System v3. Está pensado para listar y visualizar perfiles de autores, mostrando el avatar, los tags, el nombre con la bandera de nacionalidad y la cantidad de obras.</p><p>Se modela como un <code>&lt;article&gt;</code> con un único enlace real sobre el nombre del autor, estirado con un pseudo-elemento para que toda la tarjeta sea clickeable sin inflar el nombre accesible del link.</p><p>Se compone de ${docsRef(imageProfileDocs)} (avatar) y ${docsRef(tagsListDocs)} con instancias de ${docsRef(tagDocs)} (etiquetas del autor).</p></div>`,
+				component: `<div><p>El componente ${docsMention(authorTeaserCardDocs)} muestra una vista previa de un autor enlazada a su perfil, según el Design System v3. Está pensado para listar y visualizar perfiles de autores, mostrando el avatar, los tags, el nombre con la bandera de nacionalidad y la cantidad de obras.</p><p>Se modela como un <code>&lt;article&gt;</code> con un único enlace real sobre el nombre del autor, estirado con un pseudo-elemento para que toda la tarjeta sea clickeable sin inflar el nombre accesible del link.</p><p>Se compone de ${docsRef(imageProfileDocs)} (avatar) y ${docsRef(tagsListDocs)} con instancias de ${docsRef(tagDocs)} (etiquetas del autor).</p></div>`,
 			},
 		},
 		layout: 'padded',
@@ -52,7 +51,7 @@ const meta: Meta<AuthorTeaserCardComponent> = {
 };
 
 export default meta;
-type Story = StoryObj<AuthorTeaserCardComponent>;
+type Story = StoryObj<AuthorTeaserCard>;
 
 export const Default: Story = {
 	name: 'Por defecto',
@@ -96,15 +95,15 @@ export const WithoutImage: Story = {
 
 export const Skeleton: StoryObj = {
 	name: 'Esqueleto',
-	decorators: [moduleMetadata({ imports: [AuthorTeaserCardSkeletonComponent] })],
+	decorators: [moduleMetadata({ imports: [AuthorTeaserCardSkeleton] })],
 	render: () => ({ template: `<cuentoneta-author-teaser-card-skeleton />` }),
 	parameters: {
 		docs: { description: { story: 'Skeleton de carga del teaser.' } },
 	},
 };
 
-export const Estados: StoryObj<AuthorTeaserCardComponent & { loading: boolean }> = {
-	decorators: [moduleMetadata({ imports: [AuthorTeaserCardSkeletonComponent] })],
+export const Estados: StoryObj<AuthorTeaserCard & { loading: boolean }> = {
+	decorators: [moduleMetadata({ imports: [AuthorTeaserCardSkeleton] })],
 	argTypes: { loading: { control: 'boolean', name: 'Cargando' } },
 	render: (args) => ({
 		props: args,

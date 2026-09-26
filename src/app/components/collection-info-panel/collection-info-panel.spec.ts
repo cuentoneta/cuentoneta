@@ -2,7 +2,7 @@
 import { render, screen, within } from '@testing-library/angular';
 
 // Componentes
-import { CollectionInfoPanelComponent } from './collection-info-panel.component';
+import { CollectionInfoPanel } from './collection-info-panel';
 
 // Mocks
 import {
@@ -29,7 +29,7 @@ function collectionWithTags(base: Collection, count: number): Collection {
 	return createCollection({ ...base, tags: availableTags.slice(0, count) });
 }
 
-describe('CollectionInfoPanelComponent', () => {
+describe('CollectionInfoPanel', () => {
 	beforeEach(() => {
 		clearAllMocks();
 		installResizeObserverStub();
@@ -37,7 +37,7 @@ describe('CollectionInfoPanelComponent', () => {
 
 	describe('sin colección', () => {
 		it('should render its skeleton', async () => {
-			await render(CollectionInfoPanelComponent);
+			await render(CollectionInfoPanel);
 
 			expect(screen.getByTestId('collection-info-panel-skeleton')).toBeInTheDocument();
 			expect(screen.queryByTestId('description')).not.toBeInTheDocument();
@@ -46,14 +46,14 @@ describe('CollectionInfoPanelComponent', () => {
 
 	describe('con colección', () => {
 		it('should render the title', async () => {
-			await render(CollectionInfoPanelComponent, { inputs: { collection: representativeMock } });
+			await render(CollectionInfoPanel, { inputs: { collection: representativeMock } });
 
 			expect(screen.getByText(representativeMock.title)).toBeInTheDocument();
 		});
 
 		// El panel deslizable ya nombra la colección en su encabezado: repetirlo la anunciaría dos veces.
 		it('should omit the title when the consumer already shows it', async () => {
-			await render(CollectionInfoPanelComponent, {
+			await render(CollectionInfoPanel, {
 				inputs: { collection: representativeMock, showTitle: false },
 			});
 
@@ -63,7 +63,7 @@ describe('CollectionInfoPanelComponent', () => {
 		// La marcación tiene que sobrevivir: sin el bypass, el sanitizer de Angular recorta un HTML que el
 		// backend ya acotó a su allow-list, y el énfasis de la prosa se pierde sin que nada falle.
 		it('should preserve the markup of the sanitized description', async () => {
-			await render(CollectionInfoPanelComponent, { inputs: { collection: representativeMock } });
+			await render(CollectionInfoPanel, { inputs: { collection: representativeMock } });
 
 			const description = screen.getByTestId('description');
 			expect(description).not.toBeEmptyDOMElement();
@@ -75,7 +75,7 @@ describe('CollectionInfoPanelComponent', () => {
 		// una, una plantilla que pintara `tags[0]` pasaría igual y el test no probaría nada.
 		it('should render every tag of the collection', async () => {
 			const collection = collectionWithTags(representativeMock, 3);
-			await render(CollectionInfoPanelComponent, { inputs: { collection } });
+			await render(CollectionInfoPanel, { inputs: { collection } });
 
 			const tags = screen.getByTestId('tags');
 			expect(collection.tags).toHaveLength(3);
@@ -83,7 +83,7 @@ describe('CollectionInfoPanelComponent', () => {
 		});
 
 		it('should omit the tag list when the collection has none', async () => {
-			await render(CollectionInfoPanelComponent, {
+			await render(CollectionInfoPanel, {
 				inputs: { collection: { ...representativeMock, tags: [] } },
 			});
 
@@ -95,7 +95,7 @@ describe('CollectionInfoPanelComponent', () => {
 	// panel le entrega el dato de dominio.
 	describe('portada', () => {
 		it('should hand the imagery of the collection to the cover', async () => {
-			await render(CollectionInfoPanelComponent, { inputs: { collection: sampleMock } });
+			await render(CollectionInfoPanel, { inputs: { collection: sampleMock } });
 
 			expect(screen.getByTestId('cover-fan')).toBeInTheDocument();
 		});
@@ -105,13 +105,13 @@ describe('CollectionInfoPanelComponent', () => {
 		// Cuántas líneas se muestran depende del alto de la columna que lo hospeda, así que lo decide el
 		// consumidor: sin ese dato el panel no recorta.
 		it('should not clamp when the consumer does not ask for it', async () => {
-			await render(CollectionInfoPanelComponent, { inputs: { collection: representativeMock } });
+			await render(CollectionInfoPanel, { inputs: { collection: representativeMock } });
 
 			expect(screen.getByTestId('description').className).not.toMatch(/line-clamp-/);
 		});
 
 		it('should clamp to the requested number of lines', async () => {
-			await render(CollectionInfoPanelComponent, {
+			await render(CollectionInfoPanel, {
 				inputs: { collection: representativeMock, descriptionLines: 8 },
 			});
 
@@ -120,7 +120,7 @@ describe('CollectionInfoPanelComponent', () => {
 
 		// El safelist de Tailwind llega hasta 10: pedir más produciría una clase que no existe.
 		it('should cap the clamp at the highest safelisted value', async () => {
-			await render(CollectionInfoPanelComponent, {
+			await render(CollectionInfoPanel, {
 				inputs: { collection: representativeMock, descriptionLines: 40 },
 			});
 
@@ -137,7 +137,7 @@ describe('CollectionInfoPanelComponent', () => {
 		const readMoreButton = () => screen.queryByRole('button', { name: 'Leer más' });
 
 		it('should offer the access when the description overflows its clamp', async () => {
-			const { detectChanges } = await render(CollectionInfoPanelComponent, {
+			const { detectChanges } = await render(CollectionInfoPanel, {
 				inputs: { collection: representativeMock, descriptionLines: 8, showReadMore: true },
 			});
 
@@ -149,7 +149,7 @@ describe('CollectionInfoPanelComponent', () => {
 
 		it('should report the request without applying it', async () => {
 			const readMore = fn();
-			const { detectChanges } = await render(CollectionInfoPanelComponent, {
+			const { detectChanges } = await render(CollectionInfoPanel, {
 				inputs: { collection: representativeMock, descriptionLines: 8, showReadMore: true },
 				on: { readMore },
 			});
@@ -163,7 +163,7 @@ describe('CollectionInfoPanelComponent', () => {
 
 		// El montaje del panel deslizable muestra la descripción entera: ahí no hay nada más que leer.
 		it('should not offer the access when the consumer does not ask for it', async () => {
-			const { detectChanges } = await render(CollectionInfoPanelComponent, {
+			const { detectChanges } = await render(CollectionInfoPanel, {
 				inputs: { collection: representativeMock, descriptionLines: 8 },
 			});
 
@@ -174,7 +174,7 @@ describe('CollectionInfoPanelComponent', () => {
 		});
 
 		it('should not offer the access when the description fits', async () => {
-			const { detectChanges } = await render(CollectionInfoPanelComponent, {
+			const { detectChanges } = await render(CollectionInfoPanel, {
 				inputs: { collection: representativeMock, descriptionLines: 8, showReadMore: true },
 			});
 
@@ -188,7 +188,7 @@ describe('CollectionInfoPanelComponent', () => {
 		// Precondición de la directiva de medición: el control dentro del elemento observado cambiaría
 		// justamente lo que se mide.
 		it('should keep the access outside the measured element', async () => {
-			const { detectChanges } = await render(CollectionInfoPanelComponent, {
+			const { detectChanges } = await render(CollectionInfoPanel, {
 				inputs: { collection: representativeMock, descriptionLines: 8, showReadMore: true },
 			});
 			overflowing();
