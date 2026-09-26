@@ -9,7 +9,7 @@ import { onoffTagsWithShortTitles } from '@mocks/onoff-tags.mock';
 import { authorTeaserCardDocs } from '@components/author-teaser-card/author-teaser-card.component.docs';
 import { tagDocs } from '@components/tag/tag.component.docs';
 import { docsRef } from '@testing/storybook-docs';
-import type { TagsOverflowDirective } from './tags-overflow.directive';
+import type { TagsOverflowDirective } from '@components/tags-list/tags-overflow.directive';
 
 export type DocsSymbols = [TagsListComponent, TagsOverflowDirective];
 

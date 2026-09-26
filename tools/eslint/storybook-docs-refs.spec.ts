@@ -71,6 +71,12 @@ ruleTester.run('storybook-docs-refs', rule, {
 			code: "const prose = '<p>Recorta <code>TagsOverflowDirective</code>.</p>';",
 			errors: [{ messageId: 'undeclaredSymbol', data: { name: 'TagsOverflowDirective' } }],
 		},
+		// Los servicios del repo se decoran con `@Service()`, no con `@Injectable()`.
+		{
+			filename: DIVIDER_STORY,
+			code: "const prose = '<p>El estado vive en <code>CarouselStateService</code>.</p>';",
+			errors: [{ messageId: 'undeclaredSymbol', data: { name: 'CarouselStateService' } }],
+		},
 		// Declarar otro símbolo no alcanza: la tupla tiene que nombrar el que la prosa usa.
 		{
 			filename: DIVIDER_STORY,

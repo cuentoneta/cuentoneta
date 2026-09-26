@@ -38,8 +38,8 @@ import { resolve } from 'node:path';
 const DOCS_ENTRY_GLOB = 'src/app/**/*.docs.ts';
 const APP_SOURCE_GLOB = 'src/app/**/*.ts';
 const NON_SOURCE_SUFFIXES = ['.spec.ts', '.stories.ts', '.docs.ts'];
-const ENTRY_DECLARATION = /title:\s*(['"])(.+?)\1/;
-const ANGULAR_DECORATOR = /@(?:Component|Directive|Pipe|Injectable)\(/;
+const ENTRY_DECLARATION = /title:\s*(['"`])(.+?)\1/;
+const ANGULAR_DECORATOR = /@(?:Component|Directive|Pipe|Injectable|Service)\(/;
 const EXPORTED_CLASS = /export\s+(?:default\s+)?(?:abstract\s+)?class\s+(\w+)/g;
 const KIND_ID_LITERAL = /path=\/docs\//;
 const NAMED_TAG = /<(strong|code)>([^<]+)<\/\1>/g;
@@ -99,7 +99,11 @@ function readTree(cwd) {
 	const sourcePaths = globSync(APP_SOURCE_GLOB, { cwd })
 		.filter((file) => !NON_SOURCE_SUFFIXES.some((suffix) => file.endsWith(suffix)))
 		.map(toAbsolute);
-	const signature = [...entryPaths, ...sourcePaths].map((path) => `${path}@${statSync(path).mtimeMs}`).join('|');
+	// Un archivo borrado entre el glob y el stat —el editor guardando en medio de una pasada— no debe
+	// tumbar la regla: firma con 0 y la pasada siguiente lo saca de la lista.
+	const signature = [...entryPaths, ...sourcePaths]
+		.map((path) => `${path}@${statSync(path, { throwIfNoEntry: false })?.mtimeMs ?? 0}`)
+		.join('|');
 	if (cached?.signature !== signature) {
 		cached = {
 			signature,
@@ -170,7 +174,7 @@ function namedTagViolation(name, tree, declared) {
 }
 
 /**
- * Verifica que el `title` del meta coincida con el de su módulo de entrada.
+ * Reporta si falta el módulo de entrada de la story o si su `title` difiere del literal del meta.
  *
  * @param {import('eslint').Rule.RuleContext} context
  * @param {import('estree').Property} node
