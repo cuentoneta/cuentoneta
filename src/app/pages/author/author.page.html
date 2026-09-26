@@ -1,6 +1,4 @@
-<!-- El encabezado es fijo: sin el margen superior, la página arranca debajo de él. Los 32px de padding
-     son los que el diseño reserva sobre el contenido. -->
-<main class="mx-auto mt-header-height flex w-full max-w-310 flex-col gap-8 px-4 pt-8 pb-16 lg:flex-row lg:gap-16">
+<div class="mx-auto flex w-full max-w-310 flex-col gap-8 px-4 pt-8 pb-16 lg:flex-row lg:gap-16">
 	@if (author(); as author) {
 	<!-- Primero en el DOM y último en la fila de escritorio: el perfil es el contenido propio de la página,
 	     así que encabeza la lectura y su `h1` precede al `h2` del listado. A diferencia de la página de
@@ -28,7 +26,7 @@
 			@for (literaryWork of literaryWorks(); track literaryWork._id; let index = $index) { @if (index >= 2) {
 			<cuentoneta-divider />
 			}
-			<cuentoneta-literary-work-card-teaser
+			<cuentoneta-literary-work-teaser-card
 				[literaryWork]="literaryWork"
 				[variant]="index === 0 ? 'highlighted' : 'on-white'"
 				[order]="index + 1"
@@ -90,9 +88,9 @@
 		<cuentoneta-skeleton appearance="line" class="h-9 w-40 bg-neutral-300" />
 		<div class="flex flex-col gap-8">
 			@for (placeholder of [1, 2, 3]; track placeholder) {
-			<cuentoneta-literary-work-card-teaser [showExcerpt]="true" [showMultimedia]="true" />
+			<cuentoneta-literary-work-teaser-card [showExcerpt]="true" [showMultimedia]="true" />
 			}
 		</div>
 	</div>
 	}
-</main>
+</div>

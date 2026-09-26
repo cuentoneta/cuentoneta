@@ -13,7 +13,7 @@ import { CarouselIndicatorComponent } from './carousel-indicator.component';
 import { CarouselControlsComponent } from './carousel-controls.component';
 
 // Modelos
-import { ContentCampaign, ContentCampaignViewport } from '@models/content-campaign.model';
+import type { ContentCampaign, ContentCampaignViewport } from '@models/content-campaign.model';
 
 // Servicios
 import { LayoutService } from '../../providers/layout.interface';

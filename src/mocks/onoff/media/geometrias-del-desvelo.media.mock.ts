@@ -1,6 +1,7 @@
 import type { Media } from '@models/media.model';
 import { createMarkdown } from '@models/markdown.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
+import { onoffAudioAssets } from '../../onoff-audio-assets.mock';
 import { onoffImageAssets } from '../../onoff-image-assets.mock';
 import {
 	geometriasDelDesveloSpaceDescription,
@@ -28,7 +29,7 @@ export const geometriasDelDesveloMediaMock: Media[] = [
 		type: 'spaceRecording',
 		description: markdownToSanitizedHtml(createMarkdown(geometriasDelDesveloSpaceDescription)),
 		data: {
-			url: 'https://cdn.example.org/onoff/geometria-space.ogg',
+			url: onoffAudioAssets.geometriaSpace.path,
 			duration: '52:40',
 			hostName: 'Biblioteca del Méridien',
 			hostAvatar: onoffImageAssets.bibliotecaMeridienAvatar.path,

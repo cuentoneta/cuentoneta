@@ -11,14 +11,37 @@ export class DrawerTransitionDirective {
 	private readonly _isTransitionedIn = signal(false);
 	public readonly isTransitionedIn = this._isTransitionedIn.asReadonly();
 
+	private pendingEntryFrame: number | null = null;
+
 	/** Abre el diálogo y dispara el slide-in después de un frame (para que el navegador aplique primero el estado cerrado). */
 	public open(element: HTMLDialogElement): void {
 		element.showModal();
-		requestAnimationFrame(() => this._isTransitionedIn.set(true));
+		this.pendingEntryFrame = requestAnimationFrame(() => {
+			this.pendingEntryFrame = null;
+			this._isTransitionedIn.set(true);
+		});
 	}
 
-	/** Dispara la transición de salida y llama a `onComplete` recién después de `transitionend`. */
+	/** Dispara la salida y llama a `onComplete` al terminar; válido en cualquier instante posterior a `open()`. */
 	public close(element: HTMLDialogElement, onComplete: () => void): void {
+		if (!element.open) {
+			// Cierre por fuera de la directiva (p. ej. `form method=dialog`): limpia el frame y el estado.
+			if (this.pendingEntryFrame !== null) {
+				cancelAnimationFrame(this.pendingEntryFrame);
+				this.pendingEntryFrame = null;
+			}
+			this._isTransitionedIn.set(false);
+			onComplete();
+			return;
+		}
+		if (this.pendingEntryFrame !== null) {
+			// La entrada aún no asentó: no hay transición que esperar y el frame vivo reabriría el panel.
+			cancelAnimationFrame(this.pendingEntryFrame);
+			this.pendingEntryFrame = null;
+			element.close();
+			onComplete();
+			return;
+		}
 		this._isTransitionedIn.set(false);
 		const handler = (event: Event): void => {
 			if (event.target !== element) {

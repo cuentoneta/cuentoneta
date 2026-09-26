@@ -5,6 +5,8 @@ import { Title } from '@angular/platform-browser';
 
 import { onoffCollectionsWithTagsMock } from '@mocks/onoff-collections.mock';
 import { type Collection } from '@models/collection.model';
+import { createSanitizedHtml } from '@models/sanitized-html.model';
+import { htmlToPlainText } from '@utils/html-to-text.utils';
 import { AppRoutes } from '../../app.routes';
 import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
@@ -51,6 +53,31 @@ describe('CollectionMetaTagsDirective', () => {
 		TestBed.tick();
 
 		expect(titleSpy).toHaveBeenCalledWith(expect.stringContaining(canon.title));
+	});
+
+	it('should set the description derived from the collection prose', () => {
+		collectionSignal.set(canon);
+		const descriptionSpy = spyOn(TestBed.inject(HeadMetadataDirective), 'setDescription');
+
+		instantiate();
+		TestBed.tick();
+
+		expect(descriptionSpy).toHaveBeenCalledWith(htmlToPlainText(canon.description));
+	});
+
+	it('should fall back to the fixed editorial phrase when the collection HTML carries no prose', () => {
+		collectionSignal.set({
+			...canon,
+			description: createSanitizedHtml('<p><img src="https://cdn.sanity.io/foto.jpg" alt="Foto"/></p>'),
+		});
+		const descriptionSpy = spyOn(TestBed.inject(HeadMetadataDirective), 'setDescription');
+
+		instantiate();
+		TestBed.tick();
+
+		expect(descriptionSpy).toHaveBeenCalledWith(
+			'Una colección de La Cuentoneta: una iniciativa que busca fomentar y hacer accesible la lectura digital.',
+		);
 	});
 
 	it('should set the canonical URL from the collection slug via buildCanonicalUrl', () => {

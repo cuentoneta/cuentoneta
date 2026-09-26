@@ -12,6 +12,12 @@
 // anidado (`:host { .child { @apply } }`) o `:host ::ng-deep { @apply }` no matchea.
 const BARE_HOST_APPLY = /:host\s*\{[^{}]*@apply/i;
 
+/**
+ * El texto CSS que un valor de `styles` aporta, cualquiera sea su forma.
+ *
+ * @param {import('estree').Node | null | undefined} node
+ * @returns {string}
+ */
 function stylesText(node) {
 	if (!node) {
 		return '';

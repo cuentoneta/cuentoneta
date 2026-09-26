@@ -10,7 +10,7 @@ import { CollectionTeaserCard } from '@components/collection-teaser-card/collect
 import { CollectionTeaserCardSkeletonComponent } from '@components/collection-teaser-card/collection-teaser-card-skeleton';
 
 // Mocks
-import { onoffCollectionTeasersMock, onoffCollectionTeasersOfLength } from '@mocks/onoff-collections.mock';
+import { onoffCollectionTeasersMock } from '@mocks/onoff-collections.mock';
 
 describe('CollectionTeasersDeck', () => {
 	const defaultProviders = [provideRouter([])];
@@ -69,7 +69,7 @@ describe('CollectionTeasersDeck', () => {
 	describe('Estados del listado', () => {
 		it('should fill the grid with skeletons while loading', async () => {
 			await render(CollectionTeasersDeck, {
-				inputs: { teasers: onoffCollectionTeasersOfLength(4), loading: true },
+				inputs: { teasers: onoffCollectionTeasersMock.slice(0, 4), loading: true },
 				providers: defaultProviders,
 				componentImports: defaultImports,
 			});
@@ -79,20 +79,21 @@ describe('CollectionTeasersDeck', () => {
 		});
 
 		it('should render one card per teaser when data is available', async () => {
+			const teasers = onoffCollectionTeasersMock.slice(0, 3);
+
 			await render(CollectionTeasersDeck, {
-				inputs: { teasers: onoffCollectionTeasersOfLength(3) },
+				inputs: { teasers },
 				providers: defaultProviders,
 				componentImports: defaultImports,
 			});
 
-			expect(cardLinks()).toHaveLength(3);
-			expect(screen.getByText('Colección 1')).toBeInTheDocument();
-			expect(screen.getByText('Colección 3')).toBeInTheDocument();
+			expect(cardLinks()).toHaveLength(teasers.length);
+			teasers.forEach(({ title }) => expect(screen.getByText(title)).toBeInTheDocument());
 			expect(screen.queryAllByTestId('skeleton')).toHaveLength(0);
 		});
 
 		it('should link each card to the collection page', async () => {
-			const [teaser] = onoffCollectionTeasersOfLength(1);
+			const [teaser] = onoffCollectionTeasersMock;
 			await render(CollectionTeasersDeck, {
 				inputs: { teasers: [teaser] },
 				providers: defaultProviders,

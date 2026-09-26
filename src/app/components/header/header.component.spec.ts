@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { RouterModule, provideRouter } from '@angular/router';
+import { RouterLink, provideRouter } from '@angular/router';
 import { HeaderComponent } from './header.component';
 
 describe('HeaderComponent', () => {
@@ -9,7 +9,7 @@ describe('HeaderComponent', () => {
 	// el que se ejercita en la mayoría de los casos.
 	const renderHeader = async (isVisible?: boolean) =>
 		await render(HeaderComponent, {
-			componentImports: [CommonModule, NgOptimizedImage, RouterModule],
+			componentImports: [CommonModule, NgOptimizedImage, RouterLink],
 			providers: [provideRouter([])],
 			...(isVisible === undefined ? {} : { inputs: { isVisible } }),
 		});

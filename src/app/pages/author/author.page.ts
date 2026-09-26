@@ -19,7 +19,7 @@ import { AuthorStructuredDataDirective } from './author-structured-data.directiv
 import { AuthorInfoPanelComponent } from '@components/author-info-panel/author-info-panel.component';
 import { DividerComponent } from '@components/divider/divider.component';
 import { DrawerComponent } from '@components/drawer/drawer.component';
-import { LiteraryWorkCardTeaserComponent } from '@components/literary-work-card-teaser/literary-work-card-teaser.component';
+import { LiteraryWorkTeaserCardComponent } from '@components/literary-work-teaser-card/literary-work-teaser-card.component';
 import { ResourceComponent } from '@components/resource/resource.component';
 import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 
@@ -32,7 +32,7 @@ import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 		AuthorInfoPanelComponent,
 		DividerComponent,
 		DrawerComponent,
-		LiteraryWorkCardTeaserComponent,
+		LiteraryWorkTeaserCardComponent,
 		NgTemplateOutlet,
 		ResourceComponent,
 		SkeletonComponent,

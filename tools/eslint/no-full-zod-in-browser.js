@@ -26,10 +26,19 @@ const FULL_PACKAGE_SUBPATHS = ['zod/v3', 'zod/v4', 'zod/locales'];
 // La variante tree-shakable y sus alias. Solo sirven importadas como namespace.
 const TREE_SHAKABLE_SPECIFIERS = ['zod/mini', 'zod/v4-mini', 'zod/v4/mini'];
 
-const bringsFullPackage = (source) =>
+const bringsFullPackage = (/** @type {string} */ source) =>
 	source === FULL_PACKAGE_SPECIFIER ||
 	FULL_PACKAGE_SUBPATHS.some((subpath) => source === subpath || source.startsWith(`${subpath}/`));
 
+/**
+ * El nombre del binding importado. Un ImportSpecifier lo guarda en `name` salvo en la forma con
+ * nombre arbitrario de módulo (`import { "z" as z }`), donde el nodo es un Literal y viaja en `value`.
+ *
+ * @param {import('estree').ImportSpecifier['imported']} imported
+ */
+const importedName = (imported) => (imported.type === 'Identifier' ? imported.name : String(imported.value));
+
+/** @type {import('eslint').Rule.RuleModule} */
 export default {
 	meta: {
 		type: 'problem',
@@ -68,7 +77,7 @@ export default {
 						context.report({
 							node: specifier,
 							messageId: 'namedNamespace',
-							data: { source, name: specifier.imported.name },
+							data: { source, name: importedName(specifier.imported) },
 						});
 					}
 				}

@@ -16,7 +16,8 @@ import {
 import { createSanitizedHtml } from '@models/sanitized-html.model';
 import { collectionDtoSchema, collectionTeaserListDtoSchema, type CollectionDto } from '@models/collection.dto';
 import { toLiteraryWorkTeaser } from '@models/literary-work.dto';
-import { ApiUrl, Endpoints } from './endpoints';
+import type { ApiUrl } from './endpoints';
+import { Endpoints } from './endpoints';
 
 // El listado devuelve teasers: la vista de catálogo muestra cada colección sin sus obras.
 export interface CollectionApi {

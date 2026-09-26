@@ -1,4 +1,5 @@
-import { APP_ID, ApplicationConfig, LOCALE_ID } from '@angular/core';
+import type { ApplicationConfig } from '@angular/core';
+import { APP_ID, LOCALE_ID } from '@angular/core';
 import { provideRouter, withInMemoryScrolling, withViewTransitions, withComponentInputBinding } from '@angular/router';
 import { appRoutes } from './app.routes';
 
