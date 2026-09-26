@@ -1,4 +1,4 @@
-import { AppComponent } from './app.component';
+import { App } from './app';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { NgOptimizedImage } from '@angular/common';
@@ -10,9 +10,9 @@ import { AnalyticsMockService } from './providers/analytics/analytics.mock.servi
 import { LayoutService } from './providers/layout.interface';
 import { ControllableLayoutService } from './providers/layout.mock';
 
-describe('AppComponent', () => {
+describe('App', () => {
 	const renderShell = async () => {
-		return await render(AppComponent, {
+		return await render(App, {
 			componentImports: [HeaderComponent, FooterComponent, NgOptimizedImage, RouterOutlet],
 			providers: [
 				provideRouter([]),

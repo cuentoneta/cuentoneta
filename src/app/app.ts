@@ -35,7 +35,7 @@ import { LayoutService } from './providers/layout.interface';
 	imports: [FooterComponent, HeaderComponent, RouterOutlet],
 	providers: [AnalyticsService],
 })
-export class AppComponent {
+export class App {
 	private readonly analytics = inject(AnalyticsService);
 	protected readonly isHeaderVisible = inject(LayoutService).isHeaderVisible;
 

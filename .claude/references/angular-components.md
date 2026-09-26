@@ -337,7 +337,7 @@ Notas:
 
 ## Layout del shell: el landmark principal y el despeje del encabezado
 
-El encabezado es `fixed top-0` y mide `--spacing-header-height`. Que el contenido despeje su alto es un invariante global, no una decisión de cada pantalla, así que **lo resuelve el shell una sola vez**: `AppComponent` declara el único `<main>` de la aplicación, envolviendo el `router-outlet`, con `pt-header-height`.
+El encabezado es `fixed top-0` y mide `--spacing-header-height`. Que el contenido despeje su alto es un invariante global, no una decisión de cada pantalla, así que **lo resuelve el shell una sola vez**: `App` declara el único `<main>` de la aplicación, envolviendo el `router-outlet`, con `pt-header-height`.
 
 De ahí se siguen tres reglas para una página:
 
