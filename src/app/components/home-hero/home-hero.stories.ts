@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/angular-vite';
 
-import { HomeHeroComponent } from './home-hero.component';
-import { homeHeroDocs } from './home-hero.component.docs';
+import { HomeHero } from './home-hero';
+import { homeHeroDocs } from './home-hero.docs';
 import { docsMention } from '@testing/storybook-docs';
 
-const meta: Meta<HomeHeroComponent> = {
-	component: HomeHeroComponent,
+const meta: Meta<HomeHero> = {
+	component: HomeHero,
 	title: 'Componentes V3/HomeHero',
 	parameters: {
 		// Sin esto el canvas enmarca la banda con su padding y esconde justo lo que la define.
@@ -19,7 +19,7 @@ const meta: Meta<HomeHeroComponent> = {
 	},
 };
 export default meta;
-type Story = StoryObj<HomeHeroComponent>;
+type Story = StoryObj<HomeHero>;
 
 export const Primary: Story = {
 	render: () => ({

@@ -93,7 +93,7 @@ import { NgIcon, provideIcons, provideNgIconsConfig } from '@ng-icons/core';
 		}
 	`,
 })
-export class FooterComponent {
+export class Footer {
 	protected readonly navLinks: InternalLink[] = [
 		{ path: '/', label: 'Inicio' },
 		{ path: '/about', label: 'Acerca de' },

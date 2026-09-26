@@ -53,7 +53,7 @@ import { AuthorTeaserCardSkeletonComponent } from '@components/author-teaser-car
 		'[attr.aria-label]': 'sectionHeading',
 	},
 })
-export class HighlightedAuthorsComponent {
+export class HighlightedAuthors {
 	// El mismo tope que el backend aplica a la curaduría: la grilla en carga dibuja la sección llena.
 	protected readonly skeletonCount = 6;
 	// Una sola declaración para el <h2> y para el nombre de la región: dos literales se desincronizan.

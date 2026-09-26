@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/angular-vite';
 import { argsToTemplate } from '@storybook/angular-vite';
 
-import { HighlightedAuthorsComponent } from './highlighted-authors.component';
+import { HighlightedAuthors } from './highlighted-authors';
 import { onoffHighlightedAuthorsOfLength, onoffUntaggedHighlightedAuthor } from '@mocks/onoff-highlighted-authors.mock';
-import { highlightedAuthorsDocs } from './highlighted-authors.component.docs';
+import { highlightedAuthorsDocs } from './highlighted-authors.docs';
 import { authorTeaserCardDocs } from '@components/author-teaser-card/author-teaser-card.component.docs';
 import { emptyStateDocs } from '@components/empty-state/empty-state.docs';
 import { sectionHeaderDocs } from '@components/section-header/section-header.docs';
@@ -24,8 +24,8 @@ const untaggedAuthors = highlightedAuthors.map((highlighted) => ({
 	tags: onoffUntaggedHighlightedAuthor.tags,
 }));
 
-const meta: Meta<HighlightedAuthorsComponent> = {
-	component: HighlightedAuthorsComponent,
+const meta: Meta<HighlightedAuthors> = {
+	component: HighlightedAuthors,
 	title: 'Componentes V3/HighlightedAuthors',
 	parameters: {
 		docs: {
@@ -49,7 +49,7 @@ const meta: Meta<HighlightedAuthorsComponent> = {
 	},
 };
 export default meta;
-type Story = StoryObj<HighlightedAuthorsComponent>;
+type Story = StoryObj<HighlightedAuthors>;
 
 export const Primary: Story = {
 	render: (args) => ({

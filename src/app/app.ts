@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 
-import { HeaderComponent } from '@components/header/header.component';
-import { FooterComponent } from '@components/footer/footer.component';
+import { Header } from '@components/header/header';
+import { Footer } from '@components/footer/footer';
 import { RouterOutlet } from '@angular/router';
 import { environment } from './environments/environment';
 
@@ -32,7 +32,7 @@ import { LayoutService } from './providers/layout.interface';
 			<div></div>
 		}
 	`,
-	imports: [FooterComponent, HeaderComponent, RouterOutlet],
+	imports: [Footer, Header, RouterOutlet],
 	providers: [AnalyticsService],
 })
 export class App {

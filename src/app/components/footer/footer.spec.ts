@@ -1,10 +1,10 @@
 import { render, screen } from '@testing-library/angular';
-import { FooterComponent } from './footer.component';
+import { Footer } from './footer';
 import { provideRouter } from '@angular/router';
 
-describe('FooterComponent', () => {
+describe('Footer', () => {
 	it('should display the logo image correctly', async () => {
-		await render(FooterComponent, {
+		await render(Footer, {
 			providers: [provideRouter([])],
 		});
 
@@ -16,7 +16,7 @@ describe('FooterComponent', () => {
 	});
 
 	it('should render navigable navLinks', async () => {
-		const view = await render(FooterComponent, {
+		const view = await render(Footer, {
 			providers: [provideRouter([])],
 		});
 
@@ -28,7 +28,7 @@ describe('FooterComponent', () => {
 	});
 
 	it('should display social link icons as expected', async () => {
-		const view = await render(FooterComponent, {
+		const view = await render(Footer, {
 			providers: [provideRouter([])],
 		});
 

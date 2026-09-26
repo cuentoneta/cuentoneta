@@ -80,7 +80,7 @@ type VisibilityState = (typeof VisibilityState)[keyof typeof VisibilityState];
 	`,
 	imports: [RouterLink, NgOptimizedImage],
 })
-export class HeaderComponent {
+export class Header {
 	protected readonly appRoutes = AppRoutes;
 	protected readonly navLinks: InternalLink[] = [
 		{ label: 'Inicio', path: `/${AppRoutes.Home}` },

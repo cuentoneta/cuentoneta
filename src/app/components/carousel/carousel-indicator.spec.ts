@@ -3,13 +3,13 @@ import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 
 // Componentes
-import { CarouselIndicatorComponent } from './carousel-indicator.component';
+import { CarouselIndicator } from './carousel-indicator';
 
 const INDICATOR_COUNT = 3;
 
-describe('CarouselIndicatorComponent', () => {
+describe('CarouselIndicator', () => {
 	it('should render the component', async () => {
-		const { container } = await render(CarouselIndicatorComponent, {
+		const { container } = await render(CarouselIndicator, {
 			inputs: {
 				count: INDICATOR_COUNT,
 				activeIndex: 0,
@@ -19,7 +19,7 @@ describe('CarouselIndicatorComponent', () => {
 	});
 
 	it('should render indicator for each slide', async () => {
-		await render(CarouselIndicatorComponent, {
+		await render(CarouselIndicator, {
 			inputs: {
 				count: INDICATOR_COUNT,
 				activeIndex: 0,
@@ -31,7 +31,7 @@ describe('CarouselIndicatorComponent', () => {
 	});
 
 	it('should mark active indicator with aria-current', async () => {
-		await render(CarouselIndicatorComponent, {
+		await render(CarouselIndicator, {
 			inputs: {
 				count: INDICATOR_COUNT,
 				activeIndex: 0,
@@ -51,7 +51,7 @@ describe('CarouselIndicatorComponent', () => {
 
 	it('should emit indicatorClick with correct index when clicked', async () => {
 		const user = userEvent.setup();
-		const { fixture } = await render(CarouselIndicatorComponent, {
+		const { fixture } = await render(CarouselIndicator, {
 			inputs: {
 				count: INDICATOR_COUNT,
 				activeIndex: 0,
@@ -72,7 +72,7 @@ describe('CarouselIndicatorComponent', () => {
 	});
 
 	it('should render with Desktop device input', async () => {
-		await render(CarouselIndicatorComponent, {
+		await render(CarouselIndicator, {
 			inputs: {
 				count: INDICATOR_COUNT,
 				activeIndex: 0,
@@ -85,7 +85,7 @@ describe('CarouselIndicatorComponent', () => {
 	});
 
 	it('should render with Mobile device input', async () => {
-		await render(CarouselIndicatorComponent, {
+		await render(CarouselIndicator, {
 			inputs: {
 				count: INDICATOR_COUNT,
 				activeIndex: 0,
@@ -98,7 +98,7 @@ describe('CarouselIndicatorComponent', () => {
 	});
 
 	it('should have proper ARIA attributes', async () => {
-		await render(CarouselIndicatorComponent, {
+		await render(CarouselIndicator, {
 			inputs: {
 				count: INDICATOR_COUNT,
 				activeIndex: 0,

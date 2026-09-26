@@ -9,8 +9,8 @@ import { interval, Subject } from 'rxjs';
 import { filter, startWith, switchMap } from 'rxjs/operators';
 
 // Componentes
-import { CarouselIndicatorComponent } from './carousel-indicator.component';
-import { CarouselControlsComponent } from './carousel-controls.component';
+import { CarouselIndicator } from './carousel-indicator';
+import { CarouselControls } from './carousel-controls';
 
 // Modelos
 import type { ContentCampaign, ContentCampaignViewport } from '@models/content-campaign.model';
@@ -22,11 +22,11 @@ import { CarouselGestureService } from './carousel-gesture.service';
 
 @Component({
 	selector: 'cuentoneta-carousel',
-	imports: [NgOptimizedImage, RouterLink, CarouselIndicatorComponent, CarouselControlsComponent],
+	imports: [NgOptimizedImage, RouterLink, CarouselIndicator, CarouselControls],
 	providers: [CarouselStateService, CarouselGestureService],
 
-	templateUrl: './carousel.component.html',
-	styleUrl: './carousel.component.css',
+	templateUrl: './carousel.html',
+	styleUrl: './carousel.css',
 	host: {
 		// `isolate` confina las capas internas del carousel —controles, indicadores y el orden entre
 		// diapositivas—, que sin aislar suben al contexto raíz y compiten con las capas globales.
@@ -34,7 +34,7 @@ import { CarouselGestureService } from './carousel-gesture.service';
 		'[style.--transition-duration]': 'transitionDuration() + "ms"',
 	},
 })
-export class CarouselComponent {
+export class Carousel {
 	// Servicios
 	private readonly layoutService = inject(LayoutService);
 	private readonly stateService = inject(CarouselStateService);

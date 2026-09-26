@@ -5,7 +5,7 @@ import { AuthorTeaserCardComponent } from './author-teaser-card.component';
 import { AuthorTeaserCardSkeletonComponent } from './author-teaser-card-skeleton.component';
 import { authorTeaserMock } from '@mocks/author.mock';
 import { onoffTagsMock } from '@mocks/onoff-tags.mock';
-import { highlightedAuthorsDocs } from '@components/highlighted-authors/highlighted-authors.component.docs';
+import { highlightedAuthorsDocs } from '@components/highlighted-authors/highlighted-authors.docs';
 import { imageProfileDocs } from '@components/image-profile/image-profile.docs';
 import { tagDocs } from '@components/tag/tag.docs';
 import { tagsListDocs } from '@components/tags-list/tags-list.docs';

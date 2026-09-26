@@ -458,7 +458,7 @@ export default [
 					// La franja alta queda reservada a los archivos que declaran una capa global de la
 					// aplicación. Cualquier otro tiene que elevar con una capa interna y confinar su
 					// apilamiento, que es lo que evita volver a competir con la barra.
-					allowGlobalLayersIn: ['src/app/components/header/header.component.ts', 'src/app/app.ts'],
+					allowGlobalLayersIn: ['src/app/components/header/header.ts', 'src/app/app.ts'],
 				},
 			],
 		},

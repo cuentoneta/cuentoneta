@@ -15,4 +15,4 @@ import { Skeleton } from '@components/skeleton/skeleton';
 		/>
 	</div>`,
 })
-export class CarouselSkeletonComponent {}
+export class CarouselSkeleton {}

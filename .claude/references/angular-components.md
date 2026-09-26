@@ -361,7 +361,7 @@ Todo apilamiento sale de la escala del Design System, declarada como tokens `--z
 | ------------ | ----- | ----------- | -------------------------------------------------------------------------------- |
 | `z-content`  | 10    | **Interna** | Ordena hermanos dentro de un componente (p. ej. superponer texto a una imagen).  |
 | `z-raised`   | 20    | **Interna** | Un elemento que se eleva por encima de `z-content` dentro del mismo componente.  |
-| `z-nav`      | 50    | **Global**  | La barra de navegación fija (`header.component.ts`).                             |
+| `z-nav`      | 50    | **Global**  | La barra de navegación fija (`header.ts`).                                       |
 | `z-floating` | 60    | **Global**  | La capa flotante anclada al `body` (p. ej. el tooltip, `tooltip.directive.css`). |
 
 ### Norma de confinamiento

@@ -1,17 +1,19 @@
 import type { Meta, StoryObj } from '@storybook/angular-vite';
 import { argsToTemplate, moduleMetadata } from '@storybook/angular-vite';
 
-import { CarouselComponent } from './carousel.component';
-import { CarouselSkeletonComponent } from './carousel-skeleton.component';
+import { Carousel } from './carousel';
+import { CarouselSkeleton } from './carousel-skeleton';
 import { contentCampaignMock } from '@mocks/content-campaign.mock';
 import type { ContentCampaign } from '@models/content-campaign.model';
-import type { CarouselControlsComponent } from '@components/carousel/carousel-controls.component';
-import type { CarouselIndicatorComponent } from '@components/carousel/carousel-indicator.component';
+import type { CarouselControls } from '@components/carousel/carousel-controls';
+import type { CarouselIndicator } from '@components/carousel/carousel-indicator';
+import { carouselDocs } from './carousel.docs';
+import { docsMention } from '@testing/storybook-docs';
 
-export type DocsSymbols = [CarouselComponent, CarouselControlsComponent, CarouselIndicatorComponent];
+export type DocsSymbols = [CarouselControls, CarouselIndicator];
 
-const meta: Meta<CarouselComponent> = {
-	component: CarouselComponent,
+const meta: Meta<Carousel> = {
+	component: Carousel,
 	title: 'Componentes V3/Carousel',
 	parameters: {
 		// El carousel elige imagen y controles a partir del ancho de la ventana, no del contenedor: la
@@ -29,7 +31,7 @@ const meta: Meta<CarouselComponent> = {
 				sourceState: 'shown',
 			},
 			description: {
-				component: `<div><p>El componente <strong>CarouselComponent</strong> es un carousel de contenido interactivo que muestra campañas de contenido destacado con navegación automática y manual. Compone <strong>CarouselIndicatorComponent</strong> (indicadores de progreso clickeables) y <strong>CarouselControlsComponent</strong> (controles de navegación, solo en desktop).</p><p><strong>Características:</strong> reproducción automática con pausa al hacer hover o durante interacción táctil; navegación por gestos táctiles (swipe) y por teclado (flechas ← →); indicadores de progreso clickeables; controles de navegación solo en desktop; imágenes responsive (mobile/desktop); respeta <code>prefers-reduced-motion</code>.</p><p><strong>Accesibilidad:</strong> atributos ARIA completos para lectores de pantalla, navegación por teclado y focus visible.</p></div>`,
+				component: `<div><p>El componente ${docsMention(carouselDocs)} es un carousel de contenido interactivo que muestra campañas de contenido destacado con navegación automática y manual. Compone <strong>CarouselIndicator</strong> (indicadores de progreso clickeables) y <strong>CarouselControls</strong> (controles de navegación, solo en desktop).</p><p><strong>Características:</strong> reproducción automática con pausa al hacer hover o durante interacción táctil; navegación por gestos táctiles (swipe) y por teclado (flechas ← →); indicadores de progreso clickeables; controles de navegación solo en desktop; imágenes responsive (mobile/desktop); respeta <code>prefers-reduced-motion</code>.</p><p><strong>Accesibilidad:</strong> atributos ARIA completos para lectores de pantalla, navegación por teclado y focus visible.</p></div>`,
 			},
 		},
 		layout: 'padded',
@@ -63,7 +65,7 @@ const meta: Meta<CarouselComponent> = {
 };
 
 export default meta;
-type Story = StoryObj<CarouselComponent>;
+type Story = StoryObj<Carousel>;
 
 export const Default: Story = {
 	name: 'Por defecto',
@@ -267,8 +269,8 @@ export const Panoramico: Story = {
 	},
 };
 
-export const Estados: StoryObj<CarouselComponent & { loading: boolean }> = {
-	decorators: [moduleMetadata({ imports: [CarouselSkeletonComponent] })],
+export const Estados: StoryObj<Carousel & { loading: boolean }> = {
+	decorators: [moduleMetadata({ imports: [CarouselSkeleton] })],
 	argTypes: { loading: { control: 'boolean', name: 'Cargando' } },
 	render: (args) => ({
 		props: args,

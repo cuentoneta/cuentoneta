@@ -46,7 +46,7 @@ import { faSolidChevronLeft, faSolidChevronRight } from '@ng-icons/font-awesome/
 		}
 	`,
 })
-export class CarouselControlsComponent {
+export class CarouselControls {
 	// Entradas
 	public readonly type = input.required<'left' | 'right'>();
 	public readonly disabled = input<boolean>(false);

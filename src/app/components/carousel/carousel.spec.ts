@@ -2,7 +2,7 @@
 import { render, screen } from '@testing-library/angular';
 
 // Componentes
-import { CarouselComponent } from './carousel.component';
+import { Carousel } from './carousel';
 
 // Mocks
 import { contentCampaignMock } from '@mocks/content-campaign.mock';
@@ -13,13 +13,13 @@ import type { Viewport } from '@utils/screen.utils';
 function setup(viewport: Viewport = 'md') {
 	const layout = new ControllableLayoutService();
 	layout.simulateViewport(viewport);
-	return render(CarouselComponent, {
+	return render(Carousel, {
 		inputs: { slides: contentCampaignMock },
 		providers: [{ provide: LayoutService, useValue: layout }],
 	});
 }
 
-describe('CarouselComponent', () => {
+describe('Carousel', () => {
 	it('should render the component', async () => {
 		const { container } = await setup();
 		expect(container).toBeInTheDocument();

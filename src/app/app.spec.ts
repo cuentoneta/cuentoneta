@@ -3,8 +3,8 @@ import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { NgOptimizedImage } from '@angular/common';
 import { provideRouter, RouterOutlet } from '@angular/router';
-import { HeaderComponent } from '@components/header/header.component';
-import { FooterComponent } from '@components/footer/footer.component';
+import { Header } from '@components/header/header';
+import { Footer } from '@components/footer/footer';
 import { AnalyticsService } from './providers/analytics/analytics.service';
 import { AnalyticsMockService } from './providers/analytics/analytics.mock.service';
 import { LayoutService } from './providers/layout.interface';
@@ -13,7 +13,7 @@ import { ControllableLayoutService } from './providers/layout.mock';
 describe('App', () => {
 	const renderShell = async () => {
 		return await render(App, {
-			componentImports: [HeaderComponent, FooterComponent, NgOptimizedImage, RouterOutlet],
+			componentImports: [Header, Footer, NgOptimizedImage, RouterOutlet],
 			providers: [
 				provideRouter([]),
 				{ provide: AnalyticsService, useClass: AnalyticsMockService },

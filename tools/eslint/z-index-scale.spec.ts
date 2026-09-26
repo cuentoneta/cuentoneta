@@ -9,7 +9,7 @@ const tsRuleTester = new RuleTester({ languageOptions: { parser: tsParser } });
 // `.html` del proyecto: probarla con el parser de TS no ejercitaría el mismo camino.
 const templateRuleTester = new RuleTester({ languageOptions: { parser: angular.templateParser } });
 
-const HEADER_FILE = 'src/app/components/header/header.component.ts';
+const HEADER_FILE = 'src/app/components/header/header.ts';
 const allowHeader = [{ allowGlobalLayersIn: [HEADER_FILE] }];
 const SHELL_FILE = 'src/app/app.ts';
 const allowShell = [{ allowGlobalLayersIn: [SHELL_FILE] }];

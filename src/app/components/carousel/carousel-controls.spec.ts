@@ -3,18 +3,18 @@ import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 
 // Componentes
-import { CarouselControlsComponent } from './carousel-controls.component';
+import { CarouselControls } from './carousel-controls';
 
-describe('CarouselControlsComponent', () => {
+describe('CarouselControls', () => {
 	it('should render the component', async () => {
-		const { container } = await render(CarouselControlsComponent, {
+		const { container } = await render(CarouselControls, {
 			inputs: { type: 'left' },
 		});
 		expect(container).toBeInTheDocument();
 	});
 
 	it('should render left control with correct icon', async () => {
-		await render(CarouselControlsComponent, {
+		await render(CarouselControls, {
 			inputs: { type: 'left' },
 		});
 
@@ -24,7 +24,7 @@ describe('CarouselControlsComponent', () => {
 	});
 
 	it('should render right control with correct icon', async () => {
-		await render(CarouselControlsComponent, {
+		await render(CarouselControls, {
 			inputs: { type: 'right' },
 		});
 
@@ -35,7 +35,7 @@ describe('CarouselControlsComponent', () => {
 
 	it('should emit controlClick event when clicked', async () => {
 		const user = userEvent.setup();
-		const { fixture } = await render(CarouselControlsComponent, {
+		const { fixture } = await render(CarouselControls, {
 			inputs: { type: 'left' },
 		});
 
@@ -51,7 +51,7 @@ describe('CarouselControlsComponent', () => {
 	});
 
 	it('should be disabled when disabled input is true', async () => {
-		await render(CarouselControlsComponent, {
+		await render(CarouselControls, {
 			inputs: {
 				type: 'left',
 				disabled: true,
@@ -63,7 +63,7 @@ describe('CarouselControlsComponent', () => {
 	});
 
 	it('should apply left-specific classes when type is left', async () => {
-		await render(CarouselControlsComponent, {
+		await render(CarouselControls, {
 			inputs: { type: 'left' },
 		});
 
@@ -72,7 +72,7 @@ describe('CarouselControlsComponent', () => {
 	});
 
 	it('should apply right-specific classes when type is right', async () => {
-		await render(CarouselControlsComponent, {
+		await render(CarouselControls, {
 			inputs: { type: 'right' },
 		});
 

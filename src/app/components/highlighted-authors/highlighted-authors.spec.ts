@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/angular';
 import { provideRouter } from '@angular/router';
 
-import { HighlightedAuthorsComponent } from './highlighted-authors.component';
+import { HighlightedAuthors } from './highlighted-authors';
 import { SectionHeader } from '@components/section-header/section-header';
 import { EmptyState } from '@components/empty-state/empty-state';
 import { AuthorTeaserCardComponent } from '@components/author-teaser-card/author-teaser-card.component';
@@ -9,13 +9,13 @@ import { AuthorTeaserCardSkeletonComponent } from '@components/author-teaser-car
 
 import { onoffHighlightedAuthorsOfLength, onoffUntaggedHighlightedAuthor } from '@mocks/onoff-highlighted-authors.mock';
 
-describe('HighlightedAuthorsComponent', () => {
+describe('HighlightedAuthors', () => {
 	const defaultProviders = [provideRouter([])];
 	// `componentImports` reemplaza los imports del componente bajo prueba, no los suma. Sin
 	// `SectionHeader` el encabezado se renderiza como un elemento desconocido y la sección
 	// pierde título, bajada y enlace.
 	const defaultImports = [
-		HighlightedAuthorsComponent,
+		HighlightedAuthors,
 		SectionHeader,
 		EmptyState,
 		AuthorTeaserCardComponent,
@@ -24,7 +24,7 @@ describe('HighlightedAuthorsComponent', () => {
 
 	describe('Renderizado del componente', () => {
 		it('should display the section title', async () => {
-			await render(HighlightedAuthorsComponent, {
+			await render(HighlightedAuthors, {
 				inputs: { authors: [] },
 				providers: defaultProviders,
 				componentImports: defaultImports,
@@ -34,7 +34,7 @@ describe('HighlightedAuthorsComponent', () => {
 		});
 
 		it('should describe the section as a curated selection', async () => {
-			await render(HighlightedAuthorsComponent, {
+			await render(HighlightedAuthors, {
 				inputs: { authors: [] },
 				providers: defaultProviders,
 				componentImports: defaultImports,
@@ -46,7 +46,7 @@ describe('HighlightedAuthorsComponent', () => {
 		// El enlace se afirma con la lista vacía a propósito: es el caso en que el contenido curado todavía
 		// no llegó, y es donde un enlace condicionado al dato desaparecería sin que nada más lo note.
 		it('should link to the authors index even with nothing highlighted', async () => {
-			await render(HighlightedAuthorsComponent, {
+			await render(HighlightedAuthors, {
 				inputs: { authors: [] },
 				providers: defaultProviders,
 				componentImports: defaultImports,
@@ -62,7 +62,7 @@ describe('HighlightedAuthorsComponent', () => {
 		// aunque ya hubiera cargado. La cantidad no sigue al input a propósito — la grilla en carga dibuja
 		// la sección llena aunque todavía no haya llegado ningún destacado.
 		it('should fill the grid with skeletons while loading, regardless of how many arrived', async () => {
-			await render(HighlightedAuthorsComponent, {
+			await render(HighlightedAuthors, {
 				inputs: { authors: onoffHighlightedAuthorsOfLength(3), loading: true },
 				providers: defaultProviders,
 				componentImports: defaultImports,
@@ -73,7 +73,7 @@ describe('HighlightedAuthorsComponent', () => {
 
 		it('should render one card per highlighted author when data is available', async () => {
 			const highlighted = onoffHighlightedAuthorsOfLength(6);
-			await render(HighlightedAuthorsComponent, {
+			await render(HighlightedAuthors, {
 				inputs: { authors: highlighted },
 				providers: defaultProviders,
 				componentImports: defaultImports,
@@ -89,7 +89,7 @@ describe('HighlightedAuthorsComponent', () => {
 		// apunta al perfil que le corresponde y no seis veces al mismo.
 		it('should link every card to its own author profile', async () => {
 			const highlighted = onoffHighlightedAuthorsOfLength(3);
-			await render(HighlightedAuthorsComponent, {
+			await render(HighlightedAuthors, {
 				inputs: { authors: highlighted },
 				providers: defaultProviders,
 				componentImports: defaultImports,
@@ -102,7 +102,7 @@ describe('HighlightedAuthorsComponent', () => {
 
 		it('should carry the story count of each highlighted author', async () => {
 			const [highlighted] = onoffHighlightedAuthorsOfLength(1);
-			await render(HighlightedAuthorsComponent, {
+			await render(HighlightedAuthors, {
 				inputs: { authors: [highlighted] },
 				providers: defaultProviders,
 				componentImports: defaultImports,
@@ -113,7 +113,7 @@ describe('HighlightedAuthorsComponent', () => {
 
 		it('should transition from loading to complete state', async () => {
 			const highlighted = onoffHighlightedAuthorsOfLength(6);
-			const { rerender } = await render(HighlightedAuthorsComponent, {
+			const { rerender } = await render(HighlightedAuthors, {
 				inputs: { authors: highlighted, loading: true },
 				providers: defaultProviders,
 				componentImports: defaultImports,
@@ -131,7 +131,7 @@ describe('HighlightedAuthorsComponent', () => {
 
 		// Sin destacados y sin carga la sección no queda en blanco debajo de su encabezado.
 		it('should explain the emptiness when there is nothing to show', async () => {
-			await render(HighlightedAuthorsComponent, {
+			await render(HighlightedAuthors, {
 				inputs: { authors: [] },
 				providers: defaultProviders,
 				componentImports: defaultImports,
@@ -146,7 +146,7 @@ describe('HighlightedAuthorsComponent', () => {
 	// la grilla sin etiquetas es el estado con el que la sección sale, no un borde.
 	describe('Autor sin etiquetas', () => {
 		it('should render the card without a tag list', async () => {
-			await render(HighlightedAuthorsComponent, {
+			await render(HighlightedAuthors, {
 				inputs: { authors: [onoffUntaggedHighlightedAuthor] },
 				providers: defaultProviders,
 				componentImports: defaultImports,
@@ -164,7 +164,7 @@ describe('HighlightedAuthorsComponent', () => {
 			['omitiendo el input', undefined],
 			['con la lista vacía', [] as const],
 		])('should explain the emptiness %s', async (_caso, authors) => {
-			await render(HighlightedAuthorsComponent, {
+			await render(HighlightedAuthors, {
 				...(authors ? { inputs: { authors } } : {}),
 				providers: defaultProviders,
 				componentImports: defaultImports,

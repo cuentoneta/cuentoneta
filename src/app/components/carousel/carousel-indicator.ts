@@ -63,7 +63,7 @@ import { Component, computed, input, output } from '@angular/core';
 		}
 	`,
 })
-export class CarouselIndicatorComponent {
+export class CarouselIndicator {
 	// Entradas
 	public readonly count = input.required<number>();
 	public readonly activeIndex = input.required<number>();

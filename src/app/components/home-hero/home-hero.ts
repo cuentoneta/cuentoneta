@@ -55,7 +55,7 @@ import { NgOptimizedImage } from '@angular/common';
 		class: 'relative isolate block overflow-hidden bg-brand-200 pt-header-height',
 	},
 })
-export class HomeHeroComponent {
+export class HomeHero {
 	// TODO(#2414): vuelve junto con la muestra de portadas.
 	// public readonly covers = input<readonly string[]>([]);
 }

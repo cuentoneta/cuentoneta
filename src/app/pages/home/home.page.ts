@@ -13,24 +13,24 @@ import { HomeMetaTagsDirective } from './home-meta-tags.directive';
 import { HomeStructuredDataDirective } from './home-structured-data.directive';
 
 // Componentes
-import { CarouselComponent } from '@components/carousel/carousel.component';
-import { HomeHeroComponent } from '@components/home-hero/home-hero.component';
+import { Carousel } from '@components/carousel/carousel';
+import { HomeHero } from '@components/home-hero/home-hero';
 import { LiteraryWorksCardDeck } from '@components/literary-works-card-deck/literary-works-card-deck';
-import { CarouselSkeletonComponent } from '@components/carousel/carousel-skeleton.component';
+import { CarouselSkeleton } from '@components/carousel/carousel-skeleton';
 import { CollectionTeasersDeck } from '@components/collection-teasers-deck/collection-teasers-deck';
-import { HighlightedAuthorsComponent } from '@components/highlighted-authors/highlighted-authors.component';
+import { HighlightedAuthors } from '@components/highlighted-authors/highlighted-authors';
 import { SectionHeader, type SectionHeaderAction } from '@components/section-header/section-header';
 
 @Component({
 	selector: 'cuentoneta-home',
 	templateUrl: './home.page.html',
 	imports: [
-		CarouselComponent,
-		HomeHeroComponent,
+		Carousel,
+		HomeHero,
 		LiteraryWorksCardDeck,
-		CarouselSkeletonComponent,
+		CarouselSkeleton,
 		CollectionTeasersDeck,
-		HighlightedAuthorsComponent,
+		HighlightedAuthors,
 		SectionHeader,
 	],
 	hostDirectives: [HomeMetaTagsDirective, HomeStructuredDataDirective],

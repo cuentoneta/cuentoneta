@@ -2,13 +2,13 @@ import { render, screen, waitFor } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { RouterLink, provideRouter } from '@angular/router';
-import { HeaderComponent } from './header.component';
+import { Header } from './header';
 
-describe('HeaderComponent', () => {
+describe('Header', () => {
 	// El input queda sin fijar cuando el caso no lo necesita, para que el valor por defecto siga siendo
 	// el que se ejercita en la mayoría de los casos.
 	const renderHeader = async (isVisible?: boolean) =>
-		await render(HeaderComponent, {
+		await render(Header, {
 			componentImports: [CommonModule, NgOptimizedImage, RouterLink],
 			providers: [provideRouter([])],
 			...(isVisible === undefined ? {} : { inputs: { isVisible } }),
