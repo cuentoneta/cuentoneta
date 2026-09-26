@@ -9,7 +9,7 @@
 cms/schema.json linguist-generated=true
 src/sanity/types.ts linguist-generated=true
 
-# Fixtures crudas que escribe `pnpm corpus:generate`: se colapsan en la review de GitHub para que una
+# Fixtures crudas que escribe `pnpm ops corpus:generate`: se colapsan en la review de GitHub para que una
 # regeneración no la inunde. Se enumeran una por una y no por glob `*.raw.mock.ts` porque no todas las
 # que llevan ese sufijo las escribe el generador: `media/geometria.media.raw.mock.ts` se deriva a mano
 # del crudo de su obra, y un glob la escondería.

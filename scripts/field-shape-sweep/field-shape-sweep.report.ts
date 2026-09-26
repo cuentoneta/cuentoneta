@@ -62,7 +62,7 @@ export function formatReportBody(report: SweepReport): string {
 // a indicar cómo remediar. Solo los labels de esta tabla llevan hint: un campo nuevo sin
 // remediación asignada se reporta igual, sin prometer una.
 const REMEDIATION_BY_LABEL: Readonly<Record<string, string>> = {
-	'literaryWork.publishedAt': 'pnpm normalize:bare-published-at --no-dry-run',
+	'literaryWork.publishedAt': 'pnpm ops normalize:bare-published-at --no-dry-run',
 };
 
 export function remediationHints(breaches: readonly ShapeBreach[]): string[] {

@@ -1,13 +1,20 @@
 import { fn } from '@test-utils';
 import { dispatch, formatCatalog, resolveInvocation } from './dispatch';
-import { OPS_TASKS, type OpsCatalog, type OpsTaskArgs, type OpsTaskDescriptor } from './registry';
+import {
+	EXIT_CODES,
+	OPS_TASKS,
+	type ExitCode,
+	type OpsCatalog,
+	type OpsTaskArgs,
+	type OpsTaskDescriptor,
+} from './registry';
 
-type TaskRun = (args: OpsTaskArgs) => Promise<void>;
+type TaskRun = (args: OpsTaskArgs) => Promise<ExitCode | void>;
 
-function stubTask(description = 'Descripción de prueba', destructive = false) {
+function stubTask(description = 'Descripción de prueba', destructive = false, acceptsArgs = false) {
 	const run = fn<TaskRun>(() => Promise.resolve());
 	const load = fn(() => Promise.resolve({ run }));
-	const descriptor: OpsTaskDescriptor = { description, destructive, load };
+	const descriptor: OpsTaskDescriptor = { description, destructive, acceptsArgs, load };
 	return { run, load, descriptor };
 }
 
@@ -48,7 +55,7 @@ describe('resolveInvocation', () => {
 		expect(resolveInvocation({ 'tarea:prueba': descriptor }, ['tarea:prueba'])).toEqual({
 			action: 'execute',
 			descriptor,
-			args: { apply: false },
+			args: { apply: false, argv: [] },
 		});
 	});
 
@@ -59,12 +66,12 @@ describe('resolveInvocation', () => {
 		expect(resolveInvocation(tasks, ['tarea:prueba', '--no-dry-run'])).toEqual({
 			action: 'execute',
 			descriptor,
-			args: { apply: true },
+			args: { apply: true, argv: [] },
 		});
 		expect(resolveInvocation(tasks, ['--no-dry-run', 'tarea:prueba'])).toEqual({
 			action: 'execute',
 			descriptor,
-			args: { apply: true },
+			args: { apply: true, argv: [] },
 		});
 	});
 
@@ -88,6 +95,26 @@ describe('resolveInvocation', () => {
 		expect(resolveInvocation(stubCatalog().tasks, ['tarea:prueba', 'extra'])).toEqual({
 			action: 'reject',
 			reason: 'Argumento desconocido: extra',
+		});
+	});
+
+	it('le pasa los argumentos propios a una tarea que los declara', () => {
+		const { descriptor } = stubTask('Descripción de prueba', false, true);
+
+		expect(resolveInvocation({ 'tarea:prueba': descriptor }, ['tarea:prueba', '--limit=10', 'ruta'])).toEqual({
+			action: 'execute',
+			descriptor,
+			args: { apply: false, argv: ['--limit=10', 'ruta'] },
+		});
+	});
+
+	it('no confunde el flag global con un argumento propio de la tarea', () => {
+		const { descriptor } = stubTask('Descripción de prueba', false, true);
+
+		expect(resolveInvocation({ 'tarea:prueba': descriptor }, ['tarea:prueba', '--no-dry-run', '--limit=10'])).toEqual({
+			action: 'execute',
+			descriptor,
+			args: { apply: true, argv: ['--limit=10'] },
 		});
 	});
 
@@ -120,7 +147,7 @@ describe('resolveInvocation', () => {
 		expect(resolveInvocation({ 'tarea:prueba': descriptor }, ['tarea:prueba', '--no-dry-run'])).toEqual({
 			action: 'execute',
 			descriptor,
-			args: { apply: true },
+			args: { apply: true, argv: [] },
 		});
 	});
 });
@@ -151,7 +178,7 @@ describe('dispatch', () => {
 		await expect(dispatch(tasks, ['tarea:prueba', '--no-dry-run'], output)).resolves.toBe(0);
 
 		expect(load).toHaveBeenCalledTimes(1);
-		expect(run).toHaveBeenCalledWith({ apply: true });
+		expect(run).toHaveBeenCalledWith({ apply: true, argv: [] });
 	});
 
 	it('pasa apply en false por defecto: la corrida en seco es el default', async () => {
@@ -160,7 +187,7 @@ describe('dispatch', () => {
 
 		await expect(dispatch(tasks, ['tarea:prueba'], output)).resolves.toBe(0);
 
-		expect(run).toHaveBeenCalledWith({ apply: false });
+		expect(run).toHaveBeenCalledWith({ apply: false, argv: [] });
 	});
 
 	it('acepta el flag antes del id', async () => {
@@ -169,7 +196,30 @@ describe('dispatch', () => {
 
 		await expect(dispatch(tasks, ['--no-dry-run', 'tarea:prueba'], output)).resolves.toBe(0);
 
-		expect(run).toHaveBeenCalledWith({ apply: true });
+		expect(run).toHaveBeenCalledWith({ apply: true, argv: [] });
+	});
+
+	it('le pasa a la tarea sus argumentos propios, sin el flag global', async () => {
+		const { descriptor, run } = stubTask('Descripción de prueba', false, true);
+		const { output } = stubOutput();
+
+		await expect(
+			dispatch({ 'tarea:prueba': descriptor }, ['tarea:prueba', '--limit=10', 'ruta'], output),
+		).resolves.toBe(0);
+
+		expect(run).toHaveBeenCalledWith({ apply: false, argv: ['--limit=10', 'ruta'] });
+	});
+
+	it('devuelve el código que reporta la tarea', async () => {
+		const fallida: OpsTaskDescriptor = {
+			description: 'Descripción de prueba',
+			destructive: false,
+			acceptsArgs: false,
+			load: () => Promise.resolve({ run: async () => EXIT_CODES.partial }),
+		};
+		const { output } = stubOutput();
+
+		await expect(dispatch({ 'tarea:prueba': fallida }, ['tarea:prueba'], output)).resolves.toBe(EXIT_CODES.partial);
 	});
 
 	it('imprime el catálogo y termina bien cuando no hay tarea, sin cargar ninguna', async () => {
@@ -222,6 +272,7 @@ describe('dispatch', () => {
 		const fallida: OpsTaskDescriptor = {
 			description: 'Descripción de prueba',
 			destructive: false,
+			acceptsArgs: false,
 			load: () =>
 				Promise.resolve({
 					run: async () => {

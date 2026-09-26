@@ -245,7 +245,7 @@ export function formatResourceSanitizationReport(
 	];
 
 	if (!options.apply && report.sanitized.length > 0) {
-		lines.push('', 'Corrida en seco. Para persistir: pnpm sanitize:resources-without-url --no-dry-run');
+		lines.push('', 'Corrida en seco. Para persistir: pnpm ops sanitize:resources-without-url --no-dry-run');
 	}
 	return lines;
 }

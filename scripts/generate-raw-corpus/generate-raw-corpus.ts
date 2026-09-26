@@ -1,5 +1,5 @@
 /**
- * Regenera las fixtures raw del corpus de Onoff (`pnpm corpus:generate`) evaluando la query GROQ real
+ * Regenera las fixtures raw del corpus de Onoff (`pnpm ops corpus:generate`) evaluando la query GROQ real
  * sobre los documentos escritos a mano, para que el raw commiteado sea lo que la query devuelve y no lo
  * que alguien creyó que devolvía.
  *
@@ -24,6 +24,7 @@ import { assertEveryReferenceResolves } from './generate-raw-corpus.helpers';
 import { buildSubstitutionTable, emitModule } from './generate-raw-corpus.emitter';
 import { collectDerivations, collectSubstitutions, type LoadModule } from './generate-raw-corpus.table';
 import { withCorpus } from './generate-raw-corpus.loader';
+import type { OpsTask } from '../ops/registry';
 
 type Target = {
 	file: string;
@@ -35,7 +36,7 @@ type Target = {
 };
 
 const BANNER = [
-	'// Este archivo lo escribe `pnpm corpus:generate` evaluando la query GROQ real sobre los documentos del',
+	'// Este archivo lo escribe `pnpm ops corpus:generate` evaluando la query GROQ real sobre los documentos del',
 	'// corpus. No se edita a mano: cualquier cambio se pierde en la próxima corrida.',
 ].join('\n');
 
@@ -196,26 +197,32 @@ async function writeTarget(target: Target, value: unknown, load: LoadModule): Pr
 	await writeFile(target.file, await format(source, { ...config, filepath: target.file }), 'utf8');
 }
 
-await withCorpus(async (load) => {
-	const { onoffDatasetMock } = (await load('/src/mocks/onoff-documents.mock.ts')) as {
-		onoffDatasetMock: Record<string, unknown>[];
-	};
-	assertEveryReferenceResolves(onoffDatasetMock);
+export const task: OpsTask = {
+	run: async () => {
+		await withCorpus(async (load) => {
+			const { onoffDatasetMock } = (await load('/src/mocks/onoff-documents.mock.ts')) as {
+				onoffDatasetMock: Record<string, unknown>[];
+			};
+			assertEveryReferenceResolves(onoffDatasetMock);
 
-	const collectionQueries = (await load('/src/api/_queries/collection.query.ts')) as Record<string, string>;
-	const literaryWorkQueries = (await load('/src/api/_queries/literary-work.query.ts')) as Record<string, string>;
-	const contentQueries = (await load('/src/api/_queries/content.query.ts')) as Record<string, string>;
-	const { onoffLandingPageDocument } = (await load('/src/mocks/onoff/landing-page/onoff.landing-page.document.ts')) as {
-		onoffLandingPageDocument: { slug: { current: string } };
-	};
-	const targets = targetsFor(
-		{ ...collectionQueries, ...literaryWorkQueries, ...contentQueries },
-		onoffLandingPageDocument.slug.current,
-	);
+			const collectionQueries = (await load('/src/api/_queries/collection.query.ts')) as Record<string, string>;
+			const literaryWorkQueries = (await load('/src/api/_queries/literary-work.query.ts')) as Record<string, string>;
+			const contentQueries = (await load('/src/api/_queries/content.query.ts')) as Record<string, string>;
+			const { onoffLandingPageDocument } = (await load(
+				'/src/mocks/onoff/landing-page/onoff.landing-page.document.ts',
+			)) as {
+				onoffLandingPageDocument: { slug: { current: string } };
+			};
+			const targets = targetsFor(
+				{ ...collectionQueries, ...literaryWorkQueries, ...contentQueries },
+				onoffLandingPageDocument.slug.current,
+			);
 
-	for (const target of targets) {
-		const value = await evaluateTarget(target, onoffDatasetMock);
-		await writeTarget(target, value, load);
-		console.log(`✓ ${target.file}`);
-	}
-});
+			for (const target of targets) {
+				const value = await evaluateTarget(target, onoffDatasetMock);
+				await writeTarget(target, value, load);
+				console.log(`✓ ${target.file}`);
+			}
+		});
+	},
+};

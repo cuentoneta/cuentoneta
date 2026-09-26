@@ -88,7 +88,7 @@ echo "--- parent ---"; gh api graphql -f query='…' --jq '.data.repository.issu
 ls workspace/<number> 2>/dev/null; echo "--- commits ---"; git rev-list --count <base>..feat/<number>-<kebab>
 echo "--- pr ---"; gh pr list --head feat/<number>-<kebab> --state open --json number,isDraft,url
 echo "--- merged ---"; gh pr list --head feat/<number>-<kebab> --state merged --json number
-echo "--- worktrees ---"; pnpm worktrees:sweep
+echo "--- worktrees ---"; pnpm ops worktrees:sweep
 ```
 
 Lo que cada sonda responde:

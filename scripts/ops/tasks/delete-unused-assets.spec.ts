@@ -1,4 +1,4 @@
-import { isInsufficientPermissionsError } from './delete-unused-assets.helpers';
+import { isInsufficientPermissionsError } from './delete-unused-assets';
 
 describe('isInsufficientPermissionsError', () => {
 	it('reconoce el error de permisos insuficientes de Sanity por su mensaje', () => {

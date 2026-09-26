@@ -132,7 +132,7 @@ Al elegir un selector, mirá su **predicado y no su nombre**: dos selectores de 
 
 ### Las tres capas del corpus de Onoff
 
-`onoffDatasetMock` (`src/mocks/onoff-documents.mock.ts`) no es un fixture más: es el dataset de **documentos** — lo que Sanity guarda tal cual — y la única capa del corpus que se escribe a mano. Para `literary-work/`, `collection/` y `landing-page/`, la fixture **raw** que la tabla de arriba nombra (`onoffRawLiteraryWorksMock`, `onoffRawCollectionsMock`, `onoffRawLandingPageMock`) no se edita: la genera `pnpm corpus:generate` evaluando la query GROQ real con `groq-js` sobre `onoffDatasetMock`. `onoffRawContentCampaignsMock` deriva de la fixture de la landing, que es la única query que devuelve las campañas.
+`onoffDatasetMock` (`src/mocks/onoff-documents.mock.ts`) no es un fixture más: es el dataset de **documentos** — lo que Sanity guarda tal cual — y la única capa del corpus que se escribe a mano. Para `literary-work/`, `collection/` y `landing-page/`, la fixture **raw** que la tabla de arriba nombra (`onoffRawLiteraryWorksMock`, `onoffRawCollectionsMock`, `onoffRawLandingPageMock`) no se edita: la genera `pnpm ops corpus:generate` evaluando la query GROQ real con `groq-js` sobre `onoffDatasetMock`. `onoffRawContentCampaignsMock` deriva de la fixture de la landing, que es la única query que devuelve las campañas.
 
 ```
 documentos (a mano)  →  (groq-js, query real)  →  raw (generado)  →  (ACL del repository)  →  dominio

@@ -8,7 +8,6 @@
  */
 import { client } from '../../../src/api/_helpers/sanity-connector';
 import { Transaction } from '@sanity/client';
-import { isInsufficientPermissionsError } from './delete-unused-assets.helpers';
 import type { OpsTask } from '../registry';
 
 const UNUSED_ASSETS_QUERY = `
@@ -17,6 +16,10 @@ const UNUSED_ASSETS_QUERY = `
   [refs == 0]
   ._id
 `;
+
+export function isInsufficientPermissionsError(error: unknown): error is Error {
+	return error instanceof Error && error.message.includes('Insufficient permissions');
+}
 
 export const task: OpsTask = {
 	run: async () => {

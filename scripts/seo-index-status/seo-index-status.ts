@@ -34,14 +34,14 @@
  *      tenerla cerca, `.secrets/` está ignorado.
  *
  * Uso:
- *   GSC_SITE_URL=sc-domain:cuentoneta.ar pnpm seo:index-status              # muestrea el sitemap
- *   ... pnpm seo:index-status --urls=ruta/a/urls.txt                        # una URL por línea
- *   ... pnpm seo:index-status --all                                         # todo el sitemap (ojo cuota)
- *   ... pnpm seo:index-status --sample=50
- *   ... pnpm seo:index-status --history=ruta/a/latest.json               # dónde vive la serie
- *   ... pnpm seo:index-status --summary="$GITHUB_STEP_SUMMARY"           # resumen en Markdown
- *   ... pnpm seo:index-status --apply                                    # deja el aviso en la bitácora
- *   GSC_SERVICE_ACCOUNT_KEY_PATH=... pnpm seo:index-status --list-sites   # ver el siteUrl exacto
+ *   GSC_SITE_URL=sc-domain:cuentoneta.ar pnpm ops seo:index-status              # muestrea el sitemap
+ *   ... pnpm ops seo:index-status --urls=ruta/a/urls.txt                        # una URL por línea
+ *   ... pnpm ops seo:index-status --all                                         # todo el sitemap (ojo cuota)
+ *   ... pnpm ops seo:index-status --sample=50
+ *   ... pnpm ops seo:index-status --history=ruta/a/latest.json               # dónde vive la serie
+ *   ... pnpm ops seo:index-status --summary="$GITHUB_STEP_SUMMARY"           # resumen en Markdown
+ *   ... pnpm ops seo:index-status --no-dry-run                               # deja el aviso en la bitácora
+ *   GSC_SERVICE_ACCOUNT_KEY_PATH=... pnpm ops seo:index-status --list-sites   # ver el siteUrl exacto
  */
 import { appendFile, readFile, writeFile, mkdir } from 'node:fs/promises';
 // La auth se toma del propio cliente, no de `google-auth-library` como dependencia aparte: el objeto
@@ -75,19 +75,22 @@ import {
 	type DigestInput,
 } from './seo-index-status.digest';
 import { findTrackingIssue, gh } from '../tracking-issue';
+import type { ExitCode, OpsTask } from '../ops/registry';
 
 const SITE_URL = process.env['GSC_SITE_URL'] ?? '';
 const BASE_URL = process.env['BASE_URL'] ?? 'https://www.cuentoneta.ar';
 const KEY_PATH = process.env['GSC_SERVICE_ACCOUNT_KEY_PATH'];
 const INLINE_KEY = process.env['GSC_SERVICE_ACCOUNT_KEY'];
 
-const URLS_FILE = argValue('--urls');
-const SAMPLE_SIZE = parseSampleSize(argValue('--sample'));
-const ALL = process.argv.includes('--all');
-const LIST_SITES = process.argv.includes('--list-sites');
-// Escribir en la bitácora es opt-in, igual que en los otros barridos: una corrida de diagnóstico en
-// local no debe comentarle al equipo.
-const APPLY = process.argv.includes('--apply');
+type CliOptions = {
+	readonly urlsFile: string | undefined;
+	readonly sampleSize: number;
+	readonly all: boolean;
+	readonly listSites: boolean;
+	readonly history: ReturnType<typeof resolveHistoryPaths>;
+	readonly summaryFile: string | undefined;
+	readonly apply: boolean;
+};
 
 // Cuota oficial por propiedad: 2.000 consultas/día y 600/minuto.
 const QUOTA_PER_DAY = 2000;
@@ -99,13 +102,24 @@ const MS_PER_MINUTE = 60_000;
 const DISPATCH_SPACING_MS = Math.ceil(MS_PER_MINUTE / (QUOTA_PER_MINUTE * 0.8));
 const CONCURRENCY = 8;
 
-function argValue(flag: string): string | undefined {
-	const found = process.argv.find((arg) => arg.startsWith(`${flag}=`));
+function argValue(flag: string, argv: readonly string[]): string | undefined {
+	const found = argv.find((arg) => arg.startsWith(`${flag}=`));
 	return found?.slice(flag.length + 1);
 }
 
-const HISTORY = resolveHistoryPaths(argValue('--history'));
-const SUMMARY_FILE = argValue('--summary');
+function parseCliOptions(apply: boolean, argv: readonly string[]): CliOptions {
+	return {
+		urlsFile: argValue('--urls', argv),
+		sampleSize: parseSampleSize(argValue('--sample', argv)),
+		all: argv.includes('--all'),
+		listSites: argv.includes('--list-sites'),
+		history: resolveHistoryPaths(argValue('--history', argv)),
+		summaryFile: argValue('--summary', argv),
+		// Escribir en la bitácora es opt-in, igual que en los otros barridos: una corrida de diagnóstico
+		// en local no debe comentarle al equipo.
+		apply,
+	};
+}
 
 function delay(ms: number): Promise<void> {
 	return new Promise((resolve) => setTimeout(resolve, ms));
@@ -124,9 +138,9 @@ function buildAuth(): InstanceType<typeof auth.GoogleAuth> {
 	return new auth.GoogleAuth({ keyFile: KEY_PATH, scopes });
 }
 
-async function resolveUrls(): Promise<string[]> {
-	if (URLS_FILE) {
-		const contents = await readFile(URLS_FILE, 'utf8');
+async function resolveUrls(options: CliOptions): Promise<string[]> {
+	if (options.urlsFile) {
+		const contents = await readFile(options.urlsFile, 'utf8');
 		return contents
 			.split('\n')
 			.map((line) => line.trim())
@@ -138,7 +152,7 @@ async function resolveUrls(): Promise<string[]> {
 		throw new Error(`GET /sitemap.xml devolvió HTTP ${response.status}`);
 	}
 	const locs = parseSitemapLocs(await response.text());
-	return ALL ? locs : locs.slice(0, SAMPLE_SIZE);
+	return options.all ? locs : locs.slice(0, options.sampleSize);
 }
 
 type Inspector = (url: string) => Promise<InspectionSnapshot>;
@@ -192,10 +206,10 @@ async function inspectAll(urls: readonly string[], inspect: Inspector): Promise<
  * degradarse a historial vacío: la corrida seguiría bien y `writeStore` sobrescribiría con lo que
  * midió, borrando en silencio la serie acumulada, que es todo el valor de la herramienta.
  */
-async function readStore(): Promise<SnapshotStore> {
+async function readStore(options: CliOptions): Promise<SnapshotStore> {
 	let contents: string;
 	try {
-		contents = await readFile(HISTORY.file, 'utf8');
+		contents = await readFile(options.history.file, 'utf8');
 	} catch (error) {
 		if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
 			return {};
@@ -207,18 +221,23 @@ async function readStore(): Promise<SnapshotStore> {
 		return JSON.parse(contents) as SnapshotStore;
 	} catch (error) {
 		throw new Error(
-			`${HISTORY.file} existe pero no es JSON válido. Movelo o borralo para empezar una serie nueva; ` +
+			`${options.history.file} existe pero no es JSON válido. Movelo o borralo para empezar una serie nueva; ` +
 				'sobrescribirlo perdería el historial acumulado.',
 			{ cause: error },
 		);
 	}
 }
 
-async function writeStore(store: SnapshotStore, rows: readonly ClassifiedRow[], checkedAt: string): Promise<void> {
+async function writeStore(
+	options: CliOptions,
+	store: SnapshotStore,
+	rows: readonly ClassifiedRow[],
+	checkedAt: string,
+): Promise<void> {
 	const merged = mergeSnapshot(store, rows, checkedAt);
-	await mkdir(HISTORY.dir, { recursive: true });
-	await writeFile(HISTORY.file, JSON.stringify(merged, null, 2), 'utf8');
-	console.log(`\nHistorial actualizado en ${HISTORY.file} (${Object.keys(merged).length} URL(s) conocidas)`);
+	await mkdir(options.history.dir, { recursive: true });
+	await writeFile(options.history.file, JSON.stringify(merged, null, 2), 'utf8');
+	console.log(`\nHistorial actualizado en ${options.history.file} (${Object.keys(merged).length} URL(s) conocidas)`);
 }
 
 /**
@@ -228,14 +247,14 @@ async function writeStore(store: SnapshotStore, rows: readonly ClassifiedRow[], 
  * Un resumen que no se puede escribir no aborta la corrida. Es superficie de lectura, y perder la
  * medición ya hecha por no poder contarla sería el peor de los dos desenlaces.
  */
-async function writeSummary(input: SummaryInput): Promise<void> {
-	if (!SUMMARY_FILE) {
+async function writeSummary(options: CliOptions, input: SummaryInput): Promise<void> {
+	if (!options.summaryFile) {
 		return;
 	}
 	try {
-		await appendFile(SUMMARY_FILE, `${formatSummaryMarkdown(input).join('\n')}\n`, 'utf8');
+		await appendFile(options.summaryFile, `${formatSummaryMarkdown(input).join('\n')}\n`, 'utf8');
 	} catch (error) {
-		console.error(`No se pudo escribir el resumen en ${SUMMARY_FILE}: ${messageOf(error)}`);
+		console.error(`No se pudo escribir el resumen en ${options.summaryFile}: ${messageOf(error)}`);
 	}
 }
 
@@ -301,8 +320,8 @@ function publish(digest: Digest): void {
  * corrida sigue. Fallar acá tiraría abajo una medición que ya se persistió, y pintaría de rojo un job
  * cuyo rojo está reservado para no haber podido medir.
  */
-function applyDigest(digest: Digest): void {
-	if (!APPLY) {
+function applyDigest(options: CliOptions, digest: Digest): void {
+	if (!options.apply) {
 		return;
 	}
 	try {
@@ -325,7 +344,7 @@ function assertSiteUrl(): void {
 	if (!SITE_URL) {
 		throw new Error(
 			'Falta GSC_SITE_URL (p. ej. "sc-domain:cuentoneta.ar" o "https://www.cuentoneta.ar/").\n' +
-				'Corré `pnpm seo:index-status --list-sites` para ver el valor exacto de tus propiedades.',
+				'Corré `pnpm ops seo:index-status --list-sites` para ver el valor exacto de tus propiedades.',
 		);
 	}
 }
@@ -369,19 +388,19 @@ async function listSites(): Promise<void> {
  */
 let measured: DigestInput | undefined;
 
-async function run(): Promise<void> {
+async function run(options: CliOptions): Promise<ExitCode> {
 	assertKey();
-	if (LIST_SITES) {
+	if (options.listSites) {
 		await listSites();
-		return;
+		return EXIT_CODE.ok;
 	}
 
 	assertSiteUrl();
-	const urls = await resolveUrls();
+	const urls = await resolveUrls(options);
 	assertWithinQuota(urls);
 
 	console.log(`Inspeccionando ${urls.length} URL(s) de ${SITE_URL} (~${DISPATCH_SPACING_MS}ms entre llamadas)\n`);
-	const store = await readStore();
+	const store = await readStore(options);
 	const known = storedRows(store);
 	const { rows, retries } = await inspectAll(urls, buildInspector());
 
@@ -391,26 +410,33 @@ async function run(): Promise<void> {
 	measured = { ...report, checkedAt, ...(runUrl !== undefined ? { runUrl } : {}) };
 
 	console.log(formatReport(report).join('\n'));
-	await writeSummary({ ...report, checkedAt });
+	await writeSummary(options, { ...report, checkedAt });
 	// La serie va primero: es lo irrecuperable de la corrida, y el aviso se deriva de ella.
-	await writeStore(store, rows, checkedAt);
+	await writeStore(options, store, rows, checkedAt);
 
-	applyDigest(buildDigest(measured));
+	applyDigest(options, buildDigest(measured));
 
-	process.exitCode = classifyRunOutcome(rows);
+	return classifyRunOutcome(rows);
 }
 
-run().catch((error: unknown) => {
-	console.error(messageOf(error));
-	// Una corrida que se rompió es la que más merece avisar: sin esto, el silencio de una semana sin
-	// movimiento y el de una herramienta rota se leen igual. Va sobre lo que se haya medido, que puede
-	// ser nada —si cortó antes— o el movimiento entero, si cortó al persistirlo.
-	const runUrl = currentRunUrl();
-	const base: DigestInput = measured ?? {
-		rows: [],
-		checkedAt: new Date().toISOString(),
-		...(runUrl !== undefined ? { runUrl } : {}),
-	};
-	applyDigest(buildDigest({ ...base, abortedBecause: messageOf(error) }));
-	process.exitCode = EXIT_CODE.toolFailure;
-});
+export const task: OpsTask = {
+	run: async ({ apply, argv }) => {
+		const options = parseCliOptions(apply, argv);
+		try {
+			return await run(options);
+		} catch (error) {
+			console.error(messageOf(error));
+			// Una corrida que se rompió es la que más merece avisar: sin esto, el silencio de una semana sin
+			// movimiento y el de una herramienta rota se leen igual. Va sobre lo que se haya medido, que puede
+			// ser nada —si cortó antes— o el movimiento entero, si cortó al persistirlo.
+			const runUrl = currentRunUrl();
+			const base: DigestInput = measured ?? {
+				rows: [],
+				checkedAt: new Date().toISOString(),
+				...(runUrl !== undefined ? { runUrl } : {}),
+			};
+			applyDigest(options, buildDigest({ ...base, abortedBecause: messageOf(error) }));
+			return EXIT_CODE.toolFailure;
+		}
+	},
+};

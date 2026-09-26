@@ -16,8 +16,7 @@ export interface DispatchOutput {
 }
 
 export function resolveInvocation(tasks: OpsCatalog, argv: readonly string[]): Invocation {
-	let taskId: string | undefined;
-	let firstUnexpected: string | undefined;
+	const positional: string[] = [];
 	let apply = false;
 
 	for (const arg of argv) {
@@ -25,13 +24,10 @@ export function resolveInvocation(tasks: OpsCatalog, argv: readonly string[]): I
 			apply = true;
 			continue;
 		}
-		if (taskId === undefined) {
-			taskId = arg;
-			continue;
-		}
-		firstUnexpected ??= arg;
+		positional.push(arg);
 	}
 
+	const [taskId, ...taskArgs] = positional;
 	if (taskId === undefined) return { action: 'usage' };
 
 	// Object.hasOwn excluye las propiedades heredadas ('toString', 'constructor'): sin ese guard, un id
@@ -40,9 +36,10 @@ export function resolveInvocation(tasks: OpsCatalog, argv: readonly string[]): I
 	const descriptor = tasks[taskId];
 	if (!apply && descriptor.destructive)
 		return { action: 'reject', reason: `La tarea ${taskId} es destructiva y requiere ${NO_DRY_RUN_FLAG} para correr` };
-	if (firstUnexpected !== undefined) return { action: 'reject', reason: `Argumento desconocido: ${firstUnexpected}` };
+	if (!descriptor.acceptsArgs && taskArgs.length > 0)
+		return { action: 'reject', reason: `Argumento desconocido: ${taskArgs[0]}` };
 
-	return { action: 'execute', descriptor, args: { apply } };
+	return { action: 'execute', descriptor, args: { apply, argv: taskArgs } };
 }
 
 export function formatCatalog(tasks: OpsCatalog): readonly string[] {
@@ -68,8 +65,7 @@ export async function dispatch(tasks: OpsCatalog, argv: readonly string[], outpu
 		case 'execute':
 			try {
 				const task = await invocation.descriptor.load();
-				await task.run(invocation.args);
-				return EXIT_CODES.success;
+				return (await task.run(invocation.args)) ?? EXIT_CODES.success;
 			} catch (error) {
 				output.error(error);
 				return EXIT_CODES.failure;

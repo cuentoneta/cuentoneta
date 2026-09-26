@@ -260,7 +260,7 @@ Patrones que se repiten:
   resolverse igual en todas las proyecciones que la traen. Cuando una la protege y otra no, el mismo
   campo llega distinto según por dónde se lo pida — un spec de contrato sobre las queries es lo que
   vuelve visible esa asimetría en el diff en lugar de dejarla para un censo manual.
-- **Qué campos incumple hoy el dato lo mide `pnpm required-fields:sweep`**, que deriva los requeridos
+- **Qué campos incumple hoy el dato lo mide `pnpm ops required-fields:sweep`**, que deriva los requeridos
   del schema versionado y cuenta los documentos que no los cumplen. Reporta, no bloquea: lo corre un
   job programado → [`scripts.md`](scripts.md).
 - **Composición:** un mapper puede delegar en otros — `mapAuthorProfile` reutiliza `mapAuthor`, que a
