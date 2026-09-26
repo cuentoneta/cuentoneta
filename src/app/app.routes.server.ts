@@ -9,7 +9,7 @@ export const serverRoutes: Array<ServerRoute> = [
 	},
 	{
 		path: AppRoutes.Authors,
-		renderMode: RenderMode.Prerender,
+		renderMode: RenderMode.Server,
 	},
 	{
 		path: AppRoutes.About,
@@ -37,7 +37,7 @@ export const serverRoutes: Array<ServerRoute> = [
 	},
 	{
 		path: AppRoutes.LiteraryWork,
-		renderMode: RenderMode.Prerender,
+		renderMode: RenderMode.Server,
 	},
 	{
 		path: '**',
