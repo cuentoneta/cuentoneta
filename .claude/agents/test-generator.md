@@ -167,7 +167,8 @@ Mantené las stories sincronizadas cuando cambien inputs, estados visuales o la 
 
 ## Convención de nombres
 
-- `<component-name>.component.spec.ts`
+- `<component-name>.spec.ts` (componentes de `src/app/components/`, sin sufijo `Component` en el nombre de archivo ni en la clase — ver [`angular-components.md`](../references/angular-components.md#ubicación-y-nombre-de-componentes))
+- `<page-name>.page.spec.ts` (páginas ruteadas de `src/app/pages/`)
 - `<service-name>.service.spec.ts` / `<repository-name>.repository.spec.ts` (junto al módulo en `src/api/modules/<dominio>/`)
 - `<component-name>.stories.ts`
 

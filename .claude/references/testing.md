@@ -177,10 +177,11 @@ Para inputs se usa `inputs: { ... }`; para proyectar plantilla con bindings, la 
 ```typescript
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
+import { ContactForm } from './contact-form';
 
 it('should react to a click', async () => {
 	const user = userEvent.setup();
-	await render(MyComponent);
+	await render(ContactForm);
 
 	await user.click(screen.getByRole('button', { name: /enviar/i }));
 

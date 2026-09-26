@@ -370,7 +370,7 @@ El proyecto utiliza [git](https://git-scm.com) como herramienta de control de ve
   la rama desde la incidencia en la interfaz de Github, tené en cuenta que el nombre que propone viene sin el prefijo
   `feat/`: hay que agregárselo antes de empezar a trabajar.
 - Todos los commits deben ser nomenclados de la siguiente manera, referenciando el commit de manera navegable desde
-  la interfaz de Github: `[#numero-de-incidencia] - <mensaje-del-commit>`. Por ejemplo: `[#469] - Crear componente PublicationCardComponent`.
+  la interfaz de Github: `[#numero-de-incidencia] - <mensaje-del-commit>`. Por ejemplo: `[#469] - Crear componente PublicationCard`.
 - Las ramas de trabajo se crean a partir de la rama `develop` y se eliminan una vez integrados los cambios en la rama `develop`.
 - Las ramas de trabajo deben ser actualizadas con la rama `develop` antes de solicitar la integración de los cambios en la rama `develop`.
 - El código escrito en en el proyecto sigue las convenciones de [Angular](https://runebook.dev/es/docs/angular/guide/styleguide), [TypeScript](https://ts.dev/style/) y [RxJS](https://v10.angular.io/guide/rx-library#naming-conventions-for-observables) correspondientes para la escritura de código.

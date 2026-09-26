@@ -49,6 +49,43 @@ export class AuthorTeaserCard {
 
 ---
 
+## Ubicación y nombre de componentes
+
+Toda clase `@Component` sigue una convención única de ubicación y nombre, **sin** el sufijo `Component` que Angular recomendaba hasta la v20.
+
+| Rol                                                                                   | Ubicación                      | Archivo + clase                                         |
+| ------------------------------------------------------------------------------------- | ------------------------------ | ------------------------------------------------------- |
+| Componente reutilizable                                                               | `src/app/components/**`        | `x.ts` + `export class X`                               |
+| Página ruteada                                                                        | `src/app/pages/<x>/`           | `x.page.ts` + `export default class XPage`              |
+| Componente no ruteable dentro de `pages/` (skeleton, pieza propia de una sola página) | `src/app/pages/<x>/`           | `x.ts` + `export class X` — **nunca** termina en `Page` |
+| Raíz de la aplicación                                                                 | `src/app/app.ts` (ruta exacta) | `export class App`                                      |
+| Soporte de tests y del catálogo                                                       | `src/testing/**`               | Ubicación libre; igual sin sufijo `Component`           |
+
+Los hermanos de un componente —`.html`, `.css`, `.spec.ts`, `.stories.ts`, `.docs.ts`— comparten el **stem** del archivo principal: `tag.ts` va con `tag.html`, `tag.spec.ts`, `tag.stories.ts` y `tag.docs.ts`; `about.page.ts` va con `about.page.html`.
+
+**Los componentes host declarados dentro de un `*.spec.ts` o un `*.stories.ts` quedan fuera de esta convención**, con nombre y ubicación libres (p. ej. `HostComponent`, `ClampHostComponent`, `ButtonGroupStoryHostComponent`). Son andamiaje local de ese archivo —no se importan desde ningún otro lado, no se rutean ni se catalogan— y no componentes de la aplicación.
+
+**Alcance:** la convención rige **solo** para `@Component`. Directivas, pipes y servicios conservan su convención propia (`x.directive.ts` + `XDirective`, etc.); la regla que la verifica no los mira.
+
+**Rationale.** La guía de estilo de Angular deja de recomendar el sufijo `Component` a partir de la v20. `Page` se conserva, pero como sufijo de **rol** y no de tipo: una página tiene obligaciones que un componente no tiene —la cargan las rutas y declara las directivas de SEO (ver [`angular-state.md` §8](./angular-state.md#8-directivas-de-seo-de-página-declarar-el-combo-según-la-indexabilidad))— y los guardrails de layout y de SEO la descubren por su fuente. Por eso el sufijo queda **reservado** a los archivos `.page.ts`: una clase que no vive en uno no puede terminar en `Page`, y un `.page.ts` fuera de `src/app/pages/` tampoco es válido.
+
+**Colisiones de nombre.** Cuando el nombre sin sufijo choca con un modelo homónimo de `@models/*`, se aliasa del lado del **modelo**, no del componente. El sufijo `Model` coincide con el del archivo `x.model.ts` que lo declara, así el componente se sigue buscando con un solo nombre:
+
+```typescript
+import type { Resource as ResourceModel } from '@models/resource.model';
+
+@Component({ selector: 'cuentoneta-resource' /* ... */ })
+export class Resource {
+	public readonly resource = input.required<ResourceModel>();
+}
+```
+
+**Enforcement.** La regla de ESLint `cuentoneta/component-location-and-name` (`tools/eslint/component-location-and-name.js`), activa en el gate `lint`, verifica: sin sufijo `Component`; ubicación en `components/`, `pages/`, la raíz o `src/testing/`; nombre de la clase derivado del de su archivo; `.page.ts` solo dentro de `pages/`; el sufijo `Page` reservado a esos archivos; y `templateUrl`/`styleUrl` con el mismo stem que la clase. Los `*.spec.ts` y `*.stories.ts` quedan exentos de los seis chequeos. Que una página ruteada viva efectivamente en un `.page.ts` no lo decide esta regla sino `page-sources.util.ts`, que resuelve el fuente de cada ruta en el gate `test`.
+
+**Puntos ciegos declarados:** el nombre de la carpeta que aloja el componente, y la cantidad de componentes que agrupa una misma carpeta. Ninguno de los dos lo verifica ningún gate.
+
+---
+
 ## Visibilidad de campos
 
 Regla central: **un campo de componente nunca es `public` por defecto.** Las plantillas de Angular pueden acceder a miembros `protected`, así que no hay razón para exponer nada como `public` solo para usarlo en la plantilla.
@@ -409,6 +446,7 @@ La utilidad `z` de Tailwind resuelve cualquier número sin consultar el tema, as
 
 ## Checklist al crear/modificar un componente
 
+- [ ] Ubicación y nombre según [Ubicación y nombre de componentes](#ubicación-y-nombre-de-componentes): sin sufijo `Component`, `x.ts`/`x.page.ts` en la carpeta que corresponde a su rol.
 - [ ] Selector `cuentoneta-…`; sin declarar `changeDetection` (OnPush es el default de v22).
 - [ ] Inputs/outputs con `input()`/`input.required()`/`output()`/`model()`; queries con `viewChild()`/`contentChild()`.
 - [ ] Campos `protected` (plantilla) / `private` (interno); `public` solo para API (inputs/outputs/imperativa/interfaces).
