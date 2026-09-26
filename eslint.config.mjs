@@ -14,6 +14,7 @@ import componentConfigInClass from './tools/eslint/component-config-in-class.js'
 import zIndexScale from './tools/eslint/z-index-scale.js';
 import noFullZodInBrowser from './tools/eslint/no-full-zod-in-browser.js';
 import noTsExtensionImports from './tools/eslint/no-ts-extension-imports.js';
+import componentLocationAndName from './tools/eslint/component-location-and-name.js';
 
 // Las reglas propias comparten un único objeto de plugin: ESLint rechaza redefinir un namespace
 // entre bloques cuyos scopes se solapan, aunque las reglas sean distintas.
@@ -21,6 +22,7 @@ const cuentonetaPlugin = {
 	rules: {
 		'no-full-zod-in-browser': noFullZodInBrowser,
 		'no-ts-extension-imports': noTsExtensionImports,
+		'component-location-and-name': componentLocationAndName,
 	},
 };
 
@@ -430,6 +432,19 @@ export default [
 		},
 		rules: {
 			'custom-component-config/component-config-in-class': 'error',
+		},
+	},
+	{
+		// El scope es todo `src/` y no solo `src/app/`: un `@Component` fuera de las carpetas que lo alojan es
+		// justamente lo que la regla tiene que ver. Las excepciones —la raíz, `src/testing/`, specs y stories—
+		// viven dentro de la regla para que sumar una se vea en el diff.
+		name: 'component-location-and-name',
+		files: ['src/**/*.ts'],
+		plugins: {
+			cuentoneta: cuentonetaPlugin,
+		},
+		rules: {
+			'cuentoneta/component-location-and-name': 'error',
 		},
 	},
 	{
