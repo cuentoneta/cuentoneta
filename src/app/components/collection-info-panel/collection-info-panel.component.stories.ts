@@ -17,8 +17,8 @@ import { createCollection } from '@models/collection.model';
 import { createMarkdown } from '@models/markdown.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import { collectionCoverDocs } from '@components/collection-cover/collection-cover.component.docs';
-import { tagDocs } from '@components/tag/tag.component.docs';
-import { tagsListDocs } from '@components/tags-list/tags-list.component.docs';
+import { tagDocs } from '@components/tag/tag.docs';
+import { tagsListDocs } from '@components/tags-list/tags-list.docs';
 import { docsRef } from '@testing/storybook-docs';
 import type { CollectionInfoPanelSkeletonComponent } from '@components/collection-info-panel/collection-info-panel-skeleton.component';
 

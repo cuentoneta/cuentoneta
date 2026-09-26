@@ -1,7 +1,7 @@
 import { Component, computed, input } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 
-import { SkeletonComponent } from '@components/skeleton/skeleton.component';
+import { Skeleton } from '@components/skeleton/skeleton';
 import { CoverImageSkeletonComponent } from '../cover-image/cover-image-skeleton.component';
 import type { LiteraryWorkTeaserCardVariant } from './literary-work-teaser-card.component';
 
@@ -14,7 +14,7 @@ import type { LiteraryWorkTeaserCardVariant } from './literary-work-teaser-card.
  */
 @Component({
 	selector: 'cuentoneta-literary-work-teaser-card-skeleton',
-	imports: [SkeletonComponent, NgTemplateOutlet, CoverImageSkeletonComponent],
+	imports: [Skeleton, NgTemplateOutlet, CoverImageSkeletonComponent],
 	host: { class: 'block' },
 	template: `
 		<article [class]="rowWrapperClasses()">

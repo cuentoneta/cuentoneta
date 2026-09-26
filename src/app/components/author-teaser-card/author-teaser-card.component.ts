@@ -3,11 +3,11 @@ import { NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
 import type { AuthorTeaser } from '@models/author.model';
-import type { Tag } from '@models/tag.model';
+import type { Tag as TagModel } from '@models/tag.model';
 import { AppRoutes } from '../../app.routes';
-import { ImageProfileComponent } from '../image-profile/image-profile.component';
-import { TagsListComponent } from '../tags-list/tags-list.component';
-import { TagComponent } from '../tag/tag.component';
+import { ImageProfile } from '../image-profile/image-profile';
+import { TagsList } from '../tags-list/tags-list';
+import { Tag } from '../tag/tag';
 
 /**
  * Vista previa de un autor enlazada a su perfil, según el Design System v3. Componente de
@@ -20,7 +20,7 @@ import { TagComponent } from '../tag/tag.component';
  */
 @Component({
 	selector: 'cuentoneta-author-teaser-card',
-	imports: [NgOptimizedImage, RouterLink, ImageProfileComponent, TagsListComponent, TagComponent],
+	imports: [NgOptimizedImage, RouterLink, ImageProfile, TagsList, Tag],
 	template: `
 		<article class="relative flex items-start gap-4" data-testid="author">
 			<cuentoneta-image-profile
@@ -73,6 +73,6 @@ export class AuthorTeaserCardComponent {
 
 	// Inputs
 	public readonly author = input.required<AuthorTeaser>();
-	public readonly tags = input<readonly Tag[]>([]);
+	public readonly tags = input<readonly TagModel[]>([]);
 	public readonly storyCount = input<number>();
 }

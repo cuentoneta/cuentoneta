@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { SkeletonComponent } from '@components/skeleton/skeleton.component';
+import { Skeleton } from '@components/skeleton/skeleton';
 
 /**
  * Esqueleto de carga de `MediaWidgetSelector`. Reserva el alto del bloque —título, fila de formatos
@@ -11,7 +11,7 @@ import { SkeletonComponent } from '@components/skeleton/skeleton.component';
  */
 @Component({
 	selector: 'cuentoneta-media-widget-selector-skeleton',
-	imports: [SkeletonComponent],
+	imports: [Skeleton],
 	host: { class: 'block' },
 	template: `
 		<div class="flex flex-col gap-5">

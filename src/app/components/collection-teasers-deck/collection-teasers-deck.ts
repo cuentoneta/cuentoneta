@@ -1,14 +1,14 @@
 import { Component, input } from '@angular/core';
 import type { CollectionTeaser } from '@models/collection.model';
 import { AppRoutes } from '../../app.routes';
-import { SectionHeaderComponent, type SectionHeaderAction } from '@components/section-header/section-header.component';
-import { EmptyStateComponent } from '@components/empty-state/empty-state.component';
+import { SectionHeader, type SectionHeaderAction } from '@components/section-header/section-header';
+import { EmptyState } from '@components/empty-state/empty-state';
 import { CollectionTeaserCard } from '@components/collection-teaser-card/collection-teaser-card';
 import { CollectionTeaserCardSkeletonComponent } from '@components/collection-teaser-card/collection-teaser-card-skeleton';
 
 @Component({
 	selector: 'cuentoneta-collection-teasers-deck',
-	imports: [SectionHeaderComponent, EmptyStateComponent, CollectionTeaserCard, CollectionTeaserCardSkeletonComponent],
+	imports: [SectionHeader, EmptyState, CollectionTeaserCard, CollectionTeaserCardSkeletonComponent],
 	template: `
 		<cuentoneta-section-header
 			[heading]="sectionHeading"

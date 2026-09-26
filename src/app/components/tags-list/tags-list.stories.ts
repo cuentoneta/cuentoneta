@@ -1,0 +1,161 @@
+import type { Meta, StoryObj } from '@storybook/angular-vite';
+import { componentWrapperDecorator, moduleMetadata } from '@storybook/angular-vite';
+
+import { TagsList } from './tags-list';
+import type { TagVariant } from '../tag/tag';
+import { Tag } from '../tag/tag';
+import type { Tag as TagModel } from '@models/tag.model';
+import { onoffTagsWithShortTitles } from '@mocks/onoff-tags.mock';
+import { authorTeaserCardDocs } from '@components/author-teaser-card/author-teaser-card.component.docs';
+import { tagDocs } from '@components/tag/tag.docs';
+import { docsMention, docsRef } from '@testing/storybook-docs';
+import type { TagsOverflowDirective } from '@components/tags-list/tags-overflow.directive';
+import { tagsListDocs } from './tags-list.docs';
+
+export type DocsSymbols = [TagsOverflowDirective];
+
+type Args = TagsList & { tags: TagModel[]; variant: TagVariant; maxVisible?: number };
+
+const tags = onoffTagsWithShortTitles.slice(0, 5);
+
+/** Proyecta los tags dentro del componente (la API es por content projection). */
+const projected = `<cuentoneta-tags-list [maxVisible]="maxVisible">
+		@for (tag of tags; track tag.slug) {
+			<cuentoneta-tag [label]="tag.title" [variant]="variant" />
+		}
+	</cuentoneta-tags-list>`;
+
+/** Caja con ancho fijo y borde punteado para evidenciar dónde recorta el contenedor. */
+const boxed = (width: string) =>
+	componentWrapperDecorator(
+		(story) => `<div style="width:${width}; outline:1px dashed #cbd5e1; border-radius:8px; padding:8px">${story}</div>`,
+	);
+
+const meta: Meta<Args> = {
+	component: TagsList,
+	title: 'Componentes V3/TagsList',
+	decorators: [moduleMetadata({ imports: [Tag] })],
+	parameters: {
+		docs: {
+			canvas: {
+				sourceState: 'shown',
+			},
+			description: {
+				component: `<div><p>El componente ${docsMention(tagsListDocs)} recibe instancias de ${docsRef(tagDocs)} por <strong>content projection</strong> (<code>&lt;ng-content&gt;</code>) y, cuando <strong>no entran en el ancho del contenedor</strong>, colapsa el excedente detrás de un contador <strong>"+N"</strong> de ancho fijo ubicado justo después del último tag visible.</p><p>El recorte es <strong>por ancho real</strong> (vía <code>IntersectionObserver</code>, sin <code>ResizeObserver</code>), no por cantidad, y vive en <code>TagsOverflowDirective</code> aplicada como <code>hostDirective</code>. <code>maxVisible</code> es un <strong>tope duro opcional</strong>.</p><p>Probá el <em>Playground</em> para arrastrar el ancho y ver el contador aparecer/desaparecer en vivo.</p></div>`,
+			},
+		},
+		layout: 'padded',
+	},
+	argTypes: {
+		variant: {
+			control: { type: 'inline-radio' },
+			options: ['soft', 'filled', 'gray'],
+			description: 'Variante aplicada a los tags proyectados (ver Tag)',
+			table: { type: { summary: "'soft' | 'filled' | 'gray'" }, defaultValue: { summary: 'filled' } },
+		},
+		maxVisible: {
+			control: { type: 'number' },
+			description: 'Tope duro opcional de tags visibles. Vacío = recorte solo por ancho.',
+			table: { type: { summary: 'number' }, defaultValue: { summary: '— (sin tope)' } },
+		},
+	},
+};
+
+export default meta;
+type Story = StoryObj<Args>;
+
+export const Default: Story = {
+	render: (args) => ({ props: { ...args, tags }, template: projected }),
+	args: { variant: 'filled' },
+	decorators: [boxed('100%')],
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>Con espacio de sobra, los 5 tags se muestran sin contador.</p><p><strong>Usos:</strong> ${docsRef(authorTeaserCardDocs)}, en columnas anchas donde la fila de tags entra completa.</p>`,
+			},
+		},
+	},
+};
+
+export const WidthOverflow: Story = {
+	render: (args) => ({ props: { ...args, tags }, template: projected }),
+	args: { variant: 'filled' },
+	decorators: [boxed('240px')],
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>En 240px no entran los 5 tags: los que sobran se colapsan tras un "+N" después del último visible.</p><p><strong>Usos:</strong> ${docsRef(authorTeaserCardDocs)} en anchos intermedios.</p>`,
+			},
+		},
+	},
+};
+
+export const NarrowWidth: Story = {
+	render: (args) => ({ props: { ...args, tags }, template: projected }),
+	args: { variant: 'filled' },
+	decorators: [boxed('130px')],
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>A 130px casi nada entra; el contador refleja todo lo colapsado.</p><p><strong>Usos:</strong> teasers en viewports muy reducidos o columnas muy angostas.</p>`,
+			},
+		},
+	},
+};
+
+export const MaxVisibleCap: Story = {
+	render: (args) => ({ props: { ...args, tags }, template: projected }),
+	args: { variant: 'filled', maxVisible: 2 },
+	decorators: [boxed('100%')],
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>Con ancho de sobra pero maxVisible=2, se muestran 2 + "+3"; el tope manda sobre el ancho.</p><p><strong>Usos:</strong> cuando el diseño exige un máximo fijo de tags independientemente del ancho disponible.</p>`,
+			},
+		},
+	},
+};
+
+export const Variants: Story = {
+	render: () => ({
+		props: { tags },
+		template: `
+			<div class="flex flex-col gap-6">
+				@for (variant of ['soft', 'filled', 'gray']; track variant) {
+					<div style="width:240px; outline:1px dashed #cbd5e1; border-radius:8px; padding:8px">
+						<cuentoneta-tags-list>
+							@for (tag of tags; track tag.slug) {
+								<cuentoneta-tag [label]="tag.title" [variant]="variant" />
+							}
+						</cuentoneta-tags-list>
+					</div>
+				}
+			</div>
+		`,
+	}),
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>soft / filled / gray recortando por ancho en contenedores de 240px.</p><p><strong>Usos:</strong> referencia visual de cómo afecta la variante de ${docsRef(tagDocs)} a la fila completa.</p>`,
+			},
+		},
+	},
+};
+
+export const Playground: Story = {
+	render: (args) => ({ props: { ...args, tags }, template: projected }),
+	args: { variant: 'filled' },
+	decorators: [
+		componentWrapperDecorator(
+			(story) =>
+				`<div style="width:260px; max-width:100%; resize:horizontal; overflow:hidden; outline:1px dashed #cbd5e1; border-radius:8px; padding:8px">${story}</div>`,
+		),
+	],
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>Arrastrá el handle de resize del contenedor: el "+N" aparece/desaparece según el ancho disponible.</p><p><strong>Usos:</strong> verificación interactiva del recorte por ancho real (IntersectionObserver).</p>`,
+			},
+		},
+	},
+};

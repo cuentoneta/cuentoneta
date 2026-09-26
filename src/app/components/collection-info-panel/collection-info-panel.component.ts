@@ -9,10 +9,10 @@ import type { Collection } from '@models/collection.model';
 import { ClampOverflowDirective } from '../../directives/clamp-overflow.directive';
 
 // Components
-import { ButtonComponent } from '../button/button.component';
+import { Button } from '../button/button';
 import { CollectionCoverComponent } from '../collection-cover/collection-cover.component';
-import { TagComponent } from '../tag/tag.component';
-import { TagsListComponent } from '../tags-list/tags-list.component';
+import { Tag } from '../tag/tag';
+import { TagsList } from '../tags-list/tags-list';
 import { CollectionInfoPanelSkeletonComponent } from './collection-info-panel-skeleton.component';
 
 /**
@@ -32,11 +32,11 @@ import { CollectionInfoPanelSkeletonComponent } from './collection-info-panel-sk
 @Component({
 	selector: 'cuentoneta-collection-info-panel',
 	imports: [
-		ButtonComponent,
+		Button,
 		ClampOverflowDirective,
 		CollectionCoverComponent,
-		TagComponent,
-		TagsListComponent,
+		Tag,
+		TagsList,
 		CollectionInfoPanelSkeletonComponent,
 	],
 	host: { class: 'flex w-full flex-col gap-4' },

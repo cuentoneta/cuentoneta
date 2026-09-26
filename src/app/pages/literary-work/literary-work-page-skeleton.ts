@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 
-import { DividerComponent } from '@components/divider/divider.component';
+import { Divider } from '@components/divider/divider';
 import { LiteraryWorkHeroHeaderComponent } from '@components/literary-work-hero-header/literary-work-hero-header.component';
-import { SkeletonComponent } from '@components/skeleton/skeleton.component';
+import { Skeleton } from '@components/skeleton/skeleton';
 
 /**
  * Silueta de carga de la página de lectura: el hero, la barra de lectura y las primeras líneas del
@@ -14,7 +14,7 @@ import { SkeletonComponent } from '@components/skeleton/skeleton.component';
  */
 @Component({
 	selector: 'cuentoneta-literary-work-page-skeleton',
-	imports: [DividerComponent, LiteraryWorkHeroHeaderComponent, SkeletonComponent],
+	imports: [Divider, LiteraryWorkHeroHeaderComponent, Skeleton],
 	host: { class: 'block w-full' },
 	template: `
 		<header class="flex flex-col gap-2">

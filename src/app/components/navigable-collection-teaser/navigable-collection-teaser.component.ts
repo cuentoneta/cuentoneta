@@ -3,8 +3,8 @@ import { RouterLink } from '@angular/router';
 
 import type { CollectionTeaser } from '@models/collection.model';
 import { AppRoutes } from '../../app.routes';
-import { ImageProfileComponent } from '../image-profile/image-profile.component';
-import { TagComponent } from '../tag/tag.component';
+import { ImageProfile } from '../image-profile/image-profile';
+import { Tag } from '../tag/tag';
 
 /**
  * Item compacto y navegable de una colección (Design System v3): ícono de biblioteca, nombre, categoría y
@@ -16,7 +16,7 @@ import { TagComponent } from '../tag/tag.component';
  */
 @Component({
 	selector: 'cuentoneta-navigable-collection-teaser',
-	imports: [RouterLink, ImageProfileComponent, TagComponent],
+	imports: [RouterLink, ImageProfile, Tag],
 	template: `
 		<article class="relative flex items-center gap-3" data-testid="collection">
 			<cuentoneta-image-profile variant="collection" size="medium" class="shrink-0" />

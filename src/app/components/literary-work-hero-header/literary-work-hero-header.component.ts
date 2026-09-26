@@ -6,9 +6,9 @@ import type { LiteraryWork } from '@models/literary-work.model';
 import { AppRoutes } from '../../app.routes';
 import type { SanityImageLoaderParams } from '../../providers/sanity-image-loader';
 import { CoverImageComponent } from '../cover-image/cover-image.component';
-import { ImageProfileComponent } from '../image-profile/image-profile.component';
-import { TagComponent } from '../tag/tag.component';
-import { TagsListComponent } from '../tags-list/tags-list.component';
+import { ImageProfile } from '../image-profile/image-profile';
+import { Tag } from '../tag/tag';
+import { TagsList } from '../tags-list/tags-list';
 import { LiteraryWorkHeroHeaderSkeletonComponent } from './literary-work-hero-header-skeleton.component';
 
 /**
@@ -25,9 +25,9 @@ import { LiteraryWorkHeroHeaderSkeletonComponent } from './literary-work-hero-he
 		NgOptimizedImage,
 		RouterLink,
 		CoverImageComponent,
-		ImageProfileComponent,
-		TagComponent,
-		TagsListComponent,
+		ImageProfile,
+		Tag,
+		TagsList,
 		LiteraryWorkHeroHeaderSkeletonComponent,
 	],
 	// `isolate` confina el apilamiento interno: el contenido se eleva con `z-content` para quedar sobre el

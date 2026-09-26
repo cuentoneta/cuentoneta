@@ -24,12 +24,12 @@ import { RouterLink } from '@angular/router';
 
 import { AuthorTeaser } from '@models/author.model';
 import { Tag } from '@models/tag.model';
-import { ImageProfileComponent } from '../image-profile/image-profile.component';
-import { TagsListComponent } from '../tags-list/tags-list.component';
+import { ImageProfile } from '../image-profile/image-profile';
+import { TagsList } from '../tags-list/tags-list';
 
 @Component({
 	selector: 'cuentoneta-author-teaser-card',
-	imports: [NgOptimizedImage, RouterLink, ImageProfileComponent, TagsListComponent],
+	imports: [NgOptimizedImage, RouterLink, ImageProfile, TagsList],
 	template: `
 		<article class="relative flex items-start gap-4" data-testid="author">
 			<!-- ... -->
@@ -60,8 +60,8 @@ Regla central: **un campo de componente nunca es `public` por defecto.** Las pla
 | `public`    | **Solo** inputs/outputs/models de signals (`input()`, `output()`, `model()`), **API imperativa** llamada por padres (`open()`, `close()`), y miembros **requeridos por interfaces**. |
 
 ```typescript
-// Miembros de `src/app/components/resource/resource.component.ts`
-export class ResourceComponent {
+// Miembros de `src/app/components/resource/resource.ts`
+export class Resource {
 	public readonly resource = input.required<Resource>();
 
 	protected readonly NgIcon = NgIcon;
@@ -81,7 +81,7 @@ protected readonly icon = computed(() => /* … */); // la plantilla lo interpol
 private readonly isExpanded = signal(false); // estado interno, no llega a la plantilla
 ```
 
-`public` queda reservado a las dos excepciones que ya fija la tabla: un miembro **requerido por una interfaz** (p. ej. `literaryWork` en `LiteraryWorkPage`, exigido por `LiteraryWorkHost`) o **consumido por otro componente** (p. ej. `hiddenCount` de `TagsOverflowDirective`, que lee `TagsListComponent`). Exponer una signal en `public` "por las dudas" agranda la API del componente sin que nadie la consuma.
+`public` queda reservado a las dos excepciones que ya fija la tabla: un miembro **requerido por una interfaz** (p. ej. `literaryWork` en `LiteraryWorkPage`, exigido por `LiteraryWorkHost`) o **consumido por otro componente** (p. ej. `hiddenCount` de `TagsOverflowDirective`, que lee `TagsList`). Exponer una signal en `public` "por las dudas" agranda la API del componente sin que nadie la consuma.
 
 ---
 
@@ -98,7 +98,7 @@ La regla de ESLint **no verifica esa propiedad** —no puede: solo mira si el ar
 const SIZE_MAP = { sm: 'h-8 w-8', lg: 'h-16 w-16' };
 
 @Component({/* … */})
-export class ImageProfileComponent {
+export class ImageProfile {
 	protected readonly classes = computed(() => SIZE_MAP[this.size()]);
 }
 ```
@@ -106,7 +106,7 @@ export class ImageProfileComponent {
 ```ts
 // ✅ Co-locado con su único consumidor.
 @Component({/* … */})
-export class ImageProfileComponent {
+export class ImageProfile {
 	private readonly sizeMap = { sm: 'h-8 w-8', lg: 'h-16 w-16' };
 
 	protected readonly classes = computed(() => this.sizeMap[this.size()]);
@@ -156,7 +156,7 @@ public readonly selected = output<string>();
 public readonly value = model<string>('');
 
 // Queries — no son API: `protected` si la plantilla las usa, `private` si no
-private readonly listItems = contentChildren(TagComponent);
+private readonly listItems = contentChildren(Tag);
 ```
 
 Los valores **derivados** son `computed()`, nunca estado duplicado guardado a mano:
@@ -209,8 +209,8 @@ Todo `effect()` / `afterRenderEffect()` / `afterNextRender()` se declara como **
 
 ```typescript
 // ✅ Correcto — effect nombrado como field, después de lo que referencia
-// (tomado de `resource.component.ts`)
-export class ResourceComponent {
+// (tomado de `resource.ts`)
+export class Resource {
 	private readonly tooltipDirective = inject(TooltipDirective);
 	public readonly resource = input.required<Resource>();
 

@@ -6,9 +6,9 @@ import { AuthorTeaserCardSkeletonComponent } from './author-teaser-card-skeleton
 import { authorTeaserMock } from '@mocks/author.mock';
 import { onoffTagsMock } from '@mocks/onoff-tags.mock';
 import { highlightedAuthorsDocs } from '@components/highlighted-authors/highlighted-authors.component.docs';
-import { imageProfileDocs } from '@components/image-profile/image-profile.component.docs';
-import { tagDocs } from '@components/tag/tag.component.docs';
-import { tagsListDocs } from '@components/tags-list/tags-list.component.docs';
+import { imageProfileDocs } from '@components/image-profile/image-profile.docs';
+import { tagDocs } from '@components/tag/tag.docs';
+import { tagsListDocs } from '@components/tags-list/tags-list.docs';
 import { docsRef } from '@testing/storybook-docs';
 
 export type DocsSymbols = [AuthorTeaserCardComponent];

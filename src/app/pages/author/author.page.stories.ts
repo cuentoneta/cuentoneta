@@ -18,9 +18,9 @@ import type { LiteraryWorkApi, LiteraryWorkTeaserFilter } from '../../providers/
 import AuthorPage from './author.page';
 import { authorPageDocs } from './author.page.docs';
 import { authorInfoPanelDocs } from '@components/author-info-panel/author-info-panel.component.docs';
-import { drawerDocs } from '@components/drawer/drawer.component.docs';
+import { drawerDocs } from '@components/drawer/drawer.docs';
 import { literaryWorkTeaserCardDocs } from '@components/literary-work-teaser-card/literary-work-teaser-card.component.docs';
-import { resourceDocs } from '@components/resource/resource.component.docs';
+import { resourceDocs } from '@components/resource/resource.docs';
 import { docsMention, docsRef } from '@testing/storybook-docs';
 
 const [literaryWork] = onoffLiteraryWorksMock;

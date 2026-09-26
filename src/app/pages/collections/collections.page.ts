@@ -11,7 +11,7 @@ import { CollectionsStructuredDataDirective } from './collections-structured-dat
 import { CollectionFiltersComponent } from '@components/collection-filters/collection-filters.component';
 import { CollectionTeaserCard } from '@components/collection-teaser-card/collection-teaser-card';
 import { CollectionTeaserCardSkeletonComponent } from '@components/collection-teaser-card/collection-teaser-card-skeleton';
-import { DividerComponent } from '@components/divider/divider.component';
+import { Divider } from '@components/divider/divider';
 
 @Component({
 	selector: 'cuentoneta-collections',
@@ -59,7 +59,7 @@ import { DividerComponent } from '@components/divider/divider.component';
 	`,
 	providers: [{ provide: COLLECTIONS_HOST, useExisting: forwardRef(() => CollectionsPage) }],
 	hostDirectives: [CollectionsMetaTagsDirective, CollectionsStructuredDataDirective],
-	imports: [CollectionFiltersComponent, CollectionTeaserCard, CollectionTeaserCardSkeletonComponent, DividerComponent],
+	imports: [CollectionFiltersComponent, CollectionTeaserCard, CollectionTeaserCardSkeletonComponent, Divider],
 })
 export default class CollectionsPage implements CollectionsHost {
 	// Providers

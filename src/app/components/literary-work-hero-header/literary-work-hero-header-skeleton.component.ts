@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { SkeletonComponent } from '@components/skeleton/skeleton.component';
+import { Skeleton } from '@components/skeleton/skeleton';
 import { CoverImageSkeletonComponent } from '../cover-image/cover-image-skeleton.component';
 
 /**
@@ -10,7 +10,7 @@ import { CoverImageSkeletonComponent } from '../cover-image/cover-image-skeleton
  */
 @Component({
 	selector: 'cuentoneta-literary-work-hero-header-skeleton',
-	imports: [SkeletonComponent, CoverImageSkeletonComponent],
+	imports: [Skeleton, CoverImageSkeletonComponent],
 	// Aísla su apilamiento por el mismo motivo que el hero real, que este esqueleto replica.
 	host: { class: 'relative isolate block overflow-hidden bg-neutral-900' },
 	template: `

@@ -11,7 +11,7 @@ import { AppRoutes } from '../../app.routes';
 import type { NavigationParams } from '@app-utils/navigation-params';
 import { MediaSelectorsComponent, type MediaSelectorsTheme } from '../media-selectors/media-selectors.component';
 import { LiteraryWorkTeaserCardSkeletonComponent } from './literary-work-teaser-card-skeleton.component';
-import { ImageProfileComponent } from '../image-profile/image-profile.component';
+import { ImageProfile } from '../image-profile/image-profile';
 import { CoverImageComponent } from '../cover-image/cover-image.component';
 
 /**
@@ -37,7 +37,7 @@ export type LiteraryWorkTeaserCardContent =
 		RouterLink,
 		MediaSelectorsComponent,
 		LiteraryWorkTeaserCardSkeletonComponent,
-		ImageProfileComponent,
+		ImageProfile,
 		CoverImageComponent,
 	],
 	template: `

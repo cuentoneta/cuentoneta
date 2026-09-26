@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 
-import { SkeletonComponent } from '@components/skeleton/skeleton.component';
+import { Skeleton } from '@components/skeleton/skeleton';
 
 @Component({
 	selector: 'cuentoneta-author-teaser-card-skeleton',
-	imports: [SkeletonComponent],
+	imports: [Skeleton],
 	host: { class: 'block w-full', 'data-testid': 'skeleton' },
 	template: `
 		<article class="flex items-start gap-4">

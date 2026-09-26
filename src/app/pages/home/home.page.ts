@@ -19,7 +19,7 @@ import { LiteraryWorksCardDeck } from '@components/literary-works-card-deck/lite
 import { CarouselSkeletonComponent } from '@components/carousel/carousel-skeleton.component';
 import { CollectionTeasersDeck } from '@components/collection-teasers-deck/collection-teasers-deck';
 import { HighlightedAuthorsComponent } from '@components/highlighted-authors/highlighted-authors.component';
-import { SectionHeaderComponent, type SectionHeaderAction } from '@components/section-header/section-header.component';
+import { SectionHeader, type SectionHeaderAction } from '@components/section-header/section-header';
 
 @Component({
 	selector: 'cuentoneta-home',
@@ -31,7 +31,7 @@ import { SectionHeaderComponent, type SectionHeaderAction } from '@components/se
 		CarouselSkeletonComponent,
 		CollectionTeasersDeck,
 		HighlightedAuthorsComponent,
-		SectionHeaderComponent,
+		SectionHeader,
 	],
 	hostDirectives: [HomeMetaTagsDirective, HomeStructuredDataDirective],
 })

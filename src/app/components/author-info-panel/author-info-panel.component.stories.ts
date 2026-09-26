@@ -12,9 +12,9 @@ import {
 } from '@mocks/onoff-tags.mock';
 import { createMarkdown } from '@models/markdown.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
-import { imageProfileDocs } from '@components/image-profile/image-profile.component.docs';
-import { tagDocs } from '@components/tag/tag.component.docs';
-import { tagsListDocs } from '@components/tags-list/tags-list.component.docs';
+import { imageProfileDocs } from '@components/image-profile/image-profile.docs';
+import { tagDocs } from '@components/tag/tag.docs';
+import { tagsListDocs } from '@components/tags-list/tags-list.docs';
 import { docsRef } from '@testing/storybook-docs';
 import type { AuthorInfoPanelSkeletonComponent } from '@components/author-info-panel/author-info-panel-skeleton.component';
 

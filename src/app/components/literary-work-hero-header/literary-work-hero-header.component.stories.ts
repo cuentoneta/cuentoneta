@@ -5,8 +5,8 @@ import { LiteraryWorkHeroHeaderComponent } from './literary-work-hero-header.com
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 import { literaryWorkSelectArgType } from '@mocks/onoff-corpus.storybook';
 import { coverImageDocs } from '@components/cover-image/cover-image.component.docs';
-import { imageProfileDocs } from '@components/image-profile/image-profile.component.docs';
-import { tagsListDocs } from '@components/tags-list/tags-list.component.docs';
+import { imageProfileDocs } from '@components/image-profile/image-profile.docs';
+import { tagsListDocs } from '@components/tags-list/tags-list.docs';
 import { docsRef } from '@testing/storybook-docs';
 
 // Obra representativa del canon para las stories que solo necesitan una cualquiera.

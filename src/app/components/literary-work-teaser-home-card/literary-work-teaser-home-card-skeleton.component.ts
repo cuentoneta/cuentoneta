@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { SkeletonComponent } from '@components/skeleton/skeleton.component';
+import { Skeleton } from '@components/skeleton/skeleton';
 import { CoverImageSkeletonComponent } from '../cover-image/cover-image-skeleton.component';
 
 /**
@@ -10,7 +10,7 @@ import { CoverImageSkeletonComponent } from '../cover-image/cover-image-skeleton
  */
 @Component({
 	selector: 'cuentoneta-literary-work-teaser-home-card-skeleton',
-	imports: [SkeletonComponent, CoverImageSkeletonComponent],
+	imports: [Skeleton, CoverImageSkeletonComponent],
 	host: { class: 'block', 'data-testid': 'skeleton' },
 	template: `
 		<article class="flex w-full max-w-82.75 flex-col items-center gap-4">

@@ -6,7 +6,7 @@ import { LiteraryWorkTeaserHomeCardSkeletonComponent } from './literary-work-tea
 import { onoffLiteraryWorkTeasersWithMediaSourcesMock } from '@mocks/onoff-literary-work-teasers.mock';
 import { corpusLiteraryWorkTeasers, literaryWorkSelectArgType } from '@mocks/onoff-corpus.storybook';
 import { coverImageDocs } from '@components/cover-image/cover-image.component.docs';
-import { imageProfileDocs } from '@components/image-profile/image-profile.component.docs';
+import { imageProfileDocs } from '@components/image-profile/image-profile.docs';
 import { literaryWorkTeaserCardDocs } from '@components/literary-work-teaser-card/literary-work-teaser-card.component.docs';
 import { mediaSelectorsDocs } from '@components/media-selectors/media-selectors.component.docs';
 import { docsRef } from '@testing/storybook-docs';

@@ -2,11 +2,11 @@
 import { Component } from '@angular/core';
 
 // Componentes
-import { SkeletonComponent } from '@components/skeleton/skeleton.component';
+import { Skeleton } from '@components/skeleton/skeleton';
 
 @Component({
 	selector: 'cuentoneta-carousel-skeleton',
-	imports: [SkeletonComponent],
+	imports: [Skeleton],
 	host: { class: 'mx-auto block' },
 	template: `<div class="slider">
 		<cuentoneta-skeleton

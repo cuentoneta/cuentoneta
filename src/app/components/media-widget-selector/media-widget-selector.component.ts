@@ -5,7 +5,7 @@ import { simpleSpotify, simpleX, simpleYoutube } from '@ng-icons/simple-icons';
 import { faSolidFileAudio } from '@ng-icons/font-awesome/solid';
 
 import type { Media, MediaTypeKey } from '@models/media.model';
-import { ButtonGroupComponent, type ButtonGroupOption } from '@components/button-group/button-group.component';
+import { ButtonGroup, type ButtonGroupOption } from '@components/button-group/button-group';
 import { toMediaWidgetOutlet } from '@components/media-widgets/media-widget-registry';
 
 /**
@@ -22,7 +22,7 @@ import { toMediaWidgetOutlet } from '@components/media-widgets/media-widget-regi
  */
 @Component({
 	selector: 'cuentoneta-media-widget-selector',
-	imports: [ButtonGroupComponent, NgComponentOutlet],
+	imports: [ButtonGroup, NgComponentOutlet],
 	providers: [provideIcons({ faSolidFileAudio, simpleX, simpleYoutube, simpleSpotify })],
 	host: { class: 'block' },
 	template: `

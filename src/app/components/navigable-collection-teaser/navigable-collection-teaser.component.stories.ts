@@ -8,8 +8,8 @@ import {
 	onoffCollectionTeasersWithoutTagsMock,
 	onoffCollectionTeasersWithTagsMock,
 } from '@mocks/onoff-collections.mock';
-import { imageProfileDocs } from '@components/image-profile/image-profile.component.docs';
-import { tagDocs } from '@components/tag/tag.component.docs';
+import { imageProfileDocs } from '@components/image-profile/image-profile.docs';
+import { tagDocs } from '@components/tag/tag.docs';
 import { docsRef } from '@testing/storybook-docs';
 
 export type DocsSymbols = [NavigableCollectionTeaserComponent];

@@ -10,10 +10,10 @@ import type { Author } from '@models/author.model';
 import { ClampOverflowDirective } from '../../directives/clamp-overflow.directive';
 
 // Components
-import { ButtonComponent } from '../button/button.component';
-import { ImageProfileComponent } from '../image-profile/image-profile.component';
-import { TagComponent } from '../tag/tag.component';
-import { TagsListComponent } from '../tags-list/tags-list.component';
+import { Button } from '../button/button';
+import { ImageProfile } from '../image-profile/image-profile';
+import { Tag } from '../tag/tag';
+import { TagsList } from '../tags-list/tags-list';
 import { AuthorInfoPanelSkeletonComponent } from './author-info-panel-skeleton.component';
 
 /**
@@ -30,12 +30,12 @@ import { AuthorInfoPanelSkeletonComponent } from './author-info-panel-skeleton.c
 @Component({
 	selector: 'cuentoneta-author-info-panel',
 	imports: [
-		ButtonComponent,
+		Button,
 		ClampOverflowDirective,
-		ImageProfileComponent,
+		ImageProfile,
 		NgOptimizedImage,
-		TagComponent,
-		TagsListComponent,
+		Tag,
+		TagsList,
 		AuthorInfoPanelSkeletonComponent,
 	],
 	host: { class: 'flex w-full flex-col gap-4' },

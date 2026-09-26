@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 
-import { SkeletonComponent } from '@components/skeleton/skeleton.component';
+import { Skeleton } from '@components/skeleton/skeleton';
 
 /** Estado de carga de NavigableCollectionTeaser: círculo del ícono + línea del nombre + línea corta de metadatos. */
 @Component({
 	selector: 'cuentoneta-navigable-collection-teaser-skeleton',
-	imports: [SkeletonComponent],
+	imports: [Skeleton],
 	host: { class: 'block' },
 	template: `
 		<div class="flex items-center gap-3" data-testid="skeleton">

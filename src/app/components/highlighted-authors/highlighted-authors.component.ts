@@ -2,8 +2,8 @@ import { Component, input } from '@angular/core';
 
 import type { HighlightedAuthor } from '@models/landing-page-content.model';
 import { AppRoutes } from '../../app.routes';
-import { SectionHeaderComponent, type SectionHeaderAction } from '@components/section-header/section-header.component';
-import { EmptyStateComponent } from '@components/empty-state/empty-state.component';
+import { SectionHeader, type SectionHeaderAction } from '@components/section-header/section-header';
+import { EmptyState } from '@components/empty-state/empty-state';
 import { AuthorTeaserCardComponent } from '@components/author-teaser-card/author-teaser-card.component';
 import { AuthorTeaserCardSkeletonComponent } from '@components/author-teaser-card/author-teaser-card-skeleton.component';
 
@@ -16,7 +16,7 @@ import { AuthorTeaserCardSkeletonComponent } from '@components/author-teaser-car
  */
 @Component({
 	selector: 'cuentoneta-highlighted-authors',
-	imports: [SectionHeaderComponent, EmptyStateComponent, AuthorTeaserCardComponent, AuthorTeaserCardSkeletonComponent],
+	imports: [SectionHeader, EmptyState, AuthorTeaserCardComponent, AuthorTeaserCardSkeletonComponent],
 	template: `
 		<cuentoneta-section-header
 			[heading]="sectionHeading"

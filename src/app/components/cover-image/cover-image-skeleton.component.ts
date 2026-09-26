@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { SkeletonComponent } from '@components/skeleton/skeleton.component';
+import { Skeleton } from '@components/skeleton/skeleton';
 
 /**
  * Estado de carga (esqueleto) de CoverImageComponent: reproduce la caja de la portada (118×164) con
@@ -8,7 +8,7 @@ import { SkeletonComponent } from '@components/skeleton/skeleton.component';
  */
 @Component({
 	selector: 'cuentoneta-cover-image-skeleton',
-	imports: [SkeletonComponent],
+	imports: [Skeleton],
 	host: { class: 'block h-41 w-29.5 shrink-0' },
 	template: `<cuentoneta-skeleton appearance="square" class="h-full w-full rounded-lg bg-neutral-300" />`,
 })

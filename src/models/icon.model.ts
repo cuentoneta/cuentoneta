@@ -17,7 +17,7 @@ export interface IconMapper {
 
 /**
  * Traduce el slug de un `resourceType` al ícono de `@ng-icons` que lo representa. Lo consume
- * `ResourceComponent`, el único lugar del sitio donde se pinta un ícono resuelto por slug.
+ * `Resource`, el único lugar del sitio donde se pinta un ícono resuelto por slug.
  *
  * El mapa está hardcodeado porque los íconos de `@ng-icons` se importan como símbolos: servirlos desde
  * el CMS exige resolverlos dinámicamente en tiempo de ejecución, que es la dirección a futuro pero no

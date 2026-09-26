@@ -1,6 +1,6 @@
 import { Component, computed, input } from '@angular/core';
 
-import { SkeletonComponent } from '@components/skeleton/skeleton.component';
+import { Skeleton } from '@components/skeleton/skeleton';
 
 /**
  * Estado de carga (esqueleto) de AuthorInfoPanelComponent. Replica su columna —retrato, nombre, país,
@@ -8,7 +8,7 @@ import { SkeletonComponent } from '@components/skeleton/skeleton.component';
  */
 @Component({
 	selector: 'cuentoneta-author-info-panel-skeleton',
-	imports: [SkeletonComponent],
+	imports: [Skeleton],
 	host: { class: 'flex w-full flex-col gap-4', 'data-testid': 'author-info-panel-skeleton' },
 	template: `
 		<cuentoneta-skeleton appearance="square" class="size-30 rounded-full bg-neutral-300" />

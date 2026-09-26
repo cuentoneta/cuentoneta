@@ -2,9 +2,9 @@ import { Component, computed, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { LiteraryWorkTeaserCardComponent } from '@components/literary-work-teaser-card/literary-work-teaser-card.component';
-import { ButtonComponent } from '@components/button/button.component';
-import { DividerComponent } from '@components/divider/divider.component';
-import { SkeletonComponent } from '@components/skeleton/skeleton.component';
+import { Button } from '@components/button/button';
+import { Divider } from '@components/divider/divider';
+import { Skeleton } from '@components/skeleton/skeleton';
 import { READING_SUGGESTIONS_COUNT } from './pick-reading-suggestions';
 import type { LiteraryWorkTeaser } from '@models/literary-work.model';
 import type { NavigationParams } from '@app-utils/navigation-params';
@@ -18,7 +18,7 @@ import type { NavigationParams } from '@app-utils/navigation-params';
  */
 @Component({
 	selector: 'cuentoneta-reading-suggestions-list',
-	imports: [RouterLink, LiteraryWorkTeaserCardComponent, ButtonComponent, DividerComponent, SkeletonComponent],
+	imports: [RouterLink, LiteraryWorkTeaserCardComponent, Button, Divider, Skeleton],
 	host: { class: 'block' },
 	template: `
 		<!-- Sin sugerencias que ofrecer no hay bloque: un encabezado y un botón sobre una lista vacía

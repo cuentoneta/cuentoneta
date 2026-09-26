@@ -1,6 +1,6 @@
 import { Component, computed, input } from '@angular/core';
 
-import { SkeletonComponent } from '@components/skeleton/skeleton.component';
+import { Skeleton } from '@components/skeleton/skeleton';
 import { CoverImageSkeletonComponent } from '../cover-image/cover-image-skeleton.component';
 
 /**
@@ -9,7 +9,7 @@ import { CoverImageSkeletonComponent } from '../cover-image/cover-image-skeleton
  */
 @Component({
 	selector: 'cuentoneta-collection-info-panel-skeleton',
-	imports: [SkeletonComponent, CoverImageSkeletonComponent],
+	imports: [Skeleton, CoverImageSkeletonComponent],
 	host: { class: 'flex w-full flex-col gap-4', 'data-testid': 'collection-info-panel-skeleton' },
 	template: `
 		<cuentoneta-cover-image-skeleton />

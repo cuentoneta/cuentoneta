@@ -5,7 +5,7 @@ import type { LiteraryWorkNavigationTeaserWithAuthors, LiteraryWorkTeaser } from
 import { AppRoutes } from '../../app.routes';
 import type { NavigationParams } from '@app-utils/navigation-params';
 import { MediaSelectorsComponent } from '../media-selectors/media-selectors.component';
-import { ImageProfileComponent } from '../image-profile/image-profile.component';
+import { ImageProfile } from '../image-profile/image-profile';
 import { CoverImageComponent } from '../cover-image/cover-image.component';
 import { LiteraryWorkTeaserHomeCardSkeletonComponent } from './literary-work-teaser-home-card-skeleton.component';
 
@@ -30,7 +30,7 @@ import { LiteraryWorkTeaserHomeCardSkeletonComponent } from './literary-work-tea
 	imports: [
 		RouterLink,
 		MediaSelectorsComponent,
-		ImageProfileComponent,
+		ImageProfile,
 		LiteraryWorkTeaserHomeCardSkeletonComponent,
 		CoverImageComponent,
 	],

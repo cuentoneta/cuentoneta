@@ -17,11 +17,11 @@ import { AuthorStructuredDataDirective } from './author-structured-data.directiv
 
 // Components
 import { AuthorInfoPanelComponent } from '@components/author-info-panel/author-info-panel.component';
-import { DividerComponent } from '@components/divider/divider.component';
-import { DrawerComponent } from '@components/drawer/drawer.component';
+import { Divider } from '@components/divider/divider';
+import { Drawer } from '@components/drawer/drawer';
 import { LiteraryWorkTeaserCardComponent } from '@components/literary-work-teaser-card/literary-work-teaser-card.component';
-import { ResourceComponent } from '@components/resource/resource.component';
-import { SkeletonComponent } from '@components/skeleton/skeleton.component';
+import { Resource } from '@components/resource/resource';
+import { Skeleton } from '@components/skeleton/skeleton';
 
 @Component({
 	selector: 'cuentoneta-author',
@@ -30,12 +30,12 @@ import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 	hostDirectives: [AuthorMetaTagsDirective, AuthorStructuredDataDirective],
 	imports: [
 		AuthorInfoPanelComponent,
-		DividerComponent,
-		DrawerComponent,
+		Divider,
+		Drawer,
 		LiteraryWorkTeaserCardComponent,
 		NgTemplateOutlet,
-		ResourceComponent,
-		SkeletonComponent,
+		Resource,
+		Skeleton,
 	],
 })
 export default class AuthorPage implements AuthorHost {
@@ -91,7 +91,7 @@ export default class AuthorPage implements AuthorHost {
 		return `${total} ${total === 1 ? 'obra' : 'obras'}`;
 	});
 
-	protected openBiographyDrawer(drawer: DrawerComponent): void {
+	protected openBiographyDrawer(drawer: Drawer): void {
 		this.isBiographyDrawerOpen.set(true);
 		drawer.open();
 	}

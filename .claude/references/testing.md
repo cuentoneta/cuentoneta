@@ -157,11 +157,11 @@ Las **imágenes** del corpus atraviesan las tres capas por una única tabla, `sr
 
 ```typescript
 import { render, screen } from '@testing-library/angular';
-import { TagComponent } from './tag.component';
+import { Tag } from './tag';
 
-describe('TagComponent', () => {
+describe('Tag', () => {
 	it('should display the label', async () => {
-		await render(TagComponent, {
+		await render(Tag, {
 			inputs: { label: 'Crónica', variant: 'soft' },
 		});
 
@@ -245,7 +245,7 @@ Variantes: `queryBy*` (cuando se espera ausencia, no lanza), `findBy*` (async, e
 
 `happy-dom` trae un `IntersectionObserver` que no hace nada: alcanza para renderizar, pero nunca entrega un callback. `src/test-setup.ts` instala un **stub global** (`src/testing/intersection-observer.stub.ts`) que sí lo entrega bajo control del spec.
 
-Los specs que necesitan **simular overflow** (p. ej. `TagsListComponent` / `TagsOverflowDirective`, que recorta tags por ancho con `IntersectionObserver`) reutilizan los helpers del mismo stub:
+Los specs que necesitan **simular overflow** (p. ej. `TagsList` / `TagsOverflowDirective`, que recorta tags por ancho con `IntersectionObserver`) reutilizan los helpers del mismo stub:
 
 | Helper                              | Efecto                                                                 |
 | ----------------------------------- | ---------------------------------------------------------------------- |
@@ -477,13 +477,13 @@ Todo componente nuevo en **`src/app/components/`** lleva su `*.stories.ts` (docu
 
 ```typescript
 import { argsToTemplate, Meta, StoryObj } from '@storybook/angular';
-import { TagComponent } from './tag.component';
+import { Tag } from './tag';
 
-const meta: Meta<TagComponent> = {
-	component: TagComponent,
+const meta: Meta<Tag> = {
+	component: Tag,
 	title: 'Componentes V3/Tag',
 	parameters: {
-		docs: { description: { component: `<div><p>El <strong>TagComponent</strong> del Design System v3...</p></div>` } },
+		docs: { description: { component: `<div><p>El <strong>Tag</strong> del Design System v3...</p></div>` } },
 		layout: 'padded',
 	},
 	argTypes: {
@@ -496,7 +496,7 @@ const meta: Meta<TagComponent> = {
 	},
 };
 export default meta;
-type Story = StoryObj<TagComponent>;
+type Story = StoryObj<Tag>;
 
 export const Soft: Story = {
 	render: (args) => ({ props: args, template: `<cuentoneta-tag ${argsToTemplate(args)} />` }),

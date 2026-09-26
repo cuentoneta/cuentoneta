@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/angular-vite';
 import { argsToTemplate, moduleMetadata } from '@storybook/angular-vite';
 
 import { MediaSelectorsComponent } from './media-selectors.component';
-import { SkeletonComponent } from '@components/skeleton/skeleton.component';
+import { Skeleton } from '@components/skeleton/skeleton';
 import type { MediaTeaser } from '@models/media.model';
 import { onoffMediaMock, onoffYouTubeVideosMock, toMediaTeaser } from '@mocks/onoff-media.mock';
 import { literaryWorkTeaserCardDocs } from '@components/literary-work-teaser-card/literary-work-teaser-card.component.docs';
@@ -124,7 +124,7 @@ export const Themes: Story = {
 };
 
 export const Estados: StoryObj<MediaSelectorsComponent & { loading: boolean }> = {
-	decorators: [moduleMetadata({ imports: [SkeletonComponent] })],
+	decorators: [moduleMetadata({ imports: [Skeleton] })],
 	argTypes: { loading: { control: 'boolean', name: 'Cargando' } },
 	render: (args) => ({
 		props: args,

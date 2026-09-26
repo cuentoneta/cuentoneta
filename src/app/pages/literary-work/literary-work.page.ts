@@ -18,12 +18,12 @@ import { LITERARY_WORK_HOST, type LiteraryWorkHost } from './literary-work-host'
 
 // Components
 import { LiteraryWorkHeroHeaderComponent } from '@components/literary-work-hero-header/literary-work-hero-header.component';
-import { ButtonComponent } from '@components/button/button.component';
+import { Button } from '@components/button/button';
 import { EditorialNoteComponent } from '@components/editorial-note/editorial-note.component';
 import { LiteraryWorkSectionBodyComponent } from '@components/literary-work-section-body/literary-work-section-body.component';
 import { MediaWidgetSelector } from '@components/media-widget-selector/media-widget-selector.component';
 import { MediaWidgetSelectorSkeleton } from '@components/media-widget-selector/media-widget-selector-skeleton.component';
-import { DividerComponent } from '@components/divider/divider.component';
+import { Divider } from '@components/divider/divider';
 import { ReadingSuggestionsComponent } from '@components/reading-suggestions/reading-suggestions.component';
 import { LiteraryWorkPageSkeleton } from './literary-work-page-skeleton';
 import { RouterLink } from '@angular/router';
@@ -36,8 +36,8 @@ import { toNavigationContext, type NavigationContext, type NavigationParams } fr
 	hostDirectives: [LiteraryWorkMetaTagsDirective, LiteraryWorkStructuredDataDirective],
 	imports: [
 		LiteraryWorkHeroHeaderComponent,
-		ButtonComponent,
-		DividerComponent,
+		Button,
+		Divider,
 		EditorialNoteComponent,
 		LiteraryWorkSectionBodyComponent,
 		MediaWidgetSelector,
