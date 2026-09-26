@@ -1,6 +1,8 @@
-import { DestroyRef, ElementRef, Service, Signal, signal } from '@angular/core';
+import type { DestroyRef, ElementRef, Signal } from '@angular/core';
+import { Service, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { fromEvent, Observable, Subject } from 'rxjs';
+import type { Observable } from 'rxjs';
+import { fromEvent, Subject } from 'rxjs';
 import { filter, map, throttleTime } from 'rxjs/operators';
 
 export type NavigationCommand = 'next' | 'prev';

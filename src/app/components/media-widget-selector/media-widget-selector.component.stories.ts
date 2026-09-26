@@ -8,6 +8,7 @@ import {
 	onoffLiteraryWorksWithoutMediaSources,
 	onoffLiteraryWorksWithSingleMediaSource,
 } from '@mocks/onoff-literary-works.mock';
+import { embedPlaceholdersDecorator, withEmbedPlaceholders } from '@testing/storybook-embed-placeholders';
 
 // Las dos obras se toman por capacidad y no por slug: el selector reparte el corpus por el umbral que el
 // componente decide (hay entre qué elegir o no), así que enriquecer otra obra no obliga a tocar esto.
@@ -15,14 +16,18 @@ const [singleSourceWork] = onoffLiteraryWorksWithSingleMediaSource;
 const [multipleSourcesWork] = onoffLiteraryWorksWithMultipleMediaSources;
 const [workWithoutSources] = onoffLiteraryWorksWithoutMediaSources;
 
+const multipleSources = withEmbedPlaceholders(multipleSourcesWork.mediaSources);
+const singleSource = withEmbedPlaceholders(singleSourceWork.mediaSources);
+
 const meta: Meta<MediaWidgetSelector> = {
 	component: MediaWidgetSelector,
 	title: 'Componentes V3/MediaWidgetSelector',
+	decorators: embedPlaceholdersDecorator,
 	parameters: {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>El componente <strong>MediaWidgetSelector</strong> ofrece los formatos alternativos en los que se puede consumir una obra —audio, espacio grabado, episodio de podcast, video— y monta el widget del que está elegido.</p><ul><li><strong>Título:</strong> visible siempre que la obra traiga al menos un medio; su texto cambia según haya o no elección.</li><li><strong>Botonera:</strong> solo cuando hay <strong>más de un</strong> medio. Con uno solo no hay entre qué elegir y el widget se monta directo. La fila la pone <a href="./?path=/docs/componentes-v3-buttongroup--docs" target="_top"><strong>ButtonGroup</strong></a> en su geometría chica; el vocabulario de la pantalla —qué ícono y qué etiqueta le toca a cada tipo— lo aporta este componente.</li><li><strong>Widget:</strong> lo resuelve el catálogo <code>mediaWidgetRegistry</code>, que aparea cada tipo de medio con su componente.</li></ul><p>Hay <strong>un botón por recurso</strong>, no por formato: una obra con dos videos ofrece los dos. Cuando un tipo se repite, el nombre del formato dejaría de distinguir un botón del otro, así que la etiqueta pasa a ser el título del medio — es una decisión de este componente, no del diseño, que no modela ese caso.</p><p>Los widgets pintan su propia descripción, así que el componente no la repite. Comparar con <a href="./?path=/docs/componentes-v3-mediaselectors--docs" target="_top"><strong>MediaSelectors</strong></a>, que resume los recursos de una tarjeta agrupándolos por plataforma sin montar nada.</p></div>`,
+				component: `<div><p>El componente <strong>MediaWidgetSelector</strong> ofrece los formatos alternativos en los que se puede consumir una obra —audio, espacio grabado, episodio de podcast, video— y monta el widget del que está elegido.</p><ul><li><strong>Título:</strong> visible siempre que la obra traiga al menos un medio; su texto cambia según haya o no elección.</li><li><strong>Botonera:</strong> solo cuando hay <strong>más de un</strong> medio. Con uno solo no hay entre qué elegir y el widget se monta directo. La fila la pone <a href="./?path=/docs/componentes-v3-buttongroup--docs" target="_top"><strong>ButtonGroup</strong></a> en su geometría chica; el vocabulario de la pantalla —qué ícono y qué etiqueta le toca a cada tipo— lo aporta este componente.</li><li><strong>Widget:</strong> lo resuelve el catálogo <code>mediaWidgetRegistry</code>, que aparea cada tipo de medio con su componente.</li></ul><p>Hay <strong>un botón por recurso</strong>, no por formato: una obra con dos videos ofrece los dos. Cuando un tipo se repite, el nombre del formato dejaría de distinguir un botón del otro, así que la etiqueta pasa a ser el título del medio — es una decisión de este componente, no del diseño, que no modela ese caso.</p><p>Los widgets pintan su propia descripción, así que el componente no la repite. Comparar con <a href="./?path=/docs/componentes-v3-mediaselectors--docs" target="_top"><strong>MediaSelectors</strong></a>, que resume los recursos de una tarjeta agrupándolos por plataforma sin montar nada.</p><p>Los dos reproductores nativos —audio y espacio grabado— suenan de verdad: son clips cortos generados y versionados junto al corpus. Los dos embeds de terceros son un <strong>reproductor de utilería</strong> dibujado con CSS, que ocupa el lugar del real, para que el catálogo no dependa de contenido subido a una cuenta que alguien tenga que mantener.</p></div>`,
 			},
 		},
 		layout: 'padded',
@@ -41,7 +46,7 @@ type Story = StoryObj<MediaWidgetSelector>;
 
 export const MultiplesFormatos: Story = {
 	render: (args) => ({ props: args, template: `<cuentoneta-media-widget-selector ${argsToTemplate(args)} />` }),
-	args: { mediaSources: multipleSourcesWork.mediaSources },
+	args: { mediaSources: multipleSources },
 	parameters: {
 		docs: {
 			description: {
@@ -53,7 +58,7 @@ export const MultiplesFormatos: Story = {
 
 export const UnSoloFormato: Story = {
 	render: (args) => ({ props: args, template: `<cuentoneta-media-widget-selector ${argsToTemplate(args)} />` }),
-	args: { mediaSources: singleSourceWork.mediaSources },
+	args: { mediaSources: singleSource },
 	parameters: {
 		docs: {
 			description: {
@@ -67,7 +72,7 @@ export const TipoRepetido: Story = {
 	render: (args) => ({ props: args, template: `<cuentoneta-media-widget-selector ${argsToTemplate(args)} />` }),
 	// Ninguna obra del canon repite un tipo todavía, así que la precondición se compone de dos que sí
 	// existen. El día que una lo repita, esta story pasa a tomarla del corpus como las demás.
-	args: { mediaSources: [...multipleSourcesWork.mediaSources, ...singleSourceWork.mediaSources] },
+	args: { mediaSources: [...multipleSources, ...singleSource] },
 	parameters: {
 		docs: {
 			description: {
@@ -102,7 +107,7 @@ export const Estados: StoryObj<MediaWidgetSelector & { loading: boolean }> = {
 			}
 		`,
 	}),
-	args: { loading: true, mediaSources: multipleSourcesWork.mediaSources },
+	args: { loading: true, mediaSources: multipleSources },
 	parameters: {
 		docs: {
 			description: {

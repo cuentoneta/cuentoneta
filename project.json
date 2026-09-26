@@ -100,7 +100,7 @@
 			"continuous": true
 		},
 		"eslint:lint": {
-			"command": "eslint ./src ./e2e ./cms ./scripts"
+			"command": "eslint ./src ./e2e ./cms ./scripts ./tools"
 		},
 		"stylelint": {
 			"executor": "nx-stylelint:lint",

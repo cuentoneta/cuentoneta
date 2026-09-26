@@ -5,7 +5,7 @@
 >
 > **Idioma:** la documentación va en español; el **código y los identificadores siempre en inglés**. Los comentarios pueden ir en español.
 
-Esta referencia describe cómo se escriben los **componentes de presentación y de página** en cuentoneta. Los ejemplos buenos se anclan en componentes reales del repo (p. ej. `src/app/components/author-card-teaser/`, alineado con el Design System v3). Los componentes previos al Design System v3 siguen pendientes de rediseño, pero la deuda contra **estas** reglas ya está saldada: `src/` no tiene lifecycle hooks, `@HostBinding`/`@HostListener`, `*ngIf`/`*ngFor` ni `firstValueFrom`.
+Esta referencia describe cómo se escriben los **componentes de presentación y de página** en cuentoneta. Los ejemplos buenos se anclan en componentes reales del repo (p. ej. `src/app/components/author-teaser-card/`, alineado con el Design System v3). Los componentes previos al Design System v3 siguen pendientes de rediseño, pero la deuda contra **estas** reglas ya está saldada: `src/` no tiene lifecycle hooks, `@HostBinding`/`@HostListener`, `*ngIf`/`*ngFor` ni `firstValueFrom`.
 
 ---
 
@@ -28,7 +28,7 @@ import { ImageProfileComponent } from '../image-profile/image-profile.component'
 import { TagsListComponent } from '../tags-list/tags-list.component';
 
 @Component({
-	selector: 'cuentoneta-author-card-teaser',
+	selector: 'cuentoneta-author-teaser-card',
 	imports: [NgOptimizedImage, RouterLink, ImageProfileComponent, TagsListComponent],
 	template: `
 		<article class="relative flex items-start gap-4" data-testid="author">
@@ -39,7 +39,7 @@ import { TagsListComponent } from '../tags-list/tags-list.component';
 		class: 'block',
 	},
 })
-export class AuthorCardTeaserComponent {
+export class AuthorTeaserCardComponent {
 	// Inputs
 	public readonly author = input.required<AuthorTeaser>();
 	public readonly tags = input<Tag[]>([]);
@@ -332,6 +332,24 @@ Notas:
 - El bloque `:host` en `styles` se reserva para lo que **no** es `@apply`: CSS crudo (`font-family`, `transition`, …), `:host ::ng-deep ...` y `:host(.clase)` condicionales. Esas reglas **no** se mueven a `host`.
 - Si el componente ya tiene `host: { class: '...' }`, **agregar** las utilidades al string existente, no reemplazarlo.
 - **`hostDirectives`** (campo del decorador, distinto de `host`) es el mecanismo de composición de directivas del anfitrión. En **componentes de página** es cómo se declaran las directivas de SEO (meta tags + structured data): la forma correcta depende de la indexabilidad de la ruta y está **enforced por test** — ver [`angular-state.md` §8](./angular-state.md#8-directivas-de-seo-de-página-declarar-el-combo-según-la-indexabilidad).
+
+---
+
+## Layout del shell: el landmark principal y el despeje del encabezado
+
+El encabezado es `fixed top-0` y mide `--spacing-header-height`. Que el contenido despeje su alto es un invariante global, no una decisión de cada pantalla, así que **lo resuelve el shell una sola vez**: `AppComponent` declara el único `<main>` de la aplicación, envolviendo el `router-outlet`, con `pt-header-height`.
+
+De ahí se siguen tres reglas para una página:
+
+- **No declara `<main>`.** El landmark ya existe; uno propio quedaría anidado dentro del del shell.
+- **No declara su despeje** (`mt-header-height`, `pt-header-height` ni una medida que lo aproxime). El aire de diseño que la página sí quiera va como utilidad de Tailwind en su envoltorio interno, y expresa **solo** el aire.
+- **Si su primer elemento pinta a sangre desde el borde superior** —un héroe con fondo a rango completo—, cancela el despeje con la utilidad `bleeds-under-header`, aplicada a un **elemento raíz de la plantilla** de la página. Más adentro el margen negativo pasa a interactuar con el contenedor que lo envuelva, y el resultado deja de ser un desplazamiento simple. En una plantilla con ramas, la marca va en cada rama que dibuje el héroe y **no** en las que sirvan texto plano, que sí tienen que despejar.
+
+El contenedor de una página es el patrón de utilidades `mx-auto w-full max-w-310 px-4`. Las clases `.content`, `.horizontal-layout-spacing` y `.vertical-layout-spacing` están retiradas y ya no emiten CSS.
+
+El `<main>` despeja con **padding** y no con margen: con margen, el margen negativo del opt-out funcionaría por colapso de márgenes, que es un mecanismo correcto por accidente.
+
+Lo verifica el guardrail `src/app/pages/page-layout.spec.ts`, que recorre las páginas desde las rutas y falla ante cualquiera de las tres reglas, más la contracara sobre el shell y un barrido del catálogo de componentes.
 
 ---
 

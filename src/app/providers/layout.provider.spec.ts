@@ -4,7 +4,7 @@ import { WindowLayoutService } from './layout.provider';
 import { Direction, type LayoutService } from './layout.interface';
 import { WINDOW } from './window';
 import { map, of, type Observable } from 'rxjs';
-import { Viewport } from '@utils/screen.utils';
+import type { Viewport } from '@utils/screen.utils';
 
 // `isHeaderVisible$` es privado: es el detalle que alimenta el signal público `isHeaderVisible`. Se
 // accede acá para probar la política de visibilidad del header —la lógica que el signal deriva— sin

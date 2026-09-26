@@ -1,9 +1,10 @@
-import { argsToTemplate, Meta, moduleMetadata, StoryObj } from '@storybook/angular-vite';
+import type { Meta, StoryObj } from '@storybook/angular-vite';
+import { argsToTemplate, moduleMetadata } from '@storybook/angular-vite';
 
 import { CarouselComponent } from './carousel.component';
 import { CarouselSkeletonComponent } from './carousel-skeleton.component';
 import { contentCampaignMock } from '@mocks/content-campaign.mock';
-import { ContentCampaign } from '@models/content-campaign.model';
+import type { ContentCampaign } from '@models/content-campaign.model';
 
 const meta: Meta<CarouselComponent> = {
 	component: CarouselComponent,

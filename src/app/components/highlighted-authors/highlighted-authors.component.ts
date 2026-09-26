@@ -4,8 +4,8 @@ import type { HighlightedAuthor } from '@models/landing-page-content.model';
 import { AppRoutes } from '../../app.routes';
 import { SectionHeaderComponent, type SectionHeaderAction } from '@components/section-header/section-header.component';
 import { EmptyStateComponent } from '@components/empty-state/empty-state.component';
-import { AuthorCardTeaserComponent } from '@components/author-card-teaser/author-card-teaser.component';
-import { AuthorCardTeaserSkeletonComponent } from '@components/author-card-teaser/author-card-teaser-skeleton.component';
+import { AuthorTeaserCardComponent } from '@components/author-teaser-card/author-teaser-card.component';
+import { AuthorTeaserCardSkeletonComponent } from '@components/author-teaser-card/author-teaser-card-skeleton.component';
 
 /**
  * Sección de autores destacados de la página de inicio, según el Design System v3: cabecera con enlace al
@@ -16,7 +16,7 @@ import { AuthorCardTeaserSkeletonComponent } from '@components/author-card-tease
  */
 @Component({
 	selector: 'cuentoneta-highlighted-authors',
-	imports: [SectionHeaderComponent, EmptyStateComponent, AuthorCardTeaserComponent, AuthorCardTeaserSkeletonComponent],
+	imports: [SectionHeaderComponent, EmptyStateComponent, AuthorTeaserCardComponent, AuthorTeaserCardSkeletonComponent],
 	template: `
 		<cuentoneta-section-header
 			[heading]="sectionHeading"
@@ -30,11 +30,11 @@ import { AuthorCardTeaserSkeletonComponent } from '@components/author-card-tease
 			<section class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
 				@if (loading()) {
 					@for (_ of [].constructor(skeletonCount); track $index) {
-						<cuentoneta-author-card-teaser-skeleton class="w-full" />
+						<cuentoneta-author-teaser-card-skeleton class="w-full" />
 					}
 				} @else {
 					@for (highlighted of authors(); track highlighted.author._id) {
-						<cuentoneta-author-card-teaser
+						<cuentoneta-author-teaser-card
 							[author]="highlighted.author"
 							[tags]="highlighted.tags"
 							[storyCount]="highlighted.storyCount"

@@ -1,3 +1,4 @@
+import { onoffAudioAssets } from '../../onoff-audio-assets.mock';
 import { onoffImageAssets } from '../../onoff-image-assets.mock';
 import type { LiteraryWork } from '@sanity-types';
 import lasEscalerasEditorialNoteMd from './las-escaleras.editorial-note.md?raw';
@@ -26,7 +27,7 @@ export const lasEscalerasLiteraryWorkDocument: LiteraryWork = {
 			_type: 'audioRecording',
 			title: 'Lectura de "Las escaleras" por su autor',
 			description: lasEscalerasAudioDescription,
-			url: 'https://cdn.example.org/onoff/las-escaleras.ogg',
+			url: onoffAudioAssets.lasEscaleras.path,
 		},
 	],
 	resources: [],

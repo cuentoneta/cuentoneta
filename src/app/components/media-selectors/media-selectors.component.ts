@@ -3,7 +3,7 @@ import { NgIcon, provideIcons } from '@ng-icons/core';
 import { simpleSpotify, simpleX, simpleYoutube } from '@ng-icons/simple-icons';
 import { faSolidFileAudio } from '@ng-icons/font-awesome/solid';
 
-import { MediaTeaser, MediaTypeKey } from '@models/media.model';
+import type { MediaTeaser, MediaTypeKey } from '@models/media.model';
 
 /**
  * Tema visual de los selectores, desacoplado de las variantes de las tarjetas consumidoras:
@@ -34,7 +34,7 @@ interface MediaSelectorItem {
  *
  * - `false` (por defecto): los recursos se agrupan por plataforma y se muestra un contador (badge)
  *   cuando hay más de uno del mismo tipo. Los selectores son decorativos (no clickeables). Es el
- *   modo usado por las tarjetas LiteraryWorkCardTeaser y LiteraryWorkHomeCardTeaser.
+ *   modo usado por las tarjetas LiteraryWorkTeaserCard y LiteraryWorkTeaserHomeCard.
  * - `true`: se renderiza un selector clickeable por cada recurso (sin agrupar ni contador) y al
  *   hacer click se emite, vía el output `selected`, el `MediaTeaser` correspondiente. Es el modo
  *   pensado para una vista que monte el widget del recurso elegido.

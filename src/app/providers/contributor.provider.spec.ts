@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 
 import { ContributorApi, HttpContributorApi } from './contributor.provider';
-import { Contributor } from '@models/contributor.model';
+import type { Contributor } from '@models/contributor.model';
 import { environment } from '../environments/environment';
 import { Endpoints } from './endpoints';
 import { provideHttpClient } from '@angular/common/http';

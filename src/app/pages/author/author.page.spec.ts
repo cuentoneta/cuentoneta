@@ -3,7 +3,8 @@ import { RESPONSE_INIT } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 import userEvent from '@testing-library/user-event';
-import { Observable, throwError } from 'rxjs';
+import type { Observable } from 'rxjs';
+import { throwError } from 'rxjs';
 import { render, screen, within } from '@testing-library/angular';
 
 // Página bajo prueba

@@ -32,7 +32,7 @@ describe('validateJsonLd', () => {
 			'@context': 'https://schema.org',
 			'@type': 'CollectionPage',
 			name: 'Verano 2022',
-			url: 'https://x/storylist/verano-2022',
+			url: 'https://x/collection/verano-2022',
 			mainEntity: {
 				'@type': 'ItemList',
 				itemListElement: [{ '@type': 'ListItem', position: 1, name: 'El Aleph', url: 'https://x/story/el-aleph' }],

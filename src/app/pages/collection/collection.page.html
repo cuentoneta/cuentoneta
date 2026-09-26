@@ -1,6 +1,4 @@
-<!-- El encabezado es fijo: sin el margen superior, la página arranca debajo de él. Los 32px de padding
-     son los que el diseño reserva sobre el contenido. -->
-<main class="mx-auto mt-header-height flex w-full max-w-310 gap-16 px-4 pt-8 pb-16">
+<div class="mx-auto flex w-full max-w-310 gap-16 px-4 pt-8 pb-16">
 	@if (collection(); as collection) {
 	<div class="flex min-w-0 flex-1 flex-col gap-12 pt-8">
 		<h1 class="font-inter text-4xl leading-10 font-bold text-neutral-900">{{ collection.title }}</h1>
@@ -8,7 +6,7 @@
 			@for (literaryWork of collection.literaryWorks; track literaryWork._id; let index = $index) { @if (index >= 2) {
 			<cuentoneta-divider />
 			}
-			<cuentoneta-literary-work-card-teaser
+			<cuentoneta-literary-work-teaser-card
 				[literaryWork]="literaryWork"
 				[variant]="index === 0 ? 'highlighted' : 'on-white'"
 				[order]="index + 1"
@@ -75,7 +73,7 @@
 		<cuentoneta-skeleton appearance="line" class="h-9 w-72 bg-neutral-300" />
 		<div class="flex flex-col gap-8">
 			@for (placeholder of [1, 2, 3]; track placeholder) {
-			<cuentoneta-literary-work-card-teaser [showExcerpt]="true" [showMultimedia]="true" />
+			<cuentoneta-literary-work-teaser-card [showExcerpt]="true" [showMultimedia]="true" />
 			}
 		</div>
 	</div>
@@ -91,4 +89,4 @@
 		</section>
 	</aside>
 	}
-</main>
+</div>

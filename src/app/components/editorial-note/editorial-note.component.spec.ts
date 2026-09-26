@@ -88,6 +88,23 @@ describe('EditorialNoteComponent', () => {
 		expect(screen.getByTestId('content').tagName).toBe('ASIDE');
 	});
 
+	// El bloque editorial no alimenta el extracto de búsqueda: un único ancestro `data-nosnippet`
+	// —el atributo que Google solo reconoce en div/span/section— envuelve el contenido y su
+	// referencia, en las dos variantes.
+	it.each(['note', 'highlight'] as const)(
+		'should exclude the whole block from search snippets in the %s variant',
+		async (variant) => {
+			await render(EditorialNoteComponent, { inputs: { note: noteWithReference, variant } });
+
+			const excluded = screen.getByTestId('snippet-exclusion');
+
+			expect(excluded.tagName).toBeOneOf(['DIV', 'SPAN', 'SECTION']);
+			expect(excluded).toHaveAttribute('data-nosnippet');
+			expect(excluded).toContainElement(screen.getByTestId('content'));
+			expect(excluded).toContainElement(screen.getByTestId('reference'));
+		},
+	);
+
 	// Un `<aside>` anidado en contenido seccionador solo es región navegable si tiene nombre: el rótulo
 	// es lo que separa la voz del editor de la del texto que comenta, para quien no ve la tarjeta.
 	it('should expose the note as a named landmark when a label is provided', async () => {

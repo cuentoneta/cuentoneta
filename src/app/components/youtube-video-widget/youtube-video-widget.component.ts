@@ -1,6 +1,6 @@
 import { Component, input, ViewEncapsulation } from '@angular/core';
 
-import { YouTubeVideo } from '@models/media.model';
+import type { YouTubeVideo } from '@models/media.model';
 import { YouTubePlayer } from '@angular/youtube-player';
 
 @Component({

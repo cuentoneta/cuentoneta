@@ -1,11 +1,7 @@
 {
-	"compilerOptions": {
-		"allowJs": true,
-		"checkJs": false,
-		"noEmit": true,
-		"skipLibCheck": true,
-		"module": "esnext",
-		"moduleResolution": "bundler"
-	},
-	"include": ["**/*.js"]
+	// Config de editor para las reglas y sus specs. Ningún comando la invoca —el gate `typecheck` corre
+	// sobre el programa que esta config extiende, que ya incluye todo `tools/`— pero el editor asigna
+	// estos archivos al proyecto más cercano, y sin heredar mostraría verde donde el gate marca rojo.
+	"extends": "../../tsconfig.typecheck.json",
+	"include": ["**/*.js", "**/*.ts"]
 }

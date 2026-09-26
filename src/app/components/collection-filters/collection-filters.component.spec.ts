@@ -1,33 +1,21 @@
 import { render, screen, within } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 
-import { createCollectionTeaser, type CollectionTeaser } from '@models/collection.model';
 import type { Tag } from '@models/tag.model';
 import { onoffCollectionTeasersMock } from '@mocks/onoff-collections.mock';
-import { colaborativaTagMock, cuentoTagMock, surrealismoTagMock } from '@mocks/onoff-tags.mock';
+import { colaborativaTagMock, teatroTagMock, tragediaTagMock } from '@mocks/onoff-tags.mock';
 import { clearAllMocks, fn } from '@test-utils';
 
 import { CollectionFiltersComponent } from './collection-filters.component';
 
-const [canonical] = onoffCollectionTeasersMock;
-const conEtiquetas = (slug: string, tags: readonly Tag[]): CollectionTeaser =>
-	createCollectionTeaser({
-		_id: `${canonical._id}-${slug}`,
-		slug,
-		title: slug,
-		description: canonical.description,
-		imagery: canonical.imagery,
-		tags,
-		config: canonical.config,
-		mediaSources: canonical.mediaSources,
-		count: canonical.count,
-	});
+const collections = onoffCollectionTeasersMock;
 
-const collections = [
-	conEtiquetas('una', [colaborativaTagMock, surrealismoTagMock]),
-	conEtiquetas('otra', [colaborativaTagMock]),
-	conEtiquetas('tercera', [colaborativaTagMock, cuentoTagMock]),
-];
+// Los conteos se derivan del elenco: sumarle una colección mueve las facetas, y un número escrito a
+// mano convertiría ese enriquecimiento en un fallo de este spec.
+const countFor = (tag: Tag) =>
+	collections.filter((collection) => collection.tags.some((candidate) => candidate.slug === tag.slug)).length;
+
+const distinctTagCount = new Set(collections.flatMap((collection) => collection.tags.map((tag) => tag.slug))).size;
 
 const renderFilters = async (selected: readonly string[] = []) => {
 	const toggled = fn();
@@ -39,7 +27,7 @@ const renderFilters = async (selected: readonly string[] = []) => {
 	return { ...view, toggled, cleared };
 };
 
-const facetFor = (tag: Tag, count: number) => screen.getByLabelText(`${tag.title} (${count})`);
+const facetFor = (tag: Tag) => screen.getByLabelText(`${tag.title} (${countFor(tag)})`);
 
 describe('CollectionFiltersComponent', () => {
 	beforeEach(() => {
@@ -49,9 +37,9 @@ describe('CollectionFiltersComponent', () => {
 	it('should count each tag over the collections it receives', async () => {
 		await renderFilters();
 
-		expect(facetFor(colaborativaTagMock, 3)).toBeInTheDocument();
-		expect(facetFor(surrealismoTagMock, 1)).toBeInTheDocument();
-		expect(facetFor(cuentoTagMock, 1)).toBeInTheDocument();
+		expect(facetFor(colaborativaTagMock)).toBeInTheDocument();
+		expect(facetFor(tragediaTagMock)).toBeInTheDocument();
+		expect(facetFor(teatroTagMock)).toBeInTheDocument();
 	});
 
 	// El nombre no puede salir del `legend`: si contiene un botón, el `fieldset` queda sin nombrar. Este
@@ -64,24 +52,27 @@ describe('CollectionFiltersComponent', () => {
 	});
 
 	it('should offer each tag once, however many collections carry it', async () => {
+		// La deduplicación solo se ejercita si alguna etiqueta la llevan varias colecciones.
+		expect(countFor(tragediaTagMock)).toBeGreaterThan(1);
+
 		await renderFilters();
 
-		expect(within(screen.getByRole('group')).getAllByRole('checkbox')).toHaveLength(3);
+		expect(within(screen.getByRole('group')).getAllByRole('checkbox')).toHaveLength(distinctTagCount);
 	});
 
 	it('should emit the tag whose facet is activated', async () => {
 		const { toggled } = await renderFilters();
 
-		await userEvent.click(facetFor(surrealismoTagMock, 1));
+		await userEvent.click(facetFor(tragediaTagMock));
 
-		expect(toggled).toHaveBeenCalledWith(surrealismoTagMock);
+		expect(toggled).toHaveBeenCalledWith(tragediaTagMock);
 	});
 
 	it('should check the facets named in the selection', async () => {
 		await renderFilters([colaborativaTagMock.slug]);
 
-		expect(facetFor(colaborativaTagMock, 3)).toBeChecked();
-		expect(facetFor(surrealismoTagMock, 1)).not.toBeChecked();
+		expect(facetFor(colaborativaTagMock)).toBeChecked();
+		expect(facetFor(tragediaTagMock)).not.toBeChecked();
 	});
 
 	describe('filtros en uso', () => {
@@ -102,7 +93,7 @@ describe('CollectionFiltersComponent', () => {
 		});
 
 		it('should emit once when asked to clear everything', async () => {
-			const { cleared } = await renderFilters([colaborativaTagMock.slug, surrealismoTagMock.slug]);
+			const { cleared } = await renderFilters([colaborativaTagMock.slug, tragediaTagMock.slug]);
 
 			await userEvent.click(screen.getByRole('button', { name: 'Limpiar filtros' }));
 
@@ -123,7 +114,7 @@ describe('CollectionFiltersComponent', () => {
 		await userEvent.click(screen.getByRole('button', { name: /Categoría/ }));
 
 		expect(screen.getByRole('button', { name: /Categoría/ })).toHaveAttribute('aria-expanded', 'false');
-		expect(screen.queryByLabelText(`${surrealismoTagMock.title} (1)`)).not.toBeInTheDocument();
+		expect(screen.queryByLabelText(`${tragediaTagMock.title} (${countFor(tragediaTagMock)})`)).not.toBeInTheDocument();
 		expect(screen.getByTestId('active-filters')).toBeInTheDocument();
 	});
 
