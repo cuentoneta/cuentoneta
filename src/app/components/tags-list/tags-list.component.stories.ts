@@ -6,13 +6,12 @@ import type { TagVariant } from '../tag/tag.component';
 import { TagComponent } from '../tag/tag.component';
 import type { Tag } from '@models/tag.model';
 import { onoffTagsWithShortTitles } from '@mocks/onoff-tags.mock';
-import { authorTeaserCardDocs } from '../author-teaser-card/author-teaser-card.component.docs';
-import { tagDocs } from '../tag/tag.component.docs';
+import { authorTeaserCardDocs } from '@components/author-teaser-card/author-teaser-card.component.docs';
+import { tagDocs } from '@components/tag/tag.component.docs';
 import { docsRef } from '@testing/storybook-docs';
+import type { TagsOverflowDirective } from './tags-overflow.directive';
 
-// Los símbolos que la prosa de esta story nombra sin enlazar. La tupla no se usa en runtime:
-// existe para que el import type-only rompa el `typecheck` si alguno deja de estar declarado.
-export type DocsSymbols = [TagsListComponent];
+export type DocsSymbols = [TagsListComponent, TagsOverflowDirective];
 
 type Args = TagsListComponent & { tags: Tag[]; variant: TagVariant; maxVisible?: number };
 

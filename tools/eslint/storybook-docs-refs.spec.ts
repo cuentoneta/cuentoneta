@@ -5,8 +5,9 @@ import rule from './storybook-docs-refs.js';
 
 const ruleTester = new RuleTester({ languageOptions: { parser: tsParser } });
 
-// La regla resuelve el módulo de entrada por el nombre del archivo y lee el catálogo del árbol, así que
-// los casos apuntan a una story real: `Divider` existe y su entrada declara `Componentes V3/Divider`.
+// La regla resuelve el módulo de entrada por el nombre del archivo y lee el catálogo y las clases Angular
+// del árbol, así que los casos apuntan a símbolos reales: `Divider` es una entrada que declara
+// `Componentes V3/Divider`, y `TagsOverflowDirective` una directiva sin entrada propia.
 const DIVIDER_STORY = 'src/app/components/divider/divider.component.stories.ts';
 
 // `RuleTester.run` declara su propia suite con `describe`/`it`, así que se invoca al nivel superior del
@@ -38,6 +39,16 @@ ruleTester.run('storybook-docs-refs', rule, {
 			filename: 'src/app/components/divider/divider.component.ts',
 			code: "const link = './?path=/docs/componentes-v3-divider--docs';",
 		},
+		// Una clase Angular sin entrada propia, declarada en la tupla.
+		{
+			filename: DIVIDER_STORY,
+			code: "export type DocsSymbols = [TagsOverflowDirective]; const prose = '<p>Recorta <code>TagsOverflowDirective</code>.</p>';",
+		},
+		// La tupla puede declararse después de la prosa que la necesita.
+		{
+			filename: DIVIDER_STORY,
+			code: "const prose = '<p><strong>TagsOverflowDirective</strong></p>'; type DocsSymbols = [TagsOverflowDirective];",
+		},
 	],
 	invalid: [
 		{
@@ -49,6 +60,22 @@ ruleTester.run('storybook-docs-refs', rule, {
 			filename: DIVIDER_STORY,
 			code: "const prose = '<p>El <strong>Divider</strong> separa.</p>';",
 			errors: [{ messageId: 'literalMention', data: { name: 'Divider' } }],
+		},
+		{
+			filename: DIVIDER_STORY,
+			code: "const prose = '<p>Usa <code>Divider</code>.</p>';",
+			errors: [{ messageId: 'literalMention', data: { name: 'Divider' } }],
+		},
+		{
+			filename: DIVIDER_STORY,
+			code: "const prose = '<p>Recorta <code>TagsOverflowDirective</code>.</p>';",
+			errors: [{ messageId: 'undeclaredSymbol', data: { name: 'TagsOverflowDirective' } }],
+		},
+		// Declarar otro símbolo no alcanza: la tupla tiene que nombrar el que la prosa usa.
+		{
+			filename: DIVIDER_STORY,
+			code: "export type DocsSymbols = [DividerComponent]; const prose = '<strong>TagsOverflowDirective</strong>';",
+			errors: [{ messageId: 'undeclaredSymbol', data: { name: 'TagsOverflowDirective' } }],
 		},
 		{
 			filename: DIVIDER_STORY,

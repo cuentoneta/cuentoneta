@@ -544,9 +544,11 @@ El **corpus conserva** sus URLs e identificadores de plataforma: son la forma qu
 
   El nombre visible y el `kind-id` salen los dos del mismo `title`, así que no pueden discrepar, y borrar una entrada rompe el `typecheck` de cada story que la referenciaba. El módulo aparte existe para romper el ciclo: hay pares de stories que se referencian mutuamente, y un módulo que no importa nada no puede formar un ciclo ESM.
 
-  El `title` del `meta` sigue siendo un **literal** porque el indexador CSF lo exige (leerlo de la entrada falla el build con `unexpected dynamic title`). Que ese literal siga igual al de su entrada lo verifica la regla de ESLint `storybook-docs-refs`, que además rechaza un `kind-id` escrito a mano y un nombre del catálogo puesto como texto.
+  El `title` del `meta` sigue siendo un **literal** porque el indexador CSF lo exige (leerlo de la entrada falla el build con `unexpected dynamic title`). Que ese literal siga igual al de su entrada lo verifica la regla de ESLint `storybook-docs-refs`, que además rechaza un `kind-id` escrito a mano y un nombre del catálogo puesto como texto en `<strong>` o `<code>`.
 
-  Un componente **sin story propia** —un sub-componente, un skeleton— no tiene entrada que lo publique con nombre corto, así que la prosa lo nombra por su clase (`CollectionTeaserCardSkeletonComponent`) y la story declara un `export type DocsSymbols` con los símbolos que nombra: el import type-only rompe el `typecheck` si alguno deja de existir.
+  Una clase Angular **sin story propia** —un sub-componente, un skeleton, una directiva— no tiene entrada que la publique con nombre corto, así que la prosa la nombra por su clase (`CollectionTeaserCardSkeletonComponent`) y la story la declara en un `export type DocsSymbols`: el import type-only rompe el `typecheck` si deja de existir. Para las clases de `src/app/` decoradas como componente, directiva, pipe o servicio la declaración es **obligatoria** —la regla marca la que la prosa nombra y la tupla no incluye—; un modelo o un tipo puede declararse igual, pero la regla no lo exige.
+
+  Los `*.docs.ts` de `src/app/components/` se importan por el alias `@components/…`, salvo el de la propia story (`./…`); los de `src/app/pages/`, que no tienen alias, por ruta relativa.
 
 ### Estado de carga (skeleton) → story intercambiable (obligatoria)
 
