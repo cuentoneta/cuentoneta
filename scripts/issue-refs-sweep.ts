@@ -3,8 +3,8 @@
  * que ya no están abiertos. El criterio y la decisión viven en `issue-refs-sweep.helpers.ts`; acá solo
  * están la lectura del árbol, la consulta a GitHub y la escritura del seguimiento.
  *
- * **Read-only por defecto.** Solo `--apply` escribe, y lo único que escribe es un issue de seguimiento
- * con título fijo: nunca toca el código ni cierra nada.
+ * **Read-only por defecto.** Solo `--no-dry-run` escribe, y lo único que escribe es un issue de
+ * seguimiento con título fijo: nunca toca el código ni cierra nada.
  *
  * Corre programado y **no** como gate. La condición que verifica —que el issue citado siga abierto— se
  * vuelve falsa sin que nadie toque el repositorio, así que atarla a un PR haría fallar diffs que no la
@@ -23,8 +23,11 @@ import {
 	formatConsoleReport,
 	selectStaleRefs,
 	type IssueState,
+	type SweepAction,
+	type TrackedIssueRef,
 } from './issue-refs-sweep.helpers';
 import { findTrackingIssue, gh } from './tracking-issue';
+import type { OpsTask } from './ops/registry';
 
 const TRACKING_TITLE = 'Menciones a issues que ya cerraron';
 const REPO = 'cuentoneta/cuentoneta';
@@ -75,46 +78,77 @@ function fetchStates(numbers: number[]): Map<number, IssueState> {
 	return states;
 }
 
-const refs = tracked();
-const states = fetchStates([...new Set(refs.map((ref) => ref.issueNumber))]);
-const stale = selectStaleRefs(refs, states);
+type TrackingIssue = NonNullable<ReturnType<typeof findTrackingIssue>>;
 
-process.stdout.write(`${formatConsoleReport(stale, refs.length)}\n`);
-
-if (!process.argv.includes('--apply')) {
-	process.exit(0);
+function createTrackingIssue(action: SweepAction): void {
+	gh(
+		'issue',
+		'create',
+		'--title',
+		TRACKING_TITLE,
+		'--body',
+		action.body ?? '',
+		'--label',
+		'🛠️ tooling',
+		'--label',
+		'🤖 agentes',
+	);
+	process.stdout.write('seguimiento creado.\n');
 }
 
-const existing = findTrackingIssue(TRACKING_TITLE);
-const action = decideAction({ stale, states, existing });
-
-switch (action.kind) {
-	case 'create':
-		gh(
-			'issue',
-			'create',
-			'--title',
-			TRACKING_TITLE,
-			'--body',
-			action.body ?? '',
-			'--label',
-			'🛠️ tooling',
-			'--label',
-			'🤖 agentes',
-		);
-		process.stdout.write('seguimiento creado.\n');
-		break;
-	case 'update':
-		gh('issue', 'edit', String(existing?.number), '--body', action.body ?? '');
-		process.stdout.write(`seguimiento #${existing?.number} actualizado.\n`);
-		break;
-	case 'resolved':
-		// El cuerpo se actualiza junto con el aviso: quitarle la huella es lo que impide que el aviso
-		// se repita cada corrida, porque el job no cierra el seguimiento por diseño.
-		gh('issue', 'edit', String(existing?.number), '--body', action.body ?? '');
-		gh('issue', 'comment', String(existing?.number), '--body', action.comment ?? '');
-		process.stdout.write(`comentado en #${existing?.number}; se cierra a mano.\n`);
-		break;
-	default:
-		process.stdout.write('sin cambios respecto de la corrida anterior.\n');
+function updateTrackingIssue(existing: TrackingIssue, action: SweepAction): void {
+	gh('issue', 'edit', String(existing.number), '--body', action.body ?? '');
+	process.stdout.write(`seguimiento #${existing.number} actualizado.\n`);
 }
+
+function resolveTrackingIssue(existing: TrackingIssue, action: SweepAction): void {
+	// El cuerpo se actualiza junto con el aviso: quitarle la huella es lo que impide que el aviso
+	// se repita cada corrida, porque el job no cierra el seguimiento por diseño.
+	gh('issue', 'edit', String(existing.number), '--body', action.body ?? '');
+	gh('issue', 'comment', String(existing.number), '--body', action.comment ?? '');
+	process.stdout.write(`comentado en #${existing.number}; se cierra a mano.\n`);
+}
+
+// Las dos ramas que editan el seguimiento no tienen nada que editar si no existe: `gh` recibiría el
+// literal "undefined" como número y fallaría con un mensaje que no dice qué pasó.
+function requireTrackingIssue(existing: TrackingIssue | null): TrackingIssue {
+	if (existing === null) {
+		throw new Error('se decidió editar el seguimiento sin un issue que editar');
+	}
+	return existing;
+}
+
+function applySweep(stale: TrackedIssueRef[], states: ReadonlyMap<number, IssueState>): void {
+	const existing = findTrackingIssue(TRACKING_TITLE);
+	const action = decideAction({ stale, states, existing });
+
+	switch (action.kind) {
+		case 'create':
+			createTrackingIssue(action);
+			break;
+		case 'update':
+			updateTrackingIssue(requireTrackingIssue(existing), action);
+			break;
+		case 'resolved':
+			resolveTrackingIssue(requireTrackingIssue(existing), action);
+			break;
+		default:
+			process.stdout.write('sin cambios respecto de la corrida anterior.\n');
+	}
+}
+
+export const task: OpsTask = {
+	run: async ({ apply }) => {
+		const refs = tracked();
+		const states = fetchStates([...new Set(refs.map((ref) => ref.issueNumber))]);
+		const stale = selectStaleRefs(refs, states);
+
+		process.stdout.write(`${formatConsoleReport(stale, refs.length)}\n`);
+
+		if (!apply) {
+			return;
+		}
+
+		applySweep(stale, states);
+	},
+};

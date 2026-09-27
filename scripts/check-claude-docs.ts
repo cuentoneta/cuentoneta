@@ -8,17 +8,22 @@
 import { checkAgentFrontmatter } from './check-agent-frontmatter';
 import { checkDocRefs } from './check-doc-refs';
 import { checkIssueRefs } from './check-issue-refs';
+import { EXIT_CODES, type OpsTask } from './ops/registry';
 
-const problems = [...checkAgentFrontmatter(), ...checkDocRefs(), ...checkIssueRefs()];
+export const task: OpsTask = {
+	run: async () => {
+		const problems = [...checkAgentFrontmatter(), ...checkDocRefs(), ...checkIssueRefs()];
 
-if (problems.length > 0) {
-	for (const problem of problems) console.error(problem);
-	console.error(
-		`\n${problems.length} problema(s) en la config de .claude/. Cada uno es un fallo que no emite señal por sí solo.`,
-	);
-	process.exit(1);
-}
+		if (problems.length > 0) {
+			for (const problem of problems) console.error(problem);
+			console.error(
+				`\n${problems.length} problema(s) en la config de .claude/. Cada uno es un fallo que no emite señal por sí solo.`,
+			);
+			return EXIT_CODES.failure;
+		}
 
-console.log(
-	'✓ Config de .claude/ válida: frontmatter de agentes, anclas a CLAUDE.md, rutas citadas y menciones a issues.',
-);
+		console.log(
+			'✓ Config de .claude/ válida: frontmatter de agentes, anclas a CLAUDE.md, rutas citadas y menciones a issues.',
+		);
+	},
+};

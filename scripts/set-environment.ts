@@ -15,6 +15,7 @@ import { writeFileSync, existsSync, mkdirSync, writeFile } from 'fs';
 import ErrnoException = NodeJS.ErrnoException;
 import { TEnvironmentType } from './vercel-environments.model';
 import { join } from 'node:path';
+import type { OpsTask } from './ops/registry';
 
 // Constantes para generar el archivo de environment
 const environment: TEnvironmentType = (process.env['VERCEL_TARGET_ENV'] as TEnvironmentType) ?? 'development';
@@ -57,72 +58,69 @@ function createSanityStudioEnvFile() {
 	console.log('Creado archivo .env para Sanity Studio con variables por defecto.');
 }
 
-if (environment === 'development') {
-	createAppEnvFile();
-	createSanityStudioEnvFile();
-}
-
 // Genera una ruta absoluta a la API en función del ambiente
 const generateApiUrl = (environment: TEnvironmentType): string => {
 	let url = '/';
 
-	// Asigna URL en base a la URL de la rama de Vercel para ambiente staging
 	if (environment === 'staging') {
 		url = `https://staging.cuentoneta.ar/`;
-	}
-	// Lectura de la variable de entorno de Vercel para deployments de preview fuera de staging
-	else if (environment === 'preview') {
+	} else if (environment === 'preview') {
 		url = `https://${process.env['VERCEL_BRANCH_URL']}/`;
-	}
-	// Asigna URL en base a variables de entorno para producción y staging (preview develop)
-	else if (environment === 'production') {
+	} else if (environment === 'production') {
 		url = `https://${process.env['VERCEL_PROJECT_PRODUCTION_URL']}/` as string;
 	}
 
 	return url;
 };
 
-const apiUrl = generateApiUrl(environment);
+export const task: OpsTask = {
+	run: async () => {
+		if (environment === 'development') {
+			createAppEnvFile();
+			createSanityStudioEnvFile();
+		}
 
-// Postura de indexado SEO de la build: solo producción indexa; staging/preview/development van
-// noindex. SEO_INDEXABLE=true la fuerza en una build no productiva sin tocar las URLs (lo usa el
-// job de e2e para validar el HTML del crawler contra el server SSR local).
-const indexable = environment === 'production' || process.env['SEO_INDEXABLE'] === 'true';
+		const apiUrl = generateApiUrl(environment);
 
-// Accede a las variables de entorno y genera un string
-// correspondiente al objeto environment que utilizará Angular
+		// Postura de indexado SEO de la build: solo producción indexa; staging/preview/development van
+		// noindex. SEO_INDEXABLE=true la fuerza en una build no productiva sin tocar las URLs (lo usa el
+		// job de e2e para validar el HTML del crawler contra el server SSR local).
+		const indexable = environment === 'production' || process.env['SEO_INDEXABLE'] === 'true';
 
-const exportedEnvironment = {
-	environment: `${environment ?? 'development'}`,
-	website: `${apiUrl ?? 'https://cuentoneta.ar/'}`,
-	apiUrl: `${apiUrl}`,
-	clarityProjectId: '',
-	indexable,
-};
+		const exportedEnvironment = {
+			environment: `${environment ?? 'development'}`,
+			website: `${apiUrl ?? 'https://cuentoneta.ar/'}`,
+			apiUrl: `${apiUrl}`,
+			clarityProjectId: '',
+			indexable,
+		};
 
-// Chequea si existe la variable de entorno para analytics de Microsoft Clarity
-if (process.env['CLARITY_PROJECT_ID']) {
-	exportedEnvironment.clarityProjectId = `${process.env['CLARITY_PROJECT_ID']}`;
-}
+		if (process.env['CLARITY_PROJECT_ID']) {
+			exportedEnvironment.clarityProjectId = `${process.env['CLARITY_PROJECT_ID']}`;
+		}
 
-const environmentFileContent = `
+		const environmentFileContent = `
     export const environment = ${JSON.stringify(exportedEnvironment)};
 `;
 
-// En caso de que no exista el directorio environments, se lo crea
-if (!existsSync(dirPath)) {
-	mkdirSync(dirPath);
-}
+		if (!existsSync(dirPath)) {
+			mkdirSync(dirPath);
+		}
 
-// Escribe el contenido en el archivo correspondiente environment.ts
-writeFile(targetPath, environmentFileContent, { flag: 'w' }, function (err: ErrnoException | null) {
-	if (err) {
-		console.log(err);
-		return;
-	}
-	console.log(`Variables de entorno escritas en ${targetPath}`);
-	console.log('Ambiente de Vercel - VERCEL_TARGET_ENV = ', process.env['VERCEL_TARGET_ENV']);
-	console.log('Ambiente de Vercel - VERCEL_URL = ', process.env['VERCEL_URL']);
-	console.log('URL de branch de Vercel - VERCEL_BRANCH_URL = ', process.env['VERCEL_BRANCH_URL']);
-	console.log('URL de API y Website = ', apiUrl);
-});
+		await new Promise<void>((resolve) => {
+			writeFile(targetPath, environmentFileContent, { flag: 'w' }, function (err: ErrnoException | null) {
+				if (err) {
+					console.log(err);
+					resolve();
+					return;
+				}
+				console.log(`Variables de entorno escritas en ${targetPath}`);
+				console.log('Ambiente de Vercel - VERCEL_TARGET_ENV = ', process.env['VERCEL_TARGET_ENV']);
+				console.log('Ambiente de Vercel - VERCEL_URL = ', process.env['VERCEL_URL']);
+				console.log('URL de branch de Vercel - VERCEL_BRANCH_URL = ', process.env['VERCEL_BRANCH_URL']);
+				console.log('URL de API y Website = ', apiUrl);
+				resolve();
+			});
+		});
+	},
+};

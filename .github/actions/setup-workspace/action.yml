@@ -33,7 +33,7 @@ runs:
 
     - name: Generate testing environment file
       shell: bash
-      run: pnpm run config
+      run: pnpm ops config
 
     - name: Rebuild and prepare
       shell: bash

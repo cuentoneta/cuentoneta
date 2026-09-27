@@ -131,7 +131,7 @@ jobs:
         run: |
           set -uo pipefail
           status=0
-          pnpm seo:index-status --all --history="$HISTORY_FILE" --summary="$GITHUB_STEP_SUMMARY" --apply || status=$?
+          pnpm ops seo:index-status --all --history="$HISTORY_FILE" --summary="$GITHUB_STEP_SUMMARY" --no-dry-run || status=$?
           case "$status" in
             0) echo "La corrida midió todas las URLs." ;;
             2) echo "::warning::Algunas inspecciones erraron por causas transitorias; la serie se persiste igual." ;;
@@ -188,7 +188,7 @@ jobs:
       - name: Smoke de invariantes SSR
         id: smoke
         continue-on-error: true
-        run: pnpm seo:smoke
+        run: pnpm ops seo:smoke
 
       # Los tres desenlaces se distinguen: cuando la medición corta el job el smoke no corre, su
       # `outcome` llega vacío, y anotar "encontró violaciones" afirmaría un hallazgo inexistente.
@@ -221,7 +221,7 @@ jobs:
           # sin capturar el código con `|| status=$?`, un hallazgo abortaría el step antes del `case`
           # y lo pintaría rojo — justo lo que este job no hace por un hallazgo.
           status=0
-          pnpm seo:body-sweep --apply --summary="$GITHUB_STEP_SUMMARY" || status=$?
+          pnpm ops seo:body-sweep --no-dry-run --summary="$GITHUB_STEP_SUMMARY" || status=$?
           case "$status" in
             0) echo "Ninguna URL del sitemap sirve un cuerpo vacío." ;;
             2) echo "::warning::El barrido encontró hallazgos; quedaron en el issue de seguimiento." ;;

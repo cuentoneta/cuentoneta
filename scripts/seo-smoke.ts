@@ -12,11 +12,11 @@
  * solo se ve contra el corpus real de un despliegue.
  *
  * Uso:
- *   BASE_URL=https://www.cuentoneta.ar pnpm seo:smoke
- *   SEO_SMOKE_SAMPLE=5 pnpm seo:smoke                            # N aleatorios por tipo (default 3)
- *   SEO_SMOKE_SLUGS=/literary-work/el-fin,/author/... pnpm seo:smoke      # reproduce paths puntuales (sin muestra)
- *   pnpm seo:smoke --full   (o SEO_SMOKE_FULL=true)              # recorre TODO el sitemap (lento)
- *   SIMULATE_PROXY_HEADERS=true pnpm seo:smoke                   # reproduce el x-forwarded-for de Vercel
+ *   BASE_URL=https://www.cuentoneta.ar pnpm ops seo:smoke
+ *   SEO_SMOKE_SAMPLE=5 pnpm ops seo:smoke                            # N aleatorios por tipo (default 3)
+ *   SEO_SMOKE_SLUGS=/literary-work/el-fin,/author/... pnpm ops seo:smoke      # reproduce paths puntuales (sin muestra)
+ *   pnpm ops seo:smoke --full   (o SEO_SMOKE_FULL=true)              # recorre TODO el sitemap (lento)
+ *   SIMULATE_PROXY_HEADERS=true pnpm ops seo:smoke                   # reproduce el x-forwarded-for de Vercel
  *
  * Herramienta manual de diagnóstico (no un gate de CI): reporta TODAS las violaciones por página,
  * loguea los paths chequeados (para reproducir) y sale con código 1 si hay alguna.
@@ -30,9 +30,9 @@ import {
 	parseSitemap,
 	selectByType,
 } from './seo-smoke.helpers';
+import { EXIT_CODES, type OpsTask } from './ops/registry';
 
 const BASE_URL = process.env['BASE_URL'] ?? 'http://localhost:4000';
-const FULL = process.argv.includes('--full') || process.env['SEO_SMOKE_FULL'] === 'true';
 const SLUGS_OVERRIDE = (process.env['SEO_SMOKE_SLUGS'] ?? '')
 	.split(',')
 	.map((path) => path.trim())
@@ -121,11 +121,11 @@ function reportSitemapDocument(xml: string): boolean {
 	return true;
 }
 
-function sampledPaths(baseline: readonly string[], xml: string): string[] {
+function sampledPaths(baseline: readonly string[], xml: string, full: boolean): string[] {
 	const paths = parseSitemap(xml);
 	const excluded = new Set(baseline);
 	return ['/author/', '/collection/', '/literary-work/']
-		.flatMap((prefix) => selectByType(paths, prefix, SAMPLE_SIZE, FULL))
+		.flatMap((prefix) => selectByType(paths, prefix, SAMPLE_SIZE, full))
 		.filter((path) => !excluded.has(path));
 }
 
@@ -144,7 +144,7 @@ async function reportBaseline(baseline: readonly string[]): Promise<boolean> {
  * así que su falla se reporta pero **no** tumba el baseline: que el sitemap no esté disponible no
  * dice nada sobre las rutas que ya se ejercieron.
  */
-async function reportSitemap(baseline: readonly string[]): Promise<boolean> {
+async function reportSitemap(baseline: readonly string[], full: boolean): Promise<boolean> {
 	try {
 		const response = await fetch(`${BASE_URL}/sitemap.xml`, { headers: proxyHeaders });
 		if (!response.ok) {
@@ -153,8 +153,8 @@ async function reportSitemap(baseline: readonly string[]): Promise<boolean> {
 		const xml = await response.text();
 
 		let failed = reportSitemapDocument(xml);
-		const sample = sampledPaths(baseline, xml);
-		console.log(`\nMuestra del sitemap (${FULL ? 'full' : `${SAMPLE_SIZE}/tipo`}):\n  ${sample.join('\n  ')}\n`);
+		const sample = sampledPaths(baseline, xml, full);
+		console.log(`\nMuestra del sitemap (${full ? 'full' : `${SAMPLE_SIZE}/tipo`}):\n  ${sample.join('\n  ')}\n`);
 		for (const path of sample) {
 			failed = (await reportPath(path)) || failed;
 		}
@@ -165,7 +165,7 @@ async function reportSitemap(baseline: readonly string[]): Promise<boolean> {
 	}
 }
 
-async function run(): Promise<void> {
+async function run(full: boolean): Promise<boolean> {
 	console.log(
 		`Smoke de indexado contra ${BASE_URL}${proxyHeaders['x-forwarded-for'] ? ' (con x-forwarded-for)' : ''}\n`,
 	);
@@ -182,15 +182,20 @@ async function run(): Promise<void> {
 	let failed = await reportBaseline(baseline);
 	// Con slugs explícitos no hay muestra que tomar: el llamador ya dijo qué quiere ejercer.
 	if (SLUGS_OVERRIDE.length === 0) {
-		failed = (await reportSitemap(baseline)) || failed;
+		failed = (await reportSitemap(baseline, full)) || failed;
 	}
 
-	if (failed) {
-		process.exitCode = 1;
-	}
+	return failed;
 }
 
-run().catch((error: unknown) => {
-	console.error(error);
-	process.exitCode = 1;
-});
+export const task: OpsTask = {
+	run: async ({ argv }) => {
+		const full = argv.includes('--full') || process.env['SEO_SMOKE_FULL'] === 'true';
+		try {
+			return (await run(full)) ? EXIT_CODES.failure : undefined;
+		} catch (error) {
+			console.error(error);
+			return EXIT_CODES.failure;
+		}
+	},
+};

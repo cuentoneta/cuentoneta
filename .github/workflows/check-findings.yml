@@ -70,7 +70,7 @@ jobs:
       - name: Verificar los mensajes de commit
         run: |
           set -euo pipefail
-          pnpm check:findings --surface=commit commit-messages.txt
+          pnpm ops check:findings --surface=commit commit-messages.txt
 
       # El cuerpo viaja por `env` y nunca interpolado dentro del `run:`: un `${{ }}` con texto que
       # escribe cualquiera es inyección de shell. Un PR sin descripción llega como cadena vacía y pasa.
@@ -80,4 +80,4 @@ jobs:
           PR_BODY: ${{ github.event.pull_request.body }}
         run: |
           set -euo pipefail
-          printf '%s' "$PR_BODY" | pnpm check:findings --surface=pr
+          printf '%s' "$PR_BODY" | pnpm ops check:findings --surface=pr

@@ -71,7 +71,7 @@ jobs:
           SANITY_STUDIO_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
         run: |
           set -uo pipefail
-          # El script se invoca con `node --env-file=.env`, y ese `.env` apunta a `development`. Node
+          # `pnpm ops` corre con `--env-file-if-exists=.env`, y ese `.env` apunta a `development`. Node
           # le da precedencia a la variable del entorno, así que el bloque `env:` decide el dataset.
           # Sin comillas: en modo seco la variable vacía debe desaparecer, no pasarse como argumento.
           apply_flag=''
@@ -83,7 +83,7 @@ jobs:
           # rastro de qué obras alcanzó a tocar, con escrituras ya aplicadas. `pipefail` conserva el
           # código de salida de `pnpm`, que `tee` taparía con su propio 0.
           status=0
-          pnpm backfill:reading-time $apply_flag 2>&1 | tee report.txt || status=$?
+          pnpm ops reading-time:backfill $apply_flag 2>&1 | tee report.txt || status=$?
           # También al resumen: un schedule diario que hay que abrir para saber qué hizo termina sin
           # que nadie lo abra.
           {

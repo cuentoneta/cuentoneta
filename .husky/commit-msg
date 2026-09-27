@@ -2,4 +2,4 @@
 # con `commit -v`, el diff completo debajo de la línea de tijeras. Verificar eso sin sanear marca
 # cualquier diff que toque un archivo donde el identificador aparece legítimamente —los tests de este
 # mismo criterio, sin ir más lejos— y rechaza commits impecables.
-sed '/^#.*>8/,$d' "$1" | git stripspace --strip-comments | pnpm check:findings --surface=commit
+sed '/^#.*>8/,$d' "$1" | git stripspace --strip-comments | pnpm ops check:findings --surface=commit

@@ -153,12 +153,12 @@ Es la forma que usa el skill [`release-workflow`](../skills/release-workflow/SKI
 
 ### El id de proyecto no se escribe: se resuelve del entorno
 
-El valor de `--project` **no se copia a ningún archivo versionado** —ni a esta referencia, ni a un README de migración, ni a un skill—: se resuelve en el momento desde el archivo de entorno que genera `pnpm run config` (un `.env` en la raíz y otro en `cms/`, los dos con `SANITY_STUDIO_PROJECT_ID`).
+El valor de `--project` **no se copia a ningún archivo versionado** —ni a esta referencia, ni a un README de migración, ni a un skill—: se resuelve en el momento desde el archivo de entorno que genera `pnpm ops config` (un `.env` en la raíz y otro en `cms/`, los dos con `SANITY_STUDIO_PROJECT_ID`).
 
 ```bash
 --project "$(node --env-file=.env -p 'process.env.SANITY_STUDIO_PROJECT_ID')"
 ```
 
-La sustitución lleva el valor del archivo al flag sin que nadie abra el `.env` ni lo imprima por pantalla, y sin que la documentación quede sosteniendo una copia que envejece por su cuenta. Si el archivo todavía no existe, `node` aborta y el comando no llega a correr: la respuesta es `pnpm run config`, nunca escribir el id a mano.
+La sustitución lleva el valor del archivo al flag sin que nadie abra el `.env` ni lo imprima por pantalla, y sin que la documentación quede sosteniendo una copia que envejece por su cuenta. Si el archivo todavía no existe, `node` aborta y el comando no llega a correr: la respuesta es `pnpm ops config`, nunca escribir el id a mano.
 
 La ruta del `--env-file` es relativa al directorio desde donde se corre — `.env` desde `cms/`, `cms/.env` desde la raíz (la forma con `pnpm -C cms exec`). Vale igual para el `--project-id` del comando de censo.
