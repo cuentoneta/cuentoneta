@@ -1,10 +1,10 @@
 import { computed, Directive, input } from '@angular/core';
 
-import type { DrawerDirection } from './drawer.component';
+import type { DrawerDirection } from './drawer';
 
 /**
  * Calcula las clases de posición, tamaño y transform del panel del drawer según su dirección. Se aplica como
- * `hostDirective` de `DrawerComponent` con el input `direction` forwardeado. El par de transforms (offset base
+ * `hostDirective` de `Drawer` con el input `direction` forwardeado. El par de transforms (offset base
  * + `data-[open]:...`) resuelve el slide en combinación con la transición declarada en el propio componente.
  *
  * El panel flota con un gap de `spacing/4` (16px) respecto de los bordes del viewport —igual que el contenedor

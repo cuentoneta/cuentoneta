@@ -14,7 +14,7 @@ export function collectPageLayoutViolations(source: string): string[] {
 	const violations: string[] = [];
 
 	if (mainElement.test(source)) {
-		violations.push('declara un <main> propio; el landmark principal lo declara el shell (AppComponent)');
+		violations.push('declara un <main> propio; el landmark principal lo declara el shell (App)');
 	}
 	if (headerClearance.test(source)) {
 		violations.push('despeja el encabezado por su cuenta; el shell ya reserva su alto');

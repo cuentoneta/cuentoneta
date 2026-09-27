@@ -8,7 +8,7 @@ import {
 	isConventionSource,
 } from './block-issue-refs-in-comments.helpers';
 
-const file = 'src/app/components/widget/widget.component.ts';
+const file = 'src/app/components/widget/widget.ts';
 
 describe('findIssueRefsInComments — lo que bloquea', () => {
 	it.each([
@@ -127,7 +127,7 @@ describe('findIssueRefsInComments — alcance', () => {
 });
 
 describe('findExemptIssueRefs — la operación inversa', () => {
-	const file = 'src/app/components/widget/widget.component.ts';
+	const file = 'src/app/components/widget/widget.ts';
 
 	it.each([
 		['un TODO con paréntesis', '// TODO(#1471): eliminar el adapter', 1471, 'todo'],

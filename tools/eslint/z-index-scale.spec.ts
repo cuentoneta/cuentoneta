@@ -9,9 +9,9 @@ const tsRuleTester = new RuleTester({ languageOptions: { parser: tsParser } });
 // `.html` del proyecto: probarla con el parser de TS no ejercitaría el mismo camino.
 const templateRuleTester = new RuleTester({ languageOptions: { parser: angular.templateParser } });
 
-const HEADER_FILE = 'src/app/components/header/header.component.ts';
+const HEADER_FILE = 'src/app/components/header/header.ts';
 const allowHeader = [{ allowGlobalLayersIn: [HEADER_FILE] }];
-const SHELL_FILE = 'src/app/app.component.ts';
+const SHELL_FILE = 'src/app/app.ts';
 const allowShell = [{ allowGlobalLayersIn: [SHELL_FILE] }];
 
 const decorate = (hostClass: string) =>
@@ -121,7 +121,7 @@ templateRuleTester.run('z-index-scale (plantillas)', rule, {
 		// Sin recortar el nombre virtual al `.ts`, la allowlist solo cubriría la metadata de host.
 		{
 			code: `<a class="focus:z-floating"></a>`,
-			filename: `${SHELL_FILE}/1_inline-template-app.component.ts-1.component.html`,
+			filename: `${SHELL_FILE}/1_inline-template-app.ts-1.component.html`,
 			options: allowShell,
 		},
 	],
@@ -137,7 +137,7 @@ templateRuleTester.run('z-index-scale (plantillas)', rule, {
 		// La contracara: el nombre virtual no habilita nada por sí solo.
 		{
 			code: `<a class="focus:z-floating"></a>`,
-			filename: 'src/app/pages/x.component.ts/1_inline-template-x.component.ts-1.component.html',
+			filename: 'src/app/pages/x/x.page.ts/1_inline-template-x.page.ts-1.component.html',
 			options: allowShell,
 			errors: [{ messageId: 'globalLayer' }],
 		},

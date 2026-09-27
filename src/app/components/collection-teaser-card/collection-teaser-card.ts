@@ -10,11 +10,11 @@ import { AppRoutes } from '../../app.routes';
 import type { CollectionTeaser } from '@models/collection.model';
 
 // Components
-import { CollectionCoverComponent } from '../collection-cover/collection-cover.component';
+import { CollectionCover } from '../collection-cover/collection-cover';
 
 @Component({
 	selector: 'cuentoneta-collection-teaser-card',
-	imports: [RouterLink, CollectionCoverComponent],
+	imports: [RouterLink, CollectionCover],
 
 	template: `
 		<article class="relative flex items-start gap-5">

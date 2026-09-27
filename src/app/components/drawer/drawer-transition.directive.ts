@@ -2,9 +2,9 @@ import { Directive, signal } from '@angular/core';
 
 /**
  * Orquesta la transición de entrada/salida del drawer. Expone `isTransitionedIn` como signal para que
- * `DrawerComponent` maneje el atributo `data-open` de forma declarativa en la plantilla; solo el timing de
+ * `Drawer` maneje el atributo `data-open` de forma declarativa en la plantilla; solo el timing de
  * pintado (`requestAnimationFrame`) y el fin de la transición CSS (`transitionend`) se manejan de forma
- * imperativa, porque son Web APIs sin equivalente reactivo. Se aplica como `hostDirective` de `DrawerComponent`.
+ * imperativa, porque son Web APIs sin equivalente reactivo. Se aplica como `hostDirective` de `Drawer`.
  */
 @Directive({})
 export class DrawerTransitionDirective {

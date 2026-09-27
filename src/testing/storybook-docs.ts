@@ -14,7 +14,7 @@
  * un ciclo, y por eso el `title` vive ahí y no en el `meta`, que lo consume.
  *
  * El nombre visible es el último segmento del `title`, no el de la clase: el catálogo publica
- * `AudioRecording` para `AudioRecordingWidgetComponent`, y es el título el que decide qué lee quien
+ * `AudioRecording` para `AudioRecordingWidget`, y es el título el que decide qué lee quien
  * navega los autodocs.
  */
 

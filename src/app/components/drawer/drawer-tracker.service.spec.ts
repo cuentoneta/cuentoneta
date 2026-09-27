@@ -1,7 +1,7 @@
 import { DrawerTrackerService } from './drawer-tracker.service';
-import type { DrawerComponent } from './drawer.component';
+import type { Drawer } from './drawer';
 
-const drawerStub = (): DrawerComponent => ({}) as unknown as DrawerComponent;
+const drawerStub = (): Drawer => ({}) as unknown as Drawer;
 
 describe('DrawerTrackerService', () => {
 	it('should generate incrementing ids', () => {

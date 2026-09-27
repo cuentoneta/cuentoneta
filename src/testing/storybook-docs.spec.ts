@@ -23,7 +23,7 @@ describe('docsName', () => {
 	});
 
 	it('devuelve el title entero cuando no tiene sección', () => {
-		expect(docsName({ title: 'FooterComponent' })).toBe('FooterComponent');
+		expect(docsName({ title: 'Footer' })).toBe('Footer');
 	});
 });
 

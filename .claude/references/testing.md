@@ -157,11 +157,11 @@ Las **imágenes** del corpus atraviesan las tres capas por una única tabla, `sr
 
 ```typescript
 import { render, screen } from '@testing-library/angular';
-import { TagComponent } from './tag.component';
+import { Tag } from './tag';
 
-describe('TagComponent', () => {
+describe('Tag', () => {
 	it('should display the label', async () => {
-		await render(TagComponent, {
+		await render(Tag, {
 			inputs: { label: 'Crónica', variant: 'soft' },
 		});
 
@@ -177,10 +177,11 @@ Para inputs se usa `inputs: { ... }`; para proyectar plantilla con bindings, la 
 ```typescript
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
+import { ContactForm } from './contact-form';
 
 it('should react to a click', async () => {
 	const user = userEvent.setup();
-	await render(MyComponent);
+	await render(ContactForm);
 
 	await user.click(screen.getByRole('button', { name: /enviar/i }));
 
@@ -245,7 +246,7 @@ Variantes: `queryBy*` (cuando se espera ausencia, no lanza), `findBy*` (async, e
 
 `happy-dom` trae un `IntersectionObserver` que no hace nada: alcanza para renderizar, pero nunca entrega un callback. `src/test-setup.ts` instala un **stub global** (`src/testing/intersection-observer.stub.ts`) que sí lo entrega bajo control del spec.
 
-Los specs que necesitan **simular overflow** (p. ej. `TagsListComponent` / `TagsOverflowDirective`, que recorta tags por ancho con `IntersectionObserver`) reutilizan los helpers del mismo stub:
+Los specs que necesitan **simular overflow** (p. ej. `TagsList` / `TagsOverflowDirective`, que recorta tags por ancho con `IntersectionObserver`) reutilizan los helpers del mismo stub:
 
 | Helper                              | Efecto                                                                 |
 | ----------------------------------- | ---------------------------------------------------------------------- |
@@ -477,13 +478,13 @@ Todo componente nuevo en **`src/app/components/`** lleva su `*.stories.ts` (docu
 
 ```typescript
 import { argsToTemplate, Meta, StoryObj } from '@storybook/angular';
-import { TagComponent } from './tag.component';
+import { Tag } from './tag';
 
-const meta: Meta<TagComponent> = {
-	component: TagComponent,
+const meta: Meta<Tag> = {
+	component: Tag,
 	title: 'Componentes V3/Tag',
 	parameters: {
-		docs: { description: { component: `<div><p>El <strong>TagComponent</strong> del Design System v3...</p></div>` } },
+		docs: { description: { component: `<div><p>El <strong>Tag</strong> del Design System v3...</p></div>` } },
 		layout: 'padded',
 	},
 	argTypes: {
@@ -496,7 +497,7 @@ const meta: Meta<TagComponent> = {
 	},
 };
 export default meta;
-type Story = StoryObj<TagComponent>;
+type Story = StoryObj<Tag>;
 
 export const Soft: Story = {
 	render: (args) => ({ props: args, template: `<cuentoneta-tag ${argsToTemplate(args)} />` }),
@@ -535,7 +536,7 @@ El **corpus conserva** sus URLs e identificadores de plataforma: son la forma qu
 - **La referencia sale de la entrada, no del teclado.** Cada story tiene su módulo `*.docs.ts` al lado, que declara el `title` del catálogo. La prosa que nombra o enlaza otra entrada la importa y la pasa por un helper de [`@testing/storybook-docs`](../../src/testing/storybook-docs.ts), en vez de escribir el nombre y el `kind-id` a mano:
 
   ```typescript
-  import { literaryWorkTeaserCardDocs } from '@components/literary-work-teaser-card/literary-work-teaser-card.component.docs';
+  import { literaryWorkTeaserCardDocs } from '@components/literary-work-teaser-card/literary-work-teaser-card.docs';
   import { docsMention, docsRef } from '@testing/storybook-docs';
 
   // docsRef → nombre resaltado y enlazado · docsMention → solo el nombre · docsLink → texto propio
@@ -546,7 +547,7 @@ El **corpus conserva** sus URLs e identificadores de plataforma: son la forma qu
 
   El `title` del `meta` sigue siendo un **literal** porque el indexador CSF lo exige (leerlo de la entrada falla el build con `unexpected dynamic title`). Que ese literal siga igual al de su entrada lo verifica la regla de ESLint `storybook-docs-refs`, que además rechaza un `kind-id` escrito a mano y un nombre del catálogo puesto como texto en `<strong>` o `<code>`.
 
-  Una clase Angular **sin story propia** —un sub-componente, un skeleton, una directiva— no tiene entrada que la publique con nombre corto, así que la prosa la nombra por su clase (`CollectionTeaserCardSkeletonComponent`) y la story la declara en un `export type DocsSymbols`: el import type-only rompe el `typecheck` si deja de existir. Para las clases de `src/app/` decoradas como componente, directiva, pipe o servicio la declaración es **obligatoria** —la regla marca la que la prosa nombra y la tupla no incluye—; un modelo o un tipo puede declararse igual, pero la regla no lo exige.
+  Una clase Angular **sin story propia** —un sub-componente, un skeleton, una directiva— no tiene entrada que la publique con nombre corto, así que la prosa la nombra por su clase (`CollectionTeaserCardSkeleton`) y la story la declara en un `export type DocsSymbols`: el import type-only rompe el `typecheck` si deja de existir. Para las clases de `src/app/` decoradas como componente, directiva, pipe o servicio la declaración es **obligatoria** —la regla marca la que la prosa nombra y la tupla no incluye—; un modelo o un tipo puede declararse igual, pero la regla no lo exige.
 
   Los `*.docs.ts` de `src/app/components/` se importan por el alias `@components/…`, salvo el de la propia story (`./…`); los de `src/app/pages/`, que no tienen alias, por ruta relativa.
 

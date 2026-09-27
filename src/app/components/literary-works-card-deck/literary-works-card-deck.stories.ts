@@ -4,9 +4,9 @@ import { argsToTemplate } from '@storybook/angular-vite';
 import { LiteraryWorksCardDeck } from './literary-works-card-deck';
 import { onoffLiteraryWorkNavigationTeasersWithAuthorsMock } from '@mocks/onoff-literary-work-teasers.mock';
 import { literaryWorksCardDeckDocs } from './literary-works-card-deck.docs';
-import { emptyStateDocs } from '@components/empty-state/empty-state.component.docs';
-import { literaryWorkTeaserHomeCardDocs } from '@components/literary-work-teaser-home-card/literary-work-teaser-home-card.component.docs';
-import { sectionHeaderDocs } from '@components/section-header/section-header.component.docs';
+import { emptyStateDocs } from '@components/empty-state/empty-state.docs';
+import { literaryWorkTeaserHomeCardDocs } from '@components/literary-work-teaser-home-card/literary-work-teaser-home-card.docs';
+import { sectionHeaderDocs } from '@components/section-header/section-header.docs';
 import { docsMention, docsRef } from '@testing/storybook-docs';
 
 // Un solo dataset compartido por todas las stories: las mismas obras en cada estado hacen que el switch
