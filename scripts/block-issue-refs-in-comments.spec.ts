@@ -14,7 +14,7 @@ import { spawnSync } from 'node:child_process';
 import { resolve } from 'node:path';
 
 const RUNNER = resolve(process.cwd(), 'scripts/block-issue-refs-in-comments.ts');
-const FILE = 'src/app/components/widget/widget.component.ts';
+const FILE = 'src/app/components/widget/widget.ts';
 const OFENSIVO = '// Rediseñado en #1234: antes usaba otra proyección';
 
 function run(payload: unknown): { status: number | null; stderr: string } {

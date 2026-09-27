@@ -137,7 +137,7 @@ templateRuleTester.run('z-index-scale (plantillas)', rule, {
 		// La contracara: el nombre virtual no habilita nada por sí solo.
 		{
 			code: `<a class="focus:z-floating"></a>`,
-			filename: 'src/app/pages/x.component.ts/1_inline-template-x.component.ts-1.component.html',
+			filename: 'src/app/pages/x/x.page.ts/1_inline-template-x.page.ts-1.component.html',
 			options: allowShell,
 			errors: [{ messageId: 'globalLayer' }],
 		},
