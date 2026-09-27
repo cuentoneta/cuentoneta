@@ -100,6 +100,27 @@ ruleTester.run('component-location-and-name', rule, {
 			filename: 'src/app/pages/about/about.page.ts',
 			errors: [{ messageId: 'nameMismatch', data: { name: 'About', expectedFile: 'about.ts' } }],
 		},
+		// Una metadata que no es un objeto literal no saca a la clase de los chequeos de sufijo, ubicación y nombre.
+		{
+			code: '@Component(config) export class TagComponent {}',
+			filename: 'src/app/components/tag/tag.ts',
+			errors: [{ messageId: 'componentSuffix' }, { messageId: 'nameMismatch' }],
+		},
+		{
+			code: '@Component(config) export class Foo {}',
+			filename: 'src/app/foo.ts',
+			errors: [{ messageId: 'misplaced' }],
+		},
+		{
+			code: component('Carousel', `'templateUrl': './carousel.component.html'`),
+			filename: 'src/app/components/carousel/carousel.ts',
+			errors: [{ messageId: 'siblingMismatch' }],
+		},
+		{
+			code: `@Component({ selector: 'cuentoneta-x' }) export default class {}`,
+			filename: 'src/app/pages/about/about.page.ts',
+			errors: [{ messageId: 'anonymousComponent' }],
+		},
 		{
 			code: component('Carousel', `templateUrl: './carousel.component.html', styleUrls: ['./other.css']`),
 			filename: 'src/app/components/carousel/carousel.ts',

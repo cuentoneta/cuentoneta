@@ -29,6 +29,7 @@ const COMPONENT_SUFFIX = 'Component';
 const PAGE_SUFFIX = 'Page';
 
 /** @typedef {import('@typescript-eslint/utils').TSESTree.ClassDeclaration} ClassDeclaration */
+/** @typedef {import('@typescript-eslint/utils').TSESTree.CallExpression} CallExpression */
 /** @typedef {import('@typescript-eslint/utils').TSESTree.ObjectExpression} ObjectExpression */
 /** @typedef {import('@typescript-eslint/utils').TSESTree.Node} TsNode */
 /** @typedef {import('eslint').Rule.RuleContext} RuleContext */
@@ -47,24 +48,46 @@ const toKebab = (pascal) => pascal.replace(/(?<=[a-z0-9])(?=[A-Z])/g, '-').toLow
 const repoPath = (context) => relative(context.cwd, context.filename).replaceAll('\\', '/');
 
 /**
- * El argumento objeto de `@Component({...})`, o `null` si la clase no está decorada con `@Component`.
+ * La llamada `@Component(...)` que decora la clase, o `undefined` si no la decora.
  *
  * @param {ClassDeclaration} node
- * @returns {ObjectExpression | null}
+ * @returns {CallExpression | undefined}
  */
-function componentMetadata(node) {
-	for (const decorator of node.decorators ?? []) {
-		const expression = decorator.expression;
-		const isComponent =
+function componentDecorator(node) {
+	for (const { expression } of node.decorators ?? []) {
+		if (
 			expression.type === 'CallExpression' &&
 			expression.callee.type === 'Identifier' &&
-			expression.callee.name === 'Component';
-		if (isComponent) {
-			const [argument] = expression.arguments;
-			return argument?.type === 'ObjectExpression' ? argument : null;
+			expression.callee.name === 'Component'
+		) {
+			return expression;
 		}
 	}
-	return null;
+	return undefined;
+}
+
+/**
+ * El objeto literal que recibe `@Component`, o `null` si recibe otra cosa (una variable, una llamada): en
+ * ese caso la metadata no se puede leer estáticamente y los hermanos quedan sin verificar.
+ *
+ * @param {CallExpression} decorator
+ * @returns {ObjectExpression | null}
+ */
+function literalMetadata(decorator) {
+	const [argument] = decorator.arguments;
+	return argument?.type === 'ObjectExpression' ? argument : null;
+}
+
+/**
+ * El nombre de una clave de objeto, escrita como identificador o entre comillas.
+ *
+ * @param {TsNode} key
+ */
+function keyName(key) {
+	if (key.type === 'Identifier') {
+		return key.name;
+	}
+	return key.type === 'Literal' && typeof key.value === 'string' ? key.value : undefined;
 }
 
 /**
@@ -101,6 +124,38 @@ function nameProblem(className, stem, inPages) {
 }
 
 /**
+ * El nombre de la clase por sí mismo, sin mirar el archivo: que exista y que no lleve el sufijo `Component`.
+ *
+ * @param {RuleContext} context
+ * @param {import('eslint').Rule.Node | import('estree').Identifier} target
+ * @param {string | undefined} name
+ */
+function checkClassName(context, target, name) {
+	if (!name) {
+		context.report({ node: target, messageId: 'anonymousComponent' });
+	} else if (name.endsWith(COMPONENT_SUFFIX)) {
+		const expected = name.slice(0, -COMPONENT_SUFFIX.length);
+		context.report({ node: target, messageId: 'componentSuffix', data: { name, expected } });
+	}
+}
+
+/**
+ * @param {RuleContext} context
+ * @param {import('eslint').Rule.Node | import('estree').Identifier} target
+ * @param {string} name
+ * @param {string} path
+ * @param {string} stem
+ */
+function checkName(context, target, name, path, stem) {
+	const inPages = path.startsWith(PAGES_DIR);
+	const problem = nameProblem(name, stem, inPages);
+	if (problem) {
+		const expectedFile = expectedFileFor(name, inPages);
+		context.report({ node: target, messageId: problem, data: { name, expectedFile } });
+	}
+}
+
+/**
  * Los literales de `templateUrl`, `styleUrl` y `styleUrls`, cada uno con la extensión que le corresponde.
  *
  * @param {ObjectExpression} metadata
@@ -110,10 +165,10 @@ function siblingReferences(metadata) {
 	/** @type {Record<string, string>} */
 	const extensions = { templateUrl: 'html', styleUrl: 'css', styleUrls: 'css' };
 	return metadata.properties.flatMap((property) => {
-		if (property.type !== 'Property' || property.key.type !== 'Identifier') {
+		if (property.type !== 'Property') {
 			return [];
 		}
-		const extension = extensions[property.key.name];
+		const extension = extensions[keyName(property.key) ?? ''];
 		if (!extension) {
 			return [];
 		}
@@ -153,6 +208,8 @@ export default {
 		},
 		schema: [],
 		messages: {
+			anonymousComponent:
+				'Una clase `@Component` lleva nombre, derivado del de su archivo — ver angular-components.md#ubicación-y-nombre-de-componentes.',
 			componentSuffix:
 				'`{{name}}` lleva el sufijo `Component`: la clase se nombra sin él (`{{expected}}`) — ver angular-components.md#ubicación-y-nombre-de-componentes.',
 			misplaced:
@@ -180,18 +237,14 @@ export default {
 			ClassDeclaration(node) {
 				// Los tipos de `eslint` describen ESTree, que no conoce los decoradores: se lee el AST que el
 				// parser de TypeScript realmente entrega.
-				const declaration = /** @type {ClassDeclaration} */ (/** @type {unknown} */ (node));
-				const metadata = componentMetadata(declaration);
-				if (!metadata || !node.id) {
+				const decorator = componentDecorator(/** @type {ClassDeclaration} */ (/** @type {unknown} */ (node)));
+				if (!decorator) {
 					return;
 				}
-				const name = node.id.name;
-				const target = node.id;
+				const name = node.id?.name;
+				const target = node.id ?? node;
 
-				if (name.endsWith(COMPONENT_SUFFIX)) {
-					const expected = name.slice(0, -COMPONENT_SUFFIX.length);
-					context.report({ node: target, messageId: 'componentSuffix', data: { name, expected } });
-				}
+				checkClassName(context, target, name);
 				if (locationExempt) {
 					return;
 				}
@@ -200,13 +253,13 @@ export default {
 					return;
 				}
 
-				const inPages = path.startsWith(PAGES_DIR);
-				const problem = nameProblem(name, stem, inPages);
-				if (problem) {
-					const expectedFile = expectedFileFor(name, inPages);
-					context.report({ node: target, messageId: problem, data: { name, expectedFile } });
+				if (name) {
+					checkName(context, target, name, path, stem);
 				}
-				checkSiblings(context, metadata, stem);
+				const metadata = literalMetadata(decorator);
+				if (metadata) {
+					checkSiblings(context, metadata, stem);
+				}
 			},
 		};
 	},
