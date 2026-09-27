@@ -544,7 +544,7 @@ interface Tag {
 
 > El nombre `description` no implica un mismo tipo en todo el modelo: en `Tag` y en [`ResourceType`](#resource-recurso-externo) es texto plano, mientras que `Media.description` es HTML saneado y `Collection.description` es Markdown saneado a HTML. Conviene mirar la interfaz antes de asumir el formato.
 
-> Una etiqueta no lleva ícono: `Tag` renderiza solo su título. El CMS supo tener un campo de ícono, pero ninguna superficie lo mostraba.
+> Una etiqueta no lleva ícono: el componente `Tag` renderiza solo su título. El CMS supo tener un campo de ícono, pero ninguna superficie lo mostraba.
 
 ---
 
