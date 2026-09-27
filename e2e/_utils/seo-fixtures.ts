@@ -24,6 +24,8 @@ export const SCHEMA_IDS = Object.freeze({
 	article: 'article',
 	profilePage: 'profile-page',
 	breadcrumbAuthor: 'breadcrumb-author',
+	authorCatalog: 'author-catalog',
+	breadcrumbAuthorCatalog: 'breadcrumb-author-catalog',
 	breadcrumbLiteraryWork: 'breadcrumb-literary-work',
 	collection: 'collection',
 	breadcrumbCollection: 'breadcrumb-collection',

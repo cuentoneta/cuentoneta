@@ -33,6 +33,16 @@ describe('SchemaOrgService', () => {
 		});
 	});
 
+	it('should escape `<` so a CMS text cannot close the script block', () => {
+		const name = 'Autora </script><script>alert(1)</script>';
+
+		service.setPageScopedJsonLd('author-catalog', { '@context': CONTEXT, '@type': 'CollectionPage', name });
+
+		const textContent = scriptFor('author-catalog')?.textContent ?? '';
+		expect(textContent).not.toContain('<');
+		expect(JSON.parse(textContent)).toMatchObject({ name });
+	});
+
 	it('should reuse the same script on repeated calls (idempotent by id)', () => {
 		service.setJsonLd('website', { '@context': CONTEXT, '@type': 'WebSite', name: 'A' });
 		service.setJsonLd('website', { '@context': CONTEXT, '@type': 'WebSite', name: 'B' });

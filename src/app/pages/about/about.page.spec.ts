@@ -30,6 +30,14 @@ describe('AboutPage', () => {
 		expect(canonicalSpy).toHaveBeenCalledWith(buildCanonicalUrl('about'));
 	});
 
+	it('should keep the page out of the index without following its links', async () => {
+		const robotsSpy = spyOn(HeadMetadataDirective.prototype, 'setRobots');
+
+		await setup();
+
+		expect(robotsSpy).toHaveBeenCalledWith('noindex, nofollow');
+	});
+
 	// La página es la única superficie de runtime que enlaza al repositorio. Las URLs del repositorio
 	// previo a la organización resuelven por redirección, así que una regresión acá no se vería
 	// navegando: solo se nota el día que GitHub deje de redirigir.
