@@ -44,14 +44,15 @@ const renderPage = (api?: AuthorApi) =>
 	});
 
 const emittedCatalog = (): HTMLScriptElement | null =>
+	// eslint-disable-next-line testing-library/no-node-access -- el <head> no tiene rol accesible: se consulta por selector
 	TestBed.inject(DOCUMENT).head.querySelector('script[data-schema-id="author-catalog"]');
 
 describe('AuthorsPage', () => {
 	afterEach(() => {
 		restoreAllMocks();
-		TestBed.inject(DOCUMENT)
-			.head.querySelectorAll('script[data-schema-id]')
-			.forEach((el) => el.remove());
+		const head = TestBed.inject(DOCUMENT).head;
+		// eslint-disable-next-line testing-library/no-node-access -- el <head> no tiene rol accesible: se limpia por selector
+		head.querySelectorAll('script[data-schema-id]').forEach((el) => el.remove());
 	});
 
 	it('should set the canonical URL of the index', async () => {
