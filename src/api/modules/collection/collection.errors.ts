@@ -7,9 +7,13 @@ export class CollectionNotFoundError extends Error {
 
 // Se distingue de "el slug no existe" porque son dos problemas distintos: acá la colección está en el
 // content lake pero sus datos no permiten construir el agregado, así que merece un status propio en
-// vez de confundirse con un 404.
+// vez de confundirse con un 404. Nombra a la colección culpable y preserva la causa, que es lo que
+// después vuelve útil el registro de un descarte.
 export class MalformedCollectionError extends Error {
-	constructor(slug: string, options?: { cause?: unknown }) {
+	constructor(
+		public readonly slug: string,
+		options?: { cause?: unknown },
+	) {
 		super(`Collection with slug "${slug}" is malformed`, options);
 		this.name = 'MalformedCollectionError';
 	}

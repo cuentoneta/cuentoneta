@@ -185,6 +185,13 @@ describe('SanityCollectionRepository malformed data', () => {
 		).rejects.toMatchObject({ cause: expect.any(Error) });
 	});
 
+	// El slug viaja como dato y no solo en el mensaje: es lo que el registro de un descarte necesita.
+	it('names the malformed collection', async () => {
+		await expect(
+			repoReturning(descriptionlessRawCollection).fetchBySlug('geometrias-del-desvelo'),
+		).rejects.toMatchObject({ slug: descriptionlessRawCollection.slug });
+	});
+
 	// Un listado que esconde el elemento roto es un bug de datos que nadie ve: se cae entero, con el
 	// primer elemento sano por delante para que no pase por casualidad.
 	it('brings down the whole listing instead of filtering the bad collection out', async () => {
