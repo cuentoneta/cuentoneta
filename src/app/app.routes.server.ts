@@ -1,4 +1,5 @@
-import { RenderMode, ServerRoute } from '@angular/ssr';
+import type { ServerRoute } from '@angular/ssr';
+import { RenderMode } from '@angular/ssr';
 import { AppRoutes } from './app.routes';
 
 export const serverRoutes: Array<ServerRoute> = [
@@ -8,7 +9,7 @@ export const serverRoutes: Array<ServerRoute> = [
 	},
 	{
 		path: AppRoutes.Authors,
-		renderMode: RenderMode.Prerender,
+		renderMode: RenderMode.Server,
 	},
 	{
 		path: AppRoutes.About,
@@ -36,7 +37,7 @@ export const serverRoutes: Array<ServerRoute> = [
 	},
 	{
 		path: AppRoutes.LiteraryWork,
-		renderMode: RenderMode.Prerender,
+		renderMode: RenderMode.Server,
 	},
 	{
 		path: '**',

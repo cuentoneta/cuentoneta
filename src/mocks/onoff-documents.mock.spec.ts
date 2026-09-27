@@ -13,7 +13,7 @@ async function run(query: string, params: Record<string, unknown> = {}) {
 }
 
 // El gate de frescura del corpus generado. Las fixtures crudas commiteadas las escribió
-// `pnpm corpus:generate` evaluando estas mismas queries sobre estos mismos documentos: si alguien toca un
+// `pnpm ops corpus:generate` evaluando estas mismas queries sobre estos mismos documentos: si alguien toca un
 // documento y no regenera, lo commiteado deja de ser lo que la query devuelve y estos casos cortan.
 //
 // Compara valores y no bytes a propósito — el formato lo fija Prettier dentro del generador, así que un

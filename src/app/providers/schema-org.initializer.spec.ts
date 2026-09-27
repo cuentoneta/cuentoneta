@@ -76,7 +76,7 @@ describe('applySiteSchema', () => {
 		expect(ids).toEqual(['organization', 'website']);
 	});
 
-	it('should remain idempotent when applied twice (app-shell renders AppComponent twice)', () => {
+	it('should remain idempotent when applied twice (app-shell renders App twice)', () => {
 		applySiteSchema(service, 'https://cuentoneta.ar/');
 		applySiteSchema(service, 'https://cuentoneta.ar/');
 

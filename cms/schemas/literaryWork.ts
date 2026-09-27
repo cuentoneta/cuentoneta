@@ -37,8 +37,8 @@ const section = defineArrayMember({
 			type: 'markdown',
 			validation: (Rule) => Rule.required(),
 		}),
-		// Derivado del texto, poblado por el script de backfill (`pnpm backfill:reading-time`, fuera del
-		// CMS), no editable. Opcional a propósito: arranca vacío y sigue vacío hasta que corra el
+		// Derivado del texto, poblado por el script de backfill (`pnpm ops reading-time:backfill`, fuera
+		// del CMS), no editable. Opcional a propósito: arranca vacío y sigue vacío hasta que corra el
 		// backfill — mientras tanto la lectura deriva un fallback puro, sin persistir. Ver
 		// docs/LITERARY_WORK_DESIGN.md §5. Podrá volverse required en un increment futuro, una vez
 		// pobladas todas las obras.

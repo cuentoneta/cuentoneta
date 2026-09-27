@@ -1,9 +1,6 @@
 <div align="center" width="100%">
-    <h1>La Cuentoneta</h1>
-    <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="https://github.com/rolivencia/cuentoneta/assets/32349705/b0ea0659-3c9d-4c4f-9d14-ab60d50dd832">
-        <img width="33%" alt="La Cuentoneta" src="https://github.com/rolivencia/cuentoneta/assets/32349705/b0ea0659-3c9d-4c4f-9d14-ab60d50dd832">
-    </picture>
+    <h2>La Cuentoneta</h2>
+    <img width="33%" alt="" src="../.github/assets/cuentoneta-logo.png">
 </div>
 
 ---
@@ -369,11 +366,11 @@ El proyecto utiliza [git](https://git-scm.com) como herramienta de control de ve
   _pull request_ desde tu _fork_ al repositorio principal, generando el fork tal como se detalla en la sección
   [Clonar el repositorio](#clonar-el-repositorio).
 - Las ramas de trabajo se nomenclan de la siguiente manera: `feat/<numero-de-incidencia>-<nombre-de-la-funcionalidad>`,
-  con el nombre en _kebab-case_. Por ejemplo: `feat/469-implementar-nuevo-componente-literary-work-card-teaser`. Si generás
+  con el nombre en _kebab-case_. Por ejemplo: `feat/469-implementar-nuevo-componente-literary-work-teaser-card`. Si generás
   la rama desde la incidencia en la interfaz de Github, tené en cuenta que el nombre que propone viene sin el prefijo
   `feat/`: hay que agregárselo antes de empezar a trabajar.
 - Todos los commits deben ser nomenclados de la siguiente manera, referenciando el commit de manera navegable desde
-  la interfaz de Github: `[#numero-de-incidencia] - <mensaje-del-commit>`. Por ejemplo: `[#469] - Crear componente PublicationCardComponent`.
+  la interfaz de Github: `[#numero-de-incidencia] - <mensaje-del-commit>`. Por ejemplo: `[#469] - Crear componente PublicationCard`.
 - Las ramas de trabajo se crean a partir de la rama `develop` y se eliminan una vez integrados los cambios en la rama `develop`.
 - Las ramas de trabajo deben ser actualizadas con la rama `develop` antes de solicitar la integración de los cambios en la rama `develop`.
 - El código escrito en en el proyecto sigue las convenciones de [Angular](https://runebook.dev/es/docs/angular/guide/styleguide), [TypeScript](https://ts.dev/style/) y [RxJS](https://v10.angular.io/guide/rx-library#naming-conventions-for-observables) correspondientes para la escritura de código.

@@ -115,7 +115,7 @@ export function formatReadingTimeBackfillReport(
 	];
 
 	if (!options.apply && report.materialized.length > 0) {
-		lines.push('', 'Corrida en seco. Para persistir: pnpm backfill:reading-time --no-dry-run');
+		lines.push('', 'Corrida en seco. Para persistir: pnpm ops reading-time:backfill --no-dry-run');
 	}
 	return lines;
 }

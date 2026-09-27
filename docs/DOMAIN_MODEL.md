@@ -1,9 +1,6 @@
 <div align="center" width="100%">
-    <h1>La Cuentoneta</h1>
-    <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="https://github.com/rolivencia/cuentoneta/assets/32349705/b0ea0659-3c9d-4c4f-9d14-ab60d50dd832">
-        <img width="33%" alt="La Cuentoneta" src="https://github.com/rolivencia/cuentoneta/assets/32349705/b0ea0659-3c9d-4c4f-9d14-ab60d50dd832">
-    </picture>
+    <h2>La Cuentoneta</h2>
+    <img width="33%" alt="" src="../.github/assets/cuentoneta-logo.png">
 </div>
 
 ---
@@ -547,7 +544,7 @@ interface Tag {
 
 > El nombre `description` no implica un mismo tipo en todo el modelo: en `Tag` y en [`ResourceType`](#resource-recurso-externo) es texto plano, mientras que `Media.description` es HTML saneado y `Collection.description` es Markdown saneado a HTML. Conviene mirar la interfaz antes de asumir el formato.
 
-> Una etiqueta no lleva ícono: `TagComponent` renderiza solo su título. El CMS supo tener un campo de ícono, pero ninguna superficie lo mostraba.
+> Una etiqueta no lleva ícono: el componente `Tag` renderiza solo su título. El CMS supo tener un campo de ícono, pero ninguna superficie lo mostraba.
 
 ---
 
@@ -586,7 +583,7 @@ interface UrlLink {
 	url: string; // URL externa
 	label: string; // Texto del enlace
 	ariaLabel: string; // Etiqueta de accesibilidad
-	icon: string; // Nombre del ícono
+	icon: IconName; // Nombre de un ícono de los sets de @ng-icons instalados
 	alt: string; // Texto alternativo
 }
 ```

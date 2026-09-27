@@ -21,7 +21,7 @@
 
 Archivos clave:
 
-- **`vitest.config.ts`** — `globals: true`, `environment: 'happy-dom'`, `setupFiles: ['src/test-setup.ts']`, `include: ['src/**/*.{test,spec}.ts']`. Inlina `@sanity` y bundles `fesm` para que Vite los transforme. Coverage solo en CI (`CI=true`/`COVERAGE=true`).
+- **`vitest.config.ts`** — `globals: true`, `environment: 'happy-dom'`, `setupFiles: ['src/test-setup.ts']`, y un `include` que además de `src/**` alcanza los specs de `scripts/`, de `e2e/_utils/` y de `tools/`. Los de `tools/` cubren las reglas propias de ESLint y de Stylelint —cada módulo tiene el suyo— y los alcanzan además los gates `typecheck` —junto con los `.js` de las reglas que ejercitan— y `lint`. Inlina `@sanity` y bundles `fesm` para que Vite los transforme. Coverage solo en CI (`CI=true`/`COVERAGE=true`).
 - **`src/test-setup.ts`** — inicializa el `TestBed` zoneless (Angular 22 corre zoneless por defecto cuando `zone.js` no está presente; no se llama a `provideZonelessChangeDetection()`). El `ErrorHandler` **relanza** cualquier error no manejado para que falle el test. Instala los stubs globales de `IntersectionObserver`, de `ResizeObserver` y de `document.fonts`.
 - **`src/test-utils.ts`** — los wrappers obligatorios (ver abajo).
 
@@ -91,6 +91,13 @@ ESLint (`no-single-work-corpus-imports` en `eslint.config.mjs`) **prohíbe** imp
 
 Un spec o una story que importa una obra concreta queda atado a ella: sus aserciones citan la prosa de esa obra y enriquecer el canon no las alcanza. Las colecciones y los **selectores por capacidad** declaran el shape que el caso necesita y crecen solos.
 
+La prohibición rige **por ruta y por nombre**, y cada vía la cubre un gate distinto:
+
+- **Por ruta** la verifica `lint`, con el glob de arriba. Es la que ejercita `tools/eslint/single-work-corpus-imports.spec.ts`, que corre ESLint contra el config real (la restricción no es una regla propia, así que `RuleTester` no la alcanza). Arrancar ESLint cuesta lo bastante como para que sea el único spec de `tools/eslint/` al que no le alcanza el `testTimeout` por default de Vitest: declara el suyo como opción de su `describe`, y el archivo comenta de dónde sale ese costo.
+- **Por nombre** la sostiene que los agregadores (`@mocks/onoff-*.mock`) expongan **solo** colecciones, derivados y selectores. Los handles nombrados por identidad —`<slugCamelCase>LiteraryWorkTeaserMock`, las colecciones de dominio y sus teasers— viven bajo `@mocks/onoff/<entidad>/`, o sea del lado que la restricción de ruta alcanza. No hay regla que los liste: un import por nombre falla porque **el símbolo no existe**, y lo reporta `typecheck`, no `lint`.
+
+De ahí que volver a exportar un handle por identidad desde un agregador reabra el hueco. No lo bloquea ningún gate; queda como una adición visible en el diff, y es de las cosas que una review tiene que mirar.
+
 | Necesitás…                                          | Importá                                                                                                                                                                                           |
 | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Una obra cualquiera                                 | `onoffLiteraryWorksMock` (o `onoffRawLiteraryWorksMock` en el backend), y desestructurá la primera                                                                                                |
@@ -103,15 +110,29 @@ Un spec o una story que importa una obra concreta queda atado a ella: sus aserci
 | Un epígrafe cortado en varias líneas                | `onoffRawLiteraryWorksWithMultilineEpigraphs`                                                                                                                                                     |
 | Un dataset para evaluar una query con `groq-js`     | `onoffDatasetMock` — el dataset entero, no un subconjunto: una referencia sin documento resuelve a `null` sin fallar                                                                              |
 | Una obra con o sin etiquetas                        | `onoffRawLiteraryWorksWith(out)Tags`                                                                                                                                                              |
+| Un teaser de obra                                   | `onoffLiteraryWorkTeasersMock`; con extracto no vacío, `onoffLiteraryWorkTeasersWithExcerptMock`                                                                                                  |
+| Un teaser de obra con multimedia                    | `onoffLiteraryWorkTeasersWithMediaSourcesMock` enriquece **todo** el canon; `onoffLiteraryWorkTeasersWithOwnMediaSourcesMock` conserva solo las obras que declaran medios propios                 |
+| Una colección, o su teaser                          | `onoffCollectionsMock` / `onoffCollectionTeasersMock`, y desestructurá la primera                                                                                                                 |
+| Una colección por rama de `imagery`                 | `onoffCollections(Teasers)With(Representative\|Sample)ImageryMock`                                                                                                                                |
+| Una colección con etiquetas                         | `onoffCollectionsWithTagsMock` / `onoffCollectionTeasersWithTagsMock`                                                                                                                             |
+| Una colección sin etiquetas                         | `onoffCollections(Teasers)WithoutTagsMock`                                                                                                                                                        |
+| Una colección con una sola etiqueta, o con varias   | `onoffCollections(Teasers)With(Single\|Multiple)TagsMock`                                                                                                                                         |
+| Una colección de título largo                       | `onoffCollections(Teasers)WithLongTitlesMock`                                                                                                                                                     |
+| Una colección con un enlace propio en su prosa      | `onoffCollections(Teasers)WithLinkedDescriptionMock` — el teaser llega sin el ancla, que es lo que el selector permite afirmar                                                                    |
+| Una colección cuyo título no empieza en ASCII       | `onoffCollections(Teasers)WithNonAsciiInitialMock` — para el orden con colación española                                                                                                          |
+| Una colección de una sola obra                      | `singleLiteraryWorkCollectionTeaserMock` — el único teaser del corpus que no proviene de un documento                                                                                             |
+| Una colección que muestra u oculta autores          | `onoffCollections(Showing\|Hiding)AuthorsMock`                                                                                                                                                    |
 | Una etiqueta cualquiera                             | `onoffTagsMock` (o `onoffRawTagsMock` en el backend), y tomá un slice                                                                                                                             |
 | Etiquetas de título corto                           | `onoffTagsWithShortTitles` — para stories donde un título de dos palabras fuerza el recorte por ancho                                                                                             |
 | La página de inicio cruda, o sus campañas           | `onoffRawLandingPageMock` / `onoffRawContentCampaignsMock`, ambos de `@mocks/onoff-raw-landing-page.mock`                                                                                         |
 
-Corolario: **las aserciones se derivan del fixture**, no de prosa clavada. Si el caso necesita una palabra del texto, extraela del propio mock (`bodyHtml.replace(/<[^>]+>/g, ' ')` y tomá una palabra) en vez de escribirla a mano — así sigue pasando cuando el canon cambie. Si falta un selector para el shape que necesitás, **agregalo al agregador** (derivado por predicado, no una lista en paralelo) en vez de importar la obra.
+Corolario: **las aserciones se derivan del fixture**, no de prosa clavada. Si el caso necesita una palabra del texto, extraela del propio mock (`bodyHtml.replace(/<[^>]+>/g, ' ')` y tomá una palabra) en vez de escribirla a mano — así sigue pasando cuando el canon cambie. Si falta un selector para el shape que necesitás, **agregalo al agregador** (derivado por predicado, no una lista en paralelo) en vez de importar la obra, y sumale en el spec del agregador la guarda de que no queda vacío: un selector vacío no rompe a su consumidor, lo deja desestructurando `undefined` o afirmando contra un `arrayContaining([])` que pasa trivialmente.
+
+Al elegir un selector, mirá su **predicado y no su nombre**: dos selectores de nombre parecido pueden filtrar sobre capas distintas y devolver conjuntos distintos.
 
 ### Las tres capas del corpus de Onoff
 
-`onoffDatasetMock` (`src/mocks/onoff-documents.mock.ts`) no es un fixture más: es el dataset de **documentos** — lo que Sanity guarda tal cual — y la única capa del corpus que se escribe a mano. Para `literary-work/`, `collection/` y `landing-page/`, la fixture **raw** que la tabla de arriba nombra (`onoffRawLiteraryWorksMock`, `onoffRawCollectionsMock`, `onoffRawLandingPageMock`) no se edita: la genera `pnpm corpus:generate` evaluando la query GROQ real con `groq-js` sobre `onoffDatasetMock`. `onoffRawContentCampaignsMock` deriva de la fixture de la landing, que es la única query que devuelve las campañas.
+`onoffDatasetMock` (`src/mocks/onoff-documents.mock.ts`) no es un fixture más: es el dataset de **documentos** — lo que Sanity guarda tal cual — y la única capa del corpus que se escribe a mano. Para `literary-work/`, `collection/` y `landing-page/`, la fixture **raw** que la tabla de arriba nombra (`onoffRawLiteraryWorksMock`, `onoffRawCollectionsMock`, `onoffRawLandingPageMock`) no se edita: la genera `pnpm ops corpus:generate` evaluando la query GROQ real con `groq-js` sobre `onoffDatasetMock`. `onoffRawContentCampaignsMock` deriva de la fixture de la landing, que es la única query que devuelve las campañas.
 
 ```
 documentos (a mano)  →  (groq-js, query real)  →  raw (generado)  →  (ACL del repository)  →  dominio
@@ -136,11 +157,11 @@ Las **imágenes** del corpus atraviesan las tres capas por una única tabla, `sr
 
 ```typescript
 import { render, screen } from '@testing-library/angular';
-import { TagComponent } from './tag.component';
+import { Tag } from './tag';
 
-describe('TagComponent', () => {
+describe('Tag', () => {
 	it('should display the label', async () => {
-		await render(TagComponent, {
+		await render(Tag, {
 			inputs: { label: 'Crónica', variant: 'soft' },
 		});
 
@@ -156,10 +177,11 @@ Para inputs se usa `inputs: { ... }`; para proyectar plantilla con bindings, la 
 ```typescript
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
+import { ContactForm } from './contact-form';
 
 it('should react to a click', async () => {
 	const user = userEvent.setup();
-	await render(MyComponent);
+	await render(ContactForm);
 
 	await user.click(screen.getByRole('button', { name: /enviar/i }));
 
@@ -224,7 +246,7 @@ Variantes: `queryBy*` (cuando se espera ausencia, no lanza), `findBy*` (async, e
 
 `happy-dom` trae un `IntersectionObserver` que no hace nada: alcanza para renderizar, pero nunca entrega un callback. `src/test-setup.ts` instala un **stub global** (`src/testing/intersection-observer.stub.ts`) que sí lo entrega bajo control del spec.
 
-Los specs que necesitan **simular overflow** (p. ej. `TagsListComponent` / `TagsOverflowDirective`, que recorta tags por ancho con `IntersectionObserver`) reutilizan los helpers del mismo stub:
+Los specs que necesitan **simular overflow** (p. ej. `TagsList` / `TagsOverflowDirective`, que recorta tags por ancho con `IntersectionObserver`) reutilizan los helpers del mismo stub:
 
 | Helper                              | Efecto                                                                 |
 | ----------------------------------- | ---------------------------------------------------------------------- |
@@ -456,13 +478,13 @@ Todo componente nuevo en **`src/app/components/`** lleva su `*.stories.ts` (docu
 
 ```typescript
 import { argsToTemplate, Meta, StoryObj } from '@storybook/angular';
-import { TagComponent } from './tag.component';
+import { Tag } from './tag';
 
-const meta: Meta<TagComponent> = {
-	component: TagComponent,
+const meta: Meta<Tag> = {
+	component: Tag,
 	title: 'Componentes V3/Tag',
 	parameters: {
-		docs: { description: { component: `<div><p>El <strong>TagComponent</strong> del Design System v3...</p></div>` } },
+		docs: { description: { component: `<div><p>El <strong>Tag</strong> del Design System v3...</p></div>` } },
 		layout: 'padded',
 	},
 	argTypes: {
@@ -475,7 +497,7 @@ const meta: Meta<TagComponent> = {
 	},
 };
 export default meta;
-type Story = StoryObj<TagComponent>;
+type Story = StoryObj<Tag>;
 
 export const Soft: Story = {
 	render: (args) => ({ props: args, template: `<cuentoneta-tag ${argsToTemplate(args)} />` }),
@@ -499,6 +521,10 @@ Storybook **acumula** los decoradores `applicationConfig`: los providers que dec
 
 Todo archivo de la app que el preview importe debe estar en el `include` de `.storybook/tsconfig.json`. Si tiene decoradores de Angular y queda fuera del programa, el compilador no lo procesa y el bundle del preview revienta con un `SyntaxError: Unexpected token 'export'` que **tumba el catálogo entero**, no una story.
 
+**Embeds de terceros: el catálogo monta un reproductor de utilería dibujado con CSS.** `src/testing/storybook-embed-placeholders.ts` aporta `embedPlaceholdersDecorator` —que apaga la carga de la IFrame API de YouTube y pinta el reproductor sobre el propio placeholder que el player dibuja— y `withEmbedPlaceholder(s)`, que reapunta la URL del episodio de Spotify a una página HTML servida desde `assets/`. Son dos mecanismos porque hay dos seams distintos: el episodio expone su URL como dato, el video no (su `videoId` no es una URL). Los dos se dibujan en CSS y no con una imagen para que acompañen el ancho: el del video en unidades relativas a su caja, y la página del episodio con media queries que responden al ancho de su iframe.
+
+El **corpus conserva** sus URLs e identificadores de plataforma: son la forma que producción tiene y hay specs que la afirman. Lo que se sustituye es lo que el catálogo monta. Va a la story y no al preview por el discriminante de arriba — depende de esos componentes en concreto, no de cualquiera. Verificar un embed de verdad es un e2e contra el dataset real, no una entrada de catálogo.
+
 **Siempre** actualizá las stories cuando cambien inputs, estados visuales o la API pública del componente.
 
 ### Documentación de la descripción (`description`)
@@ -507,13 +533,23 @@ Todo archivo de la app que el preview importe debe estar en el `include` de `.st
 
 - **Una sola línea por descripción.** El render de Markdown trata cualquier línea con indentación (tab / ≥ 4 espacios) como bloque de código, así que un HTML multilínea indentado se muestra dentro de un recuadro de código. Escribí el HTML de la descripción en una sola línea (sin saltos ni indentación interna).
 - **Negrita para nombres de componentes.** El nombre del componente documentado y el de cualquier otro componente mencionado van en `<strong>…</strong>`.
-- **Enlace navegable a otros componentes.** Cuando la descripción menciona otro componente documentado, su nombre debe ser un enlace que navegue a la story de ese componente. Como la doc se renderiza dentro de `iframe.html`, usá un enlace relativo a la raíz del Storybook (robusto ante subpaths de deploy) con `target="_top"`:
+- **La referencia sale de la entrada, no del teclado.** Cada story tiene su módulo `*.docs.ts` al lado, que declara el `title` del catálogo. La prosa que nombra o enlaza otra entrada la importa y la pasa por un helper de [`@testing/storybook-docs`](../../src/testing/storybook-docs.ts), en vez de escribir el nombre y el `kind-id` a mano:
 
-  ```html
-  <a href="./?path=/docs/<kind-id>--docs" target="_top"><strong>LiteraryWorkCardTeaser</strong></a>
+  ```typescript
+  import { literaryWorkTeaserCardDocs } from '@components/literary-work-teaser-card/literary-work-teaser-card.docs';
+  import { docsMention, docsRef } from '@testing/storybook-docs';
+
+  // docsRef → nombre resaltado y enlazado · docsMention → solo el nombre · docsLink → texto propio
+  component: `<p>La portada la resuelve ${docsRef(literaryWorkTeaserCardDocs)}.</p>`;
   ```
 
-  El `<kind-id>` se deriva del `title` (minúsculas; espacios y `/` → `-`): `Componentes V3/LiteraryWorkCardTeaser` → `componentes-v3-literaryworkcardteaser`. El sufijo `--docs` apunta a la página de autodocs.
+  El nombre visible y el `kind-id` salen los dos del mismo `title`, así que no pueden discrepar, y borrar una entrada rompe el `typecheck` de cada story que la referenciaba. El módulo aparte existe para romper el ciclo: hay pares de stories que se referencian mutuamente, y un módulo que no importa nada no puede formar un ciclo ESM.
+
+  El `title` del `meta` sigue siendo un **literal** porque el indexador CSF lo exige (leerlo de la entrada falla el build con `unexpected dynamic title`). Que ese literal siga igual al de su entrada lo verifica la regla de ESLint `storybook-docs-refs`, que además rechaza un `kind-id` escrito a mano y un nombre del catálogo puesto como texto en `<strong>` o `<code>`.
+
+  Una clase Angular **sin story propia** —un sub-componente, un skeleton, una directiva— no tiene entrada que la publique con nombre corto, así que la prosa la nombra por su clase (`CollectionTeaserCardSkeleton`) y la story la declara en un `export type DocsSymbols`: el import type-only rompe el `typecheck` si deja de existir. Para las clases de `src/app/` decoradas como componente, directiva, pipe o servicio la declaración es **obligatoria** —la regla marca la que la prosa nombra y la tupla no incluye—; un modelo o un tipo puede declararse igual, pero la regla no lo exige.
+
+  Los `*.docs.ts` de `src/app/components/` se importan por el alias `@components/…`, salvo el de la propia story (`./…`); los de `src/app/pages/`, que no tienen alias, por ruta relativa.
 
 ### Estado de carga (skeleton) → story intercambiable (obligatoria)
 

@@ -6,7 +6,8 @@ import { createLiteraryWorkExcerpt, type LiteraryWorkExcerpt } from '@models/lit
 import { createLiteraryWorkSection, type LiteraryWorkSection } from '@models/literary-work-section.model';
 import { createSectionTitle } from '@models/section-title.model';
 import { createMarkdown } from '@models/markdown.model';
-import { createReadingTime, deriveSectionReadingTime, type ReadingTime } from '@models/reading-time.model';
+import { deriveSectionReadingTime } from '@models/reading-time-derivation.model';
+import { createReadingTime, type ReadingTime } from '@models/reading-time.model';
 import { createSlug } from '@models/slug.model';
 import { createIsoDateTime } from '@utils/date.utils';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';

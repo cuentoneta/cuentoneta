@@ -8,7 +8,7 @@
  * Las aserciones se derivan del DTO que entrega el API (`_utils/literary-work-fixtures.ts`), no de prosa clavada:
  * el spec afirma que la página muestra la obra que el API dice que es.
  */
-import { expect, type Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 
 import type { LiteraryWorkDto } from '@models/literary-work.dto';
 
@@ -26,12 +26,15 @@ let work: LiteraryWorkDto | undefined;
 // Los casos de multimedia y de sugerencias anclan en la obra curada para eso: `el-fin` no declara
 // recursos y su autor tiene una sola obra, así que ninguno de los dos frentes se puede afirmar sobre él.
 let mediaWork: LiteraryWorkDto | undefined;
+// Sin anclas el caso del salto no mide nada.
+let titledSectionsWork: LiteraryWorkDto | undefined;
 let stableCollection: CollectionCatalogEntry | undefined;
 
 test.beforeAll(async ({ request }) => {
 	status = (await request.get(ROUTE)).status();
 	work = await fetchLiteraryWork(request, STABLE_SLUGS.literaryWork);
 	mediaWork = await fetchLiteraryWork(request, STABLE_SLUGS.literaryWorkWithMedia);
+	titledSectionsWork = await fetchLiteraryWork(request, STABLE_SLUGS.literaryWorkWithTitledSections);
 	stableCollection = (await fetchCollectionCatalog(request)).find((entry) => entry.slug === STABLE_SLUGS.collection);
 });
 
@@ -40,6 +43,17 @@ test.beforeAll(async ({ request }) => {
 test('literary-work — la obra estable existe en el dataset y cumple el contrato', () => {
 	expect(status, `"${ROUTE}" no responde 200: nada de esta suite verifica la página real`).toBe(200);
 	expect(work, `el API no sirve "${STABLE_SLUGS.literaryWork}": no habría con qué comparar`).toBeDefined();
+});
+
+test('literary-work — la obra con secciones tituladas existe y emite anclas', () => {
+	expect(
+		titledSectionsWork,
+		`el API no sirve "${STABLE_SLUGS.literaryWorkWithTitledSections}": el caso del salto a un ancla no mediría nada`,
+	).toBeDefined();
+	expect(
+		titledSectionsWork?.content.some((section) => section.title),
+		`"${STABLE_SLUGS.literaryWorkWithTitledSections}" no titula ninguna sección: sin título no hay ancla`,
+	).toBe(true);
 });
 
 /** Abre una obra con su contenido ya resuelto: el recurso bloquea el SSR, así que el h1 llega con el documento. */
@@ -246,4 +260,60 @@ test('literary-work — llegar desde una colección cambia la fuente de las suge
 
 	await expect(page).toHaveURL(/navigation=collection/);
 	await settleSuggestions(page, `Más obras de ${stableCollection?.title}`);
+});
+
+/**
+ * Afirma que el elemento queda por debajo del encabezado fijo, leyendo su alto del token y no de un literal
+ * para atrapar también un desfasaje entre el offset y la barra real. Sondea la caja en vez de medirla una
+ * vez: la hidratación puede desprender el nodo entre la comprobación de visibilidad y la medición.
+ */
+async function expectClearOfHeader(page: Page, target: Locator, message: string): Promise<void> {
+	const headerHeight = await page.evaluate(() =>
+		parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--spacing-header-height')),
+	);
+	expect(headerHeight, 'el token del alto del encabezado no resuelve a un número').toBeGreaterThan(0);
+
+	await expect
+		.poll(async () => (await target.boundingBox())?.y ?? -1, { message })
+		.toBeGreaterThanOrEqual(headerHeight);
+}
+
+// El offset lo aplica el motor de scroll al resolver el fragmento, así que solo se ve en un navegador real.
+// Se mide sobre una carga fresca porque es la única forma en que se llega a un ancla: el router no declara
+// `anchorScrolling`, así que un fragmento navegado dentro del documento no desplaza nada.
+test('literary-work — llegar a una sección por su ancla la deja debajo del encabezado fijo', async ({ page }) => {
+	const route = `/literary-work/${STABLE_SLUGS.literaryWorkWithTitledSections}`;
+	await page.setViewportSize(DESKTOP_VIEWPORT);
+	await page.goto(route);
+	await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+
+	// La última y no la primera: una sección temprana puede quedar despejada sin scrollear, y entonces la
+	// medición pasaría por la disposición natural de la página.
+	const lastSection = page.locator('h2[id]').last();
+	await expect(lastSection, 'la obra con secciones tituladas no emitió ninguna ancla').toHaveAttribute('id', /.+/);
+	const anchor = await lastSection.getAttribute('id');
+
+	// Sale del documento para que volver con el fragmento sea una navegación real y no un salto interno.
+	await page.goto('about:blank');
+	await page.goto(`${route}#${anchor}`);
+
+	const section = page.locator(`h2[id="${anchor}"]`);
+	await expect(section).toBeVisible();
+	await expect
+		.poll(() => page.evaluate(() => window.scrollY), { message: 'el salto al ancla no desplazó la página' })
+		.toBeGreaterThan(0);
+
+	await expectClearOfHeader(page, section, `el título de la sección "${anchor}" quedó tapado por el encabezado fijo`);
+});
+
+// Esta rama antes quedaba tapada por la barra. Sin el caso, ponerle el opt-out "por simetría" con la rama
+// de la obra devolvería el defecto sin señal.
+test('literary-work — el aviso de obra inexistente no queda tapado por el encabezado fijo', async ({ page }) => {
+	await page.setViewportSize(DESKTOP_VIEWPORT);
+	await page.goto('/literary-work/obra-inexistente-e2e');
+
+	const heading = page.getByRole('heading', { level: 1, name: 'No encontramos esta obra' });
+	await expect(heading).toBeVisible();
+
+	await expectClearOfHeader(page, heading, 'el aviso de obra inexistente quedó tapado por el encabezado fijo');
 });

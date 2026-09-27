@@ -44,7 +44,11 @@ app.route('/api', apiRoutes);
 // las que arman su HTML pidiéndole el dato a Sanity en cada visita. Las `Prerender` no entran acá —
 // las sirve `serveStatic` con su propio `Cache-Control`—, y lo que sí les cuesta es la consulta que
 // el navegador dispara al hidratar, que cubre la caché del API.
-app.on('GET', ['/home', '/about', '/collection', '/collection/*', '/author/*', '/literary-work/*'], ssrCacheControl);
+app.on(
+	'GET',
+	['/home', '/about', '/collection', '/collection/*', '/author/*', '/authors', '/literary-work', '/literary-work/*'],
+	ssrCacheControl,
+);
 
 // Las rutas viejas de obra y de colección se mudaron. Van antes del catch-all SSR, que es un
 // `use('*')`: si la request llegara hasta él se renderizaría una página y el 301 no se emitiría nunca.

@@ -8,12 +8,12 @@ import { LiteraryWorkApi } from '../../providers/literary-work.provider';
 import { LITERARY_WORKS_HOST, type LiteraryWorksHost } from './literary-works-host';
 import { LiteraryWorksMetaTagsDirective } from './literary-works-meta-tags.directive';
 import { LiteraryWorksStructuredDataDirective } from './literary-works-structured-data.directive';
-import { SkeletonComponent } from '@components/skeleton/skeleton.component';
+import { Skeleton } from '@components/skeleton/skeleton';
 
 @Component({
 	selector: 'cuentoneta-literary-works',
 	template: `
-		<main class="mx-auto mt-header-height flex w-full max-w-310 flex-col gap-12 px-4 pt-8 pb-16">
+		<div class="mx-auto flex w-full max-w-310 flex-col gap-12 px-4 pt-8 pb-16">
 			<h1 class="font-inter text-2xl leading-8 font-bold text-neutral-900">{{ headline() }}</h1>
 
 			@if (failed()) {
@@ -79,11 +79,11 @@ import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 					Todavía no hay obras publicadas.
 				</p>
 			}
-		</main>
+		</div>
 	`,
 	providers: [{ provide: LITERARY_WORKS_HOST, useExisting: forwardRef(() => LiteraryWorksPage) }],
 	hostDirectives: [LiteraryWorksMetaTagsDirective, LiteraryWorksStructuredDataDirective],
-	imports: [RouterLink, SkeletonComponent],
+	imports: [RouterLink, Skeleton],
 })
 export default class LiteraryWorksPage implements LiteraryWorksHost {
 	protected readonly appRoutes = AppRoutes;

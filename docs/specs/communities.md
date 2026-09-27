@@ -1,9 +1,6 @@
 <div align="center" width="100%">
-    <h1>La Cuentoneta</h1>
-    <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="https://github.com/rolivencia/cuentoneta/assets/32349705/b0ea0659-3c9d-4c4f-9d14-ab60d50dd832">
-        <img width="33%" alt="La Cuentoneta" src="https://github.com/rolivencia/cuentoneta/assets/32349705/b0ea0659-3c9d-4c4f-9d14-ab60d50dd832">
-    </picture>
+    <h2>La Cuentoneta</h2>
+    <img width="33%" alt="" src="../../.github/assets/cuentoneta-logo.png">
 </div>
 
 ---
@@ -2395,8 +2392,8 @@ Agregar a `src/app/app.routes.ts`:
 ```typescript
 const routes: Routes = [
 	// Rutas existentes
-	{ path: 'literary-work/:slug', component: LiteraryWorkComponent },
-	{ path: 'author/:slug', component: AuthorComponent },
+	{ path: 'literary-work/:slug', loadComponent: () => import('./pages/literary-work/literary-work.page') },
+	{ path: 'author/:slug', loadComponent: () => import('./pages/author/author.page') },
 
 	// Nuevas rutas de comunidades
 	{
@@ -2404,58 +2401,60 @@ const routes: Routes = [
 		children: [
 			{
 				path: ':slug',
-				component: CommunityProfileComponent,
+				loadComponent: () => import('./pages/community/community-profile/community-profile.page'),
 			},
 			{
 				path: ':slug/members',
-				component: CommunityMembersComponent,
+				loadComponent: () => import('./pages/community/community-members/community-members.page'),
 			},
 			{
 				path: ':slug/blog',
-				component: CommunityBlogComponent,
+				loadComponent: () => import('./pages/community/community-blog/community-blog.page'),
 			},
 			{
 				path: ':slug/blog/:entrySlug',
-				component: BlogEntryComponent,
+				loadComponent: () => import('./pages/blog/blog-entry/blog-entry.page'),
 			},
 			{
 				path: ':slug/events',
-				component: CommunityEventsComponent,
+				loadComponent: () => import('./pages/community/community-events/community-events.page'),
 			},
 			{
 				path: ':slug/contests',
-				component: CommunityContestsComponent,
+				loadComponent: () => import('./pages/community/community-contests/community-contests.page'),
 			},
 		],
 	},
 	{
 		path: 'communities',
-		component: CommunitiesListComponent,
+		loadComponent: () => import('./pages/communities/communities-list/communities-list.page'),
 	},
 	{
 		path: 'event/:slug',
-		component: EventDetailComponent,
+		loadComponent: () => import('./pages/event/event-detail/event-detail.page'),
 	},
 	{
 		path: 'events',
-		component: EventsListComponent,
+		loadComponent: () => import('./pages/event/events-list/events-list.page'),
 	},
 	{
 		path: 'blog/:slug',
-		component: BlogEntryComponent,
+		loadComponent: () => import('./pages/blog/blog-entry/blog-entry.page'),
 	},
 	{
 		path: 'contest/:slug',
-		component: ContestDetailComponent,
+		loadComponent: () => import('./pages/contest/contest-detail/contest-detail.page'),
 	},
 ];
 ```
 
 ### Componentes de página
 
-#### CommunityProfileComponent
+Siguiendo la convención de [`angular-components.md`](../../.claude/references/angular-components.md#ubicación-y-nombre-de-componentes): páginas ruteadas en `src/app/pages/`, archivo `x.page.ts`, clase `export default class XPage`.
 
-**Ubicación:** `src/app/pages/community/community-profile/community-profile.component.ts`
+#### CommunityProfilePage
+
+**Ubicación:** `src/app/pages/community/community-profile/community-profile.page.ts`
 
 **Responsabilidades:**
 
@@ -2477,9 +2476,9 @@ const routes: Routes = [
 - CommunityService (HTTP)
 - LayoutService (estado visual)
 
-#### CommunitiesListComponent
+#### CommunitiesListPage
 
-**Ubicación:** `src/app/pages/communities/communities-list/communities-list.component.ts`
+**Ubicación:** `src/app/pages/communities/communities-list/communities-list.page.ts`
 
 **Responsabilidades:**
 
@@ -2489,9 +2488,9 @@ const routes: Routes = [
 - Mostrar comunidades en grid/list
 - SEO: página `/communities`
 
-#### EventDetailComponent
+#### EventDetailPage
 
-**Ubicación:** `src/app/pages/event/event-detail/event-detail.component.ts`
+**Ubicación:** `src/app/pages/event/event-detail/event-detail.page.ts`
 
 **Responsabilidades:**
 
@@ -2502,9 +2501,9 @@ const routes: Routes = [
 - Participantes/autores
 - Multimedia relacionada
 
-#### EventsListComponent
+#### EventsListPage
 
-**Ubicación:** `src/app/pages/event/events-list/events-list.component.ts`
+**Ubicación:** `src/app/pages/event/events-list/events-list.page.ts`
 
 **Responsabilidades:**
 
@@ -2513,9 +2512,9 @@ const routes: Routes = [
 - Vistas: grid, list, calendar
 - Búsqueda
 
-#### CommunityBlogComponent
+#### CommunityBlogPage
 
-**Ubicación:** `src/app/pages/community/community-blog/community-blog.component.ts`
+**Ubicación:** `src/app/pages/community/community-blog/community-blog.page.ts`
 
 **Responsabilidades:**
 
@@ -2524,9 +2523,9 @@ const routes: Routes = [
 - Búsqueda en texto
 - Paginación
 
-#### BlogEntryComponent
+#### BlogEntryPage
 
-**Ubicación:** `src/app/pages/blog/blog-entry/blog-entry.component.ts`
+**Ubicación:** `src/app/pages/blog/blog-entry/blog-entry.page.ts`
 
 **Responsabilidades:**
 
@@ -2670,33 +2669,35 @@ export interface CommunityFull extends CommunityProfile {
 
 ### Componentes reutilizables
 
-#### CommunityCardComponent
+Siguiendo la misma convención: componentes en `src/app/components/`, archivo `x.ts`, clase `export class X` (sin sufijo `Component`).
 
-**Ubicación:** `src/app/components/community-card/community-card.component.ts`
+#### CommunityCard
+
+**Ubicación:** `src/app/components/community-card/community-card.ts`
 
 Tarjeta de comunidad para uso en listados.
 
-#### CommunityMemberCardComponent
+#### CommunityMemberCard
 
-**Ubicación:** `src/app/components/community-member-card/community-member-card.component.ts`
+**Ubicación:** `src/app/components/community-member-card/community-member-card.ts`
 
 Tarjeta de miembro con foto, rol, enlaces.
 
-#### EventCardComponent
+#### EventCard
 
-**Ubicación:** `src/app/components/event-card/event-card.component.ts`
+**Ubicación:** `src/app/components/event-card/event-card.ts`
 
 Tarjeta de evento con fecha, ubicación, imagen.
 
-#### BlogEntryCardComponent
+#### BlogEntryCard
 
-**Ubicación:** `src/app/components/blog-entry-card/blog-entry-card.component.ts`
+**Ubicación:** `src/app/components/blog-entry-card/blog-entry-card.ts`
 
 Tarjeta de entrada de blog con título, autor, fecha, excerpt.
 
-#### ContestBadgeComponent
+#### ContestBadge
 
-**Ubicación:** `src/app/components/contest-badge/contest-badge.component.ts`
+**Ubicación:** `src/app/components/contest-badge/contest-badge.ts`
 
 Badge que indica si una obra es ganadora/mención especial en certamen.
 

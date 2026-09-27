@@ -53,7 +53,7 @@ test('collection — el listado muestra las obras y cada una lleva a su lectura'
 
 	await openCollection(page);
 
-	const cards = page.getByTestId('literary-works').locator('cuentoneta-literary-work-card-teaser');
+	const cards = page.getByTestId('literary-works').locator('cuentoneta-literary-work-teaser-card');
 
 	// Control positivo: sin él, un listado vacío dejaría la aserción de destinos cumpliéndose en vacío.
 	await expect(cards.first()).toBeVisible();

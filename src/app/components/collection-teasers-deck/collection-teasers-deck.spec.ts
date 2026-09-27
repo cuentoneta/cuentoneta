@@ -4,25 +4,25 @@ import { provideRouter } from '@angular/router';
 
 // Componentes
 import { CollectionTeasersDeck } from './collection-teasers-deck';
-import { SectionHeaderComponent } from '@components/section-header/section-header.component';
-import { EmptyStateComponent } from '@components/empty-state/empty-state.component';
+import { SectionHeader } from '@components/section-header/section-header';
+import { EmptyState } from '@components/empty-state/empty-state';
 import { CollectionTeaserCard } from '@components/collection-teaser-card/collection-teaser-card';
-import { CollectionTeaserCardSkeletonComponent } from '@components/collection-teaser-card/collection-teaser-card-skeleton';
+import { CollectionTeaserCardSkeleton } from '@components/collection-teaser-card/collection-teaser-card-skeleton';
 
 // Mocks
-import { onoffCollectionTeasersMock, onoffCollectionTeasersOfLength } from '@mocks/onoff-collections.mock';
+import { onoffCollectionTeasersMock } from '@mocks/onoff-collections.mock';
 
 describe('CollectionTeasersDeck', () => {
 	const defaultProviders = [provideRouter([])];
 	// `componentImports` reemplaza los imports del componente bajo prueba, no los suma. Sin
-	// `SectionHeaderComponent` el encabezado se renderiza como un elemento desconocido y la sección
+	// `SectionHeader` el encabezado se renderiza como un elemento desconocido y la sección
 	// pierde título, bajada y enlace.
 	const defaultImports = [
 		CollectionTeasersDeck,
-		SectionHeaderComponent,
-		EmptyStateComponent,
+		SectionHeader,
+		EmptyState,
 		CollectionTeaserCard,
-		CollectionTeaserCardSkeletonComponent,
+		CollectionTeaserCardSkeleton,
 	];
 	// Se seleccionan por su destino —una colección concreta, no el índice—, no por descarte del enlace
 	// del encabezado: un segundo enlace que no sea tarjeta no debe contarse como una.
@@ -69,7 +69,7 @@ describe('CollectionTeasersDeck', () => {
 	describe('Estados del listado', () => {
 		it('should fill the grid with skeletons while loading', async () => {
 			await render(CollectionTeasersDeck, {
-				inputs: { teasers: onoffCollectionTeasersOfLength(4), loading: true },
+				inputs: { teasers: onoffCollectionTeasersMock.slice(0, 4), loading: true },
 				providers: defaultProviders,
 				componentImports: defaultImports,
 			});
@@ -79,20 +79,21 @@ describe('CollectionTeasersDeck', () => {
 		});
 
 		it('should render one card per teaser when data is available', async () => {
+			const teasers = onoffCollectionTeasersMock.slice(0, 3);
+
 			await render(CollectionTeasersDeck, {
-				inputs: { teasers: onoffCollectionTeasersOfLength(3) },
+				inputs: { teasers },
 				providers: defaultProviders,
 				componentImports: defaultImports,
 			});
 
-			expect(cardLinks()).toHaveLength(3);
-			expect(screen.getByText('Colección 1')).toBeInTheDocument();
-			expect(screen.getByText('Colección 3')).toBeInTheDocument();
+			expect(cardLinks()).toHaveLength(teasers.length);
+			teasers.forEach(({ title }) => expect(screen.getByText(title)).toBeInTheDocument());
 			expect(screen.queryAllByTestId('skeleton')).toHaveLength(0);
 		});
 
 		it('should link each card to the collection page', async () => {
-			const [teaser] = onoffCollectionTeasersOfLength(1);
+			const [teaser] = onoffCollectionTeasersMock;
 			await render(CollectionTeasersDeck, {
 				inputs: { teasers: [teaser] },
 				providers: defaultProviders,

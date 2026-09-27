@@ -16,27 +16,19 @@ import { AuthorMetaTagsDirective } from './author-meta-tags.directive';
 import { AuthorStructuredDataDirective } from './author-structured-data.directive';
 
 // Components
-import { AuthorInfoPanelComponent } from '@components/author-info-panel/author-info-panel.component';
-import { DividerComponent } from '@components/divider/divider.component';
-import { DrawerComponent } from '@components/drawer/drawer.component';
-import { LiteraryWorkCardTeaserComponent } from '@components/literary-work-card-teaser/literary-work-card-teaser.component';
-import { ResourceComponent } from '@components/resource/resource.component';
-import { SkeletonComponent } from '@components/skeleton/skeleton.component';
+import { AuthorInfoPanel } from '@components/author-info-panel/author-info-panel';
+import { Divider } from '@components/divider/divider';
+import { Drawer } from '@components/drawer/drawer';
+import { LiteraryWorkTeaserCard } from '@components/literary-work-teaser-card/literary-work-teaser-card';
+import { Resource } from '@components/resource/resource';
+import { Skeleton } from '@components/skeleton/skeleton';
 
 @Component({
 	selector: 'cuentoneta-author',
 	templateUrl: './author.page.html',
 	providers: [{ provide: AUTHOR_HOST, useExisting: forwardRef(() => AuthorPage) }],
 	hostDirectives: [AuthorMetaTagsDirective, AuthorStructuredDataDirective],
-	imports: [
-		AuthorInfoPanelComponent,
-		DividerComponent,
-		DrawerComponent,
-		LiteraryWorkCardTeaserComponent,
-		NgTemplateOutlet,
-		ResourceComponent,
-		SkeletonComponent,
-	],
+	imports: [AuthorInfoPanel, Divider, Drawer, LiteraryWorkTeaserCard, NgTemplateOutlet, Resource, Skeleton],
 })
 export default class AuthorPage implements AuthorHost {
 	public readonly slug = input.required<string>();
@@ -91,7 +83,7 @@ export default class AuthorPage implements AuthorHost {
 		return `${total} ${total === 1 ? 'obra' : 'obras'}`;
 	});
 
-	protected openBiographyDrawer(drawer: DrawerComponent): void {
+	protected openBiographyDrawer(drawer: Drawer): void {
 		this.isBiographyDrawerOpen.set(true);
 		drawer.open();
 	}

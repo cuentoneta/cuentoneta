@@ -1,11 +1,11 @@
 /**
- * Barrido de cuerpos: recorre TODAS las URLs del sitemap afirmando un solo invariante —que la página
- * sirve un `<main>` con contenido— y reporta las que no.
+ * Barrido de cuerpos: recorre TODAS las URLs del sitemap afirmando que la página sirve su contenido
+ * —`<main>` con texto, sin skeleton de carga y sin su aviso de error— y reporta las que no.
  *
  * Es el complemento de la muestra aleatoria del smoke, no su reemplazo. El smoke afirma el set
- * completo de invariantes sobre pocas URLs y falla; este afirma uno solo sobre todas y reporta. La
- * muestra descubre problemas nuevos; el barrido garantiza que un defecto extendido no dependa del
- * sorteo para aparecer.
+ * completo de invariantes sobre pocas URLs y falla; este afirma el subconjunto que no depende del tipo
+ * de página sobre todas y reporta. La muestra descubre problemas nuevos; el barrido garantiza que un
+ * defecto extendido no dependa del sorteo para aparecer.
  *
  * Acá vive la orquestación y nada más: qué significa cada respuesta, qué se reintenta y qué se
  * escribe lo deciden `seo-body-sweep.helpers.ts` y `seo-body-sweep.report.ts`, que se ejercitan sin red.
@@ -21,6 +21,7 @@ import {
 	isTransientStatus,
 	runWithRetries,
 	TransientResponseError,
+	type ExitCode,
 	type PageResult,
 } from './seo-body-sweep.helpers';
 import {
@@ -31,8 +32,9 @@ import {
 	type SweepReport,
 } from './seo-body-sweep.report';
 import { findTrackingIssue, gh } from '../tracking-issue';
+import type { OpsTask } from '../ops/registry';
 
-const TRACKING_TITLE = 'Páginas del sitemap que sirven un cuerpo vacío';
+const TRACKING_TITLE = 'Páginas del sitemap que no sirven su contenido';
 // Identificable a propósito: un barrido de ~1000 requests contra el propio origen tiene que poder
 // reconocerse en los logs de acceso sin confundirse con un crawler ajeno.
 const USER_AGENT = 'cuentoneta-seo-body-sweep';
@@ -44,29 +46,29 @@ const MAX_CONCURRENCY = 24;
 // defecto de undici, minutos por URL.
 const REQUEST_TIMEOUT_MS = 15_000;
 
-// Apuntar a producción es una decisión explícita de quien corre, no un default silencioso.
-const baseUrl = (process.env['BASE_URL'] ?? 'http://localhost:4000').replace(/\/$/, '');
+type SweepConfig = {
+	readonly baseUrl: string;
+	readonly concurrency: number;
+	readonly limit: number;
+	readonly summaryPath: string | undefined;
+	readonly apply: boolean;
+};
 
-function flag(name: string): string | undefined {
-	return process.argv
+function flag(name: string, argv: readonly string[]): string | undefined {
+	return argv
 		.find((argument) => argument.startsWith(`--${name}=`))
 		?.split('=')
 		.slice(1)
 		.join('=');
 }
 
-function numericFlag(name: string, fallback: number): number {
-	const raw = flag(name);
+function numericFlag(name: string, fallback: number, argv: readonly string[]): number {
+	const raw = flag(name, argv);
 	const parsed = raw === undefined ? Number.NaN : Number.parseInt(raw, 10);
 	return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
 }
 
-const concurrency = Math.min(numericFlag('concurrency', DEFAULT_CONCURRENCY), MAX_CONCURRENCY);
-const limit = numericFlag('limit', Number.POSITIVE_INFINITY);
-const summaryPath = flag('summary');
-const shouldApply = process.argv.includes('--apply');
-
-async function fetchPage(path: string): Promise<{ status: number; html: string }> {
+async function fetchPage(path: string, baseUrl: string): Promise<{ status: number; html: string }> {
 	const response = await fetch(`${baseUrl}${path}`, {
 		headers: { 'user-agent': USER_AGENT },
 		signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
@@ -79,8 +81,8 @@ async function fetchPage(path: string): Promise<{ status: number; html: string }
 	return { status: response.status, html: await response.text() };
 }
 
-async function sweepPath(path: string): Promise<PageResult> {
-	const attempt = await runWithRetries(() => fetchPage(path), {
+async function sweepPath(path: string, config: SweepConfig): Promise<PageResult> {
+	const attempt = await runWithRetries(() => fetchPage(path, config.baseUrl), {
 		sleep: (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
 		isTransient: isTransientFailure,
 	});
@@ -102,12 +104,12 @@ function describeFailure(error: unknown, attempts: number): string {
  * Pool de workers que se reparten una cola compartida. Acota por construcción cuántas requests hay en
  * vuelo, que es lo que mantiene cortés un barrido de este tamaño contra el propio origen.
  */
-async function sweepAll(paths: readonly string[]): Promise<PageResult[]> {
+async function sweepAll(paths: readonly string[], config: SweepConfig): Promise<PageResult[]> {
 	const queue = [...paths];
 	const results: PageResult[] = [];
-	const workers = Array.from({ length: Math.min(concurrency, queue.length) }, async () => {
+	const workers = Array.from({ length: Math.min(config.concurrency, queue.length) }, async () => {
 		for (let path = queue.shift(); path !== undefined; path = queue.shift()) {
-			results.push(await sweepPath(path));
+			results.push(await sweepPath(path, config));
 		}
 	});
 	await Promise.all(workers);
@@ -143,8 +145,8 @@ function applyAction(report: SweepReport): void {
 	process.stdout.write(`seguimiento #${existing.number} actualizado.\n`);
 }
 
-async function readSitemapPaths(): Promise<string[]> {
-	const url = `${baseUrl}/sitemap.xml`;
+async function readSitemapPaths(config: SweepConfig): Promise<string[]> {
+	const url = `${config.baseUrl}/sitemap.xml`;
 	// El error de `fetch` dice "fetch failed" y nada más: sin la URL a la vista, un BASE_URL mal puesto
 	// y un origen caído se diagnostican igual de mal.
 	const response = await fetch(url, {
@@ -160,33 +162,44 @@ async function readSitemapPaths(): Promise<string[]> {
 	if (paths.length === 0) {
 		throw new Error('el sitemap no declara ninguna URL');
 	}
-	return paths.slice(0, limit);
+	return paths.slice(0, config.limit);
 }
 
-async function main(): Promise<number> {
-	const paths = await readSitemapPaths();
-	process.stdout.write(`barriendo ${paths.length} URLs de ${baseUrl} (concurrencia ${concurrency})…\n`);
+async function main(config: SweepConfig): Promise<ExitCode> {
+	const paths = await readSitemapPaths(config);
+	process.stdout.write(`barriendo ${paths.length} URLs de ${config.baseUrl} (concurrencia ${config.concurrency})…\n`);
 
-	const results = await sweepAll(paths);
+	const results = await sweepAll(paths, config);
 	const report = buildReport(results);
 	process.stdout.write(`${formatConsoleReport(report)}\n`);
 
 	// Append, nunca truncar: el destino es de quien lo pasó y suele traer lo que escribieron otros steps.
-	if (summaryPath) {
-		appendFileSync(summaryPath, formatSummaryMarkdown(report));
+	if (config.summaryPath) {
+		appendFileSync(config.summaryPath, formatSummaryMarkdown(report));
 	}
-	if (shouldApply) {
+	if (config.apply) {
 		applyAction(report);
 	}
 	return classifyRunOutcome(results);
 }
 
-main()
-	.then((code) => {
-		process.exitCode = code;
-	})
-	.catch((error: unknown) => {
-		const cause = error instanceof Error && error.cause instanceof Error ? `: ${error.cause.message}` : '';
-		process.stderr.write(`${error instanceof Error ? error.message : String(error)}${cause}\n`);
-		process.exitCode = EXIT_CODES.toolFailure;
-	});
+export const task: OpsTask = {
+	run: async ({ apply, argv }) => {
+		const config: SweepConfig = {
+			// Apuntar a producción es una decisión explícita de quien corre, no un default silencioso.
+			baseUrl: (process.env['BASE_URL'] ?? 'http://localhost:4000').replace(/\/$/, ''),
+			concurrency: Math.min(numericFlag('concurrency', DEFAULT_CONCURRENCY, argv), MAX_CONCURRENCY),
+			limit: numericFlag('limit', Number.POSITIVE_INFINITY, argv),
+			summaryPath: flag('summary', argv),
+			apply,
+		};
+
+		try {
+			return await main(config);
+		} catch (error) {
+			const cause = error instanceof Error && error.cause instanceof Error ? `: ${error.cause.message}` : '';
+			process.stderr.write(`${error instanceof Error ? error.message : String(error)}${cause}\n`);
+			return EXIT_CODES.toolFailure;
+		}
+	},
+};

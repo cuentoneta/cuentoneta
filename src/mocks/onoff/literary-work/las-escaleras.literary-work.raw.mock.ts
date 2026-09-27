@@ -1,4 +1,4 @@
-// Este archivo lo escribe `pnpm corpus:generate` evaluando la query GROQ real sobre los documentos del
+// Este archivo lo escribe `pnpm ops corpus:generate` evaluando la query GROQ real sobre los documentos del
 // corpus. No se edita a mano: cualquier cambio se pierde en la próxima corrida.
 import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
 import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
@@ -25,7 +25,7 @@ export const lasEscalerasRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryRes
 			_type: 'audioRecording',
 			title: 'Lectura de "Las escaleras" por su autor',
 			description: lasEscalerasAudioDescription,
-			url: 'https://cdn.example.org/onoff/las-escaleras.ogg',
+			url: 'assets/audio/mocks/las-escaleras.ogg',
 		},
 	],
 	resources: [],

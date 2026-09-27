@@ -1,4 +1,4 @@
-// Este archivo lo escribe `pnpm corpus:generate` evaluando la query GROQ real sobre los documentos del
+// Este archivo lo escribe `pnpm ops corpus:generate` evaluando la query GROQ real sobre los documentos del
 // corpus. No se edita a mano: cualquier cambio se pierde en la próxima corrida.
 import type { LiteraryWorkBySlugQueryResult } from '@sanity-types';
 import { rawOnoffAuthor } from '../../onoff-raw-author.mock';
@@ -32,7 +32,7 @@ export const geometriaRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult
 			_type: 'audioRecording',
 			title: 'Lectura de "Geometría" por su autor',
 			description: geometriaAudioDescription,
-			url: 'https://cdn.example.org/onoff/geometria.ogg',
+			url: 'assets/audio/mocks/geometria.ogg',
 		},
 		{
 			_key: 'geometria-space',
@@ -44,7 +44,7 @@ export const geometriaRawLiteraryWork: NonNullable<LiteraryWorkBySlugQueryResult
 			hostAvatar: { _type: 'image', asset: { _type: 'reference', _ref: 'image-bibliotecaMeridienAvatar-96x96-png' } },
 			date: '1974-06-12',
 			duration: '48:12',
-			audioUrl: 'https://cdn.example.org/onoff/geometria-space.ogg',
+			audioUrl: 'assets/audio/mocks/geometria-space.ogg',
 		},
 		{
 			_key: 'geometria-spotify',

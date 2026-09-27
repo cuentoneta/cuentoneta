@@ -5,6 +5,7 @@ import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 import { AbstractMetaTagsDirective } from '../../directives/abstract-meta-tags.directive';
 import { COLLECTION_HOST } from './collection-host';
+import { buildCollectionDescription } from './collection.schema';
 
 @Directive({
 	selector: '[cuentonetaCollectionMetaTags]',
@@ -20,8 +21,11 @@ export class CollectionMetaTagsDirective extends AbstractMetaTagsDirective {
 		}
 		untracked(() => {
 			this.head.setTitle(collection.title);
+			// Sin prosa propia no hay texto que derivar: la frase editorial fija garantiza que el
+			// `description` nunca salga vacío.
 			this.head.setDescription(
-				'Una colección de La Cuentoneta: una iniciativa que busca fomentar y hacer accesible la lectura digital.',
+				buildCollectionDescription(collection.description) ??
+					'Una colección de La Cuentoneta: una iniciativa que busca fomentar y hacer accesible la lectura digital.',
 			);
 			this.head.setCanonicalUrl(buildCanonicalUrl(`${AppRoutes.Collection}/${collection.slug}`));
 			this.head.setRobots('index, follow');

@@ -5,13 +5,16 @@ import storybook from 'eslint-plugin-storybook';
 import vitest from '@vitest/eslint-plugin';
 import testingLibrary from 'eslint-plugin-testing-library';
 import noBarrelFiles from 'eslint-plugin-no-barrel-files';
+import unicorn from 'eslint-plugin-unicorn';
 import requireEnvironmentProviders from './tools/eslint/require-environment-providers.js';
 import storybookSourceState from './tools/eslint/storybook-source-state.js';
+import storybookDocsRefs from './tools/eslint/storybook-docs-refs.js';
 import noApplyInHostStyles from './tools/eslint/no-apply-in-host-styles.js';
 import componentConfigInClass from './tools/eslint/component-config-in-class.js';
 import zIndexScale from './tools/eslint/z-index-scale.js';
 import noFullZodInBrowser from './tools/eslint/no-full-zod-in-browser.js';
 import noTsExtensionImports from './tools/eslint/no-ts-extension-imports.js';
+import componentLocationAndName from './tools/eslint/component-location-and-name.js';
 
 // Las reglas propias comparten un único objeto de plugin: ESLint rechaza redefinir un namespace
 // entre bloques cuyos scopes se solapan, aunque las reglas sean distintas.
@@ -19,6 +22,7 @@ const cuentonetaPlugin = {
 	rules: {
 		'no-full-zod-in-browser': noFullZodInBrowser,
 		'no-ts-extension-imports': noTsExtensionImports,
+		'component-location-and-name': componentLocationAndName,
 	},
 };
 
@@ -47,7 +51,7 @@ const readonlyFactoryMessage =
 const singleWorkCorpusImportPattern = {
 	group: ['@mocks/onoff/**', '**/mocks/onoff/**'],
 	message:
-		'No importes una obra puntual del corpus: usá las colecciones de @mocks/onoff-literary-works.mock (onoffLiteraryWorksMock, onoffLiteraryWorkEpigraphsMock) o sus selectores por capacidad (onoffLiteraryWorksWithEpigraphs, onoffLiteraryWorksWithEditorialNote, …), que declaran el shape que el caso necesita y crecen con el canon.',
+		'No importes una pieza puntual del corpus: usá el agregador de la entidad que necesitás — @mocks/onoff-literary-works.mock, @mocks/onoff-literary-work-teasers.mock o @mocks/onoff-collections.mock — por su colección (onoffLiteraryWorksMock, onoffLiteraryWorkTeasersMock, onoffCollectionsMock, onoffCollectionTeasersMock) o por el selector cuya capacidad es la que tu caso afirma (onoffLiteraryWorksWithEpigraphs, onoffLiteraryWorkTeasersWithExcerptMock, onoffCollectionTeasersWithSampleImageryMock, …). Declaran el shape que el caso necesita y crecen con el canon.',
 };
 
 const commonRestrictedSyntax = [
@@ -148,7 +152,7 @@ export default [
 		// `**/node_modules/**`. Sin nombrar el árbol de cms, ESLint intenta cargar los eslint.config.js
 		// anidados de sus dependencias y aborta antes de lintear nada.
 		name: 'ignores',
-		ignores: ['!**/*', '.nx', 'dist', 'tools/**', 'cms/node_modules/**', 'cms/dist/**', 'cms/.sanity/**'],
+		ignores: ['!**/*', '.nx', 'dist', 'cms/node_modules/**', 'cms/dist/**', 'cms/.sanity/**'],
 	},
 	...nx.configs['flat/base'],
 	...nx.configs['flat/typescript'],
@@ -259,15 +263,26 @@ export default [
 		// `meta` de una story son funciones por sintaxis y no por lógica, así que medir su largo mide
 		// el tamaño de la suite y del catálogo. `complexity` y `max-depth` siguen rigiendo ahí, porque
 		// un test enrevesado es tan difícil de leer como cualquier otro código. `src/sanity/types.ts`
-		// lo emite el typegen de Sanity: su largo no lo decide nadie. Nota de alcance: `tools/**` está
-		// en el ignore global de más arriba, así que las reglas custom de ESLint y sus specs quedan
-		// fuera de todo esto.
+		// lo emite el typegen de Sanity: su largo no lo decide nadie.
 		name: 'size-limits',
 		files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.mjs'],
 		ignores: ['**/*.spec.ts', '**/*.stories.ts', 'src/sanity/types.ts'],
 		rules: {
 			'max-lines': ['error', { max: 500, skipBlankLines: true, skipComments: true }],
 			'max-lines-per-function': ['error', { max: 50, skipBlankLines: true, skipComments: true }],
+		},
+	},
+	{
+		// El plugin entra por esta única regla: su config `recommended` no está adoptado, y registrar el
+		// namespace no enciende nada por sí solo. El scope nombra todas las extensiones que el gate
+		// lintea, no solo el `**/*.ts` del bloque `nx`: la regla mide forma del código y no framework ni
+		// capa, así que rige igual en el Studio React, en los scripts y en las reglas de las que depende
+		// el linteo del repo.
+		name: 'prefer-smaller-scope',
+		files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.mjs'],
+		plugins: { unicorn },
+		rules: {
+			'unicorn/prefer-smaller-scope': 'error',
 		},
 	},
 	{
@@ -397,16 +412,39 @@ export default [
 		},
 	},
 	{
+		name: 'storybook-docs-refs',
+		files: ['**/*.stories.ts'],
+		plugins: {
+			'custom-storybook-docs': { rules: { 'storybook-docs-refs': storybookDocsRefs } },
+		},
+		rules: {
+			'custom-storybook-docs/storybook-docs-refs': 'error',
+		},
+	},
+	{
 		name: 'component-config-in-class',
 		files: ['src/**/*.ts'],
 		// Los specs y las stories declaran componentes host de prueba, y sus fixtures de módulo
-		// (`const collectionMock: Storylist = {...}`) son datos del test, no configuración de una clase.
+		// (`const collectionMock: Collection = {...}`) son datos del test, no configuración de una clase.
 		ignores: ['src/**/*.spec.ts', 'src/**/*.stories.ts'],
 		plugins: {
 			'custom-component-config': { rules: { 'component-config-in-class': componentConfigInClass } },
 		},
 		rules: {
 			'custom-component-config/component-config-in-class': 'error',
+		},
+	},
+	{
+		// El scope es todo `src/` y no solo `src/app/`: un `@Component` fuera de las carpetas que lo alojan es
+		// justamente lo que la regla tiene que ver. Las excepciones —la raíz, `src/testing/`, specs y stories—
+		// viven dentro de la regla para que sumar una se vea en el diff.
+		name: 'component-location-and-name',
+		files: ['src/**/*.ts'],
+		plugins: {
+			cuentoneta: cuentonetaPlugin,
+		},
+		rules: {
+			'cuentoneta/component-location-and-name': 'error',
 		},
 	},
 	{
@@ -435,9 +473,19 @@ export default [
 					// La franja alta queda reservada a los archivos que declaran una capa global de la
 					// aplicación. Cualquier otro tiene que elevar con una capa interna y confinar su
 					// apilamiento, que es lo que evita volver a competir con la barra.
-					allowGlobalLayersIn: ['src/app/components/header/header.component.ts'],
+					allowGlobalLayersIn: ['src/app/components/header/header.ts', 'src/app/app.ts'],
 				},
 			],
+		},
+	},
+	{
+		// El alcance es todo `src/`, no solo el catálogo de stories donde se midió la deuda: la convención
+		// de imports type-only (ver typescript.md) vale para cada archivo, y declararla acá hace que el
+		// próximo archivo nazca cumpliéndola en vez de depender del recuerdo de quien lo escribe.
+		name: 'consistent-type-imports',
+		files: ['src/**/*.ts'],
+		rules: {
+			'@typescript-eslint/consistent-type-imports': 'error',
 		},
 	},
 	{

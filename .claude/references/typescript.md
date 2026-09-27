@@ -63,6 +63,8 @@ import { LiteraryWork } from '@models/literary-work.model';
 
 **Cuándo NO usar `type`:** clases usadas en runtime (constructores, métodos estáticos), funciones, constantes, o cualquier cosa usada en una expresión.
 
+**Enforcement activo:** la regla `@typescript-eslint/consistent-type-imports` cubre todo `src/**` (bloque `consistent-type-imports` de [`eslint.config.mjs`](../../eslint.config.mjs)). El alcance es todo el árbol de la app —no solo los stories donde se midió la deuda original— para que el próximo archivo nazca cumpliendo la convención.
+
 ---
 
 ## `zod/mini` como namespace en los DTO del frontend
@@ -131,6 +133,10 @@ const DEFAULT_INTERVAL = 24 * 60 * 60 * 1000;
 
 **Rationale:** una constante declarada 50 líneas lejos de su único uso obliga al lector a saltar entre dos lugares. Co-locarla con su uso (cuando es único) hace el código autocontenido.
 
+**Enforcement parcial:** la regla `unicorn/prefer-smaller-scope` (bloque `prefer-smaller-scope` de [`eslint.config.mjs`](../../eslint.config.mjs), en `error` sobre todo el árbol, con autofix) cubre **un solo eje**: la declaración cuyas lecturas viven todas dentro de un mismo bloque anidado —un `if`, un `while`— va declarada adentro de ese bloque. `eslint-plugin-unicorn` se adopta por esa regla sola: su config `recommended` no está evaluado.
+
+El otro eje —la constante de módulo cuyo único consumidor es una **función**— **no lo verifica nada**, y se sostiene en review. No es un olvido: mover una declaración inicializada adentro de una función cambia cuántas veces se evalúa su inicializador y cuándo, lo que la expone a los efectos que ocurran en el medio. Decidir si esa traslación preserva el comportamiento es una aproximación de pureza y no un análisis de scope, y las reglas que lo intentaron en el ecosistema se retiraron por sus falsos positivos. Por eso la regla adoptada tampoco reporta un inicializador que contenga una llamada.
+
 ## `eslint.config.mjs`: reglas por-scope reemplazan, no mergean
 
 En ESLint flat config, cuando **dos config objects aplican al mismo archivo** y ambos setean la **misma** regla (p. ej. `no-restricted-syntax`), el bloque que matchea **último gana por completo**: su array de opciones **reemplaza** el del bloque anterior, no lo concatena. Un bloque acotado (`files: ['src/app/pages/**/*.ts']`) que redeclara `no-restricted-syntax` con solo sus restricciones nuevas **pierde silenciosamente** las del bloque global (`files: ['**/*.ts']`) para esos archivos.
@@ -156,6 +162,15 @@ En el repo esa forma la necesita **una sola cadena**: la del hook `PreToolUse`, 
 | ------------------------- | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `tsconfig.typecheck.json` | `allowImportingTsExtensions`                                     | Ya tiene `noEmit`, que es lo que `TS5096` pide. Es el programa del gate `typecheck`                                                                                                                               |
 | `tsconfig.spec.json`      | `allowImportingTsExtensions` + `rewriteRelativeImportExtensions` | Incluye `scripts/**/*.ts` para que Vitest resuelva sus `paths`. **No admite `noEmit`**: con él, el plugin de Angular deja de contar `src/test-setup.ts` como parte del programa y la suite entera falla al cargar |
+
+### `allowJs` en `tsconfig.typecheck.json`: por qué el gate mira `.js`
+
+El programa del gate `typecheck` incluye `tools/**/*.js` además de los `.ts`, con `allowJs` y `checkJs` activos. Los `.js` de `tools/` son las reglas propias de ESLint y de Stylelint, y las cubre el mismo gate que a sus specs por dos razones:
+
+- **Sin `allowJs` los specs no tipan.** Un spec de regla importa su regla, y un `.js` que no puede entrar al programa se reporta como un módulo sin declaración — el JSDoc que tenga adentro no lo lee nadie.
+- **Sin `checkJs` las reglas quedan sin verificar.** Es código del que depende el linteo de todo el repo, y su modo de falla es el peor: una regla que deja de marcar lo que marcaba vuelve permisivo al gate `lint` sin que nada avise. Las reglas se anotan con JSDoc —`@type {import('eslint').Rule.RuleModule}` y `@param`—, que es la vía que el repo ya usaba en la mayoría de ellas.
+
+El `include` nombra los `.js` explícitamente en vez de apoyarse en que `allowJs` los arrastre: `allowJs` suma al programa **solo lo que un spec importa**, así que la cobertura de una regla quedaría atada a que alguien le hubiera escrito un spec — el mismo punto ciego un nivel más abajo, y con un criterio invisible desde la config.
 
 El raíz queda afuera a propósito: es una config _solution-style_ de la que heredan los proyectos de app, spec, editor, server y Storybook, y **ninguno declara `noEmit`**. Poner el flag arriba obliga a agregárselo a cada proyecto que emite —el de la app entre ellos— o a activar el reescrito de extensiones sobre el emit real.
 

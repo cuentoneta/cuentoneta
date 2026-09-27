@@ -1,11 +1,27 @@
-import { argsToTemplate, Meta, StoryObj } from '@storybook/angular-vite';
+import type { Meta, StoryObj } from '@storybook/angular-vite';
+import { argsToTemplate } from '@storybook/angular-vite';
 
 import { CollectionTeasersDeck } from './collection-teasers-deck';
-import { onoffCollectionTeasersOfLength } from '@mocks/onoff-collections.mock';
+import { onoffCollectionTeasersMock, onoffCollectionTeasersWithLongTitlesMock } from '@mocks/onoff-collections.mock';
+import { collectionTeasersDeckDocs } from './collection-teasers-deck.docs';
+import { collectionTeaserCardDocs } from '@components/collection-teaser-card/collection-teaser-card.docs';
+import { emptyStateDocs } from '@components/empty-state/empty-state.docs';
+import { sectionHeaderDocs } from '@components/section-header/section-header.docs';
+import { docsMention, docsRef } from '@testing/storybook-docs';
+import type { Collection } from '@models/collection.model';
+import type { CollectionTeaserCardSkeleton } from '@components/collection-teaser-card/collection-teaser-card-skeleton';
+
+export type DocsSymbols = [Collection, CollectionTeaserCardSkeleton];
 
 // Un solo dataset compartido por todas las stories: mismas colecciones en cada estado hace que el
 // switch del catálogo compare siempre lo mismo.
-const deckTeasers = onoffCollectionTeasersOfLength(4);
+// El título largo entra por el selector que lo garantiza, no por el orden en que el agregador declara
+// las colecciones: de él depende que la descripción de la grilla siga siendo cierta.
+const [withLongTitle] = onoffCollectionTeasersWithLongTitlesMock;
+const deckTeasers = [
+	withLongTitle,
+	...onoffCollectionTeasersMock.filter(({ slug }) => slug !== withLongTitle.slug),
+].slice(0, 4);
 
 const meta: Meta<CollectionTeasersDeck> = {
 	component: CollectionTeasersDeck,
@@ -14,7 +30,7 @@ const meta: Meta<CollectionTeasersDeck> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>El <strong>CollectionTeasersDeck</strong> es el bloque de sección que agrupa colecciones en el Design System v3: un <a href="./?path=/docs/componentes-v3-sectionheader--docs" target="_top"><strong>SectionHeader</strong></a> con el título "Colecciones", su bajada y el enlace al índice de colecciones, sobre una grilla responsiva de una columna en mobile y dos desde <code>sm</code>, con una tarjeta por colección resuelta por <a href="./?path=/docs/componentes-v3-collectionteasercard--docs" target="_top"><strong>CollectionTeaserCard</strong></a>.</p><p>Está tipado contra el modelo de dominio <strong>Collection</strong> vía su proyección <code>CollectionTeaser</code>; el estado de carga entra por input, porque el dueño del recurso es la página: cargando dibuja los skeletons de <strong>CollectionTeaserCardSkeleton</strong>, con colecciones la grilla, y sin colecciones el aviso de <a href="./?path=/docs/componentes-v3-emptystate--docs" target="_top"><strong>EmptyState</strong></a>.</p></div>`,
+				component: `<div><p>El ${docsMention(collectionTeasersDeckDocs)} es el bloque de sección que agrupa colecciones en el Design System v3: un ${docsRef(sectionHeaderDocs)} con el título "Colecciones", su bajada y el enlace al índice de colecciones, sobre una grilla responsiva de una columna en mobile y dos desde <code>sm</code>, con una tarjeta por colección resuelta por ${docsRef(collectionTeaserCardDocs)}.</p><p>Está tipado contra el modelo de dominio <strong>Collection</strong> vía su proyección <code>CollectionTeaser</code>; el estado de carga entra por input, porque el dueño del recurso es la página: cargando dibuja los skeletons de <strong>CollectionTeaserCardSkeleton</strong>, con colecciones la grilla, y sin colecciones el aviso de ${docsRef(emptyStateDocs)}.</p></div>`,
 			},
 		},
 	},
@@ -45,7 +61,7 @@ export const Primary: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Colecciones derivadas del canon de Onoff mediante el selector del agregador de mocks; la grilla arma una fila por cada dos tarjetas desde viewport <code>sm</code>.</p><p>Las cuatro salen de la misma colección canónica, así que comparten portada, prosa y etiqueta: la grilla se ve más pareja de lo que se verá con contenido real, y no ejercita portadas dispares ni descripciones de largo distinto. Se corrige al ampliar el corpus con colecciones propias.</p><p><strong>Usos:</strong> la sección de colecciones de la página de inicio.</p>`,
+				story: `<p>Cuatro colecciones del corpus de Onoff; la grilla arma una fila por cada dos tarjetas desde viewport <code>sm</code>.</p><p>Cada una trae su propia portada, su prosa y sus etiquetas, así que la grilla ejercita lo que la vuelve difícil: abanicos de portadas distintos, descripciones de largo desparejo y un título que no entra en una línea.</p><p><strong>Usos:</strong> la sección de colecciones de la página de inicio.</p>`,
 			},
 		},
 	},

@@ -1,9 +1,9 @@
 import { Component, input } from '@angular/core';
 
-import { SectionHeaderComponent, type SectionHeaderAction } from '@components/section-header/section-header.component';
-import { EmptyStateComponent } from '@components/empty-state/empty-state.component';
-import { LiteraryWorkHomeCardTeaserComponent } from '../literary-work-home-card-teaser/literary-work-home-card-teaser.component';
-import { LiteraryWorkHomeCardTeaserSkeletonComponent } from '../literary-work-home-card-teaser/literary-work-home-card-teaser-skeleton.component';
+import { SectionHeader, type SectionHeaderAction } from '@components/section-header/section-header';
+import { EmptyState } from '@components/empty-state/empty-state';
+import { LiteraryWorkTeaserHomeCard } from '../literary-work-teaser-home-card/literary-work-teaser-home-card';
+import { LiteraryWorkTeaserHomeCardSkeleton } from '../literary-work-teaser-home-card/literary-work-teaser-home-card-skeleton';
 import type { LiteraryWorkNavigationTeaserWithAuthors } from '@models/literary-work.model';
 
 /**
@@ -16,12 +16,7 @@ import type { LiteraryWorkNavigationTeaserWithAuthors } from '@models/literary-w
  */
 @Component({
 	selector: 'cuentoneta-literary-works-card-deck',
-	imports: [
-		SectionHeaderComponent,
-		EmptyStateComponent,
-		LiteraryWorkHomeCardTeaserComponent,
-		LiteraryWorkHomeCardTeaserSkeletonComponent,
-	],
+	imports: [SectionHeader, EmptyState, LiteraryWorkTeaserHomeCard, LiteraryWorkTeaserHomeCardSkeleton],
 	template: `
 		@if (heading() || subtitle()) {
 			<cuentoneta-section-header [heading]="heading()" [subtitle]="subtitle()" [action]="action()" />
@@ -33,11 +28,11 @@ import type { LiteraryWorkNavigationTeaserWithAuthors } from '@models/literary-w
 			<section class="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-8">
 				@if (loading()) {
 					@for (_ of [].constructor(skeletonCount); track $index) {
-						<cuentoneta-literary-work-home-card-teaser-skeleton />
+						<cuentoneta-literary-work-teaser-home-card-skeleton />
 					}
 				} @else {
 					@for (literaryWork of literaryWorks(); track literaryWork.slug) {
-						<cuentoneta-literary-work-home-card-teaser
+						<cuentoneta-literary-work-teaser-home-card
 							[literaryWork]="literaryWork"
 							[order]="numbered() ? $index + 1 : undefined"
 							[navigationParams]="{

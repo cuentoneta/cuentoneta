@@ -1,0 +1,43 @@
+import { render, screen } from '@testing-library/angular';
+
+import { SkeletonAppearance, Skeleton } from './skeleton';
+
+describe('Skeleton', () => {
+	it('should expose role="status" and aria-busy without an accessible name', async () => {
+		await render(Skeleton);
+		const bar = screen.getByRole('status');
+		expect(bar).toHaveAttribute('aria-busy', 'true');
+		expect(bar).not.toHaveAttribute('aria-label');
+	});
+
+	it('should not expose an accessible name on any bar when rendered multiple times', async () => {
+		await render('<cuentoneta-skeleton /><cuentoneta-skeleton /><cuentoneta-skeleton />', {
+			imports: [Skeleton],
+		});
+		expect(screen.getAllByRole('status')).toHaveLength(3);
+		expect(screen.queryAllByRole('status', { name: /.+/ })).toEqual([]);
+	});
+
+	it('should animate with animate-pulse on the host', async () => {
+		await render(Skeleton);
+		expect(screen.getByRole('status')).toHaveClass('block', 'animate-pulse');
+	});
+
+	it('should render a rounded bar for the line appearance (default)', async () => {
+		await render(Skeleton);
+		const bar = screen.getByRole('status');
+		expect(bar).toHaveClass('rounded');
+		expect(bar).not.toHaveClass('rounded-full', 'aspect-square');
+	});
+
+	it('should render a fully rounded square bar for the circle appearance', async () => {
+		await render(Skeleton, { inputs: { appearance: SkeletonAppearance.Circle } });
+		expect(screen.getByRole('status')).toHaveClass('rounded-full', 'aspect-square');
+	});
+
+	it('should leave the radius to the consumer for the square appearance', async () => {
+		await render(Skeleton, { inputs: { appearance: SkeletonAppearance.Square } });
+		const bar = screen.getByRole('status');
+		expect(bar).not.toHaveClass('rounded', 'rounded-full', 'aspect-square');
+	});
+});

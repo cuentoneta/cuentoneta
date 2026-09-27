@@ -20,5 +20,11 @@ export const readCacheHeaders = createMiddleware(async (c, next) => {
 		return;
 	}
 
+	// Una ruta con ventana propia la declara en su handler (la landing) y el default del módulo no la
+	// pisa: sin esta guarda, el SWR largo de lectura cubriría la respuesta y sobreviviría a la rotación.
+	if (c.res.headers.has('Vercel-CDN-Cache-Control')) {
+		return;
+	}
+
 	applyReadCacheHeaders(c);
 });

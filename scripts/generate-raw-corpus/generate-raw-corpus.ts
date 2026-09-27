@@ -1,5 +1,5 @@
 /**
- * Regenera las fixtures raw del corpus de Onoff (`pnpm corpus:generate`) evaluando la query GROQ real
+ * Regenera las fixtures raw del corpus de Onoff (`pnpm ops corpus:generate`) evaluando la query GROQ real
  * sobre los documentos escritos a mano, para que el raw commiteado sea lo que la query devuelve y no lo
  * que alguien creyó que devolvía.
  *
@@ -22,8 +22,9 @@ import { evaluate, parse } from 'groq-js';
 import { format, resolveConfig } from 'prettier';
 import { assertEveryReferenceResolves } from './generate-raw-corpus.helpers';
 import { buildSubstitutionTable, emitModule } from './generate-raw-corpus.emitter';
-import { collectSubstitutions, type LoadModule } from './generate-raw-corpus.table';
+import { collectDerivations, collectSubstitutions, type LoadModule } from './generate-raw-corpus.table';
 import { withCorpus } from './generate-raw-corpus.loader';
+import type { OpsTask } from '../ops/registry';
 
 type Target = {
 	file: string;
@@ -35,7 +36,7 @@ type Target = {
 };
 
 const BANNER = [
-	'// Este archivo lo escribe `pnpm corpus:generate` evaluando la query GROQ real sobre los documentos del',
+	'// Este archivo lo escribe `pnpm ops corpus:generate` evaluando la query GROQ real sobre los documentos del',
 	'// corpus. No se edita a mano: cualquier cambio se pierde en la próxima corrida.',
 ].join('\n');
 
@@ -58,6 +59,10 @@ const LITERARY_WORK_EXPORTS: Record<string, string> = {
 const COLLECTION_EXPORTS: Record<string, string> = {
 	'geometrias-del-desvelo': 'geometriasDelDesveloRawCollection',
 	'inventario-de-las-pasiones': 'inventarioDeLasPasionesRawCollection',
+	'ambar-y-ceniza': 'ambarYCenizaRawCollection',
+	'cuadernos-del-meridien': 'cuadernosDelMeridienRawCollection',
+	'bitacora-del-insomnio': 'bitacoraDelInsomnioRawCollection',
+	'reyes-de-utileria': 'reyesDeUtileriaRawCollection',
 };
 
 function queryNamed(queries: Record<string, string>, name: string): string {
@@ -88,6 +93,24 @@ function landingPageTarget(queries: Record<string, string>, slug: string): Targe
 	};
 }
 
+/**
+ * El teaser de cada obra. Va antes que los raws de colección, que embeben obras con exactamente esta
+ * proyección: la tabla de sustituciones los lee del disco para poder referenciarlos en vez de repetirlos.
+ *
+ * `literaryWorkTeasers` devuelve el listado y acepta `$slugs`, así que acotarla a una obra y tomar la
+ * primera es lo que la vuelve un resultado top-level por obra, sin recortar campos a mano.
+ */
+function literaryWorkTeaserTargets(queries: Record<string, string>): Target[] {
+	return Object.entries(LITERARY_WORK_EXPORTS).map(([slug, exportName]) => ({
+		file: join('src/mocks/onoff/literary-work', `${slug}.literary-work-teaser.raw.mock.ts`),
+		exportName: `${exportName}Teaser`,
+		typeImport: 'LiteraryWorkTeasersResult',
+		typeAnnotation: 'LiteraryWorkTeasersResult[number]',
+		query: `${queryNamed(queries, 'literaryWorkTeasers')}[0]`,
+		params: { slugs: [slug], author: null },
+	}));
+}
+
 function targetsFor(queries: Record<string, string>, landingPageSlug: string): Target[] {
 	const bySlug = (
 		exports: Record<string, string>,
@@ -105,6 +128,9 @@ function targetsFor(queries: Record<string, string>, landingPageSlug: string): T
 			params: { slug },
 		}));
 
+	// El orden es el de las dependencias: cada destino se escribe después de aquello de lo que deriva o a
+	// lo que referencia. El teaser sale del raw completo, la colección embebe teasers, el listado sale de
+	// la colección, y la landing y el contenido rotativo salen del teaser.
 	return [
 		...bySlug(
 			LITERARY_WORK_EXPORTS,
@@ -113,6 +139,7 @@ function targetsFor(queries: Record<string, string>, landingPageSlug: string): T
 			'LiteraryWorkBySlugQueryResult',
 			'literaryWorkBySlugQuery',
 		),
+		...literaryWorkTeaserTargets(queries),
 		...bySlug(
 			COLLECTION_EXPORTS,
 			'src/mocks/onoff/collection',
@@ -151,8 +178,10 @@ async function evaluateTarget(target: Target, dataset: Record<string, unknown>[]
 }
 
 async function writeTarget(target: Target, value: unknown, load: LoadModule): Promise<void> {
-	const entries = await collectSubstitutions(load, dirname(target.file));
+	const entries = await collectSubstitutions(load, dirname(target.file), target.file);
+	const derivations = await collectDerivations(load, target.file);
 	const source = emitModule({
+		derivations,
 		banner: BANNER,
 		exportName: target.exportName,
 		typeImport: target.typeImport,
@@ -168,26 +197,32 @@ async function writeTarget(target: Target, value: unknown, load: LoadModule): Pr
 	await writeFile(target.file, await format(source, { ...config, filepath: target.file }), 'utf8');
 }
 
-await withCorpus(async (load) => {
-	const { onoffDatasetMock } = (await load('/src/mocks/onoff-documents.mock.ts')) as {
-		onoffDatasetMock: Record<string, unknown>[];
-	};
-	assertEveryReferenceResolves(onoffDatasetMock);
+export const task: OpsTask = {
+	run: async () => {
+		await withCorpus(async (load) => {
+			const { onoffDatasetMock } = (await load('/src/mocks/onoff-documents.mock.ts')) as {
+				onoffDatasetMock: Record<string, unknown>[];
+			};
+			assertEveryReferenceResolves(onoffDatasetMock);
 
-	const collectionQueries = (await load('/src/api/_queries/collection.query.ts')) as Record<string, string>;
-	const literaryWorkQueries = (await load('/src/api/_queries/literary-work.query.ts')) as Record<string, string>;
-	const contentQueries = (await load('/src/api/_queries/content.query.ts')) as Record<string, string>;
-	const { onoffLandingPageDocument } = (await load('/src/mocks/onoff/landing-page/onoff.landing-page.document.ts')) as {
-		onoffLandingPageDocument: { slug: { current: string } };
-	};
-	const targets = targetsFor(
-		{ ...collectionQueries, ...literaryWorkQueries, ...contentQueries },
-		onoffLandingPageDocument.slug.current,
-	);
+			const collectionQueries = (await load('/src/api/_queries/collection.query.ts')) as Record<string, string>;
+			const literaryWorkQueries = (await load('/src/api/_queries/literary-work.query.ts')) as Record<string, string>;
+			const contentQueries = (await load('/src/api/_queries/content.query.ts')) as Record<string, string>;
+			const { onoffLandingPageDocument } = (await load(
+				'/src/mocks/onoff/landing-page/onoff.landing-page.document.ts',
+			)) as {
+				onoffLandingPageDocument: { slug: { current: string } };
+			};
+			const targets = targetsFor(
+				{ ...collectionQueries, ...literaryWorkQueries, ...contentQueries },
+				onoffLandingPageDocument.slug.current,
+			);
 
-	for (const target of targets) {
-		const value = await evaluateTarget(target, onoffDatasetMock);
-		await writeTarget(target, value, load);
-		console.log(`✓ ${target.file}`);
-	}
-});
+			for (const target of targets) {
+				const value = await evaluateTarget(target, onoffDatasetMock);
+				await writeTarget(target, value, load);
+				console.log(`✓ ${target.file}`);
+			}
+		});
+	},
+};

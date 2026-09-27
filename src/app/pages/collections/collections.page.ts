@@ -8,16 +8,15 @@ import { COLLECTIONS_HOST, type CollectionsHost } from './collections-host';
 import { CollectionsMetaTagsDirective } from './collections-meta-tags.directive';
 import { CollectionsStructuredDataDirective } from './collections-structured-data.directive';
 
-import { CollectionFiltersComponent } from '@components/collection-filters/collection-filters.component';
+import { CollectionFilters } from '@components/collection-filters/collection-filters';
 import { CollectionTeaserCard } from '@components/collection-teaser-card/collection-teaser-card';
-import { CollectionTeaserCardSkeletonComponent } from '@components/collection-teaser-card/collection-teaser-card-skeleton';
-import { DividerComponent } from '@components/divider/divider.component';
+import { CollectionTeaserCardSkeleton } from '@components/collection-teaser-card/collection-teaser-card-skeleton';
+import { Divider } from '@components/divider/divider';
 
 @Component({
 	selector: 'cuentoneta-collections',
 	template: `
-		<!-- TODO(#2348): el despeje del encabezado fijo pasa al shell; hoy cada página lo repite. -->
-		<main class="mx-auto mt-header-height flex w-full max-w-310 items-stretch gap-8 px-4 pt-8 pb-16">
+		<div class="mx-auto flex w-full max-w-310 items-stretch gap-8 px-4 pt-8 pb-16">
 			<cuentoneta-collection-filters
 				(cleared)="clearFilters()"
 				(toggled)="toggleTag($event.slug)"
@@ -56,11 +55,11 @@ import { DividerComponent } from '@components/divider/divider.component';
 					</p>
 				}
 			</div>
-		</main>
+		</div>
 	`,
 	providers: [{ provide: COLLECTIONS_HOST, useExisting: forwardRef(() => CollectionsPage) }],
 	hostDirectives: [CollectionsMetaTagsDirective, CollectionsStructuredDataDirective],
-	imports: [CollectionFiltersComponent, CollectionTeaserCard, CollectionTeaserCardSkeletonComponent, DividerComponent],
+	imports: [CollectionFilters, CollectionTeaserCard, CollectionTeaserCardSkeleton, Divider],
 })
 export default class CollectionsPage implements CollectionsHost {
 	// Providers

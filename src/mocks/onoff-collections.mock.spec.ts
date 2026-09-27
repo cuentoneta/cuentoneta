@@ -1,8 +1,32 @@
 import {
 	geometriasDelDesveloCollectionMock,
 	inventarioDeLasPasionesCollectionMock,
+} from './onoff/collection/collections.mock';
+import {
+	onoffCollectionsHidingAuthorsMock,
 	onoffCollectionsMock,
+	onoffCollectionsShowingAuthorsMock,
+	onoffCollectionsWithMediaSourcesMock,
+	onoffCollectionsWithRepresentativeImageryMock,
+	onoffCollectionsWithSampleImageryMock,
+	onoffCollectionsWithLinkedDescriptionMock,
+	onoffCollectionsWithLongTitlesMock,
+	onoffCollectionsWithMultipleTagsMock,
+	onoffCollectionsWithNonAsciiInitialMock,
+	onoffCollectionsWithoutTagsMock,
+	onoffCollectionsWithSingleTagMock,
+	onoffCollectionsWithTagsMock,
 	onoffCollectionTeasersMock,
+	onoffCollectionTeasersWithLinkedDescriptionMock,
+	onoffCollectionTeasersWithLongTitlesMock,
+	onoffCollectionTeasersWithMultipleTagsMock,
+	onoffCollectionTeasersWithNonAsciiInitialMock,
+	onoffCollectionTeasersWithoutTagsMock,
+	onoffCollectionTeasersWithRepresentativeImageryMock,
+	onoffCollectionTeasersWithSampleImageryMock,
+	onoffCollectionTeasersWithSingleTagMock,
+	onoffCollectionTeasersWithTagsMock,
+	singleLiteraryWorkCollectionTeaserMock,
 } from './onoff-collections.mock';
 import geometriasDescriptionMd from './onoff/collection/geometrias-del-desvelo.collection.md?raw';
 import inventarioDescriptionMd from './onoff/collection/inventario-de-las-pasiones.collection.md?raw';
@@ -11,7 +35,7 @@ describe('onoff collections mock', () => {
 	// Que la factory los construya sin lanzar es la prueba de que el contrato es satisfacible con
 	// datos del canon, no solo que compila.
 	it('builds every collection through the factory', () => {
-		expect(onoffCollectionsMock).toHaveLength(2);
+		expect(onoffCollectionsMock).not.toHaveLength(0);
 		onoffCollectionsMock.forEach((collection) => {
 			expect(Object.isFrozen(collection)).toBe(true);
 			expect(collection.count).toBe(collection.literaryWorks.length);
@@ -49,8 +73,57 @@ describe('onoff collections mock', () => {
 		});
 	});
 
+	// La guarda que evita que un selector vacío llegue a sus consumidores — ver `testing.md`.
+	it('exposes a non-empty fixture for every capability selector', () => {
+		const selectorsByName = {
+			onoffCollectionsWithRepresentativeImageryMock,
+			onoffCollectionsWithSampleImageryMock,
+			onoffCollectionsShowingAuthorsMock,
+			onoffCollectionsHidingAuthorsMock,
+			onoffCollectionsWithMediaSourcesMock,
+			onoffCollectionsWithTagsMock,
+			onoffCollectionsWithoutTagsMock,
+			onoffCollectionsWithSingleTagMock,
+			onoffCollectionsWithMultipleTagsMock,
+			onoffCollectionsWithLongTitlesMock,
+			onoffCollectionsWithLinkedDescriptionMock,
+			onoffCollectionsWithNonAsciiInitialMock,
+			onoffCollectionTeasersWithRepresentativeImageryMock,
+			onoffCollectionTeasersWithSampleImageryMock,
+			onoffCollectionTeasersWithTagsMock,
+			onoffCollectionTeasersWithoutTagsMock,
+			onoffCollectionTeasersWithSingleTagMock,
+			onoffCollectionTeasersWithMultipleTagsMock,
+			onoffCollectionTeasersWithLongTitlesMock,
+			onoffCollectionTeasersWithLinkedDescriptionMock,
+			onoffCollectionTeasersWithNonAsciiInitialMock,
+		};
+
+		Object.entries(selectorsByName).forEach(([name, selector]) => {
+			expect(selector, name).not.toHaveLength(0);
+		});
+	});
+
+	// De esto depende que los abanicos de portadas se distingan entre sí, que es lo que el deck y el
+	// catálogo muestran. Vive como caso y no solo como criterio de curaduría escrito al lado del elenco.
+	it('curates a distinct set of works for every collection', () => {
+		const sets = onoffCollectionsMock.map((collection) =>
+			collection.literaryWorks
+				.map(({ slug }) => slug)
+				.sort()
+				.join(),
+		);
+
+		expect(new Set(sets).size).toBe(sets.length);
+	});
+
+	it('exposes a teaser that carries a single work', () => {
+		expect(singleLiteraryWorkCollectionTeaserMock.count).toBe(1);
+		expect(Object.isFrozen(singleLiteraryWorkCollectionTeaserMock)).toBe(true);
+	});
+
 	it('projects teasers that carry no works', () => {
-		expect(onoffCollectionTeasersMock).toHaveLength(2);
+		expect(onoffCollectionTeasersMock).toHaveLength(onoffCollectionsMock.length);
 		onoffCollectionTeasersMock.forEach((teaser, index) => {
 			expect(teaser.literaryWorks).toEqual([]);
 			expect(teaser.count).toBe(onoffCollectionsMock[index]?.count);

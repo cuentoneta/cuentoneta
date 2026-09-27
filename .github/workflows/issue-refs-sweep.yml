@@ -40,4 +40,4 @@ jobs:
       - name: Barrer las menciones a issues
         env:
           GH_TOKEN: ${{ github.token }}
-        run: pnpm issue-refs:sweep --apply
+        run: pnpm ops issue-refs:sweep --no-dry-run

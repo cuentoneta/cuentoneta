@@ -81,4 +81,11 @@ test.describe('literary-work — HTML server-rendered del catálogo', () => {
 			}),
 		).toEqual([]);
 	});
+
+	// Con `Prerender`, el HTML del catálogo queda horneado en el build: el fallo del endpoint que lo
+	// alimenta se sirve congelado todo el ciclo de release. `ssg` es el marcador de ese artefacto, así
+	// que afirmar `ssr` es afirmar que la página se renderiza por request.
+	test('E: se renderiza por request, no desde un artefacto del build', () => {
+		expect(html).toContain('ng-server-context="ssr"');
+	});
 });

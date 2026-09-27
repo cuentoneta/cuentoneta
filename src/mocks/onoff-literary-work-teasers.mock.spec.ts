@@ -2,8 +2,11 @@ import {
 	onoffLiteraryWorkNavigationTeasersMock,
 	onoffLiteraryWorkNavigationTeasersWithAuthorsMock,
 	onoffLiteraryWorkTeasersMock,
-	palacioNueveFronterasLiteraryWorkTeaserMock,
+	onoffLiteraryWorkTeasersWithExcerptMock,
+	onoffLiteraryWorkTeasersWithOwnMediaSourcesMock,
+	onoffLiteraryWorkTeasersWithMediaSourcesMock,
 } from './onoff-literary-work-teasers.mock';
+import { palacioNueveFronterasLiteraryWorkTeaserMock } from './onoff/literary-work/literary-work-teasers.mock';
 import { onoffLiteraryWorksMock } from './onoff-literary-works.mock';
 import { palacioNueveFronterasLiteraryWorkMock } from './onoff/literary-work/el-palacio-de-las-nueve-fronteras.literary-work.mock';
 
@@ -30,6 +33,27 @@ describe('onoffLiteraryWorkTeasersMock (derivación de teasers desde LiteraryWor
 		for (const teaser of onoffLiteraryWorkTeasersMock) {
 			expect(teaser.authors.length).toBeGreaterThan(0);
 		}
+	});
+
+	// La guarda que evita que un selector vacío llegue a sus consumidores — ver `testing.md`.
+	it('exposes a non-empty fixture for every capability selector', () => {
+		const selectorsByName = {
+			onoffLiteraryWorkTeasersWithExcerptMock,
+			onoffLiteraryWorkTeasersWithOwnMediaSourcesMock,
+			onoffLiteraryWorkTeasersWithMediaSourcesMock,
+		};
+
+		Object.entries(selectorsByName).forEach(([name, selector]) => {
+			expect(selector, name).not.toHaveLength(0);
+		});
+	});
+
+	// Si los dos conjuntos dejaran de distinguirse, elegir uno u otro pasaría a dar lo mismo y un caso
+	// podría afirmar sobre el equivocado sin notarlo.
+	it('keeps the enriched media selector wider than the filtered one', () => {
+		expect(onoffLiteraryWorkTeasersWithOwnMediaSourcesMock.length).toBeLessThan(
+			onoffLiteraryWorkTeasersWithMediaSourcesMock.length,
+		);
 	});
 
 	it('should not carry the full-view fields (content, resources, dates)', () => {

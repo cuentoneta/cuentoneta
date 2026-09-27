@@ -1,9 +1,6 @@
 <div align="center" width="100%">
-    <h1>La Cuentoneta</h1>
-    <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="https://github.com/rolivencia/cuentoneta/assets/32349705/b0ea0659-3c9d-4c4f-9d14-ab60d50dd832">
-        <img width="33%" alt="La Cuentoneta" src="https://github.com/rolivencia/cuentoneta/assets/32349705/b0ea0659-3c9d-4c4f-9d14-ab60d50dd832">
-    </picture>
+    <h2>La Cuentoneta</h2>
+    <img width="33%" alt="" src=".github/assets/cuentoneta-logo.png">
 </div>
 
 ---
@@ -15,6 +12,88 @@ Esta bitácora de cambios detalla los hitos principales en el desarrollo de La C
 La lista de características futuras a implementar puede hallarse en la sección [issues](https://github.com/cuentoneta/cuentoneta/issues) del repositorio de Github del proyecto.
 
 Los hitos futuros de desarrollo, en los cuales se detallan las funcionalidades a desarrollar y los cambios a implementar, pueden encontrarse en las secciones [milestones](https://github.com/cuentoneta/cuentoneta/milestones) y [projects](https://github.com/cuentoneta/cuentoneta/projects) del repositorio de Github del proyecto.
+
+## Versión 2.11.1 (2026-09-27)
+
+La versión 2.11.1 es un patch posterior a la migración de 2.11.0, con cuatro frentes y ningún cambio de modelo de contenido.
+
+El primero es de **indexado** y corrige un defecto que el release anterior dejó en producción: `/literary-work` se prerenderizaba con los datos del deploy previo, y durante días sirvió congelado su estado de error —con código 200 y sin enlaces— como si fuera contenido. El catálogo de obras y el índice de autores pasan a renderizarse por request, detrás de la misma caché de borde que el resto de las páginas SSR, y el barrido de cuerpos deja de dar por buena una página que sirve su error (#2502). El índice de autores, además, se vuelve indexable, con datos estructurados mínimos (#1727). Se suman la descripción de indexado de cada colección, que ahora sale de su propio texto (#2314), y los extractos de los resultados de búsqueda, que dejan afuera epígrafes y notas editoriales (#2208).
+
+El segundo es de **rendimiento**. El contenido de la página de inicio tenía la ventana de caché de borde de la página de lectura, que sobrevivía a la rotación semanal, y ahora tiene una propia (#2367). El shell de la aplicación difiere el footer y acota las directivas de router (#2245), y el pipeline de Markdown sale del navegador al separar la aritmética del tiempo de lectura de su derivación desde el texto (#2244).
+
+El tercero es de **operación**. Las tareas recurrentes del repositorio se reúnen detrás de un único punto de entrada, `pnpm ops`, que reemplaza a los alias de `package.json` (#2030). El backfill del tiempo de lectura corre a diario contra producción, así que las obras nuevas se materializan sin intervención manual (#2041). Y `cms/migrations/` queda vacío: las migraciones inaplicables se dan de baja y las remediaciones recurrentes pasan a tareas propias (#2438).
+
+El cuarto es de **calidad del catálogo y del tooling**. La prosa de Storybook referencia componentes y enlaces como símbolos, así que una referencia rota falla en el type-check (#2398). La ubicación y el nombre de las clases de componente pasan a verificarse por lint (#2506). El corpus de mocks suma colecciones reales y medios reproducibles (#2333, #2364), y los gates estáticos cubren también `tools/`, donde viven las reglas propias de lint (#2492).
+
+### Cambios completos
+
+Ver el changelog completo en [2.11.1](https://github.com/cuentoneta/cuentoneta/releases/tag/2.11.1)
+
+### Cambios
+
+#### Indexado
+
+- [#2502] - Renderiza por request el catálogo de obras y el índice de autores, que servían congelado el estado de error del prerender.
+- [#1727] - Vuelve indexable y rastreable el índice de autores con structured data mínimo.
+- [#2314] - Deriva la descripción de indexado de cada colección de su propio texto.
+- [#2208] - Excluye epígrafes y nota editorial de los extractos de los resultados de búsqueda.
+- [#2274] - Completa los textos de cara al usuario en «colección».
+
+#### Rendimiento
+
+- [#2367] - Da a la página de inicio una ventana de caché de borde propia, más corta que la rotación semanal.
+- [#2245] - Aligera el shell difiriendo el footer y acotando las directivas de router.
+- [#2244] - Saca el pipeline de Markdown del navegador partiendo el modelo de reading time.
+
+#### Operación
+
+- [#2030] - Agrupa las tareas recurrentes del repositorio detrás de `pnpm ops`.
+- [#2041] - Agenda el backfill de reading time para que las obras nuevas se materialicen solas.
+- [#2438] - Vacía `cms/migrations` dando de baja las inaplicables y moviendo a scripts las remediaciones recurrentes.
+
+#### Design System y accesibilidad
+
+- [#2348] - Unifica el despeje del encabezado fijo y el landmark `main` en el shell de la aplicación.
+- [#2310] - Corrige el drawer que quedaba abierto si se cerraba en el mismo frame en que se abría.
+- [#2296] - Corrige el valor del token `neutral-200`, que no coincidía con el del diseño.
+- [#2139] - Renombra los componentes CardTeaser a TeaserCard.
+- [#2514] - Alinea @ng-icons a 36.1.0 y tipa los nombres de ícono con `IconName`.
+
+#### Catálogo de Storybook y corpus
+
+- [#2398] - Verifica las referencias de la prosa de autodocs con el compilador.
+- [#2506] - Verifica por lint la ubicación y el nombre de las clases de componente.
+- [#2333] - Amplía el corpus de Onoff con colecciones reales y deduplica sus fixtures generadas.
+- [#2364] - Reemplaza los medios falsos del corpus por audio generado y placeholders de embed.
+- [#2387] - Extiende la restricción de imports del corpus a los agregadores.
+
+#### Tooling
+
+- [#2492] - Cubre `tools/` con los gates estáticos de type-check y lint.
+- [#2297] - Activa `consistent-type-imports` y adecua el catálogo de Storybook.
+- [#2031] - Adopta la regla `prefer-smaller-scope` de eslint-plugin-unicorn.
+- [#2464] - Corrige el timeout del spec de la restricción de imports del corpus.
+- [#2370] - Colapsa en las reviews los archivos autogenerados de Sanity.
+
+#### Build y dependencias
+
+- [#2450] - Acota satori a la línea 0.32, que rompía la extracción de rutas del build.
+- [#2460] - Congela satori y typescript en Dependabot.
+- [#2429] - Actualiza el grupo minor-and-patch de la aplicación (33 paquetes).
+- [#2461] - Actualiza el grupo minor-and-patch de la aplicación (37 paquetes).
+- [#2484] - Actualiza el grupo minor-and-patch de la aplicación (46 paquetes).
+- [#2479] - Actualiza @ng-icons/core de 35.1.0 a 36.0.0.
+- [#2476] - Actualiza vitest de 4.1.11 a 5.0.0 en el Studio.
+- [#2448] - Actualiza el grupo minor-and-patch del Studio (7 paquetes).
+- [#2504] - Actualiza el grupo minor-and-patch del Studio (10 paquetes).
+- [#2354] - Actualiza @sanity/vision a 5.31.2 en el Studio.
+- [#2355] - Actualiza sanity a 5.31.2 en el Studio.
+- [#2474] - Actualiza pnpm/action-setup a 6.1.0 en CI.
+
+#### Documentación
+
+- [#2237] - Versiona la imagen de cabecera de la documentación, que apuntaba al repositorio previo a la organización.
+- [#2105] - Agrega el badge de Appgentina.
 
 ## Versión 2.11.0 (2026-08-31)
 

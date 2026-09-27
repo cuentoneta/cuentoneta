@@ -1,11 +1,4 @@
-.content {
-	@apply my-0 min-h-screen max-w-screen-lg lg:m-auto;
-}
-
-.vertical-layout-spacing {
-	@apply mt-24 md:mt-36;
-}
-
-.horizontal-layout-spacing {
-	@apply mx-5 lg:mx-auto;
+/* Sin esto un salto a un ancla deja el destino bajo el encabezado fijo. */
+html {
+	scroll-padding-top: calc(var(--spacing-header-height) + 1rem);
 }

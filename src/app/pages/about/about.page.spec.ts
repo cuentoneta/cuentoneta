@@ -1,0 +1,55 @@
+import { render, screen } from '@testing-library/angular';
+import { restoreAllMocks, spyOn } from '@test-utils';
+
+import AboutPage from './about.page';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideContributorApiMock } from '../../providers/contributor.mock';
+import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
+import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
+
+describe('AboutPage', () => {
+	const setup = async () => {
+		return await render(AboutPage, {
+			providers: [provideHttpClient(), provideHttpClientTesting(), provideContributorApiMock()],
+		});
+	};
+
+	afterEach(() => restoreAllMocks());
+
+	it('should create', async () => {
+		const view = setup();
+		expect(view).toBeTruthy();
+	});
+
+	it('should set the canonical URL for /about via buildCanonicalUrl', async () => {
+		const canonicalSpy = spyOn(HeadMetadataDirective.prototype, 'setCanonicalUrl');
+
+		await setup();
+
+		expect(canonicalSpy).toHaveBeenCalledWith(buildCanonicalUrl('about'));
+	});
+
+	it('should keep the page out of the index without following its links', async () => {
+		const robotsSpy = spyOn(HeadMetadataDirective.prototype, 'setRobots');
+
+		await setup();
+
+		expect(robotsSpy).toHaveBeenCalledWith('noindex, nofollow');
+	});
+
+	// La página es la única superficie de runtime que enlaza al repositorio. Las URLs del repositorio
+	// previo a la organización resuelven por redirección, así que una regresión acá no se vería
+	// navegando: solo se nota el día que GitHub deje de redirigir.
+	it('no enlaza al repositorio previo a la organización', async () => {
+		await setup();
+
+		const destinos = screen
+			.getAllByRole('link')
+			.map((enlace) => enlace.getAttribute('href') ?? '')
+			.filter((destino) => destino.includes('github.com'));
+
+		expect(destinos.length).toBeGreaterThan(0);
+		expect(destinos.every((destino) => destino.startsWith('https://github.com/cuentoneta/cuentoneta'))).toBe(true);
+	});
+});

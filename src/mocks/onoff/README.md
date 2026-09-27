@@ -27,6 +27,8 @@ onoff/
 
 **Los agregadores no viven acá:** están un nivel arriba, en `src/mocks/`, y son lo que el resto del repo importa. Una regla de ESLint prohíbe importar una pieza puntual desde fuera de `src/mocks/**`. Por eso la tabla de assets de imagen (`../onoff-image-assets.mock.ts`, ver [Imágenes](#imágenes-el-puente-a-los-assets-locales)) también vive arriba: la consume un spec de `src/api/`.
 
+El corolario es que **un handle nombrado por identidad va de este lado**, y un agregador expone únicamente colecciones, derivados y selectores por capacidad. Si un handle por identidad se exportara desde arriba, quedaría alcanzable desde afuera por su nombre —una vía que la regla, que mira rutas, no ve—.
+
 ## Las tres capas
 
 ```
@@ -34,24 +36,25 @@ documentos (a mano)  →  (groq-js, query real)  →  raw (generado)  →  (ACL 
 ```
 
 - **Documentos** (`<slug>.<entidad>.document.ts`): lo que vive en el content lake. Es la única capa escrita a mano.
-- **Raw** (`<slug>.<entidad>.raw.mock.ts`): el resultado de evaluar la query GROQ real sobre los documentos, tipado contra los `*QueryResult`. Se **genera** con `pnpm corpus:generate`; no se edita a mano. Lo consumen los specs de repository y mapper.
+- **Raw** (`<slug>.<entidad>.raw.mock.ts`): el resultado de evaluar la query GROQ real sobre los documentos, tipado contra los `*QueryResult`. Se **genera** con `pnpm ops corpus:generate`; no se edita a mano. Lo consumen los specs de repository y mapper.
 - **Dominio** (`<slug>.<entidad>.mock.ts`): el agregado construido por su factory. Lo consume el frontend.
 
 Antes de esta capa de documentos el flujo corría al revés: el raw se escribía a mano y los documentos se derivaban invirtiendo a mano la proyección de la query. El sentido actual evita esa inversión manual: la query real, evaluada con `groq-js`, es la única fuente de verdad de qué shape produce.
 
-### El generador (`pnpm corpus:generate`)
+### El generador (`pnpm ops corpus:generate`)
 
-`pnpm corpus:generate` → `node --import tsx ./scripts/generate-raw-corpus/generate-raw-corpus.ts`. Por cada obra, cada colección, la página de inicio y el contenido rotativo, evalúa la query GROQ real (`literaryWorkBySlugQuery`, `collectionBySlugQuery`, `collectionsQuery` para el listado, `landingPageContentQuery` para la landing —que va con su semana como parámetro— y `rotatingContentQuery` para lo más leído) con `groq-js` sobre `onoffDatasetMock` — el dataset plano de todos los documentos del corpus — y escribe el resultado en su fixture `*.raw.mock.ts`.
+`pnpm ops corpus:generate` → `node --import tsx ./scripts/generate-raw-corpus/generate-raw-corpus.ts`. Por cada obra, cada colección, la página de inicio y el contenido rotativo, evalúa la query GROQ real (`literaryWorkBySlugQuery`, `collectionBySlugQuery`, `collectionsQuery` para el listado, `landingPageContentQuery` para la landing —que va con su semana como parámetro— y `rotatingContentQuery` para lo más leído) con `groq-js` sobre `onoffDatasetMock` — el dataset plano de todos los documentos del corpus — y escribe el resultado en su fixture `*.raw.mock.ts`.
 
-**Archivos generados (13):**
+**Archivos generados:**
 
-- Las 8 `literary-work/<slug>.literary-work.raw.mock.ts`.
-- Las 2 `collection/<slug>.collection.raw.mock.ts`.
+- Una `literary-work/<slug>.literary-work.raw.mock.ts` por obra.
+- Una `literary-work/<slug>.literary-work-teaser.raw.mock.ts` por obra: el resultado de `literaryWorkTeasers` acotada a esa obra con `$slugs`. Es la proyección con la que las colecciones embeben obras, así que la referencian en vez de repetirla.
+- Una `collection/<slug>.collection.raw.mock.ts` por colección.
 - `collection/collection-teasers.raw.mock.ts` (resultado de `collectionsQuery`, el listado).
 - `landing-page/landing-page.raw.mock.ts` (resultado de `landingPageContentQuery`).
 - `landing-page/rotating-content.raw.mock.ts` (resultado de `rotatingContentQuery`, lo más leído).
 
-Cada uno abre con un banner de dos líneas ("Este archivo lo escribe `pnpm corpus:generate`... No se edita a mano: cualquier cambio se pierde en la próxima corrida.") y está marcado `linguist-generated=true` en `.gitattributes`.
+Cada uno abre con un banner de dos líneas ("Este archivo lo escribe `pnpm ops corpus:generate`... No se edita a mano: cualquier cambio se pierde en la próxima corrida.") y está marcado `linguist-generated=true` en `.gitattributes`.
 
 **Qué impide que la generación mienta:** `src/mocks/onoff-documents.mock.spec.ts` vuelve a evaluar las mismas queries sobre los mismos documentos y compara **valores** (no bytes: el formato lo fija Prettier dentro del generador, así que un desvío de formato no es una desincronización, pero una diferencia de valor sí) contra las fixtures crudas commiteadas. Este spec corre dentro de `pnpm test` (gate `test`, ya required) — **no se agregó ningún gate de CI nuevo**.
 
@@ -95,14 +98,15 @@ Origen del contenido:
 - **Citas dentro del cuerpo:** `el-palacio-de-las-nueve-fronteras` transcribe un bando en su primera frontera, escrito como cita de Markdown. Es la construcción que el Portable Text original marcaba con alineación centrada y que el corpus no tenía: sin ella no hay dónde afirmar su tratamiento tipográfico. Sostiene el selector `onoffLiteraryWorksWithBlockquotes`, derivado por predicado sobre el `bodyHtml`.
 - **`epigraphs`:** cada obra que lleva uno lo declara como export nombrado (`<slugCamelCase>EpigraphMock`) y lo consume desde su propia sección, para que specs y stories puedan tomar un epígrafe concreto sin hand-authorear prosa. El conjunto de todos vive en `../onoff-literary-works.mock.ts` → `onoffLiteraryWorkEpigraphsMock`, **derivado** del corpus (no una lista en paralelo): quien necesita el shape `{ text, reference? }` (`AttributedText`) y no la obra que lo contiene lo toma de ahí.
 - **Fuente compartida del título + epígrafe:** el título de sección y los textos crudos del epígrafe (el Markdown de `text` y `reference`) viven en un módulo neutral `literary-work/<slug>.epigraph.ts` (solo strings, sin dependencias). Del mismo módulo tiran el mock de dominio (envolviendo los strings con `createSectionTitle` / `createAttributedText` + `markdownToSanitizedHtml`), el documento (que los transporta crudos) y, por consiguiente, la fixture raw generada, que hereda el mismo import gracias al emisor del generador (ver [Las tres capas](#las-tres-capas)). Así las tres capas comparten una única fuente literal y no pueden divergir ([#2016](https://github.com/cuentoneta/cuentoneta/issues/2016)).
-- **`mediaSources`:** dos obras traen multimedia, y la diferencia entre ellas es la que le importa a quien ofrece elegir formato. `geometria` cubre los cuatro tipos que el dominio modela más un `pdfLink`, que el schema admite y el ACL descarta — el caso real de tipo no mapeado; `las-escaleras` trae **un solo** medio, el contracaso donde no hay entre qué elegir. Los separan los selectores `onoffLiteraryWorksWithSingleMediaSource` y `onoffLiteraryWorksWithMultipleMediaSources`. Sus textos de descripción viven en el módulo neutral `media/<slug>.media.ts` (solo strings, misma convención que `<slug>.epigraph.ts`). El array crudo (`media/<slug>.media.raw.mock.ts`, export `geometriaRawMediaSources`) ya no se declara aparte: se **deriva** de la fixture generada de la cara de obra literaria (`geometriaRawLiteraryWork.mediaSources`), porque las dos proyecciones resuelven `audioUrl` igual y declararlas por separado las dejaría desincronizar sin aviso. Sostiene los selectores `onoffRawLiteraryWorksWithMediaSources`, `onoffLiteraryWorksWithMediaSources` y `onoffLiteraryWorkTeasersWithMediaSources`.
+- **`mediaSources`:** dos obras traen multimedia, y la diferencia entre ellas es la que le importa a quien ofrece elegir formato. `geometria` cubre los cuatro tipos que el dominio modela más un `pdfLink`, que el schema admite y el ACL descarta — el caso real de tipo no mapeado; `las-escaleras` trae **un solo** medio, el contracaso donde no hay entre qué elegir. Los separan los selectores `onoffLiteraryWorksWithSingleMediaSource` y `onoffLiteraryWorksWithMultipleMediaSources`. Sus textos de descripción viven en el módulo neutral `media/<slug>.media.ts` (solo strings, misma convención que `<slug>.epigraph.ts`). El array crudo (`media/<slug>.media.raw.mock.ts`, export `geometriaRawMediaSources`) ya no se declara aparte: se **deriva** de la fixture generada de la cara de obra literaria (`geometriaRawLiteraryWork.mediaSources`), porque las dos proyecciones resuelven `audioUrl` igual y declararlas por separado las dejaría desincronizar sin aviso. Sostiene los selectores `onoffRawLiteraryWorksWithMediaSources`, `onoffLiteraryWorksWithMediaSources` y `onoffLiteraryWorkTeasersWithOwnMediaSourcesMock`.
 - **`editorialNote`:** vive como Markdown plano en `literary-work/<slug>.editorial-note.md`, importado con `?raw`, la misma convención que `<slug>.md` para el cuerpo. `neron` es la **excepción deliberada**: no tiene `literary-work/<slug>.editorial-note.md`, su documento y su mock de dominio omiten el campo (`null`) — es el fixture que sostiene el selector `onoffLiteraryWorksWithoutEditorialNote` y ejercita, extremo a extremo, la rama de una obra sin nota.
 
 Archivos:
 
 - **`LiteraryWork` completa:** `literary-work/<slug>.literary-work.mock.ts`, export `<slugCamelCase>LiteraryWorkMock: LiteraryWork` (vía `createLiteraryWork`).
 - **Agregador:** `../onoff-literary-works.mock.ts` → `onoffLiteraryWorksMock: LiteraryWork[]`.
-- **Teasers derivados:** `../onoff-literary-work-teasers.mock.ts` (`toTeaser`) → `<slugCamelCase>LiteraryWorkTeaserMock` + `onoffLiteraryWorkTeasersMock`.
+- **Teasers derivados:** `literary-work/literary-work-teasers.mock.ts` (`toTeaser`) → `<slugCamelCase>LiteraryWorkTeaserMock`, uno por obra. Viven acá y no en el agregador por ser handles nombrados por identidad (ver [Cómo está organizado](#cómo-está-organizado)).
+- **Agregador de teasers:** `../onoff-literary-work-teasers.mock.ts` → `onoffLiteraryWorkTeasersMock`, sus variantes de navegación y los selectores por capacidad (`onoffLiteraryWorkTeasersWithExcerptMock`, los dos de multimedia).
 
 ## Corpus de dominio: `Author`
 
@@ -114,15 +118,49 @@ El autor embebido sí está anclado, aunque su raw sea a mano: las fixtures gene
 
 ## Corpus de dominio: `Collection`
 
-Corpus mínimo de dos colecciones de `LiteraryWork`, una por cada rama de `imagery`.
+Un elenco de colecciones de `LiteraryWork` curado para cubrir, entre todas, cada estado que un consumidor necesita mirar: las dos ramas de `imagery`, medios propios, colecciones con etiquetas y sin ellas, un título que no entra en una línea y una prosa con enlace propio. El reparto de etiquetas es parte de la curaduría: sostiene facetas de conteos distintos, etiquetas que conviven entre colecciones y otras que no, que es lo que ejercita el filtrado del catálogo. Un título con inicial acentuada es lo que distingue el orden con colación española del orden por punto de código, que es el que devuelve la query.
 
 - **Descripciones:** Markdown plano por colección — `collection/<slug>.collection.md`, importados con `?raw` y saneados con `markdownToSanitizedHtml`, misma convención que `<slug>.editorial-note.md` de `LiteraryWork`.
-- **Colecciones:** `../onoff-collections.mock.ts`, export `geometriasDelDesveloCollectionMock` (rama `representative`, con portada editorial propia) e `inventarioDeLasPasionesCollectionMock` (rama `sample`, sin portada propia) — ambas construidas vía `createCollection`.
-- **Obras:** cada colección se cura con las obras que su propia prosa nombra —`geometria`/`losPeldanos`/`lasEscaleras` y `elTratadoDeLosPlaceres`/`elOdio`/`lasDosAntorchas`—, importadas del agregador por nombre. No cortar el agregador por índice: las dos colecciones quedarían indistinguibles por contenido.
-- **Agregador:** `onoffCollectionsMock: Collection[]`.
-- **Selectores por capacidad:** `onoffCollectionsWithRepresentativeImageryMock`, `onoffCollectionsWithSampleImageryMock` y `onoffCollectionsWithMediaSourcesMock`, derivados por predicado sobre el agregador.
+- **Colecciones:** `collection/collections.mock.ts`, un export por colección —`geometriasDelDesveloCollectionMock` es la de la rama `representative`, con portada editorial propia; el resto resuelve `sample` con las portadas de sus obras—, todas construidas vía `createCollection`, junto a `toTeaser`. Viven acá por lo mismo que los teasers por obra: son handles nombrados por identidad.
+- **Obras:** cada colección se cura con las obras que su propia prosa nombra, tomadas por nombre de `literary-work/literary-work-teasers.mock.ts`. No cortar el agregador por índice: las colecciones quedarían indistinguibles por contenido. Una obra puede pertenecer a más de una colección —el dominio lo admite y el contenido real lo hace—, siempre que cada colección la tome por un ángulo de curaduría distinto y ningún par de colecciones repita el mismo trío: de eso depende que los abanicos de portadas se distingan entre sí.
+- **La cara de teaser de la prosa:** `toTeaser` **rehace** la descripción desde el Markdown con `markdownToLinklessSanitizedHtml`, en vez de copiar la que ya construyó la colección. Es lo que hace el ACL, que sanea el teaser sin enlaces y la vista completa con ellos; copiarla haría coincidir las dos caras por construcción y el corpus dejaría de tener con qué probar a quien las distingue.
+- **Agregador:** `../onoff-collections.mock.ts` → `onoffCollectionsMock: Collection[]`.
+- **Selectores por capacidad:** sobre las colecciones, `onoffCollectionsWith(Representative|Sample)ImageryMock`, `onoffCollectionsWithMediaSourcesMock`, `onoffCollections(Showing|Hiding)AuthorsMock`, `onoffCollectionsWith(out)?TagsMock`, `onoffCollectionsWith(Single|Multiple)TagsMock`, `onoffCollectionsWithLongTitlesMock`, `onoffCollectionsWithLinkedDescriptionMock` y `onoffCollectionsWithNonAsciiInitialMock`; sobre los teasers, el homónimo de cada uno. Todos derivados por predicado, y los de teaser proyectando el de colección homónimo para que la capacidad quede definida una sola vez.
 - **Teasers derivados:** `toTeaser` (vacía `literaryWorks`) → `onoffCollectionTeasersMock: CollectionTeaser[]`.
-- **Nada se escribe a mano:** las obras (`literaryWorks`), los tags y las tres portadas de la rama `sample` se **derivan** del canon existente — `onoffLiteraryWorkTeasersMock` y `onoff-tags.mock.ts` — en vez de hardcodearse.
+- **El único teaser que no proviene de un documento** es `singleLiteraryWorkCollectionTeaserMock`, que declara una sola obra. La tarjeta de colección distingue el singular del plural en su contador, y esa rama es alcanzable para cualquier dato que el modelo admita; el elenco, en cambio, quedó curado con colecciones que agrupan varias obras. El handle existe para que quien renderiza esa rama tenga con qué probarla.
+- **Nada se escribe a mano:** las obras (`literaryWorks`), los tags y las tres portadas de la rama `sample` se **derivan** del canon existente — `literary-work/literary-work-teasers.mock.ts` y `onoff-tags.mock.ts` — en vez de hardcodearse.
+
+### Qué no se repite en lo generado
+
+Una fixture generada **referencia** las piezas que el corpus ya declara en vez de volver a escribirlas: la prosa, las etiquetas, el autor y el teaser de cada obra. La sustitución la decide el emisor por **igualdad de valores**, así que aplica cuando la proyección coincide y no aplica cuando no.
+
+Del autor hay **tres caras crudas**, una por proyección, y las dos angostas leen sus valores de la completa para que no puedan divergir:
+
+| Handle                   | Qué agrega sobre los nueve campos comunes | Quién la devuelve                                     |
+| ------------------------ | ----------------------------------------- | ----------------------------------------------------- |
+| `rawOnoffAuthor`         | `biography` y `resources` poblado         | las dos queries de detalle de obra                    |
+| `rawOnoffAuthorTeaser`   | `resources` siempre vacío                 | `authorsQuery` y los autores destacados de la landing |
+| `rawOnoffEmbeddedAuthor` | nada                                      | colección, contenido rotativo y el listado de obras   |
+
+La obra embebida en una colección sale de la misma proyección que su teaser generado, así que la colección lo referencia. **La landing es la excepción**: proyecta la obra sin `excerpt`, de modo que lo que escribe no es el teaser y referenciarlo afirmaría que la query devuelve un campo que no devuelve.
+
+Que la sustitución siga ocurriendo lo verifica `../onoff-raw-corpus.spec.ts`. Es la señal que falta por diseño: cuando una proyección se aparta, el valor deja de coincidir y el literal vuelve a escribirse entero sin que falle nada.
+
+### Derivaciones: una fixture que sale de otra
+
+Varias queries proyectan un subconjunto de lo que otra devuelve. Donde eso pasa, la fixture no repite los campos compartidos: los produce con una función de `derive-raw.ts` y declara solo lo que la query **calcula** y ningún recorte puede reproducir.
+
+| Fixture                      | Deriva de                | Qué declara igual                                                    |
+| ---------------------------- | ------------------------ | -------------------------------------------------------------------- |
+| Teaser de obra               | su raw completo          | el extracto, que GROQ arma partiendo el cuerpo de la primera sección |
+| Listado de colecciones       | el raw de cada colección | el conteo de obras y el abanico de portadas                          |
+| Landing y contenido rotativo | el teaser de cada obra   | nada: la proyección es el teaser sin su extracto                     |
+
+El generador aplica una derivación **por igualdad de valor**, igual que una sustitución: computa lo que la función produce y lo compara contra lo que devolvió la query. Si coincide, emite la llamada con spread; si no, escribe el objeto entero. Esa comparación es lo que impide que la derivación afirme algo que la query no devuelve.
+
+De ahí que las funciones de `derive-raw.ts` **enumeren** los campos en vez de quitarlos por resto: enumerándolos, un campo nuevo en la proyección ancha no se cuela en la angosta, porque la firma deja de tipar.
+
+El orden de generación es el de esas dependencias: primero los raws completos de obra, después sus teasers, después las colecciones, su listado, y por último la landing y el contenido rotativo.
 
 ## Corpus raw: `Collection` (generado)
 
@@ -130,7 +168,7 @@ Corpus mínimo de dos colecciones de `LiteraryWork`, una por cada rama de `image
 
 ## Corpus raw: `LiteraryWork` (generado, #1981)
 
-Contraparte cruda del corpus de dominio `LiteraryWork`, tipada contra `NonNullable<LiteraryWorkBySlugQueryResult>`. Alimenta los tests de la capa de datos de `LiteraryWork` (mapper/repository/service). Cada `literary-work/<slug>.literary-work.raw.mock.ts` lo escribe `pnpm corpus:generate` evaluando `literaryWorkBySlugQuery` sobre `literary-work/<slug>.literary-work.document.ts` (ver [Las tres capas](#las-tres-capas)) — no se edita a mano.
+Contraparte cruda del corpus de dominio `LiteraryWork`, tipada contra `NonNullable<LiteraryWorkBySlugQueryResult>`. Alimenta los tests de la capa de datos de `LiteraryWork` (mapper/repository/service). Cada `literary-work/<slug>.literary-work.raw.mock.ts` lo escribe `pnpm ops corpus:generate` evaluando `literaryWorkBySlugQuery` sobre `literary-work/<slug>.literary-work.document.ts` (ver [Las tres capas](#las-tres-capas)) — no se edita a mano.
 
 - **Agregador:** `../onoff-raw-literary-works.mock.ts` → `onoffRawLiteraryWorksMock` (las 8, en el mismo orden que `onoffLiteraryWorksMock`).
 - **Selector por capacidad:** `onoffRawLiteraryWorksWithEpigraphs` (contraparte cruda de `onoffLiteraryWorksWithEpigraphs`), derivado por predicado — las obras crudas con epígrafes, para ejercitar el mapeo raw→dominio del epígrafe sin conocer un slug concreto.
@@ -184,11 +222,44 @@ Nadie escribe una referencia ni una ruta a mano: las dos caras salen de la misma
 - **Directorio:** `src/assets/img/mocks/stories/`
 - **Nombre:** `<slug>.png` (la misma cadena que el campo `slug` del mock)
 - **Path en el mock:** `assets/img/mocks/stories/<slug>.png` (sin `./` ni `/` inicial), declarado por la tabla
-- **Aspecto:** portrait 3:4 (referencia 118×164 del `CoverImageComponent`)
+- **Aspecto:** portrait 3:4 (referencia 118×164 del `CoverImage`)
 
 El resto de los assets del corpus vive junto a estas portadas, todos bajo `src/assets/img/mocks/`: `author/` (retrato), `collections/` (portadas editoriales), `media/` (el avatar del host de una grabación) y `banners/` (campañas, un archivo por viewport).
 
 **Las banderas son la excepción, y no son del corpus.** El set completo por código ISO vive en `public/flags/`, que la app publica en la raíz: es un recurso general, no una fixture, y ponerlo bajo `mocks/` lo habría etiquetado como lo que no es. Por eso su entrada en la tabla es la única cuya ruta no empieza con `assets/` — el prefijo es lo que distingue las dos raíces publicadas, y de eso depende que el spec sepa dónde buscar el archivo en disco.
+
+## Audio: el puente a los clips locales
+
+Los cuatro medios del corpus apuntaban a destinos deliberadamente falsos, y cada uno rompía distinto en el navegador. Los dos **reproductores nativos** —`audioRecording` y `spaceRecording`— ya no: suenan de verdad, contra clips cortos versionados junto al corpus. **La tabla `../onoff-audio-assets.mock.ts` (`onoffAudioAssets`) es lo que une las puntas**, con el mismo criterio que la de imágenes: una entrada por clip, y nadie escribe una ruta a mano.
+
+La diferencia con las imágenes está en cuántas caras tiene cada entrada. El ACL pasa la URL del audio **tal cual**, así que el documento y el corpus de dominio declaran el **mismo** valor —la ruta servida— y no dos distintos. La segunda cara, el `_ref`, existe solo donde Sanity modela un asset: la grabación de espacio, que dereferencia un `sanity.fileAsset`.
+
+```
+documento (url)      →  onoffAudioAssets.<clave>.path
+documento (audioFile) →  onoffAudioAssets.<clave>.ref
+dominio              →  onoffAudioAssets.<clave>.path
+```
+
+**Formato de la referencia:** `file-<slug>-<ext>`. A diferencia de la de imágenes conserva los guiones del slug: el `_ref` de un archivo no lo parsea nadie —`@sanity/image-url` no interviene y el dereferenciado va por igualdad contra el `_id` del asset—, así que no hay un parser que exija camelCase.
+
+`../onoff-audio-assets.mock.spec.ts` lo hace cumplir en cinco frentes: que la clave nombre a su propio clip, que cada entrada declare un archivo distinto, que el `_ref` se derive de esa misma ruta, que el archivo exista, y que **ninguna ruta de audio del corpus quede fuera de la tabla**. El recorrido saltea el `path` de un `sanity.fileAsset`: es la ubicación interna del archivo en el almacenamiento de Sanity, no algo que el navegador pida.
+
+**La de existencia es la única guarda contra perder los binarios**: la cobertura compara rutas contra la tabla y no contra el disco, así que sin ella un directorio de clips borrado o renombrado dejaría todos los gates en verde. El spec no mide el formato ni la duración de los clips: los clips son fijos, y eso se verificó una sola vez al versionarlos.
+
+### Convención de clips
+
+- **Directorio:** `src/assets/audio/mocks/`
+- **Nombre:** `<slug>.ogg`
+- **Path en el mock:** `assets/audio/mocks/<slug>.ogg` (sin `./` ni `/` inicial), declarado por la tabla
+- **Formato:** Vorbis mono, de a lo sumo veinte segundos
+
+**Son fragmentos, no lecturas completas.** Una obra entera son megabytes por archivo, y el corpus los cargaría en cada checkout para siempre. Lo que el catálogo necesita mostrar es que el reproductor funciona, y para eso alcanza con que suene.
+
+**Cómo se produjeron.** Cada clip es la lectura de un fragmento de la prosa propia de su obra, cortado en un límite de oración, sintetizada con una voz genérica en español del TTS de Windows —nunca la clonación de una voz real— y encodeada a Vorbis con ffmpeg. El fragmento excluye las oraciones entrecomilladas, que es como este corpus marca lo único ajeno que declara: las citas de los diálogos del film.
+
+**No hay generador en el repo.** Los clips son binarios versionados a mano, así que reemplazar uno o sumar otro es producirlo fuera del repo bajo la convención de arriba. Ningún gate la verifica: el formato y el techo de duración quedan a cargo de quien produzca el clip.
+
+**Los embeds de terceros son otra cosa.** `youTubeVideo` y `spotifyPodcastEpisode` conservan su URL y su identificador de plataforma: son la forma que producción tiene, y hay specs que la afirman. Lo que se sustituye es lo que **el catálogo monta** — `../../testing/storybook-embed-placeholders.ts` aporta un decorator que apaga la carga de la IFrame API de YouTube y pinta en su lugar un reproductor de utilería con CSS, y reapunta la URL del episodio a una página local dibujada igual. Subir el contenido a una cuenta real se evaluó y se descartó: un video que se cae, se bloquea por región o queda privado rompe el catálogo sin que ningún gate lo note.
 
 ## Obras
 
