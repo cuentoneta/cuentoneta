@@ -1,6 +1,10 @@
 import { onoffCollectionsMock, onoffCollectionTeasersMock } from '@mocks/onoff-collections.mock';
 import { restoreAllMocks, spyOn } from '@test-utils';
-import { CollectionNotFoundError, MalformedCollectionCatalogError, MalformedCollectionError } from './collection.errors';
+import {
+	CollectionNotFoundError,
+	MalformedCollectionCatalogError,
+	MalformedCollectionError,
+} from './collection.errors';
 import type { CollectionRepository, CollectionTeaserListing } from './collection.repository';
 import { InMemoryCollectionRepository } from './collection.repository.mock';
 import { getCollectionBySlug, getCollections } from './collection.service';

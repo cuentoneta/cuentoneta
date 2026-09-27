@@ -17,7 +17,10 @@ export class InMemoryCollectionRepository implements CollectionRepository {
 
 	// Carga dominio ya construido, así que no tiene descartes que reportar.
 	public async fetchAll(): Promise<CollectionTeaserListing> {
-		const collections: CollectionTeaser[] = this.collections.map((collection) => ({ ...collection, literaryWorks: [] }));
+		const collections: CollectionTeaser[] = this.collections.map((collection) => ({
+			...collection,
+			literaryWorks: [],
+		}));
 		return { collections, malformed: [] };
 	}
 }
