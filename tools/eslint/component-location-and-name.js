@@ -90,37 +90,33 @@ function keyName(key) {
 	return key.type === 'Literal' && typeof key.value === 'string' ? key.value : undefined;
 }
 
+/** @param {string} className */
+const withoutComponentSuffix = (className) =>
+	className.endsWith(COMPONENT_SUFFIX) ? className.slice(0, -COMPONENT_SUFFIX.length) : className;
+
 /**
  * El archivo que le corresponde a una clase, para sugerirlo en el reporte.
  *
- * @param {string} className
+ * @param {string} className sin el sufijo `Component`
  * @param {boolean} inPages
  */
 function expectedFileFor(className, inPages) {
-	const base = className.endsWith(COMPONENT_SUFFIX) ? className.slice(0, -COMPONENT_SUFFIX.length) : className;
-	if (inPages && base.endsWith(PAGE_SUFFIX)) {
-		return `${toKebab(base.slice(0, -PAGE_SUFFIX.length))}${PAGE_EXTENSION}.ts`;
+	if (inPages && className.endsWith(PAGE_SUFFIX)) {
+		return `${toKebab(className.slice(0, -PAGE_SUFFIX.length))}${PAGE_EXTENSION}.ts`;
 	}
-	return `${toKebab(base)}.ts`;
+	return `${toKebab(className)}.ts`;
 }
 
 /**
- * El primer problema del nombre de la clase respecto de su archivo, o `null` si coincide.
+ * La clase que le corresponde a un archivo, o `null` si el archivo no tiene la forma `x.ts` ni `x.page.ts`
+ * (p. ej. `x.component.ts`): ahí ninguna clase coincide y lo que se corrige es el archivo.
  *
- * @param {string} className
  * @param {string} stem el nombre del archivo sin `.ts`
- * @param {boolean} inPages
  */
-function nameProblem(className, stem, inPages) {
+function expectedClassFor(stem) {
 	const isPageFile = stem.endsWith(PAGE_EXTENSION);
-	if (isPageFile && !inPages) {
-		return 'pageOutsidePages';
-	}
-	if (!isPageFile && className.endsWith(PAGE_SUFFIX)) {
-		return 'pageSuffixReserved';
-	}
-	const expected = isPageFile ? toPascal(stem.slice(0, -PAGE_EXTENSION.length)) + PAGE_SUFFIX : toPascal(stem);
-	return className === expected ? null : 'nameMismatch';
+	const base = isPageFile ? stem.slice(0, -PAGE_EXTENSION.length) : stem;
+	return base.includes('.') ? null : toPascal(base) + (isPageFile ? PAGE_SUFFIX : '');
 }
 
 /**
@@ -148,10 +144,26 @@ function checkClassName(context, target, name) {
  */
 function checkName(context, target, name, path, stem) {
 	const inPages = path.startsWith(PAGES_DIR);
-	const problem = nameProblem(name, stem, inPages);
-	if (problem) {
-		const expectedFile = expectedFileFor(name, inPages);
-		context.report({ node: target, messageId: problem, data: { name, expectedFile } });
+	const isPageFile = stem.endsWith(PAGE_EXTENSION);
+	// El sufijo `Component` ya lo reporta `componentSuffix`: el nombre se compara sin él para no repetirlo.
+	const className = withoutComponentSuffix(name);
+	const expectedFile = expectedFileFor(className, inPages);
+	const report = (/** @type {string} */ messageId, /** @type {Record<string, string>} */ data = {}) =>
+		context.report({ node: target, messageId, data: { name, expectedFile, ...data } });
+
+	if (isPageFile && !inPages) {
+		report('pageOutsidePages');
+		return;
+	}
+	if (!isPageFile && className.endsWith(PAGE_SUFFIX)) {
+		report('pageSuffixReserved');
+		return;
+	}
+	const expectedClass = expectedClassFor(stem);
+	if (!expectedClass) {
+		report('invalidFileName', { file: `${stem}.ts` });
+	} else if (className !== expectedClass) {
+		report('nameMismatch', { expectedClass });
 	}
 }
 
@@ -214,8 +226,10 @@ export default {
 				'`{{name}}` lleva el sufijo `Component`: la clase se nombra sin él (`{{expected}}`) — ver angular-components.md#ubicación-y-nombre-de-componentes.',
 			misplaced:
 				'Un `@Component` vive en `src/app/components/` o en `src/app/pages/`; `{{path}}` no está en ninguna de las dos — ver angular-components.md#ubicación-y-nombre-de-componentes.',
+			invalidFileName:
+				'`{{file}}` no tiene la forma `x.ts` ni `x.page.ts`: para `{{name}}` se espera `{{expectedFile}}` — ver angular-components.md#ubicación-y-nombre-de-componentes.',
 			nameMismatch:
-				'`{{name}}` no coincide con el nombre de su archivo: se espera `{{expectedFile}}` — ver angular-components.md#ubicación-y-nombre-de-componentes.',
+				'`{{name}}` no coincide con el nombre de su archivo: se espera la clase `{{expectedClass}}` o el archivo `{{expectedFile}}` — ver angular-components.md#ubicación-y-nombre-de-componentes.',
 			pageOutsidePages:
 				'Un `.page.ts` es una página ruteada y vive en `src/app/pages/` — ver angular-components.md#ubicación-y-nombre-de-componentes.',
 			pageSuffixReserved:

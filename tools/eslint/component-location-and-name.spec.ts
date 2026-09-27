@@ -53,19 +53,35 @@ ruleTester.run('component-location-and-name', rule, {
 			filename: 'src/app/components/button/button.component.ts',
 			errors: [
 				{ messageId: 'componentSuffix', data: { name: 'ButtonComponent', expected: 'Button' } },
-				{ messageId: 'nameMismatch', data: { name: 'ButtonComponent', expectedFile: 'button.ts' } },
+				{
+					messageId: 'invalidFileName',
+					data: { name: 'ButtonComponent', file: 'button.component.ts', expectedFile: 'button.ts' },
+				},
 			],
 		},
+		// El sufijo ya lo reporta `componentSuffix`: sin él, la clase coincide con el archivo.
 		{
 			code: component('ButtonComponent'),
 			filename: 'src/app/components/button/button.ts',
-			errors: [{ messageId: 'componentSuffix' }, { messageId: 'nameMismatch' }],
+			errors: [{ messageId: 'componentSuffix', data: { name: 'ButtonComponent', expected: 'Button' } }],
 		},
 		// Un stem con `.component` nunca coincide, aunque la clase ya no lleve el sufijo.
 		{
 			code: component('Button'),
 			filename: 'src/app/components/button/button.component.ts',
-			errors: [{ messageId: 'nameMismatch', data: { name: 'Button', expectedFile: 'button.ts' } }],
+			errors: [
+				{
+					messageId: 'invalidFileName',
+					data: { name: 'Button', file: 'button.component.ts', expectedFile: 'button.ts' },
+				},
+			],
+		},
+		{
+			code: component('Buton'),
+			filename: 'src/app/components/button/button.ts',
+			errors: [
+				{ messageId: 'nameMismatch', data: { name: 'Buton', expectedClass: 'Button', expectedFile: 'buton.ts' } },
+			],
 		},
 		{
 			code: component('Tooltip'),
@@ -98,13 +114,15 @@ ruleTester.run('component-location-and-name', rule, {
 		{
 			code: page('About'),
 			filename: 'src/app/pages/about/about.page.ts',
-			errors: [{ messageId: 'nameMismatch', data: { name: 'About', expectedFile: 'about.ts' } }],
+			errors: [
+				{ messageId: 'nameMismatch', data: { name: 'About', expectedClass: 'AboutPage', expectedFile: 'about.ts' } },
+			],
 		},
 		// Una metadata que no es un objeto literal no saca a la clase de los chequeos de sufijo, ubicación y nombre.
 		{
 			code: '@Component(config) export class TagComponent {}',
 			filename: 'src/app/components/tag/tag.ts',
-			errors: [{ messageId: 'componentSuffix' }, { messageId: 'nameMismatch' }],
+			errors: [{ messageId: 'componentSuffix' }],
 		},
 		{
 			code: '@Component(config) export class Foo {}',
