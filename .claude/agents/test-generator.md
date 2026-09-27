@@ -33,7 +33,7 @@ Es la **única** referencia que cargás. No asumas convenciones del starter ni d
 
 1. **Identificar el target** — qué archivos necesitan tests.
 2. **Analizar la fuente** — leé el componente/service para entender `input()`/`output()`, dependencias inyectadas y comportamiento observable.
-3. **Mirar tests existentes** — buscá un spec cercano (p. ej. `src/app/components/literary-work-teaser-card/literary-work-teaser-card.component.spec.ts` para un componente, o `src/api/modules/sitemap/sitemap.service.spec.ts` para el backend) y seguí ese patrón.
+3. **Mirar tests existentes** — buscá un spec cercano (p. ej. `src/app/components/literary-work-teaser-card/literary-work-teaser-card.spec.ts` para un componente, o `src/api/modules/sitemap/sitemap.service.spec.ts` para el backend) y seguí ese patrón.
 4. **Generar tests** — escribilos siguiendo las reglas de abajo.
 5. **Verificar** — `pnpm test` debe compilar y pasar.
 
@@ -82,7 +82,7 @@ afterEach(() => useRealTimers());
 
 ### IntersectionObserver
 
-`happy-dom` no lo implementa. `src/test-setup.ts` instala un stub global. Para componentes que lo usan (p. ej. `TagsListComponent` / `TagsOverflowDirective`), en `beforeEach` llamá `installIntersectionObserverStub()` y simulá overflow con `markOutsideViewport(...)` / `markInsideViewport(...)` (helpers de `src/testing/intersection-observer.stub.ts`).
+`happy-dom` no lo implementa. `src/test-setup.ts` instala un stub global. Para componentes que lo usan (p. ej. `TagsList` / `TagsOverflowDirective`), en `beforeEach` llamá `installIntersectionObserverStub()` y simulá overflow con `markOutsideViewport(...)` / `markInsideViewport(...)` (helpers de `src/testing/intersection-observer.stub.ts`).
 
 ### Prioridad de queries
 
@@ -167,7 +167,8 @@ Mantené las stories sincronizadas cuando cambien inputs, estados visuales o la 
 
 ## Convención de nombres
 
-- `<component-name>.component.spec.ts`
+- `<component-name>.spec.ts` (componentes de `src/app/components/`, sin sufijo `Component` en el nombre de archivo ni en la clase — ver [`angular-components.md`](../references/angular-components.md#ubicación-y-nombre-de-componentes))
+- `<page-name>.page.spec.ts` (páginas ruteadas de `src/app/pages/`)
 - `<service-name>.service.spec.ts` / `<repository-name>.repository.spec.ts` (junto al módulo en `src/api/modules/<dominio>/`)
 - `<component-name>.stories.ts`
 

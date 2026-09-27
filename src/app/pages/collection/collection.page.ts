@@ -15,13 +15,13 @@ import { CollectionMetaTagsDirective } from './collection-meta-tags.directive';
 import { CollectionStructuredDataDirective } from './collection-structured-data.directive';
 
 // Components
-import { CollectionInfoPanelComponent } from '@components/collection-info-panel/collection-info-panel.component';
-import { DividerComponent } from '@components/divider/divider.component';
-import { DrawerComponent } from '@components/drawer/drawer.component';
-import { LiteraryWorkTeaserCardComponent } from '@components/literary-work-teaser-card/literary-work-teaser-card.component';
-import { NavigableCollectionTeaserComponent } from '@components/navigable-collection-teaser/navigable-collection-teaser.component';
-import { NavigableCollectionTeaserSkeletonComponent } from '@components/navigable-collection-teaser/navigable-collection-teaser-skeleton.component';
-import { SkeletonComponent } from '@components/skeleton/skeleton.component';
+import { CollectionInfoPanel } from '@components/collection-info-panel/collection-info-panel';
+import { Divider } from '@components/divider/divider';
+import { Drawer } from '@components/drawer/drawer';
+import { LiteraryWorkTeaserCard } from '@components/literary-work-teaser-card/literary-work-teaser-card';
+import { NavigableCollectionTeaser } from '@components/navigable-collection-teaser/navigable-collection-teaser';
+import { NavigableCollectionTeaserSkeleton } from '@components/navigable-collection-teaser/navigable-collection-teaser-skeleton';
+import { Skeleton } from '@components/skeleton/skeleton';
 
 @Component({
 	selector: 'cuentoneta-collection',
@@ -29,14 +29,14 @@ import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 	providers: [{ provide: COLLECTION_HOST, useExisting: forwardRef(() => CollectionPage) }],
 	hostDirectives: [CollectionMetaTagsDirective, CollectionStructuredDataDirective],
 	imports: [
-		CollectionInfoPanelComponent,
-		DrawerComponent,
+		CollectionInfoPanel,
+		Drawer,
 		NgTemplateOutlet,
-		DividerComponent,
-		LiteraryWorkTeaserCardComponent,
-		NavigableCollectionTeaserComponent,
-		NavigableCollectionTeaserSkeletonComponent,
-		SkeletonComponent,
+		Divider,
+		LiteraryWorkTeaserCard,
+		NavigableCollectionTeaser,
+		NavigableCollectionTeaserSkeleton,
+		Skeleton,
 	],
 })
 export default class CollectionPage implements CollectionHost {
@@ -94,7 +94,7 @@ export default class CollectionPage implements CollectionHost {
 	// Con el autor a la vista, al extracto le queda una línea menos.
 	protected readonly excerptLines = computed(() => (this.collection()?.config.showAuthors ? 3 : 4));
 
-	protected openDescriptionDrawer(drawer: DrawerComponent): void {
+	protected openDescriptionDrawer(drawer: Drawer): void {
 		this.isDescriptionDrawerOpen.set(true);
 		drawer.open();
 	}

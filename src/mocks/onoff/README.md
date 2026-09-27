@@ -222,7 +222,7 @@ Nadie escribe una referencia ni una ruta a mano: las dos caras salen de la misma
 - **Directorio:** `src/assets/img/mocks/stories/`
 - **Nombre:** `<slug>.png` (la misma cadena que el campo `slug` del mock)
 - **Path en el mock:** `assets/img/mocks/stories/<slug>.png` (sin `./` ni `/` inicial), declarado por la tabla
-- **Aspecto:** portrait 3:4 (referencia 118×164 del `CoverImageComponent`)
+- **Aspecto:** portrait 3:4 (referencia 118×164 del `CoverImage`)
 
 El resto de los assets del corpus vive junto a estas portadas, todos bajo `src/assets/img/mocks/`: `author/` (retrato), `collections/` (portadas editoriales), `media/` (el avatar del host de una grabación) y `banners/` (campañas, un archivo por viewport).
 

@@ -2,17 +2,17 @@ import { Component, inject } from '@angular/core';
 import { render, screen } from '@testing-library/angular';
 
 import { TagsOverflowDirective } from './tags-overflow.directive';
-import { TagComponent } from '../tag/tag.component';
+import { Tag } from '../tag/tag';
 import {
 	installIntersectionObserverStub,
 	markInsideViewport,
 	markOutsideViewport,
 } from '@testing/intersection-observer.stub';
 
-// Host de prueba que usa la directiva como hostDirective y proyecta tags, tal como TagsListComponent.
+// Host de prueba que usa la directiva como hostDirective y proyecta tags, tal como TagsList.
 @Component({
 	selector: 'cuentoneta-test-overflow-host',
-	imports: [TagComponent],
+	imports: [Tag],
 	hostDirectives: [{ directive: TagsOverflowDirective, inputs: ['maxVisible'] }],
 	template: `
 		<ng-content />
@@ -34,7 +34,7 @@ const renderHost = (labels: string[], maxVisible?: number) =>
 			}
 		</cuentoneta-test-overflow-host>`,
 		{
-			imports: [TestOverflowHostComponent, TagComponent],
+			imports: [TestOverflowHostComponent, Tag],
 			componentProperties: { labels, maxVisible },
 		},
 	);

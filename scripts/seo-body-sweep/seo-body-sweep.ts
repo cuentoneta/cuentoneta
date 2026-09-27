@@ -1,11 +1,11 @@
 /**
- * Barrido de cuerpos: recorre TODAS las URLs del sitemap afirmando un solo invariante —que la página
- * sirve un `<main>` con contenido— y reporta las que no.
+ * Barrido de cuerpos: recorre TODAS las URLs del sitemap afirmando que la página sirve su contenido
+ * —`<main>` con texto, sin skeleton de carga y sin su aviso de error— y reporta las que no.
  *
  * Es el complemento de la muestra aleatoria del smoke, no su reemplazo. El smoke afirma el set
- * completo de invariantes sobre pocas URLs y falla; este afirma uno solo sobre todas y reporta. La
- * muestra descubre problemas nuevos; el barrido garantiza que un defecto extendido no dependa del
- * sorteo para aparecer.
+ * completo de invariantes sobre pocas URLs y falla; este afirma el subconjunto que no depende del tipo
+ * de página sobre todas y reporta. La muestra descubre problemas nuevos; el barrido garantiza que un
+ * defecto extendido no dependa del sorteo para aparecer.
  *
  * Acá vive la orquestación y nada más: qué significa cada respuesta, qué se reintenta y qué se
  * escribe lo deciden `seo-body-sweep.helpers.ts` y `seo-body-sweep.report.ts`, que se ejercitan sin red.
@@ -34,7 +34,7 @@ import {
 import { findTrackingIssue, gh } from '../tracking-issue';
 import type { OpsTask } from '../ops/registry';
 
-const TRACKING_TITLE = 'Páginas del sitemap que sirven un cuerpo vacío';
+const TRACKING_TITLE = 'Páginas del sitemap que no sirven su contenido';
 // Identificable a propósito: un barrido de ~1000 requests contra el propio origen tiene que poder
 // reconocerse en los logs de acceso sin confundirse con un crawler ajeno.
 const USER_AGENT = 'cuentoneta-seo-body-sweep';

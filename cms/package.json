@@ -22,18 +22,18 @@
 		"sanity"
 	],
 	"dependencies": {
-		"@sanity/cli": "^8.5.0",
+		"@sanity/cli": "^8.12.0",
 		"@sanity/export": "^6.2.1",
-		"@sanity/icons": "^5.2.1",
+		"@sanity/icons": "^5.2.2",
 		"@sanity/import": "^6.0.4",
 		"@sanity/ui": "^3.5.2",
 		"@sanity/vision": "^5.31.2",
 		"date-fns": "^4.4.0",
 		"prop-types": "^15.8.1",
-		"react": "^19.2.8",
-		"react-dom": "^19.2.8",
+		"react": "^19.3.0",
+		"react-dom": "^19.3.0",
 		"react-icons": "^5.7.0",
-		"react-is": "^19.2.8",
+		"react-is": "^19.3.0",
 		"sanity": "^5.31.2",
 		"sanity-plugin-bulk-actions-table": "^1.0.4",
 		"sanity-plugin-computed-field": "^2.0.2",
@@ -42,13 +42,13 @@
 		"styled-components": "^6.5.3"
 	},
 	"devDependencies": {
-		"@types/node": "^24.13.3",
-		"@types/react": "^19.2.18",
-		"@types/react-dom": "^19.2.5",
+		"@types/node": "^24.13.6",
+		"@types/react": "^19.3.0",
+		"@types/react-dom": "^19.3.0",
 		"groq-js": "^2.0.0",
-		"tsx": "^4.23.12",
+		"tsx": "^4.23.13",
 		"typescript": "6.0.3",
-		"vitest": "^5.0.0"
+		"vitest": "^5.0.1"
 	},
 	"pnpm": {
 		"overrides": {

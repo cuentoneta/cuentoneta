@@ -5,7 +5,7 @@ import { type Thing, type WithContext } from 'schema-dts';
  * Gestiona los bloques `<script type="application/ld+json">` del `<head>`.
  *
  * Inserta los bloques durante el SSR (usa `DOCUMENT`, no `window`) y es idempotente por `id`:
- * el app-shell renderiza `AppComponent` dos veces, así que reutilizar el mismo `<script>` por
+ * el app-shell renderiza `App` dos veces, así que reutilizar el mismo `<script>` por
  * `data-schema-id` evita duplicados tanto en SSR como tras la hidratación.
  */
 @Service()

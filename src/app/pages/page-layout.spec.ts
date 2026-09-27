@@ -7,7 +7,7 @@ import { routedPagePaths, sourceFileForRoute, templateSourcesFor } from './page-
 // Guardrail estructural de la convención de layout — ver angular-components.md, "Layout del shell".
 // Descubre las páginas desde las rutas y afirma sobre su fuente, sin registro ni imports de componentes.
 
-const SHELL_FILE = 'src/app/app.component.ts';
+const SHELL_FILE = 'src/app/app.ts';
 // Las dos carpetas: un auxiliar bajo `pages/` que no sea página ruteada no lo ve el recorrido por rutas.
 const SWEPT_DIRS = ['src/app/components', 'src/app/pages'];
 

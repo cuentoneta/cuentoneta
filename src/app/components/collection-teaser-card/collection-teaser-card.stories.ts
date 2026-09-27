@@ -2,11 +2,19 @@ import type { Meta, StoryObj } from '@storybook/angular-vite';
 import { moduleMetadata } from '@storybook/angular-vite';
 
 import { CollectionTeaserCard } from './collection-teaser-card';
-import { CollectionTeaserCardSkeletonComponent } from './collection-teaser-card-skeleton';
+import { CollectionTeaserCardSkeleton } from './collection-teaser-card-skeleton';
 import {
 	onoffCollectionTeasersWithRepresentativeImageryMock,
 	onoffCollectionTeasersWithSampleImageryMock,
 } from '@mocks/onoff-collections.mock';
+import { collectionTeaserCardDocs } from './collection-teaser-card.docs';
+import { collectionCoverDocs } from '@components/collection-cover/collection-cover.docs';
+import { collectionTeasersDeckDocs } from '@components/collection-teasers-deck/collection-teasers-deck.docs';
+import { collectionsPageDocs } from '../../pages/collections/collections.page.docs';
+import { docsMention, docsRef } from '@testing/storybook-docs';
+import type { Collection } from '../../../sanity/types';
+
+export type DocsSymbols = [Collection];
 
 const [representativeTeaser] = onoffCollectionTeasersWithRepresentativeImageryMock;
 const [sampleTeaser] = onoffCollectionTeasersWithSampleImageryMock;
@@ -16,7 +24,7 @@ const meta: Meta<CollectionTeaserCard> = {
 	title: 'Componentes V3/CollectionTeaserCard',
 	decorators: [
 		moduleMetadata({
-			imports: [CollectionTeaserCardSkeletonComponent],
+			imports: [CollectionTeaserCardSkeleton],
 		}),
 	],
 	parameters: {
@@ -25,7 +33,7 @@ const meta: Meta<CollectionTeaserCard> = {
 				sourceState: 'shown',
 			},
 			description: {
-				component: `<div><p>El <strong>CollectionTeaserCard</strong> es la tarjeta de una colección para el Design System v3, tipada contra el modelo de dominio <strong>Collection</strong>: portada, título, descripción y footer con tag y contador de obras. La portada la resuelve <a href="./?path=/docs/componentes-v3-collectioncover--docs" target="_top"><strong>CollectionCover</strong></a> a partir del objeto de valor <strong>imagery</strong>, en sus dos formas; la tarjeta solo aporta el marco gris que la recorta y la centra.</p><p>La descripción llega del backend como HTML ya saneado y se pinta con <code>[innerHTML]</code>, porque el pipeline emite su propio <code>&lt;p&gt;</code>. Su skeleton vive en el mismo directorio y no depende del modelo: lo dibujan <a href="./?path=/docs/componentes-v3-collectionteasersdeck--docs" target="_top"><strong>CollectionTeasersDeck</strong></a> y <a href="./?path=/docs/páginas-collectionspage--docs" target="_top"><strong>CollectionsPage</strong></a> mientras resuelven sus datos.</p></div>`,
+				component: `<div><p>El ${docsMention(collectionTeaserCardDocs)} es la tarjeta de una colección para el Design System v3, tipada contra el modelo de dominio <strong>Collection</strong>: portada, título, descripción y footer con tag y contador de obras. La portada la resuelve ${docsRef(collectionCoverDocs)} a partir del objeto de valor <strong>imagery</strong>, en sus dos formas; la tarjeta solo aporta el marco gris que la recorta y la centra.</p><p>La descripción llega del backend como HTML ya saneado y se pinta con <code>[innerHTML]</code>, porque el pipeline emite su propio <code>&lt;p&gt;</code>. Su skeleton vive en el mismo directorio y no depende del modelo: lo dibujan ${docsRef(collectionTeasersDeckDocs)} y ${docsRef(collectionsPageDocs)} mientras resuelven sus datos.</p></div>`,
 			},
 		},
 	},

@@ -3,7 +3,8 @@
  *
  * El runner le entrega respuestas ya leídas (`{ status, html }`) y recibe de vuelta el veredicto por
  * página y el de la corrida. Esa frontera es lo que permite fijar en un spec qué se reintenta, qué
- * cuenta como cuerpo vacío y qué código de salida transporta cada desenlace, sin levantar un servidor.
+ * cuenta como contenido no servido y qué código de salida transporta cada desenlace, sin levantar un
+ * servidor.
  */
 import { collectEmptyBodyViolations } from '../../e2e/_utils/seo-invariants';
 import type { SeoInvariantViolation } from '@testing/seo-invariant-violation';
@@ -33,7 +34,7 @@ export interface FetchedPage {
  * Son dos trabajos distintos: la suite afirma sobre fixtures conocidos, donde 120 caracteres separan
  * bien una página sana de un skeleton; el barrido afirma sobre **todas** las páginas del sitio,
  * incluidas las legítimamente brevísimas. El corpus tiene microcuentos cuyo `<main>` completo —título,
- * tiempo de lectura y cuerpo— ronda los 99 caracteres, y acusarlos de servir un cuerpo vacío sería
+ * tiempo de lectura y cuerpo— ronda los 99 caracteres, y acusarlos de no servir su contenido sería
  * cambiar un punto ciego por ruido.
  *
  * 40 deja margen de sobra a los dos lados: la falla que motivó el barrido servía un `<main>` de 0
@@ -176,9 +177,9 @@ export const EXIT_CODES = Object.freeze({
 export type ExitCode = (typeof EXIT_CODES)[keyof typeof EXIT_CODES];
 
 /**
- * Solo una página vacía es un hallazgo. Una no medida no lo es: no entra al issue de seguimiento, así
- * que reportarla como hallazgo anunciaría un seguimiento que no se escribió, y un 5xx suelto sobre
- * cientos de URLs dejaría al job avisando casi todas las semanas hasta volverse ruido.
+ * Solo una página sin contenido es un hallazgo. Una no medida no lo es: no entra al issue de
+ * seguimiento, así que reportarla como hallazgo anunciaría un seguimiento que no se escribió, y un 5xx
+ * suelto sobre cientos de URLs dejaría al job avisando casi todas las semanas hasta volverse ruido.
  *
  * No haber medido NADA sí es fallo de la herramienta, tanto si no quedó ningún resultado como si
  * ninguno pudo medirse —el origen entero caído—. Decir "barrido limpio" ahí sería el mismo punto

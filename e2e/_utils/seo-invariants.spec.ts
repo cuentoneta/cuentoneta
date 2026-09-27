@@ -171,6 +171,18 @@ describe('collectEmptyBodyViolations', () => {
 		).toEqual(['primary-content', 'no-skeleton']);
 	});
 
+	// La forma congelada del defecto que el barrido persigue en el sitemap: la página sirve su estado de
+	// error con 200, así que el `<main>` tiene texto y pasa el umbral de contenido. Solo el marker lo delata.
+	it('reporta el estado de error cuando main sirve su aviso en lugar del contenido', () => {
+		const html = `<main><h1>Obras</h1><p>${primaryText}</p><p data-testid="catalog-error">No pudimos cargar las obras.</p></main>`;
+		expect(collectEmptyBodyViolations(html).map((violation) => violation.rule)).toEqual(['no-error-state']);
+	});
+
+	it('ignora un marker de error fuera de main', () => {
+		const html = `<header data-testid="chrome-error"></header><main><p>${primaryText}</p></main>`;
+		expect(collectEmptyBodyViolations(html)).toEqual([]);
+	});
+
 	it('respeta un umbral explícito', () => {
 		expect(collectEmptyBodyViolations('<main><p>corto</p></main>', 3)).toEqual([]);
 		expect(collectEmptyBodyViolations('<main><p>corto</p></main>', 500)).toHaveLength(1);

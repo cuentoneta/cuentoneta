@@ -11,7 +11,7 @@ import {
 	signal,
 } from '@angular/core';
 
-import { TagComponent } from '../tag/tag.component';
+import { Tag } from '../tag/tag';
 
 // Ratio de intersección a partir del cual se considera que un tag entra completo (tolerancia sub-pixel).
 const FULLY_VISIBLE_RATIO = 0.99;
@@ -35,7 +35,7 @@ export class TagsOverflowDirective {
 	private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
 	private readonly renderer = inject(Renderer2);
 
-	private readonly items = contentChildren(TagComponent, { read: ElementRef });
+	private readonly items = contentChildren(Tag, { read: ElementRef });
 
 	// Tags que NO entran completos en el contenedor (según el observer) y espacio reservado para el contador.
 	private readonly overflowing = signal<ReadonlySet<Element>>(new Set());

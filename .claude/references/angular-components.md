@@ -24,12 +24,12 @@ import { RouterLink } from '@angular/router';
 
 import { AuthorTeaser } from '@models/author.model';
 import { Tag } from '@models/tag.model';
-import { ImageProfileComponent } from '../image-profile/image-profile.component';
-import { TagsListComponent } from '../tags-list/tags-list.component';
+import { ImageProfile } from '../image-profile/image-profile';
+import { TagsList } from '../tags-list/tags-list';
 
 @Component({
 	selector: 'cuentoneta-author-teaser-card',
-	imports: [NgOptimizedImage, RouterLink, ImageProfileComponent, TagsListComponent],
+	imports: [NgOptimizedImage, RouterLink, ImageProfile, TagsList],
 	template: `
 		<article class="relative flex items-start gap-4" data-testid="author">
 			<!-- ... -->
@@ -39,13 +39,52 @@ import { TagsListComponent } from '../tags-list/tags-list.component';
 		class: 'block',
 	},
 })
-export class AuthorTeaserCardComponent {
+export class AuthorTeaserCard {
 	// Inputs
 	public readonly author = input.required<AuthorTeaser>();
 	public readonly tags = input<Tag[]>([]);
 	public readonly storyCount = input<number>();
 }
 ```
+
+---
+
+## Ubicación y nombre de componentes
+
+Toda clase `@Component` sigue una convención única de ubicación y nombre, **sin** el sufijo `Component` que Angular recomendaba hasta la v20.
+
+| Rol                                                                                   | Ubicación                      | Archivo + clase                                         |
+| ------------------------------------------------------------------------------------- | ------------------------------ | ------------------------------------------------------- |
+| Componente reutilizable                                                               | `src/app/components/**`        | `x.ts` + `export class X`                               |
+| Página ruteada                                                                        | `src/app/pages/<x>/`           | `x.page.ts` + `export default class XPage`              |
+| Componente no ruteable dentro de `pages/` (skeleton, pieza propia de una sola página) | `src/app/pages/<x>/`           | `x.ts` + `export class X` — **nunca** termina en `Page` |
+| Raíz de la aplicación                                                                 | `src/app/app.ts` (ruta exacta) | `export class App`                                      |
+| Soporte de tests y del catálogo                                                       | `src/testing/**`               | Ubicación libre; igual sin sufijo `Component`           |
+
+Los hermanos de un componente —`.html`, `.css`, `.spec.ts`, `.stories.ts`, `.docs.ts`— comparten el **stem** del archivo principal: `tag.ts` va con `tag.html`, `tag.spec.ts`, `tag.stories.ts` y `tag.docs.ts`; `about.page.ts` va con `about.page.html`.
+
+**Los componentes host declarados dentro de un `*.spec.ts` o un `*.stories.ts` quedan fuera de esta convención**, con nombre y ubicación libres (p. ej. `HostComponent`, `ClampHostComponent`, `ButtonGroupStoryHostComponent`). Son andamiaje local de ese archivo —no se importan desde ningún otro lado, no se rutean ni se catalogan— y no componentes de la aplicación.
+
+**Alcance:** la convención rige **solo** para `@Component`. Directivas, pipes y servicios conservan su convención propia (`x.directive.ts` + `XDirective`, etc.); la regla que la verifica no los mira.
+
+**Rationale.** La guía de estilo de Angular deja de recomendar el sufijo `Component` a partir de la v20. `Page` se conserva, pero como sufijo de **rol** y no de tipo: una página tiene obligaciones que un componente no tiene —la cargan las rutas y declara las directivas de SEO (ver [`angular-state.md` §8](./angular-state.md#8-directivas-de-seo-de-página-declarar-el-combo-según-la-indexabilidad))— y los guardrails de layout y de SEO la descubren por su fuente. Por eso el sufijo queda **reservado** a los archivos `.page.ts`: una clase que no vive en uno no puede terminar en `Page`, y un `.page.ts` fuera de `src/app/pages/` tampoco es válido.
+
+**Colisiones de nombre.** Cuando el nombre sin sufijo choca con un modelo homónimo de `@models/*`, se aliasa del lado del **modelo**, no del componente. El sufijo `Model` coincide con el del archivo `x.model.ts` que lo declara, así el componente se sigue buscando con un solo nombre:
+
+```typescript
+// `src/app/components/author-teaser-card/author-teaser-card.ts` usa el componente y el modelo
+import type { Tag as TagModel } from '@models/tag.model';
+import { Tag } from '../tag/tag';
+
+@Component({ selector: 'cuentoneta-author-teaser-card', imports: [Tag /* ... */] /* ... */ })
+export class AuthorTeaserCard {
+	public readonly tags = input<readonly TagModel[]>([]);
+}
+```
+
+**Enforcement.** La regla de ESLint `cuentoneta/component-location-and-name` (`tools/eslint/component-location-and-name.js`), activa en el gate `lint`, verifica: sin sufijo `Component`; ubicación en `components/`, `pages/`, la raíz o `src/testing/`; nombre de la clase derivado del de su archivo; `.page.ts` solo dentro de `pages/`; el sufijo `Page` reservado a esos archivos; y `templateUrl`/`styleUrl` con el mismo stem que la clase. Los `*.spec.ts` y `*.stories.ts` quedan exentos de los seis chequeos. Que una página ruteada viva efectivamente en un `.page.ts` no lo decide esta regla sino `page-sources.util.ts`, que resuelve el fuente de cada ruta en el gate `test`; su spec afirma además la vuelta: todo `.page.ts` bajo `src/app/pages/` lo carga alguna ruta.
+
+**Puntos ciegos declarados:** el nombre de la carpeta que aloja el componente, y la cantidad de componentes que agrupa una misma carpeta. Ninguno de los dos lo verifica ningún gate.
 
 ---
 
@@ -60,13 +99,18 @@ Regla central: **un campo de componente nunca es `public` por defecto.** Las pla
 | `public`    | **Solo** inputs/outputs/models de signals (`input()`, `output()`, `model()`), **API imperativa** llamada por padres (`open()`, `close()`), y miembros **requeridos por interfaces**. |
 
 ```typescript
-// Miembros de `src/app/components/resource/resource.component.ts`
-export class ResourceComponent {
-	public readonly resource = input.required<Resource>();
+// Miembros de `src/app/components/header/header.ts`
+export class Header {
+	public readonly isVisible = input(VisibilityState.Visible, {
+		transform: (value) => (value ? VisibilityState.Visible : VisibilityState.Hidden),
+	});
 
-	protected readonly NgIcon = NgIcon;
+	protected readonly displayMenu = signal(false);
 
-	private readonly tooltipDirective = inject(TooltipDirective);
+	private readonly visibilityClassMap = {
+		[VisibilityState.Visible]: 'h-header-height translate-y-0 opacity-100 ease-in',
+		[VisibilityState.Hidden]: 'h-0 -translate-y-full opacity-0 ease-out',
+	};
 }
 ```
 
@@ -81,7 +125,7 @@ protected readonly icon = computed(() => /* … */); // la plantilla lo interpol
 private readonly isExpanded = signal(false); // estado interno, no llega a la plantilla
 ```
 
-`public` queda reservado a las dos excepciones que ya fija la tabla: un miembro **requerido por una interfaz** (p. ej. `literaryWork` en `LiteraryWorkPage`, exigido por `LiteraryWorkHost`) o **consumido por otro componente** (p. ej. `hiddenCount` de `TagsOverflowDirective`, que lee `TagsListComponent`). Exponer una signal en `public` "por las dudas" agranda la API del componente sin que nadie la consuma.
+`public` queda reservado a las dos excepciones que ya fija la tabla: un miembro **requerido por una interfaz** (p. ej. `literaryWork` en `LiteraryWorkPage`, exigido por `LiteraryWorkHost`) o **consumido por otro componente** (p. ej. `hiddenCount` de `TagsOverflowDirective`, que lee `TagsList`). Exponer una signal en `public` "por las dudas" agranda la API del componente sin que nadie la consuma.
 
 ---
 
@@ -98,7 +142,7 @@ La regla de ESLint **no verifica esa propiedad** —no puede: solo mira si el ar
 const SIZE_MAP = { sm: 'h-8 w-8', lg: 'h-16 w-16' };
 
 @Component({/* … */})
-export class ImageProfileComponent {
+export class ImageProfile {
 	protected readonly classes = computed(() => SIZE_MAP[this.size()]);
 }
 ```
@@ -106,7 +150,7 @@ export class ImageProfileComponent {
 ```ts
 // ✅ Co-locado con su único consumidor.
 @Component({/* … */})
-export class ImageProfileComponent {
+export class ImageProfile {
 	private readonly sizeMap = { sm: 'h-8 w-8', lg: 'h-16 w-16' };
 
 	protected readonly classes = computed(() => this.sizeMap[this.size()]);
@@ -156,7 +200,7 @@ public readonly selected = output<string>();
 public readonly value = model<string>('');
 
 // Queries — no son API: `protected` si la plantilla las usa, `private` si no
-private readonly listItems = contentChildren(TagComponent);
+private readonly listItems = contentChildren(Tag);
 ```
 
 Los valores **derivados** son `computed()`, nunca estado duplicado guardado a mano:
@@ -209,14 +253,15 @@ Todo `effect()` / `afterRenderEffect()` / `afterNextRender()` se declara como **
 
 ```typescript
 // ✅ Correcto — effect nombrado como field, después de lo que referencia
-// (tomado de `resource.component.ts`)
-export class ResourceComponent {
-	private readonly tooltipDirective = inject(TooltipDirective);
-	public readonly resource = input.required<Resource>();
+// (tomado de `header.ts`)
+export class Header {
+	protected readonly displayMenu = signal(false);
+	protected readonly isHidden = computed(() => this.isVisible() === VisibilityState.Hidden);
 
-	private readonly syncTooltipEffect = effect(() => {
-		this.tooltipDirective.text.set(this.resource().title);
-		this.tooltipDirective.position.set('bottom');
+	private readonly collapseMenuOnHideEffect = effect(() => {
+		if (this.isHidden()) {
+			this.displayMenu.set(false);
+		}
 	});
 }
 
@@ -337,7 +382,7 @@ Notas:
 
 ## Layout del shell: el landmark principal y el despeje del encabezado
 
-El encabezado es `fixed top-0` y mide `--spacing-header-height`. Que el contenido despeje su alto es un invariante global, no una decisión de cada pantalla, así que **lo resuelve el shell una sola vez**: `AppComponent` declara el único `<main>` de la aplicación, envolviendo el `router-outlet`, con `pt-header-height`.
+El encabezado es `fixed top-0` y mide `--spacing-header-height`. Que el contenido despeje su alto es un invariante global, no una decisión de cada pantalla, así que **lo resuelve el shell una sola vez**: `App` declara el único `<main>` de la aplicación, envolviendo el `router-outlet`, con `pt-header-height`.
 
 De ahí se siguen tres reglas para una página:
 
@@ -361,7 +406,7 @@ Todo apilamiento sale de la escala del Design System, declarada como tokens `--z
 | ------------ | ----- | ----------- | -------------------------------------------------------------------------------- |
 | `z-content`  | 10    | **Interna** | Ordena hermanos dentro de un componente (p. ej. superponer texto a una imagen).  |
 | `z-raised`   | 20    | **Interna** | Un elemento que se eleva por encima de `z-content` dentro del mismo componente.  |
-| `z-nav`      | 50    | **Global**  | La barra de navegación fija (`header.component.ts`).                             |
+| `z-nav`      | 50    | **Global**  | La barra de navegación fija (`header.ts`).                                       |
 | `z-floating` | 60    | **Global**  | La capa flotante anclada al `body` (p. ej. el tooltip, `tooltip.directive.css`). |
 
 ### Norma de confinamiento
@@ -409,6 +454,7 @@ La utilidad `z` de Tailwind resuelve cualquier número sin consultar el tema, as
 
 ## Checklist al crear/modificar un componente
 
+- [ ] Ubicación y nombre según [Ubicación y nombre de componentes](#ubicación-y-nombre-de-componentes): sin sufijo `Component`, `x.ts`/`x.page.ts` en la carpeta que corresponde a su rol.
 - [ ] Selector `cuentoneta-…`; sin declarar `changeDetection` (OnPush es el default de v22).
 - [ ] Inputs/outputs con `input()`/`input.required()`/`output()`/`model()`; queries con `viewChild()`/`contentChild()`.
 - [ ] Campos `protected` (plantilla) / `private` (interno); `public` solo para API (inputs/outputs/imperativa/interfaces).
