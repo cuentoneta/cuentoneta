@@ -1,5 +1,5 @@
 import { Component, computed, input, output } from '@angular/core';
-import { NgIcon, provideIcons } from '@ng-icons/core';
+import { NgIcon, provideIcons, type IconName } from '@ng-icons/core';
 import { simpleSpotify, simpleX, simpleYoutube } from '@ng-icons/simple-icons';
 import { faSolidFileAudio } from '@ng-icons/font-awesome/solid';
 
@@ -15,7 +15,7 @@ import type { MediaTeaser, MediaTypeKey } from '@models/media.model';
 export type MediaSelectorsTheme = 'subtle' | 'solid' | 'bordered';
 
 interface MediaSelectorItem {
-	iconName: string;
+	iconName: IconName;
 	label: string;
 	count: number;
 	media?: MediaTeaser;
@@ -90,7 +90,7 @@ export class MediaSelectors {
 
 	public readonly selected = output<MediaTeaser>();
 
-	private readonly mediaPlatforms: Record<MediaTypeKey, { iconName: string; label: string }> = {
+	private readonly mediaPlatforms: Record<MediaTypeKey, { iconName: IconName; label: string }> = {
 		youTubeVideo: { iconName: 'simpleYoutube', label: 'YouTube' },
 		spaceRecording: { iconName: 'simpleX', label: 'Spaces de X' },
 		spotifyPodcastEpisode: { iconName: 'simpleSpotify', label: 'Spotify' },

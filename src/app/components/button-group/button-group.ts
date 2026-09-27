@@ -1,5 +1,5 @@
 import { Component, input, output } from '@angular/core';
-import { NgIcon } from '@ng-icons/core';
+import { NgIcon, type IconName } from '@ng-icons/core';
 import { Button, type ButtonSize } from '../button/button';
 
 /**
@@ -15,7 +15,7 @@ export interface ButtonGroupOption {
 	/** Texto visible y nombre accesible de la opción. */
 	readonly label: string;
 	/** Nombre del ícono de ng-icons. Lo registra el consumidor con `provideIcons`. */
-	readonly iconName?: string;
+	readonly iconName?: IconName;
 }
 
 /**

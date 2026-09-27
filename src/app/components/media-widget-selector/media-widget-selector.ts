@@ -1,6 +1,6 @@
 import { Component, computed, input, linkedSignal } from '@angular/core';
 import { NgComponentOutlet } from '@angular/common';
-import { provideIcons } from '@ng-icons/core';
+import { provideIcons, type IconName } from '@ng-icons/core';
 import { simpleSpotify, simpleX, simpleYoutube } from '@ng-icons/simple-icons';
 import { faSolidFileAudio } from '@ng-icons/font-awesome/solid';
 
@@ -49,7 +49,7 @@ import { toMediaWidgetOutlet } from '@components/media-widgets/media-widget-regi
 export class MediaWidgetSelector {
 	public readonly mediaSources = input<readonly Media[]>([]);
 
-	private readonly mediaTypes: Record<MediaTypeKey, { icon: string; label: string }> = {
+	private readonly mediaTypes: Record<MediaTypeKey, { icon: IconName; label: string }> = {
 		audioRecording: { icon: 'faSolidFileAudio', label: 'Audiolibro' },
 		spaceRecording: { icon: 'simpleX', label: 'X' },
 		spotifyPodcastEpisode: { icon: 'simpleSpotify', label: 'Spotify' },

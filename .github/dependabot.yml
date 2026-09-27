@@ -27,6 +27,17 @@ updates:
     target-branch: develop
     open-pull-requests-limit: 10
     groups:
+      # Los sets de íconos declaran a @ng-icons/core como peer de su misma
+      # major, así que la familia viaja junta, majors incluidas. Va antes de
+      # minor-and-patch porque Dependabot asigna cada paquete al primer grupo
+      # que lo matchea.
+      ng-icons:
+        patterns:
+          - '@ng-icons/*'
+        update-types:
+          - major
+          - minor
+          - patch
       minor-and-patch:
         update-types:
           - minor
