@@ -10,8 +10,9 @@ import {
 import type { CollectionRepository } from './collection.repository';
 import { getCollectionBySlug, getCollections } from './collection.service';
 
-// Los errores de curaduría responden con un código y no con su mensaje, a diferencia del de arriba:
-// ese mensaje nombra colecciones del lado del servidor, que en el catálogo el cliente ni siquiera pidió.
+// Los errores de curaduría responden con un código estable y no con su mensaje, a diferencia del de
+// "no encontrado": el mensaje describe el estado interno del dato —qué colección no se pudo construir,
+// cuántas se descartaron—, que es diagnóstico del servidor y no contrato para el cliente.
 async function respond<T>(c: Context, produce: () => Promise<T>) {
 	try {
 		return c.json(await produce());
