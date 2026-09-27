@@ -8,6 +8,11 @@ import {
 	onoffCollectionTeasersWithoutTagsMock,
 	onoffCollectionTeasersWithTagsMock,
 } from '@mocks/onoff-collections.mock';
+import { imageProfileDocs } from '@components/image-profile/image-profile.component.docs';
+import { tagDocs } from '@components/tag/tag.component.docs';
+import { docsRef } from '@testing/storybook-docs';
+
+export type DocsSymbols = [NavigableCollectionTeaserComponent];
 
 const [taggedTeaser] = onoffCollectionTeasersWithTagsMock;
 const [untaggedTeaser] = onoffCollectionTeasersWithoutTagsMock;
@@ -20,7 +25,7 @@ const meta: Meta<NavigableCollectionTeaserComponent> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>El componente <strong>NavigableCollectionTeaserComponent</strong> es el item compacto y navegable de una colección (Design System v3): ícono de biblioteca, nombre, categoría y cantidad de obras. Pensado para listas como «Otras colecciones sugeridas» del sidebar de la página de una colección.</p><p>Se modela como un <code>&lt;article&gt;</code> con un único enlace real sobre el nombre, estirado con un pseudo-elemento para que toda la tarjeta sea clickeable sin inflar el nombre accesible del link.</p><p>Se compone de <a href="./?path=/docs/componentes-v3-imageprofile--docs" target="_top"><strong>ImageProfile</strong></a> (ícono de colección, variante <code>collection</code>) y <a href="./?path=/docs/componentes-v3-tag--docs" target="_top"><strong>Tag</strong></a> (categoría, variante <code>soft</code>).</p></div>`,
+				component: `<div><p>El componente <strong>NavigableCollectionTeaserComponent</strong> es el item compacto y navegable de una colección (Design System v3): ícono de biblioteca, nombre, categoría y cantidad de obras. Pensado para listas como «Otras colecciones sugeridas» del sidebar de la página de una colección.</p><p>Se modela como un <code>&lt;article&gt;</code> con un único enlace real sobre el nombre, estirado con un pseudo-elemento para que toda la tarjeta sea clickeable sin inflar el nombre accesible del link.</p><p>Se compone de ${docsRef(imageProfileDocs)} (ícono de colección, variante <code>collection</code>) y ${docsRef(tagDocs)} (categoría, variante <code>soft</code>).</p></div>`,
 			},
 		},
 		layout: 'padded',

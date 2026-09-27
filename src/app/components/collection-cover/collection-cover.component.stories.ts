@@ -5,6 +5,12 @@ import {
 	onoffCollectionsWithRepresentativeImageryMock,
 	onoffCollectionsWithSampleImageryMock,
 } from '@mocks/onoff-collections.mock';
+import { collectionInfoPanelDocs } from '@components/collection-info-panel/collection-info-panel.component.docs';
+import { collectionTeaserCardDocs } from '@components/collection-teaser-card/collection-teaser-card.docs';
+import { coverImageDocs } from '@components/cover-image/cover-image.component.docs';
+import { docsMention, docsRef } from '@testing/storybook-docs';
+
+export type DocsSymbols = [CollectionCoverComponent];
 
 const [representativeCollection] = onoffCollectionsWithRepresentativeImageryMock;
 const [sampleCollection] = onoffCollectionsWithSampleImageryMock;
@@ -21,7 +27,7 @@ const meta: Meta<CollectionCoverComponent> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>El <strong>CollectionCoverComponent</strong> del Design System v3 es a la portada de una colección lo que <a href="./?path=/docs/componentes-v3-coverimage--docs" target="_top"><strong>CoverImage</strong></a> es a la de una obra: resuelve las dos formas que declara el dominio y produce una caja de alto constante.</p><ul><li><code>representative</code>: la imagen editorial de la colección, en la caja de una portada (118×164).</li><li><code>sample</code>: el abanico de tres portadas de obras que contiene, sobre una caja de 270×164 — la del frente es la primera, elevada respecto de las laterales, que se apoyan más abajo y sangran por el borde inferior.</li></ul><p>Las dos formas <strong>miden lo mismo de alto</strong>, que es lo que permite intercambiarlas —y sustituirlas por un esqueleto— sin mover lo que sigue en la columna.</p><p>El marco es del consumidor: el componente no aporta fondo, radio exterior ni recorte. <strong>CollectionTeaserCard</strong> lo monta dentro de su caja gris; <strong>CollectionInfoPanel</strong>, pelado.</p></div>`,
+				component: `<div><p>El <strong>CollectionCoverComponent</strong> del Design System v3 es a la portada de una colección lo que ${docsRef(coverImageDocs)} es a la de una obra: resuelve las dos formas que declara el dominio y produce una caja de alto constante.</p><ul><li><code>representative</code>: la imagen editorial de la colección, en la caja de una portada (118×164).</li><li><code>sample</code>: el abanico de tres portadas de obras que contiene, sobre una caja de 270×164 — la del frente es la primera, elevada respecto de las laterales, que se apoyan más abajo y sangran por el borde inferior.</li></ul><p>Las dos formas <strong>miden lo mismo de alto</strong>, que es lo que permite intercambiarlas —y sustituirlas por un esqueleto— sin mover lo que sigue en la columna.</p><p>El marco es del consumidor: el componente no aporta fondo, radio exterior ni recorte. ${docsMention(collectionTeaserCardDocs)} lo monta dentro de su caja gris; ${docsMention(collectionInfoPanelDocs)}, pelado.</p></div>`,
 			},
 		},
 	},
@@ -98,7 +104,7 @@ export const SlotsVacios: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Un abanico con portadas faltantes no deja huecos: cada slot vacío cae en el marcador que <a href="./?path=/docs/componentes-v3-coverimage--docs" target="_top"><strong>CoverImage</strong></a> ya dibuja.</p>`,
+				story: `<p>Un abanico con portadas faltantes no deja huecos: cada slot vacío cae en el marcador que ${docsRef(coverImageDocs)} ya dibuja.</p>`,
 			},
 		},
 	},

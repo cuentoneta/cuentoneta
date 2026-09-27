@@ -8,6 +8,7 @@ import noBarrelFiles from 'eslint-plugin-no-barrel-files';
 import unicorn from 'eslint-plugin-unicorn';
 import requireEnvironmentProviders from './tools/eslint/require-environment-providers.js';
 import storybookSourceState from './tools/eslint/storybook-source-state.js';
+import storybookDocsRefs from './tools/eslint/storybook-docs-refs.js';
 import noApplyInHostStyles from './tools/eslint/no-apply-in-host-styles.js';
 import componentConfigInClass from './tools/eslint/component-config-in-class.js';
 import zIndexScale from './tools/eslint/z-index-scale.js';
@@ -406,6 +407,16 @@ export default [
 		},
 		rules: {
 			'custom-storybook/storybook-source-state': 'error',
+		},
+	},
+	{
+		name: 'storybook-docs-refs',
+		files: ['**/*.stories.ts'],
+		plugins: {
+			'custom-storybook-docs': { rules: { 'storybook-docs-refs': storybookDocsRefs } },
+		},
+		rules: {
+			'custom-storybook-docs/storybook-docs-refs': 'error',
 		},
 	},
 	{

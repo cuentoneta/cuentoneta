@@ -2,6 +2,8 @@ import type { Meta, StoryObj } from '@storybook/angular-vite';
 
 import { SkeletonComponent } from './skeleton.component';
 
+export type DocsSymbols = [SkeletonComponent];
+
 const meta: Meta<SkeletonComponent> = {
 	component: SkeletonComponent,
 	title: 'Componentes V3/Skeleton',

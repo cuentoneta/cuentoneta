@@ -3,6 +3,13 @@ import { argsToTemplate, moduleMetadata } from '@storybook/angular-vite';
 
 import { TagComponent } from './tag.component';
 import { TagSkeletonComponent } from './tag-skeleton.component';
+import { authorTeaserCardDocs } from '@components/author-teaser-card/author-teaser-card.component.docs';
+import { collectionTeaserCardDocs } from '@components/collection-teaser-card/collection-teaser-card.docs';
+import { literaryWorkTeaserCardDocs } from '@components/literary-work-teaser-card/literary-work-teaser-card.component.docs';
+import { literaryWorkTeaserHomeCardDocs } from '@components/literary-work-teaser-home-card/literary-work-teaser-home-card.component.docs';
+import { docsRef } from '@testing/storybook-docs';
+
+export type DocsSymbols = [TagComponent];
 
 const meta: Meta<TagComponent> = {
 	component: TagComponent,
@@ -37,7 +44,7 @@ export const Soft: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Variante <strong>soft</strong> (default): solo texto en brand-500, sin fondo. Comportamiento (Figma): la primera letra del texto en mayúscula y el resto en minúsculas (sentence-case).</p><p><strong>Usos:</strong> Home (en <a href="./?path=/docs/componentes-v3-collectionteasercard--docs" target="_top"><strong>CollectionTeaserCard</strong></a> y <a href="./?path=/docs/componentes-v3-literaryworkteaserhomecard--docs" target="_top"><strong>LiteraryWorkTeaserHomeCard</strong></a>); Story, Story List y Author Profile (en <a href="./?path=/docs/componentes-v3-literaryworkteasercard--docs" target="_top"><strong>LiteraryWorkTeaserCard</strong></a>).</p>`,
+				story: `<p>Variante <strong>soft</strong> (default): solo texto en brand-500, sin fondo. Comportamiento (Figma): la primera letra del texto en mayúscula y el resto en minúsculas (sentence-case).</p><p><strong>Usos:</strong> Home (en ${docsRef(collectionTeaserCardDocs)} y ${docsRef(literaryWorkTeaserHomeCardDocs)}); Story, Story List y Author Profile (en ${docsRef(literaryWorkTeaserCardDocs)}).</p>`,
 			},
 		},
 	},
@@ -49,7 +56,7 @@ export const Filled: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Variante <strong>filled</strong>: pill brand-50 con el texto en mayúsculas (aplicadas vía CSS). Comportamiento (Figma): todo el texto en mayúsculas.</p><p><strong>Usos:</strong> Home (en <a href="./?path=/docs/componentes-v3-authorteasercard--docs" target="_top"><strong>AuthorTeaserCard</strong></a>), Story List y Author Profile.</p>`,
+				story: `<p>Variante <strong>filled</strong>: pill brand-50 con el texto en mayúsculas (aplicadas vía CSS). Comportamiento (Figma): todo el texto en mayúsculas.</p><p><strong>Usos:</strong> Home (en ${docsRef(authorTeaserCardDocs)}), Story List y Author Profile.</p>`,
 			},
 		},
 	},

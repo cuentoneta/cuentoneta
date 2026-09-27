@@ -4,6 +4,8 @@ import { corpusLiteraryWorkTeasers } from '@mocks/onoff-corpus.storybook';
 
 import { DividerComponent } from './divider.component';
 
+export type DocsSymbols = [DividerComponent];
+
 const meta: Meta<DividerComponent> = {
 	component: DividerComponent,
 	title: 'Componentes V3/Divider',

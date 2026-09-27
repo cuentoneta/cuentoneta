@@ -4,6 +4,8 @@ import { ResourceComponent } from './resource.component';
 import { authorMock } from '@mocks/author.mock';
 import { resourceMock } from '@mocks/resource.mock';
 
+export type DocsSymbols = [ResourceComponent];
+
 const [wikipediaResource] = authorMock.resources;
 
 // El corpus solo trae tipos que el mapa de íconos conoce, así que el caso se deriva con un slug que no
