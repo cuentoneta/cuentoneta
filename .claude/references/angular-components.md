@@ -72,11 +72,13 @@ Los hermanos de un componente —`.html`, `.css`, `.spec.ts`, `.stories.ts`, `.d
 **Colisiones de nombre.** Cuando el nombre sin sufijo choca con un modelo homónimo de `@models/*`, se aliasa del lado del **modelo**, no del componente. El sufijo `Model` coincide con el del archivo `x.model.ts` que lo declara, así el componente se sigue buscando con un solo nombre:
 
 ```typescript
-import type { Resource as ResourceModel } from '@models/resource.model';
+// `src/app/components/author-teaser-card/author-teaser-card.ts` usa el componente y el modelo
+import type { Tag as TagModel } from '@models/tag.model';
+import { Tag } from '../tag/tag';
 
-@Component({ selector: 'cuentoneta-resource' /* ... */ })
-export class Resource {
-	public readonly resource = input.required<ResourceModel>();
+@Component({ selector: 'cuentoneta-author-teaser-card', imports: [Tag /* ... */] /* ... */ })
+export class AuthorTeaserCard {
+	public readonly tags = input<readonly TagModel[]>([]);
 }
 ```
 
@@ -97,13 +99,18 @@ Regla central: **un campo de componente nunca es `public` por defecto.** Las pla
 | `public`    | **Solo** inputs/outputs/models de signals (`input()`, `output()`, `model()`), **API imperativa** llamada por padres (`open()`, `close()`), y miembros **requeridos por interfaces**. |
 
 ```typescript
-// Miembros de `src/app/components/resource/resource.ts`
-export class Resource {
-	public readonly resource = input.required<Resource>();
+// Miembros de `src/app/components/header/header.ts`
+export class Header {
+	public readonly isVisible = input(VisibilityState.Visible, {
+		transform: (value) => (value ? VisibilityState.Visible : VisibilityState.Hidden),
+	});
 
-	protected readonly NgIcon = NgIcon;
+	protected readonly displayMenu = signal(false);
 
-	private readonly tooltipDirective = inject(TooltipDirective);
+	private readonly visibilityClassMap = {
+		[VisibilityState.Visible]: 'h-header-height translate-y-0 opacity-100 ease-in',
+		[VisibilityState.Hidden]: 'h-0 -translate-y-full opacity-0 ease-out',
+	};
 }
 ```
 
@@ -246,14 +253,15 @@ Todo `effect()` / `afterRenderEffect()` / `afterNextRender()` se declara como **
 
 ```typescript
 // ✅ Correcto — effect nombrado como field, después de lo que referencia
-// (tomado de `resource.ts`)
-export class Resource {
-	private readonly tooltipDirective = inject(TooltipDirective);
-	public readonly resource = input.required<Resource>();
+// (tomado de `header.ts`)
+export class Header {
+	protected readonly displayMenu = signal(false);
+	protected readonly isHidden = computed(() => this.isVisible() === VisibilityState.Hidden);
 
-	private readonly syncTooltipEffect = effect(() => {
-		this.tooltipDirective.text.set(this.resource().title);
-		this.tooltipDirective.position.set('bottom');
+	private readonly collapseMenuOnHideEffect = effect(() => {
+		if (this.isHidden()) {
+			this.displayMenu.set(false);
+		}
 	});
 }
 
