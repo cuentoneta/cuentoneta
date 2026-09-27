@@ -81,8 +81,8 @@ export default class AuthorsPage implements AuthorsHost {
 	// ordena antes que cualquier letra: sin esto, esos autores encabezan el índice. Es defensa contra
 	// el dato, no su arreglo — la ficha sigue guardando el nombre con el espacio.
 	public readonly authors = computed(() => {
-		const index = this.authorsResource.hasValue() ? this.authorsResource.value() : [];
-		return [...index].sort((first, second) => this.collator.compare(first.name.trim(), second.name.trim()));
+		const teasers = this.authorsResource.hasValue() ? this.authorsResource.value() : [];
+		return [...teasers].sort((first, second) => this.collator.compare(first.name.trim(), second.name.trim()));
 	});
 
 	// El corpus mezcla autores históricos con contemporáneos, así que la celda tiene que servir a
