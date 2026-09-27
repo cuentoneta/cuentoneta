@@ -48,8 +48,6 @@ const toKebab = (pascal) => pascal.replace(/(?<=[a-z0-9])(?=[A-Z])/g, '-').toLow
 const repoPath = (context) => relative(context.cwd, context.filename).replaceAll('\\', '/');
 
 /**
- * La llamada `@Component(...)` que decora la clase, o `undefined` si no la decora.
- *
  * @param {ClassDeclaration} node
  * @returns {CallExpression | undefined}
  */
