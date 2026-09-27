@@ -14,8 +14,8 @@
 
 import { basename, relative } from 'node:path';
 
-const COMPONENT_DIRS = ['src/app/components/', 'src/app/pages/'];
-const PAGES_DIR = 'src/app/pages/';
+const COMPONENT_DIRS = Object.freeze({ components: 'src/app/components/', pages: 'src/app/pages/' });
+const PAGES_DIR = COMPONENT_DIRS.pages;
 
 /** El componente raíz: no es reutilizable ni una página, así que no cabe en ninguna de las dos carpetas. */
 const ROOT_COMPONENT = 'src/app/app.ts';
@@ -114,14 +114,15 @@ function siblingReferences(metadata) {
 			return [];
 		}
 		const extension = extensions[property.key.name];
+		if (!extension) {
+			return [];
+		}
 		const values = property.value.type === 'ArrayExpression' ? property.value.elements : [property.value];
-		return extension
-			? values.flatMap((value) =>
-					value?.type === 'Literal' && typeof value.value === 'string'
-						? [{ node: value, value: value.value, extension }]
-						: [],
-				)
-			: [];
+		return values.flatMap((value) =>
+			value?.type === 'Literal' && typeof value.value === 'string'
+				? [{ node: value, value: value.value, extension }]
+				: [],
+		);
 	});
 }
 
@@ -171,7 +172,7 @@ export default {
 		if (TEST_FILE.test(path)) {
 			return {};
 		}
-		const inComponentDirs = COMPONENT_DIRS.some((dir) => path.startsWith(dir));
+		const inComponentDirs = Object.values(COMPONENT_DIRS).some((dir) => path.startsWith(dir));
 		const locationExempt = path.startsWith(LOCATION_EXEMPT_DIR);
 		const stem = basename(path, '.ts');
 
