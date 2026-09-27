@@ -1,3 +1,6 @@
+// Un set suma sus nombres a `IconName` solo si el programa lo importa: sin esto, el caso válido
+// dependería de que otro archivo del programa importara el set.
+import type {} from '@ng-icons/font-awesome/brands';
 import type { UrlLink } from './link.model';
 
 // La tipificación del ícono la evalúa el gate `typecheck`, que cubre los *.spec.ts. El caso válido
