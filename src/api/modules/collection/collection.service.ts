@@ -18,6 +18,11 @@ export async function getCollectionBySlug(
 
 export async function getCollections(
 	repository: CollectionRepository = new SanityCollectionRepository(),
-): Promise<CollectionTeaser[]> {
-	return repository.fetchAll();
+): Promise<readonly CollectionTeaser[]> {
+	const { collections, malformed } = await repository.fetchAll();
+	const [firstMalformed] = malformed;
+	if (firstMalformed) {
+		throw firstMalformed;
+	}
+	return collections;
 }

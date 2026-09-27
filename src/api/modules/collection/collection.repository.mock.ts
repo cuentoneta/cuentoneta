@@ -1,5 +1,5 @@
 import type { Collection, CollectionTeaser } from '@models/collection.model';
-import type { CollectionRepository } from './collection.repository';
+import type { CollectionRepository, CollectionTeaserListing } from './collection.repository';
 
 // Fake de almacenamiento: sustituye el content lake por una lista en memoria, con la misma semántica
 // de búsqueda. El listado deriva sus teasers de las colecciones cargadas para que no puedan discrepar
@@ -15,7 +15,9 @@ export class InMemoryCollectionRepository implements CollectionRepository {
 		return this.collections.find((collection) => collection.slug === slug) ?? null;
 	}
 
-	public async fetchAll(): Promise<CollectionTeaser[]> {
-		return this.collections.map((collection) => ({ ...collection, literaryWorks: [] }));
+	// Carga dominio ya construido, así que no tiene descartes que reportar.
+	public async fetchAll(): Promise<CollectionTeaserListing> {
+		const collections: CollectionTeaser[] = this.collections.map((collection) => ({ ...collection, literaryWorks: [] }));
+		return { collections, malformed: [] };
 	}
 }

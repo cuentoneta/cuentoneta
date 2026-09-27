@@ -18,7 +18,7 @@ import {
 	resolveCollectionImagery,
 } from './collection-teaser.acl';
 import { MalformedCollectionError } from './collection.errors';
-import type { CollectionRepository } from './collection.repository';
+import type { CollectionRepository, CollectionTeaserListing } from './collection.repository';
 
 // El nombre limpio queda para el dominio: `@sanity-types` también exporta un `Collection`, que es el
 // documento crudo y no el agregado.
@@ -34,26 +34,34 @@ export class SanityCollectionRepository implements CollectionRepository {
 		if (!raw) {
 			return null;
 		}
-		return this.guard(raw.slug, () => this.mapCollection(raw));
-	}
-
-	public async fetchAll(): Promise<CollectionTeaser[]> {
-		const raw = await this.client.fetch(collectionsQuery);
-		return raw.map((teaser) => this.guard(teaser.slug, () => mapSanityCollectionTeaser(teaser)));
-	}
-
-	// Una colección mal curada tumba la llamada entera en vez de filtrarse: un listado que esconde
-	// elementos es un bug de datos que nadie ve. El slug va en el error porque, sobre decenas de
-	// colecciones, saber que "algo" está mal no alcanza para arreglarlo.
-	private guard<T>(slug: string, map: () => T): T {
 		try {
-			return map();
+			return this.mapCollection(raw);
 		} catch (error) {
-			if (error instanceof MalformedCollectionError) {
-				throw error;
-			}
-			throw new MalformedCollectionError(slug, { cause: error });
+			throw this.asMalformed(raw.slug, error);
 		}
+	}
+
+	public async fetchAll(): Promise<CollectionTeaserListing> {
+		const raw = await this.client.fetch(collectionsQuery);
+
+		const collections: CollectionTeaser[] = [];
+		const malformed: MalformedCollectionError[] = [];
+		for (const rawTeaser of raw) {
+			try {
+				collections.push(mapSanityCollectionTeaser(rawTeaser));
+			} catch (error) {
+				// Se acumula en vez de propagarse: si una colección rota se descarta del listado o lo
+				// tumba es una política del caso de uso, no de este adaptador.
+				malformed.push(this.asMalformed(rawTeaser.slug, error));
+			}
+		}
+		return { collections, malformed };
+	}
+
+	// El slug va en el error porque, sobre decenas de colecciones, saber que "algo" está mal no alcanza
+	// para arreglarlo.
+	private asMalformed(slug: string, error: unknown): MalformedCollectionError {
+		return error instanceof MalformedCollectionError ? error : new MalformedCollectionError(slug, { cause: error });
 	}
 
 	private mapCollection(raw: SanityCollection): Collection {
