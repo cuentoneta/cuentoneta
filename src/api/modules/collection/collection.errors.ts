@@ -19,9 +19,8 @@ export class MalformedCollectionError extends Error {
 	}
 }
 
-// Había colecciones para el catálogo y no se pudo construir ninguna. No hay una culpable sino un listado sin
-// nada que servir, y un vacío afirmaría que no hay colecciones publicadas. `malformed` trae cada
-// descarte, con su slug y su causa.
+// Había colecciones para el catálogo y no se pudo construir ninguna: no hay una culpable sino un
+// listado sin nada que servir. `malformed` trae cada descarte, con su slug y su causa.
 export class MalformedCollectionCatalogError extends Error {
 	constructor(public readonly malformed: readonly MalformedCollectionError[]) {
 		super(`No collection of the catalog could be built (${malformed.length} malformed)`);

@@ -82,7 +82,6 @@ describe('getCollections with malformed collections', () => {
 		expect(warn).toHaveBeenCalledWith(expect.stringContaining('una-coleccion-rota'), malformed.cause);
 	});
 
-	// Sin filtro, un vacío con documentos presentes afirmaría que no hay colecciones publicadas.
 	it('fails instead of serving an empty catalog when none can be built', async () => {
 		const warn = spyOn(console, 'warn').mockImplementation(() => undefined);
 		const malformed = [new MalformedCollectionError('una'), new MalformedCollectionError('otra')];
