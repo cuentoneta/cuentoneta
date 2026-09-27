@@ -2,7 +2,12 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular-
 import { provideRouter } from '@angular/router';
 import { NEVER, of, throwError, type Observable } from 'rxjs';
 
-import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
+import {
+	toCatalogEntry,
+	type LiteraryWork,
+	type LiteraryWorkCatalogEntry,
+	type LiteraryWorkTeaser,
+} from '@models/literary-work.model';
 import {
 	onoffLiteraryWorkTeasersMock,
 	onoffLiteraryWorkTeasersWithMediaSourcesMock,
@@ -29,7 +34,7 @@ class StubScenarioLiteraryWorkApi implements LiteraryWorkApi {
 		return throwError(() => new Error('El catálogo no consulta por slug'));
 	}
 
-	public getTeasers(): Observable<LiteraryWorkTeaser[]> {
+	public getCatalog(): Observable<LiteraryWorkCatalogEntry[]> {
 		if (this.scenario === 'failure') {
 			return throwError(() => new Error('sin catálogo'));
 		}
@@ -37,7 +42,11 @@ class StubScenarioLiteraryWorkApi implements LiteraryWorkApi {
 		if (this.scenario === 'loading') {
 			return NEVER;
 		}
-		return of([...catalogues[this.scenario]]);
+		return of(catalogues[this.scenario].map(toCatalogEntry));
+	}
+
+	public getTeasers(): Observable<LiteraryWorkTeaser[]> {
+		return throwError(() => new Error('El catálogo no consulta teasers por autor'));
 	}
 }
 

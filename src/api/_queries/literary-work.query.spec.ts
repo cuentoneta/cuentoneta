@@ -6,7 +6,7 @@ import {
 	onoffLiteraryWorkDocumentsMock,
 } from '@mocks/onoff-documents.mock';
 
-import { literaryWorkTeasers } from './literary-work.query';
+import { literaryWorkCatalogQuery, literaryWorkTeasers } from './literary-work.query';
 
 async function run(query: string, dataset: unknown[], params: Record<string, unknown> = {}) {
 	const result = await evaluate(parse(query), { dataset, params });
@@ -106,5 +106,54 @@ describe('literaryWorkTeasers', () => {
 		const works = await run(literaryWorkTeasers, [...dataset, draft], { author: null, slugs: null });
 
 		expect(works.every(({ _id }: { _id: string }) => !_id.startsWith('drafts.'))).toBe(true);
+	});
+});
+
+describe('literaryWorkCatalogQuery', () => {
+	// El recorte es el contrato de esta query: la página del catálogo solo enlaza la obra y su autoría,
+	// así que la proyección no puede traer la tarjeta —extracto, portada, etiquetas ni medios—.
+	it('should project only the fields the catalog page renders', async () => {
+		const works = await run(literaryWorkCatalogQuery, dataset);
+
+		expect(works).toHaveLength(onoffLiteraryWorkDocumentsMock.length);
+		works.forEach((work: Record<string, unknown>) => {
+			expect(Object.keys(work).sort()).toEqual(['authors', 'slug', 'title', 'totalReadingTime']);
+			(work.authors as Record<string, unknown>[]).forEach((author) => {
+				expect(Object.keys(author).sort()).toEqual(['name', 'slug']);
+			});
+		});
+	});
+
+	it('should project the author of each work as its slug and name', async () => {
+		const works = await run(literaryWorkCatalogQuery, dataset);
+
+		works.forEach((work: { authors: { slug: string; name: string }[] }) => {
+			work.authors.forEach((author) => {
+				expect(author.slug).toBe(authorSlug);
+				expect(author.name).toBe(onoffAuthor.name);
+			});
+		});
+	});
+
+	it('should carry the persisted total reading time of each work', async () => {
+		const [work] = await run(literaryWorkCatalogQuery, dataset);
+		const [document] = onoffLiteraryWorkDocumentsMock.filter(({ slug }) => slug.current === work.slug);
+
+		expect(work.totalReadingTime).toBe(document.totalReadingTime);
+	});
+
+	it('should order the listing by title', async () => {
+		const works = await run(literaryWorkCatalogQuery, dataset);
+
+		const titles = works.map(({ title }: { title: string }) => title);
+		expect(titles).toEqual([...titles].sort((a, b) => a.localeCompare(b)));
+	});
+
+	it('should leave drafts out', async () => {
+		const draft = { ...onoffLiteraryWorkDocumentsMock[0], _id: 'drafts.una-obra-en-borrador' };
+
+		const works = await run(literaryWorkCatalogQuery, [...dataset, draft]);
+
+		expect(works).toHaveLength(onoffLiteraryWorkDocumentsMock.length);
 	});
 });

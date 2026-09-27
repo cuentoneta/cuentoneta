@@ -209,3 +209,21 @@ export const literaryWorkTeasers = defineQuery(`
         'body': string::split(string::split(body, "\r\n\r\n")[0], "\n\n")[@ != ""][0]
     }
 } | order(title asc)`);
+
+// El listado plano del catálogo: los cuatro campos que la página de obras renderiza, sin la vista de
+// tarjeta. Existe separado de `literaryWorkTeasers` —no como un recorte suyo— porque esa vista la
+// sirve el mismo endpoint a la ficha de autor y a las sugerencias de lectura, que sí muestran
+// extracto, portada, medios y etiquetas: recortarla habría vaciado las tarjetas. Acá cada fila paga
+// solo lo que pinta, que es la diferencia entre transferir la obra entera y transferir su enlace.
+//
+// Los autores van por `coalesce` y con dos campos, por lo mismo que el resto: la fila enlaza la
+// autoría (slug + nombre) y nada más de ella. El total de lectura no se acota: sin él la fila no
+// puede mostrar la duración, y una obra sin materializar se descarta en el mapeo como en el teaser.
+export const literaryWorkCatalogQuery = defineQuery(`
+*[_type == 'literaryWork' && !(_id in path('drafts.**'))]
+{
+    'slug': slug.current,
+    title,
+    totalReadingTime,
+    'authors': coalesce(authors[]->{ 'slug': slug.current, name }, [])
+} | order(title asc)`);

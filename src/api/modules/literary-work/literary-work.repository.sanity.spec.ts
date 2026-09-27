@@ -12,6 +12,7 @@ import {
 	unmaterializedRawLiteraryWork,
 } from '@mocks/onoff-raw-literary-works.mock';
 import {
+	onoffRawLiteraryWorkCatalogMock,
 	onoffRawLiteraryWorksWithoutEditorialNote,
 	onoffRawLiteraryWorkTeasersMock,
 } from '@mocks/onoff-raw-literary-works.mock';
@@ -287,5 +288,56 @@ describe('SanityLiteraryWorkRepository.fetchTeasers', () => {
 
 		expect(literaryWorks).toEqual([]);
 		expect(malformed[0]).toBeInstanceOf(MalformedLiteraryWorkError);
+	});
+});
+
+describe('SanityLiteraryWorkRepository.fetchCatalog', () => {
+	it('mapea el listado plano a entradas congeladas', async () => {
+		const { literaryWorks, malformed } = await repoReturning(onoffRawLiteraryWorkCatalogMock).fetchCatalog();
+
+		expect(literaryWorks).toHaveLength(onoffRawLiteraryWorkCatalogMock.length);
+		expect(malformed).toEqual([]);
+		literaryWorks.forEach((entry) => {
+			expect(Object.isFrozen(entry)).toBe(true);
+		});
+	});
+
+	it('traduce el enlace, el título, el tiempo de lectura y la autoría de cada fila', async () => {
+		const [raw] = onoffRawLiteraryWorkCatalogMock;
+		const { literaryWorks } = await repoReturning([raw]).fetchCatalog();
+		const [entry] = literaryWorks;
+
+		expect(entry.slug).toBe(raw.slug);
+		expect(entry.title).toBe(raw.title);
+		expect(entry.totalReadingTime).toBe(raw.totalReadingTime);
+		expect(entry.authors).toEqual(raw.authors);
+	});
+
+	it('reporta la obra sin tiempo de lectura sin llevarse puestas a las demás', async () => {
+		const [sane, ...rest] = onoffRawLiteraryWorkCatalogMock;
+		const broken = { ...sane, slug: `${sane.slug}-rota`, totalReadingTime: null };
+
+		const { literaryWorks, malformed } = await repoReturning([broken, ...rest]).fetchCatalog();
+
+		expect(literaryWorks).toHaveLength(rest.length);
+		expect(malformed).toHaveLength(1);
+		expect(malformed[0].slug).toBe(broken.slug);
+	});
+
+	it('reporta como mal curada a la fila con slug inválido', async () => {
+		const [sane] = onoffRawLiteraryWorkCatalogMock;
+		const broken = { ...sane, slug: 'no es un slug' };
+
+		const { literaryWorks, malformed } = await repoReturning([broken]).fetchCatalog();
+
+		expect(literaryWorks).toEqual([]);
+		expect(malformed[0]).toBeInstanceOf(MalformedLiteraryWorkError);
+	});
+
+	it('devuelve un listado vacío sin obras', async () => {
+		const { literaryWorks, malformed } = await repoReturning([]).fetchCatalog();
+
+		expect(literaryWorks).toEqual([]);
+		expect(malformed).toEqual([]);
 	});
 });

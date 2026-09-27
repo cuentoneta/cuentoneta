@@ -1,6 +1,6 @@
-import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
+import type { LiteraryWork, LiteraryWorkCatalogEntry, LiteraryWorkTeaser } from '@models/literary-work.model';
 import type { RotatingContent } from '@models/landing-page-content.model';
-import { LiteraryWorkNotFoundError } from './literary-work.errors';
+import { LiteraryWorkNotFoundError, type MalformedLiteraryWorkError } from './literary-work.errors';
 import type { LiteraryWorkRepository, LiteraryWorkTeaserFilter } from './literary-work.repository';
 import { SanityLiteraryWorkRepository } from './literary-work.repository.sanity';
 import type { ContentRepository } from '../content/content.repository';
@@ -21,19 +21,36 @@ export async function getLiteraryWorkBySlug(
 	return literaryWork;
 }
 
+/**
+ * Devuelve las obras sanas del listado y registra en el servidor las que se descartaron.
+ *
+ * Descartar es una política de listado y no de traducción, por eso se decide acá: una obra que el
+ * CMS dejó inconsistente no debe llevarse puestas a las demás. El registro es lo único que
+ * distingue este caso del filtro que legítimamente no tiene resultados.
+ */
+function dropMalformed<T>(
+	listing: { readonly literaryWorks: readonly T[]; readonly malformed: readonly MalformedLiteraryWorkError[] },
+	origin: string,
+): readonly T[] {
+	for (const error of listing.malformed) {
+		console.warn(`[LiteraryWork] Obra descartada del ${origin}: "${error.slug}"`, error.cause);
+	}
+	return listing.literaryWorks;
+}
+
 // Sirve el catálogo de obras que satisfacen el filtro, como teasers.
 export async function getLiteraryWorkTeasers(
 	filter: LiteraryWorkTeaserFilter,
 	repository: LiteraryWorkRepository = new SanityLiteraryWorkRepository(),
 ): Promise<readonly LiteraryWorkTeaser[]> {
-	const { literaryWorks, malformed } = await repository.fetchTeasers(filter);
-	// Descartar es una política de listado y no de traducción, por eso se decide acá: una obra que el
-	// CMS dejó inconsistente no debe llevarse puestas a las demás. El registro en el servidor es lo
-	// único que distingue este caso del filtro que legítimamente no tiene resultados.
-	for (const error of malformed) {
-		console.warn(`[LiteraryWork] Obra descartada del listado de teasers: "${error.slug}"`, error.cause);
-	}
-	return literaryWorks;
+	return dropMalformed(await repository.fetchTeasers(filter), 'listado de teasers');
+}
+
+// Sirve el listado plano del catálogo: la vista sin tarjeta que renderiza la página de obras.
+export async function getLiteraryWorkCatalog(
+	repository: LiteraryWorkRepository = new SanityLiteraryWorkRepository(),
+): Promise<readonly LiteraryWorkCatalogEntry[]> {
+	return dropMalformed(await repository.fetchCatalog(), 'catálogo');
 }
 
 // Clarity reporta la URL visitada, no el slug: puede traer querystring de campaña, un ancla a una

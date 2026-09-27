@@ -1,6 +1,6 @@
 import * as z from 'zod/mini';
 import type { Author, AuthorTeaser } from './author.model';
-import type { LiteraryWorkTeaser } from './literary-work.model';
+import type { LiteraryWorkCatalogEntry, LiteraryWorkTeaser } from './literary-work.model';
 import type { Media, MediaTeaser } from './media.model';
 import type { Resource } from './resource.model';
 import type { Tag } from './tag.model';
@@ -71,7 +71,25 @@ export const literaryWorkTeaserDtoSchema = z.object({
 
 export const literaryWorkTeaserListDtoSchema = z.array(literaryWorkTeaserDtoSchema);
 
+// La vista del listado plano del catálogo —la que sirve el endpoint sin filtros— con los cuatro
+// campos que la página de obras renderiza. Los autores se validan en profundidad, a diferencia de
+// los tipos anémicos anidados del teaser: su forma la fija este mismo contrato, no otro módulo.
+export const literaryWorkCatalogAuthorDtoSchema = z.object({
+	slug: z.string(),
+	name: z.string(),
+});
+
+export const literaryWorkCatalogEntryDtoSchema = z.object({
+	slug: z.string(),
+	title: z.string(),
+	totalReadingTime: z.number(),
+	authors: z.array(literaryWorkCatalogAuthorDtoSchema),
+});
+
+export const literaryWorkCatalogDtoSchema = z.array(literaryWorkCatalogEntryDtoSchema);
+
 export type LiteraryWorkEpigraphDto = z.infer<typeof literaryWorkEpigraphDtoSchema>;
+export type LiteraryWorkCatalogEntryDto = z.infer<typeof literaryWorkCatalogEntryDtoSchema>;
 export type LiteraryWorkTeaserDto = z.infer<typeof literaryWorkTeaserDtoSchema>;
 export type LiteraryWorkSectionDto = z.infer<typeof literaryWorkSectionDtoSchema>;
 export type LiteraryWorkExcerptDto = z.infer<typeof literaryWorkExcerptDtoSchema>;
@@ -86,5 +104,13 @@ export function toLiteraryWorkTeaser(dto: LiteraryWorkTeaserDto): LiteraryWorkTe
 			title: dto.excerpt.title ? createSectionTitle(dto.excerpt.title.value) : undefined,
 			bodyHtml: createSanitizedHtml(dto.excerpt.bodyHtml),
 		}),
+	};
+}
+
+export function toLiteraryWorkCatalogEntry(dto: LiteraryWorkCatalogEntryDto): LiteraryWorkCatalogEntry {
+	return {
+		...dto,
+		slug: createSlug(dto.slug),
+		totalReadingTime: createReadingTime(dto.totalReadingTime),
 	};
 }

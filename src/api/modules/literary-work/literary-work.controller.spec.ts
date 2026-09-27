@@ -1,5 +1,6 @@
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
+import { toCatalogEntry } from '@models/literary-work.model';
 import { Hono } from 'hono';
 import { environment } from '../../_helpers/environment';
 import { readCacheHeaders } from '../../_middleware/read-cache-headers.middleware';
@@ -103,23 +104,26 @@ describe('literaryWorkController', () => {
 	});
 
 	describe('GET /', () => {
-		it('should return the whole catalog as teasers when no filter is given', async () => {
+		it('should return the flat catalog of every work when no filter is given', async () => {
 			const response = await controller.request('/');
 			const body = await response.json();
 
 			expect(response.status).toBe(200);
-			expect(Array.isArray(body)).toBe(true);
-			expect(body).toHaveLength(onoffLiteraryWorkTeasersMock.length);
+			expect(body).toEqual(onoffLiteraryWorkTeasersMock.map(toCatalogEntry));
+			// La fila del catálogo no transporta la tarjeta: el shape exacto es lo que lo afirma.
+			expect(Object.keys(body[0]).sort()).toEqual(['authors', 'slug', 'title', 'totalReadingTime']);
 		});
 
-		it('should return only the works of the author given in the filter', async () => {
+		it('should return the works of the author given in the filter as teasers', async () => {
 			const response = await controller.request(`/?author=${knownAuthor.slug}`);
-			const body: { authors: { slug: string }[] }[] = await response.json();
+			const body: { authors: { slug: string }[]; excerpt: unknown }[] = await response.json();
 
 			expect(response.status).toBe(200);
 			expect(body.length).toBeGreaterThan(0);
-			body.forEach(({ authors }) => {
+			body.forEach(({ authors, excerpt }) => {
 				expect(authors.some(({ slug }) => slug === knownAuthor.slug)).toBe(true);
+				// La ficha de autor pinta la tarjeta, así que su vista conserva el extracto.
+				expect(excerpt).toBeDefined();
 			});
 		});
 

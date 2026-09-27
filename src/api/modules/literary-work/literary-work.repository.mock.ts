@@ -1,5 +1,6 @@
-import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
+import { toCatalogEntry, type LiteraryWork, type LiteraryWorkTeaser } from '@models/literary-work.model';
 import type {
+	LiteraryWorkCatalogListing,
 	LiteraryWorkRepository,
 	LiteraryWorkTeaserFilter,
 	LiteraryWorkTeaserListing,
@@ -30,5 +31,11 @@ export class InMemoryLiteraryWorkRepository implements LiteraryWorkRepository {
 		const slugs = filter.slugs;
 		const literaryWorks = slugs ? byAuthor.filter(({ slug }) => slugs.includes(slug)) : byAuthor;
 		return { literaryWorks, malformed: [] };
+	}
+
+	// Proyecta los teasers que almacena: la entrada del catálogo es la misma obra sin la tarjeta, así
+	// que el doble no necesita una segunda lista cargada a mano.
+	public async fetchCatalog(): Promise<LiteraryWorkCatalogListing> {
+		return { literaryWorks: this.teasers.map(toCatalogEntry), malformed: [] };
 	}
 }

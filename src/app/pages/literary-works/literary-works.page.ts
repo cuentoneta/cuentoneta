@@ -92,7 +92,7 @@ export default class LiteraryWorksPage implements LiteraryWorksHost {
 	private readonly responseInit = inject(RESPONSE_INIT, { optional: true });
 
 	private readonly catalogResource = ssrBlockingRxResource({
-		stream: () => this.literaryWorkApi.getTeasers(),
+		stream: () => this.literaryWorkApi.getCatalog(),
 		defaultValue: [],
 	});
 

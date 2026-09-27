@@ -1,7 +1,7 @@
 import { Location } from '@angular/common';
 import { type BreadcrumbList, type CollectionPage, type WithContext } from 'schema-dts';
 
-import { type LiteraryWorkTeaser } from '@models/literary-work.model';
+import { type LiteraryWorkCatalogEntry } from '@models/literary-work.model';
 import { buildBreadcrumbSchema } from '@utils/schema-org.builders';
 
 /**
@@ -10,7 +10,7 @@ import { buildBreadcrumbSchema } from '@utils/schema-org.builders';
  * detalle viven en rutas distintas.
  */
 export function buildLiteraryWorkCatalogSchema(
-	literaryWorks: readonly LiteraryWorkTeaser[],
+	literaryWorks: readonly LiteraryWorkCatalogEntry[],
 	websiteUrl: string,
 ): WithContext<CollectionPage> {
 	const baseUrl = Location.stripTrailingSlash(websiteUrl);

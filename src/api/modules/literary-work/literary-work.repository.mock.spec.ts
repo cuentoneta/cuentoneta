@@ -1,5 +1,6 @@
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
+import { toCatalogEntry } from '@models/literary-work.model';
 import { InMemoryLiteraryWorkRepository } from './literary-work.repository.mock';
 
 describe('InMemoryLiteraryWorkRepository.fetchBySlug', () => {
@@ -49,6 +50,23 @@ describe('InMemoryLiteraryWorkRepository.fetchTeasers', () => {
 
 	it('devuelve un listado vacío sin teasers cargados', async () => {
 		const { literaryWorks } = await new InMemoryLiteraryWorkRepository().fetchTeasers({ author: authorOfFirst.slug });
+
+		expect(literaryWorks).toEqual([]);
+	});
+});
+
+describe('InMemoryLiteraryWorkRepository.fetchCatalog', () => {
+	const repository = new InMemoryLiteraryWorkRepository([], onoffLiteraryWorkTeasersMock);
+
+	it('proyecta las filas del catálogo desde los teasers almacenados, sin nada que reportar', async () => {
+		const { literaryWorks, malformed } = await repository.fetchCatalog();
+
+		expect(literaryWorks).toEqual(onoffLiteraryWorkTeasersMock.map(toCatalogEntry));
+		expect(malformed).toEqual([]);
+	});
+
+	it('devuelve un listado vacío sin teasers cargados', async () => {
+		const { literaryWorks } = await new InMemoryLiteraryWorkRepository().fetchCatalog();
 
 		expect(literaryWorks).toEqual([]);
 	});

@@ -150,11 +150,11 @@ Que la sustitución siga ocurriendo lo verifica `../onoff-raw-corpus.spec.ts`. E
 
 Varias queries proyectan un subconjunto de lo que otra devuelve. Donde eso pasa, la fixture no repite los campos compartidos: los produce con una función de `derive-raw.ts` y declara solo lo que la query **calcula** y ningún recorte puede reproducir.
 
-| Fixture                      | Deriva de                | Qué declara igual                                                    |
-| ---------------------------- | ------------------------ | -------------------------------------------------------------------- |
-| Teaser de obra               | su raw completo          | el extracto, que GROQ arma partiendo el cuerpo de la primera sección |
-| Listado de colecciones       | el raw de cada colección | el conteo de obras y el abanico de portadas                          |
-| Landing y contenido rotativo | el teaser de cada obra   | nada: la proyección es el teaser sin su extracto                     |
+| Fixture                      | Deriva de                | Qué declara igual                                                     |
+| ---------------------------- | ------------------------ | --------------------------------------------------------------------- |
+| Teaser de obra               | su raw completo          | el extracto, que GROQ arma partiendo del cuerpo de la primera sección |
+| Listado de colecciones       | el raw de cada colección | el conteo de obras y el abanico de portadas                           |
+| Landing y contenido rotativo | el teaser de cada obra   | nada: la proyección es el teaser sin su extracto                      |
 
 El generador aplica una derivación **por igualdad de valor**, igual que una sustitución: computa lo que la función produce y lo compara contra lo que devolvió la query. Si coincide, emite la llamada con spread; si no, escribe el objeto entero. Esa comparación es lo que impide que la derivación afirme algo que la query no devuelve.
 
@@ -171,6 +171,7 @@ El orden de generación es el de esas dependencias: primero los raws completos d
 Contraparte cruda del corpus de dominio `LiteraryWork`, tipada contra `NonNullable<LiteraryWorkBySlugQueryResult>`. Alimenta los tests de la capa de datos de `LiteraryWork` (mapper/repository/service). Cada `literary-work/<slug>.literary-work.raw.mock.ts` lo escribe `pnpm corpus:generate` evaluando `literaryWorkBySlugQuery` sobre `literary-work/<slug>.literary-work.document.ts` (ver [Las tres capas](#las-tres-capas)) — no se edita a mano.
 
 - **Agregador:** `../onoff-raw-literary-works.mock.ts` → `onoffRawLiteraryWorksMock` (las 8, en el mismo orden que `onoffLiteraryWorksMock`).
+- **Listado plano del catálogo:** `onoffRawLiteraryWorkCatalogMock`, **derivado** del crudo de los teasers en el agregador —no generado aparte—: enumera los cuatro campos que la query del catálogo proyecta, así que una proyección que diverja deja de tipar contra `LiteraryWorkCatalogQueryResult`. Lo cruza `../onoff-literary-work-catalog.acl-alignment.spec.ts`.
 - **Selector por capacidad:** `onoffRawLiteraryWorksWithEpigraphs` (contraparte cruda de `onoffLiteraryWorksWithEpigraphs`), derivado por predicado — las obras crudas con epígrafes, para ejercitar el mapeo raw→dominio del epígrafe sin conocer un slug concreto.
 - **Escenarios de borde** (overrides `{ ...base, … }` sobre las obras canónicas generadas), para ejercitar el mapper y la materialización sin depender del contenido base:
   - `multiSectionRawLiteraryWork` — obra multi-sección (`sectionCount > 1`). Los strings de su segunda sección viven en `literary-work/el-palacio-de-las-nueve-fronteras.multi-section.ts`, compartidos con el escenario homónimo de la capa de documentos (`onoff-documents.mock.ts`), para que las dos no puedan divergir.

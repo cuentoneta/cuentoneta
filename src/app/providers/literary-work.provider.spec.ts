@@ -1,7 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
+import {
+	toCatalogEntry,
+	type LiteraryWork,
+	type LiteraryWorkCatalogEntry,
+	type LiteraryWorkTeaser,
+} from '@models/literary-work.model';
 import {
 	onoffLiteraryWorksMock,
 	onoffLiteraryWorksWithEditorialNote,
@@ -173,6 +178,35 @@ describe('HttpLiteraryWorkApi', () => {
 		await expect(result).rejects.toThrow();
 	});
 
+	describe('getCatalog', () => {
+		// El wire del catálogo se deriva de los teasers por serialización, nunca a mano: es la vista
+		// hermana sobre las mismas obras, y enriquecer el corpus alcanza a estos casos solo.
+		const wireCatalog = JSON.parse(JSON.stringify(onoffLiteraryWorkTeasersMock.map(toCatalogEntry))) as unknown[];
+
+		function requestCatalog(payload: unknown[]) {
+			const result = new Promise<LiteraryWorkCatalogEntry[]>((resolve, reject) => {
+				api.getCatalog().subscribe({ next: resolve, error: reject });
+			});
+			http.expectOne(`${environment.apiUrl}${Endpoints.LiteraryWork}`).flush(payload);
+			return result;
+		}
+
+		it('requests the listing with no query params and rehydrates the flat entries', async () => {
+			const entries = await requestCatalog(wireCatalog);
+
+			expect(entries).toEqual(onoffLiteraryWorkTeasersMock.map(toCatalogEntry));
+		});
+
+		// La frontera valida acá y no en un template: un dato inválido corta el stream con error en vez
+		// de llegar a la tabla como un hueco mudo.
+		it('errors the stream when a catalog entry violates the DTO schema', async () => {
+			const [first, ...rest] = wireCatalog as Array<Record<string, unknown>>;
+			const malformed = [{ ...first, totalReadingTime: 'dos' }, ...rest];
+
+			await expect(requestCatalog(malformed)).rejects.toThrow();
+		});
+	});
+
 	describe('getTeasers', () => {
 		// El DTO de wire se deriva del canon por serialización, nunca a mano: es la misma forma en que
 		// viaja de verdad, y enriquecer el corpus alcanza a estos casos solo.
@@ -185,12 +219,6 @@ describe('HttpLiteraryWorkApi', () => {
 			http.expectOne(url).flush(payload);
 			return result;
 		}
-
-		it('requests the catalog with no query params when there is no filter', async () => {
-			const rehydrated = await requestTeasers({}, `${environment.apiUrl}${Endpoints.LiteraryWork}`, wireTeasers);
-
-			expect(rehydrated).toHaveLength(onoffLiteraryWorkTeasersMock.length);
-		});
 
 		it('rehydrates the listing filtered by author into domain teasers', async () => {
 			const rehydrated = await requestTeasers(

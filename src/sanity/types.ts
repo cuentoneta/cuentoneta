@@ -1688,6 +1688,19 @@ export type LiteraryWorkTeasersResult = Array<{
 	}>;
 }>;
 
+// Source: ../src/api/_queries/literary-work.query.ts
+// Variable: literaryWorkCatalogQuery
+// Query: *[_type == 'literaryWork' && !(_id in path('drafts.**'))]{    'slug': slug.current,    title,    totalReadingTime,    'authors': coalesce(authors[]->{ 'slug': slug.current, name }, [])} | order(title asc)
+export type LiteraryWorkCatalogQueryResult = Array<{
+	slug: string;
+	title: string;
+	totalReadingTime: number | null;
+	authors: Array<{
+		slug: string;
+		name: string;
+	}>;
+}>;
+
 // Source: ../src/api/_queries/sitemap.query.ts
 // Variable: sitemapSlugsQuery
 // Query: {	"literaryWorks": *[_type == "literaryWork" && !(_id in path('drafts.**'))] | order(_id asc) { "slug": slug.current, "lastmod": coalesce(publishedAt, _createdAt) },	"authors": *[_type == "author" && !(_id in path('drafts.**'))]{ "slug": slug.current, "lastmod": _createdAt },	"collections": *[_type == "collection" && !(_id in path('drafts.**'))] | order(_id asc) { "slug": slug.current, "lastmod": _createdAt }}
@@ -1723,6 +1736,7 @@ declare module '@sanity/client' {
 		"\n*[_type == 'literaryWork' && slug.current == $slug && !(_id in path('drafts.**'))]\n{\n    _id,\n    'slug': slug.current,\n    title,\n    coverImage,\n    editorialNote,\n    'badLanguage': coalesce(badLanguage, false),\n    'originalPublication': coalesce(originalPublication, ''),\n    'publishedAt': coalesce(publishedAt, _createdAt),\n    totalReadingTime,\n    'sectionCount': count(content),\n    'tags': coalesce(tags[] -> {\n        title,\n        'slug': slug.current,\n        description\n    }, []),\n    'mediaSources': coalesce(mediaSources[]{\n        ...,\n        _type == 'spaceRecording' => {\n            'audioUrl': audioFile.asset->url\n        }\n    }, []),\n    'resources': coalesce(resources[]{\n        title,\n        url,\n        resourceType->{\n            'slug': slug.current,\n            title,\n            description\n        }\n    }, []),\n    'authors': coalesce(authors[]-> {\n        _id,\n        'slug': slug.current,\n        name,\n        image,\n        nationality->,\n        biography,\n        bornOn,\n        bornOnYear,\n        diedOn,\n        diedOnYear,\n        'resources': coalesce(resources[]{\n            title,\n            url,\n            resourceType->{\n                'slug': slug.current,\n                title,\n                description\n            }\n        }, []),\n        'tags': []\n    }, []),\n    'section': content[$section...$sectionEnd]{\n        _key,\n        title,\n        'epigraphs': coalesce(epigraphs[]{ text, reference }, []),\n        body,\n        readingTime\n    }\n}\n| order(_id asc) [0]": LiteraryWorkSectionBySlugQueryResult;
 		"\n*[_type == 'literaryWork' && !(_id in path('drafts.**')) && _id > $cursor\n  && (!defined(totalReadingTime) || count(content[!defined(readingTime)]) > 0)]\n| order(_id asc) [0...$pageSize] {\n    _id,\n    'slug': slug.current,\n    totalReadingTime,\n    'content': coalesce(content[]{ _key, body, readingTime }, [])\n}": ReadingTimeBackfillCandidatesQueryResult;
 		"\n*[_type == 'literaryWork' && !(_id in path('drafts.**')) && ($author == null || $author in authors[]->slug.current) && ($slugs == null || slug.current in $slugs)]\n{\n    _id,\n    'slug': slug.current,\n    title,\n    coverImage,\n    totalReadingTime,\n    'sectionCount': count(content),\n    'tags': coalesce(tags[] -> {\n        title,\n        'slug': slug.current,\n        description\n    }, []),\n    'mediaSources': coalesce(mediaSources[]{ _type, title }, []),\n    'authors': coalesce(authors[]->{\n        _id,\n        'slug': slug.current,\n        name,\n        image,\n        nationality->,\n        bornOn,\n        bornOnYear,\n        diedOn,\n        diedOnYear\n    }, []),\n    'excerpt': content[0...1]{\n        _key,\n        title,\n        'body': string::split(string::split(body, \"\r\n\r\n\")[0], \"\n\n\")[@ != \"\"][0]\n    }\n} | order(title asc)": LiteraryWorkTeasersResult;
+		"\n*[_type == 'literaryWork' && !(_id in path('drafts.**'))]\n{\n    'slug': slug.current,\n    title,\n    totalReadingTime,\n    'authors': coalesce(authors[]->{ 'slug': slug.current, name }, [])\n} | order(title asc)": LiteraryWorkCatalogQueryResult;
 		'{\n\t"literaryWorks": *[_type == "literaryWork" && !(_id in path(\'drafts.**\'))] | order(_id asc) { "slug": slug.current, "lastmod": coalesce(publishedAt, _createdAt) },\n\t"authors": *[_type == "author" && !(_id in path(\'drafts.**\'))]{ "slug": slug.current, "lastmod": _createdAt },\n\t"collections": *[_type == "collection" && !(_id in path(\'drafts.**\'))] | order(_id asc) { "slug": slug.current, "lastmod": _createdAt }\n}': SitemapSlugsQueryResult;
 	}
 }

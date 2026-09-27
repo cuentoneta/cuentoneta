@@ -5,11 +5,16 @@ import {
 	onoffLiteraryWorkNavigationTeasersWithAuthorsMock,
 	onoffLiteraryWorkTeasersMock,
 } from '@mocks/onoff-literary-work-teasers.mock';
+import { toCatalogEntry } from '@models/literary-work.model';
 import * as literaryWorkService from './literary-work.service';
-import { getLiteraryWorkBySlug, getLiteraryWorkTeasers } from './literary-work.service';
+import { getLiteraryWorkBySlug, getLiteraryWorkCatalog, getLiteraryWorkTeasers } from './literary-work.service';
 import { LiteraryWorkNotFoundError, MalformedLiteraryWorkError } from './literary-work.errors';
 import { InMemoryLiteraryWorkRepository } from './literary-work.repository.mock';
-import type { LiteraryWorkRepository, LiteraryWorkTeaserListing } from './literary-work.repository';
+import type {
+	LiteraryWorkCatalogListing,
+	LiteraryWorkRepository,
+	LiteraryWorkTeaserListing,
+} from './literary-work.repository';
 import { environment } from '../../_helpers/environment';
 import { fetchClarityData } from '../../_helpers/clarity-connector';
 import { RotatingContentNotFoundError } from '../content/content.errors';
@@ -43,6 +48,28 @@ class StubLiteraryWorkRepository implements LiteraryWorkRepository {
 	}
 
 	public async fetchTeasers(): Promise<LiteraryWorkTeaserListing> {
+		return this.listing;
+	}
+
+	public async fetchCatalog(): Promise<never> {
+		throw new Error('No participa de estos casos.');
+	}
+}
+
+// El doble en memoria proyecta el listado plano sin descartar nada, así que la política de descarte
+// del catálogo se ejercita con un stub propio, como en los teasers.
+class StubLiteraryWorkCatalogRepository implements LiteraryWorkRepository {
+	constructor(private readonly listing: LiteraryWorkCatalogListing) {}
+
+	public async fetchBySlug(): Promise<never> {
+		throw new Error('No participa de estos casos.');
+	}
+
+	public async fetchTeasers(): Promise<never> {
+		throw new Error('No participa de estos casos.');
+	}
+
+	public async fetchCatalog(): Promise<LiteraryWorkCatalogListing> {
 		return this.listing;
 	}
 }
@@ -97,6 +124,34 @@ describe('getLiteraryWorkTeasers', () => {
 		});
 
 		expect(await getLiteraryWorkTeasers({ author: author.slug }, stub)).toEqual([]);
+	});
+});
+
+describe('getLiteraryWorkCatalog', () => {
+	const [firstTeaser] = onoffLiteraryWorkTeasersMock;
+	const repository = new InMemoryLiteraryWorkRepository([], onoffLiteraryWorkTeasersMock);
+
+	afterEach(() => restoreAllMocks());
+
+	it('devuelve el listado plano de todas las obras', async () => {
+		const literaryWorks = await getLiteraryWorkCatalog(repository);
+
+		expect(literaryWorks).toHaveLength(onoffLiteraryWorkTeasersMock.length);
+		expect(literaryWorks).toEqual(onoffLiteraryWorkTeasersMock.map(toCatalogEntry));
+	});
+
+	it('devuelve las filas sanas y registra la descartada', async () => {
+		const warn = spyOn(console, 'warn').mockImplementation(() => undefined);
+		const malformed = new MalformedLiteraryWorkError('una-obra-rota', { cause: new Error('sin tiempo de lectura') });
+		const stub = new StubLiteraryWorkCatalogRepository({
+			literaryWorks: [toCatalogEntry(firstTeaser)],
+			malformed: [malformed],
+		});
+
+		const literaryWorks = await getLiteraryWorkCatalog(stub);
+
+		expect(literaryWorks).toEqual([toCatalogEntry(firstTeaser)]);
+		expect(warn).toHaveBeenCalledWith(expect.stringContaining('una-obra-rota'), malformed.cause);
 	});
 });
 // Registra si el caso de uso pide la landing: solo necesita lo más leído, y pedirla entera
