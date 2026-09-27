@@ -90,6 +90,17 @@ ruleTester.run('component-location-and-name', rule, {
 		},
 		// La raíz se exime por ruta exacta, no por carpeta.
 		{ code: component('Foo'), filename: 'src/app/foo.ts', errors: [{ messageId: 'misplaced' }] },
+		// La exención de la raíz es de ubicación: su nombre sigue la convención.
+		{
+			code: component('AppComponent'),
+			filename: 'src/app/app.ts',
+			errors: [{ messageId: 'componentSuffix', data: { name: 'AppComponent', expected: 'App' } }],
+		},
+		{
+			code: component('Shell'),
+			filename: 'src/app/app.ts',
+			errors: [{ messageId: 'nameMismatch', data: { name: 'Shell', expectedClass: 'App', expectedFile: 'shell.ts' } }],
+		},
 		{
 			code: component('FooComponent'),
 			filename: 'src/testing/foo.ts',
@@ -138,6 +149,19 @@ ruleTester.run('component-location-and-name', rule, {
 			code: `@Component({ selector: 'cuentoneta-x' }) export default class {}`,
 			filename: 'src/app/pages/about/about.page.ts',
 			errors: [{ messageId: 'anonymousComponent' }],
+		},
+		// Un hermano vive en el mismo directorio que el `.ts`: ni en una carpeta vecina ni en una subcarpeta.
+		{
+			code: component('Carousel', `templateUrl: '../shared/carousel.html'`),
+			filename: 'src/app/components/carousel/carousel.ts',
+			errors: [
+				{ messageId: 'siblingMismatch', data: { actual: '../shared/carousel.html', expected: './carousel.html' } },
+			],
+		},
+		{
+			code: component('Carousel', `styleUrl: './styles/carousel.css'`),
+			filename: 'src/app/components/carousel/carousel.ts',
+			errors: [{ messageId: 'siblingMismatch', data: { actual: './styles/carousel.css', expected: './carousel.css' } }],
 		},
 		{
 			code: component('Carousel', `templateUrl: './carousel.component.html', styleUrls: ['./other.css']`),
