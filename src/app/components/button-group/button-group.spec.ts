@@ -216,9 +216,9 @@ describe('ButtonGroup', () => {
 		});
 	});
 
-	// La evalúa el gate `typecheck`, que cubre los *.spec.ts. Si `IconName` volviera a admitir
-	// cualquier string —un set de íconos que deja de registrar sus nombres—, la directiva quedaría
-	// sin uso y el gate corta acá.
+	// La tipificación del nombre la evalúa el gate `typecheck`, que cubre los *.spec.ts. Si
+	// `IconName` volviera a admitir cualquier string —ningún set instalado registra sus nombres—, la
+	// directiva quedaría sin uso y el gate corta acá.
 	describe('icon name typing', () => {
 		it('should reject a name that no installed icon set declares', () => {
 			// @ts-expect-error el nombre real es `faBrandYoutube`
