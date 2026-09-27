@@ -583,7 +583,7 @@ interface UrlLink {
 	url: string; // URL externa
 	label: string; // Texto del enlace
 	ariaLabel: string; // Etiqueta de accesibilidad
-	icon: string; // Nombre del ícono
+	icon: IconName; // Nombre de un ícono de los sets de @ng-icons instalados
 	alt: string; // Texto alternativo
 }
 ```
