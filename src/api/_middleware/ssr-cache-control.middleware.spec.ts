@@ -115,9 +115,11 @@ describe('ssrCacheControl', () => {
 	const CACHED_SSR_ROUTES = [
 		{ route: AppRoutes.Home, mount: `'/${AppRoutes.Home}'` },
 		{ route: AppRoutes.About, mount: `'/${AppRoutes.About}'` },
+		{ route: AppRoutes.Authors, mount: `'/${AppRoutes.Authors}'` },
 		{ route: AppRoutes.Collection, mount: `'/${AppRoutes.Collection}'` },
 		{ route: `${AppRoutes.Collection}/:slug`, mount: `'/${AppRoutes.Collection}/*'` },
 		{ route: `${AppRoutes.Author}/:slug`, mount: `'/${AppRoutes.Author}/*'` },
+		{ route: AppRoutes.LiteraryWork, mount: `'/${AppRoutes.LiteraryWork}'` },
 		{ route: `${AppRoutes.LiteraryWork}/:slug`, mount: `'/${AppRoutes.LiteraryWork}/*'` },
 	];
 
@@ -127,10 +129,9 @@ describe('ssrCacheControl', () => {
 		expect(serverRoutes.find(({ path }) => path === route)?.renderMode).toBe(RenderMode.Server);
 	});
 
-	// El montaje vive en `server.ts` y ningún test lo alcanza: los de arriba arman su propio Hono. Un
-	// prefijo que dejara de coincidir con la ruta no rompe nada — la caché simplemente deja de
-	// aplicarse—, así que se afirma leyendo la fuente, como hace el guardrail de directivas SEO.
-	it.each(CACHED_SSR_ROUTES)('should stay mounted on $mount', ({ mount }) => {
+	// El montaje vive en `server.ts` y ningún test lo alcanza: los de arriba arman su propio Hono.
+	// Se afirma leyendo la fuente, como hace el guardrail de directivas SEO.
+	function ssrCacheMountSource(): string {
 		const source = readFileSync(join(process.cwd(), 'src/server.ts'), 'utf-8');
 		// Se descartan los comentarios y se busca sobre el resto: mirar el archivo entero daría verde con
 		// el montaje comentado —que es justo la forma en que la caché se apagaría sin que nada lo note—,
@@ -140,9 +141,27 @@ describe('ssrCacheControl', () => {
 			.filter((line) => !line.trimStart().startsWith('//'))
 			.join('\n');
 
-		const end = code.indexOf('ssrCacheControl)');
-		expect(end, '`server.ts` no monta `ssrCacheControl`: la caché de las páginas SSR está apagada').toBeGreaterThan(-1);
+		const anchor = code.lastIndexOf('ssrCacheControl');
+		expect(anchor, '`server.ts` no monta `ssrCacheControl`: la caché de las páginas SSR está apagada').toBeGreaterThan(
+			-1,
+		);
 
-		expect(code.slice(code.lastIndexOf('app.on(', end), end)).toContain(mount);
+		return code.slice(code.lastIndexOf('app.on(', anchor), anchor);
+	}
+
+	it.each(CACHED_SSR_ROUTES)('should stay mounted on $mount', ({ mount }) => {
+		expect(ssrCacheMountSource()).toContain(mount);
+	});
+
+	// La dirección recíproca: un `Server` que no entre a la tabla se renderiza en cada visita sin caché
+	// de borde, y ni la tabla ni `server.ts` lo notan. Con las dos direcciones —toda entrada montada y
+	// toda ruta `Server` en la tabla— la sincronización entre los dos archivos queda cerrada.
+	it('should list every RenderMode.Server route in the cache table', () => {
+		const listed = new Set(CACHED_SSR_ROUTES.map(({ route }) => route));
+		const missing = serverRoutes.filter(
+			({ renderMode, path }) => renderMode === RenderMode.Server && !listed.has(path),
+		);
+
+		expect(missing.map(({ path }) => path)).toEqual([]);
 	});
 });

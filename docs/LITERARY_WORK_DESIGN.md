@@ -413,7 +413,7 @@ La cache key del CDN de Vercel incluye el query string, así que si la página l
 
 ### El mecanismo dejó de ser exclusivo de la obra
 
-Esta sección describe el origen del mecanismo, que nació para la página de lectura. Hoy la política es **del sitio**: los mismos dos middlewares y el mismo helper cubren las páginas SSR indexables (`/home`, `/about`, `/author/:slug`, `/collection` y `/collection/:slug`, además de la obra) y las rutas de lectura de los módulos del API. Lo que motivó extenderlo no es el costo de una obra sino el del rastreo: el sitemap publica cerca de mil URLs, y sin esta capa cada visita de un crawler a cualquiera de ellas vuelve a consultar a Sanity.
+Esta sección describe el origen del mecanismo, que nació para la página de lectura. Hoy la política es **del sitio**: los mismos dos middlewares y el mismo helper cubren las páginas SSR (`/home`, `/about`, `/authors`, `/author/:slug`, `/collection`, `/collection/:slug`, `/literary-work` y `/literary-work/:slug`) y las rutas de lectura de los módulos del API. Lo que motivó extenderlo no es el costo de una obra sino el del rastreo: el sitemap publica cerca de mil URLs, y sin esta capa cada visita de un crawler a cualquiera de ellas vuelve a consultar a Sanity.
 
 Tres cosas que la extensión no cambia y una que sí:
 

@@ -116,7 +116,7 @@ describe('formatReportBody', () => {
 	it('lista las no medidas sin contarlas como vacías', () => {
 		const body = formatReportBody(reportOf(['/author/a'], [{ path: '/story/x', reason: 'HTTP 503' }]));
 		expect(body).toContain('/story/x');
-		expect(body).toContain('**No** cuentan como páginas vacías');
+		expect(body).toContain('**No** cuentan como páginas sin contenido');
 		expect(body).toContain(`${'<!-- huella:'} ${fingerprint(['/author/a'])} -->`);
 	});
 
@@ -127,12 +127,12 @@ describe('formatReportBody', () => {
 
 describe('formatConsoleReport', () => {
 	it('resume una corrida limpia', () => {
-		expect(formatConsoleReport(reportOf([]))).toContain('ninguna vacía');
+		expect(formatConsoleReport(reportOf([]))).toContain('ninguna sin contenido');
 	});
 
 	it('lista las rutas cuando son pocas: de un puñado se quiere ir a mirarlas', () => {
 		const line = formatConsoleReport(reportOf(['/author/a', '/story/x']));
-		expect(line).toContain('2 vacías');
+		expect(line).toContain('2 sin contenido');
 		expect(line).toContain('/author/a');
 		expect(line).toContain('/story/x');
 	});
@@ -140,7 +140,7 @@ describe('formatConsoleReport', () => {
 	it('desglosa por tipo cuando son demasiadas para listar', () => {
 		const many = Array.from({ length: 12 }, (_, index) => `/author/a${index}`);
 		const line = formatConsoleReport(reportOf([...many, '/story/x']));
-		expect(line).toContain('13 vacías');
+		expect(line).toContain('13 sin contenido');
 		expect(line).toContain('/author — 12');
 		expect(line).not.toContain('/author/a0\n');
 	});
@@ -156,6 +156,6 @@ describe('formatSummaryMarkdown', () => {
 	});
 
 	it('dice explícitamente cuando no encontró ninguna', () => {
-		expect(formatSummaryMarkdown(reportOf([]))).toContain('ninguna vacía');
+		expect(formatSummaryMarkdown(reportOf([]))).toContain('ninguna sin contenido');
 	});
 });

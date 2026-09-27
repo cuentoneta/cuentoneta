@@ -30,7 +30,7 @@ export function buildReport(results: readonly PageResult[]): SweepReport {
 }
 
 /**
- * Cadena determinista del conjunto de páginas vacías. Es lo que vuelve idempotente al job: mismo
+ * Cadena determinista del conjunto de páginas sin contenido. Es lo que vuelve idempotente al job: mismo
  * conjunto ⇒ misma huella ⇒ no se escribe nada.
  *
  * Las páginas no medidas quedan fuera a propósito. Son transitorias por definición: un 503 distinto
@@ -70,7 +70,7 @@ function unmeasuredSection(report: SweepReport): string[] {
 		'',
 		'### Sin medir',
 		'',
-		'Estas URLs agotaron sus reintentos, así que el barrido no pudo afirmar nada sobre su cuerpo. **No** cuentan como páginas vacías, y no entran a la huella de este seguimiento.',
+		'Estas URLs agotaron sus reintentos, así que el barrido no pudo afirmar nada sobre su cuerpo. **No** cuentan como páginas sin contenido, y no entran a la huella de este seguimiento.',
 		'',
 		...report.unmeasured.map((entry) => `- \`${entry.path}\` — ${entry.reason}`),
 	];
@@ -79,9 +79,9 @@ function unmeasuredSection(report: SweepReport): string[] {
 export function formatReportBody(report: SweepReport): string {
 	const groups = groupByPrefix(report.emptyPaths);
 	return [
-		`El barrido recorrió ${report.scanned} URLs del sitemap y encontró **${report.emptyPaths.length}** que responden 200 con un cuerpo vacío.`,
+		`El barrido recorrió ${report.scanned} URLs del sitemap y encontró **${report.emptyPaths.length}** que responden 200 sin servir su contenido.`,
 		'',
-		'Una página sin cuerpo es un defecto sin importar de qué tipo sea: se sirve a los crawlers como si tuviera contenido, y lo que ven es un cascarón. El barrido afirma un solo invariante —que `<main>` trae texto y no un skeleton— justamente para poder afirmarlo sobre todas.',
+		'Una página que no sirve su contenido es un defecto sin importar de qué tipo sea: se sirve a los crawlers como si lo tuviera, y lo que ven es un cascarón. El barrido afirma ese conjunto —que `<main>` traiga texto, no un skeleton y no el aviso de un error— justamente para poder afirmarlo sobre todas.',
 		'',
 		...groups.flatMap(({ prefix, paths }) => [
 			`### \`${prefix}\` (${paths.length})`,
@@ -108,14 +108,14 @@ export function decideAction(input: { report: SweepReport; existing: { body: str
 		if (existing === null || !existing.body.includes(FINGERPRINT_PREFIX)) {
 			return { kind: 'noop' };
 		}
-		// El cuerpo se reescribe entero —conservar la lista dejaría al issue afirmando que esas páginas
-		// están vacías, justo debajo del aviso de que ya no—, pero la lista se conserva como registro:
+		// El cuerpo se reescribe entero —conservar la lista dejaría al issue afirmando que esas páginas no
+		// sirven su contenido, justo debajo del aviso de que ya no—, pero la lista se conserva como registro:
 		// el seguimiento sobrevive abierto hasta que alguien lo cierre, y sin ella quien lo lea después
 		// no puede saber qué se había roto.
 		return {
 			kind: 'resolved',
 			body: [
-				'Ninguna URL del sitemap sirve un cuerpo vacío.',
+				'Ninguna URL del sitemap deja de servir su contenido.',
 				'',
 				'### Lo que este seguimiento reportaba',
 				'',
@@ -123,7 +123,7 @@ export function decideAction(input: { report: SweepReport; existing: { body: str
 				'',
 				'<!-- resuelto -->',
 			].join('\n'),
-			comment: 'El barrido ya no encuentra páginas con cuerpo vacío. Se puede cerrar este seguimiento.',
+			comment: 'El barrido ya no encuentra páginas sin contenido. Se puede cerrar este seguimiento.',
 		};
 	}
 
@@ -146,14 +146,14 @@ export function formatConsoleReport(report: SweepReport): string {
 	const MAX_LISTED = 10;
 	const unmeasured = report.unmeasured.length === 0 ? '' : ` · ${report.unmeasured.length} sin medir`;
 	if (report.emptyPaths.length === 0) {
-		return `barrido de cuerpos: ${report.scanned} URLs · ninguna vacía${unmeasured}.`;
+		return `barrido de cuerpos: ${report.scanned} URLs · ninguna sin contenido${unmeasured}.`;
 	}
 	const detail =
 		report.emptyPaths.length <= MAX_LISTED
 			? report.emptyPaths.map((path) => `  ${path}`)
 			: groupByPrefix(report.emptyPaths).map(({ prefix, paths }) => `  ${prefix} — ${paths.length}`);
 	return [
-		`barrido de cuerpos: ${report.scanned} URLs · ${report.emptyPaths.length} vacías${unmeasured}.`,
+		`barrido de cuerpos: ${report.scanned} URLs · ${report.emptyPaths.length} sin contenido${unmeasured}.`,
 		...detail,
 	].join('\n');
 }
@@ -161,8 +161,8 @@ export function formatConsoleReport(report: SweepReport): string {
 export function formatSummaryMarkdown(report: SweepReport): string {
 	const headline =
 		report.emptyPaths.length === 0
-			? `Barrido de cuerpos: ${report.scanned} URLs, ninguna vacía.`
-			: `Barrido de cuerpos: **${report.emptyPaths.length}** de ${report.scanned} URLs sirven un cuerpo vacío.`;
+			? `Barrido de cuerpos: ${report.scanned} URLs, ninguna sin contenido.`
+			: `Barrido de cuerpos: **${report.emptyPaths.length}** de ${report.scanned} URLs sin contenido.`;
 	return [
 		'## Barrido de cuerpos',
 		'',

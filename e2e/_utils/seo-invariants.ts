@@ -128,6 +128,22 @@ function noSkeletonMarkers(root: HTMLElement): SeoInvariantViolation | null {
 	return null;
 }
 
+// Un estado de error sirve el aviso de fallo en lugar del contenido de la página, y puede llegar con
+// 200 (un artefacto congelado en el build) o con 5xx. Se lo reconoce por el sufijo `-error` del
+// `data-testid` de la rama de error: el texto cambia de página en página, el sufijo no.
+function errorState(root: HTMLElement): SeoInvariantViolation | null {
+	const marker = (root.querySelector('main')?.querySelectorAll('[data-testid]') ?? []).find((element) =>
+		element.getAttribute('data-testid')?.endsWith('-error'),
+	);
+	if (!marker) {
+		return null;
+	}
+	return {
+		rule: 'no-error-state',
+		message: `El <main> sirve su estado de error (data-testid="${marker.getAttribute('data-testid')}") en lugar del contenido.`,
+	};
+}
+
 function hrefsWithPrefix(root: HTMLElement, prefix: string): string[] {
 	const anchors = root.querySelector('main')?.querySelectorAll('a') ?? [];
 	return anchors
@@ -207,17 +223,17 @@ export function checkNoSkeletonMarkers(html: string): SeoInvariantViolation | nu
 }
 
 /**
- * Las dos violaciones que delatan una página servida sin cuerpo: `<main>` por debajo del umbral de
- * texto, y `<main>` con markers de skeleton. Es el subconjunto que se puede afirmar sobre cualquier
- * URL sin conocer su tipo —no necesita patrón de título ni lista de bloques JSON-LD—, y por eso lo
- * consume el barrido que recorre el sitemap entero.
+ * Las violaciones que delatan a una página que no sirve su contenido: `<main>` por debajo del umbral de
+ * texto, con markers de skeleton, o con su estado de error. Es el subconjunto que se puede afirmar
+ * sobre cualquier URL sin conocer su tipo —no necesita patrón de título ni lista de bloques JSON-LD—, y
+ * por eso lo consume el barrido que recorre el sitemap entero.
  */
 export function collectEmptyBodyViolations(html: string, minLength?: number): SeoInvariantViolation[] {
 	return emptyBodyViolations(parseHtml(html), minLength);
 }
 
 function emptyBodyViolations(root: HTMLElement, minLength?: number): SeoInvariantViolation[] {
-	return [primaryContentLength(root, minLength), noSkeletonMarkers(root)].filter(
+	return [primaryContentLength(root, minLength), noSkeletonMarkers(root), errorState(root)].filter(
 		(violation): violation is SeoInvariantViolation => violation !== null,
 	);
 }
