@@ -82,7 +82,7 @@ export class AuthorTeaserCard {
 }
 ```
 
-**Enforcement.** La regla de ESLint `cuentoneta/component-location-and-name` (`tools/eslint/component-location-and-name.js`), activa en el gate `lint`, verifica: sin sufijo `Component`; ubicación en `components/`, `pages/`, la raíz o `src/testing/`; nombre de la clase derivado del de su archivo; `.page.ts` solo dentro de `pages/`; el sufijo `Page` reservado a esos archivos; y `templateUrl`/`styleUrl` con el mismo stem que la clase. Los `*.spec.ts` y `*.stories.ts` quedan exentos de los seis chequeos. Que una página ruteada viva efectivamente en un `.page.ts` no lo decide esta regla sino `page-sources.util.ts`, que resuelve el fuente de cada ruta en el gate `test`.
+**Enforcement.** La regla de ESLint `cuentoneta/component-location-and-name` (`tools/eslint/component-location-and-name.js`), activa en el gate `lint`, verifica: sin sufijo `Component`; ubicación en `components/`, `pages/`, la raíz o `src/testing/`; nombre de la clase derivado del de su archivo; `.page.ts` solo dentro de `pages/`; el sufijo `Page` reservado a esos archivos; y `templateUrl`/`styleUrl` con el mismo stem que la clase. Los `*.spec.ts` y `*.stories.ts` quedan exentos de los seis chequeos. Que una página ruteada viva efectivamente en un `.page.ts` no lo decide esta regla sino `page-sources.util.ts`, que resuelve el fuente de cada ruta en el gate `test`; su spec afirma además la vuelta: todo `.page.ts` bajo `src/app/pages/` lo carga alguna ruta.
 
 **Puntos ciegos declarados:** el nombre de la carpeta que aloja el componente, y la cantidad de componentes que agrupa una misma carpeta. Ninguno de los dos lo verifica ningún gate.
 

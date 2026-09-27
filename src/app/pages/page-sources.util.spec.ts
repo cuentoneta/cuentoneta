@@ -1,4 +1,9 @@
+import { readdirSync } from 'fs';
+import { join } from 'path';
+
 import { routedPagePaths, sourceFileForRoute, templateSourcesFor } from './page-sources.util';
+
+const PAGES_DIR = 'src/app/pages';
 
 describe('page-sources.util', () => {
 	describe('routedPagePaths', () => {
@@ -14,6 +19,17 @@ describe('page-sources.util', () => {
 
 		it('should reject a path that no route declares', () => {
 			expect(() => sourceFileForRoute('no-existe')).toThrow(/no declara un loadComponent/);
+		});
+
+		// La vuelta de lo anterior: el sufijo `Page` queda reservado a las páginas ruteadas, así que un
+		// `.page.ts` que ninguna ruta carga es una página huérfana o un componente mal nombrado.
+		it('should load every .page.ts under src/app/pages from some route', () => {
+			const pageFiles = readdirSync(join(process.cwd(), PAGES_DIR), { recursive: true, encoding: 'utf-8' })
+				.filter((file) => file.endsWith('.page.ts'))
+				.map((file) => `${PAGES_DIR}/${file.replaceAll('\\', '/')}`);
+			const routedFiles = routedPagePaths().map(sourceFileForRoute);
+
+			expect(new Set(pageFiles)).toEqual(new Set(routedFiles));
 		});
 	});
 
