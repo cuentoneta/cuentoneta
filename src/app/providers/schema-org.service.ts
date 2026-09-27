@@ -43,7 +43,10 @@ export class SchemaOrgService {
 	private writeScript(id: string, schema: WithContext<Thing>, scope: 'sitewide' | 'page'): void {
 		const script = this.resolveScript(id);
 		script.setAttribute('data-schema-scope', scope);
-		script.textContent = JSON.stringify(schema);
+		// El contenido de un <script> termina en el primer `</script>`, sin importar las comillas del JSON:
+		// un texto del CMS que lo contuviera cortaría el bloque en el HTML server-rendered. `<` es el
+		// mismo `<` para cualquier parser de JSON y ya no lo es para el de HTML.
+		script.textContent = JSON.stringify(schema).replaceAll('<', '\\u003c');
 	}
 
 	private resolveScript(id: string): HTMLScriptElement {
