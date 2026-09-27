@@ -1,18 +1,20 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, forwardRef, inject } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 
 import { AuthorApi } from '../../providers/author.provider';
 import type { AuthorTeaser } from '@models/author.model';
 import { ssrBlockingRxResource } from '@app-utils/ssr-resource';
 import { RouterLink } from '@angular/router';
-import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
-import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 import { AppRoutes } from '../../app.routes';
+import { AUTHORS_HOST, type AuthorsHost } from './authors-host';
+import { AuthorsMetaTagsDirective } from './authors-meta-tags.directive';
+import { AuthorsStructuredDataDirective } from './authors-structured-data.directive';
 
 @Component({
 	selector: 'cuentoneta-authors',
 	imports: [RouterLink, NgOptimizedImage],
-	hostDirectives: [HeadMetadataDirective],
+	providers: [{ provide: AUTHORS_HOST, useExisting: forwardRef(() => AuthorsPage) }],
+	hostDirectives: [AuthorsMetaTagsDirective, AuthorsStructuredDataDirective],
 	template: `
 		<div class="mx-auto mt-8 w-full max-w-310 px-4 pb-16 md:mt-20">
 			<article class="grid grid-cols-1 gap-8">
@@ -61,10 +63,9 @@ import { AppRoutes } from '../../app.routes';
 		</div>
 	`,
 })
-export default class AuthorsPage {
+export default class AuthorsPage implements AuthorsHost {
 	protected readonly appRoutes = AppRoutes;
 	private readonly authorService = inject(AuthorApi);
-	private readonly metaTagsDirective = inject(HeadMetadataDirective);
 
 	private readonly authorsResource = ssrBlockingRxResource({
 		stream: () => this.authorService.getAll(),
@@ -79,11 +80,10 @@ export default class AuthorsPage {
 	// Se recorta antes de comparar porque hay fichas con un espacio al inicio del nombre, y el espacio
 	// ordena antes que cualquier letra: sin esto, esos autores encabezan el índice. Es defensa contra
 	// el dato, no su arreglo — la ficha sigue guardando el nombre con el espacio.
-	protected readonly authors = computed(() =>
-		[...this.authorsResource.value()].sort((first, second) =>
-			this.collator.compare(first.name.trim(), second.name.trim()),
-		),
-	);
+	public readonly authors = computed(() => {
+		const index = this.authorsResource.hasValue() ? this.authorsResource.value() : [];
+		return [...index].sort((first, second) => this.collator.compare(first.name.trim(), second.name.trim()));
+	});
 
 	// El corpus mezcla autores históricos con contemporáneos, así que la celda tiene que servir a
 	// una ficha completa, a una con solo el nacimiento y a una sin ninguna de las dos fechas.
@@ -92,16 +92,5 @@ export default class AuthorsPage {
 			return '—';
 		}
 		return author.diedOnYear ? `${author.bornOnYear}–${author.diedOnYear}` : `${author.bornOnYear}–`;
-	}
-
-	constructor() {
-		this.updateMetaTags();
-	}
-
-	private updateMetaTags() {
-		this.metaTagsDirective.setTitle('Todas las Autoras y Autores - La Cuentoneta');
-		this.metaTagsDirective.setDefaultDescription();
-		this.metaTagsDirective.setCanonicalUrl(buildCanonicalUrl('authors'));
-		this.metaTagsDirective.setRobots('noindex, follow');
 	}
 }
