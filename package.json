@@ -68,7 +68,7 @@
 		"@hono/node-server": "^2.1.1",
 		"@hono/zod-validator": "^0.9.1",
 		"@microsoft/clarity": "^1.0.2",
-		"@ng-icons/core": "^35.1.0",
+		"@ng-icons/core": "^36.0.0",
 		"@ng-icons/font-awesome": "^35.1.0",
 		"@ng-icons/simple-icons": "^35.1.0",
 		"@nx/angular": "23.2.0",
