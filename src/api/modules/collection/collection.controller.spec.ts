@@ -85,10 +85,11 @@ describe('collectionController with malformed data', () => {
 		},
 	);
 
+	// El detalle es la única ruta cuyo error de curaduría nombra una colección en su mensaje.
 	it('keeps the offending slug out of the response', async () => {
-		const response = await allBroken.request('/collection');
+		const response = await allBroken.request('/collection/geometrias-del-desvelo');
 
-		await expect(response.text()).resolves.not.toContain(broken.slug);
+		await expect(response.text()).resolves.not.toContain('geometrias-del-desvelo');
 	});
 
 	it('serves the rest of the catalog when one collection cannot be built', async () => {
