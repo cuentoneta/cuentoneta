@@ -26,10 +26,11 @@ import { AuthorTeaser } from '@models/author.model';
 import { Tag } from '@models/tag.model';
 import { ImageProfile } from '../image-profile/image-profile';
 import { TagsList } from '../tags-list/tags-list';
+import { Tag } from '../tag/tag';
 
 @Component({
 	selector: 'cuentoneta-author-teaser-card',
-	imports: [NgOptimizedImage, RouterLink, ImageProfile, TagsList],
+	imports: [NgOptimizedImage, RouterLink, ImageProfile, TagsList, Tag],
 	template: `
 		<article class="relative flex items-start gap-4" data-testid="author">
 			<!-- ... -->
