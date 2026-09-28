@@ -1,22 +1,13 @@
 import type { SanityClient } from '@sanity/client';
-import type {
-	LiteraryWorkBySlugQueryResult,
-	LiteraryWorkCatalogQueryResult,
-	LiteraryWorkTeasersResult,
-} from '@sanity-types';
-import {
-	createLiteraryWork,
-	type LiteraryWork,
-	type LiteraryWorkCatalogEntry,
-	type LiteraryWorkTeaser,
-} from '@models/literary-work.model';
+import type { LiteraryWorkBySlugQueryResult, LiteraryWorkTeasersResult } from '@sanity-types';
+import { createLiteraryWork, type LiteraryWork, type LiteraryWorkTeaser } from '@models/literary-work.model';
 import { createAttributedText, type AttributedText } from '@models/attributed-text.model';
 import { createLiteraryWorkExcerpt, type LiteraryWorkExcerpt } from '@models/literary-work-excerpt.model';
 import { createLiteraryWorkSection, type LiteraryWorkSection } from '@models/literary-work-section.model';
 import { createSectionTitle } from '@models/section-title.model';
 import { createMarkdown } from '@models/markdown.model';
 import { deriveSectionReadingTime } from '@models/reading-time-derivation.model';
-import { createReadingTime, type ReadingTime } from '@models/reading-time.model';
+import { createReadingTime } from '@models/reading-time.model';
 import { createSlug } from '@models/slug.model';
 import { createIsoDateTime } from '@utils/date.utils';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
@@ -25,9 +16,10 @@ import { mapMediaSources, mapMediaTeasers } from '../../_utils/media-sources.fun
 import { client as sanityClient } from '../../_helpers/sanity-connector';
 import {
 	literaryWorkBySlugQuery,
-	literaryWorkCatalogQuery,
+	literaryWorkNavigationTeasersWithAuthorsQuery,
 	literaryWorkTeasers,
 } from '../../_queries/literary-work.query';
+import { mapNavigationTeaser } from './literary-work-navigation-teaser.acl';
 import { MalformedLiteraryWorkError } from './literary-work.errors';
 import type {
 	LiteraryWorkCatalogListing,
@@ -42,7 +34,6 @@ type SanityEpigraph = NonNullable<SanityLiteraryWorkSection['epigraphs']>[number
 type SanityLiteraryWorkMetadata = Omit<SanityLiteraryWork, 'content'>;
 type SanityLiteraryWorkTeaser = LiteraryWorkTeasersResult[number];
 type SanityTeaserExcerpt = SanityLiteraryWorkTeaser['excerpt'][number];
-type SanityLiteraryWorkCatalogEntry = LiteraryWorkCatalogQueryResult[number];
 
 export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 	constructor(private readonly client: SanityClient = sanityClient) {}
@@ -74,10 +65,10 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 		return this.mapListing(raw, (rawTeaser) => this.mapLiteraryWorkTeaser(rawTeaser));
 	}
 
-	// Trae el listado plano del catálogo, traducido a la vista de la página de obras.
+	// Trae el listado sin filtros, traducido a la vista de navegación con autores de la página de obras.
 	public async fetchCatalog(): Promise<LiteraryWorkCatalogListing> {
-		const raw = await this.client.fetch(literaryWorkCatalogQuery);
-		return this.mapListing(raw, (rawEntry) => this.mapCatalogEntry(rawEntry));
+		const raw = await this.client.fetch(literaryWorkNavigationTeasersWithAuthorsQuery);
+		return this.mapListing(raw, (rawWork) => mapNavigationTeaser(rawWork));
 	}
 
 	/**
@@ -108,21 +99,17 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 		return { literaryWorks, malformed };
 	}
 
-	private mapCatalogEntry(raw: SanityLiteraryWorkCatalogEntry): LiteraryWorkCatalogEntry {
-		// Se congela como el teaser: esta vista tampoco tiene factory propia.
-		return Object.freeze({
-			slug: createSlug(raw.slug),
-			title: raw.title,
-			totalReadingTime: this.resolveTotalReadingTime(raw),
-			authors: raw.authors.map((author) => ({ slug: author.slug, name: author.name })),
-		});
-	}
-
 	private mapLiteraryWorkTeaser(raw: SanityLiteraryWorkTeaser): LiteraryWorkTeaser {
 		const [rawExcerpt] = raw.excerpt;
 		if (!rawExcerpt) {
 			// Sin sección de apertura el teaser es inconstruible: es la contracara de la invariante
 			// "al menos una sección" que la obra ya hace cumplir.
+			throw new MalformedLiteraryWorkError(raw.slug);
+		}
+		// Ausente, la obra es intraducible: no hay derivación que sirva de reemplazo, porque en una
+		// obra de texto el total es la suma de sus secciones y en una recitada es la duración del
+		// medio. Cualquier cálculo acierta en una y falla en la otra.
+		if (raw.totalReadingTime === null) {
 			throw new MalformedLiteraryWorkError(raw.slug);
 		}
 		// Se congela como los agregados que lo transportan: el teaser no tiene factory propia, pero eso
@@ -132,28 +119,13 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 			slug: createSlug(raw.slug),
 			title: raw.title,
 			coverImage: raw.coverImage ? urlFor(raw.coverImage) : '',
-			totalReadingTime: this.resolveTotalReadingTime(raw),
+			totalReadingTime: createReadingTime(raw.totalReadingTime),
 			sectionCount: raw.sectionCount,
 			tags: mapTags(raw.tags),
 			mediaSources: mapMediaTeasers(raw.mediaSources),
 			authors: raw.authors.map(mapAuthorTeaser),
 			excerpt: this.mapExcerpt(raw.slug, rawExcerpt),
 		});
-	}
-
-	// El tiempo total de lectura de la obra, tal como lo persiste el CMS. Las dos vistas de listado
-	// comparten el campo, así que el contrato se declara sobre lo que el resolvedor necesita.
-	private resolveTotalReadingTime(raw: {
-		readonly slug: string;
-		readonly totalReadingTime: number | null;
-	}): ReadingTime {
-		// Ausente, la obra es intraducible: no hay derivación que sirva de reemplazo, porque en una
-		// obra de texto el total es la suma de sus secciones y en una recitada es la duración del
-		// medio. Cualquier cálculo acierta en una y falla en la otra.
-		if (raw.totalReadingTime === null) {
-			throw new MalformedLiteraryWorkError(raw.slug);
-		}
-		return createReadingTime(raw.totalReadingTime);
 	}
 
 	// El extracto que la tarjeta pinta bajo el título: el arranque de la sección de apertura, ya

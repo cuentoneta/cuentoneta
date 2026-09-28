@@ -22,10 +22,10 @@ export function createLiteraryWorkController(
 	const controller = new Hono();
 
 	// El catálogo, filtrable por query params: un criterio nuevo es un campo más del schema, no una
-	// sub-ruta por atributo. El filtro elige además la vista: sin `author`, la entrada plana que
-	// renderiza la página de obras; con él, el teaser de tarjeta que consumen la ficha de autor y las
-	// sugerencias. Sin ramas de error propias — un filtro sin resultados es un listado vacío, y la
-	// obra mal curada la descarta el service.
+	// sub-ruta por atributo. El filtro elige además la vista: sin `author`, la vista de navegación con
+	// autores que renderiza la página de obras; con él, el teaser de tarjeta que consumen la ficha de
+	// autor y las sugerencias. Sin ramas de error propias — un filtro sin resultados es un listado
+	// vacío, y la obra mal curada la descarta el service.
 	controller.get('/', zValidator('query', literaryWorkTeaserFilterSchema), async (c) => {
 		const filter = c.req.valid('query');
 		const literaryWorks = filter.author

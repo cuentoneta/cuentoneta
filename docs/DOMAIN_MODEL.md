@@ -53,7 +53,7 @@ Un **Contexto Acotado** (Bounded Context) es un límite explícito dentro del cu
 ```
 GET /api/author/:slug              # Obtener autor completo
 GET /api/literary-work/:slug       # Obtener obra literaria completa
-GET /api/literary-work             # Catálogo de obras, filtrable por query params: sin filtros, el listado plano; con `author`, los teasers de tarjeta
+GET /api/literary-work             # Catálogo de obras (teasers), filtrable por query params
 ```
 
 ---
@@ -205,11 +205,10 @@ Borrador en Sanity → Publicación → Accesible para lectura en /literary-work
 
 - `LiteraryWork` - Vista completa (todas las secciones, autores completos)
 - `LiteraryWorkTeaser` - Vista resumida: expone un **extracto** del arranque de la obra (`excerpt`), que no declara tiempo de lectura ni posición porque su cuerpo va recortado
-- `LiteraryWorkCatalogEntry` - Vista plana del listado del catálogo: enlace, título, tiempo de lectura y autoría resumida; la única que no extiende `LiteraryWorkBase`, porque su proyección no transporta el resto de la metadata
 - `LiteraryWorkNavigationTeaser` - Vista mínima para navegación
 - `LiteraryWorkNavigationTeaserWithAuthors` - Vista mínima con autores resumidos
 
-`mediaSources` lo exponen todas las vistas de tarjeta y navegación, cada una con el tipo de su vista: `LiteraryWork` transporta `Media[]` (la vista completa, con la carga del recurso); `LiteraryWorkTeaser`, `LiteraryWorkNavigationTeaser` y `LiteraryWorkNavigationTeaserWithAuthors` transportan `MediaTeaser[]` (solo el `type`), que es lo único que la tarjeta de listado necesita para pintar el ícono de la plataforma — ver [Media](#media-contenido-multimedia). `LiteraryWorkCatalogEntry` no lo declara: la fila del catálogo no pinta el ícono y su proyección lo omite.
+`mediaSources` lo exponen **todas** las vistas, cada una con el tipo de su vista: `LiteraryWork` transporta `Media[]` (la vista completa, con la carga del recurso); `LiteraryWorkTeaser`, `LiteraryWorkNavigationTeaser` y `LiteraryWorkNavigationTeaserWithAuthors` transportan `MediaTeaser[]` (solo el `type`), que es lo único que la tarjeta de listado necesita para pintar el ícono de la plataforma — ver [Media](#media-contenido-multimedia).
 
 ---
 
@@ -545,7 +544,7 @@ interface Tag {
 
 > El nombre `description` no implica un mismo tipo en todo el modelo: en `Tag` y en [`ResourceType`](#resource-recurso-externo) es texto plano, mientras que `Media.description` es HTML saneado y `Collection.description` es Markdown saneado a HTML. Conviene mirar la interfaz antes de asumir el formato.
 
-> Una etiqueta no lleva ícono: `TagComponent` renderiza solo su título. El CMS supo tener un campo de ícono, pero ninguna superficie lo mostraba.
+> Una etiqueta no lleva ícono: el componente `Tag` renderiza solo su título. El CMS supo tener un campo de ícono, pero ninguna superficie lo mostraba.
 
 ---
 
@@ -584,7 +583,7 @@ interface UrlLink {
 	url: string; // URL externa
 	label: string; // Texto del enlace
 	ariaLabel: string; // Etiqueta de accesibilidad
-	icon: string; // Nombre del ícono
+	icon: IconName; // Nombre de un ícono de los sets de @ng-icons instalados
 	alt: string; // Texto alternativo
 }
 ```
@@ -699,9 +698,6 @@ LiteraryWork → incluye secciones, autores completos
 
 // Vista para listados
 LiteraryWorkTeaser → extracto del arranque, sin secciones completas
-
-// Vista plana del catálogo
-LiteraryWorkCatalogEntry → enlace, título, tiempo de lectura y autoría, sin tarjeta
 
 // Vista para navegación
 LiteraryWorkNavigationTeaser → información mínima

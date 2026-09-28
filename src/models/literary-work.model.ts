@@ -49,39 +49,6 @@ export interface LiteraryWorkTeaser extends LiteraryWorkBase {
 	readonly excerpt: LiteraryWorkExcerpt;
 }
 
-// La vista del listado del catálogo: la fila de la tabla enlaza la obra y su autoría, así que no
-// transporta portada, etiquetas, medios ni extracto — a diferencia del teaser, que pinta una tarjeta
-// con todo eso. Ver la proyección `literaryWorkCatalogQuery` y docs/LITERARY_WORK_DESIGN.md §7.
-export interface LiteraryWorkCatalogEntry {
-	readonly slug: Slug;
-	readonly title: string;
-	readonly totalReadingTime: ReadingTime;
-	readonly authors: readonly CatalogAuthor[];
-}
-
-// El autor tal como lo ve el catálogo de obras: lo mínimo para enlazar su ficha.
-export interface CatalogAuthor {
-	readonly slug: string;
-	readonly name: string;
-}
-
-/**
- * Proyecta la vista de teaser a la entrada del catálogo.
- *
- * La usan los dobles —el repository en memoria del backend y el stub del frontend— para responder el
- * listado a partir de los teasers que ya almacenan, en vez de declarar el shape dos veces. No
- * reemplaza al mapeo del adaptador de Sanity: ese traduce el crudo de la query, y el cruce del
- * corpus es lo que mantiene a los dos de acuerdo.
- */
-export function toCatalogEntry(teaser: LiteraryWorkTeaser): LiteraryWorkCatalogEntry {
-	return Object.freeze({
-		slug: teaser.slug,
-		title: teaser.title,
-		totalReadingTime: teaser.totalReadingTime,
-		authors: teaser.authors.map(({ slug, name }) => ({ slug, name })),
-	});
-}
-
 export interface LiteraryWorkNavigationTeaser extends LiteraryWorkBase {
 	readonly authors: Array<never>;
 	readonly mediaSources: readonly MediaTeaser[];

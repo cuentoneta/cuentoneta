@@ -9,7 +9,11 @@ import LiteraryWorksPage from './literary-works.page';
 import { LITERARY_WORKS_HOST } from './literary-works-host';
 import type { LiteraryWorkApi } from '../../providers/literary-work.provider';
 import { provideLiteraryWorkApiMock, StubLiteraryWorkApi } from '../../providers/literary-work.mock';
-import type { LiteraryWork, LiteraryWorkCatalogEntry, LiteraryWorkTeaser } from '@models/literary-work.model';
+import type {
+	LiteraryWork,
+	LiteraryWorkNavigationTeaserWithAuthors,
+	LiteraryWorkTeaser,
+} from '@models/literary-work.model';
 import { createSlug } from '@models/slug.model';
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
@@ -19,7 +23,7 @@ class FailingLiteraryWorkApi implements LiteraryWorkApi {
 		return throwError(() => new Error('sin catálogo'));
 	}
 
-	public getCatalog(): Observable<LiteraryWorkCatalogEntry[]> {
+	public getCatalog(): Observable<LiteraryWorkNavigationTeaserWithAuthors[]> {
 		return throwError(() => new Error('sin catálogo'));
 	}
 
@@ -35,7 +39,7 @@ class PendingLiteraryWorkApi implements LiteraryWorkApi {
 		return NEVER;
 	}
 
-	public getCatalog(): Observable<LiteraryWorkCatalogEntry[]> {
+	public getCatalog(): Observable<LiteraryWorkNavigationTeaserWithAuthors[]> {
 		return NEVER;
 	}
 

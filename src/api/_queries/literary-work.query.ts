@@ -210,20 +210,37 @@ export const literaryWorkTeasers = defineQuery(`
     }
 } | order(title asc)`);
 
-// El listado plano del catálogo: los cuatro campos que la página de obras renderiza, sin la vista de
-// tarjeta. Existe separado de `literaryWorkTeasers` —no como un recorte suyo— porque esa vista la
-// sirve el mismo endpoint a la ficha de autor y a las sugerencias de lectura, que sí muestran
-// extracto, portada, medios y etiquetas: recortarla habría vaciado las tarjetas. Acá cada fila paga
-// solo lo que pinta, que es la diferencia entre transferir la obra entera y transferir su enlace.
-//
-// Los autores van por `coalesce` y con dos campos, por lo mismo que el resto: la fila enlaza la
-// autoría (slug + nombre) y nada más de ella. El total de lectura no se acota: sin él la fila no
-// puede mostrar la duración, y una obra sin materializar se descarta en el mapeo como en el teaser.
-export const literaryWorkCatalogQuery = defineQuery(`
-*[_type == 'literaryWork' && !(_id in path('drafts.**'))]
+// La proyección de la vista de navegación con autores, compartida con las dos queries de contenido:
+// vive acá una sola vez y se interpola, y el typegen resuelve la constante importada sin perder el
+// tipo de cada query. Es lo que hace imposible que las tres proyecten la misma vista de formas
+// distintas — ver `.claude/references/sanity-acl.md`.
+export const literaryWorkNavigationTeasersWithAuthorsProjection = `
 {
+    _id,
     'slug': slug.current,
     title,
+    coverImage,
     totalReadingTime,
-    'authors': coalesce(authors[]->{ 'slug': slug.current, name }, [])
-} | order(title asc)`);
+    'sectionCount': count(content),
+    'tags': coalesce(tags[] -> {
+        title,
+        'slug': slug.current,
+        description
+    }, []),
+    'mediaSources': coalesce(mediaSources[]{ _type, title }, []),
+    'authors': coalesce(authors[]->{
+        _id,
+        'slug': slug.current,
+        name,
+        image,
+        nationality->,
+        bornOn,
+        bornOnYear,
+        diedOn,
+        diedOnYear
+    }, [])
+}`;
+
+// El listado sin filtros de la vista de navegación con autores, ordenado por título como el de teasers.
+export const literaryWorkNavigationTeasersWithAuthorsQuery = defineQuery(`
+*[_type == 'literaryWork' && !(_id in path('drafts.**'))]${literaryWorkNavigationTeasersWithAuthorsProjection} | order(title asc)`);

@@ -6,12 +6,30 @@ import { of } from 'rxjs';
 
 // Models
 import {
-	toCatalogEntry,
+	createLiteraryWorkNavigationTeaser,
 	type LiteraryWork,
-	type LiteraryWorkCatalogEntry,
+	type LiteraryWorkNavigationTeaserWithAuthors,
 	type LiteraryWorkTeaser,
 } from '@models/literary-work.model';
 import { LiteraryWorkApi, type LiteraryWorkTeaserFilter } from './literary-work.provider';
+
+// La vista de navegación es el teaser sin el extracto: el doble la proyecta desde lo que ya recibe por
+// constructor, así que no necesita una segunda lista cableada en cada spec. La factory hace cumplir
+// sus invariantes, igual que el provider real al rehidratar el DTO. La exporta además la story del
+// catálogo, que arma sus escenarios sobre teasers.
+export function toNavigationTeaser(teaser: LiteraryWorkTeaser): LiteraryWorkNavigationTeaserWithAuthors {
+	return createLiteraryWorkNavigationTeaser({
+		_id: teaser._id,
+		slug: teaser.slug,
+		title: teaser.title,
+		coverImage: teaser.coverImage,
+		totalReadingTime: teaser.totalReadingTime,
+		sectionCount: teaser.sectionCount,
+		tags: teaser.tags,
+		mediaSources: teaser.mediaSources,
+		authors: teaser.authors,
+	});
+}
 
 export class StubLiteraryWorkApi implements LiteraryWorkApi {
 	constructor(
@@ -23,10 +41,8 @@ export class StubLiteraryWorkApi implements LiteraryWorkApi {
 		return of(this.literaryWork);
 	}
 
-	// Proyecta los teasers que ya recibe por constructor: la entrada del catálogo es la misma obra sin
-	// la tarjeta, así que el doble no necesita una segunda lista cableada en cada spec.
-	public getCatalog(): Observable<LiteraryWorkCatalogEntry[]> {
-		return of(this.teasers.map(toCatalogEntry));
+	public getCatalog(): Observable<LiteraryWorkNavigationTeaserWithAuthors[]> {
+		return of(this.teasers.map(toNavigationTeaser));
 	}
 
 	public getTeasers(filter: LiteraryWorkTeaserFilter): Observable<LiteraryWorkTeaser[]> {

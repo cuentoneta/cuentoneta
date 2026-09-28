@@ -62,12 +62,18 @@ queda contenido en el mapper; el dominio y el frontend no se enteran.
 > consumen tanto `SanityCollectionRepository` (el catálogo y el detalle de colecciones) como
 > `SanityContentRepository` (las colecciones destacadas de la landing) porque las dos dereferencian
 > una `Collection` y necesitan construir exactamente la misma vista. Vive en el módulo de `collection`
-> — dueño del agregado que describe — y no en el de `content`, que solo lo consume.
+> — dueño del agregado que describe — y no en el de `content`, que solo lo consume. El mismo criterio
+> sigue `src/api/modules/literary-work/literary-work-navigation-teaser.acl.ts` (`mapNavigationTeaser`):
+> el ensamblado de `LiteraryWorkNavigationTeaserWithAuthors` lo comparten `SanityLiteraryWorkRepository`
+> (el listado sin filtros) y `SanityContentRepository` (los slots de la landing).
 >
-> **`defineQuery` exige literales.** El typegen parsea el string de la llamada, así que una constante
-> concatenada o un template interpolado dejan de emitir tipos. Por eso dos queries con la misma
-> proyección **repiten el literal** en vez de compartirlo, y lo que impide que se desincronicen es el
-> tipo: el privado que las mapea se tipa contra una y recibe los resultados de la otra.
+> **`defineQuery` exige literales, pero resuelve interpolaciones.** El typegen parsea el string de la
+> llamada, así que una concatenación (`'…' + constante`) deja de emitir tipos. Una **interpolación de
+> una constante con tipo literal** —definida en el mismo archivo o importada— sí se resuelve: el
+> typegen la lee y el tipo de la query queda como el literal completo, así que `client.fetch` conserva
+> su tipo generado. Por eso dos queries con la misma proyección **comparten la constante** en vez de
+> repetir el literal (`literaryWorkNavigationTeasersWithAuthorsProjection`, en `literary-work.query.ts`),
+> y el mapper que las consume se tipa contra la unión de sus resultados.
 
 ---
 

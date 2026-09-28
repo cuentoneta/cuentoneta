@@ -1,6 +1,5 @@
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
-import { toCatalogEntry } from '@models/literary-work.model';
 import { Hono } from 'hono';
 import { environment } from '../../_helpers/environment';
 import { readCacheHeaders } from '../../_middleware/read-cache-headers.middleware';
@@ -104,14 +103,14 @@ describe('literaryWorkController', () => {
 	});
 
 	describe('GET /', () => {
-		it('should return the flat catalog of every work when no filter is given', async () => {
+		it('should return the navigation view of every work when no filter is given', async () => {
 			const response = await controller.request('/');
 			const body = await response.json();
 
 			expect(response.status).toBe(200);
-			expect(body).toEqual(onoffLiteraryWorkTeasersMock.map(toCatalogEntry));
-			// La fila del catálogo no transporta la tarjeta: el shape exacto es lo que lo afirma.
-			expect(Object.keys(body[0]).sort()).toEqual(['authors', 'slug', 'title', 'totalReadingTime']);
+			expect(body).toEqual(onoffLiteraryWorkNavigationTeasersWithAuthorsMock);
+			// La vista no transporta el extracto: el shape exacto es lo que lo afirma.
+			expect(body[0]).not.toHaveProperty('excerpt');
 		});
 
 		it('should return the works of the author given in the filter as teasers', async () => {

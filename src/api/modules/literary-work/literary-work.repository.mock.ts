@@ -1,10 +1,32 @@
-import { toCatalogEntry, type LiteraryWork, type LiteraryWorkTeaser } from '@models/literary-work.model';
+import {
+	createLiteraryWorkNavigationTeaser,
+	type LiteraryWork,
+	type LiteraryWorkNavigationTeaserWithAuthors,
+	type LiteraryWorkTeaser,
+} from '@models/literary-work.model';
 import type {
 	LiteraryWorkCatalogListing,
 	LiteraryWorkRepository,
 	LiteraryWorkTeaserFilter,
 	LiteraryWorkTeaserListing,
 } from './literary-work.repository';
+
+// La vista de navegación es el teaser sin el extracto: se proyecta desde lo que el doble ya almacena
+// en vez de cargar una segunda lista a mano. La factory hace cumplir sus invariantes, como el
+// adaptador de Sanity, y enumerar los campos impide que uno del teaser se cuele en la vista.
+function toNavigationTeaser(teaser: LiteraryWorkTeaser): LiteraryWorkNavigationTeaserWithAuthors {
+	return createLiteraryWorkNavigationTeaser({
+		_id: teaser._id,
+		slug: teaser.slug,
+		title: teaser.title,
+		coverImage: teaser.coverImage,
+		totalReadingTime: teaser.totalReadingTime,
+		sectionCount: teaser.sectionCount,
+		tags: teaser.tags,
+		mediaSources: teaser.mediaSources,
+		authors: teaser.authors,
+	});
+}
 
 export class InMemoryLiteraryWorkRepository implements LiteraryWorkRepository {
 	private readonly literaryWorks: ReadonlyArray<LiteraryWork>;
@@ -33,9 +55,7 @@ export class InMemoryLiteraryWorkRepository implements LiteraryWorkRepository {
 		return { literaryWorks, malformed: [] };
 	}
 
-	// Proyecta los teasers que almacena: la entrada del catálogo es la misma obra sin la tarjeta, así
-	// que el doble no necesita una segunda lista cargada a mano.
 	public async fetchCatalog(): Promise<LiteraryWorkCatalogListing> {
-		return { literaryWorks: this.teasers.map(toCatalogEntry), malformed: [] };
+		return { literaryWorks: this.teasers.map(toNavigationTeaser), malformed: [] };
 	}
 }

@@ -1,4 +1,8 @@
-import type { LiteraryWork, LiteraryWorkCatalogEntry, LiteraryWorkTeaser } from '@models/literary-work.model';
+import type {
+	LiteraryWork,
+	LiteraryWorkNavigationTeaserWithAuthors,
+	LiteraryWorkTeaser,
+} from '@models/literary-work.model';
 import type { RotatingContent } from '@models/landing-page-content.model';
 import { LiteraryWorkNotFoundError, type MalformedLiteraryWorkError } from './literary-work.errors';
 import type { LiteraryWorkRepository, LiteraryWorkTeaserFilter } from './literary-work.repository';
@@ -46,10 +50,10 @@ export async function getLiteraryWorkTeasers(
 	return dropMalformed(await repository.fetchTeasers(filter), 'listado de teasers');
 }
 
-// Sirve el listado plano del catálogo: la vista sin tarjeta que renderiza la página de obras.
+// Sirve el listado sin filtros: la vista de navegación con autores que renderiza la página de obras.
 export async function getLiteraryWorkCatalog(
 	repository: LiteraryWorkRepository = new SanityLiteraryWorkRepository(),
-): Promise<readonly LiteraryWorkCatalogEntry[]> {
+): Promise<readonly LiteraryWorkNavigationTeaserWithAuthors[]> {
 	return dropMalformed(await repository.fetchCatalog(), 'catálogo');
 }
 

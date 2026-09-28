@@ -5,7 +5,6 @@ import {
 	onoffLiteraryWorkNavigationTeasersWithAuthorsMock,
 	onoffLiteraryWorkTeasersMock,
 } from '@mocks/onoff-literary-work-teasers.mock';
-import { toCatalogEntry } from '@models/literary-work.model';
 import * as literaryWorkService from './literary-work.service';
 import { getLiteraryWorkBySlug, getLiteraryWorkCatalog, getLiteraryWorkTeasers } from './literary-work.service';
 import { LiteraryWorkNotFoundError, MalformedLiteraryWorkError } from './literary-work.errors';
@@ -56,7 +55,7 @@ class StubLiteraryWorkRepository implements LiteraryWorkRepository {
 	}
 }
 
-// El doble en memoria proyecta el listado plano sin descartar nada, así que la política de descarte
+// El doble en memoria proyecta la vista de navegación sin descartar nada, así que la política de descarte
 // del catálogo se ejercita con un stub propio, como en los teasers.
 class StubLiteraryWorkCatalogRepository implements LiteraryWorkRepository {
 	constructor(private readonly listing: LiteraryWorkCatalogListing) {}
@@ -128,29 +127,29 @@ describe('getLiteraryWorkTeasers', () => {
 });
 
 describe('getLiteraryWorkCatalog', () => {
-	const [firstTeaser] = onoffLiteraryWorkTeasersMock;
+	const [firstNavigationTeaser] = onoffLiteraryWorkNavigationTeasersWithAuthorsMock;
 	const repository = new InMemoryLiteraryWorkRepository([], onoffLiteraryWorkTeasersMock);
 
 	afterEach(() => restoreAllMocks());
 
-	it('devuelve el listado plano de todas las obras', async () => {
+	it('devuelve la vista de navegación de todas las obras', async () => {
 		const literaryWorks = await getLiteraryWorkCatalog(repository);
 
-		expect(literaryWorks).toHaveLength(onoffLiteraryWorkTeasersMock.length);
-		expect(literaryWorks).toEqual(onoffLiteraryWorkTeasersMock.map(toCatalogEntry));
+		expect(literaryWorks).toHaveLength(onoffLiteraryWorkNavigationTeasersWithAuthorsMock.length);
+		expect(literaryWorks).toEqual(onoffLiteraryWorkNavigationTeasersWithAuthorsMock);
 	});
 
-	it('devuelve las filas sanas y registra la descartada', async () => {
+	it('devuelve las obras sanas y registra la descartada', async () => {
 		const warn = spyOn(console, 'warn').mockImplementation(() => undefined);
 		const malformed = new MalformedLiteraryWorkError('una-obra-rota', { cause: new Error('sin tiempo de lectura') });
 		const stub = new StubLiteraryWorkCatalogRepository({
-			literaryWorks: [toCatalogEntry(firstTeaser)],
+			literaryWorks: [firstNavigationTeaser],
 			malformed: [malformed],
 		});
 
 		const literaryWorks = await getLiteraryWorkCatalog(stub);
 
-		expect(literaryWorks).toEqual([toCatalogEntry(firstTeaser)]);
+		expect(literaryWorks).toEqual([firstNavigationTeaser]);
 		expect(warn).toHaveBeenCalledWith(expect.stringContaining('una-obra-rota'), malformed.cause);
 	});
 });

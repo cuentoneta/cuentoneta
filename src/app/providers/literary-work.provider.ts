@@ -7,7 +7,11 @@ import { map, type Observable } from 'rxjs';
 import { environment } from '../environments/environment';
 
 // Models
-import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
+import {
+	createLiteraryWork,
+	type LiteraryWork,
+	type LiteraryWorkNavigationTeaserWithAuthors,
+} from '@models/literary-work.model';
 import { createAttributedText } from '@models/attributed-text.model';
 import { createLiteraryWorkSection, type LiteraryWorkSection } from '@models/literary-work-section.model';
 import { createSectionTitle } from '@models/section-title.model';
@@ -15,30 +19,30 @@ import { createReadingTime } from '@models/reading-time.model';
 import { createSanitizedHtml } from '@models/sanitized-html.model';
 import { createIsoDateTime } from '@utils/date.utils';
 import {
-	literaryWorkCatalogDtoSchema,
 	literaryWorkDtoSchema,
+	literaryWorkNavigationTeaserWithAuthorsListDtoSchema,
 	literaryWorkTeaserListDtoSchema,
-	toLiteraryWorkCatalogEntry,
+	toLiteraryWorkNavigationTeaserWithAuthors,
 	toLiteraryWorkTeaser,
-	type LiteraryWorkCatalogEntryDto,
 	type LiteraryWorkDto,
+	type LiteraryWorkNavigationTeaserWithAuthorsDto,
 	type LiteraryWorkTeaserDto,
 	type LiteraryWorkSectionDto,
 } from '@models/literary-work.dto';
-import type { LiteraryWorkCatalogEntry, LiteraryWorkTeaser } from '@models/literary-work.model';
+import type { LiteraryWorkTeaser } from '@models/literary-work.model';
 import type { ApiUrl } from './endpoints';
 import { Endpoints } from './endpoints';
 
 // Espeja el contrato del endpoint: el filtrado va por query params, así que acá es un registro donde
 // un criterio nuevo suma un campo, no un método. `author` no es opcional porque la vista lo es: el
-// listado sin filtros es la entrada plana del catálogo, que tiene su propia lectura.
+// listado sin filtros es la vista de navegación con autores, que tiene su propia lectura.
 export interface LiteraryWorkTeaserFilter {
 	readonly author: string;
 }
 
 export interface LiteraryWorkApi {
 	getBySlug(slug: string): Observable<LiteraryWork>;
-	getCatalog(): Observable<LiteraryWorkCatalogEntry[]>;
+	getCatalog(): Observable<LiteraryWorkNavigationTeaserWithAuthors[]>;
 	getTeasers(filter: LiteraryWorkTeaserFilter): Observable<LiteraryWorkTeaser[]>;
 }
 
@@ -53,10 +57,16 @@ export class HttpLiteraryWorkApi implements LiteraryWorkApi {
 			.pipe(map((response) => this.toLiteraryWork(literaryWorkDtoSchema.parse(response))));
 	}
 
-	public getCatalog(): Observable<LiteraryWorkCatalogEntry[]> {
+	public getCatalog(): Observable<LiteraryWorkNavigationTeaserWithAuthors[]> {
 		return this.http
-			.get<LiteraryWorkCatalogEntryDto[]>(this.url)
-			.pipe(map((response) => literaryWorkCatalogDtoSchema.parse(response).map(toLiteraryWorkCatalogEntry)));
+			.get<LiteraryWorkNavigationTeaserWithAuthorsDto[]>(this.url)
+			.pipe(
+				map((response) =>
+					literaryWorkNavigationTeaserWithAuthorsListDtoSchema
+						.parse(response)
+						.map(toLiteraryWorkNavigationTeaserWithAuthors),
+				),
+			);
 	}
 
 	public getTeasers(filter: LiteraryWorkTeaserFilter): Observable<LiteraryWorkTeaser[]> {

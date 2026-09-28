@@ -3,7 +3,11 @@ import { provideRouter } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { NEVER, of, throwError, type Observable } from 'rxjs';
 
-import type { LiteraryWork, LiteraryWorkCatalogEntry, LiteraryWorkTeaser } from '@models/literary-work.model';
+import type {
+	LiteraryWork,
+	LiteraryWorkNavigationTeaserWithAuthors,
+	LiteraryWorkTeaser,
+} from '@models/literary-work.model';
 import {
 	onoffLiteraryWorksMock,
 	onoffLiteraryWorksWithMultipleMediaSources,
@@ -40,7 +44,7 @@ class CorpusLiteraryWorkApi implements LiteraryWorkApi {
 	}
 
 	// La página de lectura no consulta el catálogo: si alguna vez lo hiciera, este doble lo delata.
-	public getCatalog(): Observable<LiteraryWorkCatalogEntry[]> {
+	public getCatalog(): Observable<LiteraryWorkNavigationTeaserWithAuthors[]> {
 		return throwError(() => new Error('La página de lectura no consulta el catálogo'));
 	}
 

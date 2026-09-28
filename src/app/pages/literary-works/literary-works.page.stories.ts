@@ -3,9 +3,8 @@ import { provideRouter } from '@angular/router';
 import { NEVER, of, throwError, type Observable } from 'rxjs';
 
 import {
-	toCatalogEntry,
 	type LiteraryWork,
-	type LiteraryWorkCatalogEntry,
+	type LiteraryWorkNavigationTeaserWithAuthors,
 	type LiteraryWorkTeaser,
 } from '@models/literary-work.model';
 import {
@@ -13,7 +12,7 @@ import {
 	onoffLiteraryWorkTeasersWithMediaSourcesMock,
 } from '@mocks/onoff-literary-work-teasers.mock';
 
-import { provideLiteraryWorkApiMock } from '../../providers/literary-work.mock';
+import { provideLiteraryWorkApiMock, toNavigationTeaser } from '../../providers/literary-work.mock';
 import type { LiteraryWorkApi } from '../../providers/literary-work.provider';
 import LiteraryWorksPage from './literary-works.page';
 
@@ -34,7 +33,7 @@ class StubScenarioLiteraryWorkApi implements LiteraryWorkApi {
 		return throwError(() => new Error('El catálogo no consulta por slug'));
 	}
 
-	public getCatalog(): Observable<LiteraryWorkCatalogEntry[]> {
+	public getCatalog(): Observable<LiteraryWorkNavigationTeaserWithAuthors[]> {
 		if (this.scenario === 'failure') {
 			return throwError(() => new Error('sin catálogo'));
 		}
@@ -42,7 +41,7 @@ class StubScenarioLiteraryWorkApi implements LiteraryWorkApi {
 		if (this.scenario === 'loading') {
 			return NEVER;
 		}
-		return of(catalogues[this.scenario].map(toCatalogEntry));
+		return of(catalogues[this.scenario].map(toNavigationTeaser));
 	}
 
 	public getTeasers(): Observable<LiteraryWorkTeaser[]> {

@@ -15,10 +15,10 @@ params:query {
 }
 
 docs {
-  Obtener el catálogo de obras, filtrable por query params. Sin filtros devuelve el listado plano
-  que renderiza la página de obras —`slug`, `title`, `totalReadingTime` y `authors[].slug/name`—;
-  con `author` devuelve el teaser de tarjeta de la ficha de autor y las sugerencias de lectura,
-  que sí incluye extracto, portada, medios y etiquetas. Cada criterio de filtrado nuevo es un
+  Obtener el catálogo de obras, filtrable por query params. Sin filtros devuelve la vista de
+  navegación con autores que renderiza la página de obras —sin extracto, con portada, etiquetas,
+  medios y autores resumidos—; con `author` devuelve el teaser de tarjeta de la ficha de autor y
+  las sugerencias de lectura, que sí incluye el extracto. Cada criterio de filtrado nuevo es un
   query param más, no una sub-ruta.
 
   Devuelve el listado completo, ordenado por título: quién elige las que se muestran es del

@@ -12,7 +12,7 @@ import {
 	unmaterializedRawLiteraryWork,
 } from '@mocks/onoff-raw-literary-works.mock';
 import {
-	onoffRawLiteraryWorkCatalogMock,
+	onoffRawLiteraryWorkNavigationTeasersWithAuthorsMock,
 	onoffRawLiteraryWorksWithoutEditorialNote,
 	onoffRawLiteraryWorkTeasersMock,
 } from '@mocks/onoff-raw-literary-works.mock';
@@ -292,29 +292,39 @@ describe('SanityLiteraryWorkRepository.fetchTeasers', () => {
 });
 
 describe('SanityLiteraryWorkRepository.fetchCatalog', () => {
-	it('mapea el listado plano a entradas congeladas', async () => {
-		const { literaryWorks, malformed } = await repoReturning(onoffRawLiteraryWorkCatalogMock).fetchCatalog();
+	it('mapea el listado sin filtros a vistas de navegación congeladas y sin extracto', async () => {
+		const { literaryWorks, malformed } = await repoReturning(
+			onoffRawLiteraryWorkNavigationTeasersWithAuthorsMock,
+		).fetchCatalog();
 
-		expect(literaryWorks).toHaveLength(onoffRawLiteraryWorkCatalogMock.length);
+		expect(literaryWorks).toHaveLength(onoffRawLiteraryWorkNavigationTeasersWithAuthorsMock.length);
 		expect(malformed).toEqual([]);
-		literaryWorks.forEach((entry) => {
-			expect(Object.isFrozen(entry)).toBe(true);
+		literaryWorks.forEach((work) => {
+			expect(Object.isFrozen(work)).toBe(true);
+			expect(work).not.toHaveProperty('excerpt');
 		});
 	});
 
-	it('traduce el enlace, el título, el tiempo de lectura y la autoría de cada fila', async () => {
-		const [raw] = onoffRawLiteraryWorkCatalogMock;
+	it('traduce la portada, el tiempo de lectura, las etiquetas, los medios y la autoría de cada obra', async () => {
+		const [raw] = onoffRawLiteraryWorkNavigationTeasersWithAuthorsMock;
 		const { literaryWorks } = await repoReturning([raw]).fetchCatalog();
-		const [entry] = literaryWorks;
+		const [work] = literaryWorks;
 
-		expect(entry.slug).toBe(raw.slug);
-		expect(entry.title).toBe(raw.title);
-		expect(entry.totalReadingTime).toBe(raw.totalReadingTime);
-		expect(entry.authors).toEqual(raw.authors);
+		expect(work.slug).toBe(raw.slug);
+		expect(work.title).toBe(raw.title);
+		expect(work.totalReadingTime).toBe(raw.totalReadingTime);
+		expect(work.sectionCount).toBe(raw.sectionCount);
+		expect(work.tags).toEqual(raw.tags);
+		// Los medios van en su vista de teaser y el tipo que el dominio no modela se descarta, como en
+		// el mapeo del agregado completo.
+		expect(work.mediaSources).toEqual(
+			raw.mediaSources.filter(({ _type }) => _type !== 'pdfLink').map(({ _type, title }) => ({ type: _type, title })),
+		);
+		expect(work.authors.map(({ slug }) => slug)).toEqual(raw.authors.map(({ slug }) => slug));
 	});
 
 	it('reporta la obra sin tiempo de lectura sin llevarse puestas a las demás', async () => {
-		const [sane, ...rest] = onoffRawLiteraryWorkCatalogMock;
+		const [sane, ...rest] = onoffRawLiteraryWorkNavigationTeasersWithAuthorsMock;
 		const broken = { ...sane, slug: `${sane.slug}-rota`, totalReadingTime: null };
 
 		const { literaryWorks, malformed } = await repoReturning([broken, ...rest]).fetchCatalog();
@@ -324,9 +334,21 @@ describe('SanityLiteraryWorkRepository.fetchCatalog', () => {
 		expect(malformed[0].slug).toBe(broken.slug);
 	});
 
-	it('reporta como mal curada a la fila con slug inválido', async () => {
-		const [sane] = onoffRawLiteraryWorkCatalogMock;
+	it('reporta como mal curada a la obra con slug inválido', async () => {
+		const [sane] = onoffRawLiteraryWorkNavigationTeasersWithAuthorsMock;
 		const broken = { ...sane, slug: 'no es un slug' };
+
+		const { literaryWorks, malformed } = await repoReturning([broken]).fetchCatalog();
+
+		expect(literaryWorks).toEqual([]);
+		expect(malformed[0]).toBeInstanceOf(MalformedLiteraryWorkError);
+	});
+
+	// La vista hace cumplir "al menos un autor" en su factory: la obra que los perdió al despublicarse
+	// se reporta en vez de tumbarse el listado entero.
+	it('reporta como mal curada a la obra sin autores', async () => {
+		const [sane] = onoffRawLiteraryWorkNavigationTeasersWithAuthorsMock;
+		const broken = { ...sane, authors: [] };
 
 		const { literaryWorks, malformed } = await repoReturning([broken]).fetchCatalog();
 

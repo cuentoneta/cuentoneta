@@ -1,10 +1,11 @@
 import * as z from 'zod/mini';
 import type { Author, AuthorTeaser } from './author.model';
-import type { LiteraryWorkCatalogEntry, LiteraryWorkTeaser } from './literary-work.model';
+import type { LiteraryWorkNavigationTeaserWithAuthors, LiteraryWorkTeaser } from './literary-work.model';
 import type { Media, MediaTeaser } from './media.model';
 import type { Resource } from './resource.model';
 import type { Tag } from './tag.model';
 import { createLiteraryWorkExcerpt } from './literary-work-excerpt.model';
+import { createLiteraryWorkNavigationTeaser } from './literary-work.model';
 import { createReadingTime } from './reading-time.model';
 import { createSanitizedHtml } from './sanitized-html.model';
 import { createSectionTitle } from './section-title.model';
@@ -71,25 +72,28 @@ export const literaryWorkTeaserDtoSchema = z.object({
 
 export const literaryWorkTeaserListDtoSchema = z.array(literaryWorkTeaserDtoSchema);
 
-// La vista del listado plano del catálogo —la que sirve el endpoint sin filtros— con los cuatro
-// campos que la página de obras renderiza. Los autores se validan en profundidad, a diferencia de
-// los tipos anémicos anidados del teaser: su forma la fija este mismo contrato, no otro módulo.
-export const literaryWorkCatalogAuthorDtoSchema = z.object({
-	slug: z.string(),
-	name: z.string(),
-});
-
-export const literaryWorkCatalogEntryDtoSchema = z.object({
+// La vista de navegación con autores —la que sirve el endpoint sin filtros—: la metadata de tarjeta
+// sin el extracto. Los tipos anémicos anidados se validan como opacos, igual que en el teaser.
+export const literaryWorkNavigationTeaserWithAuthorsDtoSchema = z.object({
+	_id: z.string(),
 	slug: z.string(),
 	title: z.string(),
+	coverImage: z.string(),
 	totalReadingTime: z.number(),
-	authors: z.array(literaryWorkCatalogAuthorDtoSchema),
+	sectionCount: z.number(),
+	tags: z.array(opaqueDomainObject<Tag>()),
+	mediaSources: z.array(opaqueDomainObject<MediaTeaser>()),
+	authors: z.array(opaqueDomainObject<AuthorTeaser>()),
 });
 
-export const literaryWorkCatalogDtoSchema = z.array(literaryWorkCatalogEntryDtoSchema);
+export const literaryWorkNavigationTeaserWithAuthorsListDtoSchema = z.array(
+	literaryWorkNavigationTeaserWithAuthorsDtoSchema,
+);
 
 export type LiteraryWorkEpigraphDto = z.infer<typeof literaryWorkEpigraphDtoSchema>;
-export type LiteraryWorkCatalogEntryDto = z.infer<typeof literaryWorkCatalogEntryDtoSchema>;
+export type LiteraryWorkNavigationTeaserWithAuthorsDto = z.infer<
+	typeof literaryWorkNavigationTeaserWithAuthorsDtoSchema
+>;
 export type LiteraryWorkTeaserDto = z.infer<typeof literaryWorkTeaserDtoSchema>;
 export type LiteraryWorkSectionDto = z.infer<typeof literaryWorkSectionDtoSchema>;
 export type LiteraryWorkExcerptDto = z.infer<typeof literaryWorkExcerptDtoSchema>;
@@ -107,10 +111,18 @@ export function toLiteraryWorkTeaser(dto: LiteraryWorkTeaserDto): LiteraryWorkTe
 	};
 }
 
-export function toLiteraryWorkCatalogEntry(dto: LiteraryWorkCatalogEntryDto): LiteraryWorkCatalogEntry {
-	return {
-		...dto,
-		slug: createSlug(dto.slug),
+export function toLiteraryWorkNavigationTeaserWithAuthors(
+	dto: LiteraryWorkNavigationTeaserWithAuthorsDto,
+): LiteraryWorkNavigationTeaserWithAuthors {
+	return createLiteraryWorkNavigationTeaser({
+		_id: dto._id,
+		slug: dto.slug,
+		title: dto.title,
+		coverImage: dto.coverImage,
 		totalReadingTime: createReadingTime(dto.totalReadingTime),
-	};
+		sectionCount: dto.sectionCount,
+		tags: dto.tags,
+		mediaSources: dto.mediaSources,
+		authors: dto.authors,
+	});
 }

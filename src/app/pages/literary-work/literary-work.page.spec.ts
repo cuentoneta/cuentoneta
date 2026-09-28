@@ -12,7 +12,7 @@ import { of, Subject, throwError, type Observable } from 'rxjs';
 import {
 	createLiteraryWork,
 	type LiteraryWork,
-	type LiteraryWorkCatalogEntry,
+	type LiteraryWorkNavigationTeaserWithAuthors,
 	type LiteraryWorkTeaser,
 } from '@models/literary-work.model';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';
@@ -47,7 +47,7 @@ class StubFailingLiteraryWorkApi implements LiteraryWorkApi {
 		return throwError(() => new HttpErrorResponse({ status: this.status, statusText: 'error' }));
 	}
 
-	public getCatalog(): Observable<LiteraryWorkCatalogEntry[]> {
+	public getCatalog(): Observable<LiteraryWorkNavigationTeaserWithAuthors[]> {
 		return throwError(() => new HttpErrorResponse({ status: this.status, statusText: 'error' }));
 	}
 
@@ -66,7 +66,7 @@ class ControllableLiteraryWorkApi implements LiteraryWorkApi {
 	}
 
 	// La página de lectura no consulta el catálogo: si alguna vez lo hiciera, este doble lo delata.
-	public getCatalog(): Observable<LiteraryWorkCatalogEntry[]> {
+	public getCatalog(): Observable<LiteraryWorkNavigationTeaserWithAuthors[]> {
 		return throwError(() => new Error('La página de lectura no consulta el catálogo'));
 	}
 

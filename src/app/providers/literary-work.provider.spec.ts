@@ -2,9 +2,8 @@ import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import {
-	toCatalogEntry,
 	type LiteraryWork,
-	type LiteraryWorkCatalogEntry,
+	type LiteraryWorkNavigationTeaserWithAuthors,
 	type LiteraryWorkTeaser,
 } from '@models/literary-work.model';
 import {
@@ -14,7 +13,10 @@ import {
 	onoffLiteraryWorksWithEpigraphs,
 	onoffLiteraryWorksWithSectionTitles,
 } from '@mocks/onoff-literary-works.mock';
-import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
+import {
+	onoffLiteraryWorkNavigationTeasersWithAuthorsMock,
+	onoffLiteraryWorkTeasersMock,
+} from '@mocks/onoff-literary-work-teasers.mock';
 import { environment } from '../environments/environment';
 import { Endpoints } from './endpoints';
 import { HttpLiteraryWorkApi, LiteraryWorkApi, type LiteraryWorkTeaserFilter } from './literary-work.provider';
@@ -179,22 +181,22 @@ describe('HttpLiteraryWorkApi', () => {
 	});
 
 	describe('getCatalog', () => {
-		// El wire del catálogo se deriva de los teasers por serialización, nunca a mano: es la vista
-		// hermana sobre las mismas obras, y enriquecer el corpus alcanza a estos casos solo.
-		const wireCatalog = JSON.parse(JSON.stringify(onoffLiteraryWorkTeasersMock.map(toCatalogEntry))) as unknown[];
+		// El wire se deriva del corpus de dominio por serialización, nunca a mano: es la misma forma en
+		// que viaja de verdad, y enriquecer el corpus alcanza a estos casos solo.
+		const wireCatalog = JSON.parse(JSON.stringify(onoffLiteraryWorkNavigationTeasersWithAuthorsMock)) as unknown[];
 
 		function requestCatalog(payload: unknown[]) {
-			const result = new Promise<LiteraryWorkCatalogEntry[]>((resolve, reject) => {
+			const result = new Promise<LiteraryWorkNavigationTeaserWithAuthors[]>((resolve, reject) => {
 				api.getCatalog().subscribe({ next: resolve, error: reject });
 			});
 			http.expectOne(`${environment.apiUrl}${Endpoints.LiteraryWork}`).flush(payload);
 			return result;
 		}
 
-		it('requests the listing with no query params and rehydrates the flat entries', async () => {
+		it('requests the listing with no query params and rehydrates the navigation teasers', async () => {
 			const entries = await requestCatalog(wireCatalog);
 
-			expect(entries).toEqual(onoffLiteraryWorkTeasersMock.map(toCatalogEntry));
+			expect(entries).toEqual(onoffLiteraryWorkNavigationTeasersWithAuthorsMock);
 		});
 
 		// La frontera valida acá y no en un template: un dato inválido corta el stream con error en vez

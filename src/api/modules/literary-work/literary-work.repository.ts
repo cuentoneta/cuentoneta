@@ -1,4 +1,8 @@
-import type { LiteraryWork, LiteraryWorkCatalogEntry, LiteraryWorkTeaser } from '@models/literary-work.model';
+import type {
+	LiteraryWork,
+	LiteraryWorkNavigationTeaserWithAuthors,
+	LiteraryWorkTeaser,
+} from '@models/literary-work.model';
 import type { MalformedLiteraryWorkError } from './literary-work.errors';
 
 /**
@@ -13,10 +17,11 @@ export interface LiteraryWorkTeaserListing {
 	readonly malformed: readonly MalformedLiteraryWorkError[];
 }
 
-// El listado del catálogo plano reporta las obras intraducibles con la misma política que el de
-// teasers — el repository reporta y el service decide —, pero transporta la vista sin tarjeta.
+// El listado sin filtros del catálogo reporta las obras intraducibles con la misma política que el de
+// teasers — el repository reporta y el service decide —, pero transporta la vista de navegación con
+// autores.
 export interface LiteraryWorkCatalogListing {
-	readonly literaryWorks: readonly LiteraryWorkCatalogEntry[];
+	readonly literaryWorks: readonly LiteraryWorkNavigationTeaserWithAuthors[];
 	readonly malformed: readonly MalformedLiteraryWorkError[];
 }
 
