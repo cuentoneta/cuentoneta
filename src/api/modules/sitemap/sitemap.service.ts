@@ -51,6 +51,7 @@ export async function getSitemapUrls(): Promise<SitemapUrl[]> {
 		{ loc: `${BASE_URL}/dmca` },
 		{ loc: `${BASE_URL}/collection` },
 		{ loc: `${BASE_URL}/literary-work` },
+		{ loc: `${BASE_URL}/authors` },
 
 		// Páginas de obras
 		...literaryWorks.map((lw) => ({ loc: `${BASE_URL}/literary-work/${lw.slug}`, lastmod: lw.lastmod })),

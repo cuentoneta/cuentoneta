@@ -82,7 +82,7 @@ describe('remediationHints', () => {
 		const hints = remediationHints([breach('literaryWork.publishedAt', 26)]);
 
 		expect(hints).toHaveLength(1);
-		expect(hints[0]).toContain('pnpm normalize:bare-published-at --no-dry-run');
+		expect(hints[0]).toContain('pnpm ops normalize:bare-published-at --no-dry-run');
 	});
 
 	it('no promete remediación para un campo sin una asignada', () => {
@@ -93,7 +93,7 @@ describe('remediationHints', () => {
 		const body = formatReportBody({ breaches: [breach('literaryWork.publishedAt', 26)], scannedFields: 2 });
 
 		expect(body).toContain('### Remediación');
-		expect(body).toContain('pnpm normalize:bare-published-at --no-dry-run');
+		expect(body).toContain('pnpm ops normalize:bare-published-at --no-dry-run');
 	});
 
 	it('el cuerpo omite la sección cuando ningún campo tiene remediación', () => {

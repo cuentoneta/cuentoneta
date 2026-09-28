@@ -540,7 +540,7 @@ class LiteraryWorkSpecificationValidator {
 		}
 	`,
 })
-export class LiteraryWorkSearchComponent {
+export class LiteraryWorkSearch {
 	filterForm = new FormGroup({
 		minReadingTime: new FormControl(null),
 		maxReadingTime: new FormControl(null),

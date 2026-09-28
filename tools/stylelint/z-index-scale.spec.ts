@@ -13,7 +13,7 @@ const config = {
 	},
 } satisfies Config;
 
-async function warningsFor(code: string, codeFilename = 'src/app/components/probe/probe.component.css') {
+async function warningsFor(code: string, codeFilename = 'src/app/components/probe/probe.css') {
 	const result = await stylelint.lint({ code, codeFilename, config: { ...config, rules: { ...config.rules } } });
 	return result.results[0].warnings;
 }

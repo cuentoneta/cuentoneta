@@ -1,9 +1,9 @@
 import { Component, input } from '@angular/core';
 
-import { SectionHeaderComponent, type SectionHeaderAction } from '@components/section-header/section-header.component';
-import { EmptyStateComponent } from '@components/empty-state/empty-state.component';
-import { LiteraryWorkTeaserHomeCardComponent } from '../literary-work-teaser-home-card/literary-work-teaser-home-card.component';
-import { LiteraryWorkTeaserHomeCardSkeletonComponent } from '../literary-work-teaser-home-card/literary-work-teaser-home-card-skeleton.component';
+import { SectionHeader, type SectionHeaderAction } from '@components/section-header/section-header';
+import { EmptyState } from '@components/empty-state/empty-state';
+import { LiteraryWorkTeaserHomeCard } from '../literary-work-teaser-home-card/literary-work-teaser-home-card';
+import { LiteraryWorkTeaserHomeCardSkeleton } from '../literary-work-teaser-home-card/literary-work-teaser-home-card-skeleton';
 import type { LiteraryWorkNavigationTeaserWithAuthors } from '@models/literary-work.model';
 
 /**
@@ -16,12 +16,7 @@ import type { LiteraryWorkNavigationTeaserWithAuthors } from '@models/literary-w
  */
 @Component({
 	selector: 'cuentoneta-literary-works-card-deck',
-	imports: [
-		SectionHeaderComponent,
-		EmptyStateComponent,
-		LiteraryWorkTeaserHomeCardComponent,
-		LiteraryWorkTeaserHomeCardSkeletonComponent,
-	],
+	imports: [SectionHeader, EmptyState, LiteraryWorkTeaserHomeCard, LiteraryWorkTeaserHomeCardSkeleton],
 	template: `
 		@if (heading() || subtitle()) {
 			<cuentoneta-section-header [heading]="heading()" [subtitle]="subtitle()" [action]="action()" />

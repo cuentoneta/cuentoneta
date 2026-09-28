@@ -9,14 +9,14 @@
 - **Sin declarar y sin worktree previo:** Fase 0 pausa con `AskUserQuestion`:
   - `question`: "¿Dónde corremos el flujo para este issue: en un worktree aislado o en la raíz del repo?"
   - `header`: `Entorno`
-  - `options` (recomendada primero): **Worktree (recomendada)** — aísla esta sesión de cualquier otra corriendo en paralelo en la raíz o en otro worktree (un checkout externo a mitad de sesión puede invalidar gates o desviar commits a otra rama); a cambio, requiere un setup propio (`pnpm install` + `pnpm run config`, `node_modules` propio). **Raíz** — sin setup adicional, reusa lo ya instalado; queda expuesta a colisión si hay otra sesión activa en la raíz. La opción **"Other"** (automática) cubre cualquier instrucción libre distinta de estas dos.
+  - `options` (recomendada primero): **Worktree (recomendada)** — aísla esta sesión de cualquier otra corriendo en paralelo en la raíz o en otro worktree (un checkout externo a mitad de sesión puede invalidar gates o desviar commits a otra rama); a cambio, requiere un setup propio (`pnpm install` + `pnpm ops config`, `node_modules` propio). **Raíz** — sin setup adicional, reusa lo ya instalado; queda expuesta a colisión si hay otra sesión activa en la raíz. La opción **"Other"** (automática) cubre cualquier instrucción libre distinta de estas dos.
 
 ### Mecánica de creación (Fase 1, modo worktree)
 
 1. `git fetch origin`.
 2. `git worktree add .claude/worktrees/<number> -b feat/<number>-<kebab> <base>`, con `<base> = origin/<rama-base>` (default `origin/develop`, ver Fase 0 → "Base de la rama"). Si es un apilado (`<rama-base> ≠ develop`), tras el `git fetch origin` del paso 1 confirmar que la base existe con `git rev-parse --verify <base>`; si falla, avisar en vez de crear el worktree contra una ref inexistente (una base apilada está pusheada a origin porque tiene un PR abierto). Si la Fase 0 detectó una rama `feat/<number>-*` ya existente en la raíz sin worktree propio (creada por una sesión previa en modo raíz), adjuntar el worktree a esa rama en vez de crear una nueva: `git worktree add .claude/worktrees/<number> feat/<number>-<kebab>` (sin `-b`).
 3. Cambiar la sesión al worktree con la herramienta `EnterWorktree` del harness (`path: .claude/worktrees/<number>`). Desde acá el cwd de la sesión —y el de cualquier subagente delegado— ya es el worktree.
-4. Setup de dependencias: `pnpm install` seguido de `pnpm run config` (genera `src/app/environments/environment.ts` y `.env`; el hook `postinstall` ya invoca `pnpm run config`, pero se corre explícito para no depender de que dispare en todos los entornos).
+4. Setup de dependencias: `pnpm install` seguido de `pnpm ops config` (genera `src/app/environments/environment.ts` y `.env`; el hook `postinstall` ya invoca `pnpm ops config`, pero se corre explícito para no depender de que dispare en todos los entornos).
 5. Reportar al usuario los mismos campos que la Fase 1 paso 5, más la **ruta del worktree**.
 
 En modo raíz, el flujo de Fase 1 queda **igual que hoy**.
@@ -29,7 +29,7 @@ En modo raíz, el flujo de Fase 1 queda **igual que hoy**.
 - **Node v26 local (si aplica):** los wrappers de Nx de `pnpm test` y `pnpm storybook:build` pueden reportar "Failed tasks" por un crash de teardown de `libuv` **después** de terminar bien (el proyecto pide `engines: ^24.18.0`). Si un gate de test/storybook reporta rojo pero el log previo dice que el target corrió exitosamente, verificar el resultado real con `npx vitest run` directo antes de reportarlo como fallo.
 - **Delegación a subagentes — nota de Modo worktree.** Al delegar en `plan-writer`, `domain-model-advisor`, `architecture-advisor`, `documentation-writer`, `code-reviewer`, `security-auditor` o `test-generator` (Fases 2, 3, 4 y 5), agregar a la instrucción de la delegación:
 
-  > "Esta sesión corre en el worktree `.claude/worktrees/<number>` (cwd ya resuelto — no hace falta `cd`). Tu base de diff es `<base>` (la ref resuelta en la Fase 0, default `origin/develop`), no la rama base local. Los archivos generados/gitignoreados del setup (`src/app/environments/environment.ts`, `.env`) sí existen tras `pnpm install` + `pnpm run config` aunque no estén versionados — antes de reportar una ruta como faltante, verificá con `git check-ignore <ruta>`."
+  > "Esta sesión corre en el worktree `.claude/worktrees/<number>` (cwd ya resuelto — no hace falta `cd`). Tu base de diff es `<base>` (la ref resuelta en la Fase 0, default `origin/develop`), no la rama base local. Los archivos generados/gitignoreados del setup (`src/app/environments/environment.ts`, `.env`) sí existen tras `pnpm install` + `pnpm ops config` aunque no estén versionados — antes de reportar una ruta como faltante, verificá con `git check-ignore <ruta>`."
 
   Sin esta nota, un subagente puede leer del checkout principal en vez del worktree, diffear contra una rama base local stale, o marcar como bloqueante un archivo generado que sí existe.
 
@@ -37,7 +37,7 @@ En modo raíz, el flujo de Fase 1 queda **igual que hoy**.
 
 - El worktree se **mantiene** al menos hasta que el PR de la Fase 6 mergea — permite reanudar la sesión (Fase 0 lo detecta vía `git worktree list` y reingresa).
 - El **merge ocurre fuera de esta sesión** (evento humano posterior en GitHub); el skill no lo espera ni lo automatiza.
-- **Barrido, en cada sesión.** El batch 2 de la Fase 0 corre `pnpm worktrees:sweep`, que reporta los worktrees registrados cuya rama ya mergeó y los directorios huérfanos que quedaron sin registro. Es **O(1) por sesión** y limpia lo que dejó cualquiera, no solo la propia — a diferencia de la limpieza al reanudar, que solo cubre el caso en que alguien vuelve sobre un issue ya mergeado, el menos frecuente cuando todo sale bien. Monitorear el PR hasta el merge no sirve como alternativa: el monitor vive dentro de la sesión y muere con ella, y el merge es un evento humano posterior.
+- **Barrido, en cada sesión.** El batch 2 de la Fase 0 corre `pnpm ops worktrees:sweep`, que reporta los worktrees registrados cuya rama ya mergeó y los directorios huérfanos que quedaron sin registro. Es **O(1) por sesión** y limpia lo que dejó cualquiera, no solo la propia — a diferencia de la limpieza al reanudar, que solo cubre el caso en que alguien vuelve sobre un issue ya mergeado, el menos frecuente cuando todo sale bien. Monitorear el PR hasta el merge no sirve como alternativa: el monitor vive dentro de la sesión y muere con ella, y el merge es un evento humano posterior.
 
   Si el reporte trae candidatos, **pausar con `AskUserQuestion`** (`header`: `Worktrees`; `question` con el conteo de mergeados y huérfanos, y cuáles conservan artefactos; `options`: **Limpiar** — archivar artefactos y remover; **Omitir** — seguir sin tocar nada, que es lo recomendable si el usuario está en medio de otra cosa; "Other" para instrucciones libres). Sin candidatos, el barrido no interrumpe: ocupa una línea.
 

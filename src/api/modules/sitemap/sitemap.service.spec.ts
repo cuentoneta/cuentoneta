@@ -81,6 +81,7 @@ describe('SitemapService', () => {
 				{ loc: 'https://test.cuentoneta.ar/dmca' },
 				{ loc: 'https://test.cuentoneta.ar/collection' },
 				{ loc: 'https://test.cuentoneta.ar/literary-work' },
+				{ loc: 'https://test.cuentoneta.ar/authors' },
 			]);
 		});
 

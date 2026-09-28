@@ -11,8 +11,8 @@
  * aparecer con esa forma. La detecta el barrido `field-shape-sweep`.
  *
  * Uso:
- *   pnpm normalize:bare-published-at                 # corrida en seco: reporta qué se completaría
- *   pnpm normalize:bare-published-at --no-dry-run    # persiste
+ *   pnpm ops normalize:bare-published-at                 # corrida en seco: reporta qué se completaría
+ *   pnpm ops normalize:bare-published-at --no-dry-run    # persiste
  */
 import { client } from '../../src/api/_helpers/sanity-connector';
 import { environment } from '../../src/api/_helpers/environment';
@@ -23,8 +23,7 @@ import {
 	type PublishedAtCandidate,
 	type PublishedAtCandidatePageFetcher,
 } from './normalize-bare-published-at.helpers';
-
-const APPLY = process.argv.includes('--no-dry-run');
+import type { OpsTask } from '../ops/registry';
 
 // El connector sirve de la CDN en producción: una remediación tiene que leer el estado real,
 // no uno cacheado.
@@ -37,33 +36,28 @@ const fetcher: PublishedAtCandidatePageFetcher = {
 		sanityClient.fetch<readonly PublishedAtCandidate[]>(CANDIDATES_QUERY, { cursor, pageSize }),
 };
 
-async function run(): Promise<void> {
-	console.log(
-		`Normalización de fechas de publicación — proyecto ${environment.sanity.projectId}, dataset ${environment.sanity.dataset}, ` +
-			`modo ${APPLY ? 'APLICAR' : 'seco'}`,
-	);
+export const task: OpsTask = {
+	run: async ({ apply }) => {
+		console.log(
+			`Normalización de fechas de publicación — proyecto ${environment.sanity.projectId}, dataset ${environment.sanity.dataset}, ` +
+				`modo ${apply ? 'APLICAR' : 'seco'}`,
+		);
 
-	if (APPLY && !environment.sanity.token) {
-		console.error('Falta el token de escritura de Sanity (SANITY_STUDIO_TOKEN): no se intenta escribir.');
-		process.exitCode = 1;
-		return;
-	}
+		if (apply && !environment.sanity.token) {
+			throw new Error('Falta el token de escritura de Sanity (SANITY_STUDIO_TOKEN): no se intenta escribir.');
+		}
 
-	const report = await runPublishedAtNormalization({
-		fetcher,
-		writer: sanityClient,
-		apply: APPLY,
-		pageSize: PUBLISHED_AT_NORMALIZATION_PAGE_SIZE,
-	});
+		const report = await runPublishedAtNormalization({
+			fetcher,
+			writer: sanityClient,
+			apply,
+			pageSize: PUBLISHED_AT_NORMALIZATION_PAGE_SIZE,
+		});
 
-	console.log(formatPublishedAtNormalizationReport(report, { apply: APPLY }).join('\n'));
+		console.log(formatPublishedAtNormalizationReport(report, { apply }).join('\n'));
 
-	if (report.failed.length > 0) {
-		process.exitCode = 1;
-	}
-}
-
-run().catch((error: unknown) => {
-	console.error(error);
-	process.exitCode = 1;
-});
+		if (report.failed.length > 0) {
+			throw new Error(`Falló la normalización de fechas en ${report.failed.length} obras.`);
+		}
+	},
+};

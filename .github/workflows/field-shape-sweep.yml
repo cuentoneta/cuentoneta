@@ -31,7 +31,7 @@ on:
 permissions:
   contents: read
   # Para crear y actualizar el issue de seguimiento. Es lo único que este job escribe: sobre el
-  # contenido de Sanity nunca escribe, ni con `--apply`.
+  # contenido de Sanity nunca escribe, ni con `--no-dry-run`.
   issues: write
 
 concurrency:
@@ -60,4 +60,4 @@ jobs:
           # el mismo token con el que `sync-datasets` lo lee, y que el script aborte si el dataset no
           # devuelve documentos.
           SANITY_STUDIO_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
-        run: pnpm field-shape:sweep --apply
+        run: pnpm ops field-shape:sweep --no-dry-run

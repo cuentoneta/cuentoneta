@@ -36,14 +36,14 @@ documentos (a mano)  →  (groq-js, query real)  →  raw (generado)  →  (ACL 
 ```
 
 - **Documentos** (`<slug>.<entidad>.document.ts`): lo que vive en el content lake. Es la única capa escrita a mano.
-- **Raw** (`<slug>.<entidad>.raw.mock.ts`): el resultado de evaluar la query GROQ real sobre los documentos, tipado contra los `*QueryResult`. Se **genera** con `pnpm corpus:generate`; no se edita a mano. Lo consumen los specs de repository y mapper.
+- **Raw** (`<slug>.<entidad>.raw.mock.ts`): el resultado de evaluar la query GROQ real sobre los documentos, tipado contra los `*QueryResult`. Se **genera** con `pnpm ops corpus:generate`; no se edita a mano. Lo consumen los specs de repository y mapper.
 - **Dominio** (`<slug>.<entidad>.mock.ts`): el agregado construido por su factory. Lo consume el frontend.
 
 Antes de esta capa de documentos el flujo corría al revés: el raw se escribía a mano y los documentos se derivaban invirtiendo a mano la proyección de la query. El sentido actual evita esa inversión manual: la query real, evaluada con `groq-js`, es la única fuente de verdad de qué shape produce.
 
-### El generador (`pnpm corpus:generate`)
+### El generador (`pnpm ops corpus:generate`)
 
-`pnpm corpus:generate` → `node --import tsx ./scripts/generate-raw-corpus/generate-raw-corpus.ts`. Por cada obra, cada colección, la página de inicio y el contenido rotativo, evalúa la query GROQ real (`literaryWorkBySlugQuery`, `collectionBySlugQuery`, `collectionsQuery` para el listado, `landingPageContentQuery` para la landing —que va con su semana como parámetro— y `rotatingContentQuery` para lo más leído) con `groq-js` sobre `onoffDatasetMock` — el dataset plano de todos los documentos del corpus — y escribe el resultado en su fixture `*.raw.mock.ts`.
+`pnpm ops corpus:generate` → `node --import tsx ./scripts/generate-raw-corpus/generate-raw-corpus.ts`. Por cada obra, cada colección, la página de inicio y el contenido rotativo, evalúa la query GROQ real (`literaryWorkBySlugQuery`, `collectionBySlugQuery`, `collectionsQuery` para el listado, `landingPageContentQuery` para la landing —que va con su semana como parámetro— y `rotatingContentQuery` para lo más leído) con `groq-js` sobre `onoffDatasetMock` — el dataset plano de todos los documentos del corpus — y escribe el resultado en su fixture `*.raw.mock.ts`.
 
 **Archivos generados:**
 
@@ -54,7 +54,7 @@ Antes de esta capa de documentos el flujo corría al revés: el raw se escribía
 - `landing-page/landing-page.raw.mock.ts` (resultado de `landingPageContentQuery`).
 - `landing-page/rotating-content.raw.mock.ts` (resultado de `rotatingContentQuery`, lo más leído).
 
-Cada uno abre con un banner de dos líneas ("Este archivo lo escribe `pnpm corpus:generate`... No se edita a mano: cualquier cambio se pierde en la próxima corrida.") y está marcado `linguist-generated=true` en `.gitattributes`.
+Cada uno abre con un banner de dos líneas ("Este archivo lo escribe `pnpm ops corpus:generate`... No se edita a mano: cualquier cambio se pierde en la próxima corrida.") y está marcado `linguist-generated=true` en `.gitattributes`.
 
 **Qué impide que la generación mienta:** `src/mocks/onoff-documents.mock.spec.ts` vuelve a evaluar las mismas queries sobre los mismos documentos y compara **valores** (no bytes: el formato lo fija Prettier dentro del generador, así que un desvío de formato no es una desincronización, pero una diferencia de valor sí) contra las fixtures crudas commiteadas. Este spec corre dentro de `pnpm test` (gate `test`, ya required) — **no se agregó ningún gate de CI nuevo**.
 
@@ -168,7 +168,7 @@ El orden de generación es el de esas dependencias: primero los raws completos d
 
 ## Corpus raw: `LiteraryWork` (generado, #1981)
 
-Contraparte cruda del corpus de dominio `LiteraryWork`, tipada contra `NonNullable<LiteraryWorkBySlugQueryResult>`. Alimenta los tests de la capa de datos de `LiteraryWork` (mapper/repository/service). Cada `literary-work/<slug>.literary-work.raw.mock.ts` lo escribe `pnpm corpus:generate` evaluando `literaryWorkBySlugQuery` sobre `literary-work/<slug>.literary-work.document.ts` (ver [Las tres capas](#las-tres-capas)) — no se edita a mano.
+Contraparte cruda del corpus de dominio `LiteraryWork`, tipada contra `NonNullable<LiteraryWorkBySlugQueryResult>`. Alimenta los tests de la capa de datos de `LiteraryWork` (mapper/repository/service). Cada `literary-work/<slug>.literary-work.raw.mock.ts` lo escribe `pnpm ops corpus:generate` evaluando `literaryWorkBySlugQuery` sobre `literary-work/<slug>.literary-work.document.ts` (ver [Las tres capas](#las-tres-capas)) — no se edita a mano.
 
 - **Agregador:** `../onoff-raw-literary-works.mock.ts` → `onoffRawLiteraryWorksMock` (las 8, en el mismo orden que `onoffLiteraryWorksMock`).
 - **Vista de navegación con autores:** `onoffRawLiteraryWorkNavigationTeasersWithAuthorsMock`, **derivada** del crudo de los teasers en el agregador —no generada aparte—: enumera los campos que proyecta `literaryWorkNavigationTeasersWithAuthorsQuery`, así que una proyección que sume o pierda uno deja de tipar contra `LiteraryWorkNavigationTeasersWithAuthorsQueryResult`. La cruza `../onoff-literary-work-navigation-teasers.acl-alignment.spec.ts`.
@@ -223,7 +223,7 @@ Nadie escribe una referencia ni una ruta a mano: las dos caras salen de la misma
 - **Directorio:** `src/assets/img/mocks/stories/`
 - **Nombre:** `<slug>.png` (la misma cadena que el campo `slug` del mock)
 - **Path en el mock:** `assets/img/mocks/stories/<slug>.png` (sin `./` ni `/` inicial), declarado por la tabla
-- **Aspecto:** portrait 3:4 (referencia 118×164 del `CoverImageComponent`)
+- **Aspecto:** portrait 3:4 (referencia 118×164 del `CoverImage`)
 
 El resto de los assets del corpus vive junto a estas portadas, todos bajo `src/assets/img/mocks/`: `author/` (retrato), `collections/` (portadas editoriales), `media/` (el avatar del host de una grabación) y `banners/` (campañas, un archivo por viewport).
 

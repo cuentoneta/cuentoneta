@@ -1,15 +1,12 @@
 import type { Type } from '@angular/core';
 import type { Media, MediaTypeKey } from '@models/media.model';
-import { AudioRecordingWidgetComponent } from '@components/audio-recording-widget/audio-recording-widget.component';
-import { SpaceRecordingWidgetComponent } from '@components/space-recording-widget/space-recording-widget.component';
+import { AudioRecordingWidget } from '@components/audio-recording-widget/audio-recording-widget';
+import { SpaceRecordingWidget } from '@components/space-recording-widget/space-recording-widget';
 import { SpotifyPodcastEpisodeWidget } from '@components/spotify-audio-widget/spotify-podcast-episode-widget';
-import { YoutubeVideoWidgetComponent } from '@components/youtube-video-widget/youtube-video-widget.component';
+import { YoutubeVideoWidget } from '@components/youtube-video-widget/youtube-video-widget';
 
 export type MediaWidget =
-	| AudioRecordingWidgetComponent
-	| SpaceRecordingWidgetComponent
-	| YoutubeVideoWidgetComponent
-	| SpotifyPodcastEpisodeWidget;
+	AudioRecordingWidget | SpaceRecordingWidget | YoutubeVideoWidget | SpotifyPodcastEpisodeWidget;
 
 export interface MediaWidgetOutlet {
 	readonly component: Type<MediaWidget>;
@@ -20,10 +17,10 @@ export interface MediaWidgetOutlet {
 // como argumento deja de ser fresco, así que una clave fuera de `MediaTypeKey` se colaría sin que el
 // compilador la mire. Verificado en ambas direcciones — falta una entrada y sobra una entrada cortan.
 export const mediaWidgetRegistry = Object.freeze({
-	audioRecording: AudioRecordingWidgetComponent,
-	spaceRecording: SpaceRecordingWidgetComponent,
+	audioRecording: AudioRecordingWidget,
+	spaceRecording: SpaceRecordingWidget,
 	spotifyPodcastEpisode: SpotifyPodcastEpisodeWidget,
-	youTubeVideo: YoutubeVideoWidgetComponent,
+	youTubeVideo: YoutubeVideoWidget,
 } satisfies Record<MediaTypeKey, Type<MediaWidget>>);
 
 export function toMediaWidgetOutlet(media: Media): MediaWidgetOutlet {

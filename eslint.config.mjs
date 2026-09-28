@@ -8,11 +8,13 @@ import noBarrelFiles from 'eslint-plugin-no-barrel-files';
 import unicorn from 'eslint-plugin-unicorn';
 import requireEnvironmentProviders from './tools/eslint/require-environment-providers.js';
 import storybookSourceState from './tools/eslint/storybook-source-state.js';
+import storybookDocsRefs from './tools/eslint/storybook-docs-refs.js';
 import noApplyInHostStyles from './tools/eslint/no-apply-in-host-styles.js';
 import componentConfigInClass from './tools/eslint/component-config-in-class.js';
 import zIndexScale from './tools/eslint/z-index-scale.js';
 import noFullZodInBrowser from './tools/eslint/no-full-zod-in-browser.js';
 import noTsExtensionImports from './tools/eslint/no-ts-extension-imports.js';
+import componentLocationAndName from './tools/eslint/component-location-and-name.js';
 
 // Las reglas propias comparten un único objeto de plugin: ESLint rechaza redefinir un namespace
 // entre bloques cuyos scopes se solapan, aunque las reglas sean distintas.
@@ -20,6 +22,7 @@ const cuentonetaPlugin = {
 	rules: {
 		'no-full-zod-in-browser': noFullZodInBrowser,
 		'no-ts-extension-imports': noTsExtensionImports,
+		'component-location-and-name': componentLocationAndName,
 	},
 };
 
@@ -409,6 +412,16 @@ export default [
 		},
 	},
 	{
+		name: 'storybook-docs-refs',
+		files: ['**/*.stories.ts'],
+		plugins: {
+			'custom-storybook-docs': { rules: { 'storybook-docs-refs': storybookDocsRefs } },
+		},
+		rules: {
+			'custom-storybook-docs/storybook-docs-refs': 'error',
+		},
+	},
+	{
 		name: 'component-config-in-class',
 		files: ['src/**/*.ts'],
 		// Los specs y las stories declaran componentes host de prueba, y sus fixtures de módulo
@@ -419,6 +432,19 @@ export default [
 		},
 		rules: {
 			'custom-component-config/component-config-in-class': 'error',
+		},
+	},
+	{
+		// El scope es todo `src/` y no solo `src/app/`: un `@Component` fuera de las carpetas que lo alojan es
+		// justamente lo que la regla tiene que ver. Las excepciones —la raíz, `src/testing/`, specs y stories—
+		// viven dentro de la regla para que sumar una se vea en el diff.
+		name: 'component-location-and-name',
+		files: ['src/**/*.ts'],
+		plugins: {
+			cuentoneta: cuentonetaPlugin,
+		},
+		rules: {
+			'cuentoneta/component-location-and-name': 'error',
 		},
 	},
 	{
@@ -447,7 +473,7 @@ export default [
 					// La franja alta queda reservada a los archivos que declaran una capa global de la
 					// aplicación. Cualquier otro tiene que elevar con una capa interna y confinar su
 					// apilamiento, que es lo que evita volver a competir con la barra.
-					allowGlobalLayersIn: ['src/app/components/header/header.component.ts', 'src/app/app.component.ts'],
+					allowGlobalLayersIn: ['src/app/components/header/header.ts', 'src/app/app.ts'],
 				},
 			],
 		},

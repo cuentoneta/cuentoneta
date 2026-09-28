@@ -86,8 +86,8 @@ export function formatReportBody(report: SweepReport): string {
 // a indicar cómo remediar. Solo los labels de esta tabla llevan hint: un campo nuevo sin
 // remediación asignada se reporta igual, sin prometer una.
 const REMEDIATION_BY_LABEL: Readonly<Record<string, string>> = {
-	'author.resources.url': 'pnpm sanitize:resources-without-url --no-dry-run',
-	'literaryWork.resources.url': 'pnpm sanitize:resources-without-url --no-dry-run',
+	'author.resources.url': 'pnpm ops sanitize:resources-without-url --no-dry-run',
+	'literaryWork.resources.url': 'pnpm ops sanitize:resources-without-url --no-dry-run',
 };
 
 export function remediationHints(breaches: readonly FieldBreach[]): string[] {

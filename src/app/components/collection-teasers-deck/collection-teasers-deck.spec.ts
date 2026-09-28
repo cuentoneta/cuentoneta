@@ -4,10 +4,10 @@ import { provideRouter } from '@angular/router';
 
 // Componentes
 import { CollectionTeasersDeck } from './collection-teasers-deck';
-import { SectionHeaderComponent } from '@components/section-header/section-header.component';
-import { EmptyStateComponent } from '@components/empty-state/empty-state.component';
+import { SectionHeader } from '@components/section-header/section-header';
+import { EmptyState } from '@components/empty-state/empty-state';
 import { CollectionTeaserCard } from '@components/collection-teaser-card/collection-teaser-card';
-import { CollectionTeaserCardSkeletonComponent } from '@components/collection-teaser-card/collection-teaser-card-skeleton';
+import { CollectionTeaserCardSkeleton } from '@components/collection-teaser-card/collection-teaser-card-skeleton';
 
 // Mocks
 import { onoffCollectionTeasersMock } from '@mocks/onoff-collections.mock';
@@ -15,14 +15,14 @@ import { onoffCollectionTeasersMock } from '@mocks/onoff-collections.mock';
 describe('CollectionTeasersDeck', () => {
 	const defaultProviders = [provideRouter([])];
 	// `componentImports` reemplaza los imports del componente bajo prueba, no los suma. Sin
-	// `SectionHeaderComponent` el encabezado se renderiza como un elemento desconocido y la sección
+	// `SectionHeader` el encabezado se renderiza como un elemento desconocido y la sección
 	// pierde título, bajada y enlace.
 	const defaultImports = [
 		CollectionTeasersDeck,
-		SectionHeaderComponent,
-		EmptyStateComponent,
+		SectionHeader,
+		EmptyState,
 		CollectionTeaserCard,
-		CollectionTeaserCardSkeletonComponent,
+		CollectionTeaserCardSkeleton,
 	];
 	// Se seleccionan por su destino —una colección concreta, no el índice—, no por descarte del enlace
 	// del encabezado: un segundo enlace que no sea tarjeta no debe contarse como una.

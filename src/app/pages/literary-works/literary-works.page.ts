@@ -8,7 +8,7 @@ import { LiteraryWorkApi } from '../../providers/literary-work.provider';
 import { LITERARY_WORKS_HOST, type LiteraryWorksHost } from './literary-works-host';
 import { LiteraryWorksMetaTagsDirective } from './literary-works-meta-tags.directive';
 import { LiteraryWorksStructuredDataDirective } from './literary-works-structured-data.directive';
-import { SkeletonComponent } from '@components/skeleton/skeleton.component';
+import { Skeleton } from '@components/skeleton/skeleton';
 
 @Component({
 	selector: 'cuentoneta-literary-works',
@@ -83,7 +83,7 @@ import { SkeletonComponent } from '@components/skeleton/skeleton.component';
 	`,
 	providers: [{ provide: LITERARY_WORKS_HOST, useExisting: forwardRef(() => LiteraryWorksPage) }],
 	hostDirectives: [LiteraryWorksMetaTagsDirective, LiteraryWorksStructuredDataDirective],
-	imports: [RouterLink, SkeletonComponent],
+	imports: [RouterLink, Skeleton],
 })
 export default class LiteraryWorksPage implements LiteraryWorksHost {
 	protected readonly appRoutes = AppRoutes;

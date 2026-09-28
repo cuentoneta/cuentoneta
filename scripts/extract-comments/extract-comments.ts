@@ -18,6 +18,7 @@ import {
 	extractComments,
 	type CommentRecord,
 } from './extract-comments.helpers';
+import { EXIT_CODES, type OpsTask } from '../ops/registry';
 
 // Bajo `workspace/`, que está gitignoreado: el inventario es un artefacto de sesión, y dejarlo caer
 // en la raíz del repo lo pone a un `git add` de distancia de quedar versionado.
@@ -46,48 +47,53 @@ function* walk(paths: readonly string[]): Generator<string> {
 	}
 }
 
-const { values, positionals } = parseArgs({
-	allowPositionals: true,
-	options: { out: { type: 'string', default: DEFAULT_OUTPUT } },
-});
+const USAGE = 'uso: pnpm ops comments:inventory <ruta> [<ruta>...] [--out <archivo.json>]\n';
 
-const USAGE = 'uso: pnpm comments:inventory <ruta> [<ruta>...] [--out <archivo.json>]\n';
+export const task: OpsTask = {
+	run: async ({ argv }) => {
+		const { values, positionals } = parseArgs({
+			args: [...argv],
+			allowPositionals: true,
+			options: { out: { type: 'string', default: DEFAULT_OUTPUT } },
+		});
 
-if (positionals.length === 0) {
-	process.stderr.write(USAGE);
-	process.exit(1);
-}
+		if (positionals.length === 0) {
+			process.stderr.write(USAGE);
+			return EXIT_CODES.failure;
+		}
 
-// Una ruta inexistente se reporta acá y no como el stack trace de ENOENT que tiraría el recorrido.
-const missing = positionals.filter((path) => !existsSync(path));
-if (missing.length > 0) {
-	process.stderr.write(`no existe: ${missing.join(', ')}\n${USAGE}`);
-	process.exit(1);
-}
+		// Una ruta inexistente se reporta acá y no como el stack trace de ENOENT que tiraría el recorrido.
+		const missing = positionals.filter((path) => !existsSync(path));
+		if (missing.length > 0) {
+			process.stderr.write(`no existe: ${missing.join(', ')}\n${USAGE}`);
+			return EXIT_CODES.failure;
+		}
 
-const comments: CommentRecord[] = [];
-let scanned = 0;
+		const comments: CommentRecord[] = [];
+		let scanned = 0;
 
-for (const file of walk(positionals)) {
-	const syntax = SYNTAX_BY_EXTENSION[extname(file).toLowerCase()];
-	if (!syntax) {
-		continue;
-	}
-	try {
-		comments.push(...extractComments(file, readFileSync(file, 'utf8'), syntax));
-		scanned++;
-	} catch (error) {
-		// Un archivo ilegible no invalida el inventario del resto; queda constancia de cuál se salteó.
-		process.stderr.write(
-			`aviso: ${file} no se pudo leer — ${error instanceof Error ? error.message : String(error)}\n`,
-		);
-	}
-}
+		for (const file of walk(positionals)) {
+			const syntax = SYNTAX_BY_EXTENSION[extname(file).toLowerCase()];
+			if (!syntax) {
+				continue;
+			}
+			try {
+				comments.push(...extractComments(file, readFileSync(file, 'utf8'), syntax));
+				scanned++;
+			} catch (error) {
+				// Un archivo ilegible no invalida el inventario del resto; queda constancia de cuál se salteó.
+				process.stderr.write(
+					`aviso: ${file} no se pudo leer — ${error instanceof Error ? error.message : String(error)}\n`,
+				);
+			}
+		}
 
-// El recorrido es en profundidad y su orden depende del filesystem. La skill compara inventarios
-// antes y después de remediar, así que la salida se ordena para que dos corridas sean diffeables.
-comments.sort((a, b) => a.file.localeCompare(b.file) || a.line - b.line);
+		// El recorrido es en profundidad y su orden depende del filesystem. La skill compara inventarios
+		// antes y después de remediar, así que la salida se ordena para que dos corridas sean diffeables.
+		comments.sort((a, b) => a.file.localeCompare(b.file) || a.line - b.line);
 
-mkdirSync(dirname(values.out), { recursive: true });
-writeFileSync(values.out, `${JSON.stringify(comments, null, 2)}\n`, 'utf8');
-process.stdout.write(`${scanned} archivos escaneados · ${comments.length} comentarios → ${values.out}\n`);
+		mkdirSync(dirname(values.out), { recursive: true });
+		writeFileSync(values.out, `${JSON.stringify(comments, null, 2)}\n`, 'utf8');
+		process.stdout.write(`${scanned} archivos escaneados · ${comments.length} comentarios → ${values.out}\n`);
+	},
+};

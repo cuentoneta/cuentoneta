@@ -140,7 +140,7 @@ export function formatPublishedAtNormalizationReport(
 	];
 
 	if (!options.apply && report.normalized.length > 0) {
-		lines.push('', 'Corrida en seco. Para persistir: pnpm normalize:bare-published-at --no-dry-run');
+		lines.push('', 'Corrida en seco. Para persistir: pnpm ops normalize:bare-published-at --no-dry-run');
 	}
 	return lines;
 }

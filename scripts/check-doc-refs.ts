@@ -28,7 +28,7 @@ const ABSENT_BUT_LEGITIMATE = [
 	'.claude/projects', // memoria de Claude Code: vive en el home del usuario, nunca en el repo
 	'.claude/worktrees', // worktrees de trabajo: gitignoreado, no existe en un checkout limpio
 	'tools/author-bios', // salida gitignoreada de un exportador de biografías que se dio de baja al quedar obsoleto
-	'src/app/environments', // generado por `pnpm run config`; gitignoreado. En CI existe solo porque el job baja el workspace artifact — no dependas de eso para validar la cita
+	'src/app/environments', // generado por `pnpm ops config`; gitignoreado. En CI lo regenera cada job vía setup-workspace — no dependas de eso para validar la cita
 ];
 
 const slug = (text: string): string =>

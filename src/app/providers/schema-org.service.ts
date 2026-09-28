@@ -5,7 +5,7 @@ import { type Thing, type WithContext } from 'schema-dts';
  * Gestiona los bloques `<script type="application/ld+json">` del `<head>`.
  *
  * Inserta los bloques durante el SSR (usa `DOCUMENT`, no `window`) y es idempotente por `id`:
- * el app-shell renderiza `AppComponent` dos veces, así que reutilizar el mismo `<script>` por
+ * el app-shell renderiza `App` dos veces, así que reutilizar el mismo `<script>` por
  * `data-schema-id` evita duplicados tanto en SSR como tras la hidratación.
  */
 @Service()
@@ -43,7 +43,10 @@ export class SchemaOrgService {
 	private writeScript(id: string, schema: WithContext<Thing>, scope: 'sitewide' | 'page'): void {
 		const script = this.resolveScript(id);
 		script.setAttribute('data-schema-scope', scope);
-		script.textContent = JSON.stringify(schema);
+		// El contenido de un <script> termina en el primer `</script>`, sin importar las comillas del JSON:
+		// un texto del CMS que lo contuviera cortaría el bloque en el HTML server-rendered. `<` es el
+		// mismo `<` para cualquier parser de JSON y ya no lo es para el de HTML.
+		script.textContent = JSON.stringify(schema).replaceAll('<', '\\u003c');
 	}
 
 	private resolveScript(id: string): HTMLScriptElement {

@@ -139,7 +139,7 @@ describe('remediationHints', () => {
 		const hints = remediationHints([breach('author.resources.url', 17), breach('literaryWork.resources.url', 100)]);
 
 		expect(hints).toHaveLength(2);
-		expect(hints[0]).toContain('pnpm sanitize:resources-without-url --no-dry-run');
+		expect(hints[0]).toContain('pnpm ops sanitize:resources-without-url --no-dry-run');
 	});
 
 	it('no promete remediación para un campo sin una asignada', () => {
@@ -150,7 +150,7 @@ describe('remediationHints', () => {
 		const body = formatReportBody(reportOf([breach('author.resources.url', 17)]));
 
 		expect(body).toContain('### Remediación');
-		expect(body).toContain('pnpm sanitize:resources-without-url --no-dry-run');
+		expect(body).toContain('pnpm ops sanitize:resources-without-url --no-dry-run');
 	});
 
 	it('el cuerpo omite la sección cuando ningún campo tiene remediación', () => {

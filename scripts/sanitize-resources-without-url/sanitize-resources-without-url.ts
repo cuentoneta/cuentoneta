@@ -11,8 +11,8 @@
  * no se regenera.
  *
  * Uso:
- *   pnpm sanitize:resources-without-url                 # corrida en seco: reporta qué se sanearía
- *   pnpm sanitize:resources-without-url --no-dry-run    # persiste
+ *   pnpm ops sanitize:resources-without-url                 # corrida en seco: reporta qué se sanearía
+ *   pnpm ops sanitize:resources-without-url --no-dry-run    # persiste
  */
 import { client } from '../../src/api/_helpers/sanity-connector';
 import { environment } from '../../src/api/_helpers/environment';
@@ -24,8 +24,7 @@ import {
 	type ResourceCandidatePageFetcher,
 	type SanitizeCandidate,
 } from './sanitize-resources-without-url.helpers';
-
-const APPLY = process.argv.includes('--no-dry-run');
+import type { OpsTask } from '../ops/registry';
 
 // El connector sirve de la CDN en producción: una remediación tiene que leer el estado real,
 // no uno cacheado.
@@ -42,33 +41,28 @@ const fetcher: ResourceCandidatePageFetcher = {
 		}),
 };
 
-async function run(): Promise<void> {
-	console.log(
-		`Saneamiento de recursos sin URL — proyecto ${environment.sanity.projectId}, dataset ${environment.sanity.dataset}, ` +
-			`modo ${APPLY ? 'APLICAR' : 'seco'}`,
-	);
+export const task: OpsTask = {
+	run: async ({ apply }) => {
+		console.log(
+			`Saneamiento de recursos sin URL — proyecto ${environment.sanity.projectId}, dataset ${environment.sanity.dataset}, ` +
+				`modo ${apply ? 'APLICAR' : 'seco'}`,
+		);
 
-	if (APPLY && !environment.sanity.token) {
-		console.error('Falta el token de escritura de Sanity (SANITY_STUDIO_TOKEN): no se intenta escribir.');
-		process.exitCode = 1;
-		return;
-	}
+		if (apply && !environment.sanity.token) {
+			throw new Error('Falta el token de escritura de Sanity (SANITY_STUDIO_TOKEN): no se intenta escribir.');
+		}
 
-	const report = await runResourceSanitization({
-		fetcher,
-		writer: sanityClient,
-		apply: APPLY,
-		pageSize: RESOURCE_SANITIZATION_PAGE_SIZE,
-	});
+		const report = await runResourceSanitization({
+			fetcher,
+			writer: sanityClient,
+			apply,
+			pageSize: RESOURCE_SANITIZATION_PAGE_SIZE,
+		});
 
-	console.log(formatResourceSanitizationReport(report, { apply: APPLY }).join('\n'));
+		console.log(formatResourceSanitizationReport(report, { apply }).join('\n'));
 
-	if (report.failed.length > 0) {
-		process.exitCode = 1;
-	}
-}
-
-run().catch((error: unknown) => {
-	console.error(error);
-	process.exitCode = 1;
-});
+		if (report.failed.length > 0) {
+			throw new Error(`Falló el saneamiento de recursos en ${report.failed.length} documentos.`);
+		}
+	},
+};

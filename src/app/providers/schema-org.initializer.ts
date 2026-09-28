@@ -10,7 +10,7 @@ const ORGANIZATION_DESCRIPTION =
 	'Proyecto abierto, comunitario y sin fines de lucro que fomenta y hace accesible la lectura digital, ' +
 	'publicando relatos breves en colecciones temáticas.';
 
-// URLs canónicas de los perfiles, alineadas con las que renderiza el footer (footer.component.ts).
+// URLs canónicas de los perfiles, alineadas con las que renderiza el footer (footer.ts).
 const SOCIAL_PROFILES = [
 	'https://twitter.com/cuentoneta',
 	'https://www.instagram.com/cuentoneta',

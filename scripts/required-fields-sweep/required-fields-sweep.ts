@@ -6,7 +6,7 @@
  * la regla, o escrito por script o migración, la esquiva sin dejar señal, y el typegen igual emite un
  * tipo no-nullable en el que el mapper confía.
  *
- * **Read-only sobre el contenido, siempre.** Solo `--apply` escribe, y lo único que escribe es un
+ * **Read-only sobre el contenido, siempre.** Solo `--no-dry-run` escribe, y lo único que escribe es un
  * issue de seguimiento con título fijo: nunca toca un documento ni cierra nada.
  *
  * Corre programado y **no** como gate. Lo que verifica es una propiedad del **dato**, que cambia sin
@@ -27,6 +27,7 @@ import {
 } from './required-fields-sweep.report';
 import { scanRequiredFields } from './required-fields-sweep.schema';
 import { findTrackingIssue, gh } from '../tracking-issue';
+import type { OpsTask } from '../ops/registry';
 
 const TRACKING_TITLE = 'Campos requeridos que el dato persistido no cumple';
 const SCHEMA_PATH = new URL('../../cms/schema.json', import.meta.url);
@@ -37,7 +38,7 @@ const sanityClient = client.withConfig({ useCdn: false });
 /**
  * Un dataset que no se puede leer **no falla**: sin permiso, una consulta de conteo devuelve `0` en
  * vez de un error. Sin este guard, una credencial vencida produciría un reporte impecable de "ningún
- * campo incumplido" y, con `--apply`, anunciaría que ya no queda nada que atender. Es exactamente el
+ * campo incumplido" y, con `--no-dry-run`, anunciaría que ya no queda nada que atender. Es exactamente el
  * modo de falla que este barrido existe para cerrar.
  */
 async function assertDatasetIsReadable(): Promise<void> {
@@ -95,15 +96,19 @@ function applyAction(report: SweepReport): void {
 	process.stdout.write(`seguimiento #${existing.number} actualizado.\n`);
 }
 
-process.stdout.write(
-	`Barrido de campos requeridos — proyecto ${environment.sanity.projectId}, dataset ${environment.sanity.dataset}\n`,
-);
+export const task: OpsTask = {
+	run: async ({ apply }) => {
+		process.stdout.write(
+			`Barrido de campos requeridos — proyecto ${environment.sanity.projectId}, dataset ${environment.sanity.dataset}\n`,
+		);
 
-await assertDatasetIsReadable();
-const { report } = await countBreaches();
+		await assertDatasetIsReadable();
+		const { report } = await countBreaches();
 
-process.stdout.write(`${formatConsoleReport(report)}\n`);
+		process.stdout.write(`${formatConsoleReport(report)}\n`);
 
-if (process.argv.includes('--apply')) {
-	applyAction(report);
-}
+		if (apply) {
+			applyAction(report);
+		}
+	},
+};

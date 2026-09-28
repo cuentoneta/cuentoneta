@@ -51,11 +51,7 @@
 			"unitTestRunner": "vitest-analog"
 		},
 		"@nx/angular:component": {
-			"style": "css",
-			"type": "component"
-		},
-		"@schematics/angular:component": {
-			"type": "component"
+			"style": "css"
 		},
 		"@nx/angular:directive": {
 			"type": "directive"
@@ -68,9 +64,6 @@
 		},
 		"@schematics/angular:service": {
 			"type": "service"
-		},
-		"@nx/angular:scam": {
-			"type": "component"
 		},
 		"@nx/angular:scam-directive": {
 			"type": "directive"
