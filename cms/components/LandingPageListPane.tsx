@@ -29,7 +29,7 @@ function toMessage(cause: unknown): string {
 function ErrorNotice({ message }: { message: string }) {
 	return (
 		<Box padding={4}>
-			{/* El tono va en el Card: Text de @sanity/ui v3 no acepta `tone`, así que el mensaje se venía
+			{/* El tono va en el Card: Text de @sanity/ui no acepta `tone`, así que el mensaje se venía
 			    renderizando sin color de error. */}
 			<Card padding={3} radius={2} tone="critical">
 				<Text>No se pudieron cargar las páginas de inicio: {message}</Text>
@@ -97,11 +97,7 @@ function LandingPageCard({ config, tone, badge }: { config: string } & LandingPa
 						{config}
 					</Text>
 				</Box>
-				{badge !== null && (
-					<Badge tone={tone} mode="outline">
-						{badge}
-					</Badge>
-				)}
+				{badge !== null && <Badge tone={tone}>{badge}</Badge>}
 			</Flex>
 		</Card>
 	);
@@ -146,7 +142,7 @@ export function LandingPageListPane() {
 	}
 
 	return (
-		<Stack space={0}>
+		<Stack gap={0}>
 			<Box padding={2}>
 				<Button
 					icon={AddIcon}
