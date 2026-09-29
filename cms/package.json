@@ -23,7 +23,7 @@
 	],
 	"dependencies": {
 		"@sanity/cli": "^8.13.0",
-		"@sanity/export": "^6.2.1",
+		"@sanity/export": "^7.0.3",
 		"@sanity/icons": "^5.2.2",
 		"@sanity/import": "^6.0.4",
 		"@sanity/ui": "^3.5.2",
