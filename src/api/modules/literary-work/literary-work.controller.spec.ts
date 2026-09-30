@@ -28,9 +28,18 @@ describe('literaryWorkController', () => {
 	const originalProduction = environment.production;
 	const originalSMaxAge = environment.readCacheSMaxAge;
 
+	const originalCronSecret = environment.cronSecret;
+	const cronHeaders = { Authorization: 'Bearer s3cret' };
+
+	beforeEach(() => {
+		environment.cronSecret = 's3cret';
+		(fetchClarityData as Mock).mockClear();
+	});
+
 	afterEach(() => {
 		environment.production = originalProduction;
 		environment.readCacheSMaxAge = originalSMaxAge;
+		environment.cronSecret = originalCronSecret;
 	});
 
 	// Espeja el montaje real de `routes.ts`: los headers de caché no los emite el controller sino el
@@ -96,10 +105,26 @@ describe('literaryWorkController', () => {
 		environment.readCacheSMaxAge = 900;
 		(fetchClarityData as Mock).mockResolvedValue([{ metricName: 'PopularPages', information: [] }]);
 
-		const response = await appUnderTest().request('/literary-work/update-most-read');
+		const response = await appUnderTest().request('/literary-work/update-most-read', { headers: cronHeaders });
 
 		expect(response.headers.get('Vercel-CDN-Cache-Control')).toBeNull();
 		expect(response.headers.get('Cache-Control')).toBe('no-store');
+	});
+
+	it('should reject the most-read update without credentials before reaching Clarity', async () => {
+		const response = await appUnderTest().request('/literary-work/update-most-read');
+
+		expect(response.status).toBe(401);
+		expect(fetchClarityData).not.toHaveBeenCalled();
+	});
+
+	it('should reject the most-read update when the secret is not configured', async () => {
+		environment.cronSecret = undefined;
+
+		const response = await appUnderTest().request('/literary-work/update-most-read', { headers: cronHeaders });
+
+		expect(response.status).toBe(401);
+		expect(fetchClarityData).not.toHaveBeenCalled();
 	});
 
 	describe('GET /', () => {

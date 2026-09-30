@@ -87,9 +87,16 @@ describe('contentController with malformed data', () => {
 // creado ningún documento, y la redacción se quedaría sin la semana siguiente sin ninguna señal.
 describe('contentController — la escritura no es cacheable', () => {
 	const originalProduction = environment.production;
+	const originalCronSecret = environment.cronSecret;
+	const cronHeaders = { Authorization: 'Bearer s3cret' };
+
+	beforeEach(() => {
+		environment.cronSecret = 's3cret';
+	});
 
 	afterEach(() => {
 		environment.production = originalProduction;
+		environment.cronSecret = originalCronSecret;
 	});
 
 	// El generador clona las referencias de la última semana curada, así que sin ellas la ruta responde
@@ -108,10 +115,35 @@ describe('contentController — la escritura no es cacheable', () => {
 	it('declares the weekly landing page creation as no-store', async () => {
 		const response = await appWith(writableRepository()).request(
 			'/content/add-next-weeks-landing-page-content?weeksInTheFuture=1',
+			{ headers: cronHeaders },
 		);
 
 		expect(response.status).toBe(200);
 		expect(response.headers.get('Cache-Control')).toBe('no-store');
+	});
+
+	it('rejects the weekly landing page creation without credentials and creates nothing', async () => {
+		const repository = writableRepository();
+
+		const response = await appWith(repository).request(
+			'/content/add-next-weeks-landing-page-content?weeksInTheFuture=1',
+		);
+
+		expect(response.status).toBe(401);
+		expect(repository.createdLandingPages).toEqual([]);
+	});
+
+	it('rejects the weekly landing page creation when the secret is not configured', async () => {
+		environment.cronSecret = undefined;
+		const repository = writableRepository();
+
+		const response = await appWith(repository).request(
+			'/content/add-next-weeks-landing-page-content?weeksInTheFuture=1',
+			{ headers: cronHeaders },
+		);
+
+		expect(response.status).toBe(401);
+		expect(repository.createdLandingPages).toEqual([]);
 	});
 
 	// Y la composición con el middleware, que es lo que el `no-store` existe para lograr: montado
@@ -123,7 +155,9 @@ describe('contentController — la escritura no es cacheable', () => {
 		app.on('GET', ['/content', '/content/*'], readCacheHeaders);
 		app.route('/content', createContentController(writableRepository()));
 
-		const response = await app.request('/content/add-next-weeks-landing-page-content?weeksInTheFuture=1');
+		const response = await app.request('/content/add-next-weeks-landing-page-content?weeksInTheFuture=1', {
+			headers: cronHeaders,
+		});
 
 		// El 200 no es decoración: el middleware ya se saltea toda respuesta que no lo sea, así que sin
 		// esta aserción el caso pasaría igual por la vía del error y no probaría el `no-store`.

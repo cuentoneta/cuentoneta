@@ -6,6 +6,7 @@ import { LandingPageNotFoundError, MalformedLandingPageError } from './content.e
 import type { ContentRepository } from './content.repository';
 import { addNextWeeksLandingPageContent, getLandingPageContent } from './content.service';
 import { applyLandingPageCacheHeaders } from '../../_helpers/cache-control';
+import { cronAuth } from '../../_middleware/cron-auth.middleware';
 
 /** Traduce los errores del módulo al status que le corresponde a cada uno. */
 async function respond<T>(c: Context, produce: () => Promise<T>) {
@@ -41,7 +42,7 @@ export function createContentController(repository?: ContentRepository) {
 	 * Endpoint encargado de agregar instancias de documentos landingPage para las próximas semanas, a fin de generar automáticamente
 	 * los documentos que luego son modificados manualmente para actualizar el contenido de la landing page desde Sanity Studio
 	 */
-	controller.get('/add-next-weeks-landing-page-content', zValidator('query', addWeeksSchema), async (c) => {
+	controller.get('/add-next-weeks-landing-page-content', cronAuth, zValidator('query', addWeeksSchema), async (c) => {
 		const { weeksInTheFuture } = c.req.valid('query');
 		// El `no-store` no es decorativo: el módulo sirve sus lecturas con caché de borde, y sin
 		// declararse incacheable esta escritura recibiría el mismo tratamiento y la invocación siguiente

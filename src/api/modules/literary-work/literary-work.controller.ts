@@ -4,6 +4,7 @@ import { zValidator } from '@hono/zod-validator';
 import { slugSchema } from '@schemas/common.schemas';
 import { literaryWorkTeaserFilterSchema } from '@schemas/literary-work.schemas';
 import { LiteraryWorkNotFoundError } from './literary-work.errors';
+import { cronAuth } from '../../_middleware/cron-auth.middleware';
 import type { LiteraryWorkRepository } from './literary-work.repository';
 import type { ContentRepository } from '../content/content.repository';
 import { getLiteraryWorkBySlug, getLiteraryWorkTeasers, updateMostReadLiteraryWorks } from './literary-work.service';
@@ -30,7 +31,7 @@ export function createLiteraryWorkController(
 	// El `no-store` no es decorativo: el módulo sirve sus lecturas con caché de borde, y sin declararse
 	// incacheable esta escritura recibiría el mismo tratamiento y la corrida siguiente se resolvería
 	// con un hit, devolviendo un 200 sin haber actualizado nada.
-	controller.get('/update-most-read', async (c) => {
+	controller.get('/update-most-read', cronAuth, async (c) => {
 		const result = await updateMostReadLiteraryWorks(contentRepository);
 		c.header('Cache-Control', 'no-store');
 		return c.json(result);
