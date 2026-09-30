@@ -1,0 +1,134 @@
+# Pre-genera en `production` los documentos de landing page de las próximas semanas.
+#
+# Dependencia de horario: debe correr antes de `sync-datasets.yml` (domingos 03:17 UTC). El sync
+# replica `production` sobre `staging` y `development`; una landing creada después deja a esos
+# datasets sin la semana vigente hasta el domingo siguiente. Si se mueve el sync, revisar este cron y
+# `timeout-minutes`: la corrida tiene que terminar dentro del margen.
+#
+# Prerequisito (secret del repo): SANITY_AUTH_TOKEN.
+# Su id no debe sumarse a los required status checks de `develop`.
+name: Add next weeks landing page content
+
+on:
+  schedule:
+    - cron: '47 2 * * 0'
+  workflow_dispatch:
+    inputs:
+      weeks_in_the_future:
+        description: 'Cuántas semanas futuras pre-generar (1 a 26).'
+        type: string
+        default: '1'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: add-next-weeks-landing-page-content
+  cancel-in-progress: false
+
+jobs:
+  add-next-weeks-landing-page-content:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    outputs:
+      report: ${{ steps.collect.outputs.report }}
+      weeks: ${{ steps.collect.outputs.weeks }}
+      late_start: ${{ steps.collect.outputs.late_start }}
+
+    steps:
+      - name: Abortar si el runner arrancó tarde
+        id: late_start
+        if: github.event_name == 'schedule'
+        run: |
+          # 03:02 UTC = sync (03:17) menos timeout-minutes: pasada esa hora el timeout ya no
+          # garantiza terminar antes del sync.
+          if [ "$(date -u +%H%M)" \> '0302' ]; then
+            echo "Arranque tardío: $(date -u +%H:%M) UTC. No se genera para no correr junto al sync." | tee report.txt >&2
+            exit 1
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+
+      - name: Setup workspace
+        uses: ./.github/actions/setup-workspace
+
+      - name: Generar las landing pages de las próximas semanas
+        env:
+          WEEKS: ${{ github.event.inputs.weeks_in_the_future || '1' }}
+          SANITY_STUDIO_DATASET: production
+          SANITY_STUDIO_PROJECT_ID: ${{ secrets.SANITY_STUDIO_PROJECT_ID }}
+          SANITY_STUDIO_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+        run: |
+          set -uo pipefail
+          status=0
+          pnpm ops landing-pages:add-next-weeks "--weeks=${WEEKS}" 2>&1 | tee report.txt || status=$?
+          {
+            echo '## Generación de landing pages'
+            echo '```'
+            cat report.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit "$status"
+
+      - name: Dejar el reporte para el seguimiento
+        id: collect
+        if: always()
+        env:
+          WEEKS: ${{ github.event.inputs.weeks_in_the_future || '1' }}
+          LATE_START: ${{ steps.late_start.outcome }}
+        run: |
+          {
+            echo "weeks=${WEEKS}"
+            echo "late_start=$([ "$LATE_START" = 'failure' ] && echo true || echo false)"
+            echo 'report<<REPORT_EOF'
+            tail -n 200 report.txt 2>/dev/null
+            echo 'REPORT_EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Subir el reporte
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: landing-pages-report
+          path: report.txt
+          if-no-files-found: ignore
+
+  notify-failure:
+    needs: add-next-weeks-landing-page-content
+    if: failure() && github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      issues: write
+
+    steps:
+      - name: Abrir un issue de seguimiento
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          WEEKS: ${{ needs.add-next-weeks-landing-page-content.outputs.weeks }}
+          LATE_START: ${{ needs.add-next-weeks-landing-page-content.outputs.late_start }}
+          REPORT: ${{ needs.add-next-weeks-landing-page-content.outputs.report }}
+        run: |
+          if [ "$LATE_START" = 'true' ]; then
+            cause='El runner arrancó después del límite (03:02 UTC) y no se generó nada para no correr junto al sync de datasets.'
+          else
+            cause='La tarea `landing-pages:add-next-weeks` terminó con error.'
+          fi
+          {
+            echo "La corrida programada del $(date -u +'%Y-%m-%d %H:%M') UTC falló al pre-generar las próximas ${WEEKS} semanas."
+            echo
+            echo "**Causa:** ${cause}"
+            echo
+            echo "**Corrida:** ${RUN_URL} (el reporte completo está en el artifact \`landing-pages-report\`)."
+            echo
+            echo '**Reporte:**'
+            echo '```'
+            echo "${REPORT:-Sin reporte: la tarea no llegó a ejecutarse.}"
+            echo '```'
+            echo
+            echo 'Hasta corregirla y volver a dispararla, `production` no tiene esas semanas y el sync del domingo replica el faltante a `staging` y `development`.'
+          } > body.md
+          gh issue create --repo "$GITHUB_REPOSITORY" --title 'Falló la generación semanal de landing pages' --body-file body.md

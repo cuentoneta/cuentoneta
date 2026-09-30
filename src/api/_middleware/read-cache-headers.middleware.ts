@@ -15,7 +15,7 @@ export const readCacheHeaders = createMiddleware(async (c, next) => {
 
 	// Un handler que ya se declaró incacheable gana sobre el default de la ruta. La alternativa era una
 	// lista de rutas exceptuadas acá, que obliga a recordar actualizarla cada vez que el módulo suma una
-	// escritura; y una escritura servida desde la caché de borde devuelve un 200 sin haber corrido.
+	// respuesta que no debe cachearse.
 	if (c.res.headers.get('Cache-Control')?.includes('no-store')) {
 		return;
 	}

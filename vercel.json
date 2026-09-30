@@ -8,11 +8,5 @@
 		"api/index.mjs": {
 			"includeFiles": "dist/cuentoneta/**"
 		}
-	},
-	"crons": [
-		{
-			"path": "/api/literary-work/update-most-read",
-			"schedule": "15 3 * * *"
-		}
-	]
+	}
 }

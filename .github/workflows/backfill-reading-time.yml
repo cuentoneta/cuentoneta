@@ -22,7 +22,7 @@ name: Backfill reading time
 
 on:
   schedule:
-    # Horario valle, lejos del cron de Vercel (03:15) y del racimo de barridos de los lunes
+    # Horario valle, lejos de `update-most-read` (02:15) y del racimo de barridos de los lunes
     # (06:00–07:23), para no competir por runners. GitHub desactiva un `schedule` tras 60 días sin
     # actividad en el repo; el `workflow_dispatch` permite re-dispararlo cuando eso pasa.
     - cron: '35 4 * * *'
