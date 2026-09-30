@@ -15,15 +15,20 @@ import { RecordingContentRepository } from '../../recording-content-repository';
 import type { OpsTask } from '../registry';
 
 const DEFAULT_WEEKS = 4;
+const MAX_WEEKS = 26;
 const WEEKS_FLAG = '--weeks=';
 
 export function parseWeeks(argv: readonly string[]): number {
-	const raw = argv.find((arg) => arg.startsWith(WEEKS_FLAG))?.slice(WEEKS_FLAG.length);
+	const unknown = argv.find((arg) => !arg.startsWith(WEEKS_FLAG));
+	if (unknown !== undefined) {
+		throw new Error(`Argumento desconocido: ${unknown}`);
+	}
+	const raw = argv[0]?.slice(WEEKS_FLAG.length);
 	if (raw === undefined) {
 		return DEFAULT_WEEKS;
 	}
-	if (!/^[1-9]\d*$/.test(raw)) {
-		throw new Error(`--weeks debe ser un entero positivo, recibió "${raw}".`);
+	if (!/^[1-9]\d{0,2}$/.test(raw) || Number(raw) > MAX_WEEKS) {
+		throw new Error(`--weeks debe ser un entero entre 1 y ${MAX_WEEKS}, recibió "${raw}".`);
 	}
 	return Number(raw);
 }

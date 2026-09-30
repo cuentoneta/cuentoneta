@@ -62,6 +62,26 @@ describe('runMostReadUpdate', () => {
 		expect((await content.fetchRotatingContent())?.mostRead.map(({ slug }) => slug)).toEqual([third.slug]);
 	});
 
+	it('should report what was persisted and not what was requested', async () => {
+		(fetchClarityData as Mock).mockResolvedValue(popularPages(second.slug, 'sin-obra', first.slug));
+
+		const slugs = await runMostReadUpdate(true, repository());
+
+		expect(slugs).toEqual([second.slug, first.slug]);
+	});
+
+	it('should fail when no Clarity slug resolves to a work', async () => {
+		(fetchClarityData as Mock).mockResolvedValue(popularPages('sin-obra'));
+
+		await expect(runMostReadUpdate(true, repository())).rejects.toThrow('resolvió');
+	});
+
+	it('should fail when Clarity reports no read work', async () => {
+		(fetchClarityData as Mock).mockResolvedValue(popularPages());
+
+		await expect(runMostReadUpdate(true, repository())).rejects.toThrow('ninguna obra');
+	});
+
 	it('should fail when Clarity returns no popular pages', async () => {
 		(fetchClarityData as Mock).mockResolvedValue([]);
 

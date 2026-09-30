@@ -30,8 +30,16 @@ export async function runMostReadUpdate(
 	}
 
 	const recording = new RecordingContentRepository(repository, apply);
-	await updateMostReadLiteraryWorks(recording);
-	const slugs = [...recording.mostReadSlugs];
+	const result = await updateMostReadLiteraryWorks(recording);
+	if (recording.mostReadSlugs.length === 0) {
+		throw new Error('Clarity no devolvió ninguna obra leída: el ranking no se actualiza.');
+	}
+
+	// En aplicar se reporta lo persistido: el repository descarta los slugs que no resuelven a una obra.
+	const slugs = apply ? result.mostRead.map(({ slug }) => String(slug)) : [...recording.mostReadSlugs];
+	if (slugs.length === 0) {
+		throw new Error('Ningún slug del ranking de Clarity resolvió a una obra.');
+	}
 
 	console.log(`${apply ? 'Ranking escrito' : 'Ranking que se escribiría'} (${slugs.length} obras):`);
 	console.log(slugs.map((slug, index) => `${index + 1}. ${slug}`).join('\n'));

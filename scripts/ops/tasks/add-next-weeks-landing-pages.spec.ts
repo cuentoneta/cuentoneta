@@ -25,8 +25,19 @@ describe('parseWeeks', () => {
 		expect(parseWeeks(['--weeks=6'])).toBe(6);
 	});
 
-	it.each(['--weeks=0', '--weeks=abc', '--weeks=2.5', '--weeks=', '--weeks=-1'])('should reject %s', (arg) => {
-		expect(() => parseWeeks([arg])).toThrow('--weeks');
+	it.each(['--weeks=0', '--weeks=abc', '--weeks=2.5', '--weeks=', '--weeks=-1', '--weeks=27'])(
+		'should reject %s',
+		(arg) => {
+			expect(() => parseWeeks([arg])).toThrow('--weeks');
+		},
+	);
+
+	it.each([['--weeks', '6'], ['--week=6'], ['6']])('should reject the unknown argument %j', (...argv) => {
+		expect(() => parseWeeks(argv)).toThrow('Argumento desconocido');
+	});
+
+	it('should accept the upper bound', () => {
+		expect(parseWeeks(['--weeks=26'])).toBe(26);
 	});
 });
 
