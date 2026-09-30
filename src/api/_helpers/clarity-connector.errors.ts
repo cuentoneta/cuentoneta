@@ -5,8 +5,8 @@ export class ClarityRequestError extends Error {
 	}
 }
 
-// El contrato de la respuesta cambió o no es el esperado: distingue "Clarity cambió" de "Clarity no
-// contestó" o "rechazó la credencial".
+// Clarity contestó con éxito pero la respuesta no tiene la forma esperada: distingue "Clarity cambió
+// su contrato" de "Clarity rechazó la petición" (`ClarityRequestError`).
 export class ClarityResponseError extends Error {
 	constructor(detail: string, options?: { cause?: unknown }) {
 		super(`Clarity API returned an unexpected response: ${detail}`, options);

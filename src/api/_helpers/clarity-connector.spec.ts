@@ -1,3 +1,4 @@
+import { ZodError } from 'zod';
 import { restoreAllMocks, spyOn } from '@test-utils';
 import { environment } from './environment';
 import { fetchPopularPagesMetric } from './clarity-connector';
@@ -54,7 +55,7 @@ describe('fetchPopularPagesMetric', () => {
 		const error = await fetchPopularPagesMetric().catch((cause: unknown) => cause);
 
 		expect(error).toBeInstanceOf(ClarityResponseError);
-		expect((error as ClarityResponseError).cause).toBeDefined();
+		expect((error as ClarityResponseError).cause).toBeInstanceOf(ZodError);
 	});
 
 	it.each([
@@ -70,7 +71,18 @@ describe('fetchPopularPagesMetric', () => {
 	it('should throw a typed error when the body is not JSON', async () => {
 		spyOn(globalThis, 'fetch').mockResolvedValue(new Response('<html>', { status: 200 }));
 
-		await expect(fetchPopularPagesMetric()).rejects.toThrow(ClarityResponseError);
+		const error = await fetchPopularPagesMetric().catch((cause: unknown) => cause);
+
+		expect(error).toBeInstanceOf(ClarityResponseError);
+		expect((error as ClarityResponseError).cause).toMatchObject({ name: 'SyntaxError' });
+	});
+
+	it('should not fail because of a field of PopularPages the ranking does not read', async () => {
+		respondWith([
+			{ ...popularPages, information: [{ url: 'https://www.cuentoneta.ar/literary-work/a', visitsCount: 3 }] },
+		]);
+
+		await expect(fetchPopularPagesMetric()).resolves.toMatchObject({ metricName: 'PopularPages' });
 	});
 
 	it.each([401, 500])('should throw a request error, not a contract error, on status %i', async (status) => {

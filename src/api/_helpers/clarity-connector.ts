@@ -2,8 +2,9 @@ import { clarityResponseSchema, popularPagesMetricSchema, type PopularPagesMetri
 import { environment } from './environment';
 import { ClarityRequestError, ClarityResponseError } from './clarity-connector.errors';
 
-// Valida solo la métrica que se consume: una deformación en otra no debe tumbar el ranking. Una falla de
-// red propaga el error de `fetch` tal cual; `undefined` significa que Clarity no reportó la métrica.
+// Valida solo lo que se consume: el contenido de las otras métricas y los campos de `PopularPages` que el
+// ranking no lee no deben tumbarlo. Una falla de red propaga el error de `fetch` tal cual; `undefined`
+// significa que Clarity no reportó la métrica.
 export const fetchPopularPagesMetric = async (): Promise<PopularPagesMetric | undefined> => {
 	const response = await fetch('https://www.clarity.ms/export-data/api/v1/project-live-insights', {
 		headers: { Authorization: `Bearer ${environment.clarity.token}`, ContentType: 'application/json' },
@@ -13,7 +14,7 @@ export const fetchPopularPagesMetric = async (): Promise<PopularPagesMetric | un
 	}
 
 	const body = await response.json().catch((cause: unknown) => {
-		throw new ClarityResponseError('the body is not valid JSON', { cause });
+		throw new ClarityResponseError('the body could not be parsed as JSON', { cause });
 	});
 	const metrics = clarityResponseSchema.safeParse(body);
 	if (!metrics.success) {

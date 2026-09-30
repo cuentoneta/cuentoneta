@@ -56,8 +56,8 @@ function slugFromReadingUrl(url: string, prefix: string): string | undefined {
 export async function updateMostReadLiteraryWorks(
 	contentRepository: ContentRepository = new SanityContentRepository(),
 ): Promise<RotatingContent> {
-	const popularPagesMetrics = await fetchPopularPagesMetric();
-	if (!popularPagesMetrics) {
+	const popularPagesMetric = await fetchPopularPagesMetric();
+	if (!popularPagesMetric) {
 		throw new ClarityResponseError('the PopularPages metric is missing');
 	}
 
@@ -66,7 +66,7 @@ export async function updateMostReadLiteraryWorks(
 	// orden **es** el ranking.
 	const rankedSlugs = [
 		...new Set(
-			popularPagesMetrics.information.flatMap((entry) => slugFromReadingUrl(entry.url, readingPathPrefix) ?? []),
+			popularPagesMetric.information.flatMap((entry) => slugFromReadingUrl(entry.url, readingPathPrefix) ?? []),
 		),
 	];
 
