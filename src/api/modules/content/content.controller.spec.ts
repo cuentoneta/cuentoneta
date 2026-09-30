@@ -133,6 +133,15 @@ describe('contentController — la escritura no es cacheable', () => {
 		expect(repository.createdLandingPages).toEqual([]);
 	});
 
+	// La credencial se evalúa antes que la query: una llamada sin ella no debe enterarse de qué parámetros son válidos.
+	it('answers 401 and not 400 when an invalid query comes without credentials', async () => {
+		const response = await appWith(writableRepository()).request(
+			'/content/add-next-weeks-landing-page-content?weeksInTheFuture=abc',
+		);
+
+		expect(response.status).toBe(401);
+	});
+
 	it('rejects the weekly landing page creation when the secret is not configured', async () => {
 		environment.cronSecret = undefined;
 		const repository = writableRepository();
