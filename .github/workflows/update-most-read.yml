@@ -1,0 +1,43 @@
+# Actualiza el ranking de obras más leídas invocando el endpoint del backend.
+#
+# Dependencia de horario: debe terminar antes del export de `sync-datasets.yml` (domingos 03:17 UTC),
+# para que los datasets replicados lleven el ranking al día. Si se mueve el sync, revisar este cron.
+#
+# Requiere el secret `CRON_SECRET`, con el mismo valor que la variable de entorno del despliegue.
+# Su id no debe sumarse a los required status checks de `develop`.
+name: Update most read
+
+on:
+  schedule:
+    - cron: '15 2 * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: update-most-read
+  cancel-in-progress: false
+
+jobs:
+  update-most-read:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Actualizar las obras más leídas
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          set -uo pipefail
+          status=0
+          curl --silent --show-error --fail-with-body --max-time 300 \
+            --header "Authorization: Bearer ${CRON_SECRET}" \
+            --output response.txt \
+            'https://www.cuentoneta.ar/api/literary-work/update-most-read' || status=$?
+          {
+            echo '## Actualización de más leídas'
+            echo '```'
+            cat response.txt 2>/dev/null
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit "$status"

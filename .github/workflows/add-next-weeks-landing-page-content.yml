@@ -1,0 +1,73 @@
+# Pre-genera los documentos de landing page de las próximas semanas invocando el endpoint del backend.
+#
+# Dependencia de horario: debe correr antes de `sync-datasets.yml` (domingos 03:17 UTC). El sync
+# replica `production` sobre `staging` y `development`; una landing creada después deja a esos
+# datasets sin la semana vigente hasta el domingo siguiente. Si se mueve el sync, revisar este cron y
+# `timeout-minutes`: la corrida tiene que terminar dentro del margen.
+#
+# Requiere el secret `CRON_SECRET`, con el mismo valor que la variable de entorno del despliegue.
+# Su id no debe sumarse a los required status checks de `develop`.
+name: Add next weeks landing page content
+
+on:
+  schedule:
+    - cron: '47 2 * * 0'
+  workflow_dispatch:
+    inputs:
+      weeks_in_the_future:
+        description: 'Cuántas semanas futuras pre-generar.'
+        type: string
+        default: '4'
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: add-next-weeks-landing-page-content
+  cancel-in-progress: false
+
+jobs:
+  add-next-weeks-landing-page-content:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Abortar si el runner arrancó tarde
+        if: github.event_name == 'schedule'
+        run: |
+          # Pasadas las 03:02 UTC, el timeout ya no garantiza terminar antes del sync de las 03:17.
+          if [ "$(date -u +%H%M)" \> '0302' ]; then
+            echo "Arranque tardío: $(date -u +%H:%M) UTC. No se genera para no correr junto al sync." >&2
+            exit 1
+          fi
+
+      - name: Generar las landing pages de las próximas semanas
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          WEEKS: ${{ github.event.inputs.weeks_in_the_future || '4' }}
+        run: |
+          set -uo pipefail
+          status=0
+          curl --silent --show-error --fail-with-body --max-time 600 \
+            --header "Authorization: Bearer ${CRON_SECRET}" \
+            --output response.txt \
+            "https://www.cuentoneta.ar/api/content/add-next-weeks-landing-page-content?weeksInTheFuture=${WEEKS}" || status=$?
+          {
+            echo '## Generación de landing pages'
+            echo '```'
+            cat response.txt 2>/dev/null
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit "$status"
+
+      - name: Abrir un issue de seguimiento
+        if: failure() && github.event_name == 'schedule'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          gh issue create \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "Falló la generación semanal de landing pages" \
+            --body "La corrida programada falló: ${RUN_URL}. Hasta corregirla y volver a dispararla, \`production\` no tiene las próximas semanas y el sync del domingo replica ese faltante a \`staging\` y \`development\`."
