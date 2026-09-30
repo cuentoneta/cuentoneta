@@ -48,7 +48,7 @@ export const OPS_TASKS = Object.freeze({
 	},
 	'landing-pages:add-next-weeks': {
 		description:
-			'Pre-genera las landing pages de las próximas semanas (--weeks=<n>; escribe siempre, ignora --no-dry-run)',
+			'Crea la landing page de la semana siguiente si falta (--weeks=<n> para más; escribe siempre, ignora --no-dry-run)',
 		destructive: false,
 		acceptsArgs: true,
 		load: () => import('./tasks/add-next-weeks-landing-pages').then((m) => m.task),

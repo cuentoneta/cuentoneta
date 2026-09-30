@@ -17,7 +17,7 @@ on:
       weeks_in_the_future:
         description: 'Cuántas semanas futuras pre-generar (1 a 26).'
         type: string
-        default: '4'
+        default: '1'
 
 permissions:
   contents: read
@@ -56,7 +56,7 @@ jobs:
 
       - name: Generar las landing pages de las próximas semanas
         env:
-          WEEKS: ${{ github.event.inputs.weeks_in_the_future || '4' }}
+          WEEKS: ${{ github.event.inputs.weeks_in_the_future || '1' }}
           SANITY_STUDIO_DATASET: production
           SANITY_STUDIO_PROJECT_ID: ${{ secrets.SANITY_STUDIO_PROJECT_ID }}
           SANITY_STUDIO_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
@@ -76,7 +76,7 @@ jobs:
         id: collect
         if: always()
         env:
-          WEEKS: ${{ github.event.inputs.weeks_in_the_future || '4' }}
+          WEEKS: ${{ github.event.inputs.weeks_in_the_future || '1' }}
           LATE_START: ${{ steps.late_start.outcome }}
         run: |
           {

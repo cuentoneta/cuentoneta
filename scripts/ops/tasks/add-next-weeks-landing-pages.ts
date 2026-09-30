@@ -1,10 +1,10 @@
 /**
- * Pre-genera los documentos `landingPage` de las próximas semanas copiando las referencias de la última
- * configuración no futura. Idempotente: solo crea las semanas que faltan. Escribe siempre, con o sin
- * `--no-dry-run`.
+ * Crea el documento `landingPage` de la semana siguiente si todavía no existe, copiando las referencias de
+ * la última configuración no futura. Es la red de seguridad de la creación manual: con el default no toca
+ * nada si la semana ya fue cargada. Idempotente. Escribe siempre, con o sin `--no-dry-run`.
  *
  * Uso:
- *   pnpm ops landing-pages:add-next-weeks                # 4 semanas
+ *   pnpm ops landing-pages:add-next-weeks                # solo la semana siguiente
  *   pnpm ops landing-pages:add-next-weeks --weeks=6      # 6 semanas
  */
 import { environment } from '@api/_helpers/environment';
@@ -13,7 +13,7 @@ import { SanityContentRepository } from '@api/modules/content/content.repository
 import { addNextWeeksLandingPageContent } from '@api/modules/content/content.service';
 import type { OpsTask } from '../registry';
 
-const DEFAULT_WEEKS = 4;
+const DEFAULT_WEEKS = 1;
 const MAX_WEEKS = 26;
 const WEEKS_FLAG = '--weeks=';
 

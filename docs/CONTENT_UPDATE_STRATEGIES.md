@@ -94,11 +94,12 @@ El cron job que actualiza el contenido rotativo se ejecuta de manera diaria a la
 
 Una **configuración de landing page** en La Cuentoneta es una configuración temática que agrupa contenido relevante para un período de tiempo, contable en semanas, y con un mínimo de una semana — siendo extensible a períodos múltiplos de una semana mediante la copia de este contenido.
 
-El sistema genera automáticamente las configuraciones de landing pages para las próximas semanas a partir de la vigente mediante un cronjob. En caso de que no haya configuraciones de landing pages definidas para alguna de las próximas cuatro semanas en la plataforma el sistema se encarga de generarlas, utilizando como base la configuración válida más reciente **que no sea futura** (`config <= semana actual`), es decir, la semana vigente curada por los editores.
+Las configuraciones de landing pages de las semanas futuras se cargan de manera manual. Como red de seguridad, un cronjob semanal crea la de la semana siguiente si todavía no existe, utilizando como base la configuración válida más reciente **que no sea futura** (`config <= semana actual`), es decir, la semana vigente curada por los editores.
 
 Este proceso garantiza que:
 
-- Siempre haya landing pages disponibles para las próximas cuatro semanas, permitiendo una configuración planificada en múltiplos de semanas.
+- La landing page de la semana siguiente exista siempre, aunque nadie la haya cargado a mano.
+- Una landing page ya cargada manualmente nunca se toca ni se duplica.
 - Los editores de contenido solo necesiten actualizar la configuración de la semana vigente, modificándola completamente o en partes.
 - Las nuevas semanas hereden automáticamente la estructura de la semana vigente, siendo las nuevas configuraciones creadas copiando esa configuración en el estado en el que se encuentra al momento de ejecutarse el cronjob.
 
@@ -165,7 +166,7 @@ La función `addNextWeeksLandingPageContent(weeksInTheFuture)` ejecuta el siguie
 
 ```
 1. Calcular fecha actual y slug de la semana actual (formato YYYY-WW vía getISOWeekYear + getISOWeek)
-2. Generar slugs para las próximas N semanas (ej: weeksInTheFuture = 4)
+2. Generar slugs para las próximas N semanas (por defecto, N = 1: solo la semana siguiente)
 3. Consultar Sanity para obtener landing pages existentes con esos slugs
 4. Si TODAS las próximas N semanas ya existen → retornar vacío (sin cambios)
 5. Si alguna no existe:
@@ -182,34 +183,31 @@ La función `addNextWeeksLandingPageContent(weeksInTheFuture)` ejecuta el siguie
 
 ### Frecuencia de Ejecución
 
-La definición para la ejecución de este cronjob se encuentra en el workflow `.github/workflows/add-next-weeks-landing-page-content.yml`, que corre `pnpm ops landing-pages:add-next-weeks --weeks=4` contra `production` con el secret `SANITY_AUTH_TOKEN`:
+La definición para la ejecución de este cronjob se encuentra en el workflow `.github/workflows/add-next-weeks-landing-page-content.yml`, que corre `pnpm ops landing-pages:add-next-weeks` contra `production` con el secret `SANITY_AUTH_TOKEN`:
 
 - **Frecuencia**: Semanalmente
 - **Día y hora**: Domingos a las 02:47 UTC (sábados a las 23:47 GMT -3), media hora antes del sync de datasets (`.github/workflows/sync-datasets.yml`, domingos a las 03:17 UTC), para que `staging` y `development` repliquen ya la semana que empieza al día siguiente
-- **Tolerancia**: Puede también ejecutarse de manera manual en cualquier momento antes de que se necesite, con el disparo manual del workflow o con `pnpm ops landing-pages:add-next-weeks` (`--weeks=<n>` cambia la cantidad de semanas); ambos escriben, y al ser idempotente una corrida de más no duplica documentos
+- **Tolerancia**: Puede también ejecutarse de manera manual en cualquier momento antes de que se necesite, con el disparo manual del workflow o con `pnpm ops landing-pages:add-next-weeks` (`--weeks=<n>` cambia la cantidad de semanas, por defecto una); ambos escriben, y al ser idempotente una corrida de más no duplica documentos
 
-> **Interacción con la numeración ISO-8601 (#1751):** las semanas ISO empiezan el **lunes**, y el cron corre el **domingo** — el último día de la semana ISO en curso. Por eso, el domingo la home todavía sirve la semana que termina ese día, y recién el lunes rota a la siguiente. Esto es **continuo, sin huecos**: cada domingo el cron pre-genera las próximas 4 semanas (`semana_actual + 1 … + 4`), así que la semana que la home pedirá de lunes a sábado siempre existe. (La corrida del domingo genera desde la semana _siguiente_; la semana que la home pide ese mismo domingo fue creada por la corrida del domingo anterior.)
+> **Interacción con la numeración ISO-8601 (#1751):** las semanas ISO empiezan el **lunes**, y el cron corre el **domingo** — el último día de la semana ISO en curso. Por eso, el domingo la home todavía sirve la semana que termina ese día, y recién el lunes rota a la siguiente. Esto es **continuo, sin huecos**: cada domingo el cron crea, si falta, la semana siguiente (`semana_actual + 1`), que es la que la home pedirá de lunes a sábado. Si los editores ya la cargaron a mano, la corrida no hace nada.
 
 ### Ejemplo de Ejecución
 
-**Escenario**: Domingo 16 de noviembre de 2025, último día de la semana 46, a las 02:47 UTC (sábado 15, 23:47 GMT -3). Se ejecuta el cronjob con el argumento de "semanas hacia adelante" `--weeks` en su valor predeterminado de 4 (admite de 1 a 26).
+**Escenario**: Domingo 16 de noviembre de 2025, último día de la semana 46, a las 02:47 UTC (sábado 15, 23:47 GMT -3). Se ejecuta el cronjob con el argumento de "semanas hacia adelante" `--weeks` en su valor predeterminado de 1 (admite de 1 a 26).
 
 ```javascript
-await addNextWeeksLandingPageContent(4);
+await addNextWeeksLandingPageContent(1);
 ```
 
-**Semanas a procesar**: 47, 48, 49, 50 (2025)
+**Semanas a procesar**: 47 (2025)
 
-**Resultado si todas existen**: `[]` (array vacío)
+**Resultado si ya existe**: `[]` (array vacío)
 
-**Resultado si faltan semanas 49 y 50**:
-
-Este flujo alternativo asume que fueron agregadas, por una ejecución manual de la tarea o por una ejecución de cronjob previa, las configuraciones de landing pages para las semanas 47 y 48.
+**Resultado si falta la semana 47**:
 
 ```javascript
 [
-  { _id: "landing-page-2025-49", config: "2025-49", slug: "2025-49", ... },
-  { _id: "landing-page-2025-50", config: "2025-50", slug: "2025-50", ... }
+  { _id: "landing-page-2025-47", config: "2025-47", slug: "2025-47", ... }
 ]
 ```
 
@@ -299,7 +297,7 @@ Los horarios de los cron jobs están en UTC y el resto en horario GMT -3 (Buenos
 
 ### Semana de Publicación Normal
 
-1. **Domingo 02:47 UTC (día 7, semana vigente)** - cron job genera landing pages para, como máximo, las próximas 4 semanas
+1. **Domingo 02:47 UTC (día 7, semana vigente)** - cron job crea la landing page de la semana siguiente si los editores todavía no la cargaron
 2. **Lunes 00:00 (día 1, semana posterior)** - Se visualiza en la landing page el contenido configurado correspondiente a la nueva semana que acaba de comenzar
 3. **Lunes - Viernes (días 2-6, de la ahora semana vigente)** - Editores actualizan contenido de la landing page para la próxima semana
 4. **Sábado (día 6)** - Revisión final de cambios
@@ -342,15 +340,15 @@ No, la creación está bloqueada para evitar inconsistencias. Sin embargo, puede
 
 La función siempre utiliza la configuración válida más reciente que no sea futura (`config <= semana actual`), es decir, la semana vigente. Si necesitas cambiar la estructura para todas las futuras semanas, actualiza la landing page de la semana actual y ejecuta el cron job nuevamente.
 
-### ¿Puedo generar landing pages para más de 4 semanas?
+### ¿Puedo generar landing pages para más de una semana?
 
 Sí, la función acepta un parámetro `weeksInTheFuture`:
 
 ```typescript
-await addNextWeeksLandingPageContent(8); // Genera 8 semanas adelante
+await addNextWeeksLandingPageContent(8); // Crea las que falten de las próximas 8 semanas
 ```
 
-Sin embargo, se recomienda mantener entre 4-6 semanas para evitar data obsoleta.
+Desde la tarea, `pnpm ops landing-pages:add-next-weeks --weeks=8`. Como cada semana nueva copia la configuración vigente al momento de la corrida, conviene no adelantar más semanas de las necesarias para evitar data obsoleta.
 
 ### ¿Cómo agrego un nuevo tipo de contenido rotativo?
 

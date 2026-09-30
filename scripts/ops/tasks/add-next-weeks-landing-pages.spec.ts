@@ -17,8 +17,8 @@ function nextWeekSlugs(weeks: number): string[] {
 }
 
 describe('parseWeeks', () => {
-	it('should default to four weeks', () => {
-		expect(parseWeeks([])).toBe(4);
+	it('should default to one week', () => {
+		expect(parseWeeks([])).toBe(1);
 	});
 
 	it('should read the --weeks flag', () => {
@@ -55,46 +55,57 @@ describe('runAddNextWeeksLandingPages', () => {
 		environment.sanity.projectId = originalProjectId;
 	});
 
-	it('should create the missing weeks', async () => {
-		const repository = new InMemoryContentRepository({ latestReferences });
-
-		const slugs = await runAddNextWeeksLandingPages(4, repository);
-
-		expect(slugs).toEqual(nextWeekSlugs(4));
-		expect(repository.createdLandingPages.map(({ config }) => config)).toEqual(nextWeekSlugs(4));
-	});
-
-	it('should not create anything on a second run', async () => {
-		const landingPages = nextWeekSlugs(4).map((slug) => ({
+	function existing(weeks: number) {
+		return nextWeekSlugs(weeks).map((slug) => ({
 			slug,
 			content: { _id: `landing-page-${slug}`, config: slug } as never,
 		}));
-		const repository = new InMemoryContentRepository({ latestReferences, landingPages });
+	}
 
-		const slugs = await runAddNextWeeksLandingPages(4, repository);
+	it('should create only next week by default', async () => {
+		const repository = new InMemoryContentRepository({ latestReferences });
+
+		const slugs = await runAddNextWeeksLandingPages(parseWeeks([]), repository);
+
+		expect(slugs).toEqual(nextWeekSlugs(1));
+		expect(repository.createdLandingPages.map(({ config }) => config)).toEqual(nextWeekSlugs(1));
+	});
+
+	it('should create nothing by default when next week already exists', async () => {
+		const repository = new InMemoryContentRepository({ latestReferences, landingPages: existing(1) });
+
+		const slugs = await runAddNextWeeksLandingPages(parseWeeks([]), repository);
 
 		expect(slugs).toEqual([]);
 		expect(repository.createdLandingPages).toEqual([]);
 	});
 
+	it('should create only the weeks that are missing when asked for more than one', async () => {
+		const repository = new InMemoryContentRepository({ latestReferences, landingPages: existing(1) });
+
+		const slugs = await runAddNextWeeksLandingPages(parseWeeks(['--weeks=4']), repository);
+
+		expect(slugs).toEqual(nextWeekSlugs(4).slice(1));
+	});
+
 	it('should fail when the Sanity project id is missing', async () => {
 		environment.sanity.projectId = '';
 
-		await expect(runAddNextWeeksLandingPages(4, new InMemoryContentRepository({ latestReferences }))).rejects.toThrow(
-			'SANITY_STUDIO_PROJECT_ID',
-		);
+		await expect(
+			runAddNextWeeksLandingPages(parseWeeks([]), new InMemoryContentRepository({ latestReferences })),
+		).rejects.toThrow('SANITY_STUDIO_PROJECT_ID');
 	});
 
 	it('should fail before writing when the Sanity token is missing', async () => {
 		environment.sanity.token = '';
 		const repository = new InMemoryContentRepository({ latestReferences });
 
-		await expect(runAddNextWeeksLandingPages(4, repository)).rejects.toThrow('SANITY_STUDIO_TOKEN');
+		await expect(runAddNextWeeksLandingPages(parseWeeks([]), repository)).rejects.toThrow('SANITY_STUDIO_TOKEN');
 		expect(repository.createdLandingPages).toEqual([]);
 	});
 
 	it('should propagate the failure when there is no landing page to copy from', async () => {
-		await expect(runAddNextWeeksLandingPages(4, new InMemoryContentRepository())).rejects.toThrow(
+		await expect(runAddNextWeeksLandingPages(parseWeeks([]), new InMemoryContentRepository())).rejects.toThrow(
 			'Latest landing page',
 		);
 	});
