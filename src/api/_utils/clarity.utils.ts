@@ -3,6 +3,8 @@
  * @author Ramiro Olivencia <ramiro@olivencia.com.ar>
  */
 
+import type { PopularPagesMetric } from '@schemas/clarity.schemas';
+
 // Interfaces base para representar la información de las métricas
 interface MetricWithSessions {
 	sessionsCount: string;
@@ -31,11 +33,6 @@ interface EngagementTimeInfo {
 interface SessionsCountInfo {
 	name: string | null;
 	sessionsCount: string;
-}
-
-interface PopularPageInfo {
-	url: string;
-	visitsCount: string;
 }
 
 // Type guards
@@ -112,11 +109,6 @@ interface PageTitleMetric {
 interface ReferrerUrlMetric {
 	metricName: 'ReferrerUrl';
 	information: SessionsCountInfo[];
-}
-
-interface PopularPagesMetric {
-	metricName: 'PopularPages';
-	information: PopularPageInfo[];
 }
 
 type MetricData =
