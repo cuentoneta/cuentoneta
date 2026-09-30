@@ -36,7 +36,7 @@ Las funcionalidades relacionadas a contenido rotativo están y deben de ser impl
 
 Las **obras más leídas** son un ejemplo de contenido dentro del patrón de **contenido rotativo**. Actualmente, mediante el uso de la [Data Export API de Microsoft Clarity](https://learn.microsoft.com/en-us/clarity/setup-and-installation/clarity-data-export-api), el sistema mantiene un registro de las páginas más leídas por los usuarios de La Cuentoneta, tomando una referencia de las más leídas en los últimos tres días.
 
-De manera diaria se ejecuta un cron job, agendado por el workflow `.github/workflows/update-most-read.yml` a las 02:15 UTC (23:15 GMT -3 del día anterior), que se encarga, partiendo de esas listas, de alojar en el documento singleton `rotatingContent` las referencias correspondientes.
+De manera diaria se ejecuta un cron job, agendado por el workflow `.github/workflows/update-most-read.yml` a las 02:15 UTC (23:15 GMT -3 del día anterior), que corre la tarea `pnpm ops most-read:update` y se encarga, partiendo de esas listas, de alojar en el documento singleton `rotatingContent` las referencias correspondientes.
 
 Escribe en `mostReadLiteraryWorks`, con referencias a documentos `literaryWork`. El conteo de páginas populares de Clarity filtra por un único prefijo de lectura, `/literary-work/:slug`. La métrica registra la URL efectivamente visitada, así que el prefijo indexado anterior aportó mientras quedó tráfico suyo dentro de la ventana; hoy no queda, porque `src/server.ts` lo redirige con 301 desde hace más tiempo que los tres días que la ventana abarca. Los slugs resultantes se deduplican —una misma obra llega varias veces cuando la URL viene decorada con querystring de campaña, un ancla o una barra final— y se resuelven a `_id` de `literaryWork` antes de escribir las referencias.
 
@@ -45,7 +45,7 @@ Escribe en `mostReadLiteraryWorks`, con referencias a documentos `literaryWork`.
 - **Consultas GROQ**: `src/api/_queries/content.query.ts` - `rotatingContentQuery` (lectura del documento singleton) y `src/api/_queries/literary-work.query.ts` - `literaryWorkTeasers`, cuyo filtro opcional por slugs resuelve el lote del ranking
 - **Repositorio de acceso a datos**: `src/api/modules/content/content.repository.sanity.ts` - `SanityContentRepository.fetchRotatingContent()` y `updateMostReadLiteraryWorks(slugs)`, que resuelve los slugs y repone el orden del ranking antes de parchear
 - **Servicio**: `src/api/modules/literary-work/literary-work.service.ts` - `updateMostReadLiteraryWorks()`, que deriva los slugs de Clarity y se los pasa al repositorio
-- **Ruta**: `src/api/modules/literary-work/literary-work.controller.ts` - `GET /update-most-read`, declarada `no-store` porque el módulo sirve sus lecturas con caché de borde y una escritura servida desde el borde devolvería un 200 sin haber corrido
+- **Tarea de operación**: `scripts/ops/tasks/update-most-read.ts` - `pnpm ops most-read:update`, que llama al servicio directo contra el repositorio real. Corre en seco por defecto y solo escribe con `--no-dry-run`
 
 La resolución de slugs a identificadores vive **dentro de la escritura** y no en el puerto de obras: los slugs salen de una métrica externa, así que quien orquesta no tiene de dónde sacar un identificador, y pedírselo a otro repositorio para devolvérselo a éste haría que el caso de uso cruzara dos repositorios para escribir en uno. Los resuelve el listado de obras y no una consulta dedicada: el registro de filtro de ese listado declara que cada criterio nuevo entra como campo opcional, y una consulta que solo tradujera slugs a identificadores sería una segunda forma de preguntar lo mismo.
 
@@ -84,15 +84,7 @@ El documento `rotatingContent` está diseñado para ser **extensible**. La estru
 
 ### Frecuencia de Ejecución
 
-El cron job que actualiza el contenido rotativo se ejecuta de manera diaria a las 02:15 UTC (23:15 GMT -3 del día anterior, horario de Buenos Aires, Argentina), agendado por `.github/workflows/update-most-read.yml`. Invoca `GET /api/literary-work/update-most-read` con `Authorization: Bearer $CRON_SECRET`.
-
-### Autenticación de las invocaciones
-
-Las dos rutas de escritura de los cron jobs (`/api/literary-work/update-most-read` y `/api/content/add-next-weeks-landing-page-content`) exigen `Authorization: Bearer <CRON_SECRET>`:
-
-- El mismo valor vive como secret `CRON_SECRET` del repositorio (lo manda el workflow) y como variable de entorno `CRON_SECRET` del despliegue (lo verifica el backend).
-- Sin `CRON_SECRET` configurado en el despliegue, **toda** invocación responde 401, incluidas las de los entornos de preview. Una llamada manual necesita el mismo header.
-- Un secreto con caracteres fuera de `[A-Za-z0-9._~+/-]` responde siempre 400, tanto en el servidor como en el workflow. Generarlo con `openssl rand -hex 32` cae dentro de ese alfabeto y da entropía suficiente.
+El cron job que actualiza el contenido rotativo se ejecuta de manera diaria a las 02:15 UTC (23:15 GMT -3 del día anterior, horario de Buenos Aires, Argentina), agendado por `.github/workflows/update-most-read.yml`, que corre `pnpm ops most-read:update --no-dry-run` contra `production` con los secrets `SANITY_AUTH_TOKEN`, `CLARITY_TOKEN` y `CLARITY_PROJECT_ID`. Un disparo manual del workflow arranca en seco; a mano, `pnpm ops most-read:update` reporta el ranking que escribiría y `--no-dry-run` lo aplica.
 
 ---
 
@@ -188,11 +180,11 @@ La función `addNextWeeksLandingPageContent(weeksInTheFuture)` ejecuta el siguie
 
 ### Frecuencia de Ejecución
 
-La definición para la ejecución de este cronjob se encuentra en el workflow `.github/workflows/add-next-weeks-landing-page-content.yml`, que invoca `GET /api/content/add-next-weeks-landing-page-content` con `Authorization: Bearer $CRON_SECRET`:
+La definición para la ejecución de este cronjob se encuentra en el workflow `.github/workflows/add-next-weeks-landing-page-content.yml`, que corre `pnpm ops landing-pages:add-next-weeks --weeks=4 --no-dry-run` contra `production` con el secret `SANITY_AUTH_TOKEN`:
 
 - **Frecuencia**: Semanalmente
 - **Día y hora**: Domingos a las 02:47 UTC (sábados a las 23:47 GMT -3), media hora antes del sync de datasets (`.github/workflows/sync-datasets.yml`, domingos a las 03:17 UTC), para que `staging` y `development` repliquen ya la semana que empieza al día siguiente
-- **Tolerancia**: Puede también ejecutarse de manera manual en cualquier momento antes de que se necesite
+- **Tolerancia**: Puede también ejecutarse de manera manual en cualquier momento antes de que se necesite, con el disparo manual del workflow (en seco por defecto) o con `pnpm ops landing-pages:add-next-weeks` (`--weeks=<n>` cambia la cantidad de semanas y `--no-dry-run` aplica)
 
 > **Interacción con la numeración ISO-8601 (#1751):** las semanas ISO empiezan el **lunes**, y el cron corre el **domingo** — el último día de la semana ISO en curso. Por eso, el domingo la home todavía sirve la semana que termina ese día, y recién el lunes rota a la siguiente. Esto es **continuo, sin huecos**: cada domingo el cron pre-genera las próximas 4 semanas (`semana_actual + 1 … + 4`), así que la semana que la home pedirá de lunes a sábado siempre existe. (La corrida del domingo genera desde la semana _siguiente_; la semana que la home pide ese mismo domingo fue creada por la corrida del domingo anterior.)
 
@@ -210,7 +202,7 @@ await addNextWeeksLandingPageContent(4);
 
 **Resultado si faltan semanas 49 y 50**:
 
-Este flujo alternativo asume que fueron agregadas, por una ejecución manual llamando al endpoint o por una ejecución de cronjob previa, las configuraciones de landing pages para las semanas 47 y 48.
+Este flujo alternativo asume que fueron agregadas, por una ejecución manual de la tarea o por una ejecución de cronjob previa, las configuraciones de landing pages para las semanas 47 y 48.
 
 ```javascript
 [
