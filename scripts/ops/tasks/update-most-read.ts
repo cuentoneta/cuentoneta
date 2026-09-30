@@ -6,12 +6,24 @@
  *   pnpm ops most-read:update                 # corrida en seco: reporta el ranking que escribiría
  *   pnpm ops most-read:update --no-dry-run    # persiste
  */
-import { environment } from '../../../src/api/_helpers/environment';
-import type { ContentRepository } from '../../../src/api/modules/content/content.repository';
-import { SanityContentRepository } from '../../../src/api/modules/content/content.repository.sanity';
-import { updateMostReadLiteraryWorks } from '../../../src/api/modules/literary-work/literary-work.service';
+import { environment } from '@api/_helpers/environment';
+import type { ContentRepository } from '@api/modules/content/content.repository';
+import { SanityContentRepository } from '@api/modules/content/content.repository.sanity';
+import { updateMostReadLiteraryWorks } from '@api/modules/literary-work/literary-work.service';
 import { RecordingContentRepository } from '../../recording-content-repository';
 import type { OpsTask } from '../registry';
+
+function assertCredentials(apply: boolean): void {
+	if (!environment.sanity.projectId) {
+		throw new Error('Falta el id del proyecto de Sanity (SANITY_STUDIO_PROJECT_ID).');
+	}
+	if (apply && !environment.sanity.token) {
+		throw new Error('Falta el token de escritura de Sanity (SANITY_STUDIO_TOKEN): no se intenta escribir.');
+	}
+	if (!environment.clarity.token) {
+		throw new Error('Falta el token de Clarity (CLARITY_TOKEN): no hay métrica de la que derivar el ranking.');
+	}
+}
 
 export async function runMostReadUpdate(
 	apply: boolean,
@@ -22,12 +34,7 @@ export async function runMostReadUpdate(
 			`modo ${apply ? 'APLICAR' : 'seco'}`,
 	);
 
-	if (apply && !environment.sanity.token) {
-		throw new Error('Falta el token de escritura de Sanity (SANITY_STUDIO_TOKEN): no se intenta escribir.');
-	}
-	if (!environment.clarity.token) {
-		throw new Error('Falta el token de Clarity (CLARITY_TOKEN): no hay métrica de la que derivar el ranking.');
-	}
+	assertCredentials(apply);
 
 	const recording = new RecordingContentRepository(repository, apply);
 	const result = await updateMostReadLiteraryWorks(recording);

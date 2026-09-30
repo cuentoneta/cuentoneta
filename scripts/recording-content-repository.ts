@@ -4,7 +4,7 @@ import type {
 	LandingPageCreatePayload,
 	LandingPageReferences,
 	LandingPageSummary,
-} from '../src/api/modules/content/content.repository';
+} from '@api/modules/content/content.repository';
 
 /**
  * Registra las escrituras que pide el service y las reenvía al repository real solo si `apply` está

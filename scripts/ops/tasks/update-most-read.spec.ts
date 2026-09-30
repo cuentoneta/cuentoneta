@@ -1,12 +1,12 @@
 import { onoffLiteraryWorkNavigationTeasersWithAuthorsMock } from '@mocks/onoff-literary-work-teasers.mock';
 import { clearAllMocks, type Mock } from '@test-utils';
-import { environment } from '../../../src/api/_helpers/environment';
-import { fetchClarityData } from '../../../src/api/_helpers/clarity-connector';
-import { InMemoryContentRepository } from '../../../src/api/modules/content/content.repository.mock';
+import { environment } from '@api/_helpers/environment';
+import { fetchClarityData } from '@api/_helpers/clarity-connector';
+import { InMemoryContentRepository } from '@api/modules/content/content.repository.mock';
 import { runMostReadUpdate } from './update-most-read';
 
 /* eslint-disable no-restricted-syntax -- vi.mock/vi.fn: mock de módulo de un servicio externo sin punto de inyección */
-vi.mock('../../../src/api/_helpers/clarity-connector', () => ({ fetchClarityData: vi.fn() }));
+vi.mock('@api/_helpers/clarity-connector', () => ({ fetchClarityData: vi.fn() }));
 /* eslint-enable no-restricted-syntax */
 
 const [first, second, third] = onoffLiteraryWorkNavigationTeasersWithAuthorsMock;
@@ -23,6 +23,7 @@ function popularPages(...slugs: string[]) {
 describe('runMostReadUpdate', () => {
 	const originalSanityToken = environment.sanity.token;
 	const originalClarityToken = environment.clarity.token;
+	const originalProjectId = environment.sanity.projectId;
 
 	function repository() {
 		return new InMemoryContentRepository({
@@ -34,11 +35,13 @@ describe('runMostReadUpdate', () => {
 	beforeEach(() => {
 		environment.sanity.token = 'sanity';
 		environment.clarity.token = 'clarity';
+		environment.sanity.projectId = 'project';
 	});
 
 	afterEach(() => {
 		environment.sanity.token = originalSanityToken;
 		environment.clarity.token = originalClarityToken;
+		environment.sanity.projectId = originalProjectId;
 		clearAllMocks();
 	});
 
@@ -92,6 +95,13 @@ describe('runMostReadUpdate', () => {
 		environment.sanity.token = '';
 
 		await expect(runMostReadUpdate(true, repository())).rejects.toThrow('SANITY_STUDIO_TOKEN');
+		expect(fetchClarityData).not.toHaveBeenCalled();
+	});
+
+	it('should fail when the Sanity project id is missing', async () => {
+		environment.sanity.projectId = '';
+
+		await expect(runMostReadUpdate(false, repository())).rejects.toThrow('SANITY_STUDIO_PROJECT_ID');
 		expect(fetchClarityData).not.toHaveBeenCalled();
 	});
 

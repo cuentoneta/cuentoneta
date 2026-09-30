@@ -7,10 +7,10 @@
  *   pnpm ops landing-pages:add-next-weeks --weeks=6          # corrida en seco, 6 semanas
  *   pnpm ops landing-pages:add-next-weeks --no-dry-run       # persiste
  */
-import { environment } from '../../../src/api/_helpers/environment';
-import type { ContentRepository } from '../../../src/api/modules/content/content.repository';
-import { SanityContentRepository } from '../../../src/api/modules/content/content.repository.sanity';
-import { addNextWeeksLandingPageContent } from '../../../src/api/modules/content/content.service';
+import { environment } from '@api/_helpers/environment';
+import type { ContentRepository } from '@api/modules/content/content.repository';
+import { SanityContentRepository } from '@api/modules/content/content.repository.sanity';
+import { addNextWeeksLandingPageContent } from '@api/modules/content/content.service';
 import { RecordingContentRepository } from '../../recording-content-repository';
 import type { OpsTask } from '../registry';
 
@@ -43,6 +43,9 @@ export async function runAddNextWeeksLandingPages(
 			`dataset ${environment.sanity.dataset}, modo ${apply ? 'APLICAR' : 'seco'}`,
 	);
 
+	if (!environment.sanity.projectId) {
+		throw new Error('Falta el id del proyecto de Sanity (SANITY_STUDIO_PROJECT_ID).');
+	}
 	if (apply && !environment.sanity.token) {
 		throw new Error('Falta el token de escritura de Sanity (SANITY_STUDIO_TOKEN): no se intenta escribir.');
 	}

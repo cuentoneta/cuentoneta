@@ -1,6 +1,6 @@
 import { onoffLiteraryWorkNavigationTeasersWithAuthorsMock } from '@mocks/onoff-literary-work-teasers.mock';
-import { InMemoryContentRepository } from '../src/api/modules/content/content.repository.mock';
-import type { LandingPageCreatePayload } from '../src/api/modules/content/content.repository';
+import { InMemoryContentRepository } from '@api/modules/content/content.repository.mock';
+import type { LandingPageCreatePayload } from '@api/modules/content/content.repository';
 import { RecordingContentRepository } from './recording-content-repository';
 
 const payload = { config: '2026-40' } as LandingPageCreatePayload;

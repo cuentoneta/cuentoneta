@@ -1,7 +1,7 @@
 import { addWeeks } from 'date-fns';
 import { buildWeekSlug } from '@utils/week-slug.utils';
-import { environment } from '../../../src/api/_helpers/environment';
-import { InMemoryContentRepository } from '../../../src/api/modules/content/content.repository.mock';
+import { environment } from '@api/_helpers/environment';
+import { InMemoryContentRepository } from '@api/modules/content/content.repository.mock';
 import { parseWeeks, runAddNextWeeksLandingPages } from './add-next-weeks-landing-pages';
 
 const latestReferences = {
@@ -43,13 +43,16 @@ describe('parseWeeks', () => {
 
 describe('runAddNextWeeksLandingPages', () => {
 	const originalToken = environment.sanity.token;
+	const originalProjectId = environment.sanity.projectId;
 
 	beforeEach(() => {
 		environment.sanity.token = 'token';
+		environment.sanity.projectId = 'project';
 	});
 
 	afterEach(() => {
 		environment.sanity.token = originalToken;
+		environment.sanity.projectId = originalProjectId;
 	});
 
 	it('should create the missing weeks when applying', async () => {
@@ -81,6 +84,14 @@ describe('runAddNextWeeksLandingPages', () => {
 
 		expect(slugs).toEqual(nextWeekSlugs(4));
 		expect(repository.createdLandingPages).toEqual([]);
+	});
+
+	it('should fail when the Sanity project id is missing', async () => {
+		environment.sanity.projectId = '';
+
+		await expect(
+			runAddNextWeeksLandingPages(false, 4, new InMemoryContentRepository({ latestReferences })),
+		).rejects.toThrow('SANITY_STUDIO_PROJECT_ID');
 	});
 
 	it('should fail before writing when the Sanity token is missing', async () => {
