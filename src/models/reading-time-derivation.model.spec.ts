@@ -7,16 +7,14 @@ import {
 import { deriveReadingTime } from './reading-time.model';
 import { createMarkdown } from './markdown.model';
 
-type TreeNode = Parameters<typeof collectReadableText>[0];
-
-// Más profunda que lo que aguanta la pila del worker de Vitest con un colector recursivo (del orden de
-// 50 000 frames): una regresión a recursión tira RangeError acá, sin depender del costo del parser.
-const STACK_BUSTING_DEPTH = 200_000;
+type MarkdownNode = Parameters<typeof collectReadableText>[0];
 
 describe('collectReadableText', () => {
 	it('traverses a tree deeper than the call stack without exhausting it', () => {
-		let node: TreeNode = { type: 'text', value: 'palabra' };
-		for (let level = 0; level < STACK_BUSTING_DEPTH; level++) {
+		// Supera la pila del worker con un colector recursivo: una regresión tira RangeError.
+		const depth = 200_000;
+		let node: MarkdownNode = { type: 'text', value: 'palabra' };
+		for (let level = 0; level < depth; level++) {
 			node = { type: 'blockquote', children: [node] };
 		}
 		const fragments: string[] = [];
@@ -27,7 +25,7 @@ describe('collectReadableText', () => {
 	});
 
 	it('collects the readable literals in document order', () => {
-		const root: TreeNode = {
+		const root: MarkdownNode = {
 			type: 'root',
 			children: [
 				{
