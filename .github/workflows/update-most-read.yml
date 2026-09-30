@@ -11,11 +11,6 @@ on:
   schedule:
     - cron: '15 2 * * *'
   workflow_dispatch:
-    inputs:
-      dry_run:
-        description: 'Reportar el ranking que se escribiría, sin escribir.'
-        type: boolean
-        default: true
 
 permissions:
   contents: read
@@ -38,8 +33,6 @@ jobs:
 
       - name: Actualizar las obras más leídas
         env:
-          # En `schedule` no hay inputs y la expresión resuelve vacía, así que la corrida programada aplica.
-          DRY_RUN: ${{ github.event.inputs.dry_run }}
           SANITY_STUDIO_DATASET: production
           SANITY_STUDIO_PROJECT_ID: ${{ secrets.SANITY_STUDIO_PROJECT_ID }}
           SANITY_STUDIO_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
@@ -47,12 +40,8 @@ jobs:
           CLARITY_PROJECT_ID: ${{ secrets.CLARITY_PROJECT_ID }}
         run: |
           set -uo pipefail
-          apply_flag=''
-          if [ "$DRY_RUN" != 'true' ]; then
-            apply_flag='--no-dry-run'
-          fi
           status=0
-          pnpm ops most-read:update $apply_flag 2>&1 | tee report.txt || status=$?
+          pnpm ops most-read:update 2>&1 | tee report.txt || status=$?
           {
             echo '## Actualización de más leídas'
             echo '```'

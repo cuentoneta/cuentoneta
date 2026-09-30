@@ -1,17 +1,16 @@
 /**
  * Pre-genera los documentos `landingPage` de las próximas semanas copiando las referencias de la última
- * configuración no futura. Idempotente: solo crea las semanas que faltan.
+ * configuración no futura. Idempotente: solo crea las semanas que faltan. Escribe siempre, con o sin
+ * `--no-dry-run`.
  *
  * Uso:
- *   pnpm ops landing-pages:add-next-weeks                    # corrida en seco, 4 semanas
- *   pnpm ops landing-pages:add-next-weeks --weeks=6          # corrida en seco, 6 semanas
- *   pnpm ops landing-pages:add-next-weeks --no-dry-run       # persiste
+ *   pnpm ops landing-pages:add-next-weeks                # 4 semanas
+ *   pnpm ops landing-pages:add-next-weeks --weeks=6      # 6 semanas
  */
 import { environment } from '@api/_helpers/environment';
 import type { ContentRepository } from '@api/modules/content/content.repository';
 import { SanityContentRepository } from '@api/modules/content/content.repository.sanity';
 import { addNextWeeksLandingPageContent } from '@api/modules/content/content.service';
-import { RecordingContentRepository } from '../../recording-content-repository';
 import type { OpsTask } from '../registry';
 
 const DEFAULT_WEEKS = 4;
@@ -34,36 +33,32 @@ export function parseWeeks(argv: readonly string[]): number {
 }
 
 export async function runAddNextWeeksLandingPages(
-	apply: boolean,
 	weeks: number,
 	repository: ContentRepository = new SanityContentRepository(),
 ): Promise<string[]> {
 	console.log(
 		`Landing pages de las próximas ${weeks} semanas — proyecto ${environment.sanity.projectId}, ` +
-			`dataset ${environment.sanity.dataset}, modo ${apply ? 'APLICAR' : 'seco'}`,
+			`dataset ${environment.sanity.dataset}`,
 	);
 
 	if (!environment.sanity.projectId) {
 		throw new Error('Falta el id del proyecto de Sanity (SANITY_STUDIO_PROJECT_ID).');
 	}
-	if (apply && !environment.sanity.token) {
+	if (!environment.sanity.token) {
 		throw new Error('Falta el token de escritura de Sanity (SANITY_STUDIO_TOKEN): no se intenta escribir.');
 	}
 
-	const recording = new RecordingContentRepository(repository, apply);
-	await addNextWeeksLandingPageContent(weeks, recording);
-	const slugs = recording.landingPages.map(({ config }) => config);
+	const created = await addNextWeeksLandingPageContent(weeks, repository);
+	const slugs = created.map((landingPage) => (landingPage as { config: string }).config);
 
 	console.log(
-		slugs.length === 0
-			? 'Ya existen las landing pages de todas las semanas pedidas.'
-			: `${apply ? 'Creadas' : 'Se crearían'}: ${slugs.join(', ')}`,
+		slugs.length === 0 ? 'Ya existen las landing pages de todas las semanas pedidas.' : `Creadas: ${slugs.join(', ')}`,
 	);
 	return slugs;
 }
 
 export const task: OpsTask = {
-	run: async ({ apply, argv }) => {
-		await runAddNextWeeksLandingPages(apply, parseWeeks(argv));
+	run: async ({ argv }) => {
+		await runAddNextWeeksLandingPages(parseWeeks(argv));
 	},
 };

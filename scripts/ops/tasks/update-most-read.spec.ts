@@ -45,30 +45,20 @@ describe('runMostReadUpdate', () => {
 		clearAllMocks();
 	});
 
-	it('should write the ranking deduplicated and in Clarity order when applying', async () => {
+	it('should write the ranking deduplicated and in Clarity order', async () => {
 		(fetchClarityData as Mock).mockResolvedValue(popularPages(second.slug, first.slug, second.slug));
 		const content = repository();
 
-		const slugs = await runMostReadUpdate(true, content);
+		const slugs = await runMostReadUpdate(content);
 
 		expect(slugs).toEqual([second.slug, first.slug]);
 		expect((await content.fetchRotatingContent())?.mostRead.map(({ slug }) => slug)).toEqual([second.slug, first.slug]);
 	});
 
-	it('should report the ranking without writing it in dry-run', async () => {
-		(fetchClarityData as Mock).mockResolvedValue(popularPages(second.slug, first.slug));
-		const content = repository();
-
-		const slugs = await runMostReadUpdate(false, content);
-
-		expect(slugs).toEqual([second.slug, first.slug]);
-		expect((await content.fetchRotatingContent())?.mostRead.map(({ slug }) => slug)).toEqual([third.slug]);
-	});
-
 	it('should report what was persisted and not what was requested', async () => {
 		(fetchClarityData as Mock).mockResolvedValue(popularPages(second.slug, 'sin-obra', first.slug));
 
-		const slugs = await runMostReadUpdate(true, repository());
+		const slugs = await runMostReadUpdate(repository());
 
 		expect(slugs).toEqual([second.slug, first.slug]);
 	});
@@ -76,39 +66,33 @@ describe('runMostReadUpdate', () => {
 	it('should fail when no Clarity slug resolves to a work', async () => {
 		(fetchClarityData as Mock).mockResolvedValue(popularPages('sin-obra'));
 
-		await expect(runMostReadUpdate(true, repository())).rejects.toThrow('resolvió');
-	});
-
-	it('should fail when Clarity reports no read work', async () => {
-		(fetchClarityData as Mock).mockResolvedValue(popularPages());
-
-		await expect(runMostReadUpdate(true, repository())).rejects.toThrow('ninguna obra');
+		await expect(runMostReadUpdate(repository())).rejects.toThrow('ranking quedó vacío');
 	});
 
 	it('should fail when Clarity returns no popular pages', async () => {
 		(fetchClarityData as Mock).mockResolvedValue([]);
 
-		await expect(runMostReadUpdate(true, repository())).rejects.toThrow('Could not fetch metrics.');
+		await expect(runMostReadUpdate(repository())).rejects.toThrow('Could not fetch metrics.');
 	});
 
-	it('should fail before writing when the Sanity token is missing', async () => {
+	it('should fail before reaching Clarity when the Sanity token is missing', async () => {
 		environment.sanity.token = '';
 
-		await expect(runMostReadUpdate(true, repository())).rejects.toThrow('SANITY_STUDIO_TOKEN');
+		await expect(runMostReadUpdate(repository())).rejects.toThrow('SANITY_STUDIO_TOKEN');
 		expect(fetchClarityData).not.toHaveBeenCalled();
 	});
 
 	it('should fail when the Sanity project id is missing', async () => {
 		environment.sanity.projectId = '';
 
-		await expect(runMostReadUpdate(false, repository())).rejects.toThrow('SANITY_STUDIO_PROJECT_ID');
+		await expect(runMostReadUpdate(repository())).rejects.toThrow('SANITY_STUDIO_PROJECT_ID');
 		expect(fetchClarityData).not.toHaveBeenCalled();
 	});
 
 	it('should fail when the Clarity token is missing', async () => {
 		environment.clarity.token = '';
 
-		await expect(runMostReadUpdate(false, repository())).rejects.toThrow('CLARITY_TOKEN');
+		await expect(runMostReadUpdate(repository())).rejects.toThrow('CLARITY_TOKEN');
 		expect(fetchClarityData).not.toHaveBeenCalled();
 	});
 });

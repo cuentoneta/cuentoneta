@@ -55,10 +55,10 @@ describe('runAddNextWeeksLandingPages', () => {
 		environment.sanity.projectId = originalProjectId;
 	});
 
-	it('should create the missing weeks when applying', async () => {
+	it('should create the missing weeks', async () => {
 		const repository = new InMemoryContentRepository({ latestReferences });
 
-		const slugs = await runAddNextWeeksLandingPages(true, 4, repository);
+		const slugs = await runAddNextWeeksLandingPages(4, repository);
 
 		expect(slugs).toEqual(nextWeekSlugs(4));
 		expect(repository.createdLandingPages.map(({ config }) => config)).toEqual(nextWeekSlugs(4));
@@ -71,39 +71,30 @@ describe('runAddNextWeeksLandingPages', () => {
 		}));
 		const repository = new InMemoryContentRepository({ latestReferences, landingPages });
 
-		const slugs = await runAddNextWeeksLandingPages(true, 4, repository);
+		const slugs = await runAddNextWeeksLandingPages(4, repository);
 
 		expect(slugs).toEqual([]);
-		expect(repository.createdLandingPages).toEqual([]);
-	});
-
-	it('should report what it would create without writing in dry-run', async () => {
-		const repository = new InMemoryContentRepository({ latestReferences });
-
-		const slugs = await runAddNextWeeksLandingPages(false, 4, repository);
-
-		expect(slugs).toEqual(nextWeekSlugs(4));
 		expect(repository.createdLandingPages).toEqual([]);
 	});
 
 	it('should fail when the Sanity project id is missing', async () => {
 		environment.sanity.projectId = '';
 
-		await expect(
-			runAddNextWeeksLandingPages(false, 4, new InMemoryContentRepository({ latestReferences })),
-		).rejects.toThrow('SANITY_STUDIO_PROJECT_ID');
+		await expect(runAddNextWeeksLandingPages(4, new InMemoryContentRepository({ latestReferences }))).rejects.toThrow(
+			'SANITY_STUDIO_PROJECT_ID',
+		);
 	});
 
 	it('should fail before writing when the Sanity token is missing', async () => {
 		environment.sanity.token = '';
 		const repository = new InMemoryContentRepository({ latestReferences });
 
-		await expect(runAddNextWeeksLandingPages(true, 4, repository)).rejects.toThrow('SANITY_STUDIO_TOKEN');
+		await expect(runAddNextWeeksLandingPages(4, repository)).rejects.toThrow('SANITY_STUDIO_TOKEN');
 		expect(repository.createdLandingPages).toEqual([]);
 	});
 
 	it('should propagate the failure when there is no landing page to copy from', async () => {
-		await expect(runAddNextWeeksLandingPages(true, 4, new InMemoryContentRepository())).rejects.toThrow(
+		await expect(runAddNextWeeksLandingPages(4, new InMemoryContentRepository())).rejects.toThrow(
 			'Latest landing page',
 		);
 	});

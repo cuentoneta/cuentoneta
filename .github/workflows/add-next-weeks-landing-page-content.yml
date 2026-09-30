@@ -18,10 +18,6 @@ on:
         description: 'Cuántas semanas futuras pre-generar (1 a 26).'
         type: string
         default: '4'
-      dry_run:
-        description: 'Reportar qué se crearía, sin escribir.'
-        type: boolean
-        default: true
 
 permissions:
   contents: read
@@ -60,20 +56,14 @@ jobs:
 
       - name: Generar las landing pages de las próximas semanas
         env:
-          # En `schedule` no hay inputs y la expresión resuelve vacía, así que la corrida programada aplica.
-          DRY_RUN: ${{ github.event.inputs.dry_run }}
           WEEKS: ${{ github.event.inputs.weeks_in_the_future || '4' }}
           SANITY_STUDIO_DATASET: production
           SANITY_STUDIO_PROJECT_ID: ${{ secrets.SANITY_STUDIO_PROJECT_ID }}
           SANITY_STUDIO_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
         run: |
           set -uo pipefail
-          apply_flag=''
-          if [ "$DRY_RUN" != 'true' ]; then
-            apply_flag='--no-dry-run'
-          fi
           status=0
-          pnpm ops landing-pages:add-next-weeks "--weeks=${WEEKS}" $apply_flag 2>&1 | tee report.txt || status=$?
+          pnpm ops landing-pages:add-next-weeks "--weeks=${WEEKS}" 2>&1 | tee report.txt || status=$?
           {
             echo '## Generación de landing pages'
             echo '```'

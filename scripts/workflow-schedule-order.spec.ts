@@ -63,8 +63,4 @@ describe('horario de las tareas programadas de producto', () => {
 	it.each([GENERATOR, MOST_READ])('should pin the production dataset in %s', (file) => {
 		expect(workflow(file)).toContain('SANITY_STUDIO_DATASET: production');
 	});
-
-	it.each([GENERATOR, MOST_READ])('should apply on the scheduled run of %s', (file) => {
-		expect(workflow(file)).toContain("apply_flag='--no-dry-run'");
-	});
 });

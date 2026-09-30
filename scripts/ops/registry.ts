@@ -41,13 +41,14 @@ export const OPS_TASKS = Object.freeze({
 		load: () => import('./tasks/backfill-reading-time').then((m) => m.task),
 	},
 	'most-read:update': {
-		description: 'Actualiza el ranking de obras más leídas desde Clarity (dry-run por defecto; --no-dry-run aplica)',
+		description: 'Actualiza el ranking de obras más leídas desde Clarity (escribe siempre; ignora --no-dry-run)',
 		destructive: false,
 		acceptsArgs: false,
 		load: () => import('./tasks/update-most-read').then((m) => m.task),
 	},
 	'landing-pages:add-next-weeks': {
-		description: 'Pre-genera las landing pages de las próximas semanas (--weeks=<n>; --no-dry-run aplica)',
+		description:
+			'Pre-genera las landing pages de las próximas semanas (--weeks=<n>; escribe siempre, ignora --no-dry-run)',
 		destructive: false,
 		acceptsArgs: true,
 		load: () => import('./tasks/add-next-weeks-landing-pages').then((m) => m.task),

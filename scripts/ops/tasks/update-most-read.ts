@@ -1,23 +1,21 @@
 /**
  * Actualiza el ranking de obras más leídas en el documento singleton `rotatingContent`, a partir de
- * las páginas más visitadas que reporta Clarity.
+ * las páginas más visitadas que reporta Clarity. Escribe siempre, con o sin `--no-dry-run`.
  *
  * Uso:
- *   pnpm ops most-read:update                 # corrida en seco: reporta el ranking que escribiría
- *   pnpm ops most-read:update --no-dry-run    # persiste
+ *   pnpm ops most-read:update
  */
 import { environment } from '@api/_helpers/environment';
 import type { ContentRepository } from '@api/modules/content/content.repository';
 import { SanityContentRepository } from '@api/modules/content/content.repository.sanity';
 import { updateMostReadLiteraryWorks } from '@api/modules/literary-work/literary-work.service';
-import { RecordingContentRepository } from '../../recording-content-repository';
 import type { OpsTask } from '../registry';
 
-function assertCredentials(apply: boolean): void {
+function assertCredentials(): void {
 	if (!environment.sanity.projectId) {
 		throw new Error('Falta el id del proyecto de Sanity (SANITY_STUDIO_PROJECT_ID).');
 	}
-	if (apply && !environment.sanity.token) {
+	if (!environment.sanity.token) {
 		throw new Error('Falta el token de escritura de Sanity (SANITY_STUDIO_TOKEN): no se intenta escribir.');
 	}
 	if (!environment.clarity.token) {
@@ -26,35 +24,27 @@ function assertCredentials(apply: boolean): void {
 }
 
 export async function runMostReadUpdate(
-	apply: boolean,
 	repository: ContentRepository = new SanityContentRepository(),
 ): Promise<string[]> {
 	console.log(
-		`Actualización de más leídas — proyecto ${environment.sanity.projectId}, dataset ${environment.sanity.dataset}, ` +
-			`modo ${apply ? 'APLICAR' : 'seco'}`,
+		`Actualización de más leídas — proyecto ${environment.sanity.projectId}, dataset ${environment.sanity.dataset}`,
 	);
 
-	assertCredentials(apply);
+	assertCredentials();
 
-	const recording = new RecordingContentRepository(repository, apply);
-	const result = await updateMostReadLiteraryWorks(recording);
-	if (recording.mostReadSlugs.length === 0) {
-		throw new Error('Clarity no devolvió ninguna obra leída: el ranking no se actualiza.');
-	}
-
-	// En aplicar se reporta lo persistido: el repository descarta los slugs que no resuelven a una obra.
-	const slugs = apply ? result.mostRead.map(({ slug }) => String(slug)) : [...recording.mostReadSlugs];
+	const { mostRead } = await updateMostReadLiteraryWorks(repository);
+	const slugs = mostRead.map(({ slug }) => String(slug));
 	if (slugs.length === 0) {
-		throw new Error('Ningún slug del ranking de Clarity resolvió a una obra.');
+		throw new Error('El ranking quedó vacío: Clarity no devolvió obras leídas o ninguna resolvió a una obra.');
 	}
 
-	console.log(`${apply ? 'Ranking escrito' : 'Ranking que se escribiría'} (${slugs.length} obras):`);
+	console.log(`Ranking escrito (${slugs.length} obras):`);
 	console.log(slugs.map((slug, index) => `${index + 1}. ${slug}`).join('\n'));
 	return slugs;
 }
 
 export const task: OpsTask = {
-	run: async ({ apply }) => {
-		await runMostReadUpdate(apply);
+	run: async () => {
+		await runMostReadUpdate();
 	},
 };
