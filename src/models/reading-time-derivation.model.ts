@@ -29,7 +29,8 @@ function hasWordCharacter(word: string): boolean {
 // profundidad del mdast la fija el contenido (cada `>` o nivel de lista anida otro nodo), así
 // que la recursión directa puede agotar el call stack del runtime con documentos patológicos;
 // la pila traslada ese límite del stack al heap.
-function collectReadableText(root: MarkdownNode, fragments: string[]): void {
+// Exportada para test: la invariante de la pila se prueba sobre un árbol sintético, sin pagar el parseo.
+export function collectReadableText(root: MarkdownNode, fragments: string[]): void {
 	const pending: Array<MarkdownNode> = [root];
 	for (let node = pending.pop(); node !== undefined; node = pending.pop()) {
 		if (node.value !== undefined && readableLiteralTypes.has(node.type)) {
