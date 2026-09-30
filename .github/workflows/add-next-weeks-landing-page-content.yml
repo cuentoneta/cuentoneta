@@ -15,7 +15,7 @@ on:
   workflow_dispatch:
     inputs:
       weeks_in_the_future:
-        description: 'Cuántas semanas futuras pre-generar.'
+        description: 'Cuántas semanas futuras pre-generar (1 a 26).'
         type: string
         default: '4'
       dry_run:

@@ -155,6 +155,8 @@ El año va primero para que el **orden lexicográfico del slug coincida con el o
 - **Servicio de lógica de negocio**: `src/api/modules/content/content.service.ts`
   - `addNextWeeksLandingPageContent(weeksInTheFuture = 4)` - Función principal
 
+- **Tarea de operación**: `scripts/ops/tasks/add-next-weeks-landing-pages.ts` - `pnpm ops landing-pages:add-next-weeks`, que llama al servicio directo contra el repositorio real. Corre en seco por defecto y solo escribe con `--no-dry-run`; `scripts/recording-content-repository.ts` registra las escrituras y las reenvía solo al aplicar
+
 - **Tests unitarios**: `src/utils/week-slug.utils.spec.ts` (casos borde del slug ISO-8601), `src/api/modules/content/content.service.spec.ts` y, del lado del Studio, `cms/utils/landing-page.spec.ts` (Vitest standalone de `cms/` — ver [`testing.md`](../.claude/references/testing.md))
 
 ### Proceso de Generación
@@ -190,7 +192,7 @@ La definición para la ejecución de este cronjob se encuentra en el workflow `.
 
 ### Ejemplo de Ejecución
 
-**Escenario**: Domingo 16 de noviembre de 2025, último día de la semana 46, a las 02:47 UTC (sábado 15, 23:47 GMT -3). Se ejecuta el cronjob con el queryParam de "semanas hacia adelante" `weeksInTheFuture` predeterminado de 4.
+**Escenario**: Domingo 16 de noviembre de 2025, último día de la semana 46, a las 02:47 UTC (sábado 15, 23:47 GMT -3). Se ejecuta el cronjob con el argumento de "semanas hacia adelante" `--weeks` en su valor predeterminado de 4 (admite de 1 a 26).
 
 ```javascript
 await addNextWeeksLandingPageContent(4);
