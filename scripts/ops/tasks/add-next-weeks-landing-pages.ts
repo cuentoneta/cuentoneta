@@ -1,0 +1,61 @@
+/**
+ * Pre-genera los documentos `landingPage` de las próximas semanas copiando las referencias de la última
+ * configuración no futura. Idempotente: solo crea las semanas que faltan.
+ *
+ * Uso:
+ *   pnpm ops landing-pages:add-next-weeks                    # corrida en seco, 4 semanas
+ *   pnpm ops landing-pages:add-next-weeks --weeks=6          # corrida en seco, 6 semanas
+ *   pnpm ops landing-pages:add-next-weeks --no-dry-run       # persiste
+ */
+import { environment } from '../../../src/api/_helpers/environment';
+import type { ContentRepository } from '../../../src/api/modules/content/content.repository';
+import { SanityContentRepository } from '../../../src/api/modules/content/content.repository.sanity';
+import { addNextWeeksLandingPageContent } from '../../../src/api/modules/content/content.service';
+import { RecordingContentRepository } from '../../recording-content-repository';
+import type { OpsTask } from '../registry';
+
+const DEFAULT_WEEKS = 4;
+const WEEKS_FLAG = '--weeks=';
+
+export function parseWeeks(argv: readonly string[]): number {
+	const raw = argv.find((arg) => arg.startsWith(WEEKS_FLAG))?.slice(WEEKS_FLAG.length);
+	if (raw === undefined) {
+		return DEFAULT_WEEKS;
+	}
+	if (!/^[1-9]\d*$/.test(raw)) {
+		throw new Error(`--weeks debe ser un entero positivo, recibió "${raw}".`);
+	}
+	return Number(raw);
+}
+
+export async function runAddNextWeeksLandingPages(
+	apply: boolean,
+	weeks: number,
+	repository: ContentRepository = new SanityContentRepository(),
+): Promise<string[]> {
+	console.log(
+		`Landing pages de las próximas ${weeks} semanas — proyecto ${environment.sanity.projectId}, ` +
+			`dataset ${environment.sanity.dataset}, modo ${apply ? 'APLICAR' : 'seco'}`,
+	);
+
+	if (apply && !environment.sanity.token) {
+		throw new Error('Falta el token de escritura de Sanity (SANITY_STUDIO_TOKEN): no se intenta escribir.');
+	}
+
+	const recording = new RecordingContentRepository(repository, apply);
+	await addNextWeeksLandingPageContent(weeks, recording);
+	const slugs = recording.landingPages.map(({ config }) => config);
+
+	console.log(
+		slugs.length === 0
+			? 'Ya existen las landing pages de todas las semanas pedidas.'
+			: `${apply ? 'Creadas' : 'Se crearían'}: ${slugs.join(', ')}`,
+	);
+	return slugs;
+}
+
+export const task: OpsTask = {
+	run: async ({ apply, argv }) => {
+		await runAddNextWeeksLandingPages(apply, parseWeeks(argv));
+	},
+};
