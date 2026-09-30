@@ -16,9 +16,6 @@ export interface EnvironmentConfig {
 	// propagación de una edición, no un límite de disponibilidad — el `stale-while-revalidate`
 	// cubre el servido mientras el borde revalida.
 	readCacheSMaxAge: number;
-	// Secreto que deben presentar las invocaciones programadas. Ausente o vacío, las rutas que lo exigen
-	// rechazan toda invocación.
-	cronSecret: string | undefined;
 	sanity: {
 		token: string;
 		projectId: string;
@@ -48,7 +45,6 @@ export const environment: EnvironmentConfig = {
 	// TODO: Mover obtención de la URL base a las variables de entorno
 	basePath: 'https://www.cuentoneta.ar',
 	readCacheSMaxAge: parseReadCacheSMaxAge(process.env['READ_CACHE_S_MAXAGE']),
-	cronSecret: process.env['CRON_SECRET'],
 	sanity: {
 		projectId: process.env['SANITY_STUDIO_PROJECT_ID'] as string,
 		dataset: process.env['SANITY_STUDIO_DATASET'] as string,

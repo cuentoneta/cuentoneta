@@ -5,41 +5,19 @@ import { environment } from '../../_helpers/environment';
 import { readCacheHeaders } from '../../_middleware/read-cache-headers.middleware';
 import { createLiteraryWorkController } from './literary-work.controller';
 import { InMemoryLiteraryWorkRepository } from './literary-work.repository.mock';
-import { InMemoryContentRepository } from '../content/content.repository.mock';
-import { onoffLiteraryWorkNavigationTeasersWithAuthorsMock } from '@mocks/onoff-literary-work-teasers.mock';
-import { fetchClarityData } from '../../_helpers/clarity-connector';
-import type { Mock } from '@test-utils';
-
-// La ruta del cron alcanza la métrica externa por import de módulo, sin punto de inyección.
-/* eslint-disable no-restricted-syntax -- vi.mock/vi.fn: servicio externo sin seam de inyección */
-vi.mock('../../_helpers/clarity-connector', () => ({ fetchClarityData: vi.fn() }));
-/* eslint-enable no-restricted-syntax */
 
 describe('literaryWorkController', () => {
 	const controller = createLiteraryWorkController(
 		new InMemoryLiteraryWorkRepository(onoffLiteraryWorksMock, onoffLiteraryWorkTeasersMock),
-		new InMemoryContentRepository({
-			rotatingContent: { _id: 'rotatingContent', name: 'Lo más leído', mostRead: [] },
-			literaryWorks: onoffLiteraryWorkNavigationTeasersWithAuthorsMock,
-		}),
 	);
 	const knownSlug = onoffLiteraryWorksMock[0].slug;
 	const [knownAuthor] = onoffLiteraryWorkTeasersMock[0].authors;
 	const originalProduction = environment.production;
 	const originalSMaxAge = environment.readCacheSMaxAge;
 
-	const originalCronSecret = environment.cronSecret;
-	const cronHeaders = { Authorization: 'Bearer s3cret' };
-
-	beforeEach(() => {
-		environment.cronSecret = 's3cret';
-		(fetchClarityData as Mock).mockClear();
-	});
-
 	afterEach(() => {
 		environment.production = originalProduction;
 		environment.readCacheSMaxAge = originalSMaxAge;
-		environment.cronSecret = originalCronSecret;
 	});
 
 	// Espeja el montaje real de `routes.ts`: los headers de caché no los emite el controller sino el
@@ -96,35 +74,6 @@ describe('literaryWorkController', () => {
 		const response = await appUnderTest().request('/literary-work/no-existe');
 
 		expect(response.headers.get('Vercel-CDN-Cache-Control')).toBeNull();
-	});
-
-	// La ruta del cron comparte prefijo con las lecturas, así que hereda su middleware de caché. Servida
-	// desde el borde devolvería un 200 sin haber corrido, y el ranking quedaría congelado sin señal.
-	it('should keep the most-read update out of the edge cache', async () => {
-		environment.production = true;
-		environment.readCacheSMaxAge = 900;
-		(fetchClarityData as Mock).mockResolvedValue([{ metricName: 'PopularPages', information: [] }]);
-
-		const response = await appUnderTest().request('/literary-work/update-most-read', { headers: cronHeaders });
-
-		expect(response.headers.get('Vercel-CDN-Cache-Control')).toBeNull();
-		expect(response.headers.get('Cache-Control')).toBe('no-store');
-	});
-
-	it('should reject the most-read update without credentials before reaching Clarity', async () => {
-		const response = await appUnderTest().request('/literary-work/update-most-read');
-
-		expect(response.status).toBe(401);
-		expect(fetchClarityData).not.toHaveBeenCalled();
-	});
-
-	it('should reject the most-read update when the secret is not configured', async () => {
-		environment.cronSecret = undefined;
-
-		const response = await appUnderTest().request('/literary-work/update-most-read', { headers: cronHeaders });
-
-		expect(response.status).toBe(401);
-		expect(fetchClarityData).not.toHaveBeenCalled();
 	});
 
 	describe('GET /', () => {
