@@ -36,7 +36,7 @@ Las funcionalidades relacionadas a contenido rotativo están y deben de ser impl
 
 Las **obras más leídas** son un ejemplo de contenido dentro del patrón de **contenido rotativo**. Actualmente, mediante el uso de la [Data Export API de Microsoft Clarity](https://learn.microsoft.com/en-us/clarity/setup-and-installation/clarity-data-export-api), el sistema mantiene un registro de las páginas más leídas por los usuarios de La Cuentoneta, tomando una referencia de las más leídas en los últimos tres días.
 
-De manera diaria se ejecuta un cron job, definido en `vercel.json` para su ejecución a las 03:30 am (GMT -3), que se encarga, partiendo de esas listas, de alojar en el documento singleton `rotatingContent` las referencias correspondientes.
+De manera diaria se ejecuta un cron job, agendado por el workflow `.github/workflows/update-most-read.yml` a las 02:15 UTC (23:15 GMT -3 del día anterior), que se encarga, partiendo de esas listas, de alojar en el documento singleton `rotatingContent` las referencias correspondientes.
 
 Escribe en `mostReadLiteraryWorks`, con referencias a documentos `literaryWork`. El conteo de páginas populares de Clarity filtra por un único prefijo de lectura, `/literary-work/:slug`. La métrica registra la URL efectivamente visitada, así que el prefijo indexado anterior aportó mientras quedó tráfico suyo dentro de la ventana; hoy no queda, porque `src/server.ts` lo redirige con 301 desde hace más tiempo que los tres días que la ventana abarca. Los slugs resultantes se deduplican —una misma obra llega varias veces cuando la URL viene decorada con querystring de campaña, un ancla o una barra final— y se resuelven a `_id` de `literaryWork` antes de escribir las referencias.
 
@@ -84,7 +84,7 @@ El documento `rotatingContent` está diseñado para ser **extensible**. La estru
 
 ### Frecuencia de Ejecución
 
-El cron job que actualiza el contenido rotativo se ejecuta de manera diaria, durante la madrugada en horario GMT -3 (horario de Buenos Aires, Argentina).
+El cron job que actualiza el contenido rotativo se ejecuta de manera diaria a las 02:15 UTC (23:15 GMT -3 del día anterior, horario de Buenos Aires, Argentina), agendado por `.github/workflows/update-most-read.yml`. Invoca `GET /api/literary-work/update-most-read` con `Authorization: Bearer $CRON_SECRET`.
 
 ---
 
@@ -180,17 +180,17 @@ La función `addNextWeeksLandingPageContent(weeksInTheFuture)` ejecuta el siguie
 
 ### Frecuencia de Ejecución
 
-La definición para la ejecución de este cronjob se encuentra en el archivo `vercel.json`:
+La definición para la ejecución de este cronjob se encuentra en el workflow `.github/workflows/add-next-weeks-landing-page-content.yml`, que invoca `GET /api/content/add-next-weeks-landing-page-content` con `Authorization: Bearer $CRON_SECRET`:
 
 - **Frecuencia**: Semanalmente
-- **Día y hora**: Domingos a las 03:30 am (GMT -3)
+- **Día y hora**: Domingos a las 02:47 UTC (sábados a las 23:47 GMT -3), media hora antes del sync de datasets (`.github/workflows/sync-datasets.yml`, domingos a las 03:17 UTC), para que `staging` y `development` repliquen ya la semana que empieza al día siguiente
 - **Tolerancia**: Puede también ejecutarse de manera manual en cualquier momento antes de que se necesite
 
 > **Interacción con la numeración ISO-8601 (#1751):** las semanas ISO empiezan el **lunes**, y el cron corre el **domingo** — el último día de la semana ISO en curso. Por eso, el domingo la home todavía sirve la semana que termina ese día, y recién el lunes rota a la siguiente. Esto es **continuo, sin huecos**: cada domingo el cron pre-genera las próximas 4 semanas (`semana_actual + 1 … + 4`), así que la semana que la home pedirá de lunes a sábado siempre existe. (La corrida del domingo genera desde la semana _siguiente_; la semana que la home pide ese mismo domingo fue creada por la corrida del domingo anterior.)
 
 ### Ejemplo de Ejecución
 
-**Escenario**: Domingo 16 de noviembre de 2025, último día de la semana 46, a las 3:30 am (GMT -3). Se ejecuta el cronjob con el queryParam de "semanas hacia adelante" `weeksInTheFuture` predeterminado de 4.
+**Escenario**: Domingo 16 de noviembre de 2025, último día de la semana 46, a las 02:47 UTC (sábado 15, 23:47 GMT -3). Se ejecuta el cronjob con el queryParam de "semanas hacia adelante" `weeksInTheFuture` predeterminado de 4.
 
 ```javascript
 await addNextWeeksLandingPageContent(4);
@@ -293,19 +293,19 @@ cms/utils/
 
 ## 4. Workflow Típico
 
-Todos los horarios están especificados en horario GMT -3 (Buenos Aires, Argentina) y en formato de 24 horas. Se considera al domingo como el "día 7 de la semana".
+Los horarios de los cron jobs están en UTC y el resto en horario GMT -3 (Buenos Aires, Argentina), todos en formato de 24 horas. Se considera al domingo como el "día 7 de la semana".
 
 ### Semana de Publicación Normal
 
-1. **Domingo 03:30 (día 7, semana vigente)** - cron job genera landing pages para, como máximo, las próximas 4 semanas
+1. **Domingo 02:47 UTC (día 7, semana vigente)** - cron job genera landing pages para, como máximo, las próximas 4 semanas
 2. **Lunes 00:00 (día 1, semana posterior)** - Se visualiza en la landing page el contenido configurado correspondiente a la nueva semana que acaba de comenzar
 3. **Lunes - Viernes (días 2-6, de la ahora semana vigente)** - Editores actualizan contenido de la landing page para la próxima semana
 4. **Sábado (día 6)** - Revisión final de cambios
-   5**Domingo siguiente 03:30** - La Se repite el ciclo con la próxima semana como "actual"
+5. **Domingo siguiente 02:47 UTC** - Se repite el ciclo con la próxima semana como "actual"
 
 ### Actualización de Obras Más Leídas
 
-1. **Diariamente 03:15** - cron job recopila métricas de visualización
+1. **Diariamente 02:15 UTC** - cron job recopila métricas de visualización
 2. **Cálculo automático** - Se ordena el ranking de obras
 3. **Actualización** - Documento `rotatingContent` se sincroniza
 4. **Visible en web** - Usuarios ven el ranking actualizado en su próximo acceso a la landing page de La Cuentoneta
