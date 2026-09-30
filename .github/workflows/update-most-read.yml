@@ -29,6 +29,10 @@ jobs:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
         run: |
           set -uo pipefail
+          if [ -z "$CRON_SECRET" ]; then
+            echo 'El secret CRON_SECRET no está configurado.' >&2
+            exit 1
+          fi
           status=0
           curl --silent --show-error --fail-with-body --max-time 300 \
             --header "Authorization: Bearer ${CRON_SECRET}" \

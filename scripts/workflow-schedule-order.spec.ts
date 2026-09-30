@@ -3,32 +3,36 @@ import { join } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
-const WORKFLOWS_DIR = join(__dirname, '..', '.github', 'workflows');
 const SYNC = 'sync-datasets.yml';
 const GENERATOR = 'add-next-weeks-landing-page-content.yml';
 const MOST_READ = 'update-most-read.yml';
-const SUNDAY = '0';
 const GENERATOR_MARGIN_MINUTES = 30;
 
 function workflow(file: string): string {
-	return readFileSync(join(WORKFLOWS_DIR, file), 'utf8');
+	return readFileSync(join(__dirname, '..', '.github', 'workflows', file), 'utf8');
 }
 
 /** Devuelve el minuto del día UTC y el día de semana del único `cron` del workflow. */
 function schedule(file: string): { minuteOfDay: number; weekday: string } {
-	const [, minute, hour, , , weekday] = /- cron: '(\S+) (\S+) (\S+) (\S+) (\S+)'/.exec(workflow(file)) as string[] &
-		RegExpExecArray;
-	return { minuteOfDay: Number(hour) * 60 + Number(minute), weekday };
+	const match = /- cron: '(\d+) (\d+) \S+ \S+ (\S+)'/.exec(workflow(file));
+	if (!match) {
+		throw new Error(`${file} no declara un cron`);
+	}
+	return { minuteOfDay: Number(match[2]) * 60 + Number(match[1]), weekday: match[3] };
 }
 
+/** Timeout del primer job del workflow. */
 function timeoutMinutes(file: string): number {
 	return Number(/timeout-minutes: (\d+)/.exec(workflow(file))?.[1]);
 }
 
+function formatHhmm(minuteOfDay: number): string {
+	return `${String(Math.floor(minuteOfDay / 60)).padStart(2, '0')}${String(minuteOfDay % 60).padStart(2, '0')}`;
+}
+
 describe('horario de las tareas programadas de producto', () => {
 	it('should run the landing page generator on the same weekday as the datasets sync', () => {
-		expect(schedule(GENERATOR).weekday).toBe(SUNDAY);
-		expect(schedule(SYNC).weekday).toBe(SUNDAY);
+		expect(schedule(GENERATOR).weekday).toBe(schedule(SYNC).weekday);
 	});
 
 	it('should run the landing page generator 30 minutes before the datasets sync', () => {
@@ -37,6 +41,12 @@ describe('horario de las tareas programadas de producto', () => {
 
 	it('should time out the landing page generator inside its margin', () => {
 		expect(timeoutMinutes(GENERATOR)).toBeLessThan(GENERATOR_MARGIN_MINUTES);
+	});
+
+	it('should abort a late start when the timeout can no longer finish before the sync', () => {
+		const latestStart = formatHhmm(schedule(SYNC).minuteOfDay - timeoutMinutes(GENERATOR));
+
+		expect(workflow(GENERATOR)).toContain(`'${latestStart}'`);
 	});
 
 	it('should finish the most-read update before the generator starts', () => {

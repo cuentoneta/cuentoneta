@@ -19,9 +19,7 @@ on:
         type: string
         default: '4'
 
-permissions:
-  contents: read
-  issues: write
+permissions: {}
 
 concurrency:
   group: add-next-weeks-landing-page-content
@@ -36,7 +34,8 @@ jobs:
       - name: Abortar si el runner arrancó tarde
         if: github.event_name == 'schedule'
         run: |
-          # Pasadas las 03:02 UTC, el timeout ya no garantiza terminar antes del sync de las 03:17.
+          # 03:02 UTC = sync (03:17) menos timeout-minutes: pasada esa hora el timeout ya no
+          # garantiza terminar antes del sync.
           if [ "$(date -u +%H%M)" \> '0302' ]; then
             echo "Arranque tardío: $(date -u +%H:%M) UTC. No se genera para no correr junto al sync." >&2
             exit 1
@@ -48,6 +47,14 @@ jobs:
           WEEKS: ${{ github.event.inputs.weeks_in_the_future || '4' }}
         run: |
           set -uo pipefail
+          if [ -z "$CRON_SECRET" ]; then
+            echo 'El secret CRON_SECRET no está configurado.' >&2
+            exit 1
+          fi
+          if ! [[ "$WEEKS" =~ ^[0-9]+$ ]]; then
+            echo 'weeks_in_the_future debe ser un entero.' >&2
+            exit 1
+          fi
           status=0
           curl --silent --show-error --fail-with-body --max-time 600 \
             --header "Authorization: Bearer ${CRON_SECRET}" \
@@ -61,8 +68,16 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
           exit "$status"
 
+  notify-failure:
+    needs: add-next-weeks-landing-page-content
+    if: failure() && github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      issues: write
+
+    steps:
       - name: Abrir un issue de seguimiento
-        if: failure() && github.event_name == 'schedule'
         env:
           GH_TOKEN: ${{ github.token }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
