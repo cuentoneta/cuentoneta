@@ -86,6 +86,14 @@ El documento `rotatingContent` está diseñado para ser **extensible**. La estru
 
 El cron job que actualiza el contenido rotativo se ejecuta de manera diaria a las 02:15 UTC (23:15 GMT -3 del día anterior, horario de Buenos Aires, Argentina), agendado por `.github/workflows/update-most-read.yml`. Invoca `GET /api/literary-work/update-most-read` con `Authorization: Bearer $CRON_SECRET`.
 
+### Autenticación de las invocaciones
+
+Las dos rutas de escritura de los cron jobs (`/api/literary-work/update-most-read` y `/api/content/add-next-weeks-landing-page-content`) exigen `Authorization: Bearer <CRON_SECRET>`:
+
+- El mismo valor vive como secret `CRON_SECRET` del repositorio (lo manda el workflow) y como variable de entorno `CRON_SECRET` del despliegue (lo verifica el backend).
+- Sin `CRON_SECRET` configurado en el despliegue, **toda** invocación responde 401, incluidas las de los entornos de preview. Una llamada manual necesita el mismo header.
+- Un secreto con caracteres fuera de `[A-Za-z0-9._~+/-]` responde siempre 400, tanto en el servidor como en el workflow. Generarlo con `openssl rand -hex 32` cae dentro de ese alfabeto y da entropía suficiente.
+
 ---
 
 ## 2. Generación Automática de Configuraciones de Landing Pages

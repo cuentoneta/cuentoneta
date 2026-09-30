@@ -7,7 +7,11 @@ meta {
 get {
   url: {{apiUrl}}{{baseApiPath}}/content/add-next-weeks-landing-page-content
   body: none
-  auth: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{cronSecret}}
 }
 
 params:query {

@@ -7,7 +7,11 @@ meta {
 get {
   url: {{apiUrl}}{{baseApiPath}}/literary-work/update-most-read
   body: none
-  auth: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{cronSecret}}
 }
 
 docs {
