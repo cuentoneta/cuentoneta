@@ -6,7 +6,8 @@ import { SanityLiteraryWorkRepository } from './literary-work.repository.sanity'
 import type { ContentRepository } from '../content/content.repository';
 import { SanityContentRepository } from '../content/content.repository.sanity';
 import { getRotatingContent } from '../content/content.service';
-import { fetchClarityData } from '../../_helpers/clarity-connector';
+import { fetchPopularPagesMetric } from '../../_helpers/clarity-connector';
+import { ClarityResponseError } from '../../_helpers/clarity-connector.errors';
 import { environment } from '../../_helpers/environment';
 
 // El repository es stateless, así que instanciarlo por llamada (default) no comparte estado.
@@ -55,9 +56,9 @@ function slugFromReadingUrl(url: string, prefix: string): string | undefined {
 export async function updateMostReadLiteraryWorks(
 	contentRepository: ContentRepository = new SanityContentRepository(),
 ): Promise<RotatingContent> {
-	const popularPagesMetrics = (await fetchClarityData()).find((metric) => metric.metricName === 'PopularPages');
-	if (!popularPagesMetrics) {
-		throw new Error('Could not fetch metrics.');
+	const popularPagesMetric = await fetchPopularPagesMetric();
+	if (!popularPagesMetric) {
+		throw new ClarityResponseError('the PopularPages metric is missing');
 	}
 
 	const readingPathPrefix = `${environment.basePath}/literary-work/`;
@@ -65,7 +66,7 @@ export async function updateMostReadLiteraryWorks(
 	// orden **es** el ranking.
 	const rankedSlugs = [
 		...new Set(
-			popularPagesMetrics.information.flatMap((entry) => slugFromReadingUrl(entry.url, readingPathPrefix) ?? []),
+			popularPagesMetric.information.flatMap((entry) => slugFromReadingUrl(entry.url, readingPathPrefix) ?? []),
 		),
 	];
 
