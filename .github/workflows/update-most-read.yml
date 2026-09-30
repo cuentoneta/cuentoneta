@@ -1,9 +1,9 @@
-# Actualiza el ranking de obras más leídas invocando el endpoint del backend.
+# Actualiza el ranking de obras más leídas en `production` a partir de las páginas más visitadas de Clarity.
 #
 # Dependencia de horario: debe terminar antes del export de `sync-datasets.yml` (domingos 03:17 UTC),
 # para que los datasets replicados lleven el ranking al día. Si se mueve el sync, revisar este cron.
 #
-# Requiere el secret `CRON_SECRET`, con el mismo valor que la variable de entorno del despliegue.
+# Prerequisitos (secrets del repo): SANITY_AUTH_TOKEN, CLARITY_TOKEN y CLARITY_PROJECT_ID.
 # Su id no debe sumarse a los required status checks de `develop`.
 name: Update most read
 
@@ -11,8 +11,14 @@ on:
   schedule:
     - cron: '15 2 * * *'
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Reportar el ranking que se escribiría, sin escribir.'
+        type: boolean
+        default: true
 
-permissions: {}
+permissions:
+  contents: read
 
 concurrency:
   group: update-most-read
@@ -24,24 +30,33 @@ jobs:
     timeout-minutes: 10
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+
+      - name: Setup workspace
+        uses: ./.github/actions/setup-workspace
+
       - name: Actualizar las obras más leídas
         env:
-          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          # En `schedule` no hay inputs y la expresión resuelve vacía, así que la corrida programada aplica.
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
+          SANITY_STUDIO_DATASET: production
+          SANITY_STUDIO_PROJECT_ID: ${{ secrets.SANITY_STUDIO_PROJECT_ID || 's4dbqkc5' }}
+          SANITY_STUDIO_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+          CLARITY_TOKEN: ${{ secrets.CLARITY_TOKEN }}
+          CLARITY_PROJECT_ID: ${{ secrets.CLARITY_PROJECT_ID }}
         run: |
           set -uo pipefail
-          if [ -z "$CRON_SECRET" ]; then
-            echo 'El secret CRON_SECRET no está configurado.' >&2
-            exit 1
+          apply_flag=''
+          if [ "$DRY_RUN" != 'true' ]; then
+            apply_flag='--no-dry-run'
           fi
           status=0
-          curl --silent --show-error --fail-with-body --max-time 300 \
-            --header "Authorization: Bearer ${CRON_SECRET}" \
-            --output response.txt \
-            'https://www.cuentoneta.ar/api/literary-work/update-most-read' || status=$?
+          pnpm ops most-read:update $apply_flag 2>&1 | tee report.txt || status=$?
           {
             echo '## Actualización de más leídas'
             echo '```'
-            cat response.txt 2>/dev/null
+            cat report.txt
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
           exit "$status"

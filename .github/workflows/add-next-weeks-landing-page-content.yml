@@ -1,11 +1,11 @@
-# Pre-genera los documentos de landing page de las próximas semanas invocando el endpoint del backend.
+# Pre-genera en `production` los documentos de landing page de las próximas semanas.
 #
 # Dependencia de horario: debe correr antes de `sync-datasets.yml` (domingos 03:17 UTC). El sync
 # replica `production` sobre `staging` y `development`; una landing creada después deja a esos
 # datasets sin la semana vigente hasta el domingo siguiente. Si se mueve el sync, revisar este cron y
 # `timeout-minutes`: la corrida tiene que terminar dentro del margen.
 #
-# Requiere el secret `CRON_SECRET`, con el mismo valor que la variable de entorno del despliegue.
+# Prerequisito (secret del repo): SANITY_AUTH_TOKEN.
 # Su id no debe sumarse a los required status checks de `develop`.
 name: Add next weeks landing page content
 
@@ -18,8 +18,13 @@ on:
         description: 'Cuántas semanas futuras pre-generar.'
         type: string
         default: '4'
+      dry_run:
+        description: 'Reportar qué se crearía, sin escribir.'
+        type: boolean
+        default: true
 
-permissions: {}
+permissions:
+  contents: read
 
 concurrency:
   group: add-next-weeks-landing-page-content
@@ -41,29 +46,32 @@ jobs:
             exit 1
           fi
 
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+
+      - name: Setup workspace
+        uses: ./.github/actions/setup-workspace
+
       - name: Generar las landing pages de las próximas semanas
         env:
-          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          # En `schedule` no hay inputs y la expresión resuelve vacía, así que la corrida programada aplica.
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
           WEEKS: ${{ github.event.inputs.weeks_in_the_future || '4' }}
+          SANITY_STUDIO_DATASET: production
+          SANITY_STUDIO_PROJECT_ID: ${{ secrets.SANITY_STUDIO_PROJECT_ID || 's4dbqkc5' }}
+          SANITY_STUDIO_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
         run: |
           set -uo pipefail
-          if [ -z "$CRON_SECRET" ]; then
-            echo 'El secret CRON_SECRET no está configurado.' >&2
-            exit 1
-          fi
-          if ! [[ "$WEEKS" =~ ^[0-9]+$ ]]; then
-            echo 'weeks_in_the_future debe ser un entero.' >&2
-            exit 1
+          apply_flag=''
+          if [ "$DRY_RUN" != 'true' ]; then
+            apply_flag='--no-dry-run'
           fi
           status=0
-          curl --silent --show-error --fail-with-body --max-time 600 \
-            --header "Authorization: Bearer ${CRON_SECRET}" \
-            --output response.txt \
-            "https://www.cuentoneta.ar/api/content/add-next-weeks-landing-page-content?weeksInTheFuture=${WEEKS}" || status=$?
+          pnpm ops landing-pages:add-next-weeks "--weeks=${WEEKS}" $apply_flag 2>&1 | tee report.txt || status=$?
           {
             echo '## Generación de landing pages'
             echo '```'
-            cat response.txt 2>/dev/null
+            cat report.txt
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
           exit "$status"
