@@ -1,6 +1,52 @@
-import { countWords, deriveSectionReadingTime, deriveTotalReadingTime } from './reading-time-derivation.model';
+import {
+	collectReadableText,
+	countWords,
+	deriveSectionReadingTime,
+	deriveTotalReadingTime,
+} from './reading-time-derivation.model';
 import { deriveReadingTime } from './reading-time.model';
 import { createMarkdown } from './markdown.model';
+
+type MarkdownNode = Parameters<typeof collectReadableText>[0];
+
+describe('collectReadableText', () => {
+	it('traverses a tree deeper than the call stack without exhausting it', () => {
+		// Supera la pila del worker con un colector recursivo: una regresión tira RangeError.
+		const depth = 200_000;
+		let node: MarkdownNode = { type: 'text', value: 'palabra' };
+		for (let level = 0; level < depth; level++) {
+			node = { type: 'blockquote', children: [node] };
+		}
+		const fragments: string[] = [];
+
+		collectReadableText(node, fragments);
+
+		expect(fragments).toEqual(['palabra']);
+	});
+
+	it('collects the readable literals in document order', () => {
+		const root: MarkdownNode = {
+			type: 'root',
+			children: [
+				{
+					type: 'paragraph',
+					children: [
+						{ type: 'text', value: 'uno' },
+						{ type: 'inlineCode', value: 'dos' },
+					],
+				},
+				{ type: 'code', value: 'tres' },
+				{ type: 'html', value: '<b>' },
+				{ type: 'paragraph', children: [{ type: 'text', value: 'cuatro' }] },
+			],
+		};
+		const fragments: string[] = [];
+
+		collectReadableText(root, fragments);
+
+		expect(fragments).toEqual(['uno', 'dos', 'tres', 'cuatro']);
+	});
+});
 
 describe('countWords', () => {
 	it('counts the words of a plain paragraph', () => {
@@ -29,8 +75,8 @@ describe('countWords', () => {
 		expect(countWords(createMarkdown('corazón 夜'))).toBe(2);
 	});
 
-	it('traverses deeply nested blocks without exhausting the call stack', () => {
-		expect(countWords(createMarkdown('> '.repeat(20_000) + 'palabra'))).toBe(1);
+	it('counts words inside nested blockquotes', () => {
+		expect(countWords(createMarkdown('> '.repeat(1_000) + 'palabra'))).toBe(1);
 	});
 
 	it('feeds deriveReadingTime for the full markdown-to-minutes flow', () => {

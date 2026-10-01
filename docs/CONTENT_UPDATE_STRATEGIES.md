@@ -36,7 +36,7 @@ Las funcionalidades relacionadas a contenido rotativo están y deben de ser impl
 
 Las **obras más leídas** son un ejemplo de contenido dentro del patrón de **contenido rotativo**. Actualmente, mediante el uso de la [Data Export API de Microsoft Clarity](https://learn.microsoft.com/en-us/clarity/setup-and-installation/clarity-data-export-api), el sistema mantiene un registro de las páginas más leídas por los usuarios de La Cuentoneta, tomando una referencia de las más leídas en los últimos tres días.
 
-De manera diaria se ejecuta un cron job, definido en `vercel.json` para su ejecución a las 03:30 am (GMT -3), que se encarga, partiendo de esas listas, de alojar en el documento singleton `rotatingContent` las referencias correspondientes.
+De manera diaria se ejecuta un cron job, agendado por el workflow `.github/workflows/update-most-read.yml` a las 02:15 UTC (23:15 GMT -3 del día anterior), que corre la tarea `pnpm ops most-read:update` y se encarga, partiendo de esas listas, de alojar en el documento singleton `rotatingContent` las referencias correspondientes.
 
 Escribe en `mostReadLiteraryWorks`, con referencias a documentos `literaryWork`. El conteo de páginas populares de Clarity filtra por un único prefijo de lectura, `/literary-work/:slug`. La métrica registra la URL efectivamente visitada, así que el prefijo indexado anterior aportó mientras quedó tráfico suyo dentro de la ventana; hoy no queda, porque `src/server.ts` lo redirige con 301 desde hace más tiempo que los tres días que la ventana abarca. Los slugs resultantes se deduplican —una misma obra llega varias veces cuando la URL viene decorada con querystring de campaña, un ancla o una barra final— y se resuelven a `_id` de `literaryWork` antes de escribir las referencias.
 
@@ -45,7 +45,7 @@ Escribe en `mostReadLiteraryWorks`, con referencias a documentos `literaryWork`.
 - **Consultas GROQ**: `src/api/_queries/content.query.ts` - `rotatingContentQuery` (lectura del documento singleton) y `src/api/_queries/literary-work.query.ts` - `literaryWorkTeasers`, cuyo filtro opcional por slugs resuelve el lote del ranking
 - **Repositorio de acceso a datos**: `src/api/modules/content/content.repository.sanity.ts` - `SanityContentRepository.fetchRotatingContent()` y `updateMostReadLiteraryWorks(slugs)`, que resuelve los slugs y repone el orden del ranking antes de parchear
 - **Servicio**: `src/api/modules/literary-work/literary-work.service.ts` - `updateMostReadLiteraryWorks()`, que deriva los slugs de Clarity y se los pasa al repositorio
-- **Ruta**: `src/api/modules/literary-work/literary-work.controller.ts` - `GET /update-most-read`, declarada `no-store` porque el módulo sirve sus lecturas con caché de borde y una escritura servida desde el borde devolvería un 200 sin haber corrido
+- **Tarea de operación**: `scripts/ops/tasks/update-most-read.ts` - `pnpm ops most-read:update`, que llama al servicio directo contra el repositorio real. Escribe siempre, con o sin `--no-dry-run`
 
 La resolución de slugs a identificadores vive **dentro de la escritura** y no en el puerto de obras: los slugs salen de una métrica externa, así que quien orquesta no tiene de dónde sacar un identificador, y pedírselo a otro repositorio para devolvérselo a éste haría que el caso de uso cruzara dos repositorios para escribir en uno. Los resuelve el listado de obras y no una consulta dedicada: el registro de filtro de ese listado declara que cada criterio nuevo entra como campo opcional, y una consulta que solo tradujera slugs a identificadores sería una segunda forma de preguntar lo mismo.
 
@@ -84,7 +84,7 @@ El documento `rotatingContent` está diseñado para ser **extensible**. La estru
 
 ### Frecuencia de Ejecución
 
-El cron job que actualiza el contenido rotativo se ejecuta de manera diaria, durante la madrugada en horario GMT -3 (horario de Buenos Aires, Argentina).
+El cron job que actualiza el contenido rotativo se ejecuta de manera diaria a las 02:15 UTC (23:15 GMT -3 del día anterior, horario de Buenos Aires, Argentina), agendado por `.github/workflows/update-most-read.yml`, que corre `pnpm ops most-read:update` contra `production` con los secrets `SANITY_AUTH_TOKEN`, `CLARITY_TOKEN` y `CLARITY_PROJECT_ID`. Un disparo manual del workflow o el mismo comando a mano también escriben.
 
 ---
 
@@ -94,11 +94,12 @@ El cron job que actualiza el contenido rotativo se ejecuta de manera diaria, dur
 
 Una **configuración de landing page** en La Cuentoneta es una configuración temática que agrupa contenido relevante para un período de tiempo, contable en semanas, y con un mínimo de una semana — siendo extensible a períodos múltiplos de una semana mediante la copia de este contenido.
 
-El sistema genera automáticamente las configuraciones de landing pages para las próximas semanas a partir de la vigente mediante un cronjob. En caso de que no haya configuraciones de landing pages definidas para alguna de las próximas cuatro semanas en la plataforma el sistema se encarga de generarlas, utilizando como base la configuración válida más reciente **que no sea futura** (`config <= semana actual`), es decir, la semana vigente curada por los editores.
+Las configuraciones de landing pages de las semanas futuras se cargan de manera manual. Como red de seguridad, un cronjob semanal crea la de la semana siguiente si todavía no existe, utilizando como base la configuración válida más reciente **que no sea futura** (`config <= semana actual`), es decir, la semana vigente curada por los editores.
 
 Este proceso garantiza que:
 
-- Siempre haya landing pages disponibles para las próximas cuatro semanas, permitiendo una configuración planificada en múltiplos de semanas.
+- La landing page de la semana siguiente exista siempre, aunque nadie la haya cargado a mano.
+- Una landing page ya cargada manualmente nunca se toca ni se duplica.
 - Los editores de contenido solo necesiten actualizar la configuración de la semana vigente, modificándola completamente o en partes.
 - Las nuevas semanas hereden automáticamente la estructura de la semana vigente, siendo las nuevas configuraciones creadas copiando esa configuración en el estado en el que se encuentra al momento de ejecutarse el cronjob.
 
@@ -155,6 +156,8 @@ El año va primero para que el **orden lexicográfico del slug coincida con el o
 - **Servicio de lógica de negocio**: `src/api/modules/content/content.service.ts`
   - `addNextWeeksLandingPageContent(weeksInTheFuture = 4)` - Función principal
 
+- **Tarea de operación**: `scripts/ops/tasks/add-next-weeks-landing-pages.ts` - `pnpm ops landing-pages:add-next-weeks`, que llama al servicio directo contra el repositorio real. Escribe siempre, con o sin `--no-dry-run`
+
 - **Tests unitarios**: `src/utils/week-slug.utils.spec.ts` (casos borde del slug ISO-8601), `src/api/modules/content/content.service.spec.ts` y, del lado del Studio, `cms/utils/landing-page.spec.ts` (Vitest standalone de `cms/` — ver [`testing.md`](../.claude/references/testing.md))
 
 ### Proceso de Generación
@@ -163,7 +166,7 @@ La función `addNextWeeksLandingPageContent(weeksInTheFuture)` ejecuta el siguie
 
 ```
 1. Calcular fecha actual y slug de la semana actual (formato YYYY-WW vía getISOWeekYear + getISOWeek)
-2. Generar slugs para las próximas N semanas (ej: weeksInTheFuture = 4)
+2. Generar slugs para las próximas N semanas (por defecto, N = 1: solo la semana siguiente)
 3. Consultar Sanity para obtener landing pages existentes con esos slugs
 4. Si TODAS las próximas N semanas ya existen → retornar vacío (sin cambios)
 5. Si alguna no existe:
@@ -180,34 +183,31 @@ La función `addNextWeeksLandingPageContent(weeksInTheFuture)` ejecuta el siguie
 
 ### Frecuencia de Ejecución
 
-La definición para la ejecución de este cronjob se encuentra en el archivo `vercel.json`:
+La definición para la ejecución de este cronjob se encuentra en el workflow `.github/workflows/add-next-weeks-landing-page-content.yml`, que corre `pnpm ops landing-pages:add-next-weeks` contra `production` con el secret `SANITY_AUTH_TOKEN`:
 
 - **Frecuencia**: Semanalmente
-- **Día y hora**: Domingos a las 03:30 am (GMT -3)
-- **Tolerancia**: Puede también ejecutarse de manera manual en cualquier momento antes de que se necesite
+- **Día y hora**: Domingos a las 02:47 UTC (sábados a las 23:47 GMT -3), media hora antes del sync de datasets (`.github/workflows/sync-datasets.yml`, domingos a las 03:17 UTC), para que `staging` y `development` repliquen ya la semana que empieza al día siguiente
+- **Tolerancia**: Puede también ejecutarse de manera manual en cualquier momento antes de que se necesite, con el disparo manual del workflow o con `pnpm ops landing-pages:add-next-weeks` (`--weeks=<n>` cambia la cantidad de semanas, por defecto una); ambos escriben, y al ser idempotente una corrida de más no duplica documentos
 
-> **Interacción con la numeración ISO-8601 (#1751):** las semanas ISO empiezan el **lunes**, y el cron corre el **domingo** — el último día de la semana ISO en curso. Por eso, el domingo la home todavía sirve la semana que termina ese día, y recién el lunes rota a la siguiente. Esto es **continuo, sin huecos**: cada domingo el cron pre-genera las próximas 4 semanas (`semana_actual + 1 … + 4`), así que la semana que la home pedirá de lunes a sábado siempre existe. (La corrida del domingo genera desde la semana _siguiente_; la semana que la home pide ese mismo domingo fue creada por la corrida del domingo anterior.)
+> **Interacción con la numeración ISO-8601 (#1751):** las semanas ISO empiezan el **lunes**, y el cron corre el **domingo** — el último día de la semana ISO en curso. Por eso, el domingo la home todavía sirve la semana que termina ese día, y recién el lunes rota a la siguiente. Esto es **continuo, sin huecos**: cada domingo el cron crea, si falta, la semana siguiente (`semana_actual + 1`), que es la que la home pedirá de lunes a sábado. Si los editores ya la cargaron a mano, la corrida no hace nada.
 
 ### Ejemplo de Ejecución
 
-**Escenario**: Domingo 16 de noviembre de 2025, último día de la semana 46, a las 3:30 am (GMT -3). Se ejecuta el cronjob con el queryParam de "semanas hacia adelante" `weeksInTheFuture` predeterminado de 4.
+**Escenario**: Domingo 16 de noviembre de 2025, último día de la semana 46, a las 02:47 UTC (sábado 15, 23:47 GMT -3). Se ejecuta el cronjob con el argumento de "semanas hacia adelante" `--weeks` en su valor predeterminado de 1 (admite de 1 a 26).
 
 ```javascript
-await addNextWeeksLandingPageContent(4);
+await addNextWeeksLandingPageContent(1);
 ```
 
-**Semanas a procesar**: 47, 48, 49, 50 (2025)
+**Semanas a procesar**: 47 (2025)
 
-**Resultado si todas existen**: `[]` (array vacío)
+**Resultado si ya existe**: `[]` (array vacío)
 
-**Resultado si faltan semanas 49 y 50**:
-
-Este flujo alternativo asume que fueron agregadas, por una ejecución manual llamando al endpoint o por una ejecución de cronjob previa, las configuraciones de landing pages para las semanas 47 y 48.
+**Resultado si falta la semana 47**:
 
 ```javascript
 [
-  { _id: "landing-page-2025-49", config: "2025-49", slug: "2025-49", ... },
-  { _id: "landing-page-2025-50", config: "2025-50", slug: "2025-50", ... }
+  { _id: "landing-page-2025-47", config: "2025-47", slug: "2025-47", ... }
 ]
 ```
 
@@ -293,19 +293,19 @@ cms/utils/
 
 ## 4. Workflow Típico
 
-Todos los horarios están especificados en horario GMT -3 (Buenos Aires, Argentina) y en formato de 24 horas. Se considera al domingo como el "día 7 de la semana".
+Los horarios de los cron jobs están en UTC y el resto en horario GMT -3 (Buenos Aires, Argentina), todos en formato de 24 horas. Se considera al domingo como el "día 7 de la semana".
 
 ### Semana de Publicación Normal
 
-1. **Domingo 03:30 (día 7, semana vigente)** - cron job genera landing pages para, como máximo, las próximas 4 semanas
+1. **Domingo 02:47 UTC (día 7, semana vigente)** - cron job crea la landing page de la semana siguiente si los editores todavía no la cargaron
 2. **Lunes 00:00 (día 1, semana posterior)** - Se visualiza en la landing page el contenido configurado correspondiente a la nueva semana que acaba de comenzar
 3. **Lunes - Viernes (días 2-6, de la ahora semana vigente)** - Editores actualizan contenido de la landing page para la próxima semana
 4. **Sábado (día 6)** - Revisión final de cambios
-   5**Domingo siguiente 03:30** - La Se repite el ciclo con la próxima semana como "actual"
+5. **Domingo siguiente 02:47 UTC** - Se repite el ciclo con la próxima semana como "actual"
 
 ### Actualización de Obras Más Leídas
 
-1. **Diariamente 03:15** - cron job recopila métricas de visualización
+1. **Diariamente 02:15 UTC** - cron job recopila métricas de visualización
 2. **Cálculo automático** - Se ordena el ranking de obras
 3. **Actualización** - Documento `rotatingContent` se sincroniza
 4. **Visible en web** - Usuarios ven el ranking actualizado en su próximo acceso a la landing page de La Cuentoneta
@@ -340,15 +340,15 @@ No, la creación está bloqueada para evitar inconsistencias. Sin embargo, puede
 
 La función siempre utiliza la configuración válida más reciente que no sea futura (`config <= semana actual`), es decir, la semana vigente. Si necesitas cambiar la estructura para todas las futuras semanas, actualiza la landing page de la semana actual y ejecuta el cron job nuevamente.
 
-### ¿Puedo generar landing pages para más de 4 semanas?
+### ¿Puedo generar landing pages para más de una semana?
 
 Sí, la función acepta un parámetro `weeksInTheFuture`:
 
 ```typescript
-await addNextWeeksLandingPageContent(8); // Genera 8 semanas adelante
+await addNextWeeksLandingPageContent(8); // Crea las que falten de las próximas 8 semanas
 ```
 
-Sin embargo, se recomienda mantener entre 4-6 semanas para evitar data obsoleta.
+Desde la tarea, `pnpm ops landing-pages:add-next-weeks --weeks=8`. Como cada semana nueva copia la configuración vigente al momento de la corrida, conviene no adelantar más semanas de las necesarias para evitar data obsoleta.
 
 ### ¿Cómo agrego un nuevo tipo de contenido rotativo?
 

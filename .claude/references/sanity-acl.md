@@ -192,7 +192,7 @@ authorController.get('/:slug', zValidator('param', slugSchema), async (c) => {
 - Validación de path params / query con **`@hono/zod-validator`** (`zValidator('param', …)`,
   `zValidator('query', …)`). Los path params usan `:slug` (estilo Hono).
 - **Orden de rutas:** las rutas específicas van **antes** del wildcard `/:slug` (p. ej.,
-  en `literary-work`, `/` → `/update-most-read` → `/:slug`).
+  en `literary-work`, `/` → `/:slug`).
 - El controller no conoce Sanity ni los mappers: solo valida, llama al service y serializa.
 
 ---

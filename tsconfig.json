@@ -6,6 +6,7 @@
 		"module": "preserve",
 		"lib": ["dom", "es2022"],
 		"paths": {
+			"@api/*": ["./src/api/*"],
 			"@app-utils/*": ["./src/app/utils/*"],
 			"@components/*": ["./src/app/components/*"],
 			"@mocks/*": ["./src/mocks/*"],

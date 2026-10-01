@@ -82,56 +82,6 @@ describe('contentController with malformed data', () => {
 	});
 });
 
-// La ruta que crea las landing pages de las próximas semanas comparte prefijo con las lecturas del
-// módulo, así que hereda su middleware de caché. Servida desde el borde devolvería un 200 sin haber
-// creado ningún documento, y la redacción se quedaría sin la semana siguiente sin ninguna señal.
-describe('contentController — la escritura no es cacheable', () => {
-	const originalProduction = environment.production;
-
-	afterEach(() => {
-		environment.production = originalProduction;
-	});
-
-	// El generador clona las referencias de la última semana curada, así que sin ellas la ruta responde
-	// 500 — y una respuesta que no es 200 el middleware ya la saltea, con lo que el caso pasaría en vacío.
-	const writableRepository = () =>
-		new InMemoryContentRepository({
-			latestReferences: {
-				_type: 'landingPage',
-				campaigns: [],
-				collections: [],
-				latestLiteraryWorks: [],
-				highlightedAuthors: [],
-			},
-		});
-
-	it('declares the weekly landing page creation as no-store', async () => {
-		const response = await appWith(writableRepository()).request(
-			'/content/add-next-weeks-landing-page-content?weeksInTheFuture=1',
-		);
-
-		expect(response.status).toBe(200);
-		expect(response.headers.get('Cache-Control')).toBe('no-store');
-	});
-
-	// Y la composición con el middleware, que es lo que el `no-store` existe para lograr: montado
-	// detrás de él y con la caché habilitada, la respuesta no recibe el TTL de borde.
-	it('stays out of the edge cache when mounted behind the read cache middleware', async () => {
-		environment.production = true;
-
-		const app = new Hono();
-		app.on('GET', ['/content', '/content/*'], readCacheHeaders);
-		app.route('/content', createContentController(writableRepository()));
-
-		const response = await app.request('/content/add-next-weeks-landing-page-content?weeksInTheFuture=1');
-
-		// El 200 no es decoración: el middleware ya se saltea toda respuesta que no lo sea, así que sin
-		// esta aserción el caso pasaría igual por la vía del error y no probaría el `no-store`.
-		expect(response.status).toBe(200);
-		expect(response.headers.get('Vercel-CDN-Cache-Control')).toBeNull();
-	});
-});
-
 // La landing rota de semana con el mismo path, así que su revalidación vive muy por debajo del ciclo
 // de rotación: comparte el `s-maxage` del módulo pero declara su ventana corta en el handler, y el
 // middleware la respeta en vez de pisarla con la larga de lectura.
