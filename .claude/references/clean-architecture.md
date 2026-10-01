@@ -121,8 +121,10 @@ El **archivo** sigue siendo `<dominio>.mock.ts` y la **factory** `provide<X>ApiM
 > † Mismo patrón que la fila anterior, aplicado a `Collection`: puerto, adaptador de Sanity con la ACL
 > en privados, y doble en memoria. Se distingue con otra marca porque su contrato no vive en el
 > documento de diseño de `LiteraryWork`. El adaptador expone dos lecturas —la colección por slug, que
-> transporta sus obras, y el catálogo, que devuelve teasers— y levanta un error propio ante datos que
-> no permiten construir el agregado, distinto del de "no encontrado".
+> transporta sus obras, y el catálogo, que devuelve teasers—. Ante datos que no permiten construir la
+> colección, el detalle levanta un error propio, distinto del de "no encontrado"; el catálogo, en
+> cambio, lo **reporta** junto a los teasers sanos y deja la decisión al service (ver
+> [`sanity-acl.md`](sanity-acl.md)).
 >
 > ‡ Mismo patrón otra vez, aplicado a `content` (la landing page y el contenido rotativo). Se
 > distingue con su propia marca porque, además de tener la ACL en privados, es el único de los tres

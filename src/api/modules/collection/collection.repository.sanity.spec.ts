@@ -9,6 +9,7 @@ import {
 	onoffRawCollectionTeasersWithLinkedDescription,
 	onoffRawCollectionsWithoutFeaturedImage,
 	onoffRawCollectionTeasersMock,
+	onoffRawCollectionTeasersWithoutFeaturedImage,
 	sectionlessWorkRawCollection,
 	unbackfilledWorkRawCollection,
 	shortSampleRawCollection,
@@ -185,27 +186,44 @@ describe('SanityCollectionRepository malformed data', () => {
 		).rejects.toMatchObject({ cause: expect.any(Error) });
 	});
 
-	// Un listado que esconde el elemento roto es un bug de datos que nadie ve: se cae entero, con el
-	// primer elemento sano por delante para que no pase por casualidad.
-	it('brings down the whole listing instead of filtering the bad collection out', async () => {
-		const [sane, ...rest] = onoffRawCollectionTeasersMock;
-		const dataset = [sane, { ...rest[0], count: 0 }];
-
-		await expect(repoReturning(dataset).fetchAll()).rejects.toThrow(MalformedCollectionError);
+	// El slug viaja como dato y no solo en el mensaje: es lo que el registro de un descarte necesita.
+	it('names the malformed collection', async () => {
+		await expect(
+			repoReturning(descriptionlessRawCollection).fetchBySlug('geometrias-del-desvelo'),
+		).rejects.toMatchObject({ slug: descriptionlessRawCollection.slug });
 	});
 });
 
 describe('SanityCollectionRepository.fetchAll', () => {
 	it('maps every teaser of the listing', async () => {
-		const teasers = await repoReturning(onoffRawCollectionTeasersMock).fetchAll();
+		const { collections: teasers, malformed } = await repoReturning(onoffRawCollectionTeasersMock).fetchAll();
 
 		expect(teasers).toHaveLength(onoffRawCollectionTeasersMock.length);
 		expect(teasers.map(({ slug }) => slug)).toEqual(onoffRawCollectionTeasersMock.map(({ slug }) => slug));
+		expect(malformed).toEqual([]);
+	});
+
+	// La colección rota va en el medio y no en un borde, para que un corte al primer error o un
+	// descarte del último no pasen por casualidad.
+	it('keeps the sane collections and reports the one it cannot build', async () => {
+		const brokenIndex = Math.floor(onoffRawCollectionTeasersMock.length / 2);
+		const broken = onoffRawCollectionTeasersMock[brokenIndex];
+		const dataset = onoffRawCollectionTeasersMock.map((teaser, index) =>
+			index === brokenIndex ? { ...teaser, count: 0 } : teaser,
+		);
+
+		const { collections, malformed } = await repoReturning(dataset).fetchAll();
+
+		expect(collections.map(({ slug }) => slug)).toEqual(
+			onoffRawCollectionTeasersMock.filter((_, index) => index !== brokenIndex).map(({ slug }) => slug),
+		);
+		expect(malformed).toHaveLength(1);
+		expect(malformed[0]).toMatchObject({ slug: broken.slug });
 	});
 
 	// Lo que distingue al teaser: muestra la colección sin transportar sus obras.
 	it('carries the count but no works', async () => {
-		const teasers = await repoReturning(onoffRawCollectionTeasersMock).fetchAll();
+		const { collections: teasers } = await repoReturning(onoffRawCollectionTeasersMock).fetchAll();
 
 		expect(teasers.map((teaser) => teaser.literaryWorks)).toEqual(onoffRawCollectionTeasersMock.map(() => []));
 		expect(teasers.map((teaser) => teaser.count)).toEqual(onoffRawCollectionTeasersMock.map((teaser) => teaser.count));
@@ -214,7 +232,7 @@ describe('SanityCollectionRepository.fetchAll', () => {
 	// Fija dónde vive la decisión: la prosa del teaser sale sin enlaces desde la traducción, no desde
 	// quien la renderiza.
 	it('strips the links of the description, keeping their text', async () => {
-		const teasers = await repoReturning(onoffRawCollectionTeasersWithLinkedDescription).fetchAll();
+		const { collections: teasers } = await repoReturning(onoffRawCollectionTeasersWithLinkedDescription).fetchAll();
 
 		expect(teasers.map(({ description }) => description).join()).not.toContain('<a');
 		teasers.forEach(({ description }) => expect(description).toContain('La Cuentoneta'));
@@ -232,20 +250,39 @@ describe('SanityCollectionRepository.fetchAll', () => {
 	// Se afirma que las dos ramas quedan cubiertas, sin atarse al orden: el listado llega ordenado por
 	// título, que es un criterio de la query y no de este mapeo.
 	it('resolves both branches of imagery from the projected covers', async () => {
-		const teasers = await repoReturning(onoffRawCollectionTeasersMock).fetchAll();
+		const { collections: teasers } = await repoReturning(onoffRawCollectionTeasersMock).fetchAll();
 
 		expect(new Set(teasers.map(({ imagery }) => imagery.kind))).toEqual(new Set(['representative', 'sample']));
 	});
 
-	// Es la invariante "al menos una obra" sobre lo único que el teaser transporta.
-	it('rejects a teaser whose count is zero', async () => {
+	// Es la invariante "al menos una obra" sobre lo único que el teaser transporta. La factory lanza un
+	// error propio, así que el reporte lo envuelve para nombrar la colección.
+	it('reports a teaser whose count is zero as malformed', async () => {
 		const [teaser] = onoffRawCollectionTeasersMock;
 
-		await expect(repoReturning([{ ...teaser, count: 0 }]).fetchAll()).rejects.toThrow(MalformedCollectionError);
+		const { collections, malformed } = await repoReturning([{ ...teaser, count: 0 }]).fetchAll();
+
+		expect(collections).toEqual([]);
+		expect(malformed).toHaveLength(1);
+		expect(malformed[0]).toBeInstanceOf(MalformedCollectionError);
+		expect(malformed[0]).toMatchObject({ slug: teaser.slug, cause: expect.any(Error) });
+	});
+
+	// Cuando la ACL ya lanzó el error de dominio, se reporta tal cual: envolverlo otra vez escondería
+	// la causa real detrás de una capa sin información.
+	it('reports an error the translation already raised without wrapping it', async () => {
+		const [teaser] = onoffRawCollectionTeasersWithoutFeaturedImage;
+		const shortSample = { ...teaser, literaryWorkCoverImages: teaser.literaryWorkCoverImages.slice(0, 2) };
+
+		const { malformed } = await repoReturning([shortSample]).fetchAll();
+
+		expect(malformed).toHaveLength(1);
+		expect(malformed[0]).toMatchObject({ slug: teaser.slug });
+		expect(malformed[0]?.cause).toBeUndefined();
 	});
 
 	// Un catálogo sin colecciones es un resultado legítimo, no un fallo.
 	it('resolves an empty listing without failing', async () => {
-		expect(await repoReturning([]).fetchAll()).toEqual([]);
+		expect(await repoReturning([]).fetchAll()).toEqual({ collections: [], malformed: [] });
 	});
 });
