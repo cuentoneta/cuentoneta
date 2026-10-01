@@ -5,7 +5,7 @@ import {
 	type LiteraryWorkTeaser,
 } from '@models/literary-work.model';
 import type {
-	LiteraryWorkCatalogListing,
+	LiteraryWorkNavigationTeaserWithAuthorsListing,
 	LiteraryWorkRepository,
 	LiteraryWorkTeaserFilter,
 	LiteraryWorkTeaserListing,
@@ -55,7 +55,7 @@ export class InMemoryLiteraryWorkRepository implements LiteraryWorkRepository {
 		return { literaryWorks, malformed: [] };
 	}
 
-	public async fetchCatalog(): Promise<LiteraryWorkCatalogListing> {
+	public async fetchNavigationTeasersWithAuthors(): Promise<LiteraryWorkNavigationTeaserWithAuthorsListing> {
 		return { literaryWorks: this.teasers.map(toNavigationTeaser), malformed: [] };
 	}
 }

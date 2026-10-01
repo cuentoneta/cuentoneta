@@ -5,7 +5,7 @@ import { of, Subject, throwError } from 'rxjs';
 
 import { AuthorReadingSuggestions } from './author-reading-suggestions';
 import { READING_SUGGESTIONS_COUNT } from './pick-reading-suggestions';
-import { LiteraryWorkApi, type LiteraryWorkTeaserFilter } from '../../providers/literary-work.provider';
+import { LiteraryWorkApi } from '../../providers/literary-work.provider';
 import type { LiteraryWorkTeaser } from '@models/literary-work.model';
 import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
 import { authorTeaserMock } from '@mocks/author.mock';
@@ -14,7 +14,7 @@ import { clearAllMocks, fn, restoreAllMocks, spyOn } from '@test-utils';
 import { firstProseWord } from '@testing/corpus-prose';
 
 const setup = async (
-	getTeasers: (filter: LiteraryWorkTeaserFilter) => Observable<LiteraryWorkTeaser[]>,
+	getTeasers: (author: string) => Observable<LiteraryWorkTeaser[]>,
 	inputs: { authorSlug?: string; currentWorkSlug?: string } = {},
 ) => {
 	const view = await render(AuthorReadingSuggestions, {
@@ -42,16 +42,16 @@ describe('AuthorReadingSuggestions', () => {
 	});
 
 	it('should fetch the teaser catalog filtered by the author', async () => {
-		const getTeasers = fn<(filter: LiteraryWorkTeaserFilter) => Observable<LiteraryWorkTeaser[]>>();
+		const getTeasers = fn<(author: string) => Observable<LiteraryWorkTeaser[]>>();
 		getTeasers.mockReturnValue(of(onoffLiteraryWorkTeasersMock));
 
 		await setup(getTeasers);
 
-		expect(getTeasers).toHaveBeenCalledWith({ author: authorTeaserMock.slug });
+		expect(getTeasers).toHaveBeenCalledWith(authorTeaserMock.slug);
 	});
 
 	it('should not fetch when there is no author slug', async () => {
-		const getTeasers = fn<(filter: LiteraryWorkTeaserFilter) => Observable<LiteraryWorkTeaser[]>>();
+		const getTeasers = fn<(author: string) => Observable<LiteraryWorkTeaser[]>>();
 		getTeasers.mockReturnValue(of(onoffLiteraryWorkTeasersMock));
 
 		await setup(getTeasers, { authorSlug: '' });
@@ -114,7 +114,7 @@ describe('AuthorReadingSuggestions', () => {
 
 	it('should resolve them again when the work being read changes', async () => {
 		const [first, second] = onoffLiteraryWorkTeasersMock;
-		const getTeasers = fn<(filter: LiteraryWorkTeaserFilter) => Observable<LiteraryWorkTeaser[]>>();
+		const getTeasers = fn<(author: string) => Observable<LiteraryWorkTeaser[]>>();
 		getTeasers.mockReturnValue(of(onoffLiteraryWorkTeasersMock));
 
 		const view = await setup(getTeasers, { currentWorkSlug: first.slug });

@@ -51,7 +51,7 @@ export class AuthorReadingSuggestions {
 			this.authorSlug() ? { slug: this.authorSlug(), currentWorkSlug: this.currentWorkSlug() } : undefined,
 		stream: ({ params }) =>
 			this.literaryWorkService
-				.getTeasers({ author: params.slug })
+				.getTeasers(params.slug)
 				.pipe(map((works) => pickReadingSuggestions(works, params.currentWorkSlug))),
 		defaultValue: [],
 	});

@@ -47,7 +47,7 @@ class StubFailingLiteraryWorkApi implements LiteraryWorkApi {
 		return throwError(() => new HttpErrorResponse({ status: this.status, statusText: 'error' }));
 	}
 
-	public getCatalog(): Observable<LiteraryWorkNavigationTeaserWithAuthors[]> {
+	public getNavigationTeasersWithAuthors(): Observable<LiteraryWorkNavigationTeaserWithAuthors[]> {
 		return throwError(() => new HttpErrorResponse({ status: this.status, statusText: 'error' }));
 	}
 
@@ -66,7 +66,7 @@ class ControllableLiteraryWorkApi implements LiteraryWorkApi {
 	}
 
 	// La página de lectura no consulta el catálogo: si alguna vez lo hiciera, este doble lo delata.
-	public getCatalog(): Observable<LiteraryWorkNavigationTeaserWithAuthors[]> {
+	public getNavigationTeasersWithAuthors(): Observable<LiteraryWorkNavigationTeaserWithAuthors[]> {
 		return throwError(() => new Error('La página de lectura no consulta el catálogo'));
 	}
 

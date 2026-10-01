@@ -8,8 +8,8 @@ import type { LiteraryWorkRepository } from './literary-work.repository';
 import type { ContentRepository } from '../content/content.repository';
 import {
 	getLiteraryWorkBySlug,
-	getLiteraryWorkCatalog,
 	getLiteraryWorkTeasers,
+	getNavigationTeasersWithAuthors,
 	updateMostReadLiteraryWorks,
 } from './literary-work.service';
 
@@ -30,7 +30,7 @@ export function createLiteraryWorkController(
 		const filter = c.req.valid('query');
 		const literaryWorks = filter.author
 			? await getLiteraryWorkTeasers(filter, repository)
-			: await getLiteraryWorkCatalog(repository);
+			: await getNavigationTeasersWithAuthors(repository);
 		return c.json(literaryWorks);
 	});
 

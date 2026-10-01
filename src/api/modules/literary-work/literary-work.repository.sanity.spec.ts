@@ -291,43 +291,43 @@ describe('SanityLiteraryWorkRepository.fetchTeasers', () => {
 	});
 });
 
-describe('SanityLiteraryWorkRepository.fetchCatalog', () => {
+describe('SanityLiteraryWorkRepository.fetchNavigationTeasersWithAuthors', () => {
 	it('mapea el listado sin filtros a vistas de navegación congeladas y sin extracto', async () => {
 		const { literaryWorks, malformed } = await repoReturning(
 			onoffRawLiteraryWorkNavigationTeasersWithAuthorsMock,
-		).fetchCatalog();
+		).fetchNavigationTeasersWithAuthors();
 
 		expect(literaryWorks).toHaveLength(onoffRawLiteraryWorkNavigationTeasersWithAuthorsMock.length);
 		expect(malformed).toEqual([]);
-		literaryWorks.forEach((work) => {
-			expect(Object.isFrozen(work)).toBe(true);
-			expect(work).not.toHaveProperty('excerpt');
+		literaryWorks.forEach((literaryWork) => {
+			expect(Object.isFrozen(literaryWork)).toBe(true);
+			expect(literaryWork).not.toHaveProperty('excerpt');
 		});
 	});
 
 	it('traduce la portada, el tiempo de lectura, las etiquetas, los medios y la autoría de cada obra', async () => {
 		const [raw] = onoffRawLiteraryWorkNavigationTeasersWithAuthorsMock;
-		const { literaryWorks } = await repoReturning([raw]).fetchCatalog();
-		const [work] = literaryWorks;
+		const { literaryWorks } = await repoReturning([raw]).fetchNavigationTeasersWithAuthors();
+		const [literaryWork] = literaryWorks;
 
-		expect(work.slug).toBe(raw.slug);
-		expect(work.title).toBe(raw.title);
-		expect(work.totalReadingTime).toBe(raw.totalReadingTime);
-		expect(work.sectionCount).toBe(raw.sectionCount);
-		expect(work.tags).toEqual(raw.tags);
+		expect(literaryWork.slug).toBe(raw.slug);
+		expect(literaryWork.title).toBe(raw.title);
+		expect(literaryWork.totalReadingTime).toBe(raw.totalReadingTime);
+		expect(literaryWork.sectionCount).toBe(raw.sectionCount);
+		expect(literaryWork.tags).toEqual(raw.tags);
 		// Los medios van en su vista de teaser y el tipo que el dominio no modela se descarta, como en
 		// el mapeo del agregado completo.
-		expect(work.mediaSources).toEqual(
+		expect(literaryWork.mediaSources).toEqual(
 			raw.mediaSources.filter(({ _type }) => _type !== 'pdfLink').map(({ _type, title }) => ({ type: _type, title })),
 		);
-		expect(work.authors.map(({ slug }) => slug)).toEqual(raw.authors.map(({ slug }) => slug));
+		expect(literaryWork.authors.map(({ slug }) => slug)).toEqual(raw.authors.map(({ slug }) => slug));
 	});
 
 	it('reporta la obra sin tiempo de lectura sin llevarse puestas a las demás', async () => {
 		const [sane, ...rest] = onoffRawLiteraryWorkNavigationTeasersWithAuthorsMock;
 		const broken = { ...sane, slug: `${sane.slug}-rota`, totalReadingTime: null };
 
-		const { literaryWorks, malformed } = await repoReturning([broken, ...rest]).fetchCatalog();
+		const { literaryWorks, malformed } = await repoReturning([broken, ...rest]).fetchNavigationTeasersWithAuthors();
 
 		expect(literaryWorks).toHaveLength(rest.length);
 		expect(malformed).toHaveLength(1);
@@ -338,7 +338,7 @@ describe('SanityLiteraryWorkRepository.fetchCatalog', () => {
 		const [sane] = onoffRawLiteraryWorkNavigationTeasersWithAuthorsMock;
 		const broken = { ...sane, slug: 'no es un slug' };
 
-		const { literaryWorks, malformed } = await repoReturning([broken]).fetchCatalog();
+		const { literaryWorks, malformed } = await repoReturning([broken]).fetchNavigationTeasersWithAuthors();
 
 		expect(literaryWorks).toEqual([]);
 		expect(malformed[0]).toBeInstanceOf(MalformedLiteraryWorkError);
@@ -350,14 +350,14 @@ describe('SanityLiteraryWorkRepository.fetchCatalog', () => {
 		const [sane] = onoffRawLiteraryWorkNavigationTeasersWithAuthorsMock;
 		const broken = { ...sane, authors: [] };
 
-		const { literaryWorks, malformed } = await repoReturning([broken]).fetchCatalog();
+		const { literaryWorks, malformed } = await repoReturning([broken]).fetchNavigationTeasersWithAuthors();
 
 		expect(literaryWorks).toEqual([]);
 		expect(malformed[0]).toBeInstanceOf(MalformedLiteraryWorkError);
 	});
 
 	it('devuelve un listado vacío sin obras', async () => {
-		const { literaryWorks, malformed } = await repoReturning([]).fetchCatalog();
+		const { literaryWorks, malformed } = await repoReturning([]).fetchNavigationTeasersWithAuthors();
 
 		expect(literaryWorks).toEqual([]);
 		expect(malformed).toEqual([]);

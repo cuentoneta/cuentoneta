@@ -210,11 +210,12 @@ export const literaryWorkTeasers = defineQuery(`
     }
 } | order(title asc)`);
 
-// La proyección de la vista de navegación con autores, compartida con las dos queries de contenido:
-// vive acá una sola vez y se interpola, y el typegen resuelve la constante importada sin perder el
-// tipo de cada query. Es lo que hace imposible que las tres proyecten la misma vista de formas
-// distintas — ver `.claude/references/sanity-acl.md`.
-export const literaryWorkNavigationTeasersWithAuthorsProjection = `
+// El listado sin filtros de la página de obras: la vista de navegación con autores, ordenada por título
+// como el de teasers. La proyección repite el literal de las dos queries de contenido en vez de compartir
+// una constante —una query no depende de otra—, y el mapper que las consume se tipa contra la unión de
+// sus resultados, así que una divergencia entre las tres deja de tipar.
+export const literaryWorkNavigationTeasersWithAuthorsQuery = defineQuery(`
+*[_type == 'literaryWork' && !(_id in path('drafts.**'))]
 {
     _id,
     'slug': slug.current,
@@ -239,8 +240,4 @@ export const literaryWorkNavigationTeasersWithAuthorsProjection = `
         diedOn,
         diedOnYear
     }, [])
-}`;
-
-// El listado sin filtros de la vista de navegación con autores, ordenado por título como el de teasers.
-export const literaryWorkNavigationTeasersWithAuthorsQuery = defineQuery(`
-*[_type == 'literaryWork' && !(_id in path('drafts.**'))]${literaryWorkNavigationTeasersWithAuthorsProjection} | order(title asc)`);
+} | order(title asc)`);

@@ -17,10 +17,9 @@ export interface LiteraryWorkTeaserListing {
 	readonly malformed: readonly MalformedLiteraryWorkError[];
 }
 
-// El listado sin filtros del catálogo reporta las obras intraducibles con la misma política que el de
-// teasers — el repository reporta y el service decide —, pero transporta la vista de navegación con
-// autores.
-export interface LiteraryWorkCatalogListing {
+// El listado sin filtros reporta las obras intraducibles con la misma política que el de teasers — el
+// repository reporta y el service decide —, pero transporta la vista de navegación con autores.
+export interface LiteraryWorkNavigationTeaserWithAuthorsListing {
 	readonly literaryWorks: readonly LiteraryWorkNavigationTeaserWithAuthors[];
 	readonly malformed: readonly MalformedLiteraryWorkError[];
 }
@@ -35,5 +34,5 @@ export interface LiteraryWorkTeaserFilter {
 export interface LiteraryWorkRepository {
 	fetchBySlug(slug: string): Promise<LiteraryWork | null>;
 	fetchTeasers(filter: LiteraryWorkTeaserFilter): Promise<LiteraryWorkTeaserListing>;
-	fetchCatalog(): Promise<LiteraryWorkCatalogListing>;
+	fetchNavigationTeasersWithAuthors(): Promise<LiteraryWorkNavigationTeaserWithAuthorsListing>;
 }

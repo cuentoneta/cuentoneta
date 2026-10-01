@@ -37,7 +37,7 @@ class StubScenarioLiteraryWorkApi implements LiteraryWorkApi {
 		return throwError(() => new Error('El catálogo no consulta por slug'));
 	}
 
-	public getCatalog(): Observable<LiteraryWorkNavigationTeaserWithAuthors[]> {
+	public getNavigationTeasersWithAuthors(): Observable<LiteraryWorkNavigationTeaserWithAuthors[]> {
 		if (this.scenario === 'failure') {
 			return throwError(() => new Error('sin catálogo'));
 		}

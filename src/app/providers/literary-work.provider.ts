@@ -33,17 +33,10 @@ import type { LiteraryWorkTeaser } from '@models/literary-work.model';
 import type { ApiUrl } from './endpoints';
 import { Endpoints } from './endpoints';
 
-// Espeja el contrato del endpoint: el filtrado va por query params, así que acá es un registro donde
-// un criterio nuevo suma un campo, no un método. `author` no es opcional porque la vista lo es: el
-// listado sin filtros es la vista de navegación con autores, que tiene su propia lectura.
-export interface LiteraryWorkTeaserFilter {
-	readonly author: string;
-}
-
 export interface LiteraryWorkApi {
 	getBySlug(slug: string): Observable<LiteraryWork>;
-	getCatalog(): Observable<LiteraryWorkNavigationTeaserWithAuthors[]>;
-	getTeasers(filter: LiteraryWorkTeaserFilter): Observable<LiteraryWorkTeaser[]>;
+	getNavigationTeasersWithAuthors(): Observable<LiteraryWorkNavigationTeaserWithAuthors[]>;
+	getTeasers(author: string): Observable<LiteraryWorkTeaser[]>;
 }
 
 @Service()
@@ -57,7 +50,7 @@ export class HttpLiteraryWorkApi implements LiteraryWorkApi {
 			.pipe(map((response) => this.toLiteraryWork(literaryWorkDtoSchema.parse(response))));
 	}
 
-	public getCatalog(): Observable<LiteraryWorkNavigationTeaserWithAuthors[]> {
+	public getNavigationTeasersWithAuthors(): Observable<LiteraryWorkNavigationTeaserWithAuthors[]> {
 		return this.http
 			.get<LiteraryWorkNavigationTeaserWithAuthorsDto[]>(this.url)
 			.pipe(
@@ -69,9 +62,9 @@ export class HttpLiteraryWorkApi implements LiteraryWorkApi {
 			);
 	}
 
-	public getTeasers(filter: LiteraryWorkTeaserFilter): Observable<LiteraryWorkTeaser[]> {
+	public getTeasers(author: string): Observable<LiteraryWorkTeaser[]> {
 		return this.http
-			.get<LiteraryWorkTeaserDto[]>(this.url, { params: { author: filter.author } })
+			.get<LiteraryWorkTeaserDto[]>(this.url, { params: { author } })
 			.pipe(map((response) => literaryWorkTeaserListDtoSchema.parse(response).map(toLiteraryWorkTeaser)));
 	}
 

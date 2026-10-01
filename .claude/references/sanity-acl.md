@@ -67,13 +67,9 @@ queda contenido en el mapper; el dominio y el frontend no se enteran.
 > el ensamblado de `LiteraryWorkNavigationTeaserWithAuthors` lo comparten `SanityLiteraryWorkRepository`
 > (el listado sin filtros) y `SanityContentRepository` (los slots de la landing).
 >
-> **`defineQuery` exige literales, pero resuelve interpolaciones.** El typegen parsea el string de la
-> llamada, así que una concatenación (`'…' + constante`) deja de emitir tipos. Una **interpolación de
-> una constante con tipo literal** —definida en el mismo archivo o importada— sí se resuelve: el
-> typegen la lee y el tipo de la query queda como el literal completo, así que `client.fetch` conserva
-> su tipo generado. Por eso dos queries con la misma proyección **comparten la constante** en vez de
-> repetir el literal (`literaryWorkNavigationTeasersWithAuthorsProjection`, en `literary-work.query.ts`),
-> y el mapper que las consume se tipa contra la unión de sus resultados.
+> **Cada query repite el literal de su proyección.** No comparten una constante: así una query no
+> depende de otra, y lo que impide que se desincronicen no es el typegen sino la ACL que las mapea,
+> tipada contra la unión de sus resultados.
 
 ---
 

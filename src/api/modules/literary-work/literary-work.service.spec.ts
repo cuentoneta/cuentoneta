@@ -6,11 +6,15 @@ import {
 	onoffLiteraryWorkTeasersMock,
 } from '@mocks/onoff-literary-work-teasers.mock';
 import * as literaryWorkService from './literary-work.service';
-import { getLiteraryWorkBySlug, getLiteraryWorkCatalog, getLiteraryWorkTeasers } from './literary-work.service';
+import {
+	getLiteraryWorkBySlug,
+	getLiteraryWorkTeasers,
+	getNavigationTeasersWithAuthors,
+} from './literary-work.service';
 import { LiteraryWorkNotFoundError, MalformedLiteraryWorkError } from './literary-work.errors';
 import { InMemoryLiteraryWorkRepository } from './literary-work.repository.mock';
 import type {
-	LiteraryWorkCatalogListing,
+	LiteraryWorkNavigationTeaserWithAuthorsListing,
 	LiteraryWorkRepository,
 	LiteraryWorkTeaserListing,
 } from './literary-work.repository';
@@ -50,15 +54,15 @@ class StubLiteraryWorkRepository implements LiteraryWorkRepository {
 		return this.listing;
 	}
 
-	public async fetchCatalog(): Promise<never> {
+	public async fetchNavigationTeasersWithAuthors(): Promise<never> {
 		throw new Error('No participa de estos casos.');
 	}
 }
 
 // El doble en memoria proyecta la vista de navegación sin descartar nada, así que la política de descarte
-// del catálogo se ejercita con un stub propio, como en los teasers.
-class StubLiteraryWorkCatalogRepository implements LiteraryWorkRepository {
-	constructor(private readonly listing: LiteraryWorkCatalogListing) {}
+// del listado se ejercita con un stub propio, como en los teasers.
+class StubLiteraryWorkNavigationTeasersRepository implements LiteraryWorkRepository {
+	constructor(private readonly listing: LiteraryWorkNavigationTeaserWithAuthorsListing) {}
 
 	public async fetchBySlug(): Promise<never> {
 		throw new Error('No participa de estos casos.');
@@ -68,7 +72,7 @@ class StubLiteraryWorkCatalogRepository implements LiteraryWorkRepository {
 		throw new Error('No participa de estos casos.');
 	}
 
-	public async fetchCatalog(): Promise<LiteraryWorkCatalogListing> {
+	public async fetchNavigationTeasersWithAuthors(): Promise<LiteraryWorkNavigationTeaserWithAuthorsListing> {
 		return this.listing;
 	}
 }
@@ -126,14 +130,14 @@ describe('getLiteraryWorkTeasers', () => {
 	});
 });
 
-describe('getLiteraryWorkCatalog', () => {
+describe('getNavigationTeasersWithAuthors', () => {
 	const [firstNavigationTeaser] = onoffLiteraryWorkNavigationTeasersWithAuthorsMock;
 	const repository = new InMemoryLiteraryWorkRepository([], onoffLiteraryWorkTeasersMock);
 
 	afterEach(() => restoreAllMocks());
 
 	it('devuelve la vista de navegación de todas las obras', async () => {
-		const literaryWorks = await getLiteraryWorkCatalog(repository);
+		const literaryWorks = await getNavigationTeasersWithAuthors(repository);
 
 		expect(literaryWorks).toHaveLength(onoffLiteraryWorkNavigationTeasersWithAuthorsMock.length);
 		expect(literaryWorks).toEqual(onoffLiteraryWorkNavigationTeasersWithAuthorsMock);
@@ -142,12 +146,12 @@ describe('getLiteraryWorkCatalog', () => {
 	it('devuelve las obras sanas y registra la descartada', async () => {
 		const warn = spyOn(console, 'warn').mockImplementation(() => undefined);
 		const malformed = new MalformedLiteraryWorkError('una-obra-rota', { cause: new Error('sin tiempo de lectura') });
-		const stub = new StubLiteraryWorkCatalogRepository({
+		const stub = new StubLiteraryWorkNavigationTeasersRepository({
 			literaryWorks: [firstNavigationTeaser],
 			malformed: [malformed],
 		});
 
-		const literaryWorks = await getLiteraryWorkCatalog(stub);
+		const literaryWorks = await getNavigationTeasersWithAuthors(stub);
 
 		expect(literaryWorks).toEqual([firstNavigationTeaser]);
 		expect(warn).toHaveBeenCalledWith(expect.stringContaining('una-obra-rota'), malformed.cause);

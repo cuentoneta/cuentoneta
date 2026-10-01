@@ -11,7 +11,7 @@ import {
 	type LiteraryWorkNavigationTeaserWithAuthors,
 	type LiteraryWorkTeaser,
 } from '@models/literary-work.model';
-import { LiteraryWorkApi, type LiteraryWorkTeaserFilter } from './literary-work.provider';
+import { LiteraryWorkApi } from './literary-work.provider';
 
 // La vista de navegación es el teaser sin el extracto: el doble la proyecta desde lo que ya recibe por
 // constructor, así que no necesita una segunda lista cableada en cada spec. La factory hace cumplir
@@ -41,12 +41,12 @@ export class StubLiteraryWorkApi implements LiteraryWorkApi {
 		return of(this.literaryWork);
 	}
 
-	public getCatalog(): Observable<LiteraryWorkNavigationTeaserWithAuthors[]> {
+	public getNavigationTeasersWithAuthors(): Observable<LiteraryWorkNavigationTeaserWithAuthors[]> {
 		return of(this.teasers.map(toNavigationTeaser));
 	}
 
-	public getTeasers(filter: LiteraryWorkTeaserFilter): Observable<LiteraryWorkTeaser[]> {
-		return of(this.teasers.filter(({ authors }) => authors.some((author) => author.slug === filter.author)));
+	public getTeasers(author: string): Observable<LiteraryWorkTeaser[]> {
+		return of(this.teasers.filter(({ authors }) => authors.some((candidate) => candidate.slug === author)));
 	}
 }
 

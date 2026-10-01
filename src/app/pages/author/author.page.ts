@@ -55,7 +55,7 @@ export default class AuthorPage implements AuthorHost {
 
 	private readonly literaryWorksResource = ssrBlockingRxResource({
 		params: this.slug,
-		stream: ({ params }) => this.literaryWorkApi.getTeasers({ author: params }),
+		stream: ({ params }) => this.literaryWorkApi.getTeasers(params),
 		defaultValue: [],
 	});
 

@@ -57,20 +57,20 @@ describe('InMemoryLiteraryWorkRepository.fetchTeasers', () => {
 	});
 });
 
-describe('InMemoryLiteraryWorkRepository.fetchCatalog', () => {
+describe('InMemoryLiteraryWorkRepository.fetchNavigationTeasersWithAuthors', () => {
 	const repository = new InMemoryLiteraryWorkRepository([], onoffLiteraryWorkTeasersMock);
 
 	// La proyección del doble tiene que dar la misma vista que el corpus de dominio, que se deriva de
 	// las obras completas: si divergiera, los specs de service afirmarían sobre un shape falso.
 	it('proyecta la vista de navegación desde los teasers almacenados, sin nada que reportar', async () => {
-		const { literaryWorks, malformed } = await repository.fetchCatalog();
+		const { literaryWorks, malformed } = await repository.fetchNavigationTeasersWithAuthors();
 
 		expect(literaryWorks).toEqual(onoffLiteraryWorkNavigationTeasersWithAuthorsMock);
 		expect(malformed).toEqual([]);
 	});
 
 	it('devuelve un listado vacío sin teasers cargados', async () => {
-		const { literaryWorks } = await new InMemoryLiteraryWorkRepository().fetchCatalog();
+		const { literaryWorks } = await new InMemoryLiteraryWorkRepository().fetchNavigationTeasersWithAuthors();
 
 		expect(literaryWorks).toEqual([]);
 	});

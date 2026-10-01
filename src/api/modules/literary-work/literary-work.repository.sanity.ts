@@ -22,7 +22,7 @@ import {
 import { mapNavigationTeaser } from './literary-work-navigation-teaser.acl';
 import { MalformedLiteraryWorkError } from './literary-work.errors';
 import type {
-	LiteraryWorkCatalogListing,
+	LiteraryWorkNavigationTeaserWithAuthorsListing,
 	LiteraryWorkRepository,
 	LiteraryWorkTeaserFilter,
 	LiteraryWorkTeaserListing,
@@ -66,9 +66,9 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 	}
 
 	// Trae el listado sin filtros, traducido a la vista de navegación con autores de la página de obras.
-	public async fetchCatalog(): Promise<LiteraryWorkCatalogListing> {
+	public async fetchNavigationTeasersWithAuthors(): Promise<LiteraryWorkNavigationTeaserWithAuthorsListing> {
 		const raw = await this.client.fetch(literaryWorkNavigationTeasersWithAuthorsQuery);
-		return this.mapListing(raw, (rawWork) => mapNavigationTeaser(rawWork));
+		return this.mapListing(raw, (rawLiteraryWork) => mapNavigationTeaser(rawLiteraryWork));
 	}
 
 	/**
@@ -79,20 +79,20 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 	 * conoce el caso de uso, no este adaptador. El slug viaja en el error porque, sobre un listado
 	 * entero, saber que "algo" está mal no alcanza para arreglarlo.
 	 */
-	private mapListing<TRaw extends { readonly slug: string }, TWork>(
+	private mapListing<TRaw extends { readonly slug: string }, TLiteraryWork>(
 		raw: readonly TRaw[],
-		map: (raw: TRaw) => TWork,
-	): { literaryWorks: TWork[]; malformed: MalformedLiteraryWorkError[] } {
-		const literaryWorks: TWork[] = [];
+		map: (raw: TRaw) => TLiteraryWork,
+	): { literaryWorks: TLiteraryWork[]; malformed: MalformedLiteraryWorkError[] } {
+		const literaryWorks: TLiteraryWork[] = [];
 		const malformed: MalformedLiteraryWorkError[] = [];
-		for (const rawWork of raw) {
+		for (const rawLiteraryWork of raw) {
 			try {
-				literaryWorks.push(map(rawWork));
+				literaryWorks.push(map(rawLiteraryWork));
 			} catch (error) {
 				malformed.push(
 					error instanceof MalformedLiteraryWorkError
 						? error
-						: new MalformedLiteraryWorkError(rawWork.slug, { cause: error }),
+						: new MalformedLiteraryWorkError(rawLiteraryWork.slug, { cause: error }),
 				);
 			}
 		}

@@ -71,7 +71,7 @@ class StubFailingLiteraryWorkApi implements LiteraryWorkApi {
 		return throwError(() => new HttpErrorResponse({ status: 500, statusText: 'error' }));
 	}
 
-	public getCatalog(): Observable<LiteraryWorkNavigationTeaserWithAuthors[]> {
+	public getNavigationTeasersWithAuthors(): Observable<LiteraryWorkNavigationTeaserWithAuthors[]> {
 		return throwError(() => new HttpErrorResponse({ status: 500, statusText: 'error' }));
 	}
 

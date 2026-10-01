@@ -23,7 +23,7 @@ class FailingLiteraryWorkApi implements LiteraryWorkApi {
 		return throwError(() => new Error('sin catálogo'));
 	}
 
-	public getCatalog(): Observable<LiteraryWorkNavigationTeaserWithAuthors[]> {
+	public getNavigationTeasersWithAuthors(): Observable<LiteraryWorkNavigationTeaserWithAuthors[]> {
 		return throwError(() => new Error('sin catálogo'));
 	}
 
@@ -39,7 +39,7 @@ class PendingLiteraryWorkApi implements LiteraryWorkApi {
 		return NEVER;
 	}
 
-	public getCatalog(): Observable<LiteraryWorkNavigationTeaserWithAuthors[]> {
+	public getNavigationTeasersWithAuthors(): Observable<LiteraryWorkNavigationTeaserWithAuthors[]> {
 		return NEVER;
 	}
 

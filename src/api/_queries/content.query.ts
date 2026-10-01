@@ -1,15 +1,42 @@
 import { defineQuery } from 'groq';
-import { literaryWorkNavigationTeasersWithAuthorsProjection } from './literary-work.query';
 
-// `mostReadLiteraryWorks` y `latestLiteraryWorks` proyectan la vista de navegación con autores: la
-// proyección vive en `literary-work.query.ts` y se interpola acá, así que las dos —y la del listado
-// sin filtros— no pueden desincronizarse.
+// La vista de navegación de una obra: lo que las tarjetas de la página de inicio pintan. Sin extracto
+// —ningún consumidor de estos slots muestra cuerpo— y con `mediaSources` en su forma de teaser, que
+// solo lleva la plataforma y el título y no resuelve la carga con la que se reproduce el recurso.
+//
+// Cada aparición de abajo repite el literal porque `defineQuery` lo exige: el typegen parsea el string
+// de la llamada, así que una constante compartida dejaría de emitir tipos. Lo que impide que se
+// desincronicen es el mapper del repository, tipado contra la unión de todas ellas.
 
 export const rotatingContentQuery = defineQuery(`
 *[_type == 'rotatingContent' && _id == 'rotatingContent'][0]{
     _id,
     name,
-    'mostReadLiteraryWorks': coalesce(mostReadLiteraryWorks[]->${literaryWorkNavigationTeasersWithAuthorsProjection},[])
+    'mostReadLiteraryWorks': coalesce(mostReadLiteraryWorks[]->{
+        _id,
+        'slug': slug.current,
+        title,
+        coverImage,
+        totalReadingTime,
+        'sectionCount': count(content),
+        'tags': coalesce(tags[] -> {
+            title,
+            'slug': slug.current,
+            description
+        }, []),
+        'mediaSources': coalesce(mediaSources[]{ _type, title }, []),
+        'authors': coalesce(authors[]->{
+            _id,
+            'slug': slug.current,
+            name,
+            image,
+            nationality->,
+            bornOn,
+            bornOnYear,
+            diedOn,
+            diedOnYear
+        }, [])
+    },[])
 }`);
 
 export const landingPageListQuery = defineQuery(`
@@ -74,7 +101,31 @@ export const landingPageContentQuery = defineQuery(`
             }
         }
     },[]),
-    'latestLiteraryWorks': coalesce(latestLiteraryWorks[]->${literaryWorkNavigationTeasersWithAuthorsProjection},[]),
+    'latestLiteraryWorks': coalesce(latestLiteraryWorks[]->{
+        _id,
+        'slug': slug.current,
+        title,
+        coverImage,
+        totalReadingTime,
+        'sectionCount': count(content),
+        'tags': coalesce(tags[] -> {
+            title,
+            'slug': slug.current,
+            description
+        }, []),
+        'mediaSources': coalesce(mediaSources[]{ _type, title }, []),
+        'authors': coalesce(authors[]->{
+            _id,
+            'slug': slug.current,
+            name,
+            image,
+            nationality->,
+            bornOn,
+            bornOnYear,
+            diedOn,
+            diedOnYear
+        }, [])
+    },[]),
     'highlightedAuthors': coalesce(highlightedAuthors[]->{
         'author': {
             _id,

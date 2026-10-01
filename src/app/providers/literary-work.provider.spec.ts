@@ -19,7 +19,7 @@ import {
 } from '@mocks/onoff-literary-work-teasers.mock';
 import { environment } from '../environments/environment';
 import { Endpoints } from './endpoints';
-import { HttpLiteraryWorkApi, LiteraryWorkApi, type LiteraryWorkTeaserFilter } from './literary-work.provider';
+import { HttpLiteraryWorkApi, LiteraryWorkApi } from './literary-work.provider';
 import type { LiteraryWorkDto } from '@models/literary-work.dto';
 import { provideLiteraryWorkApiMock, StubLiteraryWorkApi } from './literary-work.mock';
 
@@ -180,32 +180,34 @@ describe('HttpLiteraryWorkApi', () => {
 		await expect(result).rejects.toThrow();
 	});
 
-	describe('getCatalog', () => {
+	describe('getNavigationTeasersWithAuthors', () => {
 		// El wire se deriva del corpus de dominio por serialización, nunca a mano: es la misma forma en
 		// que viaja de verdad, y enriquecer el corpus alcanza a estos casos solo.
-		const wireCatalog = JSON.parse(JSON.stringify(onoffLiteraryWorkNavigationTeasersWithAuthorsMock)) as unknown[];
+		const wireNavigationTeasers = JSON.parse(
+			JSON.stringify(onoffLiteraryWorkNavigationTeasersWithAuthorsMock),
+		) as unknown[];
 
-		function requestCatalog(payload: unknown[]) {
+		function requestNavigationTeasers(payload: unknown[]) {
 			const result = new Promise<LiteraryWorkNavigationTeaserWithAuthors[]>((resolve, reject) => {
-				api.getCatalog().subscribe({ next: resolve, error: reject });
+				api.getNavigationTeasersWithAuthors().subscribe({ next: resolve, error: reject });
 			});
 			http.expectOne(`${environment.apiUrl}${Endpoints.LiteraryWork}`).flush(payload);
 			return result;
 		}
 
 		it('requests the listing with no query params and rehydrates the navigation teasers', async () => {
-			const entries = await requestCatalog(wireCatalog);
+			const entries = await requestNavigationTeasers(wireNavigationTeasers);
 
 			expect(entries).toEqual(onoffLiteraryWorkNavigationTeasersWithAuthorsMock);
 		});
 
 		// La frontera valida acá y no en un template: un dato inválido corta el stream con error en vez
 		// de llegar a la tabla como un hueco mudo.
-		it('errors the stream when a catalog entry violates the DTO schema', async () => {
-			const [first, ...rest] = wireCatalog as Array<Record<string, unknown>>;
+		it('errors the stream when a navigation teaser violates the DTO schema', async () => {
+			const [first, ...rest] = wireNavigationTeasers as Array<Record<string, unknown>>;
 			const malformed = [{ ...first, totalReadingTime: 'dos' }, ...rest];
 
-			await expect(requestCatalog(malformed)).rejects.toThrow();
+			await expect(requestNavigationTeasers(malformed)).rejects.toThrow();
 		});
 	});
 
@@ -214,9 +216,9 @@ describe('HttpLiteraryWorkApi', () => {
 		// viaja de verdad, y enriquecer el corpus alcanza a estos casos solo.
 		const wireTeasers = JSON.parse(JSON.stringify(onoffLiteraryWorkTeasersMock)) as unknown[];
 
-		function requestTeasers(filter: LiteraryWorkTeaserFilter, url: string, payload: unknown[]) {
+		function requestTeasers(author: string, url: string, payload: unknown[]) {
 			const result = new Promise<LiteraryWorkTeaser[]>((resolve, reject) => {
-				api.getTeasers(filter).subscribe({ next: resolve, error: reject });
+				api.getTeasers(author).subscribe({ next: resolve, error: reject });
 			});
 			http.expectOne(url).flush(payload);
 			return result;
@@ -224,7 +226,7 @@ describe('HttpLiteraryWorkApi', () => {
 
 		it('rehydrates the listing filtered by author into domain teasers', async () => {
 			const rehydrated = await requestTeasers(
-				{ author: 'francois-onoff' },
+				'francois-onoff',
 				`${environment.apiUrl}${Endpoints.LiteraryWork}?author=francois-onoff`,
 				wireTeasers,
 			);
@@ -238,7 +240,7 @@ describe('HttpLiteraryWorkApi', () => {
 
 		it('resolves an empty listing as an empty array', async () => {
 			const listing = await requestTeasers(
-				{ author: 'sin-obras' },
+				'sin-obras',
 				`${environment.apiUrl}${Endpoints.LiteraryWork}?author=sin-obras`,
 				[],
 			);
@@ -254,7 +256,7 @@ describe('HttpLiteraryWorkApi', () => {
 
 			await expect(
 				requestTeasers(
-					{ author: 'francois-onoff' },
+					'francois-onoff',
 					`${environment.apiUrl}${Endpoints.LiteraryWork}?author=francois-onoff`,
 					malformed,
 				),

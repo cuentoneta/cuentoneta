@@ -72,8 +72,6 @@ export const literaryWorkTeaserDtoSchema = z.object({
 
 export const literaryWorkTeaserListDtoSchema = z.array(literaryWorkTeaserDtoSchema);
 
-// La vista de navegación con autores —la que sirve el endpoint sin filtros—: la metadata de tarjeta
-// sin el extracto. Los tipos anémicos anidados se validan como opacos, igual que en el teaser.
 export const literaryWorkNavigationTeaserWithAuthorsDtoSchema = z.object({
 	_id: z.string(),
 	slug: z.string(),

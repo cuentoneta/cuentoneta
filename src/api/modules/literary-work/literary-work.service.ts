@@ -51,10 +51,10 @@ export async function getLiteraryWorkTeasers(
 }
 
 // Sirve el listado sin filtros: la vista de navegación con autores que renderiza la página de obras.
-export async function getLiteraryWorkCatalog(
+export async function getNavigationTeasersWithAuthors(
 	repository: LiteraryWorkRepository = new SanityLiteraryWorkRepository(),
 ): Promise<readonly LiteraryWorkNavigationTeaserWithAuthors[]> {
-	return dropMalformed(await repository.fetchCatalog(), 'catálogo');
+	return dropMalformed(await repository.fetchNavigationTeasersWithAuthors(), 'listado de obras');
 }
 
 // Clarity reporta la URL visitada, no el slug: puede traer querystring de campaña, un ancla a una

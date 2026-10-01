@@ -20,7 +20,7 @@ import { embedPlaceholdersDecorator, withEmbedPlaceholders } from '@testing/stor
 
 import { provideLiteraryWorkApiMock } from '../../providers/literary-work.mock';
 import { provideCollectionApiMock, StubCollectionApi } from '../../providers/collection.mock';
-import type { LiteraryWorkApi, LiteraryWorkTeaserFilter } from '../../providers/literary-work.provider';
+import type { LiteraryWorkApi } from '../../providers/literary-work.provider';
 import LiteraryWorkPage from './literary-work.page';
 import { literaryWorkPageDocs } from './literary-work.page.docs';
 import { mediaWidgetSelectorDocs } from '@components/media-widget-selector/media-widget-selector.docs';
@@ -48,12 +48,12 @@ class CorpusLiteraryWorkApi implements LiteraryWorkApi {
 	}
 
 	// La página de lectura no consulta el catálogo: si alguna vez lo hiciera, este doble lo delata.
-	public getCatalog(): Observable<LiteraryWorkNavigationTeaserWithAuthors[]> {
+	public getNavigationTeasersWithAuthors(): Observable<LiteraryWorkNavigationTeaserWithAuthors[]> {
 		return throwError(() => new Error('La página de lectura no consulta el catálogo'));
 	}
 
-	public getTeasers(filter: LiteraryWorkTeaserFilter): Observable<LiteraryWorkTeaser[]> {
-		return of(onoffLiteraryWorkTeasersMock.filter(({ authors }) => authors.some(({ slug }) => slug === filter.author)));
+	public getTeasers(author: string): Observable<LiteraryWorkTeaser[]> {
+		return of(onoffLiteraryWorkTeasersMock.filter(({ authors }) => authors.some(({ slug }) => slug === author)));
 	}
 }
 
