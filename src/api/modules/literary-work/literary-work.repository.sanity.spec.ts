@@ -12,6 +12,7 @@ import {
 	unmaterializedRawLiteraryWork,
 } from '@mocks/onoff-raw-literary-works.mock';
 import {
+	onoffRawLiteraryWorkNavigationTeasersWithAuthorsMock,
 	onoffRawLiteraryWorksWithoutEditorialNote,
 	onoffRawLiteraryWorkTeasersMock,
 } from '@mocks/onoff-raw-literary-works.mock';
@@ -287,5 +288,78 @@ describe('SanityLiteraryWorkRepository.fetchTeasers', () => {
 
 		expect(literaryWorks).toEqual([]);
 		expect(malformed[0]).toBeInstanceOf(MalformedLiteraryWorkError);
+	});
+});
+
+describe('SanityLiteraryWorkRepository.fetchNavigationTeasersWithAuthors', () => {
+	it('mapea el listado sin filtros a vistas de navegación congeladas y sin extracto', async () => {
+		const { literaryWorks, malformed } = await repoReturning(
+			onoffRawLiteraryWorkNavigationTeasersWithAuthorsMock,
+		).fetchNavigationTeasersWithAuthors();
+
+		expect(literaryWorks).toHaveLength(onoffRawLiteraryWorkNavigationTeasersWithAuthorsMock.length);
+		expect(malformed).toEqual([]);
+		literaryWorks.forEach((literaryWork) => {
+			expect(Object.isFrozen(literaryWork)).toBe(true);
+			expect(literaryWork).not.toHaveProperty('excerpt');
+		});
+	});
+
+	it('traduce la portada, el tiempo de lectura, las etiquetas, los medios y la autoría de cada obra', async () => {
+		const [raw] = onoffRawLiteraryWorkNavigationTeasersWithAuthorsMock;
+		const { literaryWorks } = await repoReturning([raw]).fetchNavigationTeasersWithAuthors();
+		const [literaryWork] = literaryWorks;
+
+		expect(literaryWork.slug).toBe(raw.slug);
+		expect(literaryWork.title).toBe(raw.title);
+		expect(literaryWork.totalReadingTime).toBe(raw.totalReadingTime);
+		expect(literaryWork.sectionCount).toBe(raw.sectionCount);
+		expect(literaryWork.tags).toEqual(raw.tags);
+		// Los medios van en su vista de teaser y el tipo que el dominio no modela se descarta, como en
+		// el mapeo del agregado completo.
+		expect(literaryWork.mediaSources).toEqual(
+			raw.mediaSources.filter(({ _type }) => _type !== 'pdfLink').map(({ _type, title }) => ({ type: _type, title })),
+		);
+		expect(literaryWork.authors.map(({ slug }) => slug)).toEqual(raw.authors.map(({ slug }) => slug));
+	});
+
+	it('reporta la obra sin tiempo de lectura sin llevarse puestas a las demás', async () => {
+		const [sane, ...rest] = onoffRawLiteraryWorkNavigationTeasersWithAuthorsMock;
+		const broken = { ...sane, slug: `${sane.slug}-rota`, totalReadingTime: null };
+
+		const { literaryWorks, malformed } = await repoReturning([broken, ...rest]).fetchNavigationTeasersWithAuthors();
+
+		expect(literaryWorks).toHaveLength(rest.length);
+		expect(malformed).toHaveLength(1);
+		expect(malformed[0].slug).toBe(broken.slug);
+	});
+
+	it('reporta como mal curada a la obra con slug inválido', async () => {
+		const [sane] = onoffRawLiteraryWorkNavigationTeasersWithAuthorsMock;
+		const broken = { ...sane, slug: 'no es un slug' };
+
+		const { literaryWorks, malformed } = await repoReturning([broken]).fetchNavigationTeasersWithAuthors();
+
+		expect(literaryWorks).toEqual([]);
+		expect(malformed[0]).toBeInstanceOf(MalformedLiteraryWorkError);
+	});
+
+	// La vista hace cumplir "al menos un autor" en su factory: la obra que los perdió al despublicarse
+	// se reporta en vez de tumbarse el listado entero.
+	it('reporta como mal curada a la obra sin autores', async () => {
+		const [sane] = onoffRawLiteraryWorkNavigationTeasersWithAuthorsMock;
+		const broken = { ...sane, authors: [] };
+
+		const { literaryWorks, malformed } = await repoReturning([broken]).fetchNavigationTeasersWithAuthors();
+
+		expect(literaryWorks).toEqual([]);
+		expect(malformed[0]).toBeInstanceOf(MalformedLiteraryWorkError);
+	});
+
+	it('devuelve un listado vacío sin obras', async () => {
+		const { literaryWorks, malformed } = await repoReturning([]).fetchNavigationTeasersWithAuthors();
+
+		expect(literaryWorks).toEqual([]);
+		expect(malformed).toEqual([]);
 	});
 });

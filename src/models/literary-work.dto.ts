@@ -1,10 +1,11 @@
 import * as z from 'zod/mini';
 import type { Author, AuthorTeaser } from './author.model';
-import type { LiteraryWorkTeaser } from './literary-work.model';
+import type { LiteraryWorkNavigationTeaserWithAuthors, LiteraryWorkTeaser } from './literary-work.model';
 import type { Media, MediaTeaser } from './media.model';
 import type { Resource } from './resource.model';
 import type { Tag } from './tag.model';
 import { createLiteraryWorkExcerpt } from './literary-work-excerpt.model';
+import { createLiteraryWorkNavigationTeaser } from './literary-work.model';
 import { createReadingTime } from './reading-time.model';
 import { createSanitizedHtml } from './sanitized-html.model';
 import { createSectionTitle } from './section-title.model';
@@ -71,7 +72,26 @@ export const literaryWorkTeaserDtoSchema = z.object({
 
 export const literaryWorkTeaserListDtoSchema = z.array(literaryWorkTeaserDtoSchema);
 
+export const literaryWorkNavigationTeaserWithAuthorsDtoSchema = z.object({
+	_id: z.string(),
+	slug: z.string(),
+	title: z.string(),
+	coverImage: z.string(),
+	totalReadingTime: z.number(),
+	sectionCount: z.number(),
+	tags: z.array(opaqueDomainObject<Tag>()),
+	mediaSources: z.array(opaqueDomainObject<MediaTeaser>()),
+	authors: z.array(opaqueDomainObject<AuthorTeaser>()),
+});
+
+export const literaryWorkNavigationTeaserWithAuthorsListDtoSchema = z.array(
+	literaryWorkNavigationTeaserWithAuthorsDtoSchema,
+);
+
 export type LiteraryWorkEpigraphDto = z.infer<typeof literaryWorkEpigraphDtoSchema>;
+export type LiteraryWorkNavigationTeaserWithAuthorsDto = z.infer<
+	typeof literaryWorkNavigationTeaserWithAuthorsDtoSchema
+>;
 export type LiteraryWorkTeaserDto = z.infer<typeof literaryWorkTeaserDtoSchema>;
 export type LiteraryWorkSectionDto = z.infer<typeof literaryWorkSectionDtoSchema>;
 export type LiteraryWorkExcerptDto = z.infer<typeof literaryWorkExcerptDtoSchema>;
@@ -87,4 +107,20 @@ export function toLiteraryWorkTeaser(dto: LiteraryWorkTeaserDto): LiteraryWorkTe
 			bodyHtml: createSanitizedHtml(dto.excerpt.bodyHtml),
 		}),
 	};
+}
+
+export function toLiteraryWorkNavigationTeaserWithAuthors(
+	dto: LiteraryWorkNavigationTeaserWithAuthorsDto,
+): LiteraryWorkNavigationTeaserWithAuthors {
+	return createLiteraryWorkNavigationTeaser({
+		_id: dto._id,
+		slug: dto.slug,
+		title: dto.title,
+		coverImage: dto.coverImage,
+		totalReadingTime: createReadingTime(dto.totalReadingTime),
+		sectionCount: dto.sectionCount,
+		tags: dto.tags,
+		mediaSources: dto.mediaSources,
+		authors: dto.authors,
+	});
 }

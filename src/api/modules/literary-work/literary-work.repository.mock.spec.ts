@@ -1,5 +1,8 @@
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
-import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
+import {
+	onoffLiteraryWorkNavigationTeasersWithAuthorsMock,
+	onoffLiteraryWorkTeasersMock,
+} from '@mocks/onoff-literary-work-teasers.mock';
 import { InMemoryLiteraryWorkRepository } from './literary-work.repository.mock';
 
 describe('InMemoryLiteraryWorkRepository.fetchBySlug', () => {
@@ -49,6 +52,25 @@ describe('InMemoryLiteraryWorkRepository.fetchTeasers', () => {
 
 	it('devuelve un listado vacío sin teasers cargados', async () => {
 		const { literaryWorks } = await new InMemoryLiteraryWorkRepository().fetchTeasers({ author: authorOfFirst.slug });
+
+		expect(literaryWorks).toEqual([]);
+	});
+});
+
+describe('InMemoryLiteraryWorkRepository.fetchNavigationTeasersWithAuthors', () => {
+	const repository = new InMemoryLiteraryWorkRepository([], onoffLiteraryWorkTeasersMock);
+
+	// La proyección del doble tiene que dar la misma vista que el corpus de dominio, que se deriva de
+	// las obras completas: si divergiera, los specs de service afirmarían sobre un shape falso.
+	it('proyecta la vista de navegación desde los teasers almacenados, sin nada que reportar', async () => {
+		const { literaryWorks, malformed } = await repository.fetchNavigationTeasersWithAuthors();
+
+		expect(literaryWorks).toEqual(onoffLiteraryWorkNavigationTeasersWithAuthorsMock);
+		expect(malformed).toEqual([]);
+	});
+
+	it('devuelve un listado vacío sin teasers cargados', async () => {
+		const { literaryWorks } = await new InMemoryLiteraryWorkRepository().fetchNavigationTeasersWithAuthors();
 
 		expect(literaryWorks).toEqual([]);
 	});

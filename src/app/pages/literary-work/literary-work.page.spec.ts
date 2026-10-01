@@ -9,7 +9,12 @@ import { restoreAllMocks, spyOn } from '@test-utils';
 import { of, Subject, throwError, type Observable } from 'rxjs';
 
 // Models
-import { createLiteraryWork, type LiteraryWork, type LiteraryWorkTeaser } from '@models/literary-work.model';
+import {
+	createLiteraryWork,
+	type LiteraryWork,
+	type LiteraryWorkNavigationTeaserWithAuthors,
+	type LiteraryWorkTeaser,
+} from '@models/literary-work.model';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';
 import { createMarkdown } from '@models/markdown.model';
 import { createReadingTime } from '@models/reading-time.model';
@@ -42,6 +47,10 @@ class StubFailingLiteraryWorkApi implements LiteraryWorkApi {
 		return throwError(() => new HttpErrorResponse({ status: this.status, statusText: 'error' }));
 	}
 
+	public getNavigationTeasersWithAuthors(): Observable<LiteraryWorkNavigationTeaserWithAuthors[]> {
+		return throwError(() => new HttpErrorResponse({ status: this.status, statusText: 'error' }));
+	}
+
 	public getTeasers(): Observable<LiteraryWorkTeaser[]> {
 		return throwError(() => new HttpErrorResponse({ status: this.status, statusText: 'error' }));
 	}
@@ -54,6 +63,11 @@ class ControllableLiteraryWorkApi implements LiteraryWorkApi {
 
 	public getBySlug(): Observable<LiteraryWork> {
 		return this.work.asObservable();
+	}
+
+	// La página de lectura no consulta el catálogo: si alguna vez lo hiciera, este doble lo delata.
+	public getNavigationTeasersWithAuthors(): Observable<LiteraryWorkNavigationTeaserWithAuthors[]> {
+		return throwError(() => new Error('La página de lectura no consulta el catálogo'));
 	}
 
 	// El control es sobre la obra que se lee: las sugerencias del pie llegan resueltas del corpus,

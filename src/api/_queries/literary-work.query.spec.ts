@@ -6,7 +6,7 @@ import {
 	onoffLiteraryWorkDocumentsMock,
 } from '@mocks/onoff-documents.mock';
 
-import { literaryWorkTeasers } from './literary-work.query';
+import { literaryWorkNavigationTeasersWithAuthorsQuery, literaryWorkTeasers } from './literary-work.query';
 
 async function run(query: string, dataset: unknown[], params: Record<string, unknown> = {}) {
 	const result = await evaluate(parse(query), { dataset, params });
@@ -106,5 +106,74 @@ describe('literaryWorkTeasers', () => {
 		const works = await run(literaryWorkTeasers, [...dataset, draft], { author: null, slugs: null });
 
 		expect(works.every(({ _id }: { _id: string }) => !_id.startsWith('drafts.'))).toBe(true);
+	});
+});
+
+describe('literaryWorkNavigationTeasersWithAuthorsQuery', () => {
+	// La vista es la de navegación, no la del teaser: su proyección no puede traer el extracto —el
+	// cuerpo recortado de la obra—, que es el campo que más pesa en el listado.
+	it('should project the navigation view of every work, without an excerpt', async () => {
+		const works = await run(literaryWorkNavigationTeasersWithAuthorsQuery, dataset);
+
+		expect(works).toHaveLength(onoffLiteraryWorkDocumentsMock.length);
+		works.forEach((work: Record<string, unknown>) => {
+			expect(Object.keys(work).sort()).toEqual([
+				'_id',
+				'authors',
+				'coverImage',
+				'mediaSources',
+				'sectionCount',
+				'slug',
+				'tags',
+				'title',
+				'totalReadingTime',
+			]);
+		});
+	});
+
+	// Los autores viajan como `AuthorTeaser` —la vista de la tarjeta, con su retrato y su nacionalidad—,
+	// no como el par slug/nombre: es la vista que la tabla va a enriquecer con multimedia.
+	it('should project the authors of each work as author teasers', async () => {
+		const works = await run(literaryWorkNavigationTeasersWithAuthorsQuery, dataset);
+
+		works.forEach((work: { authors: Record<string, unknown>[] }) => {
+			work.authors.forEach((author) => {
+				expect(Object.keys(author).sort()).toEqual([
+					'_id',
+					'bornOn',
+					'bornOnYear',
+					'diedOn',
+					'diedOnYear',
+					'image',
+					'name',
+					'nationality',
+					'slug',
+				]);
+				expect(author.slug).toBe(authorSlug);
+				expect(author.name).toBe(onoffAuthor.name);
+			});
+		});
+	});
+
+	it('should carry the persisted total reading time of each work', async () => {
+		const [work] = await run(literaryWorkNavigationTeasersWithAuthorsQuery, dataset);
+		const [document] = onoffLiteraryWorkDocumentsMock.filter(({ slug }) => slug.current === work.slug);
+
+		expect(work.totalReadingTime).toBe(document.totalReadingTime);
+	});
+
+	it('should order the listing by title', async () => {
+		const works = await run(literaryWorkNavigationTeasersWithAuthorsQuery, dataset);
+
+		const titles = works.map(({ title }: { title: string }) => title);
+		expect(titles).toEqual([...titles].sort((a, b) => a.localeCompare(b)));
+	});
+
+	it('should leave drafts out', async () => {
+		const draft = { ...onoffLiteraryWorkDocumentsMock[0], _id: 'drafts.una-obra-en-borrador' };
+
+		const works = await run(literaryWorkNavigationTeasersWithAuthorsQuery, [...dataset, draft]);
+
+		expect(works).toHaveLength(onoffLiteraryWorkDocumentsMock.length);
 	});
 });

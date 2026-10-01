@@ -1,13 +1,8 @@
 import type { SanityClient } from '@sanity/client';
-import type { LandingPageContentQueryResult, RotatingContentQueryResult } from '@sanity-types';
+import type { LandingPageContentQueryResult } from '@sanity-types';
 import type { HighlightedAuthor, LandingPageContent, RotatingContent } from '@models/landing-page-content.model';
-import {
-	createLiteraryWorkNavigationTeaser,
-	type LiteraryWorkNavigationTeaserWithAuthors,
-} from '@models/literary-work.model';
-import { createReadingTime } from '@models/reading-time.model';
-import { mapAuthorTeaser, mapContentCampaigns, mapTags, urlFor } from '../../_utils/functions';
-import { mapMediaTeasers } from '../../_utils/media-sources.functions';
+import type { LiteraryWorkNavigationTeaserWithAuthors } from '@models/literary-work.model';
+import { mapAuthorTeaser, mapContentCampaigns, mapTags } from '../../_utils/functions';
 import { client as sanityClient } from '../../_helpers/sanity-connector';
 import {
 	landingPageContentQuery,
@@ -17,6 +12,7 @@ import {
 } from '../../_queries/content.query';
 import { literaryWorkTeasers } from '../../_queries/literary-work.query';
 import { mapSanityCollectionTeaser } from '../collection/collection-teaser.acl';
+import { mapNavigationTeaser } from '../literary-work/literary-work-navigation-teaser.acl';
 import { MalformedLandingPageError, MalformedRotatingContentError } from './content.errors';
 import type {
 	ContentRepository,
@@ -26,11 +22,6 @@ import type {
 } from './content.repository';
 
 type SanityLandingPage = NonNullable<LandingPageContentQueryResult>;
-type SanityRotatingContent = NonNullable<RotatingContentQueryResult>;
-// La misma vista de obra la proyectan la landing y el contenido rotativo: el mapper se tipa contra la
-// unión para que ninguna de las dos pueda divergir sin que el typecheck lo denuncie.
-type SanityNavigationTeaser =
-	SanityLandingPage['latestLiteraryWorks'][number] | SanityRotatingContent['mostReadLiteraryWorks'][number];
 
 // El documento rotativo es único por diseño, y tanto la query que lo lee como el patch que lo escribe
 // lo fijan por este `_id`.
@@ -70,7 +61,7 @@ export class SanityContentRepository implements ContentRepository {
 			return {
 				_id: raw._id,
 				name: raw.name,
-				mostRead: raw.mostReadLiteraryWorks.map((work) => this.mapNavigationTeaser(work)),
+				mostRead: raw.mostReadLiteraryWorks.map((work) => mapNavigationTeaser(work)),
 			};
 		} catch (error) {
 			throw new MalformedRotatingContentError({ cause: error });
@@ -151,34 +142,9 @@ export class SanityContentRepository implements ContentRepository {
 			collections: raw.collections.map(mapSanityCollectionTeaser),
 			campaigns: mapContentCampaigns(raw.campaigns),
 			mostRead,
-			latestReads: raw.latestLiteraryWorks.map((work) => this.mapNavigationTeaser(work)),
+			latestReads: raw.latestLiteraryWorks.map((work) => mapNavigationTeaser(work)),
 			highlightedAuthors: this.mapHighlightedAuthors(raw.highlightedAuthors),
 		};
-	}
-
-	// Este repository es el primer y único productor backend de la vista de navegación con autores: la
-	// pintan las tarjetas de la página de inicio, que no muestran cuerpo y por eso no piden extracto.
-	//
-	// El error que sale de acá nombra la **obra**, y es el guard de arriba el que lo envuelve nombrando
-	// la semana: sin esa distinción, el mensaje culparía a la landing por una obra mal curada que puede
-	// estar en cualquiera de las dos listas, o en el documento rotativo, que ni siquiera es una landing.
-	private mapNavigationTeaser(raw: SanityNavigationTeaser): LiteraryWorkNavigationTeaserWithAuthors {
-		if (raw.totalReadingTime === null) {
-			// Sin el total no hay nada que mostrar en la tarjeta: es una obra a la que el backfill todavía
-			// no le calculó su tiempo de lectura.
-			throw new Error(`LiteraryWorkNavigationTeaser inválido: sin tiempo de lectura (slug "${raw.slug}")`);
-		}
-		return createLiteraryWorkNavigationTeaser({
-			_id: raw._id,
-			slug: raw.slug,
-			title: raw.title,
-			coverImage: raw.coverImage ? urlFor(raw.coverImage) : '',
-			totalReadingTime: createReadingTime(raw.totalReadingTime),
-			sectionCount: raw.sectionCount,
-			tags: mapTags(raw.tags),
-			mediaSources: mapMediaTeasers(raw.mediaSources),
-			authors: raw.authors.map(mapAuthorTeaser),
-		});
 	}
 
 	/** Traduce los autores que la semana destaca, con las etiquetas y el conteo que solo esta pantalla usa. */
