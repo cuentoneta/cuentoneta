@@ -19,8 +19,8 @@ importers:
         specifier: ^8.13.0
         version: 8.13.0(6f86771d0a193cad2256470c96f9d2f1)
       '@sanity/export':
-        specifier: ^6.2.1
-        version: 6.2.1
+        specifier: ^7.0.3
+        version: 7.0.3(vitest@5.0.2(@types/node@24.19.0)(jsdom@29.1.1(@noble/hashes@2.4.0))(vite@7.3.6(@types/node@24.19.0)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1)))
       '@sanity/icons':
         specifier: ^5.2.2
         version: 5.2.2(react@19.3.0)
@@ -2043,6 +2043,11 @@ packages:
     engines: {node: '>=20.19 <22 || >=22.12'}
     hasBin: true
 
+  '@sanity/export@7.0.3':
+    resolution: {integrity: sha512-kzxd4Hi5wcp0zQo9SOHLAFWAZ+rsGWZAUwTcCxw0o4NjhMbxeV0UH8QrBSTyVw+5Mb2in15yn3oMdlqm/N6zmw==}
+    engines: {node: '>=22.12'}
+    hasBin: true
+
   '@sanity/generate-help-url@4.0.0':
     resolution: {integrity: sha512-Ooa4xkLT3TLaX+mw/13fq3IeGdnAkx4rbpVASvRVixzBBvvcL6jPqj50fjlCd+EhgB5GRXBCNNAy/hWXwjZEUA==}
 
@@ -3373,15 +3378,6 @@ packages:
     resolution: {integrity: sha512-IfkbWqOGO2kd2Ccgiz/NIzk3bcwjtVqBm3RNa3j/veHg2q7c1DgS3EXrCrvIWH0jbNTbhkdblnxBP7Dm8CiH+A==}
     engines: {node: '>=14.0.0'}
 
-  get-it@9.5.2:
-    resolution: {integrity: sha512-n4iCIF3/STaCsEIgestecjGJ3Oa+GEIwMT91HU+5TBHQ8DIpBCS1/BXjaxS5HuYHtVMRVTFDRX2bf3+gP/MOPg==}
-    engines: {node: '>=22.12.0'}
-    peerDependencies:
-      vitest: '>=2.0.0'
-    peerDependenciesMeta:
-      vitest:
-        optional: true
-
   get-it@9.6.0:
     resolution: {integrity: sha512-pLA1QOriV5d3DqCmQxxJZ9hIOHMcAmpPiNzZyXgJ5sqWGIBv+Lnpg4ob18Ke6CDSU59cN/ev/mPVSbdS7qkp8g==}
     engines: {node: '>=22.12.0'}
@@ -4205,8 +4201,8 @@ packages:
     resolution: {integrity: sha512-NXAOdnEe5FsZJfT4oK84lE1Y5cFFdWlRuOo5tww8DyNMxyRXwn39fIkUtNLKppcPC+UYU/bXujNCUGDv01y7CA==}
     engines: {node: '>=20'}
 
-  p-timeout@7.0.1:
-    resolution: {integrity: sha512-AxTM2wDGORHGEkPCt8yqxOTMgpfbEHqF51f/5fJCmwFC3C/zNcGT63SymH2ttOAaiIws2zVg4+izQCjrakcwHg==}
+  p-timeout@7.0.2:
+    resolution: {integrity: sha512-prbX4Z3YszrFNgH+MW5Zoeq3baXrMtP/MQnFeET90UB/GtGcGDQ5Usg9OCy6ETjTTntOw1SL2z9fMPUppN3Guw==}
     engines: {node: '>=20'}
 
   p-try@2.2.0:
@@ -7670,7 +7666,7 @@ snapshots:
   '@sanity/client@8.4.0(vitest@5.0.2(@types/node@24.19.0)(jsdom@29.1.1(@noble/hashes@2.4.0))(vite@7.3.6(@types/node@24.19.0)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1)))':
     dependencies:
       eventsource: 5.1.2
-      get-it: 9.5.2(vitest@5.0.2(@types/node@24.19.0)(jsdom@29.1.1(@noble/hashes@2.4.0))(vite@7.3.6(@types/node@24.19.0)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1)))
+      get-it: 9.6.0(vitest@5.0.2(@types/node@24.19.0)(jsdom@29.1.1(@noble/hashes@2.4.0))(vite@7.3.6(@types/node@24.19.0)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1)))
       obug: 2.2.1
       rxjs: 7.8.2
     transitivePeerDependencies:
@@ -7790,6 +7786,15 @@ snapshots:
       - bare-buffer
       - react-native-b4a
       - supports-color
+
+  '@sanity/export@7.0.3(vitest@5.0.2(@types/node@24.19.0)(jsdom@29.1.1(@noble/hashes@2.4.0))(vite@7.3.6(@types/node@24.19.0)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1)))':
+    dependencies:
+      get-it: 9.6.0(vitest@5.0.2(@types/node@24.19.0)(jsdom@29.1.1(@noble/hashes@2.4.0))(vite@7.3.6(@types/node@24.19.0)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1)))
+      modern-tar: 0.8.5
+      obug: 3.0.0
+      p-queue: 9.3.3
+    transitivePeerDependencies:
+      - vitest
 
   '@sanity/generate-help-url@4.0.0': {}
 
@@ -9472,12 +9477,6 @@ snapshots:
       through2: 4.0.2
       tunnel-agent: 0.6.0
 
-  get-it@9.5.2(vitest@5.0.2(@types/node@24.19.0)(jsdom@29.1.1(@noble/hashes@2.4.0))(vite@7.3.6(@types/node@24.19.0)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1))):
-    dependencies:
-      undici: 7.29.0
-    optionalDependencies:
-      vitest: 5.0.2(@types/node@24.19.0)(jsdom@29.1.1(@noble/hashes@2.4.0))(vite@7.3.6(@types/node@24.19.0)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1))
-
   get-it@9.6.0(vitest@5.0.2(@types/node@24.19.0)(jsdom@29.1.1(@noble/hashes@2.4.0))(vite@7.3.6(@types/node@24.19.0)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1))):
     dependencies:
       undici: 7.30.0
@@ -10227,9 +10226,9 @@ snapshots:
   p-queue@9.3.3:
     dependencies:
       eventemitter3: 5.0.4
-      p-timeout: 7.0.1
+      p-timeout: 7.0.2
 
-  p-timeout@7.0.1: {}
+  p-timeout@7.0.2: {}
 
   p-try@2.2.0: {}
 
