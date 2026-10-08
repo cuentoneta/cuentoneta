@@ -1,5 +1,8 @@
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
-import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
+import {
+	onoffLiteraryWorkNavigationTeasersWithAuthorsMock,
+	onoffLiteraryWorkTeasersMock,
+} from '@mocks/onoff-literary-work-teasers.mock';
 import { Hono } from 'hono';
 import { environment } from '../../_helpers/environment';
 import { readCacheHeaders } from '../../_middleware/read-cache-headers.middleware';
@@ -77,23 +80,26 @@ describe('literaryWorkController', () => {
 	});
 
 	describe('GET /', () => {
-		it('should return the whole catalog as teasers when no filter is given', async () => {
+		it('should return the navigation view of every work when no filter is given', async () => {
 			const response = await controller.request('/');
 			const body = await response.json();
 
 			expect(response.status).toBe(200);
-			expect(Array.isArray(body)).toBe(true);
-			expect(body).toHaveLength(onoffLiteraryWorkTeasersMock.length);
+			expect(body).toEqual(onoffLiteraryWorkNavigationTeasersWithAuthorsMock);
+			// La vista no transporta el extracto: el shape exacto es lo que lo afirma.
+			expect(body[0]).not.toHaveProperty('excerpt');
 		});
 
-		it('should return only the works of the author given in the filter', async () => {
+		it('should return the works of the author given in the filter as teasers', async () => {
 			const response = await controller.request(`/?author=${knownAuthor.slug}`);
-			const body: { authors: { slug: string }[] }[] = await response.json();
+			const body: { authors: { slug: string }[]; excerpt: unknown }[] = await response.json();
 
 			expect(response.status).toBe(200);
 			expect(body.length).toBeGreaterThan(0);
-			body.forEach(({ authors }) => {
+			body.forEach(({ authors, excerpt }) => {
 				expect(authors.some(({ slug }) => slug === knownAuthor.slug)).toBe(true);
+				// La ficha de autor pinta la tarjeta, así que su vista conserva el extracto.
+				expect(excerpt).toBeDefined();
 			});
 		});
 

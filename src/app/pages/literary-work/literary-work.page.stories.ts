@@ -3,7 +3,11 @@ import { provideRouter } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { NEVER, of, throwError, type Observable } from 'rxjs';
 
-import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
+import type {
+	LiteraryWork,
+	LiteraryWorkNavigationTeaserWithAuthors,
+	LiteraryWorkTeaser,
+} from '@models/literary-work.model';
 import {
 	onoffLiteraryWorksMock,
 	onoffLiteraryWorksWithMultipleMediaSources,
@@ -16,7 +20,7 @@ import { embedPlaceholdersDecorator, withEmbedPlaceholders } from '@testing/stor
 
 import { provideLiteraryWorkApiMock } from '../../providers/literary-work.mock';
 import { provideCollectionApiMock, StubCollectionApi } from '../../providers/collection.mock';
-import type { LiteraryWorkApi, LiteraryWorkTeaserFilter } from '../../providers/literary-work.provider';
+import type { LiteraryWorkApi } from '../../providers/literary-work.provider';
 import LiteraryWorkPage from './literary-work.page';
 import { literaryWorkPageDocs } from './literary-work.page.docs';
 import { mediaWidgetSelectorDocs } from '@components/media-widget-selector/media-widget-selector.docs';
@@ -43,12 +47,13 @@ class CorpusLiteraryWorkApi implements LiteraryWorkApi {
 			: throwError(() => new HttpErrorResponse({ status: 404, statusText: 'Not Found' }));
 	}
 
-	public getTeasers(filter: LiteraryWorkTeaserFilter = {}): Observable<LiteraryWorkTeaser[]> {
-		return of(
-			filter.author
-				? onoffLiteraryWorkTeasersMock.filter(({ authors }) => authors.some(({ slug }) => slug === filter.author))
-				: [...onoffLiteraryWorkTeasersMock],
-		);
+	// La página de lectura no consulta el catálogo: si alguna vez lo hiciera, este doble lo delata.
+	public getNavigationTeasersWithAuthors(): Observable<LiteraryWorkNavigationTeaserWithAuthors[]> {
+		return throwError(() => new Error('La página de lectura no consulta el catálogo'));
+	}
+
+	public getTeasers(author: string): Observable<LiteraryWorkTeaser[]> {
+		return of(onoffLiteraryWorkTeasersMock.filter(({ authors }) => authors.some(({ slug }) => slug === author)));
 	}
 }
 

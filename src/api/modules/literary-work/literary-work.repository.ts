@@ -1,4 +1,8 @@
-import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
+import type {
+	LiteraryWork,
+	LiteraryWorkNavigationTeaserWithAuthors,
+	LiteraryWorkTeaser,
+} from '@models/literary-work.model';
 import type { MalformedLiteraryWorkError } from './literary-work.errors';
 
 /**
@@ -13,6 +17,13 @@ export interface LiteraryWorkTeaserListing {
 	readonly malformed: readonly MalformedLiteraryWorkError[];
 }
 
+// El listado sin filtros reporta las obras intraducibles con la misma política que el de teasers — el
+// repository reporta y el service decide —, pero transporta la vista de navegación con autores.
+export interface LiteraryWorkNavigationTeaserWithAuthorsListing {
+	readonly literaryWorks: readonly LiteraryWorkNavigationTeaserWithAuthors[];
+	readonly malformed: readonly MalformedLiteraryWorkError[];
+}
+
 // El filtro es un registro y no un slug posicional: cada criterio nuevo suma acá un campo opcional,
 // no una firma ni una sub-ruta.
 export interface LiteraryWorkTeaserFilter {
@@ -23,4 +34,5 @@ export interface LiteraryWorkTeaserFilter {
 export interface LiteraryWorkRepository {
 	fetchBySlug(slug: string): Promise<LiteraryWork | null>;
 	fetchTeasers(filter: LiteraryWorkTeaserFilter): Promise<LiteraryWorkTeaserListing>;
+	fetchNavigationTeasersWithAuthors(): Promise<LiteraryWorkNavigationTeaserWithAuthorsListing>;
 }

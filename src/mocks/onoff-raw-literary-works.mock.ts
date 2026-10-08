@@ -1,4 +1,8 @@
-import type { LiteraryWorkBySlugQueryResult, LiteraryWorkTeasersResult } from '@sanity-types';
+import type {
+	LiteraryWorkBySlugQueryResult,
+	LiteraryWorkNavigationTeasersWithAuthorsQueryResult,
+	LiteraryWorkTeasersResult,
+} from '@sanity-types';
 import { palacioNueveFronterasSectionTitle } from './onoff/literary-work/el-palacio-de-las-nueve-fronteras.epigraph';
 import {
 	palacioFirstSectionReadingTime,
@@ -133,3 +137,21 @@ export const onoffRawLiteraryWorkTeasersMock: LiteraryWorkTeasersResult = [
 		onoffRawCollectionsMock.flatMap(({ literaryWorks }) => literaryWorks).map((teaser) => [teaser._id, teaser]),
 	).values(),
 ];
+
+// Contraparte cruda de la vista de navegación con autores, derivada del crudo de los teasers —la
+// misma obra con más campos— en vez de generarse aparte. Los campos se enumeran, así que una
+// proyección que sume o pierda uno deja de tipar contra `LiteraryWorkNavigationTeasersWithAuthorsQueryResult`.
+export const onoffRawLiteraryWorkNavigationTeasersWithAuthorsMock: LiteraryWorkNavigationTeasersWithAuthorsQueryResult =
+	onoffRawLiteraryWorkTeasersMock.map(
+		({ _id, slug, title, coverImage, totalReadingTime, sectionCount, tags, mediaSources, authors }) => ({
+			_id,
+			slug,
+			title,
+			coverImage,
+			totalReadingTime,
+			sectionCount,
+			tags,
+			mediaSources,
+			authors,
+		}),
+	);

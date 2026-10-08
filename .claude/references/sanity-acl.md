@@ -62,12 +62,14 @@ queda contenido en el mapper; el dominio y el frontend no se enteran.
 > consumen tanto `SanityCollectionRepository` (el catálogo y el detalle de colecciones) como
 > `SanityContentRepository` (las colecciones destacadas de la landing) porque las dos dereferencian
 > una `Collection` y necesitan construir exactamente la misma vista. Vive en el módulo de `collection`
-> — dueño del agregado que describe — y no en el de `content`, que solo lo consume.
+> — dueño del agregado que describe — y no en el de `content`, que solo lo consume. El mismo criterio
+> sigue `src/api/modules/literary-work/literary-work-navigation-teaser.acl.ts` (`mapNavigationTeaser`):
+> el ensamblado de `LiteraryWorkNavigationTeaserWithAuthors` lo comparten `SanityLiteraryWorkRepository`
+> (el listado sin filtros) y `SanityContentRepository` (los slots de la landing).
 >
-> **`defineQuery` exige literales.** El typegen parsea el string de la llamada, así que una constante
-> concatenada o un template interpolado dejan de emitir tipos. Por eso dos queries con la misma
-> proyección **repiten el literal** en vez de compartirlo, y lo que impide que se desincronicen es el
-> tipo: el privado que las mapea se tipa contra una y recibe los resultados de la otra.
+> **Cada query repite el literal de su proyección.** No comparten una constante: así una query no
+> depende de otra, y lo que impide que se desincronicen no es el typegen sino la ACL que las mapea,
+> tipada contra la unión de sus resultados.
 
 ---
 

@@ -1,9 +1,32 @@
-import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
+import {
+	createLiteraryWorkNavigationTeaser,
+	type LiteraryWork,
+	type LiteraryWorkNavigationTeaserWithAuthors,
+	type LiteraryWorkTeaser,
+} from '@models/literary-work.model';
 import type {
+	LiteraryWorkNavigationTeaserWithAuthorsListing,
 	LiteraryWorkRepository,
 	LiteraryWorkTeaserFilter,
 	LiteraryWorkTeaserListing,
 } from './literary-work.repository';
+
+// La vista de navegación es el teaser sin el extracto: se proyecta desde lo que el doble ya almacena
+// en vez de cargar una segunda lista a mano. La factory hace cumplir sus invariantes, como el
+// adaptador de Sanity, y enumerar los campos impide que uno del teaser se cuele en la vista.
+function toNavigationTeaser(teaser: LiteraryWorkTeaser): LiteraryWorkNavigationTeaserWithAuthors {
+	return createLiteraryWorkNavigationTeaser({
+		_id: teaser._id,
+		slug: teaser.slug,
+		title: teaser.title,
+		coverImage: teaser.coverImage,
+		totalReadingTime: teaser.totalReadingTime,
+		sectionCount: teaser.sectionCount,
+		tags: teaser.tags,
+		mediaSources: teaser.mediaSources,
+		authors: teaser.authors,
+	});
+}
 
 export class InMemoryLiteraryWorkRepository implements LiteraryWorkRepository {
 	private readonly literaryWorks: ReadonlyArray<LiteraryWork>;
@@ -30,5 +53,9 @@ export class InMemoryLiteraryWorkRepository implements LiteraryWorkRepository {
 		const slugs = filter.slugs;
 		const literaryWorks = slugs ? byAuthor.filter(({ slug }) => slugs.includes(slug)) : byAuthor;
 		return { literaryWorks, malformed: [] };
+	}
+
+	public async fetchNavigationTeasersWithAuthors(): Promise<LiteraryWorkNavigationTeaserWithAuthorsListing> {
+		return { literaryWorks: this.teasers.map(toNavigationTeaser), malformed: [] };
 	}
 }

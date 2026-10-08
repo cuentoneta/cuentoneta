@@ -9,13 +9,21 @@ import LiteraryWorksPage from './literary-works.page';
 import { LITERARY_WORKS_HOST } from './literary-works-host';
 import type { LiteraryWorkApi } from '../../providers/literary-work.provider';
 import { provideLiteraryWorkApiMock, StubLiteraryWorkApi } from '../../providers/literary-work.mock';
-import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
+import type {
+	LiteraryWork,
+	LiteraryWorkNavigationTeaserWithAuthors,
+	LiteraryWorkTeaser,
+} from '@models/literary-work.model';
 import { createSlug } from '@models/slug.model';
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
 
 class FailingLiteraryWorkApi implements LiteraryWorkApi {
 	public getBySlug(): Observable<LiteraryWork> {
+		return throwError(() => new Error('sin catálogo'));
+	}
+
+	public getNavigationTeasersWithAuthors(): Observable<LiteraryWorkNavigationTeaserWithAuthors[]> {
 		return throwError(() => new Error('sin catálogo'));
 	}
 
@@ -28,6 +36,10 @@ class FailingLiteraryWorkApi implements LiteraryWorkApi {
 // pendiente y la página no llega a resolver ninguna de las otras tres ramas.
 class PendingLiteraryWorkApi implements LiteraryWorkApi {
 	public getBySlug(): Observable<LiteraryWork> {
+		return NEVER;
+	}
+
+	public getNavigationTeasersWithAuthors(): Observable<LiteraryWorkNavigationTeaserWithAuthors[]> {
 		return NEVER;
 	}
 

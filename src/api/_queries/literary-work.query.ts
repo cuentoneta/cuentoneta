@@ -209,3 +209,35 @@ export const literaryWorkTeasers = defineQuery(`
         'body': string::split(string::split(body, "\r\n\r\n")[0], "\n\n")[@ != ""][0]
     }
 } | order(title asc)`);
+
+// El listado sin filtros de la página de obras: la vista de navegación con autores, ordenada por título
+// como el de teasers. La proyección repite el literal de las dos queries de contenido en vez de compartir
+// una constante —una query no depende de otra—, y el mapper que las consume se tipa contra la unión de
+// sus resultados, así que una divergencia entre las tres deja de tipar.
+export const literaryWorkNavigationTeasersWithAuthorsQuery = defineQuery(`
+*[_type == 'literaryWork' && !(_id in path('drafts.**'))]
+{
+    _id,
+    'slug': slug.current,
+    title,
+    coverImage,
+    totalReadingTime,
+    'sectionCount': count(content),
+    'tags': coalesce(tags[] -> {
+        title,
+        'slug': slug.current,
+        description
+    }, []),
+    'mediaSources': coalesce(mediaSources[]{ _type, title }, []),
+    'authors': coalesce(authors[]->{
+        _id,
+        'slug': slug.current,
+        name,
+        image,
+        nationality->,
+        bornOn,
+        bornOnYear,
+        diedOn,
+        diedOnYear
+    }, [])
+} | order(title asc)`);

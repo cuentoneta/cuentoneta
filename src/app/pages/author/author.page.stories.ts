@@ -4,7 +4,11 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { of, throwError, type Observable } from 'rxjs';
 
 import type { AuthorProfile, AuthorTeaser } from '@models/author.model';
-import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
+import type {
+	LiteraryWork,
+	LiteraryWorkNavigationTeaserWithAuthors,
+	LiteraryWorkTeaser,
+} from '@models/literary-work.model';
 import { createMarkdown } from '@models/markdown.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import { authorMock, authorTeaserMock } from '@mocks/author.mock';
@@ -14,7 +18,7 @@ import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 import { provideAuthorApiMock } from '../../providers/author.mock';
 import { provideLiteraryWorkApiMock } from '../../providers/literary-work.mock';
 import type { AuthorApi } from '../../providers/author.provider';
-import type { LiteraryWorkApi, LiteraryWorkTeaserFilter } from '../../providers/literary-work.provider';
+import type { LiteraryWorkApi } from '../../providers/literary-work.provider';
 import AuthorPage from './author.page';
 import { authorPageDocs } from './author.page.docs';
 import { authorInfoPanelDocs } from '@components/author-info-panel/author-info-panel.docs';
@@ -66,8 +70,13 @@ class CorpusLiteraryWorkApi implements LiteraryWorkApi {
 		return of(literaryWork);
 	}
 
-	public getTeasers(filter: LiteraryWorkTeaserFilter = {}): Observable<LiteraryWorkTeaser[]> {
-		return of(filter.author === authorWithoutWorks.slug ? [] : [...onoffLiteraryWorkTeasersMock]);
+	// La ficha de autor no consulta el catálogo: si alguna vez lo hiciera, este doble lo delata.
+	public getNavigationTeasersWithAuthors(): Observable<LiteraryWorkNavigationTeaserWithAuthors[]> {
+		return throwError(() => new Error('La ficha de autor no consulta el catálogo'));
+	}
+
+	public getTeasers(author: string): Observable<LiteraryWorkTeaser[]> {
+		return of(author === authorWithoutWorks.slug ? [] : [...onoffLiteraryWorkTeasersMock]);
 	}
 }
 
