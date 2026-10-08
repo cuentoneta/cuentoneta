@@ -67,9 +67,17 @@ describe('el corpus de teasers de Collection coincide con el mapeo del listado',
 	// declara las colecciones en el orden en que se sumaron al elenco.
 	it.each(onoffRawCollectionTeasersMock.map((raw) => raw.slug))('maps the raw teaser of "%s"', async (slug) => {
 		const expected = onoffCollectionTeasersMock.find((teaser) => teaser.slug === slug);
-		const mapped = await repoReturning(onoffRawCollectionTeasersMock).fetchAll();
+		const { collections: mapped } = await repoReturning(onoffRawCollectionTeasersMock).fetchAll();
 
 		expect(expected).toBeDefined();
 		expect(mapped.find((teaser) => teaser.slug === slug)).toEqual(expected as CollectionTeaser);
+	});
+
+	// El listado reporta un teaser intraducible en vez de rechazar: sin esta aserción, un canon que se
+	// ensucia solo se notaría como un `find` vacío, sin decir cuál se descartó ni por qué.
+	it('translates the whole canon without discarding any teaser', async () => {
+		const { malformed } = await repoReturning(onoffRawCollectionTeasersMock).fetchAll();
+
+		expect(malformed).toEqual([]);
 	});
 });

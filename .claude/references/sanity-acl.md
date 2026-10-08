@@ -64,6 +64,18 @@ queda contenido en el mapper; el dominio y el frontend no se enteran.
 > una `Collection` y necesitan construir exactamente la misma vista. Vive en el módulo de `collection`
 > — dueño del agregado que describe — y no en el de `content`, que solo lo consume.
 >
+> **Los listados que divergen no propagan un error por ítem: lo reportan.** `SanityCollectionRepository.fetchAll()`
+> y `SanityLiteraryWorkRepository.fetchTeasers()` no lanzan cuando un documento no arma su teaser:
+> acumulan el error tipado junto a los teasers sanos y devuelven un registro —
+> `CollectionTeaserListing` / `LiteraryWorkTeaserListing`, con la forma `{ <agregado>, malformed }` —
+> en vez de decidir qué hacer con el descarte. Esa decisión es del service: registra cada descarte con
+> `console.warn` (slug y causa) y sirve el resto. La política sí diverge por listado — el de obras
+> filtra, así que un catálogo íntegramente roto es un `[]` legítimo; el de colecciones no tiene
+> filtro, así que un catálogo con colecciones del que no se pudo construir ninguna es un error propio
+> (`MalformedCollectionCatalogError`) —, pero la forma es la misma en los dos: el repository nunca
+> decide, solo reporta. La lectura puntual (`fetchBySlug`) no se degrada de este modo: ahí un dato
+> inconstruible sigue propagándose como error, porque el detalle no tiene "los demás" a los que servir.
+>
 > **`defineQuery` exige literales.** El typegen parsea el string de la llamada, así que una constante
 > concatenada o un template interpolado dejan de emitir tipos. Por eso dos queries con la misma
 > proyección **repiten el literal** en vez de compartirlo, y lo que impide que se desincronicen es el
