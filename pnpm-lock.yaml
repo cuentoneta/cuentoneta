@@ -29,6 +29,8 @@ overrides:
   serialize-javascript@6: '>=7.0.5'
   socket.io-parser@4: '>=4.2.6 <5'
   tar@7: '>=7.5.11 <8'
+  undici@6: '>=6.28.1 <7'
+  undici@7: '>=7.29.1 <8'
   validator@13: '>=13.15.22 <14'
   vite@7: '>=7.3.2 <8'
   ws@8: '>=8.20.1 <9'
@@ -8417,13 +8419,9 @@ packages:
   undici-types@7.18.2:
     resolution: {integrity: sha512-AsuCzffGHJybSaRrmr5eHr81mwJU3kjw6M+uprWvCXiNeN9SOGwQ3Jn8jb8m3Z6izVgknn1R0FTCEAP2QrLY/w==}
 
-  undici@6.27.0:
-    resolution: {integrity: sha512-YmfV3YnEDzXRC5lZ2jWtWWHKGUm1zIt8AhesR1tens+HTNv+YZlN/dp6G727LOvMJ8xjP9Be7Y2Sdr96LDm+pg==}
+  undici@6.29.0:
+    resolution: {integrity: sha512-R+RODBqp6i2pPflGdq+xIOUkl+RNfGgHwoinecKu/JCuf2uO06cOKoDbI2P7Dn6KcswdKwrczbU6IYJ6K8X+wg==}
     engines: {node: '>=18.17'}
-
-  undici@7.29.0:
-    resolution: {integrity: sha512-IDxfleLmmbSskfWSUATiN1nfn2rDuvnMOqb5CWR92iIfojA0Ud+ulOAAEQ57LPr9rWmsreUyf5lwyao+7GNNVw==}
-    engines: {node: '>=20.18.1'}
 
   undici@7.29.1:
     resolution: {integrity: sha512-RYONW2MeafgYlkVOKYKkA/Ag7BmXqgIWCa8t1m0JcxrQg9pI9lEqRhAOruOBCbAohOa/gkCF+iPi9hrgvTzu6Q==}
@@ -10855,7 +10853,7 @@ snapshots:
   '@digitalbazaar/http-client@4.3.0':
     dependencies:
       ky: 1.14.3
-      undici: 6.27.0
+      undici: 6.29.0
 
   '@discoveryjs/json-ext@1.1.0': {}
 
@@ -16111,7 +16109,7 @@ snapshots:
       tmp: 0.2.7
       tsconfig-paths: 4.2.0
       tslib: 2.8.1
-      undici: 7.29.0
+      undici: 7.29.1
       util-deprecate: 1.0.2
       wcwidth: 1.0.1
       which: 3.0.1
@@ -17686,9 +17684,7 @@ snapshots:
 
   undici-types@7.18.2: {}
 
-  undici@6.27.0: {}
-
-  undici@7.29.0: {}
+  undici@6.29.0: {}
 
   undici@7.29.1: {}
 
