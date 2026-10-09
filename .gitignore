@@ -100,3 +100,5 @@ scripts/*.mp4
 *service-account*.json
 gsc-key.json
 /.secrets/
+vitest.config.*.timestamp*
+.vitest
