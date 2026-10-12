@@ -3,8 +3,8 @@ export type Slug = string & { readonly __brand: 'Slug' };
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 /**
- * El formato que toda frontera exige a un slug: el Studio al guardarlo, el API al recibirlo y el sitemap
- * al publicarlo. Acepta cualquier valor para que esas fronteras lo usen sobre datos sin tipar.
+ * El formato que el dominio sabe construir, para que una frontera lo verifique sin depender de que
+ * `createSlug` lance. Acepta cualquier valor porque las fronteras lo aplican sobre datos sin tipar.
  */
 export function isSlug(value: unknown): value is Slug {
 	return typeof value === 'string' && SLUG_PATTERN.test(value);
