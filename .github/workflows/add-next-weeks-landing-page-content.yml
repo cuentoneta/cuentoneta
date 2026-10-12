@@ -1,7 +1,8 @@
 # Pre-genera en `production` los documentos de landing page de las próximas semanas.
 #
-# Primer paso de la cadena semanal: cuando esta corrida termina, `sync-datasets.yml` arranca solo
-# (`workflow_run`) y copia `production` a `staging` y `development`.
+# Primer paso de la cadena semanal de actualización y sincronización de contenido: cuando esta
+# corrida termina, `sync-datasets.yml` arranca solo (`workflow_run`) y copia `production` a
+# `staging` y `development`.
 #
 # Los dos workflows están encadenados y no agendados por separado porque el sync tiene que copiar
 # después de que exista la landing de la semana siguiente; si copia antes, esos dos datasets se
