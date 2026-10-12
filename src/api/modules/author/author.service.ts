@@ -6,12 +6,13 @@ import { mapAuthorProfile, mapAuthorTeaser } from '../../_utils/functions';
 
 // Funciones de repository
 import { fetchAllAuthors, fetchAuthorBySlug } from './author.repository';
+import { AuthorNotFoundError } from './author.errors';
 
 export async function getAuthorBySlug(slug: string): Promise<AuthorProfile> {
 	const result = await fetchAuthorBySlug(slug);
 
 	if (!result) {
-		throw new Error(`Author with slug ${slug} not found.`);
+		throw new AuthorNotFoundError(slug);
 	}
 
 	return mapAuthorProfile(result);

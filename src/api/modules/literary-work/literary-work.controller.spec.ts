@@ -4,6 +4,7 @@ import { Hono } from 'hono';
 import { environment } from '../../_helpers/environment';
 import { readCacheHeaders } from '../../_middleware/read-cache-headers.middleware';
 import { createLiteraryWorkController } from './literary-work.controller';
+import { LiteraryWorkNotFoundError } from './literary-work.errors';
 import { InMemoryLiteraryWorkRepository } from './literary-work.repository.mock';
 
 describe('literaryWorkController', () => {
@@ -46,6 +47,22 @@ describe('literaryWorkController', () => {
 
 		expect(response.status).toBe(404);
 		expect(body.error).toContain('no-existe');
+	});
+
+	it('should answer a slug the schema rejects with the same 404 as an unknown one', async () => {
+		const response = await controller.request('/no%20es%20slug');
+
+		expect(response.status).toBe(404);
+		await expect(response.json()).resolves.toEqual({ error: new LiteraryWorkNotFoundError('no es slug').message });
+	});
+
+	it('should not emit cache headers on the 404 of a malformed slug', async () => {
+		environment.production = true;
+
+		const response = await appUnderTest().request('/literary-work/no%20es%20slug');
+
+		expect(response.status).toBe(404);
+		expect(response.headers.get('Vercel-CDN-Cache-Control')).toBeNull();
 	});
 
 	it('should emit the edge cache headers on a 200 in production', async () => {

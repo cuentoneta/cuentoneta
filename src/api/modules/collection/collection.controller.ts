@@ -1,7 +1,6 @@
 import { Hono, type Context } from 'hono';
-import { zValidator } from '@hono/zod-validator';
 
-import { slugSchema } from '@schemas/common.schemas';
+import { slugParamValidator } from '../../_middleware/slug-param-validator.middleware';
 import { CollectionNotFoundError, MalformedCollectionError } from './collection.errors';
 import type { CollectionRepository } from './collection.repository';
 import { getCollectionBySlug, getCollections } from './collection.service';
@@ -27,10 +26,14 @@ export function createCollectionController(repository?: CollectionRepository) {
 
 	controller.get('/', async (c) => respond(c, () => getCollections(repository)));
 
-	controller.get('/:slug', zValidator('param', slugSchema), async (c) => {
-		const { slug } = c.req.valid('param');
-		return respond(c, () => getCollectionBySlug(slug, repository));
-	});
+	controller.get(
+		'/:slug',
+		slugParamValidator((slug) => new CollectionNotFoundError(slug)),
+		async (c) => {
+			const { slug } = c.req.valid('param');
+			return respond(c, () => getCollectionBySlug(slug, repository));
+		},
+	);
 
 	return controller;
 }
