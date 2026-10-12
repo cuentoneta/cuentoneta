@@ -81,7 +81,7 @@ describe('fetchClarityData', () => {
 		const error = await fetchClarityData().catch((cause: unknown) => cause);
 
 		expect(error).toBeInstanceOf(ClarityRequestError);
-		expect((error as ClarityRequestError).message).toContain('Clarity respondió 429 Too Many Requests');
+		expect((error as ClarityRequestError).message).toContain('Clarity API responded with status 429 Too Many Requests');
 	});
 
 	it('should let a network failure through untouched', async () => {

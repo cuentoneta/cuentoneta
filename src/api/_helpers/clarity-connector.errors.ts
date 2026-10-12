@@ -4,7 +4,7 @@ export class ClarityRequestError extends Error {
 		statusText = '',
 		body = '',
 	) {
-		super(`Clarity respondió ${status} ${statusText}: ${body}`);
+		super(`Clarity API responded with status ${status} ${statusText}: ${body}`);
 		this.name = 'ClarityRequestError';
 	}
 }
