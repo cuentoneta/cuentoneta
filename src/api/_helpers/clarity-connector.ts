@@ -7,10 +7,11 @@ import { ClarityRequestError, ClarityResponseError } from './clarity-connector.e
 // `fetch` tal cual.
 export const fetchClarityData = async (): Promise<ClarityResponse> => {
 	const response = await fetch('https://www.clarity.ms/export-data/api/v1/project-live-insights', {
-		headers: { Authorization: `Bearer ${environment.clarity.token}`, ContentType: 'application/json' },
+		headers: { Authorization: `Bearer ${environment.clarity.token}`, 'Content-Type': 'application/json' },
 	});
 	if (!response.ok) {
-		throw new ClarityRequestError(response.status);
+		// Clarity contesta los rechazos (token, cuota diaria) con cuerpo vacío: sin el status el fallo sería un error de parseo.
+		throw new ClarityRequestError(response.status, response.statusText, await response.text());
 	}
 
 	const body = await response.json().catch((cause: unknown) => {

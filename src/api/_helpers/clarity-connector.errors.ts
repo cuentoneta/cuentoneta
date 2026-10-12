@@ -1,6 +1,10 @@
 export class ClarityRequestError extends Error {
-	constructor(public readonly status: number) {
-		super(`Clarity API responded with status ${status}`);
+	constructor(
+		public readonly status: number,
+		statusText = '',
+		body = '',
+	) {
+		super(`Clarity respondió ${status} ${statusText}: ${body}`);
 		this.name = 'ClarityRequestError';
 	}
 }

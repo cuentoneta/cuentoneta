@@ -30,7 +30,9 @@ describe('fetchClarityData', () => {
 
 		await expect(fetchClarityData()).resolves.toEqual(metrics);
 
-		expect(fetchSpy.mock.calls[0][1]).toMatchObject({ headers: { Authorization: 'Bearer clarity-token' } });
+		expect(fetchSpy.mock.calls[0][1]).toMatchObject({
+			headers: { Authorization: 'Bearer clarity-token', 'Content-Type': 'application/json' },
+		});
 	});
 
 	it('should not validate the content of each metric', async () => {
@@ -71,6 +73,15 @@ describe('fetchClarityData', () => {
 		expect(error).toBeInstanceOf(ClarityRequestError);
 		expect(error).not.toBeInstanceOf(ClarityResponseError);
 		expect((error as ClarityRequestError).status).toBe(status);
+	});
+
+	it('should report the status when Clarity rejects the request with an empty body', async () => {
+		spyOn(globalThis, 'fetch').mockResolvedValue(new Response(null, { status: 429, statusText: 'Too Many Requests' }));
+
+		const error = await fetchClarityData().catch((cause: unknown) => cause);
+
+		expect(error).toBeInstanceOf(ClarityRequestError);
+		expect((error as ClarityRequestError).message).toContain('Clarity respondió 429 Too Many Requests');
 	});
 
 	it('should let a network failure through untouched', async () => {
