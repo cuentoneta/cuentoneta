@@ -186,14 +186,14 @@ La función `addNextWeeksLandingPageContent(weeksInTheFuture)` ejecuta el siguie
 La definición para la ejecución de este cronjob se encuentra en el workflow `.github/workflows/add-next-weeks-landing-page-content.yml`, que corre `pnpm ops landing-pages:add-next-weeks` contra `production` con el secret `SANITY_AUTH_TOKEN`:
 
 - **Frecuencia**: Semanalmente
-- **Día y hora**: Domingos a las 02:47 UTC (sábados a las 23:47 GMT -3), media hora antes del sync de datasets (`.github/workflows/sync-datasets.yml`, domingos a las 03:17 UTC), para que `staging` y `development` repliquen ya la semana que empieza al día siguiente
+- **Día y hora**: Sábados a las 15:17 UTC (12:17 GMT -3). Es el primer paso de la cadena semanal de actualización y sincronización de contenido: al terminar la corrida programada arranca el sync de datasets (`.github/workflows/sync-datasets.yml`, por `workflow_run`, sin cron propio), para que `staging` y `development` repliquen ya la semana que empieza el lunes. El orden lo garantiza el encadenado, no el reloj: GitHub demora los `schedule` por horas
 - **Tolerancia**: Puede también ejecutarse de manera manual en cualquier momento antes de que se necesite, con el disparo manual del workflow o con `pnpm ops landing-pages:add-next-weeks` (`--weeks=<n>` cambia la cantidad de semanas, por defecto una); ambos escriben, y al ser idempotente una corrida de más no duplica documentos
 
-> **Interacción con la numeración ISO-8601 (#1751):** las semanas ISO empiezan el **lunes**, y el cron corre el **domingo** — el último día de la semana ISO en curso. Por eso, el domingo la home todavía sirve la semana que termina ese día, y recién el lunes rota a la siguiente. Esto es **continuo, sin huecos**: cada domingo el cron crea, si falta, la semana siguiente (`semana_actual + 1`), que es la que la home pedirá de lunes a sábado. Si los editores ya la cargaron a mano, la corrida no hace nada.
+> **Interacción con la numeración ISO-8601 (#1751):** las semanas ISO empiezan el **lunes**, y el cron corre el **sábado** — dentro de la semana ISO en curso, que termina el domingo. Por eso, el sábado la home todavía sirve la semana en curso, y recién el lunes rota a la siguiente. Esto es **continuo, sin huecos**: cada sábado el cron crea, si falta, la semana siguiente (`semana_actual + 1`), que es la que la home pedirá de lunes a sábado. Si los editores ya la cargaron a mano, la corrida no hace nada.
 
 ### Ejemplo de Ejecución
 
-**Escenario**: Domingo 16 de noviembre de 2025, último día de la semana 46, a las 02:47 UTC (sábado 15, 23:47 GMT -3). Se ejecuta el cronjob con el argumento de "semanas hacia adelante" `--weeks` en su valor predeterminado de 1 (admite de 1 a 26).
+**Escenario**: Sábado 15 de noviembre de 2025, penúltimo día de la semana 46, a las 15:17 UTC (12:17 GMT -3). Se ejecuta el cronjob con el argumento de "semanas hacia adelante" `--weeks` en su valor predeterminado de 1 (admite de 1 a 26).
 
 ```javascript
 await addNextWeeksLandingPageContent(1);
@@ -297,11 +297,11 @@ Los horarios de los cron jobs están en UTC y el resto en horario GMT -3 (Buenos
 
 ### Semana de Publicación Normal
 
-1. **Domingo 02:47 UTC (día 7, semana vigente)** - cron job crea la landing page de la semana siguiente si los editores todavía no la cargaron
+1. **Sábado 15:17 UTC (día 6, semana vigente)** - cron job crea la landing page de la semana siguiente si los editores todavía no la cargaron; al terminar arranca el sync de datasets
 2. **Lunes 00:00 (día 1, semana posterior)** - Se visualiza en la landing page el contenido configurado correspondiente a la nueva semana que acaba de comenzar
 3. **Lunes - Viernes (días 2-6, de la ahora semana vigente)** - Editores actualizan contenido de la landing page para la próxima semana
 4. **Sábado (día 6)** - Revisión final de cambios
-5. **Domingo siguiente 02:47 UTC** - Se repite el ciclo con la próxima semana como "actual"
+5. **Sábado siguiente 15:17 UTC** - Se repite el ciclo con la próxima semana como "actual"
 
 ### Actualización de Obras Más Leídas
 

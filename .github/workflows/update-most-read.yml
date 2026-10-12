@@ -1,7 +1,8 @@
 # Actualiza el ranking de obras más leídas en `production` a partir de las páginas más visitadas de Clarity.
 #
-# Dependencia de horario: debe terminar antes del export de `sync-datasets.yml` (domingos 03:17 UTC),
-# para que los datasets replicados lleven el ranking al día. Si se mueve el sync, revisar este cron.
+# Dependencia de horario: debe terminar antes del export de `sync-datasets.yml`, que arranca al terminar
+# la landing semanal (sábados 15:17 UTC), para que los datasets replicados lleven el ranking al día.
+# Si se mueve ese cron, revisar este.
 #
 # Prerequisitos (secrets del repo): SANITY_AUTH_TOKEN, CLARITY_TOKEN y CLARITY_PROJECT_ID.
 # Su id no debe sumarse a los required status checks de `develop`.

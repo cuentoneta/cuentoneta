@@ -38,8 +38,8 @@ name: SEO index status
 
 on:
   schedule:
-    # Lunes 07:23 UTC: después del `issue-refs-sweep` de las 06:00 y lejos del `sync-datasets` de las
-    # 03:17, para no competir por runners. GitHub desactiva un `schedule` tras 60 días sin actividad
+    # Lunes 07:23 UTC: después del `issue-refs-sweep` de las 06:00 y lejos de la cadena semanal de los
+    # sábados, para no competir por runners. GitHub desactiva un `schedule` tras 60 días sin actividad
     # en el repo; el `workflow_dispatch` de abajo permite re-dispararlo a mano cuando eso pasa.
     - cron: '23 7 * * 1'
   workflow_dispatch:
