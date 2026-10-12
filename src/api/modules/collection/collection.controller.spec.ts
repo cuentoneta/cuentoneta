@@ -41,8 +41,8 @@ describe('collectionController', () => {
 		expect(response.status).toBe(404);
 	});
 
-	it('answers an uppercase slug, which the domain rejects, with a 404', async () => {
-		const response = await app.request('/collection/Ambar-y-Ceniza');
+	it('answers the uppercase twin of an existing slug, which the domain rejects, with a 404', async () => {
+		const response = await app.request(`/collection/${firstCollection?.slug.toUpperCase()}`);
 
 		expect(response.status).toBe(404);
 	});

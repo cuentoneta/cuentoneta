@@ -57,7 +57,7 @@ describe('literaryWorkController', () => {
 	});
 
 	// Slugs que `createSlug` rechaza: si la frontera los dejara pasar, el throw del dominio saldría como 500.
-	it.each(['IcyFox', 'el--aleph', '-lead'])(
+	it.each(['IcyFox', knownSlug.toUpperCase(), 'el--aleph', '-lead'])(
 		'should answer the slug %j, which the domain rejects, with a 404',
 		async (slug) => {
 			const response = await controller.request(`/${slug}`);
@@ -136,7 +136,7 @@ describe('literaryWorkController', () => {
 
 		// El filtro es un criterio sobre el listado, no un recurso: un valor mal formado es un request
 		// inválido, y por eso sigue en 400 aunque el slug de ruta responda 404.
-		it.each(['no%20es%20un%20slug', 'Francois-Onoff'])(
+		it.each(['no%20es%20un%20slug', knownAuthor.slug.toUpperCase()])(
 			'should reject the filter value %j with a 400',
 			async (author) => {
 				const response = await controller.request(`/?author=${author}`);

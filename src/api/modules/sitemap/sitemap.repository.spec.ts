@@ -1,5 +1,5 @@
 import { evaluate, parse } from 'groq-js';
-import { type Mock } from '@test-utils';
+import { clearAllMocks, type Mock } from '@test-utils';
 import {
 	onoffAuthorDocumentsMock,
 	onoffCollectionDocumentsMock,
@@ -14,12 +14,15 @@ import { fetchSitemapSlugs } from './sitemap.repository';
 vi.mock('../../_helpers/sanity-connector', () => ({ client: { fetch: vi.fn() } }));
 /* eslint-enable no-restricted-syntax */
 
+interface SitemapSlugsQueryResult {
+	literaryWorks: { slug: string | null }[];
+	authors: { slug: string | null }[];
+	collections: { slug: string | null }[];
+}
+
 const [canonLiteraryWork] = onoffLiteraryWorkDocumentsMock;
 const [canonAuthor] = onoffAuthorDocumentsMock;
 const [canonCollection] = onoffCollectionDocumentsMock;
-
-// Slugs que la poda de la query no ve, porque GROQ no puede expresar el alfabeto del slug.
-const OUTSIDE_THE_ALPHABET = ['foo_bar', 'café'];
 
 function withSlug<T extends { _id: string }>(document: T, slug: string): T {
 	return { ...document, _id: `${document._id}-${slug}`, slug: { _type: 'slug', current: slug } };
@@ -27,13 +30,21 @@ function withSlug<T extends { _id: string }>(document: T, slug: string): T {
 
 // El cliente responde lo mismo que respondería Sanity: el resultado de evaluar la query real sobre los
 // documentos, así el spec no inventa la forma cruda.
-async function answerWith(dataset: unknown[]): Promise<void> {
-	const result = await (await evaluate(parse(sitemapSlugsQuery), { dataset })).get();
+async function answerWith(dataset: unknown[]): Promise<SitemapSlugsQueryResult> {
+	const result = (await (await evaluate(parse(sitemapSlugsQuery), { dataset })).get()) as SitemapSlugsQueryResult;
 	(client.fetch as Mock).mockResolvedValue(result);
+	return result;
 }
+
+const slugsOf = (result: SitemapSlugsQueryResult) =>
+	[...result.literaryWorks, ...result.authors, ...result.collections].map(({ slug }) => slug);
 
 describe('fetchSitemapSlugs', () => {
 	const documents = [canonLiteraryWork, canonAuthor, canonCollection];
+
+	beforeEach(() => {
+		clearAllMocks();
+	});
 
 	it('keeps the slugs the domain can build', async () => {
 		await answerWith(documents);
@@ -46,17 +57,19 @@ describe('fetchSitemapSlugs', () => {
 	});
 
 	it('drops the slugs that pass the query but not the domain rule', async () => {
-		await answerWith([
+		const outsideTheAlphabet = ['foo_bar', 'café'];
+		const queryResult = await answerWith([
 			...documents,
-			...OUTSIDE_THE_ALPHABET.flatMap((slug) => [
+			...outsideTheAlphabet.flatMap((slug) => [
 				withSlug(canonLiteraryWork, slug),
 				withSlug(canonAuthor, slug),
 				withSlug(canonCollection, slug),
 			]),
 		]);
+		// Sin esta precondición el caso pasaría aunque la query ya los podara, sin ejercitar el repository.
+		expect(slugsOf(queryResult)).toEqual(expect.arrayContaining(outsideTheAlphabet));
 
-		const result = await fetchSitemapSlugs();
-		const published = [...result.literaryWorks, ...result.authors, ...result.collections].map(({ slug }) => slug);
+		const published = slugsOf(await fetchSitemapSlugs());
 
 		expect(published).toHaveLength(documents.length);
 		published.forEach((slug) => expect(isSlug(slug)).toBe(true));
