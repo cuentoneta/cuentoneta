@@ -143,6 +143,7 @@ recibe como entrada.
 import { AuthorProfile, AuthorTeaser } from '@models/author.model';
 import { mapAuthorProfile, mapAuthorTeaser } from '../../_utils/functions';
 import { fetchAllAuthors, fetchAuthorBySlug } from './author.repository';
+import { AuthorNotFoundError } from './author.errors';
 
 export async function getAuthorBySlug(slug: string): Promise<AuthorProfile> {
 	const result = await fetchAuthorBySlug(slug);
@@ -195,8 +196,10 @@ authorController.get(
   `zValidator('query', …)`). Los path params usan `:slug` (estilo Hono).
 - **`:slug` mal formado → 404, no 400.** `slugParamValidator(notFound)` (`_middleware/`) envuelve
   `zValidator('param', slugParamSchema)` y responde `{ error }` con el mensaje del `*NotFoundError` del
-  módulo, idéntico al del recurso inexistente: las páginas traducen todo error del API que no sea 404 en 503. Un query param con forma de slug (`?author=`, vía `slugValueSchema`) es criterio de filtro, no
-  recurso: un valor mal formado responde 400.
+  módulo: las páginas traducen todo error del API que no sea 404 en 503. En obra y colección es el mismo
+  404 que el del recurso inexistente; en autor no, porque un autor inexistente con slug bien formado
+  todavía cae en el 500 del `onError` global. Un query param con forma de slug (`?author=`, vía
+  `slugValueSchema`) es criterio de filtro, no recurso: un valor mal formado responde 400.
 - **Orden de rutas:** las rutas específicas van **antes** del wildcard `/:slug` (p. ej.,
   en `literary-work`, `/` → `/:slug`).
 - El controller no conoce Sanity ni los mappers: solo valida, llama al service y serializa.
