@@ -9,9 +9,12 @@ name: Sync datasets (production → staging + development)
 #   - SANITY_STUDIO_PROJECT_ID: id del proyecto Sanity (s4dbqkc5). Ya existe (lo usa ci.yml).
 
 on:
-  schedule:
-    # Domingos 03:17 UTC (~00:17 ART), horario valle; minuto ≠ 0 para evitar el pico de carga de las :00.
-    - cron: '17 3 * * 0'
+  # Sin cron propio: arranca al terminar la corrida programada de `add-next-weeks-landing-page-content.yml`,
+  # para que `staging` y `development` repliquen ya las landing pages recién creadas. Un cron
+  # independiente no garantiza ese orden porque GitHub demora los `schedule` por horas.
+  workflow_run:
+    workflows: ['Add next weeks landing page content']
+    types: [completed]
   workflow_dispatch:
     inputs:
       targets:
@@ -34,6 +37,12 @@ permissions:
 jobs:
   sync:
     name: Sync Sanity datasets from production
+    # `workflow_run` también dispara con una corrida manual de la landing (p. ej. con `--weeks=26`) o
+    # cancelada: solo la corrida programada que terminó, bien o mal, encadena el sync semanal. Una landing
+    # fallida no lo frena porque `production` sigue siendo la fuente de verdad y el fallo ya abre su issue.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.event == 'schedule' && github.event.workflow_run.conclusion != 'cancelled')
     runs-on: ubuntu-latest
 
     env:
@@ -49,8 +58,8 @@ jobs:
       # Umbral mínimo: un export real de producción pesa varios MB; por debajo de 50 KB asumimos un
       # export fallido o un dataset vacío y abortamos sin tocar los targets.
       MIN_TARBALL_BYTES: 51200
-      # En schedule no hay inputs (github.event.inputs.targets = '') → el fallback deja TARGETS en
-      # 'both' y la corrida diaria sincroniza ambos targets. En workflow_dispatch toma el input.
+      # En workflow_run no hay inputs (github.event.inputs.targets = '') → el fallback deja TARGETS en
+      # 'both' y la corrida semanal sincroniza ambos targets. En workflow_dispatch toma el input.
       TARGETS: ${{ github.event.inputs.targets || 'both' }}
 
     steps:
