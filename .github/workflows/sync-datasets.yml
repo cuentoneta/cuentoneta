@@ -10,8 +10,8 @@ name: Sync datasets (production → staging + development)
 
 on:
   # Sin cron propio: arranca al terminar la corrida programada de `add-next-weeks-landing-page-content.yml`,
-  # para que `staging` y `development` repliquen ya las landing pages recién creadas. Un cron
-  # independiente no garantiza ese orden porque GitHub demora los `schedule` por horas.
+  # que explica por qué el orden lo da el encadenado. Corre en horario diurno de Argentina y borra y
+  # reimporta `staging`, que usa el e2e de CI: un PR con e2e en curso en ese momento puede fallar.
   workflow_run:
     workflows: ['Add next weeks landing page content']
     types: [completed]
@@ -37,9 +37,9 @@ permissions:
 jobs:
   sync:
     name: Sync Sanity datasets from production
-    # `workflow_run` también dispara con una corrida manual de la landing (p. ej. con `--weeks=26`) o
-    # cancelada: solo la corrida programada que terminó, bien o mal, encadena el sync semanal. Una landing
-    # fallida no lo frena porque `production` sigue siendo la fuente de verdad y el fallo ya abre su issue.
+    # `workflow_run` también dispara con corridas manuales (p. ej. con `--weeks=26`) o canceladas de la
+    # landing; la `if` deja pasar solo las programadas. Una landing fallida no frena el sync:
+    # `production` sigue siendo la fuente de verdad y el fallo ya abre su propio issue.
     if: >-
       github.event_name == 'workflow_dispatch' ||
       (github.event.workflow_run.event == 'schedule' && github.event.workflow_run.conclusion != 'cancelled')

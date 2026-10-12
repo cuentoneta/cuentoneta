@@ -13,11 +13,17 @@ function workflow(file: string): string {
 
 /** Devuelve el minuto del día UTC del único `cron` del workflow. */
 function minuteOfDay(file: string): number {
-	const match = /- cron: '(\d+) (\d+) \S+ \S+ (\S+)'/.exec(workflow(file));
+	const match = /- cron: '(\d+) (\d+) \S+ \S+ \S+'/.exec(workflow(file));
 	if (!match) {
 		throw new Error(`${file} no declara un cron`);
 	}
 	return Number(match[2]) * 60 + Number(match[1]);
+}
+
+/** Condición `if` del primer job del workflow, en una sola línea. */
+function jobCondition(file: string): string {
+	const block = /^ {4}if: >-\r?\n((?: {6}.+\r?\n)+)/m.exec(workflow(file))?.[1] ?? '';
+	return block.replace(/\s+/g, ' ').trim();
 }
 
 /** Timeout del primer job del workflow. */
@@ -37,12 +43,16 @@ describe('horario de las tareas programadas de producto', () => {
 		expect(sync).toContain(`workflows: ['${workflowName(GENERATOR)}']`);
 	});
 
-	it('should chain the datasets sync only to scheduled generator runs', () => {
-		expect(workflow(SYNC)).toContain("github.event.workflow_run.event == 'schedule'");
+	it('should run the datasets sync on manual dispatch and on scheduled, non-cancelled generator runs', () => {
+		expect(jobCondition(SYNC)).toBe(
+			"github.event_name == 'workflow_dispatch' || (github.event.workflow_run.event == 'schedule' && github.event.workflow_run.conclusion != 'cancelled')",
+		);
 	});
 
-	it('should not gate the landing page generator on the wall clock', () => {
-		expect(workflow(GENERATOR)).not.toMatch(/late_start|Arranque tardío/);
+	it('should not measure the wall clock in the landing page generation job', () => {
+		const generationJob = workflow(GENERATOR).split('notify-failure:')[0];
+
+		expect(generationJob).not.toMatch(/\bdate\b/);
 	});
 
 	it('should finish the most-read update before the generator starts', () => {
