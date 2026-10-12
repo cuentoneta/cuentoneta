@@ -17,6 +17,7 @@ params:path {
 docs {
   Obtener una obra literaria completa por su slug.
   Slug inexistente responde 404 con body { error } — ver docs/LITERARY_WORK_DESIGN.md §7.
+  Un slug mal formado (mayúsculas, guiones al borde o dobles) responde el mismo 404 con { error }.
 
   `editorialNote` (HTML saneado) solo está presente en la respuesta cuando la obra tiene nota
   editorial — ausente u obra sin nota ⇒ el campo no viaja (no un string vacío).

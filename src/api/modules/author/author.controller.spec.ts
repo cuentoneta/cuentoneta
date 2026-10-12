@@ -9,4 +9,10 @@ describe('authorController', () => {
 		expect(response.status).toBe(404);
 		await expect(response.json()).resolves.toEqual({ error: new AuthorNotFoundError('no es slug').message });
 	});
+
+	it('answers an uppercase slug, which the domain rejects, with a 404', async () => {
+		const response = await authorController.request('/Jorge-Luis-Borges');
+
+		expect(response.status).toBe(404);
+	});
 });

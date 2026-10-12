@@ -56,6 +56,17 @@ describe('literaryWorkController', () => {
 		await expect(response.json()).resolves.toEqual({ error: new LiteraryWorkNotFoundError('no es slug').message });
 	});
 
+	// Slugs que `createSlug` rechaza: si la frontera los dejara pasar, el throw del dominio saldría como 500.
+	it.each(['IcyFox', 'el--aleph', '-lead'])(
+		'should answer the slug %j, which the domain rejects, with a 404',
+		async (slug) => {
+			const response = await controller.request(`/${slug}`);
+
+			expect(response.status).toBe(404);
+			await expect(response.json()).resolves.toEqual({ error: new LiteraryWorkNotFoundError(slug).message });
+		},
+	);
+
 	it('should not emit cache headers on the 404 of a malformed slug', async () => {
 		environment.production = true;
 
@@ -123,11 +134,16 @@ describe('literaryWorkController', () => {
 			expect(await response.json()).toEqual([]);
 		});
 
-		it('should reject a filter value outside the slug alphabet', async () => {
-			const response = await controller.request('/?author=no%20es%20un%20slug');
+		// El filtro es un criterio sobre el listado, no un recurso: un valor mal formado es un request
+		// inválido, y por eso sigue en 400 aunque el slug de ruta responda 404.
+		it.each(['no%20es%20un%20slug', 'Francois-Onoff'])(
+			'should reject the filter value %j with a 400',
+			async (author) => {
+				const response = await controller.request(`/?author=${author}`);
 
-			expect(response.status).toBe(400);
-		});
+				expect(response.status).toBe(400);
+			},
+		);
 
 		// Sin trailing slash, que es la URL que el frontend arma de verdad: si el patrón del middleware
 		// no cubriera el path exacto del listado, este caso lo delataría.

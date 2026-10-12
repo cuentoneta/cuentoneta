@@ -252,10 +252,10 @@ Zod valida **datos externos** en la frontera, antes de que el dominio confíe en
 
 ```typescript
 import { z } from 'zod';
-import { slugSchema } from '../../schemas/common.schemas'; // reutilizado por todos los módulos
+import { slugParamValidator } from '../../_middleware/slug-param-validator.middleware';
 
-// en el controller Hono:
-// zValidator('param', slugSchema)
+// en el controller Hono, para un recurso por slug (un `:slug` mal formado responde el 404 del recurso):
+// slugParamValidator((slug) => new LiteraryWorkNotFoundError(slug))
 ```
 
 **Frontend (`src/models/*.dto.ts`):** los DTO de wire — el contrato que valida la respuesta HTTP antes de mapearla a dominio — usan **`zod/mini`**, importado **como namespace**:

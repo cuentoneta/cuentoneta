@@ -1,6 +1,6 @@
 import { zValidator } from '@hono/zod-validator';
 
-import { slugSchema } from '@schemas/common.schemas';
+import { slugParamSchema } from '@schemas/common.schemas';
 
 /**
  * Valida el `:slug` de una ruta de recurso y responde **404** cuando no tiene formato de slug, con el
@@ -10,7 +10,7 @@ import { slugSchema } from '@schemas/common.schemas';
  * @param notFound construye el error de "no encontrado" del módulo; su mensaje es el cuerpo del 404.
  */
 export function slugParamValidator(notFound: (slug: string) => Error) {
-	return zValidator('param', slugSchema, (result, c) => {
+	return zValidator('param', slugParamSchema, (result, c) => {
 		if (!result.success) {
 			return c.json({ error: notFound(String(result.data.slug)).message }, 404);
 		}

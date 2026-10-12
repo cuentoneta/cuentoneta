@@ -41,6 +41,12 @@ describe('collectionController', () => {
 		expect(response.status).toBe(404);
 	});
 
+	it('answers an uppercase slug, which the domain rejects, with a 404', async () => {
+		const response = await app.request('/collection/Ambar-y-Ceniza');
+
+		expect(response.status).toBe(404);
+	});
+
 	it('answers a slug the schema rejects with the same 404 as an unknown one', async () => {
 		const response = await app.request('/collection/Con%20Espacios');
 

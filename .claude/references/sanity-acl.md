@@ -148,7 +148,7 @@ export async function getAuthorBySlug(slug: string): Promise<AuthorProfile> {
 	const result = await fetchAuthorBySlug(slug);
 
 	if (!result) {
-		throw new Error(`Author with slug ${slug} not found.`);
+		throw new AuthorNotFoundError(slug);
 	}
 
 	return mapAuthorProfile(result);
@@ -179,16 +179,24 @@ authorController.get('/', async (c) => {
 	return c.json(result);
 });
 
-authorController.get('/:slug', zValidator('param', slugSchema), async (c) => {
-	const { slug } = c.req.valid('param');
-	const result = await getAuthorBySlug(slug);
+authorController.get(
+	'/:slug',
+	slugParamValidator((slug) => new AuthorNotFoundError(slug)),
+	async (c) => {
+		const { slug } = c.req.valid('param');
+		const result = await getAuthorBySlug(slug);
 
-	return c.json(result);
-});
+		return c.json(result);
+	},
+);
 ```
 
 - Validación de path params / query con **`@hono/zod-validator`** (`zValidator('param', …)`,
   `zValidator('query', …)`). Los path params usan `:slug` (estilo Hono).
+- **`:slug` mal formado → 404, no 400.** `slugParamValidator(notFound)` (`_middleware/`) envuelve
+  `zValidator('param', slugParamSchema)` y responde `{ error }` con el mensaje del `*NotFoundError` del
+  módulo, idéntico al del recurso inexistente: las páginas traducen todo error del API que no sea 404 en 503. Un query param con forma de slug (`?author=`, vía `slugValueSchema`) es criterio de filtro, no
+  recurso: un valor mal formado responde 400.
 - **Orden de rutas:** las rutas específicas van **antes** del wildcard `/:slug` (p. ej.,
   en `literary-work`, `/` → `/:slug`).
 - El controller no conoce Sanity ni los mappers: solo valida, llama al service y serializa.
