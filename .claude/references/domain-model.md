@@ -194,13 +194,19 @@ export type Slug = string & { readonly __brand: 'Slug' };
 
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
+export function isSlug(value: unknown): value is Slug {
+	return typeof value === 'string' && SLUG_PATTERN.test(value);
+}
+
 export function createSlug(value: string): Slug {
-	if (!SLUG_PATTERN.test(value)) {
+	if (!isSlug(value)) {
 		throw new Error(`Slug inválido: "${value}"`);
 	}
 	return value as Slug;
 }
 ```
+
+`isSlug` es la **única** definición del formato y la consumen las fronteras que reciben o publican un slug, en vez de declarar cada una su propia regex. Una frontera más permisiva que `createSlug` deja pasar un valor que el dominio no puede construir, y la falla aparece recién al servirlo.
 
 ### ReadingTime — minutos de lectura
 
