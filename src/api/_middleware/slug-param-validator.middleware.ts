@@ -12,7 +12,7 @@ import { slugParamSchema } from '@schemas/common.schemas';
 export function slugParamValidator(notFound: (slug: string) => Error) {
 	return zValidator('param', slugParamSchema, (result, c) => {
 		if (!result.success) {
-			return c.json({ error: notFound(String(result.data.slug)).message }, 404);
+			return c.json({ error: notFound(result.data.slug).message }, 404);
 		}
 	});
 }
