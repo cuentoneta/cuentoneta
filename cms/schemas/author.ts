@@ -1,7 +1,7 @@
 import { UsersIcon } from '@sanity/icons/Users';
 import { resource } from './resourceType';
 import { defineArrayMember, defineField, defineType } from 'sanity';
-import { validateHistoricalDate } from '../utils/validations';
+import { validateHistoricalDate, validateSlugFormat } from '../utils/validations';
 
 const defaultAuthorImage = {
 	asset: {
@@ -38,7 +38,7 @@ export default defineType({
 				source: 'name',
 				maxLength: 96,
 			},
-			validation: (Rule) => Rule.required(),
+			validation: (Rule) => Rule.required().custom(validateSlugFormat),
 		}),
 		defineField({
 			name: 'image',

@@ -1,6 +1,7 @@
 import { StackIcon } from '@sanity/icons/Stack';
 import { defineArrayMember, defineField, defineType } from 'sanity';
 import { audioRecording, pdfLink, spaceRecording, spotifyPodcastEpisode, youtubeVideo } from './media-sources';
+import { validateSlugFormat } from '../utils/validations';
 
 export default defineType({
 	name: 'collection',
@@ -19,7 +20,7 @@ export default defineType({
 			title: 'Slug',
 			type: 'slug',
 			options: { source: 'title', maxLength: 96 },
-			validation: (Rule) => Rule.required(),
+			validation: (Rule) => Rule.required().custom(validateSlugFormat),
 		}),
 		defineField({
 			name: 'description',
