@@ -4,6 +4,8 @@ import { client } from '../../_helpers/sanity-connector';
 // Queries
 import { sitemapSlugsQuery } from '@queries/sitemap.query';
 
+import { isSlug } from '@models/slug.model';
+
 // Interfaces
 interface SlugEntry {
 	slug: string;
@@ -37,16 +39,17 @@ function formatLastmod(date: string | undefined): string | undefined {
 }
 
 /**
- * Filtra entradas con slugs inválidos y formatea las fechas
+ * Descarta las entradas cuyo slug el dominio no puede construir y formatea las fechas. Es la guarda que
+ * completa la poda de la query, que no puede expresar el alfabeto del slug.
  */
 function processSlugEntries(
 	entries: {
-		slug: string;
+		slug: string | null;
 		lastmod: string;
 	}[],
 ): SlugEntry[] {
 	return entries
-		.filter((entry) => entry.slug)
+		.filter((entry): entry is { slug: string; lastmod: string } => isSlug(entry.slug))
 		.map((entry) => ({
 			slug: entry.slug,
 			lastmod: formatLastmod(entry.lastmod),

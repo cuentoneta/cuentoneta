@@ -70,11 +70,36 @@ describe('sitemapSlugsQuery', () => {
 		expect((await run([draft]))[type]).toEqual([]);
 	});
 
-	it.each([
+	const canonByType = [
 		['literaryWorks' as const, canonLiteraryWork],
 		['authors' as const, canonAuthor],
 		['collections' as const, canonCollection],
-	])('projects the %s slug flat', async (type, document) => {
+	] as const;
+	const withSlug = <T extends object>(document: T, current: string): T => ({
+		...document,
+		slug: { _type: 'slug', current },
+	});
+
+	describe.each(canonByType)('for %s', (type, document) => {
+		it.each(['IcyFox', '-lead', 'trail-', 'el--aleph'])('leaves the malformed slug %j out', async (slug) => {
+			expect((await run([withSlug(document, slug)]))[type]).toEqual([]);
+		});
+
+		it('leaves a document without slug out', async () => {
+			const { slug, ...withoutSlug } = document;
+			void slug;
+
+			expect((await run([withoutSlug]))[type]).toEqual([]);
+		});
+
+		// GROQ no puede expresar el alfabeto del slug: esta brecha es la que obliga al repository a
+		// filtrar de nuevo con la regla del dominio. Si la poda la cubriera, esa guarda sobraría.
+		it('lets a slug outside the alphabet through, for the repository to drop', async () => {
+			expect((await run([withSlug(document, 'foo_bar')]))[type]).toHaveLength(1);
+		});
+	});
+
+	it.each(canonByType)('projects the %s slug flat', async (type, document) => {
 		const [entry] = (await run([document]))[type];
 
 		expect(entry?.slug).toBe(document?.slug?.current);
