@@ -6,9 +6,10 @@ import { SanityLiteraryWorkRepository } from './literary-work.repository.sanity'
 import type { ContentRepository } from '../content/content.repository';
 import { SanityContentRepository } from '../content/content.repository.sanity';
 import { getRotatingContent } from '../content/content.service';
-import { fetchPopularPagesMetric } from '../../_helpers/clarity-connector';
+import { fetchClarityData } from '../../_helpers/clarity-connector';
 import { ClarityResponseError } from '../../_helpers/clarity-connector.errors';
 import { environment } from '../../_helpers/environment';
+import { getPopularPagesMetric } from '../../_utils/clarity.utils';
 
 // El repository es stateless, así que instanciarlo por llamada (default) no comparte estado.
 export async function getLiteraryWorkBySlug(
@@ -56,7 +57,7 @@ function slugFromReadingUrl(url: string, prefix: string): string | undefined {
 export async function updateMostReadLiteraryWorks(
 	contentRepository: ContentRepository = new SanityContentRepository(),
 ): Promise<RotatingContent> {
-	const popularPagesMetric = await fetchPopularPagesMetric();
+	const popularPagesMetric = getPopularPagesMetric(await fetchClarityData());
 	if (!popularPagesMetric) {
 		throw new ClarityResponseError('the PopularPages metric is missing');
 	}

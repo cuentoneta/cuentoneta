@@ -1,11 +1,11 @@
-import { clarityResponseSchema, popularPagesMetricSchema, type PopularPagesMetric } from '@schemas/clarity.schemas';
+import { clarityResponseSchema, type ClarityResponse } from '@schemas/clarity.schemas';
 import { environment } from './environment';
 import { ClarityRequestError, ClarityResponseError } from './clarity-connector.errors';
 
-// Valida solo lo que se consume: el contenido de las otras métricas y los campos de `PopularPages` que el
-// ranking no lee no deben tumbarlo. Una falla de red propaga el error de `fetch` tal cual; `undefined`
-// significa que Clarity no reportó la métrica.
-export const fetchPopularPagesMetric = async (): Promise<PopularPagesMetric | undefined> => {
+// Trae todas las métricas de los insights del proyecto y valida solo que sean una lista de métricas; la
+// forma de cada una la valida su extractor en `clarity.utils.ts`. Una falla de red propaga el error de
+// `fetch` tal cual.
+export const fetchClarityData = async (): Promise<ClarityResponse> => {
 	const response = await fetch('https://www.clarity.ms/export-data/api/v1/project-live-insights', {
 		headers: { Authorization: `Bearer ${environment.clarity.token}`, ContentType: 'application/json' },
 	});
@@ -20,14 +20,5 @@ export const fetchPopularPagesMetric = async (): Promise<PopularPagesMetric | un
 	if (!metrics.success) {
 		throw new ClarityResponseError('the body is not a list of metrics', { cause: metrics.error });
 	}
-
-	const metric = metrics.data.find(({ metricName }) => metricName === 'PopularPages');
-	if (!metric) {
-		return undefined;
-	}
-	const popularPages = popularPagesMetricSchema.safeParse(metric);
-	if (!popularPages.success) {
-		throw new ClarityResponseError('the PopularPages metric is malformed', { cause: popularPages.error });
-	}
-	return popularPages.data;
+	return metrics.data;
 };

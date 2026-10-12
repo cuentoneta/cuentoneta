@@ -1,6 +1,10 @@
 import { z } from 'zod';
 
-export const clarityResponseSchema = z.array(z.object({ metricName: z.string() }).loose());
+// Solo el envoltorio: cada métrica se valida recién al extraerla, para que una deformación en una que
+// nadie lee no tumbe a las demás.
+export const clarityResponseSchema = z.array(z.looseObject({ metricName: z.string() }));
+
+export type ClarityResponse = z.infer<typeof clarityResponseSchema>;
 
 export const popularPagesMetricSchema = z.object({
 	metricName: z.literal('PopularPages'),
