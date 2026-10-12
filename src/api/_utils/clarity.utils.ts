@@ -3,6 +3,9 @@
  * @author Ramiro Olivencia <ramiro@olivencia.com.ar>
  */
 
+import { popularPagesMetricSchema, type ClarityResponse, type PopularPagesMetric } from '@schemas/clarity.schemas';
+import { ClarityResponseError } from '../_helpers/clarity-connector.errors';
+
 // Interfaces base para representar la información de las métricas
 interface MetricWithSessions {
 	sessionsCount: string;
@@ -31,11 +34,6 @@ interface EngagementTimeInfo {
 interface SessionsCountInfo {
 	name: string | null;
 	sessionsCount: string;
-}
-
-interface PopularPageInfo {
-	url: string;
-	visitsCount: string;
 }
 
 // Type guards
@@ -112,11 +110,6 @@ interface PageTitleMetric {
 interface ReferrerUrlMetric {
 	metricName: 'ReferrerUrl';
 	information: SessionsCountInfo[];
-}
-
-interface PopularPagesMetric {
-	metricName: 'PopularPages';
-	information: PopularPageInfo[];
 }
 
 type MetricData =
@@ -200,6 +193,16 @@ export const getReferrerUrlMetric = (response: ClarityApiResponse): ReferrerUrlM
 	return response.find((metric): metric is ReferrerUrlMetric => metric.metricName === 'ReferrerUrl');
 };
 
-export const getPopularPagesMetric = (response: ClarityApiResponse): PopularPagesMetric | undefined => {
-	return response.find((metric): metric is PopularPagesMetric => metric.metricName === 'PopularPages');
+// A diferencia de los demás extractores, valida la forma de la métrica: es la única que se consume.
+// `undefined` significa que Clarity no la reportó.
+export const getPopularPagesMetric = (response: ClarityResponse): PopularPagesMetric | undefined => {
+	const metric = response.find(({ metricName }) => metricName === 'PopularPages');
+	if (!metric) {
+		return undefined;
+	}
+	const popularPages = popularPagesMetricSchema.safeParse(metric);
+	if (!popularPages.success) {
+		throw new ClarityResponseError('the PopularPages metric is malformed', { cause: popularPages.error });
+	}
+	return popularPages.data;
 };

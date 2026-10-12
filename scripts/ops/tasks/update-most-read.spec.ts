@@ -2,6 +2,7 @@ import { onoffLiteraryWorkNavigationTeasersWithAuthorsMock } from '@mocks/onoff-
 import { clearAllMocks, type Mock } from '@test-utils';
 import { environment } from '@api/_helpers/environment';
 import { fetchClarityData } from '@api/_helpers/clarity-connector';
+import { ClarityRequestError, ClarityResponseError } from '@api/_helpers/clarity-connector.errors';
 import { InMemoryContentRepository } from '@api/modules/content/content.repository.mock';
 import { runMostReadUpdate } from './update-most-read';
 
@@ -69,10 +70,16 @@ describe('runMostReadUpdate', () => {
 		await expect(runMostReadUpdate(repository())).rejects.toThrow('ranking quedó vacío');
 	});
 
-	it('should fail when Clarity returns no popular pages', async () => {
+	it('should fail with a typed error when Clarity reports no popular pages', async () => {
 		(fetchClarityData as Mock).mockResolvedValue([]);
 
-		await expect(runMostReadUpdate(repository())).rejects.toThrow('Could not fetch metrics.');
+		await expect(runMostReadUpdate(repository())).rejects.toThrow(ClarityResponseError);
+	});
+
+	it('should propagate a provider failure', async () => {
+		(fetchClarityData as Mock).mockRejectedValue(new ClarityRequestError(401));
+
+		await expect(runMostReadUpdate(repository())).rejects.toThrow(ClarityRequestError);
 	});
 
 	it('should fail before reaching Clarity when the Sanity token is missing', async () => {
