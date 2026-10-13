@@ -81,6 +81,13 @@ const commonRestrictedSyntax = [
 		selector: `PropertyDefinition[readonly!=true][value.callee.name=/^(${readonlyFactories.join('|')})$/]`,
 		message: readonlyFactoryMessage,
 	},
+	{
+		// Sin herencia, `protected` no restringe nada que `private` no restrinja, y desde Angular 22.2 la
+		// plantilla y el `host` leen miembros `private`.
+		selector: 'ClassDeclaration:not([abstract=true]):not([superClass]) > ClassBody > [accessibility="protected"]',
+		message:
+			'`protected` solo va en miembros que una subclase usa. Lo que lee la plantilla es `private` — ver angular-components.md.',
+	},
 ];
 
 // Métodos de `vi.*` que tienen wrapper en `src/test-utils.ts` (@test-utils).
