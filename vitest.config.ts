@@ -1,5 +1,6 @@
 /// <reference types="vitest" />
 import angular from '@analogjs/vite-plugin-angular';
+import { availableParallelism } from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { normalizePath } from 'vite';
 import { defineConfig } from 'vitest/config';
@@ -20,6 +21,10 @@ export default defineConfig({
 	resolve: { tsconfigPaths: true },
 	test: {
 		globals: true,
+		// Analog fuerza el pool `vmThreads`, cuyos workers son threads de un solo proceso: la memoria crece
+		// con la cantidad de workers y por encima de ~8 ya no acelera la suite. Hasta 9 hilos el tope
+		// coincide con el default de Vitest (hilos − 1), así que solo cambia algo en máquinas más grandes.
+		maxWorkers: Math.min(8, availableParallelism() - 1),
 		environment: 'happy-dom',
 		// Por defecto happy-dom navega los frames hijos: cada <iframe> montado dispara un fetch real
 		// (p. ej. el embed de Spotify), que al desmontar el frame se aborta y emite un unhandled error
