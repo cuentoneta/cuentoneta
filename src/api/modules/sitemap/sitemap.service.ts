@@ -1,5 +1,6 @@
 // Repository
 import { escapeXml, fetchSitemapSlugs } from './sitemap.repository';
+import { PAGE_REVISED_ON, resolveLastmod } from './sitemap.lastmod';
 
 // Sin `changefreq` ni `priority`: los buscadores los ignoran de forma declarada.
 interface SitemapUrl {
@@ -57,7 +58,10 @@ export async function getSitemapUrls(): Promise<SitemapUrl[]> {
 		...literaryWorks.map((lw) => ({ loc: `${BASE_URL}/literary-work/${lw.slug}`, lastmod: lw.lastmod })),
 
 		// Páginas de autores
-		...authors.map((a) => ({ loc: `${BASE_URL}/author/${a.slug}`, lastmod: a.lastmod })),
+		...authors.map((a) => ({
+			loc: `${BASE_URL}/author/${a.slug}`,
+			lastmod: resolveLastmod(a.latestLiteraryWorkDate, PAGE_REVISED_ON.author),
+		})),
 
 		// Páginas de colecciones
 		...collections.map((c) => ({ loc: `${BASE_URL}/collection/${c.slug}`, lastmod: c.lastmod })),

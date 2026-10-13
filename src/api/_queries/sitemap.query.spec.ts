@@ -1,15 +1,20 @@
 import { evaluate, parse } from 'groq-js';
 import {
+	migratedStoryDocument,
 	onoffAuthorDocumentsMock,
 	onoffCollectionDocumentsMock,
+	onoffDatasetMock,
 	onoffLiteraryWorkDocumentsMock,
+	unmigratedStoryDocument,
 } from '@mocks/onoff-documents.mock';
+import { PAGE_REVISED_ON } from '@api/modules/sitemap/sitemap.lastmod';
+import { shiftDays } from '@testing/date-shift';
 
 import { sitemapSlugsQuery } from './sitemap.query';
 
 interface SitemapSlugs {
 	literaryWorks: { slug: string; lastmod: string }[];
-	authors: { slug: string; lastmod: string }[];
+	authors: { slug: string; latestLiteraryWorkAt: string | null }[];
 	collections: { slug: string; lastmod: string }[];
 }
 
@@ -34,7 +39,6 @@ describe('sitemapSlugsQuery', () => {
 	// escritura de todo el corpus a la vez. El sitemap no debe reflejarla.
 	it.each([
 		['literaryWorks' as const, touched(unpublished(canonLiteraryWork))],
-		['authors' as const, touched(canonAuthor)],
 		['collections' as const, touched(canonCollection)],
 	])('derives the %s lastmod from the creation date, not the write date', async (type, document) => {
 		const [entry] = (await run([document]))[type];
@@ -114,5 +118,89 @@ describe('sitemapSlugsQuery', () => {
 		const slugs = (await run(dataset))[type].map(({ slug }) => slug);
 
 		expect(slugs).toEqual(['orden-1', 'orden-0']);
+	});
+});
+
+describe('sitemapSlugsQuery — latest literary work of an author', () => {
+	type AuthorDocument = typeof canonAuthor;
+
+	// Posterior a todo el canon, y en la zona donde la fecha decide qué se publica: después de la
+	// revisión de la ficha.
+	const laterDay = shiftDays(PAGE_REVISED_ON.author, 1);
+	const otherAuthor = { ...canonAuthor, _id: `${canonAuthor._id}-otro`, slug: { _type: 'slug' as const, current: 'otro-autor' } };
+
+	const laterLiteraryWork = (publishedAt: string, authors: AuthorDocument[] = [canonAuthor]) => ({
+		...canonLiteraryWork,
+		_id: 'onoff-literary-work-posterior',
+		slug: { _type: 'slug' as const, current: 'obra-posterior' },
+		publishedAt,
+		authors: authors.map(({ _id }) => ({ _key: _id, _type: 'reference' as const, _ref: _id })),
+	});
+	const asDraft = <T extends { _id: string }>(document: T): T => ({ ...document, _id: `drafts.${document._id}` });
+
+	const latestOf = (author: AuthorDocument) => {
+		const dates = onoffLiteraryWorkDocumentsMock
+			.filter(({ authors }) => authors?.some(({ _ref }) => _ref === author._id))
+			.map(({ publishedAt, _createdAt }) => publishedAt ?? _createdAt);
+		return dates.sort().at(-1);
+	};
+
+	async function latestFor(author: AuthorDocument, dataset: unknown[]) {
+		const authors = (await run(dataset)).authors;
+		return authors.find(({ slug }) => slug === author.slug.current)?.latestLiteraryWorkAt;
+	}
+
+	it('projects the date of the most recent literary work of the author', async () => {
+		const expected = latestOf(canonAuthor);
+		// Sin obras del autor en el canon el caso pasaría comparando `null` con `undefined`.
+		expect(expected).toBeDefined();
+
+		expect(await latestFor(canonAuthor, onoffDatasetMock)).toBe(expected);
+	});
+
+	it('projects null for an author without literary works', async () => {
+		expect(await latestFor(canonAuthor, [canonAuthor])).toBeNull();
+	});
+
+	// El dataset guarda fechas con hora y fechas desnudas: las dos tienen que poder ganar.
+	it.each([`${laterDay}T10:00:00Z`, laterDay])('projects a later literary work published on %s', async (date) => {
+		expect(await latestFor(canonAuthor, [...onoffDatasetMock, laterLiteraryWork(date)])).toBe(date);
+	});
+
+	it('falls back to the creation date of a literary work without publication date', async () => {
+		const createdAt = `${laterDay}T10:00:00Z`;
+		const { publishedAt, ...withoutPublishedAt } = laterLiteraryWork(createdAt);
+		void publishedAt;
+
+		const dataset = [...onoffDatasetMock, { ...withoutPublishedAt, _createdAt: createdAt }];
+
+		expect(await latestFor(canonAuthor, dataset)).toBe(createdAt);
+	});
+
+	// Cada uno es posterior al canon, así que si contara desplazaría la fecha esperada.
+	it.each([
+		['a draft', asDraft(laterLiteraryWork(laterDay))],
+		['a migrated story', { ...migratedStoryDocument, publishedAt: laterDay }],
+		['an unmigrated story', { ...unmigratedStoryDocument, publishedAt: laterDay }],
+		['a literary work of another author', laterLiteraryWork(laterDay, [otherAuthor])],
+	])('ignores %s', async (_description, document) => {
+		const dataset = [...onoffDatasetMock, otherAuthor, document];
+
+		expect(await latestFor(canonAuthor, dataset)).toBe(latestOf(canonAuthor));
+	});
+
+	it('counts a literary work for each of its authors', async () => {
+		const dataset = [...onoffDatasetMock, otherAuthor, laterLiteraryWork(laterDay, [canonAuthor, otherAuthor])];
+
+		expect(await latestFor(canonAuthor, dataset)).toBe(laterDay);
+		expect(await latestFor(otherAuthor, dataset)).toBe(laterDay);
+	});
+
+	// Una escritura operativa sobre el autor —un backfill de biografías— no cambia lo que su página lista.
+	it('ignores the write and creation dates of the author', async () => {
+		const rewritten = { ...touched(canonAuthor), _createdAt: WRITE_DATE };
+		const dataset = [...onoffDatasetMock.filter((document) => document !== canonAuthor), rewritten];
+
+		expect(await latestFor(canonAuthor, dataset)).toBe(latestOf(canonAuthor));
 	});
 });

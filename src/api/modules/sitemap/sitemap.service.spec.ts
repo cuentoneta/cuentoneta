@@ -1,5 +1,7 @@
 import { clearAllMocks, type Mock } from '@test-utils';
+import { shiftDays } from '@testing/date-shift';
 import { childElementSequences } from '@testing/sitemap-xml';
+import { PAGE_REVISED_ON } from './sitemap.lastmod';
 import * as sitemapRepository from './sitemap.repository';
 import { generateSitemap, generateSitemapXml, getSitemapUrls } from './sitemap.service';
 
@@ -97,18 +99,31 @@ describe('SitemapService', () => {
 			expect(urls).toContainEqual({ loc: 'https://test.cuentoneta.ar/literary-work/el-fin', lastmod: '2025-01-01' });
 		});
 
-		it('should include author URLs', async () => {
-			(sitemapRepository.fetchSitemapSlugs as Mock).mockResolvedValue({
-				literaryWorks: [],
-				authors: [{ slug: 'jorge-luis-borges', lastmod: '2025-01-02' }],
-				collections: [],
+		describe('author URLs', () => {
+			const revisedOn = PAGE_REVISED_ON.author;
+			const authorUrl = async (latestLiteraryWorkDate: string | undefined) => {
+				(sitemapRepository.fetchSitemapSlugs as Mock).mockResolvedValue({
+					literaryWorks: [],
+					authors: [{ slug: 'jorge-luis-borges', latestLiteraryWorkDate }],
+					collections: [],
+				});
+				return (await getSitemapUrls()).find(({ loc }) => loc.endsWith('/author/jorge-luis-borges'));
+			};
+
+			it('should publish the date of the latest literary work when the profile is older', async () => {
+				const later = shiftDays(revisedOn, 1);
+
+				expect(await authorUrl(later)).toEqual({
+					loc: 'https://test.cuentoneta.ar/author/jorge-luis-borges',
+					lastmod: later,
+				});
 			});
 
-			const urls = await getSitemapUrls();
-
-			expect(urls).toContainEqual({
-				loc: 'https://test.cuentoneta.ar/author/jorge-luis-borges',
-				lastmod: '2025-01-02',
+			it.each([
+				['older than the profile', shiftDays(revisedOn, -1)],
+				['absent', undefined],
+			])('should publish the profile revision when the latest literary work is %s', async (_case, date) => {
+				expect((await authorUrl(date))?.lastmod).toBe(revisedOn);
 			});
 		});
 
@@ -159,10 +174,12 @@ describe('SitemapService', () => {
 		it('should emit every slug of every type, with no duplicate locations', async () => {
 			const entries = (prefix: string) =>
 				['uno', 'dos', 'tres'].map((suffix) => ({ slug: `${prefix}-${suffix}`, lastmod: '2025-01-01' }));
+			const listingEntries = (prefix: string) =>
+				['uno', 'dos', 'tres'].map((suffix) => ({ slug: `${prefix}-${suffix}`, latestLiteraryWorkDate: '2025-01-01' }));
 
 			(sitemapRepository.fetchSitemapSlugs as Mock).mockResolvedValue({
 				literaryWorks: entries('obra'),
-				authors: entries('autor'),
+				authors: listingEntries('autor'),
 				collections: entries('coleccion'),
 			});
 

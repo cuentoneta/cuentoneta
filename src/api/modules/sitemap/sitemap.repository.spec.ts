@@ -74,4 +74,30 @@ describe('fetchSitemapSlugs', () => {
 		expect(published).toHaveLength(documents.length);
 		published.forEach((slug) => expect(isSlug(slug)).toBe(true));
 	});
+
+	describe('the latest literary work date of an author', () => {
+		const withPublicationDate = (publishedAt: string) => ({
+			...withSlug(canonLiteraryWork, 'obra-posterior'),
+			publishedAt,
+			authors: [{ _key: canonAuthor._id, _type: 'reference', _ref: canonAuthor._id }],
+		});
+
+		// La fecha con hora y la desnuda son el mismo día: la política las compara contra una fecha sin
+		// hora, así que tienen que llegarle con la misma forma.
+		it.each(['2026-09-01T10:00:00Z', '2026-09-01'])('trims %s to the day', async (publishedAt) => {
+			await answerWith([canonAuthor, withPublicationDate(publishedAt)]);
+
+			const [author] = (await fetchSitemapSlugs()).authors;
+
+			expect(author?.latestLiteraryWorkDate).toBe('2026-09-01');
+		});
+
+		it('leaves it undefined for an author without literary works', async () => {
+			await answerWith([canonAuthor]);
+
+			const [author] = (await fetchSitemapSlugs()).authors;
+
+			expect(author).toEqual({ slug: canonAuthor.slug.current, latestLiteraryWorkDate: undefined });
+		});
+	});
 });
