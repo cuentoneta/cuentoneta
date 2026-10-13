@@ -45,8 +45,11 @@ test('home — A: meta tags en el HTML server-rendered', async () => {
 	expect(getMetaContent(html, 'og:description')).toBeTruthy();
 	expect(getMetaContent(html, 'twitter:title')).toBeTruthy();
 	expect(getMetaContent(html, 'twitter:description')).toBeTruthy();
-	// La portada es su propia canónica: una canónica hacia otra ruta le cedería lo indexado.
-	expect(new URL(getCanonicalHref(html) ?? '', 'http://canonical.invalid').pathname).toBe('/');
+	// La portada es su propia canónica: una canónica hacia otra ruta le cedería lo indexado. La
+	// presencia se afirma aparte porque una URL vacía también resuelve a la raíz.
+	const canonical = getCanonicalHref(html);
+	expect(canonical).toBeTruthy();
+	expect(new URL(canonical ?? '', 'http://canonical.invalid').pathname).toBe('/');
 	expect(getMetaContent(html, 'robots')).toContain('index');
 	expect(getMetaContent(html, 'keywords')).toContain('relatos breves');
 });
@@ -90,6 +93,13 @@ test('home — invariantes de indexado para crawlers (ssr, h1 real, contenido pr
 		...(await checkJsonLdBlocks(html, SITEWIDE_SCHEMA_IDS)),
 	].filter((violation): violation is SeoInvariantViolation => violation !== null);
 	expect(violations).toEqual([]);
+});
+
+// `checkNgServerContext` acepta también `ssg`, y una copia prerenderizada de la portada en el build la
+// serviría el servidor de estáticos antes que el render por request: quedaría congelada con el
+// contenido de la semana en que se buildeó.
+test('home — se renderiza por request, no desde una copia prerenderizada', () => {
+	expect(parseHtml(html).querySelector('cuentoneta-root')?.getAttribute('ng-server-context')).toBe('ssr');
 });
 
 test('home — sin markers de skeleton en <main>', () => {
