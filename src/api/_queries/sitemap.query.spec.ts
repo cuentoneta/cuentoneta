@@ -104,4 +104,15 @@ describe('sitemapSlugsQuery', () => {
 
 		expect(entry?.slug).toBe(document?.slug?.current);
 	});
+
+	// El dataset va en orden inverso al de los identificadores: si la query no ordenara, el resultado
+	// saldría en el orden del array y el caso no distinguiría las dos conductas.
+	it.each(canonByType)('orders %s by identifier', async (type, document) => {
+		const ids = [`${document._id}-b`, `${document._id}-a`];
+		const dataset = ids.map((_id, index) => ({ ...withSlug(document, `orden-${index}`), _id }));
+
+		const slugs = (await run(dataset))[type].map(({ slug }) => slug);
+
+		expect(slugs).toEqual(['orden-1', 'orden-0']);
+	});
 });

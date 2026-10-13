@@ -18,6 +18,6 @@ import { defineQuery } from 'groq';
 
 export const sitemapSlugsQuery = defineQuery(`{
 	"literaryWorks": *[_type == "literaryWork" && !(_id in path('drafts.**')) && defined(slug.current) && slug.current == lower(slug.current) && count(string::split(slug.current, "-")[@ == ""]) == 0] | order(_id asc) { "slug": slug.current, "lastmod": coalesce(publishedAt, _createdAt) },
-	"authors": *[_type == "author" && !(_id in path('drafts.**')) && defined(slug.current) && slug.current == lower(slug.current) && count(string::split(slug.current, "-")[@ == ""]) == 0]{ "slug": slug.current, "lastmod": _createdAt },
+	"authors": *[_type == "author" && !(_id in path('drafts.**')) && defined(slug.current) && slug.current == lower(slug.current) && count(string::split(slug.current, "-")[@ == ""]) == 0] | order(_id asc) { "slug": slug.current, "lastmod": _createdAt },
 	"collections": *[_type == "collection" && !(_id in path('drafts.**')) && defined(slug.current) && slug.current == lower(slug.current) && count(string::split(slug.current, "-")[@ == ""]) == 0] | order(_id asc) { "slug": slug.current, "lastmod": _createdAt }
 }`);
