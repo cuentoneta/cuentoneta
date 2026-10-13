@@ -248,15 +248,17 @@ describe('collectSitemapViolations', () => {
 
 		// Sin las exentas, el resto se mide solo: un lote que en el total pesaría poco sigue pesando lo suyo.
 		it('mide la concentración sobre las fechas que quedan', () => {
+			const batchDay = shiftDays(PAGE_REVISED_ON.author, -1);
+
 			const report = collectSitemapViolations(
 				sitemapOf([
 					...batch('/author/', 50, PAGE_REVISED_ON.author),
-					...batch('/literary-work/', 15, '2026-06-29'),
+					...batch('/literary-work/', 15, batchDay),
 					...spread(35),
 				]),
 			);
 
-			expect(report.largestCluster).toEqual({ date: '2026-06-29', share: 0.3 });
+			expect(report.largestCluster).toEqual({ date: batchDay, share: 0.3 });
 			expect(report.violations).toHaveLength(1);
 		});
 

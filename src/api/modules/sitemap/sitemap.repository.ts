@@ -7,7 +7,7 @@ import { sitemapSlugsQuery } from '@queries/sitemap.query';
 import { isSlug } from '@models/slug.model';
 
 // Interfaces
-interface SlugEntry {
+interface LiteraryWorkSlugEntry {
 	slug: string;
 	lastmod?: string;
 }
@@ -20,7 +20,7 @@ interface ListingSlugEntry {
 }
 
 interface SitemapSlugsResult {
-	literaryWorks: SlugEntry[];
+	literaryWorks: LiteraryWorkSlugEntry[];
 	authors: ListingSlugEntry[];
 	collections: ListingSlugEntry[];
 }
@@ -53,7 +53,7 @@ function withBuildableSlug<T extends { slug: string | null }>(entries: T[]): (T 
 	return entries.filter((entry): entry is T & { slug: string } => isSlug(entry.slug));
 }
 
-function processSlugEntries(entries: { slug: string | null; lastmod: string }[]): SlugEntry[] {
+function processSlugEntries(entries: { slug: string | null; lastmod: string }[]): LiteraryWorkSlugEntry[] {
 	return withBuildableSlug(entries).map((entry) => ({
 		slug: entry.slug,
 		lastmod: formatLastmod(entry.lastmod),
