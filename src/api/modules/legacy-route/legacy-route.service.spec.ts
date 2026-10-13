@@ -18,6 +18,14 @@ describe('resolveLegacySlug', () => {
 		expect(await resolveLegacySlug('storylist', 'verano-2022', fetchSlug)).toBe('verano-2022');
 	});
 
+	it('keeps, without asking Sanity, a slug longer than any the dataset can hold', async () => {
+		const fetchSlug = stubFetchSlug(() => Promise.resolve('onoff-renombre-final'));
+		const oversized = 'a'.repeat(201);
+
+		expect(await resolveLegacySlug('story', oversized, fetchSlug)).toBe(oversized);
+		expect(fetchSlug).not.toHaveBeenCalled();
+	});
+
 	it('lets a Sanity error through', async () => {
 		const failure = new Error('Sanity no responde');
 		const fetchSlug = stubFetchSlug(() => Promise.reject(failure));
