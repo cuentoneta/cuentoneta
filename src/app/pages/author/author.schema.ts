@@ -54,7 +54,7 @@ export function buildAuthorProfilePageSchema(author: AuthorProfile, websiteUrl: 
 export function buildAuthorBreadcrumb(author: Author, websiteUrl: string): WithContext<BreadcrumbList> {
 	const baseUrl = Location.stripTrailingSlash(websiteUrl);
 	return buildBreadcrumbSchema([
-		{ name: 'Inicio', url: `${baseUrl}/home` },
+		{ name: 'Inicio', url: `${baseUrl}/` },
 		{ name: 'Autores', url: `${baseUrl}/authors` },
 		{ name: author.name, url: `${baseUrl}/author/${author.slug}` },
 	]);

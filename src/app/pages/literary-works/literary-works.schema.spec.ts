@@ -51,7 +51,7 @@ describe('buildLiteraryWorkCatalogBreadcrumb', () => {
 		const breadcrumb = buildLiteraryWorkCatalogBreadcrumb(websiteUrl);
 
 		expect(breadcrumb['itemListElement']).toEqual([
-			{ '@type': 'ListItem', position: 1, name: 'Inicio', item: { '@id': 'https://www.cuentoneta.ar/home' } },
+			{ '@type': 'ListItem', position: 1, name: 'Inicio', item: { '@id': 'https://www.cuentoneta.ar/' } },
 			{
 				'@type': 'ListItem',
 				position: 2,

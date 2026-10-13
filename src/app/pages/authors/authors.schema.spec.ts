@@ -63,7 +63,7 @@ describe('buildAuthorCatalogBreadcrumb', () => {
 		const schema = buildAuthorCatalogBreadcrumb(websiteUrl);
 
 		expect(schema['itemListElement']).toEqual([
-			{ '@type': 'ListItem', position: 1, name: 'Inicio', item: { '@id': 'https://www.cuentoneta.ar/home' } },
+			{ '@type': 'ListItem', position: 1, name: 'Inicio', item: { '@id': 'https://www.cuentoneta.ar/' } },
 			{ '@type': 'ListItem', position: 2, name: 'Autores', item: { '@id': 'https://www.cuentoneta.ar/authors' } },
 		]);
 	});
