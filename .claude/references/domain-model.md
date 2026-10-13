@@ -251,7 +251,7 @@ Zod valida **datos externos** en la frontera, antes de que el dominio confíe en
 **Backend (`src/api/**`, `@schemas/*`):** zod clásico, para params/query de los controllers Hono vía `@hono/zod-validator`. Corre en Node, donde el tamaño del paquete no importa:
 
 ```typescript
-import { slugParamValidator } from '../../_middleware/slug-param-validator.middleware';
+import { slugParamValidator } from '@middleware/slug-param-validator.middleware';
 
 // en el controller Hono, para un recurso por slug (un `:slug` mal formado responde el 404 del recurso):
 // slugParamValidator((slug) => new LiteraryWorkNotFoundError(slug))

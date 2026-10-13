@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { readCacheHeaders } from './_middleware/read-cache-headers.middleware';
+import { readCacheHeaders } from '@middleware/read-cache-headers.middleware';
 import authorController from './modules/author/author.controller';
 import collectionController from './modules/collection/collection.controller';
 import contentController from './modules/content/content.controller';

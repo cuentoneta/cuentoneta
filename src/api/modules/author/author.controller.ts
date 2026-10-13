@@ -1,7 +1,7 @@
 // Hono: Imports y configuración
 import { Hono } from 'hono';
 
-import { slugParamValidator } from '../../_middleware/slug-param-validator.middleware';
+import { slugParamValidator } from '@middleware/slug-param-validator.middleware';
 import { AuthorNotFoundError } from './author.errors';
 
 // Funciones de service

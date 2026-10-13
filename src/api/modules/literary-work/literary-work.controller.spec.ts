@@ -2,7 +2,7 @@ import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
 import { Hono } from 'hono';
 import { environment } from '../../_helpers/environment';
-import { readCacheHeaders } from '../../_middleware/read-cache-headers.middleware';
+import { readCacheHeaders } from '@middleware/read-cache-headers.middleware';
 import { createLiteraryWorkController } from './literary-work.controller';
 import { LiteraryWorkNotFoundError } from './literary-work.errors';
 import { InMemoryLiteraryWorkRepository } from './literary-work.repository.mock';

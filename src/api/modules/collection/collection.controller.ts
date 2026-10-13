@@ -1,6 +1,6 @@
 import { Hono, type Context } from 'hono';
 
-import { slugParamValidator } from '../../_middleware/slug-param-validator.middleware';
+import { slugParamValidator } from '@middleware/slug-param-validator.middleware';
 import { CollectionNotFoundError, MalformedCollectionError } from './collection.errors';
 import type { CollectionRepository } from './collection.repository';
 import { getCollectionBySlug, getCollections } from './collection.service';

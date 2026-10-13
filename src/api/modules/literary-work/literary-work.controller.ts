@@ -2,7 +2,7 @@ import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 
 import { literaryWorkTeaserFilterSchema } from '@schemas/literary-work.schemas';
-import { slugParamValidator } from '../../_middleware/slug-param-validator.middleware';
+import { slugParamValidator } from '@middleware/slug-param-validator.middleware';
 import { LiteraryWorkNotFoundError } from './literary-work.errors';
 import type { LiteraryWorkRepository } from './literary-work.repository';
 import { getLiteraryWorkBySlug, getLiteraryWorkTeasers } from './literary-work.service';

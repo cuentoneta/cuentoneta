@@ -1,4 +1,4 @@
-import { readCacheHeaders } from './_middleware/read-cache-headers.middleware';
+import { readCacheHeaders } from '@middleware/read-cache-headers.middleware';
 import apiRoutes from './routes';
 
 /**

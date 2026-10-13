@@ -9,14 +9,14 @@ import { secureHeaders } from 'hono/secure-headers';
 import apiRoutes from './api/routes';
 import sitemapController from './api/modules/sitemap/sitemap.controller';
 import { getAllowedHosts } from './api/_helpers/environment';
-import { noindexNonProduction } from './api/_middleware/noindex.middleware';
-import { ssrCacheControl } from './api/_middleware/ssr-cache-control.middleware';
+import { noindexNonProduction } from '@middleware/noindex.middleware';
+import { ssrCacheControl } from '@middleware/ssr-cache-control.middleware';
 import {
 	legacyStoryDetailRedirect,
 	legacyStoryListingRedirect,
 	legacyStorylistDetailRedirect,
 	legacyStorylistListingRedirect,
-} from './api/_middleware/legacy-route-redirects.middleware';
+} from '@middleware/legacy-route-redirects.middleware';
 
 /**
  * Inicializa Hono y exporta la instancia de la aplicación
