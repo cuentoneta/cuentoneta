@@ -1,5 +1,5 @@
 /**
- * Tests e2e de SEO para la home (`/home`).
+ * Tests e2e de SEO para la home (`/`).
  *
  * Sobre el HTML server-rendered (lo que ve el crawler, sin ejecutar JS):
  *  - A. Meta tags: <title> con la marca, description, og:/twitter: title y description,
@@ -35,7 +35,7 @@ import { SCHEMA_IDS, SITEWIDE_SCHEMA_IDS } from '../_utils/seo-fixtures';
 let html: string;
 
 test.beforeAll(async ({ request }) => {
-	html = await (await request.get('/home')).text();
+	html = await (await request.get('/')).text();
 });
 
 test('home — A: meta tags en el HTML server-rendered', async () => {
@@ -45,7 +45,8 @@ test('home — A: meta tags en el HTML server-rendered', async () => {
 	expect(getMetaContent(html, 'og:description')).toBeTruthy();
 	expect(getMetaContent(html, 'twitter:title')).toBeTruthy();
 	expect(getMetaContent(html, 'twitter:description')).toBeTruthy();
-	expect(getCanonicalHref(html)).toBeTruthy();
+	// La portada es su propia canónica: una canónica hacia otra ruta le cedería lo indexado.
+	expect(new URL(getCanonicalHref(html) ?? '', 'http://canonical.invalid').pathname).toBe('/');
 	expect(getMetaContent(html, 'robots')).toContain('index');
 	expect(getMetaContent(html, 'keywords')).toContain('relatos breves');
 });
@@ -76,7 +77,7 @@ test('home — E: enlaza los hubs del catálogo en el HTML server-rendered', asy
 });
 
 test('home — invariantes de indexado para crawlers (ssr, h1 real, contenido primario, jsonld sitewide)', async () => {
-	// La canónica de home apunta a la raíz del sitio (no a /home); su presencia la cubre el test A.
+	// La canónica la cubre el test A.
 	const violations: SeoInvariantViolation[] = [
 		checkNgServerContext(html),
 		checkTitle(html, /La Cuentoneta/),
@@ -96,7 +97,7 @@ test('home — sin markers de skeleton en <main>', () => {
 });
 
 test('home — D: al navegar a una obra aparece el Article y el sitewide persiste', async ({ page }) => {
-	await page.goto('/home');
+	await page.goto('/');
 	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.organization}"]`)).toHaveCount(1);
 
 	await page.locator('a[href^="/literary-work/"]').filter({ visible: true }).first().click();

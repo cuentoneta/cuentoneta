@@ -2,7 +2,7 @@
  * Smoke post-deploy de indexado: corre las invariantes de `seo-invariants` sobre el HTML SSR crudo
  * de un despliegue real (`BASE_URL`), reusando el MISMO core que el gate de e2e para no divergir.
  *
- * Cobertura: siempre chequea `/home` + los slugs estables conocidos-buenos (baseline de regresión),
+ * Cobertura: siempre chequea `/` + los slugs estables conocidos-buenos (baseline de regresión),
  * y además una muestra ALEATORIA de obras/autores/colecciones tomada del `/sitemap.xml` en cada
  * corrida (cobertura rotativa). Los patrones de `<title>`/`<h1>` se derivan del slug de cada URL.
  * Si el sitemap no está disponible, el baseline igual se ejerce (la muestra se omite con un aviso).
@@ -46,7 +46,7 @@ const proxyHeaders: Record<string, string> =
 	process.env['SIMULATE_PROXY_HEADERS'] === 'true' ? { 'x-forwarded-for': '66.249.66.1' } : {};
 
 const HOME_EXPECTATIONS: IndexableHtmlExpectations = {
-	path: '/home',
+	path: '/',
 	titlePattern: /La Cuentoneta/,
 	canonicalContains: 'cuentoneta',
 	requiredJsonLdIds: SITEWIDE_SCHEMA_IDS,
@@ -131,7 +131,7 @@ function sampledPaths(baseline: readonly string[], xml: string, full: boolean): 
 
 /** El baseline no depende del sitemap: se ejerce siempre. Devuelve si alguna ruta falló. */
 async function reportBaseline(baseline: readonly string[]): Promise<boolean> {
-	console.log(`Baseline: /home\n  ${baseline.join('\n  ')}\n`);
+	console.log(`Baseline: /\n  ${baseline.join('\n  ')}\n`);
 	let failed = await reportExpectations(HOME_EXPECTATIONS);
 	for (const path of baseline) {
 		failed = (await reportPath(path)) || failed;
