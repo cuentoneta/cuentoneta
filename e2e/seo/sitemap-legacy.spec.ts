@@ -7,7 +7,7 @@
  * Lo que se verifica:
  *  - A. Se sirve como XML.
  *  - B. Anuncia rutas viejas de obra y de colección, y ninguna otra.
- *  - C. Ninguna entrada lleva `lastmod`.
+ *  - C. Cada entrada lleva como `lastmod` la fecha de la mudanza.
  *  - D. Ninguna ubicación aparece repetida.
  *  - E. Sobre una muestra, cada ruta responde 301 hacia una página que responde 200.
  *  - F. Cada obra renombrada lleva exactamente a su obra.
@@ -61,11 +61,15 @@ test('sitemap-legacy — B: anuncia rutas viejas de obra y de colección, y ning
 	expect(paths.filter((path) => !/^\/(story|storylist)\/[^/]+$/.test(path))).toEqual([]);
 });
 
-test('sitemap-legacy — C: ninguna entrada lleva lastmod', () => {
+// El `lastmod` es la fecha en que las rutas viejas pasaron a redirigir: es lo que le dice al buscador que
+// cambiaron después de su última visita. Otra fecha sería falsa, y una señal falsa le quita la confianza.
+test('sitemap-legacy — C: cada entrada lleva como lastmod la fecha de la mudanza', () => {
 	const sequences = childElementSequences(xml);
+	const lastmods = [...xml.matchAll(/<lastmod>([^<]*)<\/lastmod>/g)].map(([, date]) => date);
 
 	expect(sequences.length).toBeGreaterThan(0);
-	sequences.forEach((sequence) => expect(sequence).toEqual(['loc']));
+	sequences.forEach((sequence) => expect(sequence).toEqual(['loc', 'lastmod']));
+	expect(new Set(lastmods)).toEqual(new Set(['2026-08-31']));
 });
 
 test('sitemap-legacy — D: ninguna ubicación se repite', () => {
