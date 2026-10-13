@@ -13,14 +13,15 @@ const defaultAuthorImage = {
 	},
 };
 
-// Sin fecha, el año queda en `null`: es el estado de "año desconocido". El plugin tipa el resultado como
-// `number`, pero lo guarda tal cual con `set()`, así que el `null` llega al documento como siempre.
-const reduceHistoricalYear = <K extends string>(fieldName: K): HistoricalYearReducer =>
-	((result: { draft?: Record<K, string>; published: Record<K, string> }) => {
+const reduceHistoricalYear =
+	<K extends string>(fieldName: K): HistoricalYearReducer =>
+	(result: { draft?: Record<K, string>; published: Record<K, string> }) => {
 		const value = result.draft?.[fieldName] || result.published?.[fieldName];
 		const match = value && /^(-?\d{4})-/.exec(value);
-		return match ? parseInt(match[1], 10) : null;
-	}) as unknown as HistoricalYearReducer;
+		// Sin fecha, el año queda en `null`, el estado de "año desconocido". El plugin tipa el resultado
+		// como `number`, pero lo guarda tal cual con `set()`.
+		return match ? parseInt(match[1], 10) : (null as unknown as number);
+	};
 
 export default defineType({
 	name: 'author',
