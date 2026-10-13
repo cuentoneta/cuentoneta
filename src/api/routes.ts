@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { readCacheHeaders } from './_middleware/read-cache-headers.middleware';
+import { readCacheHeaders } from '@middleware/read-cache-headers.middleware';
 import authorController from './modules/author/author.controller';
 import collectionController from './modules/collection/collection.controller';
 import contentController from './modules/content/content.controller';
@@ -17,8 +17,8 @@ const apiRoutes = new Hono();
  * decisión.
  *
  * El registro va por par —el recurso y lo que cuelga de él— porque el comodín de Hono exige al menos
- * un segmento: `/x/*` deja fuera al catálogo `/x`. Cada `GET` que en realidad escribe se declara
- * `no-store` en su propio handler; el middleware lo respeta.
+ * un segmento: `/x/*` deja fuera al catálogo `/x`. Un handler que se declara
+ * `no-store` gana sobre el middleware.
  *
  * **Va antes del montaje de los controllers, y el orden es parte del mecanismo:** los handlers no
  * llaman `next()`, así que un middleware registrado después de ellos no correría nunca y la caché se

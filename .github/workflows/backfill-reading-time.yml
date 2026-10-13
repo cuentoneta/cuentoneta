@@ -22,7 +22,7 @@ name: Backfill reading time
 
 on:
   schedule:
-    # Horario valle, lejos del cron de Vercel (03:15) y del racimo de barridos de los lunes
+    # Horario valle, lejos de `update-most-read` (02:15) y del racimo de barridos de los lunes
     # (06:00–07:23), para no competir por runners. GitHub desactiva un `schedule` tras 60 días sin
     # actividad en el repo; el `workflow_dispatch` permite re-dispararlo cuando eso pasa.
     - cron: '35 4 * * *'
@@ -63,7 +63,7 @@ jobs:
           # En `schedule` no hay inputs y la expresión resuelve vacía, así que la corrida programada
           # aplica. Solo un disparo manual puede pedir el modo seco.
           DRY_RUN: ${{ github.event.inputs.dry_run }}
-          # `staging` y `development` se sobrescriben con la copia de `production` cada domingo.
+          # `staging` y `development` se sobrescriben con la copia de `production` en la cadena semanal.
           SANITY_STUDIO_DATASET: production
           SANITY_STUDIO_PROJECT_ID: ${{ secrets.SANITY_STUDIO_PROJECT_ID || 's4dbqkc5' }}
           # El secret `SANITY_STUDIO_TOKEN` no sirve acá: `ci.yml` lo usa contra `staging`, que es

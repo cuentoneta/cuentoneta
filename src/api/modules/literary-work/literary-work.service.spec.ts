@@ -12,6 +12,7 @@ import { InMemoryLiteraryWorkRepository } from './literary-work.repository.mock'
 import type { LiteraryWorkRepository, LiteraryWorkTeaserListing } from './literary-work.repository';
 import { environment } from '../../_helpers/environment';
 import { fetchClarityData } from '../../_helpers/clarity-connector';
+import { ClarityRequestError, ClarityResponseError } from '../../_helpers/clarity-connector.errors';
 import { RotatingContentNotFoundError } from '../content/content.errors';
 import { InMemoryContentRepository } from '../content/content.repository.mock';
 
@@ -178,11 +179,19 @@ describe('updateMostReadLiteraryWorks', () => {
 		expect(result.mostRead.map(({ slug }) => slug)).toEqual([first.slug]);
 	});
 
-	it('throws when the metrics service returns no popular pages', async () => {
+	it('throws a typed error when the metric is absent', async () => {
 		(fetchClarityData as Mock).mockResolvedValue([]);
 		const content = repositories();
 
-		await expect(literaryWorkService.updateMostReadLiteraryWorks(content)).rejects.toThrow('Could not fetch metrics.');
+		await expect(literaryWorkService.updateMostReadLiteraryWorks(content)).rejects.toThrow(ClarityResponseError);
+	});
+
+	it('lets a provider failure through without writing the ranking', async () => {
+		(fetchClarityData as Mock).mockRejectedValue(new ClarityRequestError(401));
+		const content = repositories();
+
+		await expect(literaryWorkService.updateMostReadLiteraryWorks(content)).rejects.toThrow(ClarityRequestError);
+		expect((await content.fetchRotatingContent())?.mostRead).toEqual(rotatingContent.mostRead);
 	});
 
 	// La lista es un ranking: el orden lo define Clarity, y la query que resuelve los identificadores

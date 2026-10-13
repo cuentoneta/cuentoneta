@@ -28,7 +28,7 @@ export async function getRotatingContent(
 }
 
 export async function addNextWeeksLandingPageContent(
-	weeksInTheFuture: number = 4,
+	weeksInTheFuture: number = 1,
 	repository: ContentRepository = new SanityContentRepository(),
 ) {
 	const currentDate = new Date();

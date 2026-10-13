@@ -94,6 +94,22 @@ describe('addNextWeeksLandingPageContent', () => {
 		expect(repository.createdLandingPages.map(({ config }) => config)).toEqual([1, 2, 3, 4].map(weekAhead));
 	});
 
+	it('creates only next week when called without a number of weeks', async () => {
+		const repository = repositoryWith();
+
+		const result = await addNextWeeksLandingPageContent(undefined, repository);
+
+		expect(result).toHaveLength(1);
+		expect(repository.createdLandingPages.map(({ config }) => config)).toEqual([weekAhead(1)]);
+	});
+
+	it('creates nothing by default when next week already exists', async () => {
+		const repository = repositoryWith([weekAhead(1)]);
+
+		expect(await addNextWeeksLandingPageContent(undefined, repository)).toEqual([]);
+		expect(repository.createdLandingPages).toEqual([]);
+	});
+
 	it('labels the week with its ISO week-year, not the calendar year, across the Dec/Jan boundary', async () => {
 		// 2025-12-29 (lunes) es la semana ISO 01 de 2026: se etiqueta 2026, no 2025, preservando el orden
 		// lexicográfico = cronológico en el cruce dic/ene.

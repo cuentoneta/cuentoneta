@@ -1,6 +1,7 @@
 import { Directive } from '@angular/core';
 
-import { environment } from '../../environments/environment';
+import { AppRoutes } from '../../app.routes';
+import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 import { AbstractMetaTagsDirective } from '../../directives/abstract-meta-tags.directive';
 
@@ -24,7 +25,7 @@ export class HomeMetaTagsDirective extends AbstractMetaTagsDirective {
 			'colecciones de cuentos',
 			'leer en línea',
 		]);
-		this.head.setCanonicalUrl(`${environment.website}`);
+		this.head.setCanonicalUrl(buildCanonicalUrl(AppRoutes.Home));
 		this.head.setRobots('index, follow');
 	}
 }

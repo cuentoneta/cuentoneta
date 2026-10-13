@@ -37,7 +37,7 @@ export function buildAuthorCatalogSchema(
 export function buildAuthorCatalogBreadcrumb(websiteUrl: string): WithContext<BreadcrumbList> {
 	const baseUrl = Location.stripTrailingSlash(websiteUrl);
 	return buildBreadcrumbSchema([
-		{ name: 'Inicio', url: `${baseUrl}/home` },
+		{ name: 'Inicio', url: `${baseUrl}/` },
 		{ name: 'Autores', url: `${baseUrl}/authors` },
 	]);
 }

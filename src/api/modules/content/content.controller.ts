@@ -1,10 +1,8 @@
 import { Hono, type Context } from 'hono';
-import { zValidator } from '@hono/zod-validator';
 
-import { addWeeksSchema } from './content.schema';
 import { LandingPageNotFoundError, MalformedLandingPageError } from './content.errors';
 import type { ContentRepository } from './content.repository';
-import { addNextWeeksLandingPageContent, getLandingPageContent } from './content.service';
+import { getLandingPageContent } from './content.service';
 import { applyLandingPageCacheHeaders } from '../../_helpers/cache-control';
 
 /** Traduce los errores del módulo al status que le corresponde a cada uno. */
@@ -36,19 +34,6 @@ export function createContentController(repository?: ContentRepository) {
 	controller.get('/landing-page', async (c) =>
 		applyLandingPageCacheHeaders(await respond(c, () => getLandingPageContent(repository))),
 	);
-
-	/**
-	 * Endpoint encargado de agregar instancias de documentos landingPage para las próximas semanas, a fin de generar automáticamente
-	 * los documentos que luego son modificados manualmente para actualizar el contenido de la landing page desde Sanity Studio
-	 */
-	controller.get('/add-next-weeks-landing-page-content', zValidator('query', addWeeksSchema), async (c) => {
-		const { weeksInTheFuture } = c.req.valid('query');
-		// El `no-store` no es decorativo: el módulo sirve sus lecturas con caché de borde, y sin
-		// declararse incacheable esta escritura recibiría el mismo tratamiento y la invocación siguiente
-		// se resolvería con un hit, devolviendo un 200 sin haber creado ningún documento.
-		c.header('Cache-Control', 'no-store');
-		return respond(c, () => addNextWeeksLandingPageContent(weeksInTheFuture, repository));
-	});
 
 	return controller;
 }

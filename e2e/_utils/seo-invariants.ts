@@ -25,8 +25,8 @@ export interface IndexableHtmlExpectations {
 	readonly requiredJsonLdIds: readonly string[];
 	readonly requiredInternalLinkPrefix?: string;
 	readonly minPrimaryContentLength?: number;
-	// Substring esperado en la canónica cuando NO coincide con `path` (p. ej. home canonicaliza a la
-	// raíz del sitio, no a `/home`). Por defecto se afirma que la canónica contiene `path`.
+	// Substring esperado en la canónica cuando `path` no la discrimina (p. ej. `/`, que toda URL
+	// absoluta contiene). Por defecto se afirma que la canónica contiene `path`.
 	readonly canonicalContains?: string;
 }
 

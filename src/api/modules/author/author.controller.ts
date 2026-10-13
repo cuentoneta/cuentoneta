@@ -1,9 +1,8 @@
 // Hono: Imports y configuración
 import { Hono } from 'hono';
-import { zValidator } from '@hono/zod-validator';
 
-// Esquemas de zod
-import { slugSchema } from '@schemas/common.schemas';
+import { slugParamValidator } from '@middleware/slug-param-validator.middleware';
+import { AuthorNotFoundError } from './author.errors';
 
 // Funciones de service
 import { getAllAuthors, getAuthorBySlug } from './author.service';
@@ -15,11 +14,15 @@ authorController.get('/', async (c) => {
 	return c.json(result);
 });
 
-authorController.get('/:slug', zValidator('param', slugSchema), async (c) => {
-	const { slug } = c.req.valid('param');
-	const result = await getAuthorBySlug(slug);
+authorController.get(
+	'/:slug',
+	slugParamValidator((slug) => new AuthorNotFoundError(slug)),
+	async (c) => {
+		const { slug } = c.req.valid('param');
+		const result = await getAuthorBySlug(slug);
 
-	return c.json(result);
-});
+		return c.json(result);
+	},
+);
 
 export default authorController;

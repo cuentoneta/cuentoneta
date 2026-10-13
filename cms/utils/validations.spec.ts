@@ -1,6 +1,63 @@
 import { describe, expect, it } from 'vitest';
 
-import { localizedRequire, validateHistoricalDate } from './validations';
+import { createSlug } from '@models/slug.model';
+import { localizedRequire, validateHistoricalDate, validateRootRelativePath, validateSlugFormat } from './validations';
+
+describe('validateRootRelativePath', () => {
+	const pathError = 'Usar una ruta del sitio que empiece con "/" (p. ej. "/collection/verano-2022").';
+
+	it('leaves an empty field to localizedRequire', () => {
+		expect(validateRootRelativePath()).toBe(true);
+		expect(validateRootRelativePath('')).toBe(true);
+	});
+
+	it.each(['/collection/verano-2022', '/literary-work/el-fin?utm_source=campania', '/'])('accepts %j', (value) => {
+		expect(validateRootRelativePath(value)).toBe(true);
+	});
+
+	it.each(['../collection/x', 'collection/x', './collection/x', 'https://www.cuentoneta.ar/x', '//otro-sitio.com/x'])(
+		'rejects %j',
+		(value) => {
+			expect(validateRootRelativePath(value)).toBe(pathError);
+		},
+	);
+});
+
+describe('validateSlugFormat', () => {
+	const formatError =
+		'Formato inválido. Usar solo minúsculas sin tildes, números y guiones simples entre palabras (p. ej. "que-seria-yo-sin-ti").';
+
+	it('leaves an empty field to Rule.required()', () => {
+		expect(validateSlugFormat()).toBe(true);
+		expect(validateSlugFormat({})).toBe(true);
+		expect(validateSlugFormat({ current: '' })).toBe(true);
+	});
+
+	it('accepts a well-formed slug', () => {
+		expect(validateSlugFormat({ current: 'que-seria-yo-sin-ti' })).toBe(true);
+	});
+
+	it.each(['IcyFox', 'foo_bar', 'el--aleph', '-lead', 'trail-', 'café'])('rejects %j', (current) => {
+		expect(validateSlugFormat({ current })).toBe(formatError);
+	});
+
+	// Una regla del Studio más permisiva que el dominio deja guardar un slug que la plataforma no puede
+	// servir: por eso se exige la equivalencia valor por valor, no solo los casos de arriba.
+	it.each(['el-aleph', 'cuento-123', 'a', 'IcyFox', 'el--aleph', 'el aleph', 'capítulo-uno', 'foo_bar'])(
+		'agrees with createSlug on %j',
+		(current) => {
+			const domainAccepts = (() => {
+				try {
+					createSlug(current);
+					return true;
+				} catch {
+					return false;
+				}
+			})();
+			expect(validateSlugFormat({ current }) === true).toBe(domainAccepts);
+		},
+	);
+});
 
 describe('localizedRequire', () => {
 	it('accepts a value the editor loaded', () => {

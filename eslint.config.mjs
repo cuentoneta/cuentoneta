@@ -15,6 +15,7 @@ import zIndexScale from './tools/eslint/z-index-scale.js';
 import noFullZodInBrowser from './tools/eslint/no-full-zod-in-browser.js';
 import noTsExtensionImports from './tools/eslint/no-ts-extension-imports.js';
 import componentLocationAndName from './tools/eslint/component-location-and-name.js';
+import opsCatalogSynced from './tools/eslint/ops-catalog-synced.js';
 
 // Las reglas propias comparten un único objeto de plugin: ESLint rechaza redefinir un namespace
 // entre bloques cuyos scopes se solapan, aunque las reglas sean distintas.
@@ -23,6 +24,7 @@ const cuentonetaPlugin = {
 		'no-full-zod-in-browser': noFullZodInBrowser,
 		'no-ts-extension-imports': noTsExtensionImports,
 		'component-location-and-name': componentLocationAndName,
+		'ops-catalog-synced': opsCatalogSynced,
 	},
 };
 
@@ -445,6 +447,18 @@ export default [
 		},
 		rules: {
 			'cuentoneta/component-location-and-name': 'error',
+		},
+	},
+	{
+		// La tabla del catálogo de `pnpm ops` se escribe a mano: una tarea sin fila, o una fila sin tarea,
+		// envejecen en silencio. El scope es el registro porque el catálogo es Markdown, que ESLint no lintea.
+		name: 'ops-catalog-synced',
+		files: ['scripts/ops/registry.ts'],
+		plugins: {
+			cuentoneta: cuentonetaPlugin,
+		},
+		rules: {
+			'cuentoneta/ops-catalog-synced': 'error',
 		},
 	},
 	{

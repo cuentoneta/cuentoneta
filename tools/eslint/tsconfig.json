@@ -2,6 +2,7 @@
 	// Config de editor para las reglas y sus specs. Ningún comando la invoca —el gate `typecheck` corre
 	// sobre el programa que esta config extiende, que ya incluye todo `tools/`— pero el editor asigna
 	// estos archivos al proyecto más cercano, y sin heredar mostraría verde donde el gate marca rojo.
+	// El registro de `pnpm ops` se nombra aparte porque el spec que lo compara con su catálogo lo importa.
 	"extends": "../../tsconfig.typecheck.json",
-	"include": ["**/*.js", "**/*.ts"]
+	"include": ["**/*.js", "**/*.ts", "../../scripts/ops/registry.ts"]
 }

@@ -1,7 +1,7 @@
 import { onoffCollectionsMock } from '@mocks/onoff-collections.mock';
 import { Hono } from 'hono';
 import { createCollectionController } from './collection.controller';
-import { MalformedCollectionError } from './collection.errors';
+import { CollectionNotFoundError, MalformedCollectionError } from './collection.errors';
 import { InMemoryCollectionRepository } from './collection.repository.mock';
 import type { CollectionRepository } from './collection.repository';
 
@@ -41,10 +41,17 @@ describe('collectionController', () => {
 		expect(response.status).toBe(404);
 	});
 
-	it('answers 400 for a slug the schema rejects', async () => {
-		const response = await app.request('/collection/Con Espacios');
+	it('answers the uppercase twin of an existing slug, which the domain rejects, with a 404', async () => {
+		const response = await app.request(`/collection/${firstCollection?.slug.toUpperCase()}`);
 
-		expect(response.status).toBe(400);
+		expect(response.status).toBe(404);
+	});
+
+	it('answers a slug the schema rejects with the same 404 as an unknown one', async () => {
+		const response = await app.request('/collection/Con%20Espacios');
+
+		expect(response.status).toBe(404);
+		await expect(response.json()).resolves.toEqual({ error: new CollectionNotFoundError('Con Espacios').message });
 	});
 });
 

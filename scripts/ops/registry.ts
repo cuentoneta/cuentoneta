@@ -40,6 +40,19 @@ export const OPS_TASKS = Object.freeze({
 		acceptsArgs: false,
 		load: () => import('./tasks/backfill-reading-time').then((m) => m.task),
 	},
+	'most-read:update': {
+		description: 'Actualiza el ranking de obras más leídas desde Clarity (escribe siempre; ignora --no-dry-run)',
+		destructive: false,
+		acceptsArgs: false,
+		load: () => import('./tasks/update-most-read').then((m) => m.task),
+	},
+	'landing-pages:add-next-weeks': {
+		description:
+			'Crea la landing page de la semana siguiente si falta (--weeks=<n> para más; escribe siempre, ignora --no-dry-run)',
+		destructive: false,
+		acceptsArgs: true,
+		load: () => import('./tasks/add-next-weeks-landing-pages').then((m) => m.task),
+	},
 	'normalize:bare-published-at': {
 		description: 'Completa con hora las fechas de publicación desnudas (dry-run por defecto; --no-dry-run aplica)',
 		destructive: false,

@@ -11,6 +11,8 @@
  *       rutas retiradas.
  *  - C. Cada `<url>` respeta la secuencia que exige el esquema de sitemaps.org.
  *  - D. Ninguna ubicación aparece repetida.
+ *  - E. Toda ficha de obra, autor o colección tiene un slug que el dominio puede construir: una que no
+ *       lo tuviera anunciaría una URL que nunca se sirve.
  *
  * No es una validación contra el esquema publicado: no cubre cardinalidades, el tipo de dato de la
  * fecha ni los límites de tamaño del documento.
@@ -20,6 +22,7 @@ import { expect } from '@playwright/test';
 import { test } from '../_utils/test';
 
 import { childElementSequences, locations } from '@testing/sitemap-xml';
+import { isSlug } from '@models/slug.model';
 
 // El sitemap no se renderiza: se pide por HTTP y se lee como texto. Correrlo en los dos proyectos
 // pagaría el doble en el gate más caro sin ejercitar nada distinto.
@@ -76,4 +79,13 @@ test('sitemap — D: ninguna ubicación se repite', () => {
 	const locs = locations(xml);
 
 	expect(new Set(locs).size).toBe(locs.length);
+});
+
+test('sitemap — E: toda ficha publicada tiene un slug que el dominio puede construir', () => {
+	const slugs = locations(xml)
+		.map((loc) => new URL(loc).pathname.match(/^\/(?:literary-work|author|collection)\/([^/]+)$/)?.[1])
+		.filter((slug): slug is string => slug !== undefined);
+
+	expect(slugs.length).toBeGreaterThan(0);
+	expect(slugs.filter((slug) => !isSlug(slug))).toEqual([]);
 });

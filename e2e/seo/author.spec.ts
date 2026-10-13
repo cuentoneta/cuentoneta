@@ -79,8 +79,8 @@ test('author — D: al volver a la home se remueven los bloques del autor', asyn
 	await page.goto(authorPath);
 	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.profilePage}"]`)).toHaveCount(1);
 
-	await page.locator('header a[href="/home"]').first().click();
-	await expect(page).toHaveURL(/\/home$/);
+	await page.locator('header a[href="/"]').first().click();
+	await expect(page).toHaveURL((url) => url.pathname === '/');
 	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.organization}"]`)).toHaveCount(1);
 
 	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.profilePage}"]`)).toHaveCount(0);

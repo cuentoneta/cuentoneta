@@ -6,8 +6,10 @@
 		"module": "preserve",
 		"lib": ["dom", "es2022"],
 		"paths": {
+			"@api/*": ["./src/api/*"],
 			"@app-utils/*": ["./src/app/utils/*"],
 			"@components/*": ["./src/app/components/*"],
+			"@middleware/*": ["./src/api/_middleware/*"],
 			"@mocks/*": ["./src/mocks/*"],
 			"@models/*": ["./src/models/*"],
 			"@queries/*": ["./src/api/_queries/*"],
