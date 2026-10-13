@@ -25,6 +25,27 @@ Archivos clave:
 - **`src/test-setup.ts`** — inicializa el `TestBed` zoneless (Angular 22 corre zoneless por defecto cuando `zone.js` no está presente; no se llama a `provideZonelessChangeDetection()`). El `ErrorHandler` **relanza** cualquier error no manejado para que falle el test. Instala los stubs globales de `IntersectionObserver`, de `ResizeObserver` y de `document.fonts`.
 - **`src/test-utils.ts`** — los wrappers obligatorios (ver abajo).
 
+### Pool, workers y memoria
+
+`@analogjs/vite-plugin-angular` pone por defecto el pool **`vmThreads`**, el más rápido para esta suite. Su costo es la memoria: los contextos de VM se **acumulan** en cada worker durante toda la corrida, en vez de liberarse al terminar cada archivo. `vmMemoryLimit` no lo acota.
+
+Por eso `maxWorkers` está topeado en 8, sin superar nunca el default de Vitest (hilos − 1 en `vitest run`, la mitad en watch): por encima de unos 8 workers la suite ya no se acelera y la memoria sigue subiendo. Con menos workers el pico no baja proporcionalmente —con 4 y con 8 es el mismo—, así que bajar el tope no es la salida para poca RAM. En el runner de CI el tope coincide con el default.
+
+Medido sobre la suite completa en una máquina de 28 hilos:
+
+| Pool        | Workers | Tiempo | Pico de memoria |
+| ----------- | ------- | ------ | --------------- |
+| `vmThreads` | 27      | 32 s   | ~19 GiB         |
+| `vmThreads` | 8       | 29 s   | ~13 GiB         |
+| `forks`     | 27      | 38 s   | ~12 GiB         |
+| `threads`   | 7       | 64 s   | ~6 GiB          |
+
+En una máquina con poca RAM, el pool se cambia por línea de comandos, que le gana al default de Analog. `threads` libera la memoria de cada archivo al terminarlo y es el que menos consume, a cambio de alrededor del doble de tiempo:
+
+```bash
+pnpm exec vitest run --pool=threads
+```
+
 > Esta es la config de **la app** (`@cuentoneta/app`). El Studio de Sanity (`cms/`) tiene su propia config de Vitest, independiente — ver [Segunda config de Vitest: el Studio (`cms/`)](#segunda-config-de-vitest-el-studio-cms).
 
 ---

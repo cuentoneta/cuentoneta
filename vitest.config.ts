@@ -1,5 +1,6 @@
 /// <reference types="vitest" />
 import angular from '@analogjs/vite-plugin-angular';
+import { availableParallelism } from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { normalizePath } from 'vite';
 import { defineConfig } from 'vitest/config';
@@ -8,6 +9,14 @@ import { defineConfig } from 'vitest/config';
 // de Analog los detecta por regex y advierte que el archivo no está en el programa de TS. No son
 // código Angular, así que se excluyen del plugin.
 const toolsDir = normalizePath(fileURLToPath(new URL('./tools/', import.meta.url)));
+
+// Por encima de ~8 workers de `vmThreads` la suite no se acelera y la memoria sigue creciendo (ver
+// "Pool, workers y memoria" en testing.md). El tope no debe superar el default de Vitest, que en
+// watch es la mitad de los hilos: el modo se infiere igual que Vitest, y si la inferencia falla solo
+// quedan menos workers.
+const threads = availableParallelism();
+const isWatch = !process.argv.includes('run') && !process.env['CI'] && process.stdin.isTTY;
+const maxWorkers = Math.max(1, Math.min(8, isWatch ? Math.floor(threads / 2) : threads - 1));
 
 // Configuración de Vitest para Angular zoneless (Nx 23 + builder vite/esbuild).
 // El plugin de Analog compila componentes/plantillas Angular en modo JIT durante los tests.
@@ -20,6 +29,7 @@ export default defineConfig({
 	resolve: { tsconfigPaths: true },
 	test: {
 		globals: true,
+		maxWorkers,
 		environment: 'happy-dom',
 		// Por defecto happy-dom navega los frames hijos: cada <iframe> montado dispara un fetch real
 		// (p. ej. el embed de Spotify), que al desmontar el frame se aborta y emite un unhandled error
