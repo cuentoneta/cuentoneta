@@ -48,7 +48,8 @@
 				"default",
 				"{workspaceRoot}/src/models/**/*",
 				"{workspaceRoot}/src/utils/**/*",
-				"{workspaceRoot}/resources/**/*"
+				"{workspaceRoot}/resources/**/*",
+				"{workspaceRoot}/scripts/vercel-environments.model.ts"
 			],
 			"options": {
 				"command": "pnpm typecheck",

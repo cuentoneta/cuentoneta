@@ -136,6 +136,34 @@
 					"buildTarget": "@cuentoneta/app:build-storybook:ci"
 				}
 			}
+		},
+		"vitest:test": {
+			"inputs": [
+				"default",
+				"^production",
+				"{workspaceRoot}/cms/**/*",
+				{
+					"fileset": "{projectRoot}/tsconfig.spec.json",
+					"dependencies": true
+				},
+				{
+					"fileset": "{projectRoot}/tsconfig.storybook.json",
+					"dependencies": true
+				},
+				{
+					"externalDependencies": ["vitest"]
+				},
+				{
+					"env": "CI"
+				},
+				{
+					"env": "COVERAGE"
+				},
+				{
+					"dependentTasksOutputFiles": "**/*.js",
+					"transitive": true
+				}
+			]
 		}
 	}
 }
