@@ -58,7 +58,7 @@ import type { LiteraryWorkNavigationTeaserWithAuthors } from '@models/literary-w
 	},
 })
 export class LiteraryWorksCardDeck {
-	protected readonly skeletonCount = 6;
+	private readonly skeletonCount = 6;
 
 	public readonly literaryWorks = input<readonly LiteraryWorkNavigationTeaserWithAuthors[]>([]);
 	public readonly heading = input<string>('');

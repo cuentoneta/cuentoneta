@@ -46,7 +46,7 @@ import { Tag } from '../tag/tag';
 	},
 })
 export class NavigableCollectionTeaser {
-	protected readonly appRoutes = AppRoutes;
+	private readonly appRoutes = AppRoutes;
 
 	public readonly collection = input.required<CollectionTeaser>();
 }

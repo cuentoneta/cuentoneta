@@ -81,6 +81,16 @@ const commonRestrictedSyntax = [
 		selector: `PropertyDefinition[readonly!=true][value.callee.name=/^(${readonlyFactories.join('|')})$/]`,
 		message: readonlyFactoryMessage,
 	},
+	{
+		// Una clase de Angular que no es abstracta ni extiende otra no tiene subclase que lea un `protected`,
+		// y desde Angular 22.2 la plantilla y el `host` leen miembros `private`. Se acota a clases con
+		// decoradores porque el AST no dice si a una clase la extiende otra: una base concreta fuera de
+		// Angular puede necesitar `protected`.
+		selector:
+			'ClassDeclaration[decorators.length>0]:not([abstract=true]):not([superClass]) > ClassBody :matches(ClassBody > [accessibility="protected"], TSParameterProperty[accessibility="protected"])',
+		message:
+			'`protected` solo va en miembros que una subclase usa. Lo que lee la plantilla es `private` — ver angular-components.md.',
+	},
 ];
 
 // Métodos de `vi.*` que tienen wrapper en `src/test-utils.ts` (@test-utils).

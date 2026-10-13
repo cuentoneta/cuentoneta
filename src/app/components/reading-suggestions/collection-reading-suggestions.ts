@@ -66,12 +66,12 @@ export class CollectionReadingSuggestions {
 	);
 	private readonly title = computed(() => this.collection()?.title ?? '');
 
-	protected readonly loading = computed(() => this.collectionResource.isLoading());
-	protected readonly suggestions = computed(() => this.collection()?.suggestions ?? []);
-	protected readonly heading = computed(() => `Más obras de ${this.title()}`);
-	protected readonly moreLabel = computed(() => `Ver más de ${this.title()}`);
-	protected readonly moreRoute = computed(() => ['/', this.appRoutes.Collection, this.collectionSlug()]);
-	protected readonly navigationParams = computed<NavigationParams>(() => ({
+	private readonly loading = computed(() => this.collectionResource.isLoading());
+	private readonly suggestions = computed(() => this.collection()?.suggestions ?? []);
+	private readonly heading = computed(() => `Más obras de ${this.title()}`);
+	private readonly moreLabel = computed(() => `Ver más de ${this.title()}`);
+	private readonly moreRoute = computed(() => ['/', this.appRoutes.Collection, this.collectionSlug()]);
+	private readonly navigationParams = computed<NavigationParams>(() => ({
 		navigation: 'collection',
 		navigationSlug: this.collectionSlug(),
 	}));

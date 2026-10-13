@@ -136,7 +136,7 @@ export type LiteraryWorkTeaserCardContent =
 	},
 })
 export class LiteraryWorkTeaserCard {
-	protected readonly appRoutes = AppRoutes;
+	private readonly appRoutes = AppRoutes;
 
 	// Inputs
 	public readonly literaryWork = input<LiteraryWorkTeaserCardContent>();
@@ -153,15 +153,15 @@ export class LiteraryWorkTeaserCard {
 	public readonly excerptLines = input(2, { transform: (value: number) => Math.min(10, Math.max(1, value)) });
 	public readonly navigationParams = input<NavigationParams>();
 
-	protected readonly coverImageUrl = computed(() => this.literaryWork()?.coverImage);
-	protected readonly literaryWorkRouterLink = computed(() => [
+	private readonly coverImageUrl = computed(() => this.literaryWork()?.coverImage);
+	private readonly literaryWorkRouterLink = computed(() => [
 		'/',
 		this.appRoutes.LiteraryWork,
 		this.literaryWork()?.slug,
 	]);
 
 	// Mapea la variante de la tarjeta al tema visual de los selectores de multimedia.
-	protected readonly mediaTheme = computed<MediaSelectorsTheme>(() => {
+	private readonly mediaTheme = computed<MediaSelectorsTheme>(() => {
 		switch (this.variant()) {
 			case 'on-gray':
 				return 'solid';
@@ -172,13 +172,13 @@ export class LiteraryWorkTeaserCard {
 		}
 	});
 
-	protected readonly rowWrapperClasses = computed(() =>
+	private readonly rowWrapperClasses = computed(() =>
 		this.variant() === 'highlighted'
 			? 'relative flex w-full max-w-178.75 items-start gap-8 overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-50 p-6'
 			: 'relative flex w-full max-w-178.75 items-start gap-6',
 	);
 
-	protected readonly rowColumnClasses = computed(() => {
+	private readonly rowColumnClasses = computed(() => {
 		const base = 'flex min-w-0 flex-1 flex-col justify-center gap-3';
 		return this.variant() === 'highlighted' ? base : `${base} pt-1`;
 	});

@@ -59,7 +59,7 @@ Los valores derivados son **`computed`** (o `toSignal` para fuentes observables)
 public readonly literaryWork = computed(() =>
 	this.literaryWorkResource.hasValue() ? this.literaryWorkResource.value() : undefined,
 ); // `public`: lo exige la interfaz LiteraryWorkHost
-protected readonly byline = computed(
+private readonly byline = computed(
 	() =>
 		this.literaryWork()
 			?.authors.map((author) => author.name)
@@ -67,7 +67,7 @@ protected readonly byline = computed(
 );
 
 // ❌ Incorrecto — segundo signal que hay que mantener en sync a mano
-protected readonly byline = signal('');
+private readonly byline = signal('');
 // ...y luego un effect/set por cada cambio de literaryWork → estado duplicado
 ```
 
@@ -154,7 +154,7 @@ Los Router resources (`resources` en la ruta + `withRouterResources()`, en devel
 
 ```typescript
 // ✅ El guard decide explícitamente qué se muestra cuando el recurso falló
-protected readonly literaryWorks = computed(() =>
+private readonly literaryWorks = computed(() =>
 	this.literaryWorksResource.hasValue() ? this.literaryWorksResource.value() : [],
 );
 ```

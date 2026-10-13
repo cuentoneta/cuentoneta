@@ -55,11 +55,11 @@ export class Divider {
 	 */
 	public readonly decorative = input(false);
 
-	protected readonly role = computed(() => (this.decorative() ? 'presentation' : 'separator'));
+	private readonly role = computed(() => (this.decorative() ? 'presentation' : 'separator'));
 
 	// Un `aria-orientation` sobre un elemento presentacional no significa nada, así que se omite en
 	// lugar de emitirlo huérfano.
-	protected readonly ariaOrientation = computed(() => (this.decorative() ? null : this.orientation()));
+	private readonly ariaOrientation = computed(() => (this.decorative() ? null : this.orientation()));
 
 	// `block` porque un elemento custom es inline por defecto y una línea inline no toma ancho;
 	// `shrink-0` para que el único píxel no se comprima a cero dentro de un contenedor apretado.
@@ -70,5 +70,5 @@ export class Divider {
 		vertical: 'w-px self-stretch',
 	};
 
-	protected readonly hostClasses = computed(() => `${this.baseClasses} ${this.orientationClasses[this.orientation()]}`);
+	private readonly hostClasses = computed(() => `${this.baseClasses} ${this.orientationClasses[this.orientation()]}`);
 }

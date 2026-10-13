@@ -43,6 +43,6 @@ Aplicá esta lente **dentro** de las convenciones del proyecto; un instinto gen�
 - el naming `fetch*()` en repositorios y `get*()`/`update*()` en servicios — no los aplanes en una sola función "para ahorrar una capa";
 - el **ACL central**: los resultados crudos de GROQ se traducen al modelo de dominio (`Author`, `LiteraryWork`, `Collection`, `Resource`, …) vía **mappers puros** (`mapAuthor`, `mapAuthorTeaser`, …); no filtres el shape crudo de Sanity al frontend "porque es más corto";
 - el estilo **signals-first** en `src/app/`: derivar con `computed()`/`toSignal()`, `effect()` como field initializers nombrados, sin promesas sobre observables (`firstValueFrom`/`lastValueFrom`/`toPromise` prohibidos) y `switchMap` como aplanado por defecto;
-- `Object.freeze({...} as const)` en vez de `enum`; campos de componente `protected`/`private` (no `public` implícito); plantillas con `@if`/`@for`, self-closing tags y `ngSrc`.
+- `Object.freeze({...} as const)` en vez de `enum`; campos de componente `private` (no `public` implícito; `protected` solo para subclases); plantillas con `@if`/`@for`, self-closing tags y `ngSrc`.
 
 Cuando una simplificación violaría una restricción dura o una convención establecida, **descartala** — la restricción gana. Mostrá solo reestructuraciones que sean a la vez más simples **y** compatibles con las convenciones.

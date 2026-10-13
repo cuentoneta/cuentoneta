@@ -68,7 +68,7 @@ private readonly syncSlugEffect = effect(() => {
 
 ```typescript
 // ✅ Idiomático en cuentoneta: derivar con computed, no estado duplicado
-protected readonly hasLiteraryWorks = computed(() => this.literaryWorks().length > 0);
+private readonly hasLiteraryWorks = computed(() => this.literaryWorks().length > 0);
 ```
 
 ## Basado en el dominio (Domain-Based)

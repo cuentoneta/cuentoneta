@@ -56,16 +56,16 @@ export class EditorialNote {
 		highlight: { container: 'gap-4 rounded-lg bg-brand-50 p-2', text: 'text-neutral-700' },
 	};
 
-	protected readonly safeContent = computed(() => this.sanitizer.bypassSecurityTrustHtml(this.note().text));
+	private readonly safeContent = computed(() => this.sanitizer.bypassSecurityTrustHtml(this.note().text));
 
-	protected readonly safeReference = computed(() => {
+	private readonly safeReference = computed(() => {
 		const { reference } = this.note();
 		return reference ? this.sanitizer.bypassSecurityTrustHtml(reference) : undefined;
 	});
 
-	protected readonly bodyClasses = computed(
+	private readonly bodyClasses = computed(
 		() => `source-serif-lg flex flex-1 flex-col font-normal ${this.variantClasses[this.variant()].text}`,
 	);
 
-	protected readonly hostClasses = computed(() => `flex items-center ${this.variantClasses[this.variant()].container}`);
+	private readonly hostClasses = computed(() => `flex items-center ${this.variantClasses[this.variant()].container}`);
 }

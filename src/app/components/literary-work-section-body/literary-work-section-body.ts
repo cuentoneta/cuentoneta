@@ -25,5 +25,5 @@ export class LiteraryWorkSectionBody {
 
 	private readonly sanitizer = inject(DomSanitizer);
 
-	protected readonly safeBody = computed(() => this.sanitizer.bypassSecurityTrustHtml(this.body()));
+	private readonly safeBody = computed(() => this.sanitizer.bypassSecurityTrustHtml(this.body()));
 }

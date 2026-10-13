@@ -113,12 +113,12 @@ export class AuthorInfoPanel {
 	// El backend entrega la biografía ya saneada por el pipeline compartido, y el brand del tipo es la
 	// prueba de que pasó por ahí. Sin el bypass, el sanitizer de Angular vuelve a recortar una marcación
 	// que ya está acotada a la allow-list, y el énfasis de la prosa se pierde.
-	protected readonly safeBiography = computed(() => {
+	private readonly safeBiography = computed(() => {
 		const author = this.author();
 		return author ? this.sanitizer.bypassSecurityTrustHtml(author.biography) : undefined;
 	});
 
-	protected readonly biographyClasses = computed(() => {
+	private readonly biographyClasses = computed(() => {
 		const lines = this.biographyLines();
 		const base = 'font-inter text-sm leading-5 font-medium text-ellipsis text-neutral-700';
 		return lines === undefined ? base : `${base} line-clamp-${lines}`;

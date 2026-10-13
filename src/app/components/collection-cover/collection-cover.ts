@@ -48,7 +48,7 @@ export class CollectionCover {
 
 	// Las tres posiciones del abanico, leídas del diseño contra el borde que cada portada usa: la del
 	// frente arriba y centrada, las laterales más abajo y pegadas a los costados.
-	protected readonly sampleImageClasses = [
+	private readonly sampleImageClasses = [
 		'absolute top-2.5 left-1/2 z-raised -translate-x-1/2 border-[3px] border-neutral-100',
 		'absolute top-7 left-1.25 z-content border-[3px] border-neutral-100',
 		'absolute top-7 right-1.25 z-content border-[3px] border-neutral-100',

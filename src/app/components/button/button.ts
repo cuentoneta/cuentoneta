@@ -88,7 +88,7 @@ export class Button {
 		'bg-neutral-900 text-neutral-50 border-transparent hover:bg-neutral-800 active:bg-neutral-700';
 
 	/** Clases del host calculadas componiendo los tres ejes */
-	protected readonly hostClasses = computed(() => {
+	private readonly hostClasses = computed(() => {
 		// El estado activo reemplaza la apariencia en vez de sumarse a ella: el contraste invertido
 		// es el mismo para las tres, así que superponerlas dejaría fondos y bordes en conflicto.
 		const appearance = this.active() ? this.activeClasses : this.variantClasses[this.variant()];

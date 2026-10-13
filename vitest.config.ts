@@ -1,14 +1,7 @@
 /// <reference types="vitest" />
 import angular from '@analogjs/vite-plugin-angular';
 import { availableParallelism } from 'node:os';
-import { fileURLToPath } from 'node:url';
-import { normalizePath } from 'vite';
 import { defineConfig } from 'vitest/config';
-
-// Los specs de las reglas de lint llevan decoradores de Angular como texto de prueba, y el plugin
-// de Analog los detecta por regex y advierte que el archivo no está en el programa de TS. No son
-// código Angular, así que se excluyen del plugin.
-const toolsDir = normalizePath(fileURLToPath(new URL('./tools/', import.meta.url)));
 
 // Por encima de ~8 workers de `vmThreads` la suite no se acelera y la memoria sigue creciendo (ver
 // "Pool, workers y memoria" en testing.md). El tope no debe superar el default de Vitest, que en
@@ -25,8 +18,14 @@ export default defineConfig({
 	// descubre proyectos recorriendo el árbol, y bajo `.claude/worktrees/` hay copias enteras del
 	// repo. Basta con que el tsconfig de una de ellas no le parsee para que aborte y deje de resolver
 	// alias en toda la corrida.
-	plugins: [angular({ transformFilter: (_code, id) => !normalizePath(id).startsWith(toolsDir) })],
+	//
+	// `fastCompile` transforma archivo por archivo: sin él, cada corrida compila primero el programa
+	// entero de `tsconfig.spec.json`, aunque se pida un solo spec. Su transform deja `@Service()` e
+	// `@Injectable()` en la clase como decoradores estándar, que V8 no ejecuta. Analog apaga el paso de
+	// OXC de Vite; declarar `oxc` lo vuelve a encender, y con `legacy` baja esos decoradores.
+	plugins: [angular({ fastCompile: true })],
 	resolve: { tsconfigPaths: true },
+	oxc: { decorator: { legacy: true } },
 	test: {
 		globals: true,
 		maxWorkers,

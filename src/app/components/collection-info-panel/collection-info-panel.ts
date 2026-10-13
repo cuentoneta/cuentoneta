@@ -103,12 +103,12 @@ export class CollectionInfoPanel {
 	// El backend entrega la descripción ya saneada por el pipeline compartido, y el brand del tipo es la
 	// prueba de que pasó por ahí. Sin el bypass, el sanitizer de Angular vuelve a recortar una marcación
 	// que ya está acotada a la allow-list, y el énfasis de la prosa se pierde.
-	protected readonly safeDescription = computed(() => {
+	private readonly safeDescription = computed(() => {
 		const collection = this.collection();
 		return collection ? this.sanitizer.bypassSecurityTrustHtml(collection.description) : undefined;
 	});
 
-	protected readonly descriptionClasses = computed(() => {
+	private readonly descriptionClasses = computed(() => {
 		const lines = this.descriptionLines();
 		const base = 'font-inter text-sm leading-5 font-medium text-ellipsis text-neutral-700';
 		return lines === undefined ? base : `${base} line-clamp-${lines}`;

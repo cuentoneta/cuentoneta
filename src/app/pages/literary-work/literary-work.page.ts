@@ -68,17 +68,17 @@ export default class LiteraryWorkPage implements LiteraryWorkHost {
 		this.literaryWorkResource.hasValue() ? this.literaryWorkResource.value() : undefined,
 	);
 
-	protected readonly notFound = computed(() => this.literaryWorkResource.status() === 'error');
+	private readonly notFound = computed(() => this.literaryWorkResource.status() === 'error');
 
 	// El primer autor y no el `byline`: el nombre y el slug que consume la variante de autor tienen
 	// que referirse al mismo, y el byline une a todos con coma.
 	private readonly primaryAuthor = computed(() => this.literaryWork()?.authors[0]);
 
-	protected readonly primaryAuthorName = computed(() => this.primaryAuthor()?.name ?? '');
+	private readonly primaryAuthorName = computed(() => this.primaryAuthor()?.name ?? '');
 
 	// Sin contexto en la ruta se cae al autor de la obra: una obra abierta por URL directa igual
 	// ofrece a dónde seguir leyendo.
-	protected readonly navigationParams = computed<NavigationParams>(() => {
+	private readonly navigationParams = computed<NavigationParams>(() => {
 		const navigationSlug = this.navigationSlug();
 
 		if (navigationSlug) {
@@ -87,7 +87,7 @@ export default class LiteraryWorkPage implements LiteraryWorkHost {
 
 		return { navigation: 'author', navigationSlug: this.primaryAuthor()?.slug ?? '' };
 	});
-	protected readonly byline = computed(
+	private readonly byline = computed(
 		() =>
 			this.literaryWork()
 				?.authors.map((author) => author.name)
@@ -95,7 +95,7 @@ export default class LiteraryWorkPage implements LiteraryWorkHost {
 	);
 
 	// TODO(#1471): mover esta lógica a un service y revisar si hace falta declarar tipos de rendering.
-	protected readonly sections = computed(
+	private readonly sections = computed(
 		() =>
 			this.literaryWork()?.content.map((section) => ({
 				position: section.position,
@@ -106,7 +106,7 @@ export default class LiteraryWorkPage implements LiteraryWorkHost {
 			})) ?? [],
 	);
 
-	protected readonly editorialNote = computed(() => {
+	private readonly editorialNote = computed(() => {
 		const editorialNote = this.literaryWork()?.editorialNote;
 		return editorialNote ? createAttributedText({ text: editorialNote }) : undefined;
 	});

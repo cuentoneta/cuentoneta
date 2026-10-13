@@ -46,7 +46,7 @@ export class ImageProfile {
 
 	// Descriptor único de "qué se dibuja" (url, tamaño, clases de la imagen y fondo del círculo),
 	// derivado de variant + src. Ramifica sobre `src` para estrechar su tipo antes de armar la URL.
-	protected readonly view = computed(() => {
+	private readonly view = computed(() => {
 		const { px, icon } = this.sizeMap[this.size()];
 		const src = this.src();
 		if (this.variant() === 'collection') {
@@ -63,7 +63,7 @@ export class ImageProfile {
 		};
 	});
 
-	protected readonly containerClasses = computed(() => {
+	private readonly containerClasses = computed(() => {
 		const { circle } = this.sizeMap[this.size()];
 		return `relative inline-flex items-center justify-center overflow-hidden rounded-full ${circle} ${this.view().background}`;
 	});

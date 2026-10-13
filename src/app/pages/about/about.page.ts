@@ -13,7 +13,7 @@ import { ContributorApi } from '../../providers/contributor.provider';
 	templateUrl: './about.page.html',
 })
 export default class AboutPage {
-	protected readonly links = {
+	private readonly links = {
 		CONTRIBUTING: 'https://github.com/cuentoneta/cuentoneta/blob/master/CONTRIBUTING.md',
 		GITHUB_REPO: 'https://github.com/cuentoneta/cuentoneta',
 		FACEBOOK: 'https://facebook.com/cuentoneta',
@@ -35,7 +35,7 @@ export default class AboutPage {
 		defaultValue: [],
 	});
 
-	protected readonly contributorsPerArea = computed(() => this.contributorsResource.value());
+	private readonly contributorsPerArea = computed(() => this.contributorsResource.value());
 
 	constructor() {
 		this.updateMetaTags();

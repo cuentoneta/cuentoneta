@@ -61,5 +61,5 @@ export class ReadingSuggestions {
 	// Es un alto fijo, así que solo acierta al ancho en que se midió: en pantallas angostas, donde los
 	// títulos y los extractos ocupan más líneas, el bloque va a superarlo y el pie se va a correr un
 	// poco. Reservar de más en el caso ancho sería peor, porque deja un hueco visible en el caso común.
-	protected readonly placeholderClasses = 'h-211';
+	private readonly placeholderClasses = 'h-211';
 }
