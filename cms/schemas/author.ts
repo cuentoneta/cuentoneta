@@ -1,7 +1,10 @@
 import { UsersIcon } from '@sanity/icons/Users';
 import { resource } from './resourceType';
 import { defineArrayMember, defineField, defineType } from 'sanity';
+import type { ComputedNumberDefinition } from 'sanity-plugin-computed-field';
 import { validateHistoricalDate, validateSlugFormat } from '../utils/validations';
+
+type HistoricalYearReducer = ComputedNumberDefinition['options']['reduceQueryResult'];
 
 const defaultAuthorImage = {
 	asset: {
@@ -10,13 +13,14 @@ const defaultAuthorImage = {
 	},
 };
 
-const reduceHistoricalYear =
-	<K extends string>(fieldName: K) =>
-	(result: { draft?: Record<K, string>; published: Record<K, string> }) => {
+// Sin fecha, el año queda en `null`: es el estado de "año desconocido". El plugin tipa el resultado como
+// `number`, pero lo guarda tal cual con `set()`, así que el `null` llega al documento como siempre.
+const reduceHistoricalYear = <K extends string>(fieldName: K): HistoricalYearReducer =>
+	((result: { draft?: Record<K, string>; published: Record<K, string> }) => {
 		const value = result.draft?.[fieldName] || result.published?.[fieldName];
 		const match = value && /^(-?\d{4})-/.exec(value);
 		return match ? parseInt(match[1], 10) : null;
-	};
+	}) as unknown as HistoricalYearReducer;
 
 export default defineType({
 	name: 'author',
