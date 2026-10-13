@@ -6,7 +6,7 @@
 import type { IndexableHtmlExpectations } from '../e2e/_utils/seo-invariants';
 import { parseHtml, parseJsonLdBlocks } from '../e2e/_utils/seo';
 import { SCHEMA_IDS, SITEWIDE_SCHEMA_IDS } from '../e2e/_utils/seo-fixtures';
-import { childElementSequences } from '../src/testing/sitemap-xml';
+import { childElementSequences, urlEntries } from '../src/testing/sitemap-xml';
 import { PAGE_REVISED_ON, type RevisedPage } from '@api/modules/sitemap/sitemap.lastmod';
 
 export function slugOf(path: string): string {
@@ -139,12 +139,7 @@ interface DatedEntry {
 }
 
 function datedEntries(xml: string): DatedEntry[] {
-	return parseHtml(xml)
-		.querySelectorAll('url')
-		.flatMap((url) => {
-			const lastmod = url.querySelector('lastmod')?.text.trim();
-			return lastmod ? [{ path: toPath(url.querySelector('loc')?.text ?? ''), lastmod }] : [];
-		});
+	return urlEntries(xml).flatMap(({ loc, lastmod }) => (lastmod ? [{ path: toPath(loc), lastmod }] : []));
 }
 
 function isDeclaredRevision({ path, lastmod }: DatedEntry): boolean {

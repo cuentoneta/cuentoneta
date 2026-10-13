@@ -1,4 +1,4 @@
-import { childElementSequences, locations } from './sitemap-xml';
+import { childElementSequences, locations, urlEntries } from './sitemap-xml';
 
 const entry = (children: string) => `<url>\n${children}\n</url>`;
 
@@ -41,6 +41,28 @@ describe('locations', () => {
 	it('keeps the escaped form, which is what the document carries', () => {
 		expect(locations(entry('<loc>https://example.com/?a=1&amp;b=2</loc>'))).toEqual([
 			'https://example.com/?a=1&amp;b=2',
+		]);
+	});
+});
+
+describe('urlEntries', () => {
+	it('pairs each location with its date, in document order', () => {
+		const xml = [
+			entry('<loc>https://example.com/a</loc>\n<lastmod>2025-01-01</lastmod>'),
+			entry('<loc>https://example.com/b</loc>'),
+		].join('\n');
+
+		expect(urlEntries(xml)).toEqual([
+			{ loc: 'https://example.com/a', lastmod: '2025-01-01' },
+			{ loc: 'https://example.com/b', lastmod: undefined },
+		]);
+	});
+
+	// La fecha pertenece a su entrada aunque venga antes de la ubicación: el orden lo juzga
+	// `childElementSequences`, no este lector.
+	it('reads the date of an entry that declares it before its location', () => {
+		expect(urlEntries(entry('<lastmod>2025-01-01</lastmod>\n<loc>https://example.com/a</loc>'))).toEqual([
+			{ loc: 'https://example.com/a', lastmod: '2025-01-01' },
 		]);
 	});
 });

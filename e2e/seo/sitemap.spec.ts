@@ -13,6 +13,8 @@
  *  - D. Ninguna ubicación aparece repetida.
  *  - E. Toda ficha de obra, autor o colección tiene un slug que el dominio puede construir: una que no
  *       lo tuviera anunciaría una URL que nunca se sirve.
+ *  - F. Ninguna ficha de autor ni de colección publica un `lastmod` anterior a la revisión declarada de
+ *       su página: la plantilla cambió ese día para todas, tengan o no obras más recientes.
  *
  * No es una validación contra el esquema publicado: no cubre cardinalidades, el tipo de dato de la
  * fecha ni los límites de tamaño del documento.
@@ -21,8 +23,9 @@ import { expect } from '@playwright/test';
 
 import { test } from '../_utils/test';
 
-import { childElementSequences, locations } from '@testing/sitemap-xml';
+import { childElementSequences, locations, urlEntries } from '@testing/sitemap-xml';
 import { isSlug } from '@models/slug.model';
+import { PAGE_REVISED_ON, type RevisedPage } from '@api/modules/sitemap/sitemap.lastmod';
 
 // El sitemap no se renderiza: se pide por HTTP y se lee como texto. Correrlo en los dos proyectos
 // pagaría el doble en el gate más caro sin ejercitar nada distinto.
@@ -88,4 +91,15 @@ test('sitemap — E: toda ficha publicada tiene un slug que el dominio puede con
 
 	expect(slugs.length).toBeGreaterThan(0);
 	expect(slugs.filter((slug) => !isSlug(slug))).toEqual([]);
+});
+
+test('sitemap — F: ninguna ficha de autor ni de colección publica una fecha anterior a su revisión', () => {
+	const revisedPages = urlEntries(xml).flatMap(({ loc, lastmod }) => {
+		const { pathname } = new URL(loc);
+		const page = (Object.keys(PAGE_REVISED_ON) as RevisedPage[]).find((type) => pathname.startsWith(`/${type}/`));
+		return page ? [{ loc, lastmod, revisedOn: PAGE_REVISED_ON[page] }] : [];
+	});
+
+	expect(revisedPages.length).toBeGreaterThan(0);
+	expect(revisedPages.filter(({ lastmod, revisedOn }) => !lastmod || lastmod < revisedOn)).toEqual([]);
 });
