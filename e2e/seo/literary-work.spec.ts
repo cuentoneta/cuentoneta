@@ -2,7 +2,8 @@
  * Tests e2e de SEO para la página de lectura (`/literary-work/:slug`, entidad LiteraryWork).
  *
  * Sobre el HTML server-rendered (lo que ve el crawler, sin ejecutar JS):
- *  - A. Status 404 real del SSR para una obra inexistente (no 200 con página vacía).
+ *  - A. Status 404 real del SSR para una obra inexistente (no 200 con página vacía) y para un
+ *       slug con un formato que el dominio rechaza (no 5xx).
  *  - B. Meta tags: <title> con la obra, description, og:/twitter: title y description,
  *       canonical a la URL de la obra, robots indexable, keywords y author (señal E-E-A-T).
  *  - C. Datos estructurados: JSON-LD Article (headline, datePublished, author Person[],
@@ -34,6 +35,12 @@ const requiredJsonLdIds = [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.article, SCHEMA_ID
 
 test('literary-work — A: una obra inexistente responde 404 real en SSR', async ({ request }) => {
 	const response = await request.get('/literary-work/obra-inexistente-e2e');
+	expect(response.status()).toBe(404);
+});
+
+// No depende del dataset: el API rechaza el formato antes de consultar.
+test('literary-work — A: un slug con un formato que el dominio rechaza responde 404, no 5xx', async ({ request }) => {
+	const response = await request.get('/literary-work/IcyFox');
 	expect(response.status()).toBe(404);
 });
 

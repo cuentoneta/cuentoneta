@@ -54,5 +54,16 @@ describe('read.schema', () => {
 			expect(breadcrumb['@type']).toBe('BreadcrumbList');
 			expect(breadcrumb.itemListElement).toHaveLength(2);
 		});
+
+		it('ancla el primer nivel en la raíz, que es la URL canónica de la portada', () => {
+			const breadcrumb = buildLiteraryWorkBreadcrumb(representativeLiteraryWork, `${WEBSITE}/`);
+
+			expect(breadcrumb.itemListElement).toContainEqual({
+				'@type': 'ListItem',
+				position: 1,
+				name: 'Inicio',
+				item: { '@id': `${WEBSITE}/` },
+			});
+		});
 	});
 });

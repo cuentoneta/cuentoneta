@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import {
+	legacyHomeRedirect,
 	legacyStoryDetailRedirect,
 	legacyStoryListingRedirect,
 	legacyStorylistDetailRedirect,
@@ -12,12 +13,24 @@ describe('legacy route redirects', () => {
 	// detalle, que es lo que decide adónde cae la barra final.
 	function appUnderTest(): Hono {
 		const app = new Hono({ strict: false });
+		app.on('GET', '/home', legacyHomeRedirect);
 		app.on('GET', '/story', legacyStoryListingRedirect);
 		app.on('GET', '/story/:slug', legacyStoryDetailRedirect);
 		app.on('GET', '/storylist', legacyStorylistListingRedirect);
 		app.on('GET', '/storylist/:slug', legacyStorylistDetailRedirect);
 		return app;
 	}
+
+	it.each([
+		['/home', '/'],
+		['/home/', '/'],
+		['/home?utm_source=boletin&page=2', '/?utm_source=boletin&page=2'],
+	])('should answer the retired home %s with a permanent redirect to the root', async (path, destination) => {
+		const response = await appUnderTest().request(path);
+
+		expect(response.status).toBe(301);
+		expect(response.headers.get('Location')).toBe(destination);
+	});
 
 	it.each([
 		['/story', '/literary-work'],
@@ -79,5 +92,31 @@ describe('legacy route redirects', () => {
 
 		expect(response.status).toBe(301);
 		expect(response.headers.get('Location')).toBe('/literary-work/index.html');
+	});
+
+	// El slug viejo de una obra puede ser el vigente de otra: el destino de cada eslabón es su propia obra.
+	it.each([
+		['/story/un-dia-perfecto-para-el-pez-platano', '/literary-work/la-pelota'],
+		['/story/un-dia-perfecto-para-el-pez-banana', '/literary-work/un-dia-perfecto-para-el-pez-platano'],
+		['/story/IcyFox?utm_source=boletin', '/literary-work/que-seria-yo-sin-ti?utm_source=boletin'],
+	])('should redirect the renamed %s to the current slug of the same work', async (path, destination) => {
+		const response = await appUnderTest().request(path);
+
+		expect(response.status).toBe(301);
+		expect(response.headers.get('Location')).toBe(destination);
+	});
+
+	// La tabla de renombres es solo de obras: un slug de colección homónimo se traslada tal cual.
+	it('should not apply the literary work renames to a collection', async () => {
+		const response = await appUnderTest().request('/storylist/IcyFox');
+
+		expect(response.headers.get('Location')).toBe('/collection/IcyFox');
+	});
+
+	// Un nombre que el prototipo de un objeto ya trae no es un slug renombrado.
+	it('should carry over a slug that names an inherited object property', async () => {
+		const response = await appUnderTest().request('/story/constructor');
+
+		expect(response.headers.get('Location')).toBe('/literary-work/constructor');
 	});
 });

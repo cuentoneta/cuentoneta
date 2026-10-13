@@ -30,7 +30,7 @@ type VisibilityState = (typeof VisibilityState)[keyof typeof VisibilityState];
 			<section class="flex items-center">
 				<!-- El nombre accesible sale del aria-label y no del contenido: el alt del logo más el
 				texto de la marca leen "Logo de 'La Cuentoneta' La Cuentoneta", que no dice a dónde lleva. -->
-				<a [routerLink]="['/', appRoutes.Home]" aria-label="La Cuentoneta — Inicio" class="flex">
+				<a [routerLink]="homePath" aria-label="La Cuentoneta — Inicio" class="flex">
 					<img [ngSrc]="'./assets/svg/logo.svg'" class="mr-3" width="59" height="32" alt="Logo de 'La Cuentoneta'" />
 					<span class="flex items-center font-inter text-lg font-bold">La Cuentoneta</span>
 				</a>
@@ -81,9 +81,9 @@ type VisibilityState = (typeof VisibilityState)[keyof typeof VisibilityState];
 	imports: [RouterLink, NgOptimizedImage],
 })
 export class Header {
-	protected readonly appRoutes = AppRoutes;
+	protected readonly homePath = `/${AppRoutes.Home}`;
 	protected readonly navLinks: InternalLink[] = [
-		{ label: 'Inicio', path: `/${AppRoutes.Home}` },
+		{ label: 'Inicio', path: this.homePath },
 		{ label: 'Obras', path: `/${AppRoutes.LiteraryWork}` },
 		{ label: 'Colecciones', path: `/${AppRoutes.Collection}` },
 		{ label: 'Autores', path: `/${AppRoutes.Authors}` },

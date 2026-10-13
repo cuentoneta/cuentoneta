@@ -1,7 +1,8 @@
 /**
- * Las URLs indexadas se mudaron: obra y colección tienen rutas nuevas, y las viejas responden con un
- * traslado permanente. Lo que se afirma acá es que ese traslado viaja en la respuesta HTTP: un
- * crawler que no ejecuta JavaScript solo ve el 301, y es el 301 lo que traslada lo indexado.
+ * Las URLs indexadas se mudaron: la portada se sirve en la raíz, obra y colección tienen rutas
+ * nuevas, y las viejas responden con un traslado permanente. Lo que se afirma acá es que ese traslado
+ * viaja en la respuesta HTTP: un crawler que no ejecuta JavaScript solo ve el 301, y es el 301 lo que
+ * traslada lo indexado.
  *
  * Se afirma además que el destino responde: un 301 hacia una URL que no existe pierde lo mismo que
  * no redirigir.
@@ -24,6 +25,28 @@ const DETAILS = [
 	{ from: `/story/${STABLE_SLUGS.literaryWork}`, to: `/literary-work/${STABLE_SLUGS.literaryWork}` },
 	{ from: `/storylist/${STABLE_SLUGS.collection}`, to: `/collection/${STABLE_SLUGS.collection}` },
 ] as const;
+
+for (const { from, to } of [
+	{ from: '/home', to: '/' },
+	{ from: '/home/', to: '/' },
+	{ from: '/home?utm_source=e2e', to: '/?utm_source=e2e' },
+]) {
+	test(`legacy-redirects — la portada vieja ${from} responde 301 permanente a ${to}`, async ({ request }) => {
+		const response = await request.get(from, { maxRedirects: 0 });
+
+		expect(response.status()).toBe(301);
+		expect(response.headers()['location']).toBe(to);
+	});
+}
+
+// La raíz es el destino de la portada vieja y la URL que publica el sitemap: si volviera a redirigir,
+// las dos URLs se apuntarían entre sí.
+test('legacy-redirects — la raíz responde 200 sin redirigir', async ({ request }) => {
+	const response = await request.get('/', { maxRedirects: 0 });
+
+	expect(response.status()).toBe(200);
+	expect(response.headers()['location']).toBeUndefined();
+});
 
 for (const { from, to } of LISTINGS) {
 	test(`legacy-redirects — el listado viejo ${from} responde 301 permanente a ${to}`, async ({ request }) => {

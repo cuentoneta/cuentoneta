@@ -9,14 +9,15 @@ import { secureHeaders } from 'hono/secure-headers';
 import apiRoutes from './api/routes';
 import sitemapController from './api/modules/sitemap/sitemap.controller';
 import { getAllowedHosts } from './api/_helpers/environment';
-import { noindexNonProduction } from './api/_middleware/noindex.middleware';
-import { ssrCacheControl } from './api/_middleware/ssr-cache-control.middleware';
+import { noindexNonProduction } from '@middleware/noindex.middleware';
+import { ssrCacheControl } from '@middleware/ssr-cache-control.middleware';
 import {
+	legacyHomeRedirect,
 	legacyStoryDetailRedirect,
 	legacyStoryListingRedirect,
 	legacyStorylistDetailRedirect,
 	legacyStorylistListingRedirect,
-} from './api/_middleware/legacy-route-redirects.middleware';
+} from '@middleware/legacy-route-redirects.middleware';
 
 /**
  * Inicializa Hono y exporta la instancia de la aplicación
@@ -46,15 +47,17 @@ app.route('/api', apiRoutes);
 // el navegador dispara al hidratar, que cubre la caché del API.
 app.on(
 	'GET',
-	['/home', '/about', '/collection', '/collection/*', '/author/*', '/authors', '/literary-work', '/literary-work/*'],
+	['/', '/about', '/collection', '/collection/*', '/author/*', '/authors', '/literary-work', '/literary-work/*'],
 	ssrCacheControl,
 );
 
-// Las rutas viejas de obra y de colección se mudaron. Van antes del catch-all SSR, que es un
-// `use('*')`: si la request llegara hasta él se renderizaría una página y el 301 no se emitiría nunca.
+// Las rutas viejas de la portada, de obra y de colección se mudaron. Van antes del catch-all SSR, que
+// es un `use('*')`: si la request llegara hasta él se renderizaría una página y el 301 no se emitiría
+// nunca.
 //
 // El listado se registra antes que su detalle: con `strict: false`, `/story/` entra por la ruta sin
 // slug, y ese es el destino que le corresponde.
+app.on('GET', '/home', legacyHomeRedirect);
 app.on('GET', '/story', legacyStoryListingRedirect);
 app.on('GET', '/story/:slug', legacyStoryDetailRedirect);
 app.on('GET', '/storylist', legacyStorylistListingRedirect);

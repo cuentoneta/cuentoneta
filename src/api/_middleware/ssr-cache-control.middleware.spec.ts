@@ -45,8 +45,8 @@ describe('ssrCacheControl', () => {
 		);
 		// La home es la ruta donde el deopt a CSR ya ocurrió en producción, así que es donde la guarda
 		// anti-CSR tiene que estar probada: cachear ese fallback serviría una página vacía por siete días.
-		app.use('/home', ssrCacheControl);
-		app.get('/home', (c) => c.html('<html ng-server-context="ssr"><body>inicio</body></html>'));
+		app.use('/', ssrCacheControl);
+		app.get('/', (c) => c.html('<html ng-server-context="ssr"><body>inicio</body></html>'));
 		return app;
 	}
 

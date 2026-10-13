@@ -13,7 +13,7 @@ const VALID_BREADCRUMB = {
 	'@context': 'https://schema.org',
 	'@type': 'BreadcrumbList',
 	itemListElement: [
-		{ '@type': 'ListItem', position: 1, name: 'Inicio', item: { '@id': 'https://x/home' } },
+		{ '@type': 'ListItem', position: 1, name: 'Inicio', item: { '@id': 'https://x/' } },
 		{ '@type': 'ListItem', position: 2, name: 'El Aleph', item: { '@id': 'https://x/story/el-aleph' } },
 	],
 };

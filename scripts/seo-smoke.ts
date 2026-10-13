@@ -2,14 +2,15 @@
  * Smoke post-deploy de indexado: corre las invariantes de `seo-invariants` sobre el HTML SSR crudo
  * de un despliegue real (`BASE_URL`), reusando el MISMO core que el gate de e2e para no divergir.
  *
- * Cobertura: siempre chequea `/home` + los slugs estables conocidos-buenos (baseline de regresión),
+ * Cobertura: siempre chequea `/` + los slugs estables conocidos-buenos (baseline de regresión),
  * y además una muestra ALEATORIA de obras/autores/colecciones tomada del `/sitemap.xml` en cada
  * corrida (cobertura rotativa). Los patrones de `<title>`/`<h1>` se derivan del slug de cada URL.
  * Si el sitemap no está disponible, el baseline igual se ejerce (la muestra se omite con un aviso).
  *
  * Del propio `/sitemap.xml` chequea además la secuencia de elementos que exige su esquema y la
  * dispersión del `lastmod`: una fecha repetida en medio corpus delata una escritura en lote, y eso
- * solo se ve contra el corpus real de un despliegue.
+ * solo se ve contra el corpus real de un despliegue. Las revisiones de página declaradas en
+ * `sitemap.lastmod.ts` son un lote legítimo y quedan fuera de esa medición.
  *
  * Uso:
  *   BASE_URL=https://www.cuentoneta.ar pnpm ops seo:smoke
@@ -46,7 +47,7 @@ const proxyHeaders: Record<string, string> =
 	process.env['SIMULATE_PROXY_HEADERS'] === 'true' ? { 'x-forwarded-for': '66.249.66.1' } : {};
 
 const HOME_EXPECTATIONS: IndexableHtmlExpectations = {
-	path: '/home',
+	path: '/',
 	titlePattern: /La Cuentoneta/,
 	canonicalContains: 'cuentoneta',
 	requiredJsonLdIds: SITEWIDE_SCHEMA_IDS,
@@ -110,7 +111,7 @@ function reportSitemapDocument(xml: string): boolean {
 	const clusterLabel = cluster ? `, mayor concentración ${Math.round(cluster.share * 100)}% en ${cluster.date}` : '';
 
 	console.log(
-		`\nSitemap: ${report.urls} URLs, ${report.dated} con fecha, ${report.distinctDates} fechas distintas${clusterLabel}`,
+		`\nSitemap: ${report.urls} URLs, ${report.dated} con fecha, ${report.distinctDates} fechas distintas, ${report.exempted} en una revisión de página declarada${clusterLabel}`,
 	);
 	if (report.violations.length === 0) {
 		console.log('✅ /sitemap.xml');
@@ -131,7 +132,7 @@ function sampledPaths(baseline: readonly string[], xml: string, full: boolean): 
 
 /** El baseline no depende del sitemap: se ejerce siempre. Devuelve si alguna ruta falló. */
 async function reportBaseline(baseline: readonly string[]): Promise<boolean> {
-	console.log(`Baseline: /home\n  ${baseline.join('\n  ')}\n`);
+	console.log(`Baseline: /\n  ${baseline.join('\n  ')}\n`);
 	let failed = await reportExpectations(HOME_EXPECTATIONS);
 	for (const path of baseline) {
 		failed = (await reportPath(path)) || failed;

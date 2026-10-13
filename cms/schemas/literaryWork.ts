@@ -2,6 +2,7 @@ import { BookIcon } from '@sanity/icons/Book';
 import { resource } from './resourceType';
 import { defineArrayMember, defineField, defineType } from 'sanity';
 import { audioRecording, pdfLink, spaceRecording, spotifyPodcastEpisode, youtubeVideo } from './media-sources';
+import { validateSlugFormat } from '../utils/validations';
 
 const section = defineArrayMember({
 	name: 'section',
@@ -83,7 +84,7 @@ export default defineType({
 			title: 'Slug',
 			type: 'slug',
 			options: { source: 'title', maxLength: 96 },
-			validation: (Rule) => Rule.required(),
+			validation: (Rule) => Rule.required().custom(validateSlugFormat),
 		}),
 		defineField({
 			name: 'authors',

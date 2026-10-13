@@ -1,7 +1,7 @@
 {
 	"name": "@cuentoneta/app",
 	"type": "module",
-	"version": "2.11.1",
+	"version": "2.11.2",
 	"imports": {
 		"#tailwind-theme": "./src/tailwind.css"
 	},
@@ -11,7 +11,7 @@
 	},
 	"packageManager": "pnpm@10.12.1",
 	"scripts": {
-		"preinstall": "pnpx only-allow pnpm",
+		"preinstall": "npx only-allow@1.2.2 pnpm",
 		"postinstall": "pnpm ops config",
 		"postbuild": "node scripts/fix-index-file-name.mjs",
 		"dev": "nx run @cuentoneta/app:serve:development",

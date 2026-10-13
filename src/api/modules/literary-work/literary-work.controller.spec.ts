@@ -2,8 +2,9 @@ import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
 import { Hono } from 'hono';
 import { environment } from '../../_helpers/environment';
-import { readCacheHeaders } from '../../_middleware/read-cache-headers.middleware';
+import { readCacheHeaders } from '@middleware/read-cache-headers.middleware';
 import { createLiteraryWorkController } from './literary-work.controller';
+import { LiteraryWorkNotFoundError } from './literary-work.errors';
 import { InMemoryLiteraryWorkRepository } from './literary-work.repository.mock';
 
 describe('literaryWorkController', () => {
@@ -46,6 +47,33 @@ describe('literaryWorkController', () => {
 
 		expect(response.status).toBe(404);
 		expect(body.error).toContain('no-existe');
+	});
+
+	it('should answer a slug the schema rejects with the same 404 as an unknown one', async () => {
+		const response = await controller.request('/no%20es%20slug');
+
+		expect(response.status).toBe(404);
+		await expect(response.json()).resolves.toEqual({ error: new LiteraryWorkNotFoundError('no es slug').message });
+	});
+
+	// Slugs que `createSlug` rechaza: si la frontera los dejara pasar, el throw del dominio saldría como 500.
+	it.each(['IcyFox', knownSlug.toUpperCase(), 'el--aleph', '-lead'])(
+		'should answer the slug %j, which the domain rejects, with a 404',
+		async (slug) => {
+			const response = await controller.request(`/${slug}`);
+
+			expect(response.status).toBe(404);
+			await expect(response.json()).resolves.toEqual({ error: new LiteraryWorkNotFoundError(slug).message });
+		},
+	);
+
+	it('should not emit cache headers on the 404 of a malformed slug', async () => {
+		environment.production = true;
+
+		const response = await appUnderTest().request('/literary-work/no%20es%20slug');
+
+		expect(response.status).toBe(404);
+		expect(response.headers.get('Vercel-CDN-Cache-Control')).toBeNull();
 	});
 
 	it('should emit the edge cache headers on a 200 in production', async () => {
@@ -106,11 +134,16 @@ describe('literaryWorkController', () => {
 			expect(await response.json()).toEqual([]);
 		});
 
-		it('should reject a filter value outside the slug alphabet', async () => {
-			const response = await controller.request('/?author=no%20es%20un%20slug');
+		// El filtro es un criterio sobre el listado, no un recurso: un valor mal formado es un request
+		// inválido, y por eso sigue en 400 aunque el slug de ruta responda 404.
+		it.each(['no%20es%20un%20slug', knownAuthor.slug.toUpperCase()])(
+			'should reject the filter value %j with a 400',
+			async (author) => {
+				const response = await controller.request(`/?author=${author}`);
 
-			expect(response.status).toBe(400);
-		});
+				expect(response.status).toBe(400);
+			},
+		);
 
 		// Sin trailing slash, que es la URL que el frontend arma de verdad: si el patrón del middleware
 		// no cubriera el path exacto del listado, este caso lo delataría.

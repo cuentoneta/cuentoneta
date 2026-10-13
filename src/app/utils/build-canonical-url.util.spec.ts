@@ -32,6 +32,15 @@ describe('buildCanonicalUrl', () => {
 		);
 	});
 
+	// La portada se sirve en la raíz: su canónica es el host con una sola barra final, venga o no
+	// `website` con ella.
+	it.each(['https://www.cuentoneta.ar', 'https://www.cuentoneta.ar/'])(
+		'should produce the root URL for an empty path with host %s',
+		(website) => {
+			expect(buildCanonicalUrl('', website)).toBe('https://www.cuentoneta.ar/');
+		},
+	);
+
 	it('should produce a root-relative URL when the host is just "/" (dev environment.website)', () => {
 		expect(buildCanonicalUrl('literary-work/el-fin', '/')).toBe('/literary-work/el-fin');
 	});
