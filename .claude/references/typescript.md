@@ -158,10 +158,10 @@ Un import relativo con extensión `.ts` solo compila si el programa lo declara c
 
 En el repo esa forma la necesita **una sola cadena**: la del hook `PreToolUse`, que corre con `node` puro y por eso paga la exigencia de extensión explícita de ESM — ver [`scripts.md`](scripts.md). El flag va en los dos programas que incluyen `scripts/`, nunca en el `tsconfig.json` raíz:
 
-| Archivo                   | Qué declara                                                      | Por qué                                                                                                                                                                                                           |
-| ------------------------- | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `tsconfig.typecheck.json` | `allowImportingTsExtensions`                                     | Ya tiene `noEmit`, que es lo que `TS5096` pide. Es el programa del gate `typecheck`                                                                                                                               |
-| `tsconfig.spec.json`      | `allowImportingTsExtensions` + `rewriteRelativeImportExtensions` | Incluye `scripts/**/*.ts` para que Vitest resuelva sus `paths`. **No admite `noEmit`**: con él, el plugin de Angular deja de contar `src/test-setup.ts` como parte del programa y la suite entera falla al cargar |
+| Archivo                   | Qué declara                             | Por qué                                                                                                                                                                                          |
+| ------------------------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `tsconfig.typecheck.json` | `allowImportingTsExtensions`            | Ya tiene `noEmit`, que es lo que `TS5096` pide. Es el programa del gate `typecheck`                                                                                                              |
+| `tsconfig.spec.json`      | `allowImportingTsExtensions` + `noEmit` | Incluye `scripts/**/*.ts` para que Vitest resuelva sus `paths`. Nadie emite desde este programa: con `fastCompile`, el plugin de Angular transforma archivo por archivo y no compila el programa |
 
 ### `allowJs` en `tsconfig.typecheck.json`: por qué el gate mira `.js`
 

@@ -35,12 +35,12 @@ Medido sobre la suite completa en una máquina de 28 hilos:
 
 | Pool        | Workers | Tiempo | Pico de memoria |
 | ----------- | ------- | ------ | --------------- |
-| `vmThreads` | 27      | 32 s   | ~19 GiB         |
-| `vmThreads` | 8       | 29 s   | ~13 GiB         |
-| `forks`     | 27      | 38 s   | ~12 GiB         |
-| `threads`   | 7       | 64 s   | ~6 GiB          |
+| `vmThreads` | 27      | 15 s   | ~16 GiB         |
+| `vmThreads` | 8       | 15 s   | ~12 GiB         |
+| `forks`     | 27      | 28 s   | ~10 GiB         |
+| `threads`   | 7       | 40 s   | ~5 GiB          |
 
-En una máquina con poca RAM, el pool se cambia por línea de comandos, que le gana al default de Analog. `threads` libera la memoria de cada archivo al terminarlo y es el que menos consume, a cambio de alrededor del doble de tiempo:
+En una máquina con poca RAM, el pool se cambia por línea de comandos, que le gana al default de Analog. `threads` libera la memoria de cada archivo al terminarlo y es el que menos consume, a cambio de casi el triple de tiempo:
 
 ```bash
 pnpm exec vitest run --pool=threads
@@ -48,7 +48,9 @@ pnpm exec vitest run --pool=threads
 
 ### Costo fijo y flujo de iteración
 
-Cada corrida paga un arranque antes del primer test: levantar Vite, cargar `src/test-setup.ts` y transformar lo que importa el spec. Con `fastCompile` el plugin transforma solo los archivos que la corrida carga. Sin él, compila primero el programa entero de `tsconfig.spec.json`, unos 5 s aunque se pida un solo spec. Ese camino deja `@Service()` e `@Injectable()` como decoradores estándar, que V8 no ejecuta, y por eso la config baja los decoradores a la forma legacy con `oxc.decorator`. Quitar una de las dos opciones sin la otra rompe la carga de todo spec que importe un servicio, con un `SyntaxError: Invalid or unexpected token` sin stack.
+Cada corrida paga un arranque antes del primer test: levantar Vite, cargar `src/test-setup.ts` y transformar lo que importa el spec. Con `fastCompile` el plugin transforma solo los archivos que la corrida carga. Sin él, compila primero el programa entero de `tsconfig.spec.json`, unos 5 s aunque se pida un solo spec.
+
+El transform de `fastCompile` deja `@Service()` e `@Injectable()` en la clase como decoradores estándar, que V8 no ejecuta. Analog apaga el paso de OXC de Vite, y declarar la clave `oxc` en la config lo vuelve a encender para todo `.ts` de la corrida, con `decorator.legacy` para bajar esos decoradores. Las dos opciones dependen en una sola dirección: `fastCompile` sin `oxc` rompe la carga de todo spec que importe un servicio, con un `SyntaxError: Invalid or unexpected token` sin stack. `oxc` sin `fastCompile` no rompe nada, pero vuelve al arranque lento.
 
 Para iterar sobre un spec, el flujo es `pnpm test:watch <ruta>`. Arranca una vez, y cada edición re-corre solo los specs afectados, sobre el server ya caliente:
 
