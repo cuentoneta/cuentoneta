@@ -27,7 +27,7 @@ Archivos clave:
 
 ### Pool, workers y memoria
 
-`@analogjs/vite-plugin-angular` pone por defecto el pool **`vmThreads`**, el más rápido para esta suite. Su costo es la memoria: los workers son threads de **un solo proceso**, y la memoria que acumulan no se libera entre archivos durante la corrida. `vmMemoryLimit` no lo acota.
+`@analogjs/vite-plugin-angular` pone por defecto el pool **`vmThreads`**, el más rápido para esta suite. Su costo es la memoria: los contextos de VM se **acumulan** en cada worker durante toda la corrida, en vez de liberarse al terminar cada archivo. `vmMemoryLimit` no lo acota.
 
 Por eso `maxWorkers` está topeado en 8, sin superar nunca el default de Vitest (hilos − 1 en `vitest run`, la mitad en watch): por encima de unos 8 workers la suite ya no se acelera y la memoria sigue subiendo. Con menos workers el pico no baja proporcionalmente —con 4 y con 8 es el mismo—, así que bajar el tope no es la salida para poca RAM. En el runner de CI el tope coincide con el default.
 
