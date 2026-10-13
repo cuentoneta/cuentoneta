@@ -51,8 +51,9 @@ app.on(
 	ssrCacheControl,
 );
 
-// Las rutas viejas de la portada, de obra y de colección se mudaron. Van antes del catch-all SSR, que es un
-// `use('*')`: si la request llegara hasta él se renderizaría una página y el 301 no se emitiría nunca.
+// Las rutas viejas de la portada, de obra y de colección se mudaron. Van antes del catch-all SSR, que
+// es un `use('*')`: si la request llegara hasta él se renderizaría una página y el 301 no se emitiría
+// nunca.
 //
 // El listado se registra antes que su detalle: con `strict: false`, `/story/` entra por la ruta sin
 // slug, y ese es el destino que le corresponde.

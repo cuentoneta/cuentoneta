@@ -1,8 +1,8 @@
 /**
  * Las URLs indexadas se mudaron: la portada se sirve en la raíz, obra y colección tienen rutas
- * nuevas, y las viejas responden con un
- * traslado permanente. Lo que se afirma acá es que ese traslado viaja en la respuesta HTTP: un
- * crawler que no ejecuta JavaScript solo ve el 301, y es el 301 lo que traslada lo indexado.
+ * nuevas, y las viejas responden con un traslado permanente. Lo que se afirma acá es que ese traslado
+ * viaja en la respuesta HTTP: un crawler que no ejecuta JavaScript solo ve el 301, y es el 301 lo que
+ * traslada lo indexado.
  *
  * Se afirma además que el destino responde: un 301 hacia una URL que no existe pierde lo mismo que
  * no redirigir.

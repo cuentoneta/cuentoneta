@@ -3,8 +3,9 @@ import type { BlankEnv } from 'hono/types';
 
 /**
  * Las URLs indexadas de la plataforma se mudaron: la portada se sirve en la raíz, y obra y colección
- * tienen rutas nuevas para su listado y su detalle. La mudanza tiene que viajar en la respuesta HTTP y no en el router del cliente: un crawler que no ejecuta JavaScript
- * solo ve el 301, y es el 301 —no un alias— lo que traslada lo que la ruta vieja tenga indexado.
+ * tienen rutas nuevas para su listado y su detalle. La mudanza tiene que viajar en la respuesta HTTP y
+ * no en el router del cliente: un crawler que no ejecuta JavaScript solo ve el 301, y es el 301 —no un
+ * alias— lo que traslada lo que la ruta vieja tenga indexado.
  *
  * Son handlers terminales y no middlewares: responden en vez de ceder a `next()`, a diferencia del
  * resto de esta carpeta.
