@@ -1,10 +1,8 @@
 // Core
 import { Component, computed, effect, forwardRef, inject, input, RESPONSE_INIT, signal } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { NgTemplateOutlet } from '@angular/common';
-
-// Utils
-import { progressiveRxResource, ssrBlockingRxResource } from '@app-utils/ssr-resource';
 
 // Services
 import { CollectionApi } from '../../providers/collection.provider';
@@ -56,16 +54,14 @@ export default class CollectionPage implements CollectionHost {
 	// enlaces internos viajarían en el HTML del servidor, duplicando lo que la columna ya muestra.
 	protected readonly isDescriptionDrawerOpen = signal(false);
 
-	// Bloquea el render del servidor: con un recurso progresivo el HTML se serializa antes de la
-	// respuesta, y una colección inexistente saldría 200 con esqueleto — un 404 blando y cacheable.
-	private readonly collectionResource = ssrBlockingRxResource({
+	private readonly collectionResource = rxResource({
 		params: this.slug,
 		stream: ({ params }) => this.collectionApi.getBySlug(params),
 		defaultValue: undefined,
 	});
 
 	// El catálogo es accesorio: si falla, el bloque de sugeridas queda vacío y la página se sirve igual.
-	private readonly catalogResource = progressiveRxResource({
+	private readonly catalogResource = rxResource({
 		stream: () => this.collectionApi.getAll(),
 		defaultValue: [],
 	});

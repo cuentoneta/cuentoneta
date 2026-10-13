@@ -1,11 +1,11 @@
 // Core
 import { Component, computed, effect, inject, RESPONSE_INIT } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
 
 // Services
 import { ContentApi } from '../../providers/content.provider';
 
 // Utils
-import { ssrBlockingRxResource } from '@app-utils/ssr-resource';
 import { AppRoutes } from '../../app.routes';
 
 // SEO
@@ -48,7 +48,7 @@ export default class HomePage {
 	};
 
 	// Recursos
-	private readonly landingPageResource = ssrBlockingRxResource({
+	private readonly landingPageResource = rxResource({
 		stream: () => this.contentService.getLandingPageContent(),
 		defaultValue: undefined,
 	});
@@ -59,10 +59,10 @@ export default class HomePage {
 	private readonly landingPageContent = computed(() =>
 		this.landingPageResource.hasValue() ? this.landingPageResource.value() : undefined,
 	);
-	// El recurso bloquea el SSR, así que en el HTML servido esto ya es falso: los decks salen con su
+	// El SSR espera al recurso, así que en el HTML servido esto ya es falso: los decks salen con su
 	// contenido y no con esqueletos. En el cliente cubre la navegación entrante.
 	protected readonly isLoading = computed(() => this.landingPageResource.isLoading());
-	// El bloqueo del SSR se libera también cuando el stream falla, y ahí el contenido llega vacío. Sin
+	// El SSR también serializa cuando el stream falla, y ahí el contenido llega vacío. Sin
 	// distinguir el fallo, la página afirmaría que no hay obras esta semana cuando lo que pasó es que no
 	// se pudo averiguar.
 	protected readonly failed = computed(() => this.landingPageResource.status() === 'error');

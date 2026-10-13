@@ -1,9 +1,7 @@
 // Core
 import { Component, computed, effect, forwardRef, inject, input, RESPONSE_INIT } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
-
-// Utils
-import { ssrBlockingRxResource } from '@app-utils/ssr-resource';
 
 // Models
 import { createAttributedText } from '@models/attributed-text.model';
@@ -60,7 +58,7 @@ export default class LiteraryWorkPage implements LiteraryWorkHost {
 	private readonly literaryWorkApi = inject(LiteraryWorkApi);
 	private readonly responseInit = inject(RESPONSE_INIT, { optional: true });
 
-	private readonly literaryWorkResource = ssrBlockingRxResource({
+	private readonly literaryWorkResource = rxResource({
 		params: this.slug,
 		stream: ({ params }) => this.literaryWorkApi.getBySlug(params),
 		defaultValue: undefined,

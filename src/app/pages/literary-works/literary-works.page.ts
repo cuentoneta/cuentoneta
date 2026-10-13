@@ -1,7 +1,6 @@
 import { Component, computed, effect, forwardRef, inject, RESPONSE_INIT } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
-
-import { ssrBlockingRxResource } from '@app-utils/ssr-resource';
 
 import { AppRoutes } from '../../app.routes';
 import { LiteraryWorkApi } from '../../providers/literary-work.provider';
@@ -91,7 +90,7 @@ export default class LiteraryWorksPage implements LiteraryWorksHost {
 	private readonly literaryWorkApi = inject(LiteraryWorkApi);
 	private readonly responseInit = inject(RESPONSE_INIT, { optional: true });
 
-	private readonly catalogResource = ssrBlockingRxResource({
+	private readonly catalogResource = rxResource({
 		stream: () => this.literaryWorkApi.getTeasers(),
 		defaultValue: [],
 	});

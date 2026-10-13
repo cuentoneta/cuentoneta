@@ -1,9 +1,9 @@
 import { Component, computed, inject, input } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
 
 import { AppRoutes } from '../../app.routes';
 import { CollectionApi } from '../../providers/collection.provider';
-import { progressiveRxResource } from '@app-utils/ssr-resource';
 import { ReadingSuggestionsList } from './reading-suggestions-list';
 import { pickReadingSuggestions } from './pick-reading-suggestions';
 import type { NavigationParams } from '@app-utils/navigation-params';
@@ -43,7 +43,7 @@ export class CollectionReadingSuggestions {
 
 	// El sorteo ocurre acá, en el stream, y no en un computed: así se resuelve una sola vez por fetch
 	// y las sugerencias no se rebarajan ante cualquier reevaluación.
-	private readonly collectionResource = progressiveRxResource({
+	private readonly collectionResource = rxResource({
 		// La obra en lectura entra en los params: al pasar a otra obra de la misma colección, el bloque
 		// vuelve a resolverse en vez de seguir sugiriendo la que se está leyendo.
 		params: () =>

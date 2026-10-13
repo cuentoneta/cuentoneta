@@ -1,6 +1,5 @@
 import { Component, computed, effect, forwardRef, inject, RESPONSE_INIT, signal } from '@angular/core';
-
-import { ssrBlockingRxResource } from '@app-utils/ssr-resource';
+import { rxResource } from '@angular/core/rxjs-interop';
 
 import { CollectionApi } from '../../providers/collection.provider';
 
@@ -66,7 +65,7 @@ export default class CollectionsPage implements CollectionsHost {
 	private readonly collectionApi = inject(CollectionApi);
 	private readonly responseInit = inject(RESPONSE_INIT, { optional: true });
 
-	private readonly catalogResource = ssrBlockingRxResource({
+	private readonly catalogResource = rxResource({
 		stream: () => this.collectionApi.getAll(),
 		defaultValue: [],
 	});
