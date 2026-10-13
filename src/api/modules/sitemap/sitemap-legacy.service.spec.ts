@@ -13,10 +13,9 @@ import { generateSitemapXml, sitemapBaseUrl } from './sitemap.service';
 const stubFetchSlugs = (slugs: LegacySitemapSlugs) =>
 	fn<typeof fetchLegacySitemapSlugs>(() => Promise.resolve(slugs));
 
-const DATASET = [...onoffDatasetMock, ...legacyMigrationDocuments];
-
 async function evaluateOnCorpus(query: string, params: Record<string, unknown>): Promise<unknown> {
-	return (await evaluate(parse(query), { dataset: DATASET, params })).get();
+	const dataset = [...onoffDatasetMock, ...legacyMigrationDocuments];
+	return (await evaluate(parse(query), { dataset, params })).get();
 }
 
 describe('getLegacySitemapUrls', () => {

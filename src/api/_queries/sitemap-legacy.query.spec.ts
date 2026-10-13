@@ -14,8 +14,6 @@ async function run(dataset: unknown[]): Promise<LegacySitemapSlugs> {
 	return (await (await evaluate(parse(legacySitemapSlugsQuery), { dataset, params })).get()) as LegacySitemapSlugs;
 }
 
-const KEY_BY_KIND = { story: 'stories', storylist: 'storylists' } as const;
-
 const slugsOf = (entries: { legacySlug: string | null }[]) => entries.map(({ legacySlug }) => legacySlug);
 
 describe('legacySitemapSlugsQuery', () => {
@@ -23,9 +21,12 @@ describe('legacySitemapSlugsQuery', () => {
 	it('projects the slug of the origin of every migrated document, and only those', async () => {
 		const result = await run([...onoffDatasetMock, ...legacyMigrationDocuments]);
 
-		for (const kind of ['story', 'storylist'] as const) {
+		for (const [kind, key] of [
+			['story', 'stories'],
+			['storylist', 'storylists'],
+		] as const) {
 			const expected = legacyMigrationPairs.filter((pair) => pair.kind === kind).map(({ origin }) => origin.slug.current);
-			expect(slugsOf(result[KEY_BY_KIND[kind]]).sort()).toEqual(expected.sort());
+			expect(slugsOf(result[key]).sort()).toEqual(expected.sort());
 		}
 	});
 

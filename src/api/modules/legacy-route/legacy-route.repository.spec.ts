@@ -7,8 +7,6 @@ import { legacyMigrationDocuments, legacyMigrationPairs } from '@testing/legacy-
 import { MIGRATED_ID_PREFIX } from './legacy-route.constants';
 import { fetchMigratedSlug } from './legacy-route.repository';
 
-const QUERY_BY_KIND = { story: migratedLiteraryWorkSlugQuery, storylist: migratedCollectionSlugQuery } as const;
-
 // El cliente responde lo mismo que Sanity: la query real evaluada sobre el corpus con los parámetros que
 // el repository le pasó, así el spec no inventa la forma cruda ni el criterio de resolución.
 function sanityAnsweringFromCorpus() {
@@ -26,7 +24,8 @@ describe('fetchMigratedSlug', () => {
 			const { client, fetch } = sanityAnsweringFromCorpus();
 
 			expect(await fetchMigratedSlug(kind, legacySlug, client)).toBe(migrated.slug.current);
-			expect(fetch).toHaveBeenCalledWith(QUERY_BY_KIND[kind], {
+			const query = { story: migratedLiteraryWorkSlugQuery, storylist: migratedCollectionSlugQuery }[kind];
+			expect(fetch).toHaveBeenCalledWith(query, {
 				legacySlug,
 				migratedIdPrefix: MIGRATED_ID_PREFIX[kind],
 			});

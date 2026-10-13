@@ -21,10 +21,6 @@ import { childElementSequences, locations } from '@testing/sitemap-xml';
 // Se pide por HTTP y se lee como texto: un segundo motor no ejercita nada distinto.
 test.skip(({ browserName }) => browserName !== 'chromium');
 
-// Cada ruta de la muestra cuesta una consulta a Sanity y un render SSR: la muestra cubre todas las
-// colecciones, que son pocas, y una porción de obras espaciada a lo largo del documento.
-const LITERARY_WORK_SAMPLE_SIZE = 8;
-
 let status: number;
 let contentType: string | undefined;
 let xml: string;
@@ -38,12 +34,15 @@ test.beforeAll(async ({ request }) => {
 
 const pathOf = (loc: string) => new URL(loc).pathname;
 
+// Cada ruta de la muestra cuesta una consulta a Sanity y un render SSR: la muestra cubre todas las
+// colecciones, que son pocas, y una porción de obras espaciada a lo largo del documento.
 function sample(): string[] {
+	const literaryWorkSampleSize = 8;
 	const paths = locations(xml).map(pathOf);
 	const stories = paths.filter((path) => path.startsWith('/story/'));
-	const step = Math.max(1, Math.floor(stories.length / LITERARY_WORK_SAMPLE_SIZE));
+	const step = Math.max(1, Math.floor(stories.length / literaryWorkSampleSize));
 	return [
-		...stories.filter((_, index) => index % step === 0).slice(0, LITERARY_WORK_SAMPLE_SIZE),
+		...stories.filter((_, index) => index % step === 0).slice(0, literaryWorkSampleSize),
 		...paths.filter((path) => path.startsWith('/storylist/')),
 	];
 }

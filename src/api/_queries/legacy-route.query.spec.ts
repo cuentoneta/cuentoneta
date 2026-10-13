@@ -4,15 +4,14 @@ import { MIGRATED_ID_PREFIX } from '@api/modules/legacy-route/legacy-route.const
 import { legacyMigrationDocuments, legacyMigrationPairs } from '@testing/legacy-migration.scenario';
 import { migratedCollectionSlugQuery, migratedLiteraryWorkSlugQuery } from './legacy-route.query';
 
-const QUERY_BY_KIND = { story: migratedLiteraryWorkSlugQuery, storylist: migratedCollectionSlugQuery } as const;
-
 async function resolve(
 	kind: keyof typeof MIGRATED_ID_PREFIX,
 	legacySlug: string,
 	dataset: unknown[] = [...onoffDatasetMock, ...legacyMigrationDocuments],
 ): Promise<string | null> {
+	const query = { story: migratedLiteraryWorkSlugQuery, storylist: migratedCollectionSlugQuery }[kind];
 	const params = { legacySlug, migratedIdPrefix: MIGRATED_ID_PREFIX[kind] };
-	return (await (await evaluate(parse(QUERY_BY_KIND[kind]), { dataset, params })).get()) as string | null;
+	return (await (await evaluate(parse(query), { dataset, params })).get()) as string | null;
 }
 
 describe('legacy route queries', () => {
