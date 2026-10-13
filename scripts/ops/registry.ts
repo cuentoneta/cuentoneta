@@ -138,6 +138,13 @@ export const OPS_TASKS = Object.freeze({
 		acceptsArgs: true,
 		load: () => import('../seo-index-status/seo-index-status').then((m) => m.task),
 	},
+	'bundle:stats': {
+		description:
+			'Buildea con estadísticas y resume el bundle inicial del navegador (--skip-build reusa las existentes; --top=<n>)',
+		destructive: false,
+		acceptsArgs: true,
+		load: () => import('../bundle-stats/bundle-stats').then((m) => m.task),
+	},
 	'corpus:generate': {
 		description: 'Regenera las fixtures raw del corpus de Onoff evaluando la query GROQ real',
 		destructive: false,
