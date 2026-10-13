@@ -91,12 +91,12 @@ export class AuthorTeaserCard {
 
 ## Visibilidad de campos
 
-Regla central: **un campo de componente nunca es `public` por defecto.** Las plantillas de Angular pueden acceder a miembros `protected`, así que no hay razón para exponer nada como `public` solo para usarlo en la plantilla.
+Regla central: **un campo de componente nunca es `public` por defecto.** Desde Angular 22.2 la plantilla, los host bindings y el type-check de ambos pueden leer miembros `private`, así que lo que solo consume la plantilla es `private`, igual que el resto de los internos.
 
 | Visibilidad | Cuándo                                                                                                                                                                               |
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `protected` | Campos/métodos usados **solo en la plantilla** del propio componente (rutas de navegación, helpers de formato, flags de UI).                                                         |
-| `private`   | Internos no referenciados en ninguna plantilla (servicios inyectados, effects, estado interno).                                                                                      |
+| `private`   | Todo lo que no es API: lo que lee la plantilla o el `host` (rutas de navegación, helpers de formato, flags de UI) y los internos (servicios inyectados, effects, estado interno).    |
+| `protected` | **Solo** miembros que una subclase lee o sobrescribe, como los de las directivas abstractas `AbstractMetaTagsDirective` y `AbstractStructuredDataDirective`.                         |
 | `public`    | **Solo** inputs/outputs/models de signals (`input()`, `output()`, `model()`), **API imperativa** llamada por padres (`open()`, `close()`), y miembros **requeridos por interfaces**. |
 
 ```typescript
@@ -106,7 +106,7 @@ export class Header {
 		transform: (value) => (value ? VisibilityState.Visible : VisibilityState.Hidden),
 	});
 
-	protected readonly displayMenu = signal(false);
+	private readonly displayMenu = signal(false);
 
 	private readonly visibilityClassMap = {
 		[VisibilityState.Visible]: 'h-header-height translate-y-0 opacity-100 ease-in',
@@ -115,14 +115,16 @@ export class Header {
 }
 ```
 
-> Los `input()` / `output()` / `model()` llevan **`public` explícito**: son la API del componente. El resto, decidir entre `protected` y `private` según la plantilla lo consuma o no.
+> Los `input()` / `output()` / `model()` llevan **`public` explícito**: son la API del componente. El resto es `private`, lo lea la plantilla o no. Un `protected` en una clase de Angular que no es abstracta ni extiende otra lo rechaza el lint (`no-restricted-syntax`).
+>
+> Dos límites: la plantilla lee solo los `private` de su propia clase, así que lo que otro componente lee por una variable de plantilla (`#ref` → `ref.x`) sigue siendo `public`. Y la convención depende de que `tsc` no active `noUnusedLocals`, que marcaría como no usado todo `private` que solo lee la plantilla.
 
 ### Signals dentro del componente
 
-Un `computed()` —y cualquier otra signal que no sea `input()`/`output()`/`model()`— es **`private` por defecto**. Pasa a **`protected`** solo cuando la plantilla del propio componente interpola su valor.
+Un `computed()` —y cualquier otra signal que no sea `input()`/`output()`/`model()`— es **`private`**, también cuando la plantilla del propio componente interpola su valor.
 
 ```typescript
-protected readonly icon = computed(() => /* … */); // la plantilla lo interpola
+private readonly icon = computed(() => /* … */); // la plantilla lo interpola
 private readonly isExpanded = signal(false); // estado interno, no llega a la plantilla
 ```
 
@@ -144,7 +146,7 @@ const SIZE_MAP = { sm: 'h-8 w-8', lg: 'h-16 w-16' };
 
 @Component({/* … */})
 export class ImageProfile {
-	protected readonly classes = computed(() => SIZE_MAP[this.size()]);
+	private readonly classes = computed(() => SIZE_MAP[this.size()]);
 }
 ```
 
@@ -154,7 +156,7 @@ export class ImageProfile {
 export class ImageProfile {
 	private readonly sizeMap = { sm: 'h-8 w-8', lg: 'h-16 w-16' };
 
-	protected readonly classes = computed(() => this.sizeMap[this.size()]);
+	private readonly classes = computed(() => this.sizeMap[this.size()]);
 }
 ```
 
@@ -200,14 +202,14 @@ public readonly isVisible = input(VisibilityState.Visible, {
 public readonly selected = output<string>();
 public readonly value = model<string>('');
 
-// Queries — no son API: `protected` si la plantilla las usa, `private` si no
+// Queries — no son API: `private`, las use la plantilla o no
 private readonly listItems = contentChildren(Tag);
 ```
 
 Los valores **derivados** son `computed()`, nunca estado duplicado guardado a mano:
 
 ```typescript
-protected readonly icon = computed(() => {
+private readonly icon = computed(() => {
 	if (!this.tag().slug) {
 		return null;
 	}
@@ -256,8 +258,8 @@ Todo `effect()` / `afterRenderEffect()` / `afterNextRender()` se declara como **
 // ✅ Correcto — effect nombrado como field, después de lo que referencia
 // (tomado de `header.ts`)
 export class Header {
-	protected readonly displayMenu = signal(false);
-	protected readonly isHidden = computed(() => this.isVisible() === VisibilityState.Hidden);
+	private readonly displayMenu = signal(false);
+	private readonly isHidden = computed(() => this.isVisible() === VisibilityState.Hidden);
 
 	private readonly collapseMenuOnHideEffect = effect(() => {
 		if (this.isHidden()) {
@@ -287,7 +289,7 @@ Reglas:
 ## Inyección de dependencias
 
 - **Siempre `inject()`**, nunca inyección por constructor.
-- Marcar las dependencias `private readonly` (o `protected readonly` si la plantilla las usa).
+- Marcar las dependencias `private readonly`, también si la plantilla las usa.
 
 ```typescript
 private readonly literaryWorkApi = inject(LiteraryWorkApi); // token del API provider, no la clase concreta
@@ -368,11 +370,10 @@ Todo lo que afecte al elemento anfitrión (host) se declara en la propiedad **`h
 	},
 })
 export class TooltipDirective {
-	// Los métodos referenciados por string desde `host` alcanzan con ser `protected`.
-	protected onMouseEnter() {
+	private onMouseEnter() {
 		/* ... */
 	}
-	protected onMouseLeave() {
+	private onMouseLeave() {
 		/* ... */
 	}
 }
@@ -380,7 +381,7 @@ export class TooltipDirective {
 
 Notas:
 
-- Los métodos/propiedades referenciados por string desde `host` solo necesitan ser **`protected`** (no `public`). Distinto es el caso de las directivas cuya API la consumen los anfitriones vía `hostDirectives` + `inject(Directive)` (p. ej. `TooltipDirective.text.set(...)`): esas signals **sí** son `public` por ser API imperativa.
+- Los métodos/propiedades referenciados por string desde `host` son **`private`** (no `public`). Distinto es el caso de las directivas cuya API la consumen los anfitriones vía `hostDirectives` + `inject(Directive)` (p. ej. `TooltipDirective.text.set(...)`): esas signals **sí** son `public` por ser API imperativa.
 - El bloque `:host` en `styles` se reserva para lo que **no** es `@apply`: CSS crudo (`font-family`, `transition`, …), `:host ::ng-deep ...` y `:host(.clase)` condicionales. Esas reglas **no** se mueven a `host`.
 - Si el componente ya tiene `host: { class: '...' }`, **agregar** las utilidades al string existente, no reemplazarlo.
 - **`hostDirectives`** (campo del decorador, distinto de `host`) es el mecanismo de composición de directivas del anfitrión. En **componentes de página** es cómo se declaran las directivas de SEO (meta tags + structured data): la forma correcta depende de la indexabilidad de la ruta y está **enforced por test** — ver [`angular-state.md` §8](./angular-state.md#8-directivas-de-seo-de-página-declarar-el-combo-según-la-indexabilidad).
@@ -464,7 +465,7 @@ La utilidad `z` de Tailwind resuelve cualquier número sin consultar el tema, as
 - [ ] Ubicación y nombre según [Ubicación y nombre de componentes](#ubicación-y-nombre-de-componentes): sin sufijo `Component`, `x.ts`/`x.page.ts` en la carpeta que corresponde a su rol.
 - [ ] Selector `cuentoneta-…`; sin declarar `changeDetection` (OnPush es el default de v22).
 - [ ] Inputs/outputs con `input()`/`input.required()`/`output()`/`model()`; queries con `viewChild()`/`contentChild()`.
-- [ ] Campos `protected` (plantilla) / `private` (interno); `public` solo para API (inputs/outputs/imperativa/interfaces).
+- [ ] Campos `private` (plantilla e internos); `protected` solo para lo que usa una subclase; `public` solo para API (inputs/outputs/imperativa/interfaces).
 - [ ] Sin lifecycle hooks: derivar con `computed()`, efectos como `effect()` nombrados (no en el constructor).
 - [ ] DI con `inject()`.
 - [ ] Plantilla con `@if`/`@for` (con `track`)/`@switch`, self-closing tags y `ngSrc`.

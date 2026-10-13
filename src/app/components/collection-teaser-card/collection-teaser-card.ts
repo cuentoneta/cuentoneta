@@ -57,12 +57,12 @@ import { CollectionCover } from '../collection-cover/collection-cover';
 	`,
 })
 export class CollectionTeaserCard {
-	protected readonly appRoutes = AppRoutes;
+	private readonly appRoutes = AppRoutes;
 	private readonly sanitizer = inject(DomSanitizer);
 
 	public readonly collection = input<CollectionTeaser>();
 
-	protected readonly safeDescription = computed(() => {
+	private readonly safeDescription = computed(() => {
 		const collection = this.collection();
 		return collection ? this.sanitizer.bypassSecurityTrustHtml(collection.description) : undefined;
 	});

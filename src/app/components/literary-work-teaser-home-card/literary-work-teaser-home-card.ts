@@ -97,7 +97,7 @@ import { LiteraryWorkTeaserHomeCardSkeleton } from './literary-work-teaser-home-
 	},
 })
 export class LiteraryWorkTeaserHomeCard {
-	protected readonly appRoutes = AppRoutes;
+	private readonly appRoutes = AppRoutes;
 
 	// Inputs
 	public readonly literaryWork = input<LiteraryWorkTeaser | LiteraryWorkNavigationTeaserWithAuthors>();
@@ -108,8 +108,8 @@ export class LiteraryWorkTeaserHomeCard {
 	public readonly showMultimedia = input<boolean>(false);
 	public readonly navigationParams = input<NavigationParams>();
 
-	protected readonly coverImageUrl = computed(() => this.literaryWork()?.coverImage);
-	protected readonly literaryWorkRouterLink = computed(() => [
+	private readonly coverImageUrl = computed(() => this.literaryWork()?.coverImage);
+	private readonly literaryWorkRouterLink = computed(() => [
 		'/',
 		this.appRoutes.LiteraryWork,
 		this.literaryWork()?.slug,

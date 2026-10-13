@@ -54,14 +54,14 @@ export class Resource {
 		sm: { circle: 'h-10 w-10', icon: '18px' },
 	};
 
-	protected readonly iconSize = computed(() => this.sizeMap[this.size()].icon);
+	private readonly iconSize = computed(() => this.sizeMap[this.size()].icon);
 
-	protected readonly linkClasses = computed(
+	private readonly linkClasses = computed(
 		() =>
 			`flex ${this.sizeMap[this.size()].circle} items-center justify-center rounded-full border-1 border-solid border-neutral-200 bg-neutral-100 hover:bg-neutral-200`,
 	);
 
-	protected readonly icon = computed(() => {
+	private readonly icon = computed(() => {
 		if (!this.resource()?.resourceType?.slug) {
 			return null;
 		}
@@ -76,7 +76,7 @@ export class Resource {
 		};
 	});
 
-	protected readonly NgIcon = NgIcon;
+	private readonly NgIcon = NgIcon;
 
 	private readonly injector = inject(EnvironmentInjector);
 	private readonly tooltipDirective = inject(TooltipDirective);

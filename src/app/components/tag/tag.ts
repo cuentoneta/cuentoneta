@@ -34,7 +34,7 @@ export class Tag {
 
 	// `filled` aplica las mayúsculas vía CSS (no acá) para preservar el texto original; `soft`/`gray`
 	// transforman el contenido a sentence-case, que CSS no puede hacer sobre la primera letra del string.
-	protected readonly displayLabel = computed(() => {
+	private readonly displayLabel = computed(() => {
 		const label = this.label();
 		if (this.variant() === 'filled') {
 			return label;
@@ -42,7 +42,7 @@ export class Tag {
 		return label.charAt(0).toLocaleUpperCase() + label.slice(1).toLocaleLowerCase();
 	});
 
-	protected readonly hostClasses = computed(
+	private readonly hostClasses = computed(
 		() => `inline-flex items-center font-inter font-bold whitespace-nowrap ${this.variantClasses[this.variant()]}`,
 	);
 }

@@ -86,7 +86,7 @@ import { Skeleton } from '@components/skeleton/skeleton';
 	imports: [RouterLink, Skeleton],
 })
 export default class LiteraryWorksPage implements LiteraryWorksHost {
-	protected readonly appRoutes = AppRoutes;
+	private readonly appRoutes = AppRoutes;
 
 	private readonly literaryWorkApi = inject(LiteraryWorkApi);
 	private readonly responseInit = inject(RESPONSE_INIT, { optional: true });
@@ -105,13 +105,13 @@ export default class LiteraryWorksPage implements LiteraryWorksHost {
 		return [...catalog].sort((first, second) => this.collator.compare(first.title, second.title));
 	});
 
-	protected readonly failed = computed(() => this.catalogResource.status() === 'error');
+	private readonly failed = computed(() => this.catalogResource.status() === 'error');
 
-	protected readonly loading = computed(() => this.catalogResource.isLoading());
+	private readonly loading = computed(() => this.catalogResource.isLoading());
 
 	// El conteo solo se enuncia cuando hay catálogo resuelto detrás: anunciarlo mientras carga o tras un
 	// fallo afirmaría que no hay obras, que es justo lo que la rama de error existe para desmentir.
-	protected readonly headline = computed(() => {
+	private readonly headline = computed(() => {
 		if (this.loading() || this.failed()) {
 			return 'Obras';
 		}

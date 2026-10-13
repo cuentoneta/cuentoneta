@@ -69,7 +69,7 @@ import { Tag } from '../tag/tag';
 	},
 })
 export class AuthorTeaserCard {
-	protected readonly appRoutes = AppRoutes;
+	private readonly appRoutes = AppRoutes;
 
 	// Inputs
 	public readonly author = input.required<AuthorTeaser>();

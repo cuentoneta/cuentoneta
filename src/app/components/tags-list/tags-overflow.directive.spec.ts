@@ -23,7 +23,7 @@ import {
 	host: { class: 'flex overflow-hidden' },
 })
 class TestOverflowHostComponent {
-	protected readonly overflow = inject(TagsOverflowDirective);
+	private readonly overflow = inject(TagsOverflowDirective);
 }
 
 const renderHost = (labels: string[], maxVisible?: number) =>

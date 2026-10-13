@@ -50,7 +50,7 @@ import { TagsOverflowDirective } from './tags-overflow.directive';
 	host: { class: 'flex items-center gap-1.5 overflow-hidden' },
 })
 export class TagsList {
-	protected readonly overflow = inject(TagsOverflowDirective);
+	private readonly overflow = inject(TagsOverflowDirective);
 	private readonly hostRef = inject<ElementRef<HTMLElement>>(ElementRef);
 	private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
@@ -58,7 +58,7 @@ export class TagsList {
 	private readonly counter = viewChild('counter', { read: ElementRef });
 
 	/** El contador "+N" toma la variante de los tags proyectados (todos suelen compartirla). */
-	protected readonly counterVariant = computed(() => this.projectedTags()[0]?.variant() ?? 'filled');
+	private readonly counterVariant = computed(() => this.projectedTags()[0]?.variant() ?? 'filled');
 
 	// Mide el ancho real del contador (más el gap de la fila) y se lo pasa a la directiva como reserva (se
 	// re-mide al aparecer el contador o cambiar su "+N"). El feedback reserva → recorte → "+N" se rompe por

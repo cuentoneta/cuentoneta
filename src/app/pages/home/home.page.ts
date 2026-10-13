@@ -42,7 +42,7 @@ export default class HomePage {
 
 	// Las dos secciones de obras comparten destino porque comparten hub: no hay una vista filtrada de
 	// novedades ni de más leídas a la que llevar.
-	protected readonly literaryWorksAction: SectionHeaderAction = {
+	private readonly literaryWorksAction: SectionHeaderAction = {
 		link: ['/', AppRoutes.LiteraryWork],
 		accessibleSuffix: 'el catálogo de obras',
 	};
@@ -61,18 +61,18 @@ export default class HomePage {
 	);
 	// El recurso bloquea el SSR, así que en el HTML servido esto ya es falso: los decks salen con su
 	// contenido y no con esqueletos. En el cliente cubre la navegación entrante.
-	protected readonly isLoading = computed(() => this.landingPageResource.isLoading());
+	private readonly isLoading = computed(() => this.landingPageResource.isLoading());
 	// El bloqueo del SSR se libera también cuando el stream falla, y ahí el contenido llega vacío. Sin
 	// distinguir el fallo, la página afirmaría que no hay obras esta semana cuando lo que pasó es que no
 	// se pudo averiguar.
-	protected readonly failed = computed(() => this.landingPageResource.status() === 'error');
+	private readonly failed = computed(() => this.landingPageResource.status() === 'error');
 	// El tope es el de la grilla del diseño, no del contrato: el backend sirve la tirada completa. La
 	// curaduría de autores destacados es la excepción — ese tope lo aplica el backend.
-	protected readonly collections = computed(() => this.landingPageContent()?.collections.slice(0, 4) || []);
-	protected readonly campaigns = computed(() => this.landingPageContent()?.campaigns || []);
-	protected readonly mostRead = computed(() => this.landingPageContent()?.mostRead.slice(0, 6) || []);
-	protected readonly latestReads = computed(() => this.landingPageContent()?.latestReads.slice(0, 6) || []);
-	protected readonly highlightedAuthors = computed(() => this.landingPageContent()?.highlightedAuthors ?? []);
+	private readonly collections = computed(() => this.landingPageContent()?.collections.slice(0, 4) || []);
+	private readonly campaigns = computed(() => this.landingPageContent()?.campaigns || []);
+	private readonly mostRead = computed(() => this.landingPageContent()?.mostRead.slice(0, 6) || []);
+	private readonly latestReads = computed(() => this.landingPageContent()?.latestReads.slice(0, 6) || []);
+	private readonly highlightedAuthors = computed(() => this.landingPageContent()?.highlightedAuthors ?? []);
 
 	// TODO(#2414): vuelve junto con la muestra de portadas del hero.
 	// Solo las colecciones con portada editorial propia: las que caen en `sample` prestan las portadas de

@@ -66,17 +66,17 @@ export class LiteraryWorkTeaserCardSkeleton {
 	public readonly excerptLines = input<number>(2);
 
 	// Placeholders de los selectores de multimedia (YouTube, X, Spotify).
-	protected readonly mediaPlaceholders = [0, 1, 2];
+	private readonly mediaPlaceholders = [0, 1, 2];
 
-	protected readonly descriptionLines = computed(() => Array(this.excerptLines()).fill(0));
+	private readonly descriptionLines = computed(() => Array(this.excerptLines()).fill(0));
 
-	protected readonly rowWrapperClasses = computed(() =>
+	private readonly rowWrapperClasses = computed(() =>
 		this.variant() === 'highlighted'
 			? 'flex w-full max-w-178.75 items-start gap-8 overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-50 p-6'
 			: 'flex w-full max-w-178.75 items-start gap-6',
 	);
 
-	protected readonly rowColumnClasses = computed(() => {
+	private readonly rowColumnClasses = computed(() => {
 		const base = 'flex min-w-0 flex-1 flex-col justify-center gap-3';
 		return this.variant() === 'highlighted' ? base : `${base} pt-1`;
 	});

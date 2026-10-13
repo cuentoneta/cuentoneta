@@ -57,15 +57,15 @@ export class Carousel {
 	public readonly direction = this.stateService.direction;
 
 	// Signals computadas
-	protected readonly slideCount = computed(() => this.slides().length);
-	protected readonly viewport = computed(() => {
+	private readonly slideCount = computed(() => this.slides().length);
+	private readonly viewport = computed(() => {
 		const isTabletOrDesktop = this.layoutService.biggerThan('xs');
 		return isTabletOrDesktop ? 'md' : 'xs';
 	});
-	protected readonly showControls = computed(() => this.layoutService.biggerThan('xs'));
+	private readonly showControls = computed(() => this.layoutService.biggerThan('xs'));
 
 	// Constantes
-	protected readonly viewportSpecificClasses: { [key in ContentCampaignViewport]: string } = {
+	private readonly viewportSpecificClasses: { [key in ContentCampaignViewport]: string } = {
 		xs: 'sm:hidden',
 		md: 'max-sm:hidden',
 	};

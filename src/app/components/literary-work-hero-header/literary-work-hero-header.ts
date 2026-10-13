@@ -75,7 +75,7 @@ import { LiteraryWorkHeroHeaderSkeleton } from './literary-work-hero-header-skel
 	`,
 })
 export class LiteraryWorkHeroHeader {
-	protected readonly appRoutes = AppRoutes;
+	private readonly appRoutes = AppRoutes;
 
 	public readonly literaryWork = input<LiteraryWork>();
 
@@ -83,5 +83,5 @@ export class LiteraryWorkHeroHeader {
 	// sola descarga. El fondo va difuminado y bajo un velo, así que no pierde nada con esa medida. Que
 	// sigan coincidiendo lo afirma el spec comparando lo que renderiza cada una, no una constante
 	// compartida: acá el número es una decisión de este componente y no un contrato con `CoverImage`.
-	protected readonly backgroundLoaderParams: SanityImageLoaderParams = { width: 118 };
+	private readonly backgroundLoaderParams: SanityImageLoaderParams = { width: 118 };
 }
