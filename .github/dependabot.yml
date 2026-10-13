@@ -49,13 +49,6 @@ updates:
       - dependency-name: '@types/node'
         update-types:
           - version-update:semver-major
-      # TODO(#2458): satori 0.33+ declara harfbuzzjs, que resuelve su WASM con
-      # __dirname y rompe la extracción de rutas del bundle ESM de servidor.
-      # En una 0.x la minor es el salto que rompe, así que se bloquean las dos.
-      - dependency-name: 'satori'
-        update-types:
-          - version-update:semver-minor
-          - version-update:semver-major
       # TODO(#2459): el peer de @angular/compiler-cli es ">=6.0 <6.1" y el de
       # typescript-eslint ">=4.8.4 <6.1.0". El techo es 6.1, no 7, así que
       # bloquear solo la major dejaría pasar un 6.1 que ya viola esos peers.
