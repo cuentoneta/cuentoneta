@@ -1,4 +1,6 @@
 # Nx no hashea lo que ignora .gitignore. El environment lo genera `pnpm ops config` y está
-# gitignoreado, pero el build y los tests lo leen: sin esta negación, cambiarlo da cache hit con el
-# environment anterior.
+# gitignoreado, pero los targets cacheados que heredan el input `default` lo leen: sin esta negación,
+# regenerarlo da cache hit con el environment anterior. La negación funciona solo porque .gitignore
+# ignora el contenido del directorio (`/*`) y no el directorio: ni git ni Nx re-incluyen nada dentro
+# de un directorio ignorado.
 !/src/app/environments/environment.ts
