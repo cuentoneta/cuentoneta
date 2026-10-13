@@ -19,13 +19,14 @@ import { resolveLegacySlug } from '../modules/legacy-route/legacy-route.service'
  * pedido, preservando la query string.
  *
  * Resolver consulta Sanity, así que el traslado resuelto se cachea en el borde y el rastreo de las rutas
- * viejas no llega al origen en cada visita. Si la consulta falla, traslada al slug pedido tal cual y sin
- * caché: acierta para casi todo documento migrado, y el pedido siguiente vuelve a intentar resolver en vez
- * de heredar un destino que puede estar mal.
+ * viejas no llega al origen en cada visita. Si la consulta falla, traslada al slug pedido tal cual y
+ * prohíbe cachearlo —un 301 es cacheable por defecto, incluso sin headers—: acierta para casi todo
+ * documento migrado, y el pedido siguiente vuelve a intentar resolver en vez de heredar un destino que
+ * puede estar mal.
  *
- * El slug vuelve a codificarse antes de componer el destino: llega ya decodificado desde el router,
- * así que uno que contenga un carácter reservado produciría un `Location` con una ruta distinta de la
- * pedida —y, en el peor caso, con otro host.
+ * El slug se codifica antes de componer el destino, venga del router —que lo entrega decodificado— o de
+ * Sanity —que lo guarda crudo—: uno que contenga un carácter reservado produciría un `Location` con una
+ * ruta distinta de la buscada y, en el peor caso, con otro host.
  *
  * La query string viaja porque es donde vienen los parámetros de campaña: perderlos en el traslado
  * rompe la atribución de cada enlace ya publicado hacia afuera.
@@ -42,6 +43,7 @@ export function legacyDetailRedirect(
 			slug = await resolveSlug(legacySlug);
 			applyReadCacheHeaders(c);
 		} catch (error) {
+			c.header('Cache-Control', 'no-store');
 			console.error('[LegacyRoute] no se pudo resolver el destino; se traslada el slug tal cual', {
 				sectionPath,
 				legacySlug,

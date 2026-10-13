@@ -157,6 +157,7 @@ describe('legacy route redirects', () => {
 		expect(response.status).toBe(301);
 		expect(response.headers.get('Location')).toBe('/literary-work/el-fin?page=2');
 		expect(response.headers.get('Vercel-CDN-Cache-Control')).toBeNull();
+		expect(response.headers.get('Cache-Control')).toBe('no-store');
 		expect(consoleError).toHaveBeenCalled();
 	});
 });
