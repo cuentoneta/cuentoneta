@@ -10,7 +10,8 @@
  *  - C. Ninguna entrada lleva `lastmod`.
  *  - D. Ninguna ubicación aparece repetida.
  *  - E. Sobre una muestra, cada ruta responde 301 hacia una página que responde 200.
- *  - F. `robots.txt` declara los dos sitemaps.
+ *  - F. Cada obra renombrada lleva exactamente a su obra.
+ *  - G. `robots.txt` declara los dos sitemaps.
  */
 import { expect } from '@playwright/test';
 
@@ -41,16 +42,8 @@ function sample(): string[] {
 	const paths = locations(xml).map(pathOf);
 	const stories = paths.filter((path) => path.startsWith('/story/'));
 	const step = Math.max(1, Math.floor(stories.length / literaryWorkSampleSize));
-	// Las obras renombradas son las que no se trasladan tal cual: van siempre, porque son las únicas
-	// cuyo destino depende de la tabla del middleware y no del slug pedido.
-	const renamed = [
-		'/story/un-dia-perfecto-para-el-pez-platano',
-		'/story/un-dia-perfecto-para-el-pez-banana',
-		'/story/IcyFox',
-	];
 	return [
 		...stories.filter((_, index) => index % step === 0).slice(0, literaryWorkSampleSize),
-		...renamed.filter((path) => paths.includes(path)),
 		...paths.filter((path) => path.startsWith('/storylist/')),
 	];
 }
@@ -63,7 +56,6 @@ test('sitemap-legacy — A: se sirve como XML', () => {
 test('sitemap-legacy — B: anuncia rutas viejas de obra y de colección, y ninguna otra', () => {
 	const paths = locations(xml).map(pathOf);
 
-	// Piso y no conteo exacto: el dataset del entorno de tests cambia con cada sincronización.
 	expect(paths.some((path) => path.startsWith('/story/'))).toBe(true);
 	expect(paths.some((path) => path.startsWith('/storylist/'))).toBe(true);
 	expect(paths.filter((path) => !/^\/(story|storylist)\/[^/]+$/.test(path))).toEqual([]);
@@ -95,7 +87,24 @@ test('sitemap-legacy — E: cada ruta de la muestra lleva con un 301 a una pági
 	}
 });
 
-test('sitemap-legacy — F: robots.txt declara los dos sitemaps', async ({ request }) => {
+// Las obras renombradas son las únicas que no se trasladan tal cual. Se afirma el destino exacto, y no
+// solo que responda: el slug viejo de una puede ser el vigente de otra, que también responde 200.
+for (const [path, destination] of [
+	['/story/un-dia-perfecto-para-el-pez-platano', '/literary-work/la-pelota'],
+	['/story/un-dia-perfecto-para-el-pez-banana', '/literary-work/un-dia-perfecto-para-el-pez-platano'],
+	['/story/IcyFox', '/literary-work/que-seria-yo-sin-ti'],
+] as const) {
+	test(`sitemap-legacy — F: la obra renombrada ${path} lleva a ${destination}, que responde`, async ({ request }) => {
+		expect(locations(xml).map(pathOf)).toContain(path);
+
+		const redirect = await request.get(path, { maxRedirects: 0 });
+		expect(redirect.status()).toBe(301);
+		expect(redirect.headers()['location']).toBe(destination);
+		expect((await request.get(destination, { maxRedirects: 0 })).status()).toBe(200);
+	});
+}
+
+test('sitemap-legacy — G: robots.txt declara los dos sitemaps', async ({ request }) => {
 	const robots = await (await request.get('/robots.txt')).text();
 	const sitemaps = robots
 		.split('\n')
