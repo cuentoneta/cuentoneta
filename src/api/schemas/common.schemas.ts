@@ -1,11 +1,11 @@
 import { z } from 'zod';
+import { isSlug } from '@models/slug.model';
 
-export const slugSchema = z.object({
-	slug: z
-		.string()
-		.nonempty('slug cannot be empty')
-		.regex(/^[a-z0-9-]+$/i, `Slug must be a string with letters from a to z, numbers from 0 to 9 and '-'`),
-});
+export const slugValueSchema = z
+	.string()
+	.refine(isSlug, `Slug must be lowercase letters from a to z and numbers from 0 to 9, joined by single '-'`);
+
+export const slugParamSchema = z.object({ slug: slugValueSchema });
 
 export const basePaginationSchema = z.object({
 	limit: z.string().regex(/^\d+$/, 'limit must be a positive integer').transform(Number),

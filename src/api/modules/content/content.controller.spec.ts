@@ -3,7 +3,7 @@ import { setSystemTime, useFakeTimers, useRealTimers } from '@test-utils';
 import { buildWeekSlug } from '@utils/week-slug.utils';
 import type { LandingPageContent } from '@models/landing-page-content.model';
 import { environment } from '../../_helpers/environment';
-import { readCacheHeaders } from '../../_middleware/read-cache-headers.middleware';
+import { readCacheHeaders } from '@middleware/read-cache-headers.middleware';
 import { createContentController } from './content.controller';
 import { MalformedLandingPageError } from './content.errors';
 import { InMemoryContentRepository } from './content.repository.mock';

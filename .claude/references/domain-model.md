@@ -194,13 +194,19 @@ export type Slug = string & { readonly __brand: 'Slug' };
 
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
+export function isSlug(value: unknown): value is Slug {
+	return typeof value === 'string' && SLUG_PATTERN.test(value);
+}
+
 export function createSlug(value: string): Slug {
-	if (!SLUG_PATTERN.test(value)) {
+	if (!isSlug(value)) {
 		throw new Error(`Slug inválido: "${value}"`);
 	}
 	return value as Slug;
 }
 ```
+
+`isSlug` es la **única** definición del formato y la consumen las fronteras que reciben o publican un slug, en vez de declarar cada una su propia regex. Una frontera más permisiva que `createSlug` deja pasar un valor que el dominio no puede construir, y la falla aparece recién al servirlo.
 
 ### ReadingTime — minutos de lectura
 
@@ -245,11 +251,10 @@ Zod valida **datos externos** en la frontera, antes de que el dominio confíe en
 **Backend (`src/api/**`, `@schemas/*`):** zod clásico, para params/query de los controllers Hono vía `@hono/zod-validator`. Corre en Node, donde el tamaño del paquete no importa:
 
 ```typescript
-import { z } from 'zod';
-import { slugSchema } from '../../schemas/common.schemas'; // reutilizado por todos los módulos
+import { slugParamValidator } from '@middleware/slug-param-validator.middleware';
 
-// en el controller Hono:
-// zValidator('param', slugSchema)
+// en el controller Hono, para un recurso por slug (un `:slug` mal formado responde el 404 del recurso):
+// slugParamValidator((slug) => new LiteraryWorkNotFoundError(slug))
 ```
 
 **Frontend (`src/models/*.dto.ts`):** los DTO de wire — el contrato que valida la respuesta HTTP antes de mapearla a dominio — usan **`zod/mini`**, importado **como namespace**:
