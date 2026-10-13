@@ -25,8 +25,14 @@ export default defineConfig({
 	// descubre proyectos recorriendo el árbol, y bajo `.claude/worktrees/` hay copias enteras del
 	// repo. Basta con que el tsconfig de una de ellas no le parsee para que aborte y deje de resolver
 	// alias en toda la corrida.
-	plugins: [angular({ transformFilter: (_code, id) => !normalizePath(id).startsWith(toolsDir) })],
+	//
+	// `fastCompile` transforma archivo por archivo: sin él, cada corrida compila primero el programa
+	// entero de `tsconfig.spec.json`, aunque se pida un solo spec. Ese camino deja `@Service()` e
+	// `@Injectable()` en la clase como decoradores estándar, que V8 no ejecuta, y por eso el paso de
+	// OXC de Vite los baja a la forma legacy.
+	plugins: [angular({ fastCompile: true, transformFilter: (_code, id) => !normalizePath(id).startsWith(toolsDir) })],
 	resolve: { tsconfigPaths: true },
+	oxc: { decorator: { legacy: true } },
 	test: {
 		globals: true,
 		maxWorkers,

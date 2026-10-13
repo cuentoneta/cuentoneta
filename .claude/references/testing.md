@@ -15,7 +15,7 @@
 | **Componentes**  | **Angular Testing Library** (`@testing-library/angular`) + `@testing-library/user-event` |
 | **Matchers DOM** | `@testing-library/jest-dom` — **no es Jest** (ver abajo)                                 |
 | **Mocks/timers** | Wrappers de **`@test-utils`** (`src/test-utils.ts`)                                      |
-| **Compilación**  | `@analogjs/vite-plugin-angular` (JIT en tests)                                           |
+| **Compilación**  | `@analogjs/vite-plugin-angular` (JIT con `fastCompile` en tests)                         |
 
 > **`@testing-library/jest-dom` no tiene relación con Jest.** El nombre viene de su origen, pero es una librería de matchers de DOM —`toBeInTheDocument`, `toHaveClass`, `toHaveAttribute`…— que se registra para Vitest en `src/test-setup.ts` (`import '@testing-library/jest-dom/vitest'`) y es parte del stack recomendado de Testing Library. Al barrer residuos de Jest del workspace, **no** es uno de ellos.
 
@@ -45,6 +45,19 @@ En una máquina con poca RAM, el pool se cambia por línea de comandos, que le g
 ```bash
 pnpm exec vitest run --pool=threads
 ```
+
+### Costo fijo y flujo de iteración
+
+Cada corrida paga un arranque antes del primer test: levantar Vite, cargar `src/test-setup.ts` y transformar lo que importa el spec. Con `fastCompile` el plugin transforma solo los archivos que la corrida carga. Sin él, compila primero el programa entero de `tsconfig.spec.json`, unos 5 s aunque se pida un solo spec. Ese camino deja `@Service()` e `@Injectable()` como decoradores estándar, que V8 no ejecuta, y por eso la config baja los decoradores a la forma legacy con `oxc.decorator`. Quitar una de las dos opciones sin la otra rompe la carga de todo spec que importe un servicio, con un `SyntaxError: Invalid or unexpected token` sin stack.
+
+Para iterar sobre un spec, el flujo es `pnpm test:watch <ruta>`. Arranca una vez, y cada edición re-corre solo los specs afectados, sobre el server ya caliente:
+
+| Flujo (1 spec)                | Primer resultado | Cada edición |
+| ----------------------------- | ---------------- | ------------ |
+| `pnpm exec vitest run <ruta>` | ~2 s             | ~2 s         |
+| `pnpm test:watch <ruta>`      | ~3 s             | ~1,4 s       |
+
+Acotar por ruta no achica el pool ni el arranque: solo evita transformar y ejecutar el resto de los specs. `pnpm test` corre la suite completa y es lo que reproduce el gate de CI.
 
 > Esta es la config de **la app** (`@cuentoneta/app`). El Studio de Sanity (`cms/`) tiene su propia config de Vitest, independiente — ver [Segunda config de Vitest: el Studio (`cms/`)](#segunda-config-de-vitest-el-studio-cms).
 
