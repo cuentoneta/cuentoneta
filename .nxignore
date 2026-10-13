@@ -1,0 +1,4 @@
+# Nx no hashea lo que ignora .gitignore. El environment lo genera `pnpm ops config` y está
+# gitignoreado, pero el build y los tests lo leen: sin esta negación, cambiarlo da cache hit con el
+# environment anterior.
+!/src/app/environments/environment.ts
