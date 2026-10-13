@@ -362,7 +362,7 @@ El documento `rotatingContent` está diseñado para ser extensible. Para agregar
 2. **Regenerar tipos**:
 
    ```bash
-   pnpm sanity typegen generate
+   pnpm sanity:run-typegen-generator
    ```
 
 3. **Crear la query GROQ** en `src/api/_queries/content.query.ts` si es necesario
