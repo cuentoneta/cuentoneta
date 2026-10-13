@@ -25,7 +25,7 @@ import { test } from '../_utils/test';
 
 import { childElementSequences, locations, urlEntries } from '@testing/sitemap-xml';
 import { isSlug } from '@models/slug.model';
-import { PAGE_REVISED_ON, type RevisedPage } from '@api/modules/sitemap/sitemap.lastmod';
+import { PAGE_REVISED_ON, revisedPageOf } from '@api/modules/sitemap/sitemap.lastmod';
 
 // El sitemap no se renderiza: se pide por HTTP y se lee como texto. Correrlo en los dos proyectos
 // pagaría el doble en el gate más caro sin ejercitar nada distinto.
@@ -94,12 +94,17 @@ test('sitemap — E: toda ficha publicada tiene un slug que el dominio puede con
 });
 
 test('sitemap — F: ninguna ficha de autor ni de colección publica una fecha anterior a su revisión', () => {
-	const revisedPages = urlEntries(xml).flatMap(({ loc, lastmod }) => {
-		const { pathname } = new URL(loc);
-		const page = (Object.keys(PAGE_REVISED_ON) as RevisedPage[]).find((type) => pathname.startsWith(`/${type}/`));
-		return page ? [{ loc, lastmod, revisedOn: PAGE_REVISED_ON[page] }] : [];
+	const entries = urlEntries(xml);
+	expect(entries.filter(({ loc }) => !URL.canParse(loc))).toEqual([]);
+
+	const revisedPages = entries.flatMap(({ loc, lastmod }) => {
+		const page = revisedPageOf(new URL(loc).pathname);
+		return page ? [{ loc, lastmod, page, revisedOn: PAGE_REVISED_ON[page] }] : [];
 	});
 
-	expect(revisedPages.length).toBeGreaterThan(0);
+	// Por tipo y no en total: si un tipo dejara de reconocerse, el otro alcanzaría para pasar el caso.
+	for (const page of Object.keys(PAGE_REVISED_ON)) {
+		expect(revisedPages.some((entry) => entry.page === page), `ninguna ficha de tipo ${page}`).toBe(true);
+	}
 	expect(revisedPages.filter(({ lastmod, revisedOn }) => !lastmod || lastmod < revisedOn)).toEqual([]);
 });

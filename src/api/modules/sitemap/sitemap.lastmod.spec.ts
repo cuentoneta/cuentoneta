@@ -1,5 +1,5 @@
 import { shiftDays } from '@testing/date-shift';
-import { PAGE_REVISED_ON, resolveLastmod } from './sitemap.lastmod';
+import { PAGE_REVISED_ON, resolveLastmod, revisedPageOf } from './sitemap.lastmod';
 
 describe('resolveLastmod', () => {
 	const revisedOn = PAGE_REVISED_ON.author;
@@ -28,5 +28,19 @@ describe('resolveLastmod', () => {
 describe('PAGE_REVISED_ON', () => {
 	it.each(Object.entries(PAGE_REVISED_ON))('declares the %s revision as YYYY-MM-DD', (_page, revisedOn) => {
 		expect(revisedOn).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+	});
+});
+
+describe('revisedPageOf', () => {
+	it.each([
+		['/author/julio-cortazar', 'author'],
+		['/collection/cuentos-de-terror', 'collection'],
+	])('maps %s to the %s revision', (path, page) => {
+		expect(revisedPageOf(path)).toBe(page);
+	});
+
+	// Los listados no son fichas: su ruta comparte el comienzo pero no cambia con la plantilla de la ficha.
+	it.each(['/literary-work/el-aleph', '/authors', '/collection', '/'])('maps %s to no revision', (path) => {
+		expect(revisedPageOf(path)).toBeUndefined();
 	});
 });

@@ -7,7 +7,7 @@ import type { IndexableHtmlExpectations } from '../e2e/_utils/seo-invariants';
 import { parseHtml, parseJsonLdBlocks } from '../e2e/_utils/seo';
 import { SCHEMA_IDS, SITEWIDE_SCHEMA_IDS } from '../e2e/_utils/seo-fixtures';
 import { childElementSequences, urlEntries } from '../src/testing/sitemap-xml';
-import { PAGE_REVISED_ON, type RevisedPage } from '@api/modules/sitemap/sitemap.lastmod';
+import { PAGE_REVISED_ON, revisedPageOf } from '@api/modules/sitemap/sitemap.lastmod';
 
 export function slugOf(path: string): string {
 	return path.split('/').filter(Boolean).pop() ?? '';
@@ -116,11 +116,6 @@ export function expectationsFor(path: string): IndexableHtmlExpectations | null 
 // que no diluyan una escritura masiva sobre el resto del sitemap.
 const LASTMOD_CLUSTER_LIMIT = 0.25;
 
-const REVISED_PAGE_PREFIXES = Object.freeze({
-	author: '/author/',
-	collection: '/collection/',
-} satisfies Record<RevisedPage, string>);
-
 const IGNORED_ELEMENTS = ['changefreq', 'priority'];
 
 export interface SitemapReport {
@@ -143,9 +138,8 @@ function datedEntries(xml: string): DatedEntry[] {
 }
 
 function isDeclaredRevision({ path, lastmod }: DatedEntry): boolean {
-	return (Object.keys(REVISED_PAGE_PREFIXES) as RevisedPage[]).some(
-		(page) => !!path?.startsWith(REVISED_PAGE_PREFIXES[page]) && lastmod === PAGE_REVISED_ON[page],
-	);
+	const page = path === null ? undefined : revisedPageOf(path);
+	return page !== undefined && lastmod === PAGE_REVISED_ON[page];
 }
 
 function largestCluster(dates: readonly string[]): { date: string; share: number } | null {
