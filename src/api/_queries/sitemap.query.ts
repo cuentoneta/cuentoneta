@@ -10,10 +10,11 @@
  * de todo el corpus a la vez. Un `lastmod` que no se actualiza cuando debería cuesta mucho menos
  * que uno que se actualiza cuando no debería: el segundo destruye la confianza en la señal.
  *
- * Las páginas que listan obras —autor y colección— no cambian cuando se crea su documento sino cuando se publica
- * una de sus obras: por eso proyectan la fecha de la más reciente, con el mismo criterio de fecha y de
- * publicación con que la página las lista, y `null` si no lista ninguna. El piso de esa fecha no lo
- * decide la query: lo aplica el service con `resolveLastmod`.
+ * Las páginas que listan obras —autor y colección— no cambian cuando se crea su documento sino cuando
+ * se publica una de sus obras: por eso proyectan la fecha de la más reciente, o `null` si no listan
+ * ninguna. Cuentan las mismas obras que la página muestra —publicadas y de tipo `literaryWork`—, y la
+ * fecha de cada una es la misma que su propio `lastmod`. El piso de esa fecha no lo decide la query:
+ * lo aplica el service con `resolveLastmod`.
  *
  * Cada filtro descarta los slugs que el dominio no puede construir, porque su página nunca se sirve.
  * GROQ no tiene expresiones regulares, así que la poda es gruesa —mayúsculas, guiones al borde o
