@@ -2,9 +2,13 @@
 import { escapeXml, fetchSitemapSlugs } from './sitemap.repository';
 
 // Sin `changefreq` ni `priority`: los buscadores los ignoran de forma declarada.
-interface SitemapUrl {
+export interface SitemapUrl {
 	loc: string;
 	lastmod?: string;
+}
+
+export function sitemapBaseUrl(): string {
+	return process.env['BASE_URL'] || 'https://www.cuentoneta.ar';
 }
 
 /**
@@ -19,7 +23,7 @@ interface SitemapUrl {
  * criterio con el que la página elige cuál servir. El descarte se registra porque es la única señal
  * de que el dataset tiene dos documentos disputando una URL.
  */
-function deduplicateByLocation(urls: SitemapUrl[]): SitemapUrl[] {
+export function deduplicateByLocation(urls: SitemapUrl[]): SitemapUrl[] {
 	const byLocation = new Map<string, SitemapUrl>();
 	const discarded: string[] = [];
 	for (const url of urls) {
@@ -42,7 +46,7 @@ function deduplicateByLocation(urls: SitemapUrl[]): SitemapUrl[] {
  */
 export async function getSitemapUrls(): Promise<SitemapUrl[]> {
 	const { literaryWorks, authors, collections } = await fetchSitemapSlugs();
-	const BASE_URL = process.env['BASE_URL'] || 'https://www.cuentoneta.ar';
+	const BASE_URL = sitemapBaseUrl();
 
 	return deduplicateByLocation([
 		// Páginas estáticas
