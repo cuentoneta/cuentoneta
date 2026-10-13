@@ -1,5 +1,4 @@
 import { clearAllMocks, type Mock } from '@test-utils';
-import { shiftDays } from '@testing/date-shift';
 import { childElementSequences } from '@testing/sitemap-xml';
 import { PAGE_REVISED_ON } from './sitemap.lastmod';
 import * as sitemapRepository from './sitemap.repository';
@@ -116,13 +115,13 @@ describe('SitemapService', () => {
 			};
 
 			it('should publish the date of the latest literary work when the page revision is older', async () => {
-				const later = shiftDays(revisedOn, 1);
+				const later = '9999-12-31';
 
 				expect(await pageUrl(later)).toEqual({ loc, lastmod: later });
 			});
 
 			it.each([
-				['older than the page revision', shiftDays(revisedOn, -1)],
+				['older than the page revision', '1970-01-01'],
 				['absent', undefined],
 			])('should publish the page revision when the latest literary work is %s', async (_case, date) => {
 				expect((await pageUrl(date))?.lastmod).toBe(revisedOn);

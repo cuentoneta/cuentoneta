@@ -21,12 +21,6 @@ export const PAGE_REVISED_ON = Object.freeze({
 
 export type RevisedPage = keyof typeof PAGE_REVISED_ON;
 
-/** El tipo de página con revisión declarada al que pertenece una ruta, o `undefined` si no pertenece a ninguno. */
-export function revisedPageOf(path: string): RevisedPage | undefined {
-	const prefixes = { author: '/author/', collection: '/collection/' } satisfies Record<RevisedPage, string>;
-	return (Object.keys(prefixes) as RevisedPage[]).find((page) => path.startsWith(prefixes[page]));
-}
-
 /**
  * El `lastmod` de una página que lista obras: la fecha de la más reciente, salvo que la plantilla de la
  * página sea posterior. `latestLiteraryWorkDate` llega en `YYYY-MM-DD` y `undefined` si la página no

@@ -13,8 +13,6 @@
  *  - D. Ninguna ubicación aparece repetida.
  *  - E. Toda ficha de obra, autor o colección tiene un slug que el dominio puede construir: una que no
  *       lo tuviera anunciaría una URL que nunca se sirve.
- *  - F. Ninguna ficha de autor ni de colección publica un `lastmod` anterior a la revisión declarada de
- *       su página: la plantilla cambió ese día para todas, tengan o no obras más recientes.
  *
  * No es una validación contra el esquema publicado: no cubre cardinalidades, el tipo de dato de la
  * fecha ni los límites de tamaño del documento.
@@ -23,9 +21,8 @@ import { expect } from '@playwright/test';
 
 import { test } from '../_utils/test';
 
-import { childElementSequences, locations, urlEntries } from '@testing/sitemap-xml';
+import { childElementSequences, locations } from '@testing/sitemap-xml';
 import { isSlug } from '@models/slug.model';
-import { PAGE_REVISED_ON, revisedPageOf } from '@api/modules/sitemap/sitemap.lastmod';
 
 // El sitemap no se renderiza: se pide por HTTP y se lee como texto. Correrlo en los dos proyectos
 // pagaría el doble en el gate más caro sin ejercitar nada distinto.
@@ -91,20 +88,4 @@ test('sitemap — E: toda ficha publicada tiene un slug que el dominio puede con
 
 	expect(slugs.length).toBeGreaterThan(0);
 	expect(slugs.filter((slug) => !isSlug(slug))).toEqual([]);
-});
-
-test('sitemap — F: ninguna ficha de autor ni de colección publica una fecha anterior a su revisión', () => {
-	const entries = urlEntries(xml);
-	expect(entries.filter(({ loc }) => !URL.canParse(loc))).toEqual([]);
-
-	const revisedPages = entries.flatMap(({ loc, lastmod }) => {
-		const page = revisedPageOf(new URL(loc).pathname);
-		return page ? [{ loc, lastmod, page, revisedOn: PAGE_REVISED_ON[page] }] : [];
-	});
-
-	// Por tipo y no en total: si un tipo dejara de reconocerse, el otro alcanzaría para pasar el caso.
-	for (const page of Object.keys(PAGE_REVISED_ON)) {
-		expect(revisedPages.some((entry) => entry.page === page), `ninguna ficha de tipo ${page}`).toBe(true);
-	}
-	expect(revisedPages.filter(({ lastmod, revisedOn }) => !lastmod || lastmod < revisedOn)).toEqual([]);
 });

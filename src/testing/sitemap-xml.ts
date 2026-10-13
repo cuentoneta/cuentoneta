@@ -19,11 +19,3 @@ export function childElementSequences(xml: string): string[][] {
 export function locations(xml: string): string[] {
 	return [...xml.matchAll(LOCATION)].map(([, loc]) => loc);
 }
-
-/** Cada `<url>` con su ubicación y su fecha; `lastmod` queda `undefined` si la entrada no la declara. */
-export function urlEntries(xml: string): { loc: string; lastmod?: string }[] {
-	return [...xml.matchAll(URL_BLOCK)].map(([, block]) => ({
-		loc: block.match(/<loc>(.*?)<\/loc>/)?.[1]?.trim() ?? '',
-		lastmod: block.match(/<lastmod>(.*?)<\/lastmod>/)?.[1]?.trim(),
-	}));
-}

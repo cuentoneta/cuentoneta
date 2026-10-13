@@ -6,8 +6,8 @@
 import type { IndexableHtmlExpectations } from '../e2e/_utils/seo-invariants';
 import { parseHtml, parseJsonLdBlocks } from '../e2e/_utils/seo';
 import { SCHEMA_IDS, SITEWIDE_SCHEMA_IDS } from '../e2e/_utils/seo-fixtures';
-import { childElementSequences, urlEntries } from '../src/testing/sitemap-xml';
-import { PAGE_REVISED_ON, revisedPageOf } from '@api/modules/sitemap/sitemap.lastmod';
+import { childElementSequences } from '../src/testing/sitemap-xml';
+import { PAGE_REVISED_ON, type RevisedPage } from '@api/modules/sitemap/sitemap.lastmod';
 
 export function slugOf(path: string): string {
 	return path.split('/').filter(Boolean).pop() ?? '';
@@ -134,12 +134,19 @@ interface DatedEntry {
 }
 
 function datedEntries(xml: string): DatedEntry[] {
-	return urlEntries(xml).flatMap(({ loc, lastmod }) => (lastmod ? [{ path: toPath(loc), lastmod }] : []));
+	return parseHtml(xml)
+		.querySelectorAll('url')
+		.flatMap((url) => {
+			const lastmod = url.querySelector('lastmod')?.text.trim();
+			return lastmod ? [{ path: toPath(url.querySelector('loc')?.text ?? ''), lastmod }] : [];
+		});
 }
 
 function isDeclaredRevision({ path, lastmod }: DatedEntry): boolean {
-	const page = path === null ? undefined : revisedPageOf(path);
-	return page !== undefined && lastmod === PAGE_REVISED_ON[page];
+	const prefixes = { author: '/author/', collection: '/collection/' } satisfies Record<RevisedPage, string>;
+	return (Object.keys(prefixes) as RevisedPage[]).some(
+		(page) => !!path?.startsWith(prefixes[page]) && lastmod === PAGE_REVISED_ON[page],
+	);
 }
 
 function largestCluster(dates: readonly string[]): { date: string; share: number } | null {
