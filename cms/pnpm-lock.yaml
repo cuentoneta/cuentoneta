@@ -16,8 +16,8 @@ importers:
   .:
     dependencies:
       '@sanity/export':
-        specifier: ^6.2.1
-        version: 6.2.1
+        specifier: ^7.0.3
+        version: 7.0.3(vitest@5.0.3(@types/node@24.19.2)(jsdom@29.1.1(@noble/hashes@2.4.0))(vite@7.3.6(@types/node@24.19.2)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1)))
       '@sanity/icons':
         specifier: ^5.2.3
         version: 5.2.3(react@19.3.0)
@@ -1808,6 +1808,11 @@ packages:
   '@sanity/export@6.2.1':
     resolution: {integrity: sha512-P8e4UDVzKlpHRIh78hXSnuUwQFWmhQ7n1FYmDl5RdO3k+tQQsb7ok+Hdh9lwJUN7DCEGPo3L3BuNM9fC6fOmkw==}
     engines: {node: '>=20.19 <22 || >=22.12'}
+    hasBin: true
+
+  '@sanity/export@7.0.3':
+    resolution: {integrity: sha512-kzxd4Hi5wcp0zQo9SOHLAFWAZ+rsGWZAUwTcCxw0o4NjhMbxeV0UH8QrBSTyVw+5Mb2in15yn3oMdlqm/N6zmw==}
+    engines: {node: '>=22.12'}
     hasBin: true
 
   '@sanity/generate-help-url@4.0.0':
@@ -3677,6 +3682,10 @@ packages:
     resolution: {integrity: sha512-KZxYo1BUkWD2TVFLr0MQoM8vUUigWD3LlD83a/75BqC+4qE0Hb1Vo5v1FgcfaNXvfXzr+5EhQ6ing/CaBijTlw==}
     engines: {node: '>= 18'}
 
+  modern-tar@0.8.5:
+    resolution: {integrity: sha512-snEhs+6G5Tjd4I7tLCDOaoln2RgE0bD19RzEKgvgK2hZ5VKy3MpLhLTZ2fWpXSTg4K2cyPwp+VHATFJhxfnOeA==}
+    engines: {node: '>=18.0.0'}
+
   motion-dom@12.43.0:
     resolution: {integrity: sha512-azKON4d9S65PEoFUiQTMTgPheEmzf2QngdRc50AKfJp9Q9mmcBVw22c8eMq9k8kxOFHdL7+WZY7N/5F/lwiDag==}
 
@@ -3859,12 +3868,12 @@ packages:
     resolution: {integrity: sha512-MitaVsCuCFIvOLLPIU7NnfrZvS9H9h7kwMUkDo+T2pEISaJD48IV9S8iIdXB7PsvvdxyYcsSTTrr90XKsbulNw==}
     engines: {node: '>=18'}
 
-  p-queue@9.3.3:
-    resolution: {integrity: sha512-NXAOdnEe5FsZJfT4oK84lE1Y5cFFdWlRuOo5tww8DyNMxyRXwn39fIkUtNLKppcPC+UYU/bXujNCUGDv01y7CA==}
+  p-queue@9.3.5:
+    resolution: {integrity: sha512-Lki/zhXFVmDhesBUn/yHRLW9Bte7mE7xoFHzTR8sIomV7a2z+LxYAPkGvdfidNiu4fKSfjtawixxSHcZci5QcQ==}
     engines: {node: '>=20'}
 
-  p-timeout@7.0.1:
-    resolution: {integrity: sha512-AxTM2wDGORHGEkPCt8yqxOTMgpfbEHqF51f/5fJCmwFC3C/zNcGT63SymH2ttOAaiIws2zVg4+izQCjrakcwHg==}
+  p-timeout@7.0.2:
+    resolution: {integrity: sha512-prbX4Z3YszrFNgH+MW5Zoeq3baXrMtP/MQnFeET90UB/GtGcGDQ5Usg9OCy6ETjTTntOw1SL2z9fMPUppN3Guw==}
     engines: {node: '>=20'}
 
   p-try@2.2.0:
@@ -6997,7 +7006,7 @@ snapshots:
       debug: 4.4.3(supports-color@8.1.1)
       get-it: 8.8.3
       json-stream-stringify: 3.1.7
-      p-queue: 9.3.3
+      p-queue: 9.3.5
       tar: 7.5.22
       tar-stream: 3.2.0
     transitivePeerDependencies:
@@ -7005,6 +7014,15 @@ snapshots:
       - bare-buffer
       - react-native-b4a
       - supports-color
+
+  '@sanity/export@7.0.3(vitest@5.0.3(@types/node@24.19.2)(jsdom@29.1.1(@noble/hashes@2.4.0))(vite@7.3.6(@types/node@24.19.2)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1)))':
+    dependencies:
+      get-it: 9.6.1(vitest@5.0.3(@types/node@24.19.2)(jsdom@29.1.1(@noble/hashes@2.4.0))(vite@7.3.6(@types/node@24.19.2)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1)))
+      modern-tar: 0.8.5
+      obug: 3.0.0
+      p-queue: 9.3.5
+    transitivePeerDependencies:
+      - vitest
 
   '@sanity/generate-help-url@4.0.0': {}
 
@@ -9028,6 +9046,8 @@ snapshots:
     dependencies:
       minipass: 7.1.3
 
+  modern-tar@0.8.5: {}
+
   motion-dom@12.43.0:
     dependencies:
       motion-utils: 12.39.0
@@ -9173,12 +9193,12 @@ snapshots:
 
   p-map@7.0.8: {}
 
-  p-queue@9.3.3:
+  p-queue@9.3.5:
     dependencies:
       eventemitter3: 5.0.4
-      p-timeout: 7.0.1
+      p-timeout: 7.0.2
 
-  p-timeout@7.0.1: {}
+  p-timeout@7.0.2: {}
 
   p-try@2.2.0: {}
 
