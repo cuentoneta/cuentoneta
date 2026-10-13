@@ -84,7 +84,7 @@ export class ReadingSuggestionsList {
 	public readonly navigationParams = input<NavigationParams>();
 
 	// Sin el autor, la tarjeta libera su franja vertical y el extracto puede ocuparla con una línea más.
-	protected readonly excerptLines = computed(() => (this.showAuthor() ? 2 : 3));
+	private readonly excerptLines = computed(() => (this.showAuthor() ? 2 : 3));
 
 	// El estado de carga reserva el alto de la misma cantidad de tarjetas que se van a renderizar,
 	// para que no haya salto de layout cuando llegan las obras.
@@ -92,7 +92,7 @@ export class ReadingSuggestionsList {
 
 	// Sin obra, la tarjeta renderiza su propio esqueleto: el estado de carga es la misma lista con
 	// los slots vacíos.
-	protected readonly displayedTeasers = computed<readonly (LiteraryWorkTeaser | undefined)[]>(() =>
+	private readonly displayedTeasers = computed<readonly (LiteraryWorkTeaser | undefined)[]>(() =>
 		this.loading() ? this.loadingPlaceholders : this.teasers(),
 	);
 }

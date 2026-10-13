@@ -80,13 +80,13 @@ export default class CollectionsPage implements CollectionsHost {
 		return [...catalog].sort((first, second) => this.collator.compare(first.title, second.title));
 	});
 
-	protected readonly failed = computed(() => this.catalogResource.status() === 'error');
+	private readonly failed = computed(() => this.catalogResource.status() === 'error');
 
-	protected readonly loading = computed(() => this.catalogResource.isLoading());
+	private readonly loading = computed(() => this.catalogResource.isLoading());
 
-	protected readonly selectedSlugs = signal<readonly string[]>([]);
+	private readonly selectedSlugs = signal<readonly string[]>([]);
 
-	protected readonly visibleCollections = computed(() => {
+	private readonly visibleCollections = computed(() => {
 		const selected = this.selectedSlugs();
 		if (selected.length === 0) {
 			return this.collections();
@@ -105,13 +105,13 @@ export default class CollectionsPage implements CollectionsHost {
 		this.responseInit.status = 503;
 	});
 
-	protected toggleTag(slug: string): void {
+	private toggleTag(slug: string): void {
 		this.selectedSlugs.update((selected) =>
 			selected.includes(slug) ? selected.filter((candidate) => candidate !== slug) : [...selected, slug],
 		);
 	}
 
-	protected clearFilters(): void {
+	private clearFilters(): void {
 		this.selectedSlugs.set([]);
 	}
 }

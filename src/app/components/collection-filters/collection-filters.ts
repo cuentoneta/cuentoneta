@@ -117,11 +117,11 @@ export class CollectionFilters {
 	public readonly toggled = output<Tag>();
 	public readonly cleared = output<void>();
 
-	protected readonly categoryLabel = 'Categoría';
+	private readonly categoryLabel = 'Categoría';
 
 	private readonly collator = new Intl.Collator('es');
 
-	protected readonly facets = computed<readonly CollectionFacet[]>(() => {
+	private readonly facets = computed<readonly CollectionFacet[]>(() => {
 		const selected = new Set(this.selected());
 		const counts = new Map<string, CollectionFacet>();
 		for (const collection of this.collections()) {
@@ -133,16 +133,16 @@ export class CollectionFilters {
 		return [...counts.values()].sort((first, second) => this.collator.compare(first.tag.title, second.tag.title));
 	});
 
-	protected readonly selectedTags = computed(() =>
+	private readonly selectedTags = computed(() =>
 		this.facets()
 			.filter((facet) => facet.selected)
 			.map((facet) => facet.tag),
 	);
 
 	private readonly categoryGroupOpen = signal(true);
-	protected readonly isCategoryGroupOpen = this.categoryGroupOpen.asReadonly();
+	private readonly isCategoryGroupOpen = this.categoryGroupOpen.asReadonly();
 
-	protected toggleCategoryGroup(): void {
+	private toggleCategoryGroup(): void {
 		this.categoryGroupOpen.update((open) => !open);
 	}
 }

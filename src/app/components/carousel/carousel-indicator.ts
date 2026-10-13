@@ -70,7 +70,7 @@ export class CarouselIndicator {
 	public readonly device = input<'Mobile' | 'Desktop'>('Desktop');
 
 	// Señales computadas
-	protected readonly indices = computed(() => Array.from({ length: this.count() }, (_, i) => i));
+	private readonly indices = computed(() => Array.from({ length: this.count() }, (_, i) => i));
 
 	// Salidas
 	public readonly indicatorClick = output<number>();

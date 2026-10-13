@@ -244,6 +244,6 @@ describe('ButtonGroup', () => {
 	`,
 })
 class ControlledHostComponent {
-	protected readonly options = options;
-	protected readonly selectedId = signal('audio');
+	private readonly options = options;
+	private readonly selectedId = signal('audio');
 }

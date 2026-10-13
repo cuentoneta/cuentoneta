@@ -64,7 +64,7 @@ import { AuthorsStructuredDataDirective } from './authors-structured-data.direct
 	`,
 })
 export default class AuthorsPage implements AuthorsHost {
-	protected readonly appRoutes = AppRoutes;
+	private readonly appRoutes = AppRoutes;
 	private readonly authorService = inject(AuthorApi);
 
 	private readonly authorsResource = ssrBlockingRxResource({
@@ -87,7 +87,7 @@ export default class AuthorsPage implements AuthorsHost {
 
 	// El corpus mezcla autores históricos con contemporáneos, así que la celda tiene que servir a
 	// una ficha completa, a una con solo el nacimiento y a una sin ninguna de las dos fechas.
-	protected lifespanOf(author: AuthorTeaser): string {
+	private lifespanOf(author: AuthorTeaser): string {
 		if (!author.bornOnYear) {
 			return '—';
 		}

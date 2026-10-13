@@ -82,20 +82,20 @@ export class Drawer {
 	private readonly dialogRef = viewChild.required<ElementRef<HTMLDialogElement>>('dialog');
 	private readonly dialogElement = computed(() => this.dialogRef().nativeElement);
 
-	protected readonly headerTemplate = contentChild(DrawerHeaderDirective);
-	protected readonly footerTemplate = contentChild(DrawerFooterDirective);
+	private readonly headerTemplate = contentChild(DrawerHeaderDirective);
+	private readonly footerTemplate = contentChild(DrawerFooterDirective);
 
 	private readonly tracker = inject(DrawerTrackerService);
 	private readonly instanceId = this.tracker.nextId();
-	protected readonly titleId = `drawer-title-${this.instanceId}`;
-	protected readonly descriptionId = `drawer-desc-${this.instanceId}`;
+	private readonly titleId = `drawer-title-${this.instanceId}`;
+	private readonly descriptionId = `drawer-desc-${this.instanceId}`;
 
 	// Todo `<dialog>` modal necesita un nombre accesible: si hay `title` lo cubre `aria-labelledby`; en su ausencia
 	// (slot de encabezado o contenido plano) se cae a `ariaLabel`, con un rótulo genérico por defecto.
-	protected readonly dialogAriaLabel = computed(() => this.ariaLabel() || (this.title() ? null : 'Panel lateral'));
+	private readonly dialogAriaLabel = computed(() => this.ariaLabel() || (this.title() ? null : 'Panel lateral'));
 
-	protected readonly transition = inject(DrawerTransitionDirective);
-	protected readonly panel = inject(DrawerPanelDirective);
+	private readonly transition = inject(DrawerTransitionDirective);
+	private readonly panel = inject(DrawerPanelDirective);
 
 	// El botón de cierre se ancla al borde interior del panel (el que da hacia el contenido, no hacia el borde del
 	// viewport): a la derecha en `left`, a la izquierda en `right`, y centrado al fondo/al top en `top`/`bottom`.
@@ -105,7 +105,7 @@ export class Drawer {
 		top: 'order-last self-center',
 		bottom: 'self-center',
 	};
-	protected readonly closeButtonClasses = computed(() => this.closeButtonConfig[this.panel.direction()]);
+	private readonly closeButtonClasses = computed(() => this.closeButtonConfig[this.panel.direction()]);
 
 	// Marca la ventana entre `close()` y `transitionend`, durante la cual el `<dialog>` sigue `open === true`: sin
 	// esta guarda, un segundo `close()` en pleno cierre volvería a emitir eventos y a apilar listeners de transición.

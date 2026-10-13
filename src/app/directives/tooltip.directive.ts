@@ -22,11 +22,11 @@ export class TooltipDirective {
 		onCleanup(() => this.myPopup?.remove());
 	});
 
-	protected onMouseEnter() {
+	private onMouseEnter() {
 		this.createTooltipPopup();
 	}
 
-	protected onMouseLeave() {
+	private onMouseLeave() {
 		if (this.myPopup) {
 			this.myPopup.remove();
 		}
