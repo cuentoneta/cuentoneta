@@ -38,6 +38,15 @@ updates:
           - major
           - minor
           - patch
+      # En una 0.x la minor de satori puede cambiar el render de la imagen OG:
+      # cada salto llega en su propio PR para revisarlo aparte.
+      satori:
+        patterns:
+          - 'satori'
+          - 'satori-html'
+        update-types:
+          - minor
+          - patch
       minor-and-patch:
         update-types:
           - minor
