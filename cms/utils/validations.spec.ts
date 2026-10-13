@@ -1,7 +1,27 @@
 import { describe, expect, it } from 'vitest';
 
 import { createSlug } from '@models/slug.model';
-import { localizedRequire, validateHistoricalDate, validateSlugFormat } from './validations';
+import { localizedRequire, validateHistoricalDate, validateRootRelativePath, validateSlugFormat } from './validations';
+
+describe('validateRootRelativePath', () => {
+	const pathError = 'Usar una ruta del sitio que empiece con "/" (p. ej. "/collection/verano-2022").';
+
+	it('leaves an empty field to localizedRequire', () => {
+		expect(validateRootRelativePath()).toBe(true);
+		expect(validateRootRelativePath('')).toBe(true);
+	});
+
+	it.each(['/collection/verano-2022', '/literary-work/el-fin?utm_source=campania', '/'])('accepts %j', (value) => {
+		expect(validateRootRelativePath(value)).toBe(true);
+	});
+
+	it.each(['../collection/x', 'collection/x', './collection/x', 'https://www.cuentoneta.ar/x', '//otro-sitio.com/x'])(
+		'rejects %j',
+		(value) => {
+			expect(validateRootRelativePath(value)).toBe(pathError);
+		},
+	);
+});
 
 describe('validateSlugFormat', () => {
 	const formatError =

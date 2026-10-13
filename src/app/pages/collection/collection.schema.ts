@@ -58,7 +58,7 @@ export function buildCollectionPageSchema(collection: Collection, websiteUrl: st
 export function buildCollectionBreadcrumb(collection: Collection, websiteUrl: string): WithContext<BreadcrumbList> {
 	const baseUrl = Location.stripTrailingSlash(websiteUrl);
 	return buildBreadcrumbSchema([
-		{ name: 'Inicio', url: `${baseUrl}/home` },
+		{ name: 'Inicio', url: `${baseUrl}/` },
 		{ name: collection.title, url: `${baseUrl}/collection/${collection.slug}` },
 	]);
 }

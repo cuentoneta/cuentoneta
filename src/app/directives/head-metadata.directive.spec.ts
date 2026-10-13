@@ -547,7 +547,7 @@ describe('HeadMetadataDirective', () => {
 		it('should clean up every per-page tag (title, description, keywords, robots, author, article dates, canonical and image) when destroyed', () => {
 			const removeSpy = spyOn(metaService, 'removeTag');
 			// El canonical no se limpia con removeTag (quita un <link>): lo seteamos para verificar su remoción.
-			directive.setCanonicalUrl(`${BASE_URL}/home`);
+			directive.setCanonicalUrl(`${BASE_URL}/`);
 			expect(document.querySelector(`link[rel='canonical']`)).not.toBeNull();
 			// La imagen se resetea al logo (no se elimina): la seteamos para verificar el fallback al limpiar.
 			directive.setImage(TEST_IMAGE_URL, TEST_IMAGE_ALT, 1200, 630);

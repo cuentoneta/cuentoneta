@@ -26,7 +26,7 @@ describe('Header', () => {
 
 	it('should show the navbar links', async () => {
 		await renderHeader();
-		expect(screen.getByText(/Inicio/)).toHaveProperty('href', expect.stringMatching(/home/));
+		expect(screen.getByRole('link', { name: 'Inicio' })).toHaveAttribute('href', '/');
 		expect(screen.getByText(/Nosotros/)).toHaveProperty('href', expect.stringMatching(/about/));
 	});
 
@@ -52,10 +52,7 @@ describe('Header', () => {
 	it('should give the brand link an accessible name that states its destination', async () => {
 		await renderHeader();
 
-		expect(screen.getByRole('link', { name: 'La Cuentoneta — Inicio' })).toHaveProperty(
-			'href',
-			expect.stringMatching(/home$/),
-		);
+		expect(screen.getByRole('link', { name: 'La Cuentoneta — Inicio' })).toHaveAttribute('href', '/');
 	});
 
 	it('should show the catalog links in the mobile menu', async () => {

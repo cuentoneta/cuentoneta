@@ -59,7 +59,7 @@ async function collectCdnAssets(page: Page, route: string): Promise<ServedAsset[
 }
 
 const ROUTES = [
-	{ name: 'la página de inicio', path: '/home' },
+	{ name: 'la página de inicio', path: '/' },
 	{ name: 'la página de una obra', path: `/literary-work/${STABLE_SLUGS.literaryWork}` },
 ];
 

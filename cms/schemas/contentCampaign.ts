@@ -1,6 +1,6 @@
 import { defineField, defineType } from 'sanity';
 import { CalendarIcon } from '@sanity/icons/Calendar';
-import { localizedRequire } from '../utils/validations';
+import { localizedRequire, validateRootRelativePath } from '../utils/validations';
 import { campaignImageSizeValidation } from '../utils/content-campaign-image';
 
 // Models
@@ -52,7 +52,7 @@ export default defineType({
 			name: 'url',
 			title: 'URL',
 			type: 'string',
-			validation: (Rule) => Rule.custom(localizedRequire),
+			validation: (Rule) => [Rule.custom(localizedRequire), Rule.custom(validateRootRelativePath)],
 		}),
 		defineField({
 			name: 'contents',

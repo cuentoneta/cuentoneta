@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import {
+	legacyHomeRedirect,
 	legacyStoryDetailRedirect,
 	legacyStoryListingRedirect,
 	legacyStorylistDetailRedirect,
@@ -12,12 +13,24 @@ describe('legacy route redirects', () => {
 	// detalle, que es lo que decide adónde cae la barra final.
 	function appUnderTest(): Hono {
 		const app = new Hono({ strict: false });
+		app.on('GET', '/home', legacyHomeRedirect);
 		app.on('GET', '/story', legacyStoryListingRedirect);
 		app.on('GET', '/story/:slug', legacyStoryDetailRedirect);
 		app.on('GET', '/storylist', legacyStorylistListingRedirect);
 		app.on('GET', '/storylist/:slug', legacyStorylistDetailRedirect);
 		return app;
 	}
+
+	it.each([
+		['/home', '/'],
+		['/home/', '/'],
+		['/home?utm_source=boletin&page=2', '/?utm_source=boletin&page=2'],
+	])('should answer the retired home %s with a permanent redirect to the root', async (path, destination) => {
+		const response = await appUnderTest().request(path);
+
+		expect(response.status).toBe(301);
+		expect(response.headers.get('Location')).toBe(destination);
+	});
 
 	it.each([
 		['/story', '/literary-work'],
