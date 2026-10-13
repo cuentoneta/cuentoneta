@@ -82,9 +82,12 @@ const commonRestrictedSyntax = [
 		message: readonlyFactoryMessage,
 	},
 	{
-		// Sin herencia, `protected` no restringe nada que `private` no restrinja, y desde Angular 22.2 la
-		// plantilla y el `host` leen miembros `private`.
-		selector: 'ClassDeclaration:not([abstract=true]):not([superClass]) > ClassBody > [accessibility="protected"]',
+		// Una clase de Angular que no es abstracta ni extiende otra no tiene subclase que lea un `protected`,
+		// y desde Angular 22.2 la plantilla y el `host` leen miembros `private`. Se acota a clases con
+		// decoradores porque el AST no dice si a una clase la extiende otra: una base concreta fuera de
+		// Angular puede necesitar `protected`.
+		selector:
+			'ClassDeclaration[decorators.length>0]:not([abstract=true]):not([superClass]) > ClassBody :matches(ClassBody > [accessibility="protected"], TSParameterProperty[accessibility="protected"])',
 		message:
 			'`protected` solo va en miembros que una subclase usa. Lo que lee la plantilla es `private` — ver angular-components.md.',
 	},

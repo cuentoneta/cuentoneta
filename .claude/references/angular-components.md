@@ -115,7 +115,9 @@ export class Header {
 }
 ```
 
-> Los `input()` / `output()` / `model()` llevan **`public` explícito**: son la API del componente. El resto es `private`, lo lea la plantilla o no. Un `protected` en una clase que no es abstracta ni extiende otra lo rechaza el lint (`no-restricted-syntax`).
+> Los `input()` / `output()` / `model()` llevan **`public` explícito**: son la API del componente. El resto es `private`, lo lea la plantilla o no. Un `protected` en una clase de Angular que no es abstracta ni extiende otra lo rechaza el lint (`no-restricted-syntax`).
+>
+> Dos límites: la plantilla lee solo los `private` de su propia clase, así que lo que otro componente lee por una variable de plantilla (`#ref` → `ref.x`) sigue siendo `public`. Y la convención depende de que `tsc` no active `noUnusedLocals`, que marcaría como no usado todo `private` que solo lee la plantilla.
 
 ### Signals dentro del componente
 
