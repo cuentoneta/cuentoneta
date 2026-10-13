@@ -3,8 +3,6 @@ import { MIGRATED_ID_PREFIX } from '@api/modules/legacy-route/legacy-route.const
 
 type LegacyKind = keyof typeof MIGRATED_ID_PREFIX;
 
-const MIGRATED_TYPE = Object.freeze({ story: 'literaryWork', storylist: 'collection' } as const);
-
 /** Un documento de origen y el documento migrado que la migración emitió a partir de él. */
 export interface LegacyMigrationPair {
 	readonly kind: LegacyKind;
@@ -12,20 +10,24 @@ export interface LegacyMigrationPair {
 	readonly migrated: { readonly _id: string; readonly _type: string; readonly slug: { current: string } };
 }
 
-const slugField = (current: string) => ({ _type: 'slug' as const, current });
-
 function migration(
 	kind: LegacyKind,
 	canon: { _id: string },
 	legacySlug: string,
 	migratedSlug: string,
 ): LegacyMigrationPair {
-	const origin = { ...canon, _id: `onoff-${kind}-${legacySlug.toLowerCase()}`, _type: kind, slug: slugField(legacySlug) };
+	const migratedType = { story: 'literaryWork', storylist: 'collection' }[kind];
+	const origin = {
+		...canon,
+		_id: `onoff-${kind}-${legacySlug.toLowerCase()}`,
+		_type: kind,
+		slug: { _type: 'slug', current: legacySlug },
+	};
 	const migrated = {
 		...canon,
 		_id: `${MIGRATED_ID_PREFIX[kind]}${origin._id}`,
-		_type: MIGRATED_TYPE[kind],
-		slug: slugField(migratedSlug),
+		_type: migratedType,
+		slug: { _type: 'slug', current: migratedSlug },
 	};
 	return { kind, origin, migrated };
 }
