@@ -99,46 +99,33 @@ describe('SitemapService', () => {
 			expect(urls).toContainEqual({ loc: 'https://test.cuentoneta.ar/literary-work/el-fin', lastmod: '2025-01-01' });
 		});
 
-		describe('author URLs', () => {
-			const revisedOn = PAGE_REVISED_ON.author;
-			const authorUrl = async (latestLiteraryWorkDate: string | undefined) => {
+		describe.each([
+			{ page: 'author' as const, listing: 'authors' as const, slug: 'jorge-luis-borges' },
+			{ page: 'collection' as const, listing: 'collections' as const, slug: 'cuentos-de-terror' },
+		])('$page URLs', ({ page, listing, slug }) => {
+			const revisedOn = PAGE_REVISED_ON[page];
+			const loc = `https://test.cuentoneta.ar/${page}/${slug}`;
+			const pageUrl = async (latestLiteraryWorkDate: string | undefined) => {
 				(sitemapRepository.fetchSitemapSlugs as Mock).mockResolvedValue({
 					literaryWorks: [],
-					authors: [{ slug: 'jorge-luis-borges', latestLiteraryWorkDate }],
+					authors: [],
 					collections: [],
+					[listing]: [{ slug, latestLiteraryWorkDate }],
 				});
-				return (await getSitemapUrls()).find(({ loc }) => loc.endsWith('/author/jorge-luis-borges'));
+				return (await getSitemapUrls()).find((url) => url.loc === loc);
 			};
 
-			it('should publish the date of the latest literary work when the profile is older', async () => {
+			it('should publish the date of the latest literary work when the page revision is older', async () => {
 				const later = shiftDays(revisedOn, 1);
 
-				expect(await authorUrl(later)).toEqual({
-					loc: 'https://test.cuentoneta.ar/author/jorge-luis-borges',
-					lastmod: later,
-				});
+				expect(await pageUrl(later)).toEqual({ loc, lastmod: later });
 			});
 
 			it.each([
-				['older than the profile', shiftDays(revisedOn, -1)],
+				['older than the page revision', shiftDays(revisedOn, -1)],
 				['absent', undefined],
-			])('should publish the profile revision when the latest literary work is %s', async (_case, date) => {
-				expect((await authorUrl(date))?.lastmod).toBe(revisedOn);
-			});
-		});
-
-		it('should include collection URLs', async () => {
-			(sitemapRepository.fetchSitemapSlugs as Mock).mockResolvedValue({
-				literaryWorks: [],
-				authors: [],
-				collections: [{ slug: 'cuentos-de-terror', lastmod: '2025-01-03' }],
-			});
-
-			const urls = await getSitemapUrls();
-
-			expect(urls).toContainEqual({
-				loc: 'https://test.cuentoneta.ar/collection/cuentos-de-terror',
-				lastmod: '2025-01-03',
+			])('should publish the page revision when the latest literary work is %s', async (_case, date) => {
+				expect((await pageUrl(date))?.lastmod).toBe(revisedOn);
 			});
 		});
 
@@ -180,7 +167,7 @@ describe('SitemapService', () => {
 			(sitemapRepository.fetchSitemapSlugs as Mock).mockResolvedValue({
 				literaryWorks: entries('obra'),
 				authors: listingEntries('autor'),
-				collections: entries('coleccion'),
+				collections: listingEntries('coleccion'),
 			});
 
 			const locations = (await getSitemapUrls()).map(({ loc }) => loc);

@@ -22,7 +22,7 @@ interface ListingSlugEntry {
 interface SitemapSlugsResult {
 	literaryWorks: SlugEntry[];
 	authors: ListingSlugEntry[];
-	collections: SlugEntry[];
+	collections: ListingSlugEntry[];
 }
 
 /**
@@ -75,6 +75,6 @@ export async function fetchSitemapSlugs(): Promise<SitemapSlugsResult> {
 	return {
 		literaryWorks: processSlugEntries(result.literaryWorks),
 		authors: processListingSlugEntries(result.authors),
-		collections: processSlugEntries(result.collections),
+		collections: processListingSlugEntries(result.collections),
 	};
 }

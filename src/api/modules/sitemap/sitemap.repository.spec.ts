@@ -75,29 +75,37 @@ describe('fetchSitemapSlugs', () => {
 		published.forEach((slug) => expect(isSlug(slug)).toBe(true));
 	});
 
-	describe('the latest literary work date of an author', () => {
-		const withPublicationDate = (publishedAt: string) => ({
-			...withSlug(canonLiteraryWork, 'obra-posterior'),
-			publishedAt,
-			authors: [{ _key: canonAuthor._id, _type: 'reference', _ref: canonAuthor._id }],
-		});
+	describe('the latest literary work date of the pages that list them', () => {
+		const reference = (_id: string) => ({ _key: _id, _type: 'reference', _ref: _id });
+
+		// Una obra del autor del canon, listada por la colección del canon: las dos páginas la ven.
+		const listedLiteraryWork = (publishedAt: string) => {
+			const literaryWork = {
+				...withSlug(canonLiteraryWork, 'obra-posterior'),
+				publishedAt,
+				authors: [reference(canonAuthor._id)],
+			};
+			return [canonAuthor, { ...canonCollection, literaryWorks: [reference(literaryWork._id)] }, literaryWork];
+		};
 
 		// La fecha con hora y la desnuda son el mismo día: la política las compara contra una fecha sin
 		// hora, así que tienen que llegarle con la misma forma.
 		it.each(['2026-09-01T10:00:00Z', '2026-09-01'])('trims %s to the day', async (publishedAt) => {
-			await answerWith([canonAuthor, withPublicationDate(publishedAt)]);
+			await answerWith(listedLiteraryWork(publishedAt));
 
-			const [author] = (await fetchSitemapSlugs()).authors;
+			const { authors, collections } = await fetchSitemapSlugs();
 
-			expect(author?.latestLiteraryWorkDate).toBe('2026-09-01');
+			expect(authors[0]?.latestLiteraryWorkDate).toBe('2026-09-01');
+			expect(collections[0]?.latestLiteraryWorkDate).toBe('2026-09-01');
 		});
 
-		it('leaves it undefined for an author without literary works', async () => {
-			await answerWith([canonAuthor]);
+		it('leaves it undefined for a page that lists no literary work', async () => {
+			await answerWith([canonAuthor, { ...canonCollection, literaryWorks: [] }]);
 
-			const [author] = (await fetchSitemapSlugs()).authors;
+			const { authors, collections } = await fetchSitemapSlugs();
 
-			expect(author).toEqual({ slug: canonAuthor.slug.current, latestLiteraryWorkDate: undefined });
+			expect(authors).toEqual([{ slug: canonAuthor.slug.current, latestLiteraryWorkDate: undefined }]);
+			expect(collections).toEqual([{ slug: canonCollection.slug?.current, latestLiteraryWorkDate: undefined }]);
 		});
 	});
 });

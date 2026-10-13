@@ -10,7 +10,7 @@
  * de todo el corpus a la vez. Un `lastmod` que no se actualiza cuando debería cuesta mucho menos
  * que uno que se actualiza cuando no debería: el segundo destruye la confianza en la señal.
  *
- * Las páginas que listan obras —autor— no cambian cuando se crea su documento sino cuando se publica
+ * Las páginas que listan obras —autor y colección— no cambian cuando se crea su documento sino cuando se publica
  * una de sus obras: por eso proyectan la fecha de la más reciente, con el mismo criterio de fecha y de
  * publicación con que la página las lista, y `null` si no lista ninguna. El piso de esa fecha no lo
  * decide la query: lo aplica el service con `resolveLastmod`.
@@ -27,5 +27,8 @@ export const sitemapSlugsQuery = defineQuery(`{
 		"slug": slug.current,
 		"latestLiteraryWorkAt": *[_type == "literaryWork" && !(_id in path('drafts.**')) && ^._id in authors[]._ref]{ "date": coalesce(publishedAt, _createdAt) } | order(date desc)[0].date
 	},
-	"collections": *[_type == "collection" && !(_id in path('drafts.**')) && defined(slug.current) && slug.current == lower(slug.current) && count(string::split(slug.current, "-")[@ == ""]) == 0] | order(_id asc) { "slug": slug.current, "lastmod": _createdAt }
+	"collections": *[_type == "collection" && !(_id in path('drafts.**')) && defined(slug.current) && slug.current == lower(slug.current) && count(string::split(slug.current, "-")[@ == ""]) == 0] | order(_id asc) {
+		"slug": slug.current,
+		"latestLiteraryWorkAt": *[_type == "literaryWork" && !(_id in path('drafts.**')) && _id in ^.literaryWorks[]._ref]{ "date": coalesce(publishedAt, _createdAt) } | order(date desc)[0].date
+	}
 }`);

@@ -64,7 +64,10 @@ export async function getSitemapUrls(): Promise<SitemapUrl[]> {
 		})),
 
 		// Páginas de colecciones
-		...collections.map((c) => ({ loc: `${BASE_URL}/collection/${c.slug}`, lastmod: c.lastmod })),
+		...collections.map((c) => ({
+			loc: `${BASE_URL}/collection/${c.slug}`,
+			lastmod: resolveLastmod(c.latestLiteraryWorkDate, PAGE_REVISED_ON.collection),
+		})),
 	]);
 }
 
