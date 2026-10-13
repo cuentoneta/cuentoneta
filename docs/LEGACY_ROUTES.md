@@ -78,7 +78,7 @@ El router entrega el slug decodificado, así que el handler lo vuelve a codifica
 
 ### Contenido
 
-- `https://www.cuentoneta.ar/story/<slug de origen>` por cada obra migrada y `/storylist/<slug de origen>` por cada colección migrada.
+- `<BASE_URL>/story/<slug de origen>` por cada obra migrada y `<BASE_URL>/storylist/<slug de origen>` por cada colección migrada. El host sale de `BASE_URL`, igual que en el sitemap principal.
 - Se parte del documento **migrado** y se llega al origen por `_id`: así solo entran los orígenes que tienen a dónde redirigir. Un migrado cuyo origen falta se descarta con `console.warn`.
 - El slug se codifica con `encodeURIComponent` antes del escape XML.
 - Dos orígenes con el mismo slug producen la misma `loc`: se conserva una y se advierte con `console.warn` (misma política que el sitemap principal).

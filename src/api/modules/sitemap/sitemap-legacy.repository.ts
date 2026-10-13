@@ -2,6 +2,7 @@ import type { SanityClient } from '@sanity/client';
 import { client } from '../../_helpers/sanity-connector';
 import { legacySitemapSlugsQuery } from '@queries/sitemap-legacy.query';
 import { MIGRATED_ID_PREFIX } from '../legacy-route/legacy-route.constants';
+import type { LegacyRouteKind } from '../legacy-route/legacy-route.repository';
 
 export interface LegacySitemapSlugs {
 	stories: string[];
@@ -13,7 +14,7 @@ export interface LegacySitemapSlugs {
  * perdió el suyo. No filtra por la regla vigente del slug: la ruta vieja es la que el origen tenía, la
  * cumpla o no.
  */
-function presentSlugs(entries: { legacySlug: string | null }[], kind: string): string[] {
+function presentSlugs(entries: { legacySlug: string | null }[], kind: LegacyRouteKind): string[] {
 	const slugs = entries.map(({ legacySlug }) => legacySlug).filter((slug): slug is string => !!slug);
 	if (slugs.length < entries.length) {
 		console.warn('[SitemapLegacy] se descartan documentos migrados cuyo origen no está en el dataset', {

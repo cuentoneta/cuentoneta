@@ -78,10 +78,11 @@ test('sitemap-legacy — E: cada ruta de la muestra lleva con un 301 a una pági
 	request,
 }) => {
 	for (const path of sample()) {
+		const section = path.startsWith('/storylist/') ? '/collection/' : '/literary-work/';
 		const redirect = await request.get(path, { maxRedirects: 0 });
 		const location = redirect.headers()['location'] ?? '';
 		expect(redirect.status(), path).toBe(301);
-		expect(location, path).toMatch(/^\/(literary-work|collection)\/[^/]+/);
+		expect(location.startsWith(section), `${path} → ${location}`).toBe(true);
 
 		const destination = await request.get(location, { maxRedirects: 0 });
 		expect(destination.status(), `${path} → ${location}`).toBe(200);
