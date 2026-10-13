@@ -1,0 +1,16 @@
+meta {
+  name: Get sitemap-legacy.xml
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{apiUrl}}/sitemap-legacy.xml
+  body: none
+  auth: none
+}
+
+docs {
+  Obtener el sitemap XML temporal con las rutas viejas (`/story/<slug>` y `/storylist/<slug>`) de las obras y colecciones migradas. Cada una responde con un 301 a su ruta vigente; el sitemap existe para que el buscador las vuelva a rastrear.
+  No lleva `lastmod` ni filtra por formato de slug: la ruta es la que tenía el documento de origen. Se retira según el criterio de `docs/LEGACY_ROUTES.md`.
+}

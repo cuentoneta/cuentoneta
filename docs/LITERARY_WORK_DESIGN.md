@@ -426,6 +426,8 @@ Tres cosas que la extensión no cambia y una que sí:
 
 El registro es explícito por módulo y por página, nunca un middleware global: cada módulo decide por sí mismo qué respuestas son cacheables, y un middleware ciego cachearía las que no corresponde. `src/api/routes.spec.ts` afirma el conjunto exacto de módulos cacheados y que su registro precede al de los controllers, para que sumar un módulo nuevo obligue a decidir su cacheabilidad en vez de heredarla por olvido.
 
+**Los 301 de detalle de las rutas viejas también pasan por `applyReadCacheHeaders`.** `/story/:slug` y `/storylist/:slug` resuelven su destino consultando a Sanity (ver [`LEGACY_ROUTES.md`](LEGACY_ROUTES.md)), así que el handler aplica la política al 301 resuelto y el rastreo de esas rutas no llega al origen en cada visita. Lo hace el propio handler, no un middleware. Un 301 que degradó por un error de Sanity **no** se cachea: el pedido siguiente tiene que volver a intentar resolver.
+
 ---
 
 ## 9. Allow-list de sanitización
