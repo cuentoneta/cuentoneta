@@ -310,6 +310,12 @@ export function provideFooInitializer() {
 
 ---
 
+## Nombres de eventos en plantillas
+
+`strictUnclaimedEventNames` (`tsconfig.json`) hace fallar el build con `NG8030` cuando la plantilla escucha `(evento)` con un nombre que ninguna directiva del elemento emite y que no es un evento nativo del DOM: un output mal escrito deja de compilar en silencio. Un evento propio que burbujea desde un hijo va en **dash-case** (`(item-selected)`), que el chequeo exime.
+
+Puntos ciegos: los nombres sin mayúsculas (`(optionselected)` sigue compilando), los elementos sin ninguna directiva, los listeners del `host` y todo lo que compila en JIT (Storybook y Vitest).
+
 ## Control flow en plantillas
 
 - **`@if` / `@for` / `@switch`** — nunca `*ngIf` / `*ngFor` / `*ngSwitch`.
