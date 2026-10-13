@@ -13,6 +13,48 @@ La lista de características futuras a implementar puede hallarse en la sección
 
 Los hitos futuros de desarrollo, en los cuales se detallan las funcionalidades a desarrollar y los cambios a implementar, pueden encontrarse en las secciones [milestones](https://github.com/cuentoneta/cuentoneta/milestones) y [projects](https://github.com/cuentoneta/cuentoneta/projects) del repositorio de Github del proyecto.
 
+## Versión 2.11.2 (2026-10-13)
+
+La versión 2.11.2 es un patch de dos frentes: las tareas periódicas de la plataforma dejan de depender del proveedor de hosting, y se resuelven cuatro problemas de indexado que el barrido del sitemap y Search Console dejaron a la vista después de 2.11.0.
+
+El primero es de **operación**. La actualización de lo más leído y la generación semanal de landing pages dejan de ser endpoints que disparaba un cron de Vercel y pasan a correr como tareas de `pnpm ops` dentro de GitHub Actions, sin una ruta HTTP que proteger (#2281). La generación de landings se vuelve el primer paso de una cadena semanal que dispara después la sincronización de datasets, así que cada copia de `staging` ya lleva la landing de la semana que empieza (#2559). La respuesta de Clarity se valida en la frontera en vez de castearse, y una llamada rechazada muestra su status en lugar de un error de JSON vacío (#2378, #2556).
+
+El segundo es de **indexado**. Una obra con slug en mayúsculas estaba en el sitemap y respondía 503: el Studio, el API y el sitemap pasan a validar el slug con la misma regla que el dominio, y un slug mal formado responde 404 (#2562). La portada deja de tener dos URLs que se apuntaban entre sí: `/` sirve la página y `/home` redirige con 301 (#2563). El `lastmod` de autores y colecciones deja de ser la fecha de creación del documento y pasa a reflejar su obra más reciente (#2560), y un sitemap temporal con las URLs viejas de obras y colecciones le pide a Google que procese las redirecciones de 2.11.0 (#2561).
+
+Queda **un paso manual antes del deploy**: reescribir como rutas desde la raíz las URLs de campaña de la portada, que hoy son relativas a `/home` y que el código nuevo, con la portada en `/`, no puede resolver.
+
+### Cambios completos
+
+Ver el changelog completo en [2.11.2](https://github.com/cuentoneta/cuentoneta/releases/tag/2.11.2)
+
+### Cambios
+
+#### Operación
+
+- [#2281] - Agenda la actualización de lo más leído y la generación semanal de landings en GitHub Actions, sin endpoints.
+- [#2377] - Acota a 26 las semanas que puede generar una sola corrida del generador de landings.
+- [#2559] - Encadena el sync de datasets a la generación semanal de landing pages.
+- [#2378] - Valida en la frontera la respuesta de la API de métricas.
+- [#2556] - Hace visible el status de Clarity cuando rechaza la llamada.
+
+#### Indexado
+
+- [#2562] - Alinea con el dominio la validación del slug en el Studio, el API y el sitemap; un slug mal formado responde 404.
+- [#2563] - Sirve la portada en una sola URL: `/` responde 200 y `/home` redirige con 301.
+- [#2560] - Publica en el sitemap un `lastmod` de autores y colecciones que refleja su obra más reciente.
+- [#2561] - Publica un sitemap temporal con las URLs viejas de obras y colecciones.
+
+#### Tooling
+
+- [#2569] - Usa la versión instalada de `sanity` en los targets del CMS en vez de `pnpx`.
+- [#2521] - Estabiliza el test de anidamiento profundo de `countWords`, que volvía no determinista la suite.
+- [#2518] - Valida que toda tarea de `pnpm ops` figure en su referencia.
+- [#2472] - Completa los imports de un ejemplo de `angular-components.md`.
+
+#### Dependencias
+
+- [#2543] - Actualiza el grupo minor-and-patch del Studio (4 paquetes).
+
 ## Versión 2.11.1 (2026-09-27)
 
 La versión 2.11.1 es un patch posterior a la migración de 2.11.0, con cuatro frentes y ningún cambio de modelo de contenido.
