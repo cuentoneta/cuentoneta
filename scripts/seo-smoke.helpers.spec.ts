@@ -9,6 +9,7 @@ import {
 	slugToTitlePattern,
 	toPath,
 } from './seo-smoke.helpers';
+import { PAGE_REVISED_ON } from '@api/modules/sitemap/sitemap.lastmod';
 
 function sitewideHtml(organizationUrl: string, websiteUrl: string): string {
 	return (
@@ -205,5 +206,36 @@ describe('collectSitemapViolations', () => {
 
 		expect(report.violations).toEqual(['El sitemap no expone ninguna entrada <url>.']);
 		expect(report.largestCluster).toBeNull();
+	});
+
+	describe('con revisiones de página declaradas', () => {
+		const batch = (prefix: string, count: number, date: string) =>
+			Array.from({ length: count }, (_, index) => urlEntry(`${prefix}lote-${index}`, date));
+
+		it('no mide las fichas fechadas en la revisión declarada de su tipo', () => {
+			const report = collectSitemapViolations(
+				sitemapOf([...batch('/author/', 34, PAGE_REVISED_ON.author), ...spread(66)]),
+			);
+
+			expect(report.violations).toEqual([]);
+			expect(report.exempted).toBe(34);
+		});
+
+		// La exención es del tipo de página, no de la fecha: la misma fecha en otro tipo es un lote.
+		it('reporta la fecha de una revisión concentrada en las obras', () => {
+			const report = collectSitemapViolations(
+				sitemapOf([...batch('/literary-work/', 48, PAGE_REVISED_ON.author), ...spread(52)]),
+			);
+
+			expect(report.exempted).toBe(0);
+			expect(report.violations[0]).toContain('escritura en lote');
+		});
+
+		it('reporta un lote de fichas en una fecha no declarada', () => {
+			const report = collectSitemapViolations(sitemapOf([...batch('/author/', 48, '1999-01-01'), ...spread(52)]));
+
+			expect(report.largestCluster).toEqual({ date: '1999-01-01', share: 0.48 });
+			expect(report.violations[0]).toContain('escritura en lote');
+		});
 	});
 });
