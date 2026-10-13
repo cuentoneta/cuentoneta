@@ -23,18 +23,37 @@ function redirectKeepingQuery(c: Context, path: string): Response {
 }
 
 /**
- * Arma el handler de detalle de una sección, preservando el slug y la query string.
+ * Arma el handler de detalle de una sección, preservando el slug y la query string. `renamedSlugs`
+ * mapea los slugs viejos que no sobrevivieron a la mudanza al slug vigente del mismo documento; el
+ * resto se traslada tal cual.
  *
  * El slug vuelve a codificarse antes de componer el destino: llega ya decodificado desde el router,
  * así que uno que contenga un carácter reservado produciría un `Location` con una ruta distinta de la
  * pedida —y, en el peor caso, con otro host.
  */
-function legacyDetailRedirect(sectionPath: string): Handler<BlankEnv, '/:slug'> {
-	return (c) => redirectKeepingQuery(c, `${sectionPath}/${encodeURIComponent(c.req.param('slug'))}`);
+function legacyDetailRedirect(
+	sectionPath: string,
+	renamedSlugs: ReadonlyMap<string, string> = new Map(),
+): Handler<BlankEnv, '/:slug'> {
+	return (c) => {
+		const legacySlug = c.req.param('slug');
+		const slug = renamedSlugs.get(legacySlug) ?? legacySlug;
+		return redirectKeepingQuery(c, `${sectionPath}/${encodeURIComponent(slug)}`);
+	};
 }
 
 export const legacyHomeRedirect: Handler = (c) => redirectKeepingQuery(c, '/');
 export const legacyStoryListingRedirect: Handler = (c) => c.redirect('/literary-work', 301);
 export const legacyStorylistListingRedirect: Handler = (c) => c.redirect('/collection', 301);
-export const legacyStoryDetailRedirect = legacyDetailRedirect('/literary-work');
+// Obras cuyo slug cambió al mudarse. La mudanza ya terminó, así que la lista está cerrada. Una cadena
+// de renombres hace que el slug viejo de una sea el vigente de otra: trasladarlo tal cual la lleva a
+// la obra equivocada.
+export const legacyStoryDetailRedirect = legacyDetailRedirect(
+	'/literary-work',
+	new Map([
+		['un-dia-perfecto-para-el-pez-platano', 'la-pelota'],
+		['un-dia-perfecto-para-el-pez-banana', 'un-dia-perfecto-para-el-pez-platano'],
+		['IcyFox', 'que-seria-yo-sin-ti'],
+	]),
+);
 export const legacyStorylistDetailRedirect = legacyDetailRedirect('/collection');

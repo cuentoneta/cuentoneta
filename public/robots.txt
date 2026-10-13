@@ -9,3 +9,6 @@ Allow: /api/og/
 
 # Referencia al sitemap
 Sitemap: https://www.cuentoneta.ar/sitemap.xml
+
+# Sitemap temporal con las rutas viejas de obras y colecciones, para que se rastreen sus redirecciones
+Sitemap: https://www.cuentoneta.ar/sitemap-legacy.xml
