@@ -4,8 +4,8 @@
  *
  * `e2e/seo/collection.spec.ts` ya mira esta ruta, pero mira el HTML que ve el crawler. Acá se ejercita la
  * página hidratada, que es lo único que alcanza las dos cosas que aquel no puede: la columna lateral, que
- * vive tras un breakpoint y por lo tanto depende del ancho real del viewport, y el bloque de sugeridas,
- * que se alimenta de un recurso progresivo y en el HTML del servidor todavía no existe.
+ * vive tras un breakpoint y por lo tanto depende del ancho real del viewport, y el bloque de sugeridas
+ * tal como se ve en la página hidratada.
  */
 import { expect, type Page } from '@playwright/test';
 
@@ -101,8 +101,6 @@ test('collection — el panel de la descripción no aporta nada antes de abrirse
 	await expect(page.getByRole('button', { name: 'Cerrar' })).toHaveCount(0);
 });
 
-// Que el bloque exista prueba además que el recurso progresivo del catálogo resolvió en el cliente: en el
-// HTML del servidor no está.
 test('collection — la columna ofrece otras colecciones y ninguna es la que se está leyendo', async ({ page }) => {
 	// eslint-disable-next-line playwright/no-skipped-test -- la ausencia del fixture ya la reporta la guarda de arriba; repetirla acá sería el mismo fallo dos veces
 	test.skip(status !== 200, `"${ROUTE}" no responde 200 en el dataset`);

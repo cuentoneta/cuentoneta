@@ -144,11 +144,11 @@ Preferir un estado de error **por operación** a un único `string | null` compa
 
 ### 7. Recursos de página y el SSR
 
-Una página carga sus datos con **`rxResource`** sobre la API de `HttpClient`, sin wrapper. `HttpClient` registra una `PendingTask` por request en vuelo, y `@angular/ssr` serializa recién cuando la app está estable. Por eso el HTML server-rendered (y el del prerender de build) llega con el contenido del recurso, o con su estado de error, incluso cuando un recurso depende de otro.
+Una página carga sus datos con **`rxResource`**, sin wrapper. El recurso registra su propia `PendingTask` al empezar a cargar y la libera con el primer valor, el error o el abort; `HttpClient` suma otra por request en vuelo. `@angular/ssr` —y el prerender de build— serializan recién cuando la app está estable, así que el HTML server-rendered llega con el contenido de cada recurso, o con su estado de error, incluso cuando un recurso depende de otro.
 
-No hay un modo progresivo por recurso: un `rxResource` sobre `HttpClient` siempre se espera en el SSR. Lo que no tiene que cargar en el servidor —contenido accesorio, sugerencias al pie— se monta dentro de un `@defer`, que en el SSR sirve su placeholder (p. ej. `AuthorReadingSuggestions`). Un stream que no pasa por `HttpClient` (un timer, una promesa de otra librería) no registra tarea y el SSR no lo espera: ahí corresponde `pendingUntilEvent(injector)`.
+No hay un modo progresivo por recurso: todo `rxResource` se espera en el SSR. El criterio es **si el dato tiene que estar en el HTML que ve el crawler**. Si tiene que estar —contenido, meta, enlaces internos como las colecciones sugeridas de `CollectionPage`—, alcanza con el recurso. Si no, el bloque se monta dentro de un `@defer`, que en el SSR sirve su placeholder (p. ej. `AuthorReadingSuggestions`). `pendingUntilEvent(injector)` queda para lo que el recurso no cubre: un observable consumido fuera de un recurso (`toSignal`, `subscribe`) cuyo valor tiene que llegar al HTML.
 
-Los Router resources de Angular 22.2 (`resources` en la ruta + `withRouterResources()`) se evaluaron y no se usan. En modo bloqueante, un error termina la navegación sin renderizar la página, así que se pierden el estado de error en página y el 404/503 de `RESPONSE_INIT`, y la navegación del cliente no muestra el skeleton. Con `nonBlocking()` el resultado es el mismo que con un `rxResource` en la página, pero con la carga declarada lejos de quien la usa.
+Los Router resources (`resources` en la ruta + `withRouterResources()`, en developer preview) no se usan. En modo bloqueante, un recurso en error termina la navegación sin renderizar la página, así que se pierden el estado de error en página, el 404/503 de `RESPONSE_INIT` y el skeleton de la navegación del cliente. Con `nonBlocking()` el resultado es el de un `rxResource` en la página, con la carga declarada lejos de quien la usa.
 
 **Leer el valor siempre guardado por `hasValue()`.** Un recurso en estado de error relanza la falla al leer `value()`, y `defaultValue` no protege: solo rige mientras el stream no emitió. Como el SSR espera al recurso, ese throw ocurre dentro del template y derriba el render del servidor de una página indexable.
 
@@ -181,7 +181,7 @@ Una página indexable **nunca** debe usar la forma no indexable: quedaría sin s
 - [ ] ¿El aplanado por defecto es `switchMap` (y cualquier otro está justificado)?
 - [ ] ¿El debounce/throttle/coordinación está en el servicio, no en el componente?
 - [ ] ¿Los errores están tipados por operación, no en un `string | null` global?
-- [ ] ¿Lo que no tiene que cargar en el SSR está dentro de un `@defer`, y no en un recurso que se espera de todos modos?
+- [ ] ¿Lo que no tiene que estar en el HTML del crawler está dentro de un `@defer`, y no en un recurso, que el SSR espera de todos modos?
 - [ ] ¿La página declara sus `hostDirectives` de SEO según su indexabilidad (indexable: MetaTags + StructuredData; no indexable/`noindex`: HeadMetadataDirective + `setRobots('noindex...')`)? Lo verifica automáticamente `seo-host-directives.spec.ts`.
 
 ---
