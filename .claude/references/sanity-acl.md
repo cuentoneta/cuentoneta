@@ -47,13 +47,6 @@ queda contenido en el mapper; el dominio y el frontend no se enteran.
 > service y el controller quedan del lado del dominio. Los ejemplos de código de abajo se conservan
 > sobre `author`, que sigue vigente para ese patrón.
 >
-> **`legacy-route` es un módulo de funciones sin ACL de dominio.** No devuelve un agregado: resuelve el
-> slug de una ruta vieja al de su documento migrado (`fetchMigratedSlug` → `resolveLegacySlug`). El
-> cliente de Sanity y el `fetch*` del service entran por parámetro con default, el mismo seam que el
-> constructor de arriba. Sus queries se anclan en tipos que el schema conoce y llegan al documento de
-> origen por `_id`, sin filtrar por `_type`: los tipos de origen ya no están en el schema y el typegen
-> tiparía ese filtro como vacío.
->
 > **Qué sí se comparte desde `_utils/`.** La divergencia no es aislarse: los repositories que la
 > adoptaron siguen usando las primitivas genéricas de traducción (`mapTags`, `mapAuthorTeaser`,
 > `mapResources`, `urlFor`, `mapMediaSources`, `mapMediaTeasers`), que no son de ningún agregado en

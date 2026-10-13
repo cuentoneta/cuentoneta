@@ -8,7 +8,6 @@ import { requestId } from 'hono/request-id';
 import { secureHeaders } from 'hono/secure-headers';
 import apiRoutes from './api/routes';
 import sitemapController from './api/modules/sitemap/sitemap.controller';
-import sitemapLegacyController from './api/modules/sitemap/sitemap-legacy.controller';
 import { getAllowedHosts } from './api/_helpers/environment';
 import { noindexNonProduction } from '@middleware/noindex.middleware';
 import { ssrCacheControl } from '@middleware/ssr-cache-control.middleware';
@@ -31,8 +30,6 @@ const angularApp = new AngularAppEngine({ allowedHosts: getAllowedHosts(), trust
 
 // Registra ruta del sitemap en la raíz
 app.route('/sitemap.xml', sitemapController);
-// TODO(#2566): retirar el sitemap temporal de rutas viejas según el criterio de docs/LEGACY_ROUTES.md.
-app.route('/sitemap-legacy.xml', sitemapLegacyController);
 
 // Registra rutas de API
 app.route('/api', apiRoutes);

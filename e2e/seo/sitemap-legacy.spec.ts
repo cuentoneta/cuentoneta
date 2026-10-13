@@ -41,8 +41,16 @@ function sample(): string[] {
 	const paths = locations(xml).map(pathOf);
 	const stories = paths.filter((path) => path.startsWith('/story/'));
 	const step = Math.max(1, Math.floor(stories.length / literaryWorkSampleSize));
+	// Las obras renombradas son las que no se trasladan tal cual: van siempre, porque son las únicas
+	// cuyo destino depende de la tabla del middleware y no del slug pedido.
+	const renamed = [
+		'/story/un-dia-perfecto-para-el-pez-platano',
+		'/story/un-dia-perfecto-para-el-pez-banana',
+		'/story/IcyFox',
+	];
 	return [
 		...stories.filter((_, index) => index % step === 0).slice(0, literaryWorkSampleSize),
+		...renamed.filter((path) => paths.includes(path)),
 		...paths.filter((path) => path.startsWith('/storylist/')),
 	];
 }
@@ -74,9 +82,7 @@ test('sitemap-legacy — D: ninguna ubicación se repite', () => {
 	expect(new Set(locs).size).toBe(locs.length);
 });
 
-test('sitemap-legacy — E: cada ruta de la muestra lleva con un 301 a una página que responde', async ({
-	request,
-}) => {
+test('sitemap-legacy — E: cada ruta de la muestra lleva con un 301 a una página que responde', async ({ request }) => {
 	for (const path of sample()) {
 		const section = path.startsWith('/storylist/') ? '/collection/' : '/literary-work/';
 		const redirect = await request.get(path, { maxRedirects: 0 });

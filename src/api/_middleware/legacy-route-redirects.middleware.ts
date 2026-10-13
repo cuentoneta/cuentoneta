@@ -1,7 +1,5 @@
 import type { Handler } from 'hono';
 import type { BlankEnv } from 'hono/types';
-import { applyReadCacheHeaders } from '../_helpers/cache-control';
-import { resolveLegacySlug } from '../modules/legacy-route/legacy-route.service';
 
 /**
  * Las URLs indexadas de la plataforma se mudaron: obra y colección tienen rutas nuevas para su listado
@@ -15,50 +13,40 @@ import { resolveLegacySlug } from '../modules/legacy-route/legacy-route.service'
  */
 
 /**
- * Arma el handler de detalle de una sección: traslada al slug que `resolveSlug` devuelve para el slug
- * pedido, preservando la query string.
+ * Arma el handler de detalle de una sección, preservando el slug y la query string. `renamedSlugs`
+ * mapea los slugs viejos que no sobrevivieron a la mudanza al slug vigente del mismo documento; el
+ * resto se traslada tal cual.
  *
- * Resolver consulta Sanity, así que el traslado resuelto se cachea en el borde y el rastreo de las rutas
- * viejas no llega al origen en cada visita. Si la consulta falla, traslada al slug pedido tal cual y
- * prohíbe cachearlo —un 301 es cacheable por defecto, incluso sin headers—: acierta para casi todo
- * documento migrado, y el pedido siguiente vuelve a intentar resolver en vez de heredar un destino que
- * puede estar mal.
- *
- * El slug se codifica antes de componer el destino, venga del router —que lo entrega decodificado— o de
- * Sanity —que lo guarda crudo—: uno que contenga un carácter reservado produciría un `Location` con una
- * ruta distinta de la buscada y, en el peor caso, con otro host.
+ * El slug vuelve a codificarse antes de componer el destino: llega ya decodificado desde el router,
+ * así que uno que contenga un carácter reservado produciría un `Location` con una ruta distinta de la
+ * pedida —y, en el peor caso, con otro host.
  *
  * La query string viaja porque es donde vienen los parámetros de campaña: perderlos en el traslado
  * rompe la atribución de cada enlace ya publicado hacia afuera.
  */
-export function legacyDetailRedirect(
+function legacyDetailRedirect(
 	sectionPath: string,
-	resolveSlug: (legacySlug: string) => Promise<string>,
+	renamedSlugs: ReadonlyMap<string, string> = new Map(),
 ): Handler<BlankEnv, '/:slug'> {
-	return async (c) => {
+	return (c) => {
 		const { search } = new URL(c.req.url);
 		const legacySlug = c.req.param('slug');
-		let slug = legacySlug;
-		try {
-			slug = await resolveSlug(legacySlug);
-			applyReadCacheHeaders(c);
-		} catch (error) {
-			c.header('Cache-Control', 'no-store');
-			console.error('[LegacyRoute] no se pudo resolver el destino; se traslada el slug tal cual', {
-				sectionPath,
-				legacySlug,
-				error,
-			});
-		}
+		const slug = renamedSlugs.get(legacySlug) ?? legacySlug;
 		return c.redirect(`${sectionPath}/${encodeURIComponent(slug)}${search}`, 301);
 	};
 }
 
 export const legacyStoryListingRedirect: Handler = (c) => c.redirect('/literary-work', 301);
 export const legacyStorylistListingRedirect: Handler = (c) => c.redirect('/collection', 301);
-export const legacyStoryDetailRedirect = legacyDetailRedirect('/literary-work', (slug) =>
-	resolveLegacySlug('story', slug),
+// Obras cuyo slug cambió al mudarse. La mudanza ya terminó, así que la lista está cerrada. Una cadena
+// de renombres hace que el slug viejo de una sea el vigente de otra: trasladarlo tal cual la lleva a
+// la obra equivocada.
+export const legacyStoryDetailRedirect = legacyDetailRedirect(
+	'/literary-work',
+	new Map([
+		['un-dia-perfecto-para-el-pez-platano', 'la-pelota'],
+		['un-dia-perfecto-para-el-pez-banana', 'un-dia-perfecto-para-el-pez-platano'],
+		['IcyFox', 'que-seria-yo-sin-ti'],
+	]),
 );
-export const legacyStorylistDetailRedirect = legacyDetailRedirect('/collection', (slug) =>
-	resolveLegacySlug('storylist', slug),
-);
+export const legacyStorylistDetailRedirect = legacyDetailRedirect('/collection');

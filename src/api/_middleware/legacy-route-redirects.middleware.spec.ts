@@ -1,38 +1,23 @@
 import { Hono } from 'hono';
-import { restoreAllMocks, spyOn } from '@test-utils';
-import { environment } from '../_helpers/environment';
 import {
-	legacyDetailRedirect,
+	legacyStoryDetailRedirect,
 	legacyStoryListingRedirect,
+	legacyStorylistDetailRedirect,
 	legacyStorylistListingRedirect,
 } from './legacy-route-redirects.middleware';
-
-type ResolveSlug = (legacySlug: string) => Promise<string>;
-
-const keepSlug: ResolveSlug = (slug) => Promise.resolve(slug);
 
 describe('legacy route redirects', () => {
 	// `strict: false` es el modo de la instancia real, y es lo que hace que `/story/` entre por la
 	// misma ruta que `/story`. El orden de registro también es el real: el listado antes que el
 	// detalle, que es lo que decide adónde cae la barra final.
-	//
-	// El resolutor entra por parámetro: por defecto conserva el slug, que es el traslado de todo documento
-	// cuyo slug no cambió al migrar.
-	function appUnderTest(resolveSlug: ResolveSlug = keepSlug): Hono {
+	function appUnderTest(): Hono {
 		const app = new Hono({ strict: false });
 		app.on('GET', '/story', legacyStoryListingRedirect);
-		app.on('GET', '/story/:slug', legacyDetailRedirect('/literary-work', resolveSlug));
+		app.on('GET', '/story/:slug', legacyStoryDetailRedirect);
 		app.on('GET', '/storylist', legacyStorylistListingRedirect);
-		app.on('GET', '/storylist/:slug', legacyDetailRedirect('/collection', resolveSlug));
+		app.on('GET', '/storylist/:slug', legacyStorylistDetailRedirect);
 		return app;
 	}
-
-	const originalProduction = environment.production;
-
-	afterEach(() => {
-		environment.production = originalProduction;
-		restoreAllMocks();
-	});
 
 	it.each([
 		['/story', '/literary-work'],
@@ -96,68 +81,29 @@ describe('legacy route redirects', () => {
 		expect(response.headers.get('Location')).toBe('/literary-work/index.html');
 	});
 
-	// El slug viejo de una obra puede ser el vigente de otra: el destino es el que resuelve la procedencia,
-	// no el slug pedido.
-	it('should redirect to the slug the provenance resolves to', async () => {
-		const resolveSlug: ResolveSlug = (slug) => Promise.resolve(slug === 'pez-banana' ? 'pez-platano' : slug);
-
-		const response = await appUnderTest(resolveSlug).request('/story/pez-banana?utm_source=boletin');
-
-		expect(response.status).toBe(301);
-		expect(response.headers.get('Location')).toBe('/literary-work/pez-platano?utm_source=boletin');
-	});
-
-	// Un slug viejo puede no cumplir la regla vigente: el que trae mayúsculas tiene que llegar al resolutor
-	// tal como vino, porque es así como lo guarda su documento de origen.
-	it('should hand the legacy slug to the resolver untouched', async () => {
-		const requested: string[] = [];
-		const resolveSlug: ResolveSlug = (slug) => {
-			requested.push(slug);
-			return Promise.resolve('que-seria-yo-sin-ti');
-		};
-
-		const response = await appUnderTest(resolveSlug).request('/story/IcyFox');
-
-		expect(requested).toEqual(['IcyFox']);
-		expect(response.headers.get('Location')).toBe('/literary-work/que-seria-yo-sin-ti');
-	});
-
-	it('should re-encode a resolved slug that carries a reserved character', async () => {
-		const response = await appUnderTest(() => Promise.resolve('a/b')).request('/story/el-fin');
-
-		expect(response.headers.get('Location')).toBe('/literary-work/a%2Fb');
-	});
-
-	it('should cache a resolved redirect at the CDN in production', async () => {
-		environment.production = true;
-
-		const response = await appUnderTest().request('/storylist/verano-2022');
+	// El slug viejo de una obra puede ser el vigente de otra: el destino de cada eslabón es su propia obra.
+	it.each([
+		['/story/un-dia-perfecto-para-el-pez-platano', '/literary-work/la-pelota'],
+		['/story/un-dia-perfecto-para-el-pez-banana', '/literary-work/un-dia-perfecto-para-el-pez-platano'],
+		['/story/IcyFox?utm_source=boletin', '/literary-work/que-seria-yo-sin-ti?utm_source=boletin'],
+	])('should redirect the renamed %s to the current slug of the same work', async (path, destination) => {
+		const response = await appUnderTest().request(path);
 
 		expect(response.status).toBe(301);
-		expect(response.headers.get('Vercel-CDN-Cache-Control')).toContain('s-maxage=');
+		expect(response.headers.get('Location')).toBe(destination);
 	});
 
-	it('should not cache a redirect outside production', async () => {
-		environment.production = false;
+	// La tabla de renombres es solo de obras: un slug de colección homónimo se traslada tal cual.
+	it('should not apply the literary work renames to a collection', async () => {
+		const response = await appUnderTest().request('/storylist/IcyFox');
 
-		const response = await appUnderTest().request('/storylist/verano-2022');
-
-		expect(response.headers.get('Vercel-CDN-Cache-Control')).toBeNull();
+		expect(response.headers.get('Location')).toBe('/collection/IcyFox');
 	});
 
-	// Un destino cacheado durante una caída de Sanity se seguiría sirviendo después de que vuelva.
-	it('should fall back to the legacy slug, uncached, when the resolver fails', async () => {
-		environment.production = true;
-		const consoleError = spyOn(console, 'error').mockImplementation(() => undefined);
+	// Un nombre que el prototipo de un objeto ya trae no es un slug renombrado.
+	it('should carry over a slug that names an inherited object property', async () => {
+		const response = await appUnderTest().request('/story/constructor');
 
-		const response = await appUnderTest(() => Promise.reject(new Error('Sanity no responde'))).request(
-			'/story/el-fin?page=2',
-		);
-
-		expect(response.status).toBe(301);
-		expect(response.headers.get('Location')).toBe('/literary-work/el-fin?page=2');
-		expect(response.headers.get('Vercel-CDN-Cache-Control')).toBeNull();
-		expect(response.headers.get('Cache-Control')).toBe('no-store');
-		expect(consoleError).toHaveBeenCalled();
+		expect(response.headers.get('Location')).toBe('/literary-work/constructor');
 	});
 });
