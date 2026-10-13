@@ -27,11 +27,20 @@ Archivos clave:
 
 ### Pool, workers y memoria
 
-`@analogjs/vite-plugin-angular` fuerza el pool **`vmThreads`**: comparte el contexto de VM entre archivos y construye happy-dom una sola vez, que es lo que lo hace el más rápido. Su costo es la memoria: los workers son threads de **un solo proceso**, y ese proceso crece con la cantidad de workers durante toda la corrida. `vmMemoryLimit` no lo acota.
+`@analogjs/vite-plugin-angular` pone por defecto el pool **`vmThreads`**, el más rápido para esta suite. Su costo es la memoria: los workers son threads de **un solo proceso**, y la memoria que acumulan no se libera entre archivos durante la corrida. `vmMemoryLimit` no lo acota.
 
-Por eso `maxWorkers` está topeado en `min(8, hilos − 1)`: por encima de unos 8 workers la suite ya no se acelera y la memoria sigue subiendo. Hasta 9 hilos, incluido el runner de CI, el tope coincide con el default de Vitest.
+Por eso `maxWorkers` está topeado en 8, sin superar nunca el default de Vitest (hilos − 1 en `vitest run`, la mitad en watch): por encima de unos 8 workers la suite ya no se acelera y la memoria sigue subiendo. Con menos workers el pico no baja proporcionalmente —con 4 y con 8 es el mismo—, así que bajar el tope no es la salida para poca RAM. En el runner de CI el tope coincide con el default.
 
-En una máquina con poca RAM, `--pool=threads` le gana al pool que fuerza Analog y reparte la memoria entre procesos. Cuesta alrededor del doble de tiempo:
+Medido sobre la suite completa en una máquina de 28 hilos:
+
+| Pool        | Workers | Tiempo | Pico de memoria |
+| ----------- | ------- | ------ | --------------- |
+| `vmThreads` | 27      | 32 s   | ~19 GiB         |
+| `vmThreads` | 8       | 29 s   | ~13 GiB         |
+| `forks`     | 27      | 38 s   | ~12 GiB         |
+| `threads`   | 7       | 64 s   | ~6 GiB          |
+
+En una máquina con poca RAM, el pool se cambia por línea de comandos, que le gana al default de Analog. `threads` libera la memoria de cada archivo al terminarlo y es el que menos consume, a cambio de alrededor del doble de tiempo:
 
 ```bash
 pnpm exec vitest run --pool=threads

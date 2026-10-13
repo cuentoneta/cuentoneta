@@ -10,6 +10,14 @@ import { defineConfig } from 'vitest/config';
 // código Angular, así que se excluyen del plugin.
 const toolsDir = normalizePath(fileURLToPath(new URL('./tools/', import.meta.url)));
 
+// Por encima de ~8 workers de `vmThreads` la suite no se acelera y la memoria sigue creciendo (ver
+// "Pool, workers y memoria" en testing.md). El tope no debe superar el default de Vitest, que en
+// watch es la mitad de los hilos: el modo se infiere igual que Vitest, y si la inferencia falla solo
+// quedan menos workers.
+const threads = availableParallelism();
+const isWatch = !process.argv.includes('run') && !process.env['CI'] && process.stdin.isTTY;
+const maxWorkers = Math.max(1, Math.min(8, isWatch ? Math.floor(threads / 2) : threads - 1));
+
 // Configuración de Vitest para Angular zoneless (Nx 23 + builder vite/esbuild).
 // El plugin de Analog compila componentes/plantillas Angular en modo JIT durante los tests.
 export default defineConfig({
@@ -21,10 +29,7 @@ export default defineConfig({
 	resolve: { tsconfigPaths: true },
 	test: {
 		globals: true,
-		// Analog fuerza el pool `vmThreads`, cuyos workers son threads de un solo proceso: la memoria crece
-		// con la cantidad de workers y por encima de ~8 ya no acelera la suite. Hasta 9 hilos el tope
-		// coincide con el default de Vitest (hilos − 1), así que solo cambia algo en máquinas más grandes.
-		maxWorkers: Math.min(8, availableParallelism() - 1),
+		maxWorkers,
 		environment: 'happy-dom',
 		// Por defecto happy-dom navega los frames hijos: cada <iframe> montado dispara un fetch real
 		// (p. ej. el embed de Spotify), que al desmontar el frame se aborta y emite un unhandled error
