@@ -7,6 +7,7 @@ import type { IndexableHtmlExpectations } from '../e2e/_utils/seo-invariants';
 import { parseHtml, parseJsonLdBlocks } from '../e2e/_utils/seo';
 import { SCHEMA_IDS, SITEWIDE_SCHEMA_IDS } from '../e2e/_utils/seo-fixtures';
 import { childElementSequences } from '../src/testing/sitemap-xml';
+import { PAGE_REVISED_ON, type RevisedPage } from '@api/modules/sitemap/sitemap.lastmod';
 
 export function slugOf(path: string): string {
 	return path.split('/').filter(Boolean).pop() ?? '';
@@ -109,6 +110,10 @@ export function expectationsFor(path: string): IndexableHtmlExpectations | null 
 // dos estados medidos —un corpus contaminado por una escritura masiva llegó a concentrar la mitad de
 // las fechas en una sola, y uno derivado de fechas de origen no pasó de unas pocas centésimas—, con
 // margen para un día de alta editorial legítimo.
+//
+// Se mide sin las revisiones de página declaradas: esas son un lote legítimo, que pone a todas las
+// páginas de un tipo en la misma fecha a propósito. Quedan fuera del numerador y del denominador, para
+// que no diluyan una escritura masiva sobre el resto del sitemap.
 const LASTMOD_CLUSTER_LIMIT = 0.25;
 
 const IGNORED_ELEMENTS = ['changefreq', 'priority'];
@@ -117,8 +122,31 @@ export interface SitemapReport {
 	urls: number;
 	dated: number;
 	distinctDates: number;
+	// Entradas fechadas en la revisión declarada de su tipo de página, que el chequeo de concentración no mide.
+	exempted: number;
 	largestCluster: { date: string; share: number } | null;
 	violations: string[];
+}
+
+interface DatedEntry {
+	path: string | null;
+	lastmod: string;
+}
+
+function datedEntries(xml: string): DatedEntry[] {
+	return parseHtml(xml)
+		.querySelectorAll('url')
+		.flatMap((url) => {
+			const lastmod = url.querySelector('lastmod')?.text.trim();
+			return lastmod ? [{ path: toPath(url.querySelector('loc')?.text ?? ''), lastmod }] : [];
+		});
+}
+
+function isDeclaredRevision({ path, lastmod }: DatedEntry): boolean {
+	const prefixes = { author: '/author/', collection: '/collection/' } satisfies Record<RevisedPage, string>;
+	return (Object.keys(prefixes) as RevisedPage[]).some(
+		(page) => !!path?.startsWith(prefixes[page]) && lastmod === PAGE_REVISED_ON[page],
+	);
 }
 
 function largestCluster(dates: readonly string[]): { date: string; share: number } | null {
@@ -138,10 +166,10 @@ function largestCluster(dates: readonly string[]): { date: string; share: number
  */
 export function collectSitemapViolations(xml: string): SitemapReport {
 	const sequences = childElementSequences(xml);
-	const dates = parseHtml(xml)
-		.querySelectorAll('lastmod')
-		.map((element) => element.text.trim());
-	const cluster = largestCluster(dates);
+	const entries = datedEntries(xml);
+	const dates = entries.map(({ lastmod }) => lastmod);
+	const measured = entries.filter((entry) => !isDeclaredRevision(entry)).map(({ lastmod }) => lastmod);
+	const cluster = largestCluster(measured);
 	const violations: string[] = [];
 
 	if (sequences.length === 0) {
@@ -171,6 +199,7 @@ export function collectSitemapViolations(xml: string): SitemapReport {
 		urls: parseHtml(xml).querySelectorAll('loc').length,
 		dated: dates.length,
 		distinctDates: new Set(dates).size,
+		exempted: dates.length - measured.length,
 		largestCluster: cluster,
 		violations,
 	};

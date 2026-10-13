@@ -9,7 +9,8 @@
  *
  * Del propio `/sitemap.xml` chequea además la secuencia de elementos que exige su esquema y la
  * dispersión del `lastmod`: una fecha repetida en medio corpus delata una escritura en lote, y eso
- * solo se ve contra el corpus real de un despliegue.
+ * solo se ve contra el corpus real de un despliegue. Las revisiones de página declaradas en
+ * `sitemap.lastmod.ts` son un lote legítimo y quedan fuera de esa medición.
  *
  * Uso:
  *   BASE_URL=https://www.cuentoneta.ar pnpm ops seo:smoke
@@ -110,7 +111,7 @@ function reportSitemapDocument(xml: string): boolean {
 	const clusterLabel = cluster ? `, mayor concentración ${Math.round(cluster.share * 100)}% en ${cluster.date}` : '';
 
 	console.log(
-		`\nSitemap: ${report.urls} URLs, ${report.dated} con fecha, ${report.distinctDates} fechas distintas${clusterLabel}`,
+		`\nSitemap: ${report.urls} URLs, ${report.dated} con fecha, ${report.distinctDates} fechas distintas, ${report.exempted} en una revisión de página declarada${clusterLabel}`,
 	);
 	if (report.violations.length === 0) {
 		console.log('✅ /sitemap.xml');
