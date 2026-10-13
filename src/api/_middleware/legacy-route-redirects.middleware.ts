@@ -1,5 +1,7 @@
 import type { Handler } from 'hono';
 import type { BlankEnv } from 'hono/types';
+import { applyReadCacheHeaders } from '../_helpers/cache-control';
+import { resolveLegacySlug } from '../modules/legacy-route/legacy-route.service';
 
 /**
  * Las URLs indexadas de la plataforma se mudaron: obra y colección tienen rutas nuevas para su listado
@@ -13,7 +15,13 @@ import type { BlankEnv } from 'hono/types';
  */
 
 /**
- * Arma el handler de detalle de una sección, preservando el slug y la query string.
+ * Arma el handler de detalle de una sección: traslada al slug que `resolveSlug` devuelve para el slug
+ * pedido, preservando la query string.
+ *
+ * Resolver consulta Sanity, así que el traslado resuelto se cachea en el borde y el rastreo de las rutas
+ * viejas no llega al origen en cada visita. Si la consulta falla, traslada al slug pedido tal cual y sin
+ * caché: acierta para casi todo documento migrado, y el pedido siguiente vuelve a intentar resolver en vez
+ * de heredar un destino que puede estar mal.
  *
  * El slug vuelve a codificarse antes de componer el destino: llega ya decodificado desde el router,
  * así que uno que contenga un carácter reservado produciría un `Location` con una ruta distinta de la
@@ -22,14 +30,33 @@ import type { BlankEnv } from 'hono/types';
  * La query string viaja porque es donde vienen los parámetros de campaña: perderlos en el traslado
  * rompe la atribución de cada enlace ya publicado hacia afuera.
  */
-function legacyDetailRedirect(sectionPath: string): Handler<BlankEnv, '/:slug'> {
-	return (c) => {
+export function legacyDetailRedirect(
+	sectionPath: string,
+	resolveSlug: (legacySlug: string) => Promise<string>,
+): Handler<BlankEnv, '/:slug'> {
+	return async (c) => {
 		const { search } = new URL(c.req.url);
-		return c.redirect(`${sectionPath}/${encodeURIComponent(c.req.param('slug'))}${search}`, 301);
+		const legacySlug = c.req.param('slug');
+		let slug = legacySlug;
+		try {
+			slug = await resolveSlug(legacySlug);
+			applyReadCacheHeaders(c);
+		} catch (error) {
+			console.error('[LegacyRoute] no se pudo resolver el destino; se traslada el slug tal cual', {
+				sectionPath,
+				legacySlug,
+				error,
+			});
+		}
+		return c.redirect(`${sectionPath}/${encodeURIComponent(slug)}${search}`, 301);
 	};
 }
 
 export const legacyStoryListingRedirect: Handler = (c) => c.redirect('/literary-work', 301);
 export const legacyStorylistListingRedirect: Handler = (c) => c.redirect('/collection', 301);
-export const legacyStoryDetailRedirect = legacyDetailRedirect('/literary-work');
-export const legacyStorylistDetailRedirect = legacyDetailRedirect('/collection');
+export const legacyStoryDetailRedirect = legacyDetailRedirect('/literary-work', (slug) =>
+	resolveLegacySlug('story', slug),
+);
+export const legacyStorylistDetailRedirect = legacyDetailRedirect('/collection', (slug) =>
+	resolveLegacySlug('storylist', slug),
+);
