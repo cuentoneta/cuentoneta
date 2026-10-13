@@ -93,8 +93,7 @@ test('literary-work — una obra inexistente ofrece la vuelta al inicio', async 
 	await expect(page.getByText('No encontramos esta obra')).toBeVisible();
 
 	await page.getByRole('link', { name: 'Volver al inicio' }).click();
-	// La raíz redirige a /home, así que es la URL en la que el lector efectivamente aterriza.
-	await expect(page).toHaveURL(/\/home$/);
+	await expect(page).toHaveURL((url) => url.pathname === '/');
 });
 
 // El caso del cambio de formato afirma por el tipo del widget montado, así que dos recursos del mismo
