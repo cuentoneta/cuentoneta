@@ -64,6 +64,8 @@ Usar **siempre `pnpm`** para instalar y ejecutar scripts. Los scripts envuelven 
 | `pnpm sanity:run-typegen-generator`       | Genera tipos a partir del schema                                                                                                                                                                                  |
 | `pnpm exec sanity migration run <slug>`   | Corre una migración de datos (desde `cms/`; dry-run por defecto). El destino va explícito con `--project` + `--dataset`, que son inseparables → [`sanity-migrations.md`](.claude/references/sanity-migrations.md) |
 
+> **Caché de Nx en local:** los scripts reusan resultados de la caché, salvo `pnpm sanity:build`, que la saltea con `--skip-nx-cache`: el CLI de Sanity lee `cms/.env`, que está gitignoreado y por eso fuera del hash. El otro archivo generado e ignorado que leen los targets, `src/app/environments/environment.ts`, entra al hash vía `.nxignore`. El lint nombra `cms/**` como input explícito porque `cms/` es un proyecto de Nx aparte, y sus archivos no entran en el `default` de la app.
+
 **Gates de CI** (deben quedar verdes en cada PR): `test`, `lint`, `stylelint`, `typecheck`, `e2e`, `build`, `storybook`, `studio-build`, `guard-config`, `check-agents`, `check-findings`.
 
 > Los once son **required status checks** de `develop`: GitHub bloquea el merge si alguno queda en rojo. El nombre del gate es el **id del job** en `.github/workflows/` — los jobs no declaran `name:` justamente para que id y context no puedan desincronizarse. `guard-config` solo tiene efecto en PRs desde forks (en PRs del mismo repo pasa en verde sin verificar nada).
