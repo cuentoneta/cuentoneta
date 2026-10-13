@@ -9,6 +9,8 @@ import {
 	slugToTitlePattern,
 	toPath,
 } from './seo-smoke.helpers';
+import { PAGE_REVISED_ON } from '@api/modules/sitemap/sitemap.lastmod';
+import { shiftDays } from '@testing/date-shift';
 
 function sitewideHtml(organizationUrl: string, websiteUrl: string): string {
 	return (
@@ -205,5 +207,64 @@ describe('collectSitemapViolations', () => {
 
 		expect(report.violations).toEqual(['El sitemap no expone ninguna entrada <url>.']);
 		expect(report.largestCluster).toBeNull();
+	});
+
+	describe('con revisiones de página declaradas', () => {
+		const batch = (prefix: string, count: number, date: string) =>
+			Array.from({ length: count }, (_, index) => urlEntry(`${prefix}lote-${index}`, date));
+
+		const revisedPages = [
+			['/author/', PAGE_REVISED_ON.author],
+			['/collection/', PAGE_REVISED_ON.collection],
+		] as const;
+
+		it.each(revisedPages)('no mide las páginas %s fechadas en su revisión', (prefix, revision) => {
+			const report = collectSitemapViolations(sitemapOf([...batch(prefix, 34, revision), ...spread(66)]));
+
+			expect(report.violations).toEqual([]);
+			expect(report.exempted).toBe(34);
+			expect(report.dated).toBe(100);
+		});
+
+		// La exención es del tipo de página, no de la fecha: la misma fecha en otro tipo es un lote.
+		it('reporta la fecha de una revisión concentrada en las obras', () => {
+			const report = collectSitemapViolations(
+				sitemapOf([...batch('/literary-work/', 48, PAGE_REVISED_ON.author), ...spread(52)]),
+			);
+
+			expect(report.exempted).toBe(0);
+			expect(report.largestCluster).toEqual({ date: PAGE_REVISED_ON.author, share: 0.48 });
+			expect(report.violations[0]).toContain('escritura en lote');
+		});
+
+		it.each(revisedPages)('reporta un lote de páginas %s en una fecha no declarada', (prefix, revision) => {
+			const undeclared = shiftDays(revision, 1);
+
+			const report = collectSitemapViolations(sitemapOf([...batch(prefix, 48, undeclared), ...spread(52)]));
+
+			expect(report.largestCluster).toEqual({ date: undeclared, share: 0.48 });
+			expect(report.violations[0]).toContain('escritura en lote');
+		});
+
+		// Sin las exentas, el resto se mide solo: un lote que en el total pesaría poco sigue pesando lo suyo.
+		it('mide la concentración sobre las fechas que quedan', () => {
+			const report = collectSitemapViolations(
+				sitemapOf([
+					...batch('/author/', 50, PAGE_REVISED_ON.author),
+					...batch('/literary-work/', 15, '2026-06-29'),
+					...spread(35),
+				]),
+			);
+
+			expect(report.largestCluster).toEqual({ date: '2026-06-29', share: 0.3 });
+			expect(report.violations).toHaveLength(1);
+		});
+
+		it('no reporta concentración cuando todas las fechas están exentas', () => {
+			const report = collectSitemapViolations(sitemapOf(batch('/author/', 10, PAGE_REVISED_ON.author)));
+
+			expect(report.largestCluster).toBeNull();
+			expect(report.violations).toEqual([]);
+		});
 	});
 });
