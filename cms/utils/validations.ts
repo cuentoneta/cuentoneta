@@ -20,6 +20,18 @@ export function validateHistoricalDate(value?: string): true | string {
 }
 
 /**
+ * Exige una ruta del sitio escrita desde la raíz (`/collection/x`). El enlace la resuelve contra la
+ * página que lo muestra, así que una ruta relativa cambia de destino —o rompe el render— según la URL de
+ * esa página; una con esquema o con `//` sale del sitio, y el enlace solo navega dentro de él. Un campo
+ * vacío pasa, porque la ausencia la decide `localizedRequire`, con el que esta regla se compone.
+ */
+export function validateRootRelativePath(value?: string): true | string {
+	if (!value) return true;
+	if (value.startsWith('/') && !value.startsWith('//')) return true;
+	return 'Usar una ruta del sitio que empiece con "/" (p. ej. "/collection/verano-2022").';
+}
+
+/**
  * Exige que el slug tenga el formato que el dominio sabe construir: un slug que lo viola queda
  * publicado en una URL que la plataforma no puede servir. Un campo vacío pasa, porque la ausencia la
  * decide `Rule.required()`, con el que esta regla se compone.

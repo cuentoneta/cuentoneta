@@ -1,6 +1,8 @@
 import { clearAllMocks, spyOn } from '@test-utils';
 import { TestBed } from '@angular/core/testing';
 
+import { AppRoutes } from '../../app.routes';
+import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 import { HomeMetaTagsDirective } from './home-meta-tags.directive';
 
@@ -28,7 +30,7 @@ describe('HomeMetaTagsDirective', () => {
 		expect(titleSpy).toHaveBeenCalledWith('Cuentos y relatos breves para leer en línea | La Cuentoneta');
 		expect(descriptionSpy).toHaveBeenCalled();
 		expect(keywordsSpy).toHaveBeenCalledWith(expect.arrayContaining(['relatos breves', 'colecciones de cuentos']));
-		expect(canonicalSpy).toHaveBeenCalled();
+		expect(canonicalSpy).toHaveBeenCalledWith(buildCanonicalUrl(AppRoutes.Home));
 		expect(robotsSpy).toHaveBeenCalledWith('index, follow');
 	});
 });

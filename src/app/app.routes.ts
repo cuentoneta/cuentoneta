@@ -1,7 +1,7 @@
 import type { Routes } from '@angular/router';
 
 export const AppRoutes = Object.freeze({
-	Home: 'home',
+	Home: '',
 	Author: 'author',
 	Authors: 'authors',
 	About: 'about',
@@ -15,6 +15,7 @@ export const appRoutes: Routes = [
 	{
 		path: AppRoutes.Home,
 		loadComponent: () => import('./pages/home/home.page'),
+		pathMatch: 'full',
 	},
 	{
 		path: AppRoutes.Authors,
@@ -47,10 +48,5 @@ export const appRoutes: Routes = [
 	{
 		path: AppRoutes.Dmca,
 		loadComponent: () => import('./pages/dmca/dmca.page'),
-	},
-	{
-		path: '',
-		redirectTo: AppRoutes.Home,
-		pathMatch: 'full',
 	},
 ];
