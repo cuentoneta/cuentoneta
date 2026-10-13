@@ -51,7 +51,7 @@ describe('buildPersonSchema', () => {
 describe('buildBreadcrumbSchema', () => {
 	it('should build a BreadcrumbList with positioned ListItems', () => {
 		const schema = buildBreadcrumbSchema([
-			{ name: 'Inicio', url: 'https://x/home' },
+			{ name: 'Inicio', url: 'https://x/' },
 			{ name: 'Autores', url: 'https://x/authors' },
 		]);
 
@@ -59,7 +59,7 @@ describe('buildBreadcrumbSchema', () => {
 			'@context': 'https://schema.org',
 			'@type': 'BreadcrumbList',
 			itemListElement: [
-				{ '@type': 'ListItem', position: 1, name: 'Inicio', item: { '@id': 'https://x/home' } },
+				{ '@type': 'ListItem', position: 1, name: 'Inicio', item: { '@id': 'https://x/' } },
 				{ '@type': 'ListItem', position: 2, name: 'Autores', item: { '@id': 'https://x/authors' } },
 			],
 		});
@@ -67,7 +67,7 @@ describe('buildBreadcrumbSchema', () => {
 
 	it('should build a schema.org-valid BreadcrumbList', async () => {
 		const schema = buildBreadcrumbSchema([
-			{ name: 'Inicio', url: 'https://x/home' },
+			{ name: 'Inicio', url: 'https://x/' },
 			{ name: 'Autores', url: 'https://x/authors' },
 		]);
 
