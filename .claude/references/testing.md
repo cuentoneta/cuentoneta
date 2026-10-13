@@ -25,6 +25,18 @@ Archivos clave:
 - **`src/test-setup.ts`** — inicializa el `TestBed` zoneless (Angular 22 corre zoneless por defecto cuando `zone.js` no está presente; no se llama a `provideZonelessChangeDetection()`). El `ErrorHandler` **relanza** cualquier error no manejado para que falle el test. Instala los stubs globales de `IntersectionObserver`, de `ResizeObserver` y de `document.fonts`.
 - **`src/test-utils.ts`** — los wrappers obligatorios (ver abajo).
 
+### Pool, workers y memoria
+
+`@analogjs/vite-plugin-angular` fuerza el pool **`vmThreads`**: comparte el contexto de VM entre archivos y construye happy-dom una sola vez, que es lo que lo hace el más rápido. Su costo es la memoria: los workers son threads de **un solo proceso**, y ese proceso crece con la cantidad de workers durante toda la corrida. `vmMemoryLimit` no lo acota.
+
+Por eso `maxWorkers` está topeado en `min(8, hilos − 1)`: por encima de unos 8 workers la suite ya no se acelera y la memoria sigue subiendo. Hasta 9 hilos, incluido el runner de CI, el tope coincide con el default de Vitest.
+
+En una máquina con poca RAM, `--pool=threads` le gana al pool que fuerza Analog y reparte la memoria entre procesos. Cuesta alrededor del doble de tiempo:
+
+```bash
+pnpm exec vitest run --pool=threads
+```
+
 > Esta es la config de **la app** (`@cuentoneta/app`). El Studio de Sanity (`cms/`) tiene su propia config de Vitest, independiente — ver [Segunda config de Vitest: el Studio (`cms/`)](#segunda-config-de-vitest-el-studio-cms).
 
 ---
