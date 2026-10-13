@@ -134,18 +134,6 @@
 					"buildTarget": "@cuentoneta/app:build-storybook:ci"
 				}
 			}
-		},
-		"e2e": {
-			"executor": "@nx/playwright:playwright",
-			"outputs": ["{workspaceRoot}/playwright-report"],
-			"options": {
-				"config": "{projectRoot}/playwright.config.ts"
-			},
-			"configurations": {
-				"ci": {
-					"ci": true
-				}
-			}
 		}
 	}
 }

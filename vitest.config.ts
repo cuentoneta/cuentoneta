@@ -1,6 +1,13 @@
 /// <reference types="vitest" />
 import angular from '@analogjs/vite-plugin-angular';
+import { fileURLToPath } from 'node:url';
+import { normalizePath } from 'vite';
 import { defineConfig } from 'vitest/config';
+
+// Los specs de las reglas de lint llevan decoradores de Angular como texto de prueba, y el plugin
+// de Analog los detecta por regex y advierte que el archivo no está en el programa de TS. No son
+// código Angular, así que se excluyen del plugin.
+const toolsDir = normalizePath(fileURLToPath(new URL('./tools/', import.meta.url)));
 
 // Configuración de Vitest para Angular zoneless (Nx 23 + builder vite/esbuild).
 // El plugin de Analog compila componentes/plantillas Angular en modo JIT durante los tests.
@@ -9,7 +16,7 @@ export default defineConfig({
 	// descubre proyectos recorriendo el árbol, y bajo `.claude/worktrees/` hay copias enteras del
 	// repo. Basta con que el tsconfig de una de ellas no le parsee para que aborte y deje de resolver
 	// alias en toda la corrida.
-	plugins: [angular()],
+	plugins: [angular({ transformFilter: (_code, id) => !normalizePath(id).startsWith(toolsDir) })],
 	resolve: { tsconfigPaths: true },
 	test: {
 		globals: true,
