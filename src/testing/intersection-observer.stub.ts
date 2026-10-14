@@ -1,5 +1,5 @@
 // Stub global de IntersectionObserver para tests (el entorno de tests no lo implementa). Se instala en
-// test-setup para que `TagsOverflowDirective` —hoy el único consumidor de IO— se pueda renderizar.
+// test-setup para que `TagsOverflow` —hoy el único consumidor de IO— se pueda renderizar.
 // Captura el callback y las opciones del último observer creado, y expone helpers para simular que
 // ciertos elementos entran o no en el contenedor.
 //

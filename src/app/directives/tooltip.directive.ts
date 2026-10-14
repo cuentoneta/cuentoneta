@@ -10,7 +10,7 @@ type TooltipPosition = 'top' | 'right' | 'bottom' | 'left';
 		'(mouseleave)': 'onMouseLeave()',
 	},
 })
-export class TooltipDirective {
+export class Tooltip {
 	public readonly text = signal<string>('');
 	public readonly position = signal<TooltipPosition>('top');
 	public readonly offset = signal<number>(6);

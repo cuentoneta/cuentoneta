@@ -7,12 +7,12 @@ import {
 	setMeasuredSize,
 	triggerResize,
 } from '@testing/resize-observer.stub';
-import { ClampOverflowDirective } from './clamp-overflow.directive';
+import { ClampOverflow } from './clamp-overflow.directive';
 
 // La directiva se ejercita por su comportamiento observable —el "Leer más" aparece o no— y no leyendo
 // la signal: es el contrato que consume una plantilla.
 @Component({
-	imports: [ClampOverflowDirective],
+	imports: [ClampOverflow],
 	template: `
 		<p #clamp="cuentonetaClampOverflow" cuentonetaClampOverflow class="line-clamp-3">Un texto cualquiera</p>
 		@if (clamp.isOverflowing()) {
@@ -24,7 +24,7 @@ class ClampHostComponent {}
 
 const readMore = (): HTMLElement | null => screen.queryByRole('button', { name: 'Leer más' });
 
-describe('ClampOverflowDirective', () => {
+describe('ClampOverflow', () => {
 	beforeEach(() => {
 		installResizeObserverStub();
 		installDocumentFontsStub();
@@ -126,7 +126,7 @@ describe('ClampOverflowDirective', () => {
 	// vista ya destruida y escribiría estado que nadie va a leer.
 	it('should not measure after the view is destroyed', async () => {
 		const { fixture } = await render(ClampHostComponent);
-		const directive = fixture.debugElement.query((node) => node.name === 'p').injector.get(ClampOverflowDirective);
+		const directive = fixture.debugElement.query((node) => node.name === 'p').injector.get(ClampOverflow);
 		setMeasuredSize(screen.getByText('Un texto cualquiera'), { scrollHeight: 200, clientHeight: 100 });
 
 		fixture.destroy();

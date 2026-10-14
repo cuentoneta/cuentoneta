@@ -128,7 +128,7 @@ private readonly icon = computed(() => /* … */); // la plantilla lo interpola
 private readonly isExpanded = signal(false); // estado interno, no llega a la plantilla
 ```
 
-`public` queda reservado a las dos excepciones que ya fija la tabla: un miembro **requerido por una interfaz** (p. ej. `literaryWork` en `LiteraryWorkPage`, exigido por `LiteraryWorkHost`) o **consumido por otro componente** (p. ej. `hiddenCount` de `TagsOverflowDirective`, que lee `TagsList`). Exponer una signal en `public` "por las dudas" agranda la API del componente sin que nadie la consuma.
+`public` queda reservado a las dos excepciones que ya fija la tabla: un miembro **requerido por una interfaz** (p. ej. `literaryWork` en `LiteraryWorkPage`, exigido por `LiteraryWorkHost`) o **consumido por otro componente** (p. ej. `hiddenCount` de `TagsOverflow`, que lee `TagsList`). Exponer una signal en `public` "por las dudas" agranda la API del componente sin que nadie la consuma.
 
 ---
 
@@ -369,7 +369,7 @@ Todo lo que afecte al elemento anfitrión (host) se declara en la propiedad **`h
 		'(mouseleave)': 'onMouseLeave()',
 	},
 })
-export class TooltipDirective {
+export class Tooltip {
 	private onMouseEnter() {
 		/* ... */
 	}
@@ -381,7 +381,7 @@ export class TooltipDirective {
 
 Notas:
 
-- Los métodos/propiedades referenciados por string desde `host` son **`private`** (no `public`). Distinto es el caso de las directivas cuya API la consumen los anfitriones vía `hostDirectives` + `inject(Directive)` (p. ej. `TooltipDirective.text.set(...)`): esas signals **sí** son `public` por ser API imperativa.
+- Los métodos/propiedades referenciados por string desde `host` son **`private`** (no `public`). Distinto es el caso de las directivas cuya API la consumen los anfitriones vía `hostDirectives` + `inject(Directive)` (p. ej. `Tooltip.text.set(...)`): esas signals **sí** son `public` por ser API imperativa.
 - El bloque `:host` en `styles` se reserva para lo que **no** es `@apply`: CSS crudo (`font-family`, `transition`, …), `:host ::ng-deep ...` y `:host(.clase)` condicionales. Esas reglas **no** se mueven a `host`.
 - Si el componente ya tiene `host: { class: '...' }`, **agregar** las utilidades al string existente, no reemplazarlo.
 - **`hostDirectives`** (campo del decorador, distinto de `host`) es el mecanismo de composición de directivas del anfitrión. En **componentes de página** es cómo se declaran las directivas de SEO (meta tags + structured data): la forma correcta depende de la indexabilidad de la ruta y está **enforced por test** — ver [`angular-state.md` §8](./angular-state.md#8-directivas-de-seo-de-página-declarar-el-combo-según-la-indexabilidad).

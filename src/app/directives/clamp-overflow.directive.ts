@@ -23,7 +23,7 @@ import { afterNextRender, Directive, effect, ElementRef, inject, signal } from '
 	selector: '[cuentonetaClampOverflow]',
 	exportAs: 'cuentonetaClampOverflow',
 })
-export class ClampOverflowDirective {
+export class ClampOverflow {
 	private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
 
 	private readonly overflowing = signal(false);

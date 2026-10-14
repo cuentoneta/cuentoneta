@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { render, screen } from '@testing-library/angular';
 
-import { TagsOverflowDirective } from './tags-overflow.directive';
+import { TagsOverflow } from './tags-overflow.directive';
 import { Tag } from '../tag/tag';
 import {
 	installIntersectionObserverStub,
@@ -13,7 +13,7 @@ import {
 @Component({
 	selector: 'cuentoneta-test-overflow-host',
 	imports: [Tag],
-	hostDirectives: [{ directive: TagsOverflowDirective, inputs: ['maxVisible'] }],
+	hostDirectives: [{ directive: TagsOverflow, inputs: ['maxVisible'] }],
 	template: `
 		<ng-content />
 		@if (overflow.hiddenCount() > 0) {
@@ -23,7 +23,7 @@ import {
 	host: { class: 'flex overflow-hidden' },
 })
 class TestOverflowHostComponent {
-	private readonly overflow = inject(TagsOverflowDirective);
+	private readonly overflow = inject(TagsOverflow);
 }
 
 const renderHost = (labels: string[], maxVisible?: number) =>
@@ -39,7 +39,7 @@ const renderHost = (labels: string[], maxVisible?: number) =>
 		},
 	);
 
-describe('TagsOverflowDirective', () => {
+describe('TagsOverflow', () => {
 	beforeEach(() => installIntersectionObserverStub());
 
 	it('should discover the projected tags and show them all when they fit', async () => {

@@ -6,7 +6,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import type { Collection } from '@models/collection.model';
 
 // Directives
-import { ClampOverflowDirective } from '../../directives/clamp-overflow.directive';
+import { ClampOverflow } from '../../directives/clamp-overflow.directive';
 
 // Components
 import { Button } from '../button/button';
@@ -31,7 +31,7 @@ import { CollectionInfoPanelSkeleton } from './collection-info-panel-skeleton';
  */
 @Component({
 	selector: 'cuentoneta-collection-info-panel',
-	imports: [Button, ClampOverflowDirective, CollectionCover, Tag, TagsList, CollectionInfoPanelSkeleton],
+	imports: [Button, ClampOverflow, CollectionCover, Tag, TagsList, CollectionInfoPanelSkeleton],
 	host: { class: 'flex w-full flex-col gap-4' },
 	template: `
 		@if (collection(); as collection) {

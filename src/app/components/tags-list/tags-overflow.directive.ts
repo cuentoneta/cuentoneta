@@ -28,7 +28,7 @@ const FULLY_VISIBLE_RATIO = 0.99;
  * ambos sentidos al cambiar el ancho. Sin layout (SSR/jsdom) no se crea el observer y entran todos.
  */
 @Directive({})
-export class TagsOverflowDirective {
+export class TagsOverflow {
 	/** Tope duro opcional de tags visibles; sin valor, el único límite es el ancho. */
 	public readonly maxVisible = input<number>();
 

@@ -13,7 +13,7 @@ import type { DrawerDirection } from './drawer';
  * user-agent aplica a `dialog:modal` en el borde opuesto al anclado (si no, ese borde quedaría pegado en `0`).
  */
 @Directive({})
-export class DrawerPanelDirective {
+export class DrawerPanel {
 	public readonly direction = input<DrawerDirection>('right');
 
 	private readonly panelConfig: Record<DrawerDirection, string> = {

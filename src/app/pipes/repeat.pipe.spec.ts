@@ -1,8 +1,8 @@
-import { RepeatPipe } from './repeat.pipe';
+import { Repeat } from './repeat.pipe';
 
-describe('RepeatPipe', () => {
+describe('Repeat', () => {
 	it('create an instance', () => {
-		const pipe = new RepeatPipe();
+		const pipe = new Repeat();
 		expect(pipe).toBeTruthy();
 	});
 });

@@ -7,7 +7,7 @@ import { Directive, signal } from '@angular/core';
  * imperativa, porque son Web APIs sin equivalente reactivo. Se aplica como `hostDirective` de `Drawer`.
  */
 @Directive({})
-export class DrawerTransitionDirective {
+export class DrawerTransition {
 	private readonly _isTransitionedIn = signal(false);
 	public readonly isTransitionedIn = this._isTransitionedIn.asReadonly();
 

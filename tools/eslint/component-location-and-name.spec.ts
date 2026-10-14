@@ -44,7 +44,7 @@ ruleTester.run('component-location-and-name', rule, {
 			filename: 'src/app/components/carousel/carousel.ts',
 		},
 		// Fuera de alcance: otros decoradores y clases sin decorador, en cualquier ubicación.
-		{ code: '@Directive({}) export class TooltipDirective {}', filename: 'src/app/directives/tooltip.directive.ts' },
+		{ code: '@Directive({}) export class Tooltip {}', filename: 'src/app/directives/tooltip.directive.ts' },
 		{ code: 'export class AnyComponent {}', filename: 'src/app/utils/any.ts' },
 	],
 	invalid: [

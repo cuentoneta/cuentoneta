@@ -1,7 +1,7 @@
 /**
  * Acceso a la descripción completa de una colección y cierre del panel que la muestra.
  *
- * Es lo único de la suite que mide el desborde real del recorte. El spec unitario de `ClampOverflowDirective`
+ * Es lo único de la suite que mide el desborde real del recorte. El spec unitario de `ClampOverflow`
  * le fija las medidas a mano porque happy-dom no computa layout, así que la aparición del control —que
  * depende de que ocho líneas no alcancen para el texto— solo se puede afirmar en un navegador de verdad.
  *

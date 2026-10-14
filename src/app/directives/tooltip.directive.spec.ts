@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { render, screen } from '@testing-library/angular';
-import { TooltipDirective } from './tooltip.directive';
+import { Tooltip } from './tooltip.directive';
 import userEvent from '@testing-library/user-event';
 
 const ELEMENT_WIDTH = 500;
@@ -13,13 +13,13 @@ const ELEMENT_HEIGHT = 500;
 		</div>
 	`,
 	standalone: true,
-	imports: [TooltipDirective],
-	hostDirectives: [TooltipDirective],
+	imports: [Tooltip],
+	hostDirectives: [Tooltip],
 })
 class HostComponent {
 	private readonly width = ELEMENT_WIDTH;
 	private readonly height = ELEMENT_HEIGHT;
-	private readonly tooltipDirective = inject(TooltipDirective);
+	private readonly tooltipDirective = inject(Tooltip);
 
 	constructor() {
 		this.tooltipDirective.text.set('Tooltip test');
@@ -27,7 +27,7 @@ class HostComponent {
 	}
 }
 
-describe('TooltipDirective', () => {
+describe('Tooltip', () => {
 	test('Should render a tooltip when the mouse enter the Host component', async () => {
 		await render(HostComponent);
 
