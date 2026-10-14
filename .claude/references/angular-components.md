@@ -96,7 +96,7 @@ Regla central: **un campo de componente nunca es `public` por defecto.** Desde A
 | Visibilidad | Cuándo                                                                                                                                                                               |
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `private`   | Todo lo que no es API: lo que lee la plantilla o el `host` (rutas de navegación, helpers de formato, flags de UI) y los internos (servicios inyectados, effects, estado interno).    |
-| `protected` | **Solo** miembros que una subclase lee o sobrescribe, como los de las directivas abstractas `AbstractMetaTagsDirective` y `AbstractStructuredDataDirective`.                         |
+| `protected` | **Solo** miembros que una subclase lee o sobrescribe, como los de las directivas abstractas `AbstractMetaTags` y `AbstractStructuredData`.                                           |
 | `public`    | **Solo** inputs/outputs/models de signals (`input()`, `output()`, `model()`), **API imperativa** llamada por padres (`open()`, `close()`), y miembros **requeridos por interfaces**. |
 
 ```typescript
@@ -234,14 +234,14 @@ El reemplazo de `ngOnDestroy` por un `effect()` nombrado con `onCleanup` es el p
 
 ```typescript
 // ❌ Antes
-export class MetaTagsDirective implements OnDestroy {
+export class MetaTags implements OnDestroy {
 	ngOnDestroy() {
 		this.resetTags();
 	}
 }
 
 // ✅ Después — field initializer nombrado, sin comentario que reitere el reemplazo
-export class MetaTagsDirective {
+export class MetaTags {
 	private readonly resetTagsOnDestroy = effect((onCleanup) => {
 		onCleanup(() => this.resetTags());
 	});

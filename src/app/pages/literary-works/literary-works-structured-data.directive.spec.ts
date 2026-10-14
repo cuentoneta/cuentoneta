@@ -5,14 +5,14 @@ import { signal } from '@angular/core';
 
 import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
 import { type LiteraryWorkTeaser } from '@models/literary-work.model';
-import { LiteraryWorksStructuredDataDirective } from './literary-works-structured-data.directive';
+import { LiteraryWorksStructuredData } from './literary-works-structured-data.directive';
 import { LITERARY_WORKS_HOST } from './literary-works-host';
 
-describe('LiteraryWorksStructuredDataDirective', () => {
+describe('LiteraryWorksStructuredData', () => {
 	const literaryWorksSignal = signal<readonly LiteraryWorkTeaser[]>([]);
 
 	function instantiate(): void {
-		TestBed.runInInjectionContext(() => new LiteraryWorksStructuredDataDirective());
+		TestBed.runInInjectionContext(() => new LiteraryWorksStructuredData());
 	}
 
 	beforeEach(() => {
@@ -20,7 +20,7 @@ describe('LiteraryWorksStructuredDataDirective', () => {
 		literaryWorksSignal.set([]);
 		TestBed.configureTestingModule({
 			providers: [
-				LiteraryWorksStructuredDataDirective,
+				LiteraryWorksStructuredData,
 				{ provide: LITERARY_WORKS_HOST, useValue: { literaryWorks: literaryWorksSignal.asReadonly() } },
 			],
 		});

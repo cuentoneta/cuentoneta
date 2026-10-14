@@ -2,14 +2,14 @@ import { Directive } from '@angular/core';
 
 import { AppRoutes } from '../../app.routes';
 import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
-import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
-import { AbstractMetaTagsDirective } from '../../directives/abstract-meta-tags.directive';
+import { HeadMetadata } from '../../directives/head-metadata.directive';
+import { AbstractMetaTags } from '../../directives/abstract-meta-tags.directive';
 
 @Directive({
 	selector: '[cuentonetaHomeMetaTags]',
-	hostDirectives: [HeadMetadataDirective],
+	hostDirectives: [HeadMetadata],
 })
-export class HomeMetaTagsDirective extends AbstractMetaTagsDirective {
+export class HomeMetaTags extends AbstractMetaTags {
 	protected applyMetaTags(): void {
 		this.head.setExactTitle('Cuentos y relatos breves para leer en línea | La Cuentoneta');
 		this.head.setDefaultDescription();

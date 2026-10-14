@@ -30,24 +30,24 @@ export function extractRobotsLiteral(source: string): string | undefined {
 /**
  * Lista los incumplimientos de la convención de SEO de una página (vacío = conforme). La indexabilidad se
  * deriva del propio código: una página que llama `setRobots('noindex...')` es un opt-out y solo debe declarar
- * `[HeadMetadataDirective]`; cualquier otra se considera indexable y debe declarar una `<Page>MetaTagsDirective`
- * y una `<Page>StructuredDataDirective`.
+ * `[HeadMetadata]`; cualquier otra se considera indexable y debe declarar una `<Page>MetaTags`
+ * y una `<Page>StructuredData`.
  */
 export function collectSeoViolations(source: string): string[] {
 	const hostDirectives = extractHostDirectiveNames(source);
 	const declared = `hostDirectives: [${hostDirectives.join(', ')}]`;
 	const violations: string[] = [];
 	if (extractRobotsLiteral(source)?.includes('noindex')) {
-		if (hostDirectives.length !== 1 || hostDirectives[0] !== 'HeadMetadataDirective') {
-			violations.push(`página noindex: se espera hostDirectives: [HeadMetadataDirective], hay ${declared}`);
+		if (hostDirectives.length !== 1 || hostDirectives[0] !== 'HeadMetadata') {
+			violations.push(`página noindex: se espera hostDirectives: [HeadMetadata], hay ${declared}`);
 		}
 		return violations;
 	}
-	if (!hostDirectives.some((name) => /MetaTagsDirective$/.test(name))) {
-		violations.push(`página indexable: falta una <Page>MetaTagsDirective (${declared})`);
+	if (!hostDirectives.some((name) => /MetaTags$/.test(name))) {
+		violations.push(`página indexable: falta una <Page>MetaTags (${declared})`);
 	}
-	if (!hostDirectives.some((name) => /StructuredDataDirective$/.test(name))) {
-		violations.push(`página indexable: falta una <Page>StructuredDataDirective (${declared})`);
+	if (!hostDirectives.some((name) => /StructuredData$/.test(name))) {
+		violations.push(`página indexable: falta una <Page>StructuredData (${declared})`);
 	}
 	return violations;
 }

@@ -1,12 +1,12 @@
 import { Component, inject } from '@angular/core';
 
-import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
+import { HeadMetadata } from '../../directives/head-metadata.directive';
 import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 
 @Component({
 	selector: 'cuentoneta-dmca',
 	imports: [],
-	hostDirectives: [HeadMetadataDirective],
+	hostDirectives: [HeadMetadata],
 	template: `
 		<div class="mx-auto mt-8 w-full max-w-310 px-4 pb-16 md:mt-20">
 			<div class="bg-neutral-50 p-5 shadow-lg md:rounded-xl md:p-16">
@@ -115,7 +115,7 @@ import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 	`,
 })
 export default class DmcaPage {
-	private readonly metaTagsDirective = inject(HeadMetadataDirective);
+	private readonly metaTagsDirective = inject(HeadMetadata);
 
 	constructor() {
 		this.updateMetaTags();

@@ -7,15 +7,15 @@ import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 import { type LiteraryWork } from '@models/literary-work.model';
 import { AppRoutes } from '../../app.routes';
 import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
-import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
-import { LiteraryWorkMetaTagsDirective } from './literary-work-meta-tags.directive';
+import { HeadMetadata } from '../../directives/head-metadata.directive';
+import { LiteraryWorkMetaTags } from './literary-work-meta-tags.directive';
 import { LITERARY_WORK_HOST } from './literary-work-host';
 
-describe('LiteraryWorkMetaTagsDirective', () => {
+describe('LiteraryWorkMetaTags', () => {
 	const literaryWorkSignal = signal<LiteraryWork | undefined>(undefined);
 
 	function instantiate(): void {
-		TestBed.runInInjectionContext(() => new LiteraryWorkMetaTagsDirective());
+		TestBed.runInInjectionContext(() => new LiteraryWorkMetaTags());
 	}
 
 	beforeEach(() => {
@@ -23,8 +23,8 @@ describe('LiteraryWorkMetaTagsDirective', () => {
 		literaryWorkSignal.set(undefined);
 		TestBed.configureTestingModule({
 			providers: [
-				LiteraryWorkMetaTagsDirective,
-				HeadMetadataDirective,
+				LiteraryWorkMetaTags,
+				HeadMetadata,
 				{ provide: LITERARY_WORK_HOST, useValue: { literaryWork: literaryWorkSignal.asReadonly() } },
 			],
 		});
@@ -53,7 +53,7 @@ describe('LiteraryWorkMetaTagsDirective', () => {
 
 	it.each(onoffLiteraryWorksMock)('setea la URL canónica de la obra desde el slug de "$slug"', (literaryWork) => {
 		literaryWorkSignal.set(literaryWork);
-		const canonicalSpy = spyOn(TestBed.inject(HeadMetadataDirective), 'setCanonicalUrl');
+		const canonicalSpy = spyOn(TestBed.inject(HeadMetadata), 'setCanonicalUrl');
 
 		instantiate();
 		TestBed.tick();
@@ -63,7 +63,7 @@ describe('LiteraryWorkMetaTagsDirective', () => {
 
 	it('marca la página como indexable', () => {
 		literaryWorkSignal.set(onoffLiteraryWorksMock[0]);
-		const robotsSpy = spyOn(TestBed.inject(HeadMetadataDirective), 'setRobots');
+		const robotsSpy = spyOn(TestBed.inject(HeadMetadata), 'setRobots');
 
 		instantiate();
 		TestBed.tick();

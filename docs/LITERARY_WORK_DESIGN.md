@@ -386,7 +386,7 @@ El contrato del frontend (Slice 1) es entonces:
 
 **Alternativa evaluada y descartada:** volver el modelo _serialization-transparent_ demoviendo `toAnchor()` a función pura standalone y compartiendo el tipo de dominio como contrato de wire. Se descarta porque renuncia al modelo rico recién construido y porque las factories ya existen y están testeadas — el costo de la rehidratación es marginal frente a recuperar métodos, brands re-validados e inmutabilidad en el cliente.
 
-> **Estado de indexación.** `/literary-work/:slug` es superficie SSR **indexable**: `literary-work.page.ts` declara el combo `LiteraryWorkMetaTagsDirective` + `LiteraryWorkStructuredDataDirective` —la forma indexable que valida `seo-host-directives.spec.ts`— y emite canonical self-referencial, meta/OG por página y JSON-LD `Article` + `BreadcrumbList`. Las invariantes de la ruta viven en `e2e/seo/literary-work.spec.ts`, y el smoke de indexado (`scripts/seo-smoke.ts`) la ejercita en su baseline.
+> **Estado de indexación.** `/literary-work/:slug` es superficie SSR **indexable**: `literary-work.page.ts` declara el combo `LiteraryWorkMetaTags` + `LiteraryWorkStructuredData` —la forma indexable que valida `seo-host-directives.spec.ts`— y emite canonical self-referencial, meta/OG por página y JSON-LD `Article` + `BreadcrumbList`. Las invariantes de la ruta viven en `e2e/seo/literary-work.spec.ts`, y el smoke de indexado (`scripts/seo-smoke.ts`) la ejercita en su baseline.
 
 ---
 

@@ -7,15 +7,15 @@ import { authorMock } from '@mocks/author.mock';
 import { type AuthorProfile } from '@models/author.model';
 import { AppRoutes } from '../../app.routes';
 import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
-import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
-import { AuthorMetaTagsDirective } from './author-meta-tags.directive';
+import { HeadMetadata } from '../../directives/head-metadata.directive';
+import { AuthorMetaTags } from './author-meta-tags.directive';
 import { AUTHOR_HOST } from './author-host';
 
-describe('AuthorMetaTagsDirective', () => {
+describe('AuthorMetaTags', () => {
 	const authorSignal = signal<AuthorProfile | undefined>(undefined);
 
 	function instantiate(): void {
-		TestBed.runInInjectionContext(() => new AuthorMetaTagsDirective());
+		TestBed.runInInjectionContext(() => new AuthorMetaTags());
 	}
 
 	beforeEach(() => {
@@ -23,8 +23,8 @@ describe('AuthorMetaTagsDirective', () => {
 		authorSignal.set(undefined);
 		TestBed.configureTestingModule({
 			providers: [
-				AuthorMetaTagsDirective,
-				HeadMetadataDirective,
+				AuthorMetaTags,
+				HeadMetadata,
 				{ provide: AUTHOR_HOST, useValue: { author: authorSignal.asReadonly() } },
 			],
 		});
@@ -51,7 +51,7 @@ describe('AuthorMetaTagsDirective', () => {
 
 	it('should set the canonical URL from the author slug via buildCanonicalUrl', () => {
 		authorSignal.set(authorMock);
-		const canonicalSpy = spyOn(TestBed.inject(HeadMetadataDirective), 'setCanonicalUrl');
+		const canonicalSpy = spyOn(TestBed.inject(HeadMetadata), 'setCanonicalUrl');
 
 		instantiate();
 		TestBed.tick();

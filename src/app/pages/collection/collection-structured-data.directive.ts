@@ -1,14 +1,14 @@
 import { Directive, inject, untracked } from '@angular/core';
 
 import { environment } from '../../environments/environment';
-import { AbstractStructuredDataDirective } from '../../directives/abstract-structured-data.directive';
+import { AbstractStructuredData } from '../../directives/abstract-structured-data.directive';
 import { COLLECTION_HOST } from './collection-host';
 import { buildCollectionBreadcrumb, buildCollectionPageSchema } from './collection.schema';
 
 @Directive({
 	selector: '[cuentonetaCollectionStructuredData]',
 })
-export class CollectionStructuredDataDirective extends AbstractStructuredDataDirective {
+export class CollectionStructuredData extends AbstractStructuredData {
 	private readonly host = inject(COLLECTION_HOST);
 
 	private readonly pageSchemaId = 'collection';
