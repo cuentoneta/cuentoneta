@@ -9,8 +9,6 @@ overrides:
   ws: '>=8.20.1'
   brace-expansion@5: '>=5.0.6'
 
-packageExtensionsChecksum: sha256-RMKf5hj7tASMngDdNM09OdogqpHLVM6SCtg7LfiIBjw=
-
 importers:
 
   .:
@@ -51,9 +49,6 @@ importers:
       sanity:
         specifier: ^5.31.2
         version: 5.31.2(@emotion/is-prop-valid@1.4.0)(@noble/hashes@2.4.0)(@oclif/core@4.14.0)(@sanity/cli-core@1.3.4(@noble/hashes@2.4.0)(@types/node@24.19.2)(babel-plugin-react-compiler@1.0.0)(lightningcss@1.33.0)(yaml@2.9.1))(@types/node@24.19.2)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(babel-plugin-react-compiler@1.0.0)(immer@10.1.1)(jiti@2.7.0)(lightningcss@1.33.0)(prismjs@1.27.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(styled-components@6.5.3(css-to-react-native@3.2.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(typescript@6.0.3)(vitest@5.0.3(@types/node@24.19.2)(jsdom@29.1.1(@noble/hashes@2.4.0))(vite@7.3.6(@types/node@24.19.2)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1)))
-      sanity-plugin-bulk-actions-table:
-        specifier: ^1.0.4
-        version: 1.0.4(react@19.3.0)(sanity@5.31.2(@emotion/is-prop-valid@1.4.0)(@noble/hashes@2.4.0)(@oclif/core@4.14.0)(@sanity/cli-core@1.3.4(@noble/hashes@2.4.0)(@types/node@24.19.2)(babel-plugin-react-compiler@1.0.0)(lightningcss@1.33.0)(yaml@2.9.1))(@types/node@24.19.2)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(babel-plugin-react-compiler@1.0.0)(immer@10.1.1)(jiti@2.7.0)(lightningcss@1.33.0)(prismjs@1.27.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(styled-components@6.5.3(css-to-react-native@3.2.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(typescript@6.0.3)(vitest@5.0.3(@types/node@24.19.2)(jsdom@29.1.1(@noble/hashes@2.4.0))(vite@7.3.6(@types/node@24.19.2)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1))))
       sanity-plugin-markdown:
         specifier: ^9.0.15
         version: 9.0.15(4947d1db8d15f3d3355671d2740c9da8)
@@ -708,10 +703,6 @@ packages:
     engines: {node: '>=6.9.0'}
     peerDependencies:
       '@babel/core': ^7.0.0-0
-
-  '@babel/runtime@7.27.6':
-    resolution: {integrity: sha512-vbavdySgbTTrmFE+EsiqUTzlOr5bzlnJtUv9PynGCAKvfQqjIXbvFdumPM/GxMDfyuGMJaJAU6TO4zc1Jf1i8Q==}
-    engines: {node: '>=6.9.0'}
 
   '@babel/runtime@7.29.7':
     resolution: {integrity: sha512-Nq8OhGWiZIZGV6hLHoyAKLLcJihP/xFeBMGJoUrxTX2psI8dCifzLhZISFb+VWS3wFMRDmCGw5R+dOySCqPLhw==}
@@ -3530,10 +3521,6 @@ packages:
   lodash.debounce@4.0.8:
     resolution: {integrity: sha512-FT1yDzDYEoYWhnSGnpE/4Kj1fLZkDFyqRb7fNt6FdYOSxlUWAtp42Eh6Wb0rGIv/m9Bgo7x4GhQbm5Ys4SG5ow==}
 
-  lodash.get@4.4.2:
-    resolution: {integrity: sha512-z+Uw/vLuy6gQe8cfaFWD7p0wVv8fJl3mbzXh33RS+0oW2wvUqiRXiQ69gLWSLpgB5/6sU+r6BlQR0MBILadqTQ==}
-    deprecated: This package is deprecated. Use the optional chaining (?.) operator instead.
-
   lodash.isplainobject@4.0.6:
     resolution: {integrity: sha512-oSXzaWypCMHkPC3NvBEaPHf0KsA5mvPrOPgQWDsbg8n7orZ290M0BmC/jgRZ4vcJ6DTAhjrsSYgdsW/F+MFOBA==}
 
@@ -3738,11 +3725,6 @@ packages:
     engines: {node: ^18 || >=20}
     hasBin: true
 
-  nanoid@5.1.5:
-    resolution: {integrity: sha512-Ir/+ZpE9fDsNH0hQ3C68uyThDXzYcim2EqcZ8zn8Chtt1iylPT9xXJB0kPCnqzgcEGikO9RxSrh63MsmVCU7Fw==}
-    engines: {node: ^18 || >=20}
-    hasBin: true
-
   node-html-parser@7.1.0:
     resolution: {integrity: sha512-iJo8b2uYGT40Y8BTyy5ufL6IVbN8rbm/1QK2xffXU/1a/v3AAa0d1YAoqBNYqaS4R/HajkWIpIfdE6KcyFh1AQ==}
 
@@ -3929,10 +3911,6 @@ packages:
     resolution: {integrity: sha512-Kb2dcpMsIutFw2hYrN0EhsAXOUJTd6FVMIxvNAkZCMQLVt9NGZqQczvGpYDxNWCZeCWLHUPxQIBudWzt1h7VVA==}
     engines: {node: '>=14.0.0'}
 
-  pluralize@8.0.0:
-    resolution: {integrity: sha512-Nc3IT5yHzflTfbjgqWcCPpo7DaKy4FnpB0l/zCAW0Tc7jxAiuqSxHasntB3D7887LSrA93kDJ9IXovxJYxyLCA==}
-    engines: {node: '>=4'}
-
   polished@4.3.1:
     resolution: {integrity: sha512-OBatVyC/N7SCW/FaDHrSd+vn0o5cS855TOmYi4OkdWUMSJCET/xip//ch8xGUvtr3i44X9LVyWwQlRMTN3pwSA==}
     engines: {node: '>=10'}
@@ -4026,11 +4004,6 @@ packages:
     resolution: {integrity: sha512-JDk8dgif51OjFoDE70+OT9ICyYr+69HlmihNwp1+Nsfbna3t5sIiCa9ZJktDmQ4/1b/rn26hIAR2uYXDMr5r0Q==}
     peerDependencies:
       react: ^19.3.0
-
-  react-error-boundary@6.0.0:
-    resolution: {integrity: sha512-gdlJjD7NWr0IfkPlaREN2d9uUZUlksrfOx7SX62VRerwXbMY6ftGCIZua1VG1aXFNOimhISsTq+Owp725b9SiA==}
-    peerDependencies:
-      react: '>=16.13.1'
 
   react-fast-compare@3.2.2:
     resolution: {integrity: sha512-nsO+KSNgo1SbJqJEYRE9ERzo7YtYbou/OqjSQKxV7jcKox7+usiUVZOAC+XnDOABXggQTno0Y1CpVnuWEc1boQ==}
@@ -4217,13 +4190,6 @@ packages:
 
   safer-buffer@2.1.2:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
-
-  sanity-plugin-bulk-actions-table@1.0.4:
-    resolution: {integrity: sha512-2LVTOE8F6HfcoJJfU20hn2q2qjJlmzvX2/4N7T2gnnZogQNznB9CbAoSaTeNyheeiBF756q9Bij/ttj02D4NrA==}
-    engines: {node: '>=18'}
-    peerDependencies:
-      react: ^18 || ^19
-      sanity: ^3
 
   sanity-plugin-markdown@9.0.15:
     resolution: {integrity: sha512-utXk4VpGz5Mr/sCRy0Fw0zP/dDTH0kA4/iK9OpW/Yxy59zPn4iZLPKCmMXBBCNzicTAqaIAPCxN9/nz0v9cq1Q==}
@@ -5742,8 +5708,6 @@ snapshots:
       make-dir: 2.1.0
       pirates: 4.0.7
       source-map-support: 0.5.21
-
-  '@babel/runtime@7.27.6': {}
 
   '@babel/runtime@7.29.7': {}
 
@@ -8835,8 +8799,6 @@ snapshots:
 
   lodash.debounce@4.0.8: {}
 
-  lodash.get@4.4.2: {}
-
   lodash.isplainobject@4.0.6: {}
 
   lodash@4.18.1: {}
@@ -8998,8 +8960,6 @@ snapshots:
   nanoid@3.3.19: {}
 
   nanoid@5.1.16: {}
-
-  nanoid@5.1.5: {}
 
   node-html-parser@7.1.0:
     dependencies:
@@ -9174,8 +9134,6 @@ snapshots:
 
   pluralize-esm@9.0.5: {}
 
-  pluralize@8.0.0: {}
-
   polished@4.3.1:
     dependencies:
       '@babel/runtime': 7.29.7
@@ -9261,11 +9219,6 @@ snapshots:
     dependencies:
       react: 19.3.0
       scheduler: 0.28.0
-
-  react-error-boundary@6.0.0(react@19.3.0):
-    dependencies:
-      '@babel/runtime': 7.27.6
-      react: 19.3.0
 
   react-fast-compare@3.2.2: {}
 
@@ -9482,18 +9435,6 @@ snapshots:
   safe-buffer@5.2.1: {}
 
   safer-buffer@2.1.2: {}
-
-  sanity-plugin-bulk-actions-table@1.0.4(react@19.3.0)(sanity@5.31.2(@emotion/is-prop-valid@1.4.0)(@noble/hashes@2.4.0)(@oclif/core@4.14.0)(@sanity/cli-core@1.3.4(@noble/hashes@2.4.0)(@types/node@24.19.2)(babel-plugin-react-compiler@1.0.0)(lightningcss@1.33.0)(yaml@2.9.1))(@types/node@24.19.2)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(babel-plugin-react-compiler@1.0.0)(immer@10.1.1)(jiti@2.7.0)(lightningcss@1.33.0)(prismjs@1.27.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(styled-components@6.5.3(css-to-react-native@3.2.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(typescript@6.0.3)(vitest@5.0.3(@types/node@24.19.2)(jsdom@29.1.1(@noble/hashes@2.4.0))(vite@7.3.6(@types/node@24.19.2)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1)))):
-    dependencies:
-      '@sanity/icons': 3.8.0(react@19.3.0)
-      classnames: 2.5.1
-      lodash.debounce: 4.0.8
-      lodash.get: 4.4.2
-      nanoid: 5.1.5
-      pluralize: 8.0.0
-      react: 19.3.0
-      react-error-boundary: 6.0.0(react@19.3.0)
-      sanity: 5.31.2(@emotion/is-prop-valid@1.4.0)(@noble/hashes@2.4.0)(@oclif/core@4.14.0)(@sanity/cli-core@1.3.4(@noble/hashes@2.4.0)(@types/node@24.19.2)(babel-plugin-react-compiler@1.0.0)(lightningcss@1.33.0)(yaml@2.9.1))(@types/node@24.19.2)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(babel-plugin-react-compiler@1.0.0)(immer@10.1.1)(jiti@2.7.0)(lightningcss@1.33.0)(prismjs@1.27.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(styled-components@6.5.3(css-to-react-native@3.2.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(typescript@6.0.3)(vitest@5.0.3(@types/node@24.19.2)(jsdom@29.1.1(@noble/hashes@2.4.0))(vite@7.3.6(@types/node@24.19.2)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1)))
 
   sanity-plugin-markdown@9.0.15(4947d1db8d15f3d3355671d2740c9da8):
     dependencies:
