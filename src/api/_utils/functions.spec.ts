@@ -52,6 +52,51 @@ describe('mapAuthorTeaser (ACL)', () => {
 	});
 });
 
+describe.each([
+	['mapAuthor', (raw: typeof rawOnoffAuthor) => mapAuthor(raw), rawOnoffAuthor],
+	['mapAuthorTeaser', (raw: typeof rawOnoffAuthorTeaser) => mapAuthorTeaser(raw), rawOnoffAuthorTeaser],
+] as const)('%s: birth and death years (ACL)', (_name, map, canon) => {
+	type Raw = typeof canon;
+	const years = (raw: Raw) => {
+		const { bornOnYear, diedOnYear } = map(raw as never);
+		return { bornOnYear, diedOnYear };
+	};
+
+	it('keeps the corpus years coherent with its full dates', () => {
+		expect(years(canon)).toEqual({ bornOnYear: canon.bornOnYear, diedOnYear: canon.diedOnYear });
+	});
+
+	it('derives the year from the full date when no manual year was loaded', () => {
+		expect(years({ ...canon, bornOnYear: null, diedOnYear: null })).toEqual({ bornOnYear: 1948, diedOnYear: 1994 });
+	});
+
+	it('serves the manual year when there is no date', () => {
+		expect(years({ ...canon, bornOn: null, bornOnYear: 1500, diedOn: null, diedOnYear: 1580 })).toEqual({
+			bornOnYear: 1500,
+			diedOnYear: 1580,
+		});
+	});
+
+	it('lets the full date win over a divergent persisted year', () => {
+		expect(years({ ...canon, bornOnYear: 1900, diedOnYear: 1900 })).toEqual({ bornOnYear: 1948, diedOnYear: 1994 });
+	});
+
+	it('serves no year when there is neither a date nor a manual year', () => {
+		expect(years({ ...canon, bornOn: null, bornOnYear: null, diedOn: null, diedOnYear: null })).toEqual({
+			bornOnYear: undefined,
+			diedOnYear: undefined,
+		});
+	});
+
+	it('keeps the historical numbering for a BCE date', () => {
+		expect(years({ ...canon, bornOn: '-0043-03-20', bornOnYear: null }).bornOnYear).toBe(-43);
+	});
+
+	it('falls back to the manual year when the date is malformed', () => {
+		expect(years({ ...canon, bornOn: '1948-1-1', bornOnYear: 1950 }).bornOnYear).toBe(1950);
+	});
+});
+
 describe('mapResources (ACL)', () => {
 	it('maps a raw Sanity resource to the domain Resource model', () => {
 		const [rawResource] = rawOnoffAuthor.resources;
