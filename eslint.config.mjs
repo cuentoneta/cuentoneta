@@ -15,6 +15,7 @@ import zIndexScale from './tools/eslint/z-index-scale.js';
 import noFullZodInBrowser from './tools/eslint/no-full-zod-in-browser.js';
 import noTsExtensionImports from './tools/eslint/no-ts-extension-imports.js';
 import componentLocationAndName from './tools/eslint/component-location-and-name.js';
+import classNameWithoutTypeSuffix from './tools/eslint/class-name-without-type-suffix.js';
 import opsCatalogSynced from './tools/eslint/ops-catalog-synced.js';
 
 // Las reglas propias comparten un único objeto de plugin: ESLint rechaza redefinir un namespace
@@ -24,6 +25,7 @@ const cuentonetaPlugin = {
 		'no-full-zod-in-browser': noFullZodInBrowser,
 		'no-ts-extension-imports': noTsExtensionImports,
 		'component-location-and-name': componentLocationAndName,
+		'class-name-without-type-suffix': classNameWithoutTypeSuffix,
 		'ops-catalog-synced': opsCatalogSynced,
 	},
 };
@@ -440,6 +442,18 @@ export default [
 		},
 		rules: {
 			'cuentoneta/component-location-and-name': 'error',
+		},
+	},
+	{
+		// Mismo scope que `component-location-and-name`: la regla mira cualquier `@Directive` o `@Pipe` de `src/`, y
+		// la exención de specs y stories vive dentro de ella.
+		name: 'class-name-without-type-suffix',
+		files: ['src/**/*.ts'],
+		plugins: {
+			cuentoneta: cuentonetaPlugin,
+		},
+		rules: {
+			'cuentoneta/class-name-without-type-suffix': 'error',
 		},
 	},
 	{
