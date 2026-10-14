@@ -159,6 +159,7 @@ El **archivo** sigue siendo `<dominio>.mock.ts` y la **factory** `provide<X>ApiM
 - `Sanity*` para repositories sobre Sanity/GROQ; `Http*` para API services del front.
 - Doble de test nombrado por comportamiento: `Stub*` (canned), `Fake*` (implementación real con un atajo — `InMemory*` para almacenamiento, `Controllable*` para entorno), `Spy*` (registra) — nunca `Mock*`.
 - Servicio de implementación única → conserva el nombre de la interfaz.
+- Los prefijos de esta convención no son sufijos de tipo: la regla de directivas y pipes sin sufijo (`cuentoneta/class-name-without-type-suffix`) no los alcanza.
 
 ---
 

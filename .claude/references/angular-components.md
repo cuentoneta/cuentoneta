@@ -66,7 +66,7 @@ Los hermanos de un componente —`.html`, `.css`, `.spec.ts`, `.stories.ts`, `.d
 
 **Los componentes host declarados dentro de un `*.spec.ts` o un `*.stories.ts` quedan fuera de esta convención**, con nombre y ubicación libres (p. ej. `HostComponent`, `ClampHostComponent`, `ButtonGroupStoryHostComponent`). Son andamiaje local de ese archivo —no se importan desde ningún otro lado, no se rutean ni se catalogan— y no componentes de la aplicación.
 
-**Alcance:** la convención rige **solo** para `@Component`. Directivas, pipes y servicios conservan su convención propia (`x.directive.ts` + `XDirective`, etc.); la regla que la verifica no los mira.
+**Alcance:** esta sección rige **solo** para `@Component`. Las directivas y los pipes siguen su propia convención de nombre, en [Nombre de directivas y pipes](#nombre-de-directivas-y-pipes); la regla de arriba no los mira.
 
 **Rationale.** La guía de estilo de Angular deja de recomendar el sufijo `Component` a partir de la v20. `Page` se conserva, pero como sufijo de **rol** y no de tipo: una página tiene obligaciones que un componente no tiene —la cargan las rutas y declara las directivas de SEO (ver [`angular-state.md` §8](./angular-state.md#8-directivas-de-seo-de-página-declarar-el-combo-según-la-indexabilidad))— y los guardrails de layout y de SEO la descubren por su fuente. Por eso el sufijo queda **reservado** a los archivos `.page.ts`: una clase que no vive en uno no puede terminar en `Page`, y un `.page.ts` fuera de `src/app/pages/` tampoco es válido.
 
@@ -86,6 +86,33 @@ export class AuthorTeaserCard {
 **Enforcement.** La regla de ESLint `cuentoneta/component-location-and-name` (`tools/eslint/component-location-and-name.js`), activa en el gate `lint`, verifica: sin sufijo `Component`; ubicación en `components/`, `pages/`, la raíz o `src/testing/`; nombre de la clase derivado del de su archivo; `.page.ts` solo dentro de `pages/`; el sufijo `Page` reservado a esos archivos; y `templateUrl`/`styleUrl` con el mismo stem que la clase. Los `*.spec.ts` y `*.stories.ts` quedan exentos de los seis chequeos. Que una página ruteada viva efectivamente en un `.page.ts` no lo decide esta regla sino `page-sources.util.ts`, que resuelve el fuente de cada ruta en el gate `test`; su spec afirma además la vuelta: todo `.page.ts` bajo `src/app/pages/` lo carga alguna ruta.
 
 **Puntos ciegos declarados:** el nombre de la carpeta que aloja el componente, y la cantidad de componentes que agrupa una misma carpeta. Ninguno de los dos lo verifica ningún gate.
+
+---
+
+## Nombre de directivas y pipes
+
+Una clase `@Directive` o `@Pipe` se nombra **sin** el sufijo de su decorador: `Tooltip`, no `TooltipDirective`; `Repeat`, no `RepeatPipe`. El **archivo** conserva su marcador de rol (`tooltip.directive.ts`, `repeat.pipe.ts`): agrupa por rol en el árbol y en los globs, igual que `.page.ts`, `.provider.ts` o `.model.ts`, y no forma parte de esta convención.
+
+| Decorador                      | Archivo                           | Clase                                    |
+| ------------------------------ | --------------------------------- | ---------------------------------------- |
+| `@Directive`                   | `tooltip.directive.ts`            | `export class Tooltip`                   |
+| `@Directive` abstracta         | `abstract-meta-tags.directive.ts` | `export abstract class AbstractMetaTags` |
+| Directiva de SEO de una página | `home-meta-tags.directive.ts`     | `export class HomeMetaTags`              |
+| `@Pipe`                        | `repeat.pipe.ts`                  | `export class Repeat`                    |
+
+**Rationale.** Es el mismo cambio de la guía de estilo que para los componentes: el sufijo repite el decorador que la clase ya lleva, y una directiva o un pipe se usa por su selector o su `name`, nunca por el nombre de la clase.
+
+**Qué no alcanza.**
+
+- **Los servicios** (`@Injectable`/`@Service`). `Service` es en este repo un **rol de arquitectura** (controller → service → repository): nombra el contrato (`LayoutService`) y lo distingue de su implementación. Sin el sufijo quedarían nombres como `Layout` o `Analytics`, que ocultan que son servicios. Los services del backend, además, son funciones.
+- **Los prefijos de Qualified Implementation** (`Sanity*`, `Http*`, `Stub*`, `Fake*`, `Spy*`) no son sufijos de tipo: la regla solo mira el **final** del nombre contra el sufijo de su propio decorador. Tampoco lo son los sufijos de rol `Page`, `Skeleton` y `Api`.
+- **Los nombres de archivo**, como se dijo arriba.
+
+**Acoplamiento por nombre.** Si algo identifica estas clases por su nombre, el renombre lo rompe sin que el compilador avise. Hoy es el caso del guardrail de SEO (`seo-host-directives.util.ts`), que reconoce las directivas de una página por el final de su nombre (`MetaTags`, `StructuredData`, `HeadMetadata`).
+
+**Enforcement.** La regla de ESLint `cuentoneta/class-name-without-type-suffix` (`tools/eslint/class-name-without-type-suffix.js`), activa en el gate `lint` sobre `src/**`, falla ante una clase `@Directive` o `@Pipe` cuyo nombre termina en el sufijo de su propio decorador. Los `*.spec.ts` y `*.stories.ts` quedan exentos. No tiene autofix, porque renombrar una clase obliga a tocar sus referencias en otros archivos. Ampliarla a otro decorador es editar su mapa, y se ve en el diff.
+
+**Punto ciego declarado:** los servicios y los nombres de archivo, por lo dicho. El schematic de Angular puede reintroducir el sufijo al generar una directiva o un pipe; el gate `lint` lo atrapa.
 
 ---
 
@@ -463,6 +490,7 @@ La utilidad `z` de Tailwind resuelve cualquier número sin consultar el tema, as
 ## Checklist al crear/modificar un componente
 
 - [ ] Ubicación y nombre según [Ubicación y nombre de componentes](#ubicación-y-nombre-de-componentes): sin sufijo `Component`, `x.ts`/`x.page.ts` en la carpeta que corresponde a su rol.
+- [ ] Si es una directiva o un pipe, sin el sufijo `Directive`/`Pipe` en la clase — ver [Nombre de directivas y pipes](#nombre-de-directivas-y-pipes).
 - [ ] Selector `cuentoneta-…`; sin declarar `changeDetection` (OnPush es el default de v22).
 - [ ] Inputs/outputs con `input()`/`input.required()`/`output()`/`model()`; queries con `viewChild()`/`contentChild()`.
 - [ ] Campos `private` (plantilla e internos); `protected` solo para lo que usa una subclase; `public` solo para API (inputs/outputs/imperativa/interfaces).
