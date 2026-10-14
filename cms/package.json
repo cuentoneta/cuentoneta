@@ -24,7 +24,7 @@
 	"dependencies": {
 		"@sanity/export": "^6.2.1",
 		"@sanity/icons": "^5.2.3",
-		"@sanity/import": "^6.0.4",
+		"@sanity/import": "^7.0.4",
 		"@sanity/ui": "^3.5.5",
 		"@sanity/vision": "^5.31.2",
 		"date-fns": "^4.4.0",
