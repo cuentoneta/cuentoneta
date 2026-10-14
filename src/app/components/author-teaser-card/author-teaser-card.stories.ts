@@ -60,7 +60,7 @@ export const Default: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Teaser completo del autor: avatar, fila de tags, nombre con bandera de nacionalidad y cantidad de obras. Toda la tarjeta es clickeable y navega al perfil del autor.</p><p><strong>Usos:</strong> la sección ${docsRef(highlightedAuthorsDocs)} de la página de inicio, y el listado de autores.</p>`,
+				story: `<p>Teaser completo del autor: avatar, fila de tags, nombre con bandera de nacionalidad y cantidad de obras. Toda la tarjeta es clickeable y navega al perfil del autor.</p><p><strong>Usos:</strong> la sección ${docsRef(highlightedAuthorsDocs)} de la página de inicio.</p>`,
 			},
 		},
 	},
@@ -74,7 +74,7 @@ export const ManyTags: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Autor con varios tags en un contenedor acotado de 320px: los que no entran se recortan por ancho y colapsan tras un contador "+N".</p><p><strong>Usos:</strong> Author List, en columnas angostas o viewports reducidos donde la fila de tags no entra completa.</p>`,
+				story: `<p>Autor con varios tags en un contenedor acotado de 320px: los que no entran se recortan por ancho y colapsan tras un contador "+N".</p><p><strong>Usos:</strong> la sección ${docsRef(highlightedAuthorsDocs)} de la página de inicio, en columnas angostas o viewports reducidos donde la fila de tags no entra completa.</p>`,
 			},
 		},
 	},
@@ -87,7 +87,7 @@ export const WithoutImage: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Autor sin imagen: el avatar cae al placeholder circular del Design System que resuelve ${docsRef(imageProfileDocs)}.</p><p><strong>Usos:</strong> Author List, para autores cuyo perfil todavía no tiene retrato cargado en el CMS.</p>`,
+				story: `<p>Autor sin imagen: el avatar cae al placeholder circular del Design System que resuelve ${docsRef(imageProfileDocs)}.</p><p><strong>Usos:</strong> la sección ${docsRef(highlightedAuthorsDocs)} de la página de inicio, para autores cuyo perfil todavía no tiene retrato cargado en el CMS.</p>`,
 			},
 		},
 	},

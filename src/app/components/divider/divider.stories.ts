@@ -76,7 +76,7 @@ export const Horizontal: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Variante <strong>horizontal</strong> (default): separa elementos organizados verticalmente. Mantiene una altura fija de 1px y ocupa el ancho disponible del contenedor.</p><p><strong>Usos:</strong> Story, Story List, Author Profile y Author List.</p>`,
+				story: `<p>Variante <strong>horizontal</strong> (default): separa elementos organizados verticalmente. Mantiene una altura fija de 1px y ocupa el ancho disponible del contenedor.</p><p><strong>Usos:</strong> las páginas de lectura, de colección y de autor.</p>`,
 			},
 		},
 	},
@@ -98,7 +98,7 @@ export const Vertical: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Variante <strong>vertical</strong>: separa elementos organizados horizontalmente. Mantiene un ancho fijo de 1px y ocupa la altura disponible del contenedor, por lo que espera un contenedor flex o grid con alto resuelto.</p><p><strong>Usos:</strong> Story List, Author Profile y Author List.</p>`,
+				story: `<p>Variante <strong>vertical</strong>: separa elementos organizados horizontalmente. Mantiene un ancho fijo de 1px y ocupa la altura disponible del contenedor, por lo que espera un contenedor flex o grid con alto resuelto.</p><p><strong>Usos:</strong> las páginas de colección, de autor y de colecciones.</p>`,
 			},
 		},
 	},
