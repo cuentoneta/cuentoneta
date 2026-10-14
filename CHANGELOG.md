@@ -13,6 +13,46 @@ La lista de características futuras a implementar puede hallarse en la sección
 
 Los hitos futuros de desarrollo, en los cuales se detallan las funcionalidades a desarrollar y los cambios a implementar, pueden encontrarse en las secciones [milestones](https://github.com/cuentoneta/cuentoneta/milestones) y [projects](https://github.com/cuentoneta/cuentoneta/projects) del repositorio de Github del proyecto.
 
+## Versión 2.11.3 (2026-10-13)
+
+La versión 2.11.3 es un patch de mantenimiento: actualiza el framework, aprovecha lo que trae Angular 22.2 para simplificar la carga de datos y endurecer las plantillas, y hace más rápido y confiable el flujo local de tests y de caché.
+
+El primero es el **framework**. Angular pasa a 22.2 y Nx a 23.3, y la suite de tests adopta Vitest 5 con la versión de Analog que lo soporta (#2538). Satori sale de la línea 0.32, en la que estaba congelado, y pasa a 0.56, que ya funciona dentro del bundle ESM del servidor (#2458).
+
+El segundo es lo que **Angular 22.2 permite simplificar**. El SSR ya espera los recursos que cargan por `HttpClient`, así que las páginas usan `rxResource` directo y se retiran los wrappers propios de bloqueo y su regla de lint; los Router resources se evaluaron y se descartaron (#2551). El build rechaza un evento de plantilla que ninguna directiva emite (#2552), lo que lee la plantilla pasa a ser `private` (#2554), y una tarea nueva resume el bundle inicial a partir de las estadísticas por plataforma (#2553).
+
+El tercero es el **tooling local**. La suite de tests topea sus workers y compila archivo por archivo: corre en 14 s y un spec suelto arranca en 2 s, contra 7 s (#2508, #2509). La caché de Nx deja de dar falso verde cuando cambia el environment generado o un archivo del Studio, y los scripts locales vuelven a reusarla, incluido el lint (#2339, #2540).
+
+### Cambios completos
+
+Ver el changelog completo en [2.11.3](https://github.com/cuentoneta/cuentoneta/releases/tag/2.11.3)
+
+### Cambios
+
+#### Framework
+
+- [#2538] - Actualiza Angular a 22.2, Nx a 23.3, Vitest a 5 y Analog a 2.8; el target `e2e` pasa al plugin inferido de Nx.
+- [#2458] - Actualiza satori a 0.56, que embebe el WASM de HarfBuzz y funciona en el bundle ESM del servidor.
+
+#### Angular 22.2
+
+- [#2551] - Carga los datos de las páginas con `rxResource` y retira los wrappers de bloqueo del SSR y su regla de lint.
+- [#2552] - Activa `strictUnclaimedEventNames`: el build rechaza un evento que ninguna directiva del elemento emite.
+- [#2554] - Pasa a `private` los miembros que lee la plantilla, y una regla de lint lo mantiene.
+- [#2553] - Agrega la tarea `bundle:stats`, que resume el bundle inicial del navegador.
+
+#### Tooling
+
+- [#2508] - Topea los workers de Vitest y documenta la salida para máquinas con poca memoria.
+- [#2509] - Compila los tests archivo por archivo con `fastCompile` y documenta el flujo de iteración.
+- [#2339] - Suma al hash de Nx el environment generado, que estaba gitignoreado.
+- [#2540] - Cachea el lint, declara los inputs entre la app y el Studio, y reusa la caché en los scripts locales.
+- [#2571] - Fija qué CLI de Sanity ejecutan los targets del Studio.
+
+#### Dependencias
+
+- [#2580] - Actualiza el grupo minor-and-patch del Studio (5 paquetes).
+
 ## Versión 2.11.2 (2026-10-13)
 
 La versión 2.11.2 es un patch de dos frentes: las tareas periódicas de la plataforma dejan de depender del proveedor de hosting, y se resuelven cuatro problemas de indexado que el barrido del sitemap y Search Console dejaron a la vista después de 2.11.0.
