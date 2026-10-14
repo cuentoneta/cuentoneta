@@ -12,6 +12,8 @@ ruleTester.run('class-name-without-type-suffix', rule, {
 		{ code: '@Directive({}) export class Tooltip {}', filename: 'src/app/directives/tooltip.directive.ts' },
 		{ code: '@Directive() export abstract class AbstractMetaTags {}', filename: 'src/app/directives/x.directive.ts' },
 		{ code: "@Pipe({ name: 'repeat' }) export class Repeat {}", filename: 'src/app/pipes/repeat.pipe.ts' },
+		// Una clase anónima no tiene un nombre que comparar.
+		{ code: '@Directive() export default class {}', filename: 'src/app/directives/x.directive.ts' },
 		// Una clase que se llama exactamente como el sufijo no tiene un nombre del que derivar el otro.
 		{ code: '@Directive({}) export class Directive {}', filename: 'src/app/directives/x.directive.ts' },
 		// Los componentes los cubre `component-location-and-name`: acá no se duplica el reporte.
@@ -65,6 +67,12 @@ ruleTester.run('class-name-without-type-suffix', rule, {
 					data: { name: 'TagsOverflowDirective', suffix: 'Directive', expected: 'TagsOverflow' },
 				},
 			],
+		},
+		// El decorador sin llamada también cuenta.
+		{
+			code: '@Directive export class FooDirective {}',
+			filename: 'src/app/directives/foo.directive.ts',
+			errors: [{ messageId: 'typeSuffix', data: { name: 'FooDirective', suffix: 'Directive', expected: 'Foo' } }],
 		},
 		// Con varios decoradores, alcanza con que uno esté en el mapa.
 		{

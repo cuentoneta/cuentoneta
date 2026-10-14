@@ -4,19 +4,12 @@
  * por el nombre de la clase. Los componentes los cubre `component-location-and-name`; la convención y su
  * porqué: `angular-components.md#nombre-de-directivas-y-pipes`.
  *
- * El alcance es el mapa de abajo y no una opción: sumar un decorador (los servicios, por ejemplo, donde
- * `Service` es un rol de arquitectura) es una decisión que tiene que verse en el diff. Sin autofix,
- * porque renombrar una clase obliga a tocar sus referencias en otros archivos.
+ * El alcance es la lista de decoradores de `repeatedSuffix` y no una opción: sumar uno (los servicios, por
+ * ejemplo, donde `Service` es un rol de arquitectura) es una decisión que tiene que verse en el diff. Sin
+ * autofix, porque renombrar una clase obliga a tocar sus referencias en otros archivos.
  *
  * Los specs y las stories quedan afuera enteros: sus clases son andamiaje de un solo archivo.
  */
-
-import { relative } from 'node:path';
-
-/** El decorador de la clase y el sufijo que repite. */
-const TYPE_SUFFIXES = Object.freeze({ Directive: 'Directive', Pipe: 'Pipe' });
-
-const TEST_FILE = /\.(spec|stories)\.ts$/;
 
 /** @typedef {import('@typescript-eslint/utils').TSESTree.ClassDeclaration} ClassDeclaration */
 /** @typedef {import('@typescript-eslint/utils').TSESTree.Decorator} Decorator */
@@ -33,18 +26,14 @@ function decoratorName(decorator) {
 }
 
 /**
- * El sufijo que repite el decorador de la clase, o `undefined` si ninguno de sus decoradores está en el mapa.
+ * El sufijo que repite el decorador de la clase, o `undefined` si ninguno de sus decoradores está en la
+ * lista. El sufijo es el propio nombre del decorador: `@Directive` repite `Directive`.
  *
  * @param {ClassDeclaration} node
  */
 function repeatedSuffix(node) {
-	for (const decorator of node.decorators ?? []) {
-		const name = decoratorName(decorator);
-		if (name && Object.hasOwn(TYPE_SUFFIXES, name)) {
-			return TYPE_SUFFIXES[/** @type {keyof typeof TYPE_SUFFIXES} */ (name)];
-		}
-	}
-	return undefined;
+	const typeDecorators = ['Directive', 'Pipe'];
+	return (node.decorators ?? []).map(decoratorName).find((name) => name && typeDecorators.includes(name));
 }
 
 /** @type {import('eslint').Rule.RuleModule} */
@@ -61,7 +50,7 @@ export default {
 		},
 	},
 	create(context) {
-		if (TEST_FILE.test(relative(context.cwd, context.filename))) {
+		if (/\.(spec|stories)\.ts$/.test(context.filename)) {
 			return {};
 		}
 		return {
