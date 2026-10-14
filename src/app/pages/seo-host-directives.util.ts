@@ -30,8 +30,8 @@ export function extractRobotsLiteral(source: string): string | undefined {
 /**
  * Lista los incumplimientos de la convención de SEO de una página (vacío = conforme). La indexabilidad se
  * deriva del propio código: una página que llama `setRobots('noindex...')` es un opt-out y solo debe declarar
- * `[HeadMetadata]`; cualquier otra se considera indexable y debe declarar una `<Page>MetaTags`
- * y una `<Page>StructuredData`.
+ * `[HeadMetadata]`; cualquier otra se considera indexable y debe declarar una `<Page>MetaTags` y una
+ * `<Page>StructuredData`.
  */
 export function collectSeoViolations(source: string): string[] {
 	const hostDirectives = extractHostDirectiveNames(source);

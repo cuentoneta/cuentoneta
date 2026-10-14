@@ -108,11 +108,11 @@ Una clase `@Directive` o `@Pipe` se nombra **sin** el sufijo de su decorador: `T
 - **Los prefijos de Qualified Implementation** (`Sanity*`, `Http*`, `Stub*`, `Fake*`, `Spy*`) no son sufijos de tipo: la regla solo mira el **final** del nombre contra el sufijo de su propio decorador. Tampoco lo son los sufijos de rol `Page`, `Skeleton` y `Api`.
 - **Los nombres de archivo**, como se dijo arriba.
 
-**Acoplamiento por nombre.** Si algo identifica estas clases por su nombre, el renombre lo rompe sin que el compilador avise. Hoy es el caso del guardrail de SEO (`seo-host-directives.util.ts`), que reconoce las directivas de una página por el final de su nombre (`MetaTags`, `StructuredData`, `HeadMetadata`).
+**Acoplamiento por nombre.** Si algo identifica estas clases por su nombre, el renombre lo rompe sin que el compilador avise. Hoy es el caso del guardrail de SEO (`seo-host-directives.util.ts`), que reconoce las directivas de una página por su nombre: el final (`MetaTags`, `StructuredData`) o el nombre completo (`HeadMetadata`).
 
-**Enforcement.** La regla de ESLint `cuentoneta/class-name-without-type-suffix` (`tools/eslint/class-name-without-type-suffix.js`), activa en el gate `lint` sobre `src/**`, falla ante una clase `@Directive` o `@Pipe` cuyo nombre termina en el sufijo de su propio decorador. Los `*.spec.ts` y `*.stories.ts` quedan exentos. No tiene autofix, porque renombrar una clase obliga a tocar sus referencias en otros archivos. Ampliarla a otro decorador es editar su mapa, y se ve en el diff.
+**Enforcement.** La regla de ESLint `cuentoneta/class-name-without-type-suffix` (`tools/eslint/class-name-without-type-suffix.js`), activa en el gate `lint` sobre `src/**`, falla ante una clase `@Directive` o `@Pipe` cuyo nombre termina en el sufijo de su propio decorador. Los `*.spec.ts` y `*.stories.ts` quedan exentos. No tiene autofix, porque renombrar una clase obliga a tocar sus referencias en otros archivos. Ampliarla a otro decorador es editar su lista, y se ve en el diff.
 
-**Punto ciego declarado:** los servicios y los nombres de archivo, por lo dicho. El schematic de Angular puede reintroducir el sufijo al generar una directiva o un pipe; el gate `lint` lo atrapa.
+**Puntos ciegos declarados:** los servicios y los nombres de archivo, por lo dicho; y lo que la regla no ve por construcción: un decorador referenciado por un miembro (`@ng.Directive()`), importado con alias (`import { Directive as D }`) o aplicado a una class expression. El schematic de Angular puede reintroducir el sufijo al generar una directiva o un pipe; el gate `lint` lo atrapa.
 
 ---
 
