@@ -119,9 +119,9 @@ export type Author = {
 	};
 	nationality: NationalityReference;
 	bornOn?: string;
-	bornOnYear?: ComputedNumber;
+	bornOnYear?: number;
 	diedOn?: string;
-	diedOnYear?: ComputedNumber;
+	diedOnYear?: number;
 	biography: Markdown;
 	resources?: Array<{
 		title: string;
@@ -138,8 +138,6 @@ export type Author = {
 };
 
 export type Markdown = string;
-
-export type ComputedNumber = number;
 
 export type Nationality = {
 	_id: string;
@@ -454,12 +452,6 @@ export type Contributor = {
 	notes?: string;
 };
 
-export type ComputedText = string;
-
-export type ComputedString = string;
-
-export type ComputedBoolean = boolean;
-
 export type SanityImagePaletteSwatch = {
 	_type: 'sanity.imagePaletteSwatch';
 	background?: string;
@@ -571,7 +563,6 @@ export type AllSanitySchemaTypes =
 	| TagReference
 	| Author
 	| Markdown
-	| ComputedNumber
 	| Nationality
 	| SanityImageCrop
 	| SanityImageHotspot
@@ -585,9 +576,6 @@ export type AllSanitySchemaTypes =
 	| Resource
 	| ResourceType
 	| Contributor
-	| ComputedText
-	| ComputedString
-	| ComputedBoolean
 	| SanityImagePaletteSwatch
 	| SanityImagePalette
 	| SanityImageDimensions
@@ -630,9 +618,9 @@ export type AuthorBySlugQueryResult = {
 	};
 	biography: Markdown;
 	bornOn: string | null;
-	bornOnYear: ComputedNumber | null;
+	bornOnYear: number | null;
 	diedOn: string | null;
-	diedOnYear: ComputedNumber | null;
+	diedOnYear: number | null;
 	resources:
 		| Array<{
 				title: string;
@@ -683,9 +671,9 @@ export type AuthorsQueryResult = Array<{
 		};
 	};
 	bornOn: string | null;
-	bornOnYear: ComputedNumber | null;
+	bornOnYear: number | null;
 	diedOn: string | null;
-	diedOnYear: ComputedNumber | null;
+	diedOnYear: number | null;
 	resources: Array<never>;
 }>;
 
@@ -830,9 +818,9 @@ export type CollectionBySlugQueryResult = {
 						};
 					};
 					bornOn: string | null;
-					bornOnYear: ComputedNumber | null;
+					bornOnYear: number | null;
 					diedOn: string | null;
-					diedOnYear: ComputedNumber | null;
+					diedOnYear: number | null;
 				}>;
 				excerpt: Array<{
 					_key: string;
@@ -1002,9 +990,9 @@ export type RotatingContentQueryResult = {
 						};
 					};
 					bornOn: string | null;
-					bornOnYear: ComputedNumber | null;
+					bornOnYear: number | null;
 					diedOn: string | null;
-					diedOnYear: ComputedNumber | null;
+					diedOnYear: number | null;
 				}>;
 		  }>
 		| Array<never>;
@@ -1243,9 +1231,9 @@ export type LandingPageContentQueryResult = {
 						};
 					};
 					bornOn: string | null;
-					bornOnYear: ComputedNumber | null;
+					bornOnYear: number | null;
 					diedOn: string | null;
-					diedOnYear: ComputedNumber | null;
+					diedOnYear: number | null;
 				}>;
 		  }>
 		| Array<never>;
@@ -1278,9 +1266,9 @@ export type LandingPageContentQueryResult = {
 						};
 					};
 					bornOn: string | null;
-					bornOnYear: ComputedNumber | null;
+					bornOnYear: number | null;
 					diedOn: string | null;
-					diedOnYear: ComputedNumber | null;
+					diedOnYear: number | null;
 					resources: Array<never>;
 				};
 				tags:
@@ -1419,9 +1407,9 @@ export type LiteraryWorkBySlugQueryResult = {
 		};
 		biography: Markdown;
 		bornOn: string | null;
-		bornOnYear: ComputedNumber | null;
+		bornOnYear: number | null;
 		diedOn: string | null;
-		diedOnYear: ComputedNumber | null;
+		diedOnYear: number | null;
 		resources:
 			| Array<{
 					title: string;
@@ -1559,9 +1547,9 @@ export type LiteraryWorkSectionBySlugQueryResult = {
 		};
 		biography: Markdown;
 		bornOn: string | null;
-		bornOnYear: ComputedNumber | null;
+		bornOnYear: number | null;
 		diedOn: string | null;
-		diedOnYear: ComputedNumber | null;
+		diedOnYear: number | null;
 		resources:
 			| Array<{
 					title: string;
@@ -1677,9 +1665,9 @@ export type LiteraryWorkTeasersResult = Array<{
 			};
 		};
 		bornOn: string | null;
-		bornOnYear: ComputedNumber | null;
+		bornOnYear: number | null;
 		diedOn: string | null;
-		diedOnYear: ComputedNumber | null;
+		diedOnYear: number | null;
 	}>;
 	excerpt: Array<{
 		_key: string;

@@ -529,8 +529,7 @@
 			"bornOnYear": {
 				"type": "objectAttribute",
 				"value": {
-					"type": "inline",
-					"name": "computedNumber"
+					"type": "number"
 				},
 				"optional": true
 			},
@@ -544,8 +543,7 @@
 			"diedOnYear": {
 				"type": "objectAttribute",
 				"value": {
-					"type": "inline",
-					"name": "computedNumber"
+					"type": "number"
 				},
 				"optional": true
 			},
@@ -638,13 +636,6 @@
 		"type": "type",
 		"value": {
 			"type": "string"
-		}
-	},
-	{
-		"name": "computedNumber",
-		"type": "type",
-		"value": {
-			"type": "number"
 		}
 	},
 	{
@@ -2468,27 +2459,6 @@
 				},
 				"optional": true
 			}
-		}
-	},
-	{
-		"name": "computedText",
-		"type": "type",
-		"value": {
-			"type": "string"
-		}
-	},
-	{
-		"name": "computedString",
-		"type": "type",
-		"value": {
-			"type": "string"
-		}
-	},
-	{
-		"name": "computedBoolean",
-		"type": "type",
-		"value": {
-			"type": "boolean"
 		}
 	},
 	{

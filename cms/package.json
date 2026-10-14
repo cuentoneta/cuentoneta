@@ -35,7 +35,6 @@
 		"react-is": "^19.3.0",
 		"sanity": "^5.31.2",
 		"sanity-plugin-bulk-actions-table": "^1.0.4",
-		"sanity-plugin-computed-field": "^2.0.2",
 		"sanity-plugin-markdown": "^9.0.15",
 		"sanity-plugin-singleton-management": "^1.1.1",
 		"styled-components": "^6.5.3"
