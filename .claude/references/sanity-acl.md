@@ -233,8 +233,9 @@ export function mapAuthor(
 		imageUrl: urlFor(rawAuthorData.image),
 		name: rawAuthorData.name,
 		biography,
-		bornOnYear: rawAuthorData.bornOnYear ?? undefined,
-		diedOnYear: rawAuthorData.diedOnYear ?? undefined,
+		// La fecha completa manda; el año cargado a mano es el respaldo cuando solo se conoce el año.
+		bornOnYear: resolveHistoricalYear(rawAuthorData.bornOn, rawAuthorData.bornOnYear),
+		diedOnYear: resolveHistoricalYear(rawAuthorData.diedOn, rawAuthorData.diedOnYear),
 		// …
 	};
 }

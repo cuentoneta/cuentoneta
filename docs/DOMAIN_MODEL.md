@@ -230,6 +230,8 @@ interface Author {
 	// Datos biográficos
 	bornOn?: DateString; // Fecha de nacimiento (formato YYYY-MM-DD)
 	diedOn?: DateString; // Fecha de muerte (formato YYYY-MM-DD)
+	bornOnYear?: number; // Año de nacimiento: derivado de bornOn o, sin fecha completa, el cargado a mano (negativo para a.C.)
+	diedOnYear?: number; // Ídem para el año de muerte
 
 	// Contenido
 	biography: SanitizedHtml; // Biografía del autor; Markdown saneado a HTML, requerida (no opcional)

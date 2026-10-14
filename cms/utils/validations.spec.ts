@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { createSlug } from '@models/slug.model';
+import { yearOfHistoricalDate } from '@utils/historical-date.utils';
 import { localizedRequire, validateHistoricalDate, validateRootRelativePath, validateSlugFormat } from './validations';
 
 describe('validateRootRelativePath', () => {
@@ -121,5 +122,20 @@ describe('validateHistoricalDate', () => {
 	it('resolves leap years against the year given, not the current one', () => {
 		expect(validateHistoricalDate('2024-02-29')).toBe(true);
 		expect(validateHistoricalDate('2023-02-29')).toContain('Fecha calendario inválida');
+	});
+
+	// El API deriva el año con yearOfHistoricalDate: una fecha que el Studio deja guardar y de la que el API
+	// no puede sacar un año dejaría al autor sin año aunque la fecha esté completa.
+	it.each([
+		'1936-07-17',
+		'-0044-03-15',
+		'-3000-01-01',
+		'2100-12-31',
+		'0000-01-01',
+		'-3001-01-01',
+		'2101-01-01',
+		'1936-7-17',
+	])('agrees with yearOfHistoricalDate on %j', (value) => {
+		expect(validateHistoricalDate(value) === true).toBe(yearOfHistoricalDate(value) !== undefined);
 	});
 });

@@ -119,9 +119,9 @@ export type Author = {
 	};
 	nationality: NationalityReference;
 	bornOn?: string;
-	bornOnYear?: ComputedNumber;
+	bornOnYear?: number;
 	diedOn?: string;
-	diedOnYear?: ComputedNumber;
+	diedOnYear?: number;
 	biography: Markdown;
 	resources?: Array<{
 		title: string;
@@ -138,8 +138,6 @@ export type Author = {
 };
 
 export type Markdown = string;
-
-export type ComputedNumber = number;
 
 export type Nationality = {
 	_id: string;
@@ -454,12 +452,6 @@ export type Contributor = {
 	notes?: string;
 };
 
-export type ComputedText = string;
-
-export type ComputedString = string;
-
-export type ComputedBoolean = boolean;
-
 export type SanityImagePaletteSwatch = {
 	_type: 'sanity.imagePaletteSwatch';
 	background?: string;
@@ -571,7 +563,6 @@ export type AllSanitySchemaTypes =
 	| TagReference
 	| Author
 	| Markdown
-	| ComputedNumber
 	| Nationality
 	| SanityImageCrop
 	| SanityImageHotspot
@@ -585,9 +576,6 @@ export type AllSanitySchemaTypes =
 	| Resource
 	| ResourceType
 	| Contributor
-	| ComputedText
-	| ComputedString
-	| ComputedBoolean
 	| SanityImagePaletteSwatch
 	| SanityImagePalette
 	| SanityImageDimensions
@@ -630,9 +618,9 @@ export type AuthorBySlugQueryResult = {
 	};
 	biography: Markdown;
 	bornOn: string | null;
-	bornOnYear: ComputedNumber | null;
+	bornOnYear: number | null;
 	diedOn: string | null;
-	diedOnYear: ComputedNumber | null;
+	diedOnYear: number | null;
 	resources:
 		| Array<{
 				title: string;
@@ -683,9 +671,9 @@ export type AuthorsQueryResult = Array<{
 		};
 	};
 	bornOn: string | null;
-	bornOnYear: ComputedNumber | null;
+	bornOnYear: number | null;
 	diedOn: string | null;
-	diedOnYear: ComputedNumber | null;
+	diedOnYear: number | null;
 	resources: Array<never>;
 }>;
 
@@ -830,9 +818,9 @@ export type CollectionBySlugQueryResult = {
 						};
 					};
 					bornOn: string | null;
-					bornOnYear: ComputedNumber | null;
+					bornOnYear: number | null;
 					diedOn: string | null;
-					diedOnYear: ComputedNumber | null;
+					diedOnYear: number | null;
 				}>;
 				excerpt: Array<{
 					_key: string;
@@ -1002,9 +990,9 @@ export type RotatingContentQueryResult = {
 						};
 					};
 					bornOn: string | null;
-					bornOnYear: ComputedNumber | null;
+					bornOnYear: number | null;
 					diedOn: string | null;
-					diedOnYear: ComputedNumber | null;
+					diedOnYear: number | null;
 				}>;
 		  }>
 		| Array<never>;
@@ -1243,9 +1231,9 @@ export type LandingPageContentQueryResult = {
 						};
 					};
 					bornOn: string | null;
-					bornOnYear: ComputedNumber | null;
+					bornOnYear: number | null;
 					diedOn: string | null;
-					diedOnYear: ComputedNumber | null;
+					diedOnYear: number | null;
 				}>;
 		  }>
 		| Array<never>;
@@ -1278,9 +1266,9 @@ export type LandingPageContentQueryResult = {
 						};
 					};
 					bornOn: string | null;
-					bornOnYear: ComputedNumber | null;
+					bornOnYear: number | null;
 					diedOn: string | null;
-					diedOnYear: ComputedNumber | null;
+					diedOnYear: number | null;
 					resources: Array<never>;
 				};
 				tags:
@@ -1419,9 +1407,9 @@ export type LiteraryWorkBySlugQueryResult = {
 		};
 		biography: Markdown;
 		bornOn: string | null;
-		bornOnYear: ComputedNumber | null;
+		bornOnYear: number | null;
 		diedOn: string | null;
-		diedOnYear: ComputedNumber | null;
+		diedOnYear: number | null;
 		resources:
 			| Array<{
 					title: string;
@@ -1559,9 +1547,9 @@ export type LiteraryWorkSectionBySlugQueryResult = {
 		};
 		biography: Markdown;
 		bornOn: string | null;
-		bornOnYear: ComputedNumber | null;
+		bornOnYear: number | null;
 		diedOn: string | null;
-		diedOnYear: ComputedNumber | null;
+		diedOnYear: number | null;
 		resources:
 			| Array<{
 					title: string;
@@ -1677,9 +1665,9 @@ export type LiteraryWorkTeasersResult = Array<{
 			};
 		};
 		bornOn: string | null;
-		bornOnYear: ComputedNumber | null;
+		bornOnYear: number | null;
 		diedOn: string | null;
-		diedOnYear: ComputedNumber | null;
+		diedOnYear: number | null;
 	}>;
 	excerpt: Array<{
 		_key: string;
@@ -1707,8 +1695,7 @@ export type SitemapSlugsQueryResult = {
 };
 
 // Query TypeMap
-import '@sanity/client';
-declare module '@sanity/client' {
+declare global {
 	interface SanityQueries {
 		"\n*[_type == 'author' && slug.current == $slug && !(_id in path('drafts.**'))][0]\n{\n    _id,\n    'slug': slug.current,\n    'createdAt': _createdAt,\n    'updatedAt': _updatedAt,\n    name,\n    image,\n    nationality->,\n    biography,\n    bornOn,\n\t\tbornOnYear,\n    diedOn,\n\t\tdiedOnYear,\n    'resources': coalesce(resources[]{\n        title,\n        url,\n        resourceType->{\n        \t'slug': slug.current,\n        \ttitle,\n        \tdescription\n        }\n    }, []),\n    'tags': coalesce(tags[] -> {\n        title,\n        'slug': slug.current,\n        description\n    }, [])\n}": AuthorBySlugQueryResult;
 		"\n*[_type == 'author' && !(_id in path('drafts.**'))]\n{\n    _id,\n    'slug': slug.current,\n    name,\n    image,\n    nationality->,\n    bornOn,\n \t\tbornOnYear,\n    diedOn,\n    diedOnYear,\n    'resources': []\n}|order(name asc)": AuthorsQueryResult;
@@ -1725,4 +1712,8 @@ declare module '@sanity/client' {
 		"\n*[_type == 'literaryWork' && !(_id in path('drafts.**')) && ($author == null || $author in authors[]->slug.current) && ($slugs == null || slug.current in $slugs)]\n{\n    _id,\n    'slug': slug.current,\n    title,\n    coverImage,\n    totalReadingTime,\n    'sectionCount': count(content),\n    'tags': coalesce(tags[] -> {\n        title,\n        'slug': slug.current,\n        description\n    }, []),\n    'mediaSources': coalesce(mediaSources[]{ _type, title }, []),\n    'authors': coalesce(authors[]->{\n        _id,\n        'slug': slug.current,\n        name,\n        image,\n        nationality->,\n        bornOn,\n        bornOnYear,\n        diedOn,\n        diedOnYear\n    }, []),\n    'excerpt': content[0...1]{\n        _key,\n        title,\n        'body': string::split(string::split(body, \"\r\n\r\n\")[0], \"\n\n\")[@ != \"\"][0]\n    }\n} | order(title asc)": LiteraryWorkTeasersResult;
 		'{\n\t"literaryWorks": *[_type == "literaryWork" && !(_id in path(\'drafts.**\')) && defined(slug.current) && slug.current == lower(slug.current) && count(string::split(slug.current, "-")[@ == ""]) == 0] | order(_id asc) { "slug": slug.current, "lastmod": coalesce(publishedAt, _createdAt) },\n\t"authors": *[_type == "author" && !(_id in path(\'drafts.**\')) && defined(slug.current) && slug.current == lower(slug.current) && count(string::split(slug.current, "-")[@ == ""]) == 0] | order(_id asc) {\n\t\t"slug": slug.current,\n\t\t"latestLiteraryWorkAt": *[_type == "literaryWork" && !(_id in path(\'drafts.**\')) && ^._id in authors[]._ref]{ "date": coalesce(publishedAt, _createdAt) } | order(date desc)[0].date\n\t},\n\t"collections": *[_type == "collection" && !(_id in path(\'drafts.**\')) && defined(slug.current) && slug.current == lower(slug.current) && count(string::split(slug.current, "-")[@ == ""]) == 0] | order(_id asc) {\n\t\t"slug": slug.current,\n\t\t"latestLiteraryWorkAt": *[_type == "literaryWork" && !(_id in path(\'drafts.**\')) && _id in ^.literaryWorks[]._ref]{ "date": coalesce(publishedAt, _createdAt) } | order(date desc)[0].date\n\t}\n}': SitemapSlugsQueryResult;
 	}
+}
+// Lets @sanity/client releases that predate the global registry read it too
+declare module '@sanity/client' {
+	interface SanityQueries extends globalThis.SanityQueries {}
 }

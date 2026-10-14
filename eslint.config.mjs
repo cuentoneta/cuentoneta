@@ -269,6 +269,16 @@ export default [
 		},
 	},
 	{
+		// El typegen de Sanity emite una `interface SanityQueries extends globalThis.SanityQueries {}`
+		// vacía a propósito: es el puente que lee el registro global desde `@sanity/client`.
+		name: 'sanity-typegen-output',
+		files: ['src/sanity/types.ts'],
+		rules: {
+			'@typescript-eslint/no-empty-object-type': 'off',
+			'@typescript-eslint/no-empty-interface': 'off',
+		},
+	},
+	{
 		// El plugin entra por esta única regla: su config `recommended` no está adoptado, y registrar el
 		// namespace no enciende nada por sí solo. El scope nombra todas las extensiones que el gate
 		// lintea, no solo el `**/*.ts` del bloque `nx`: la regla mide forma del código y no framework ni

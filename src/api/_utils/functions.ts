@@ -13,6 +13,7 @@ import type { Resource } from '@models/resource.model';
 import type { Tag } from '@models/tag.model';
 import { createMarkdown } from '@models/markdown.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
+import { yearOfHistoricalDate } from '@utils/historical-date.utils';
 
 // Tipos de Sanity
 import type {
@@ -54,9 +55,14 @@ export function mapAuthor(
 		biography: biography,
 		bornOn: rawAuthorData.bornOn ? (rawAuthorData.bornOn as DateString) : undefined,
 		diedOn: rawAuthorData.diedOn ? (rawAuthorData.diedOn as DateString) : undefined,
-		bornOnYear: rawAuthorData.bornOnYear ?? undefined,
-		diedOnYear: rawAuthorData.diedOnYear ?? undefined,
+		bornOnYear: resolveHistoricalYear(rawAuthorData.bornOn, rawAuthorData.bornOnYear),
+		diedOnYear: resolveHistoricalYear(rawAuthorData.diedOn, rawAuthorData.diedOnYear),
 	};
+}
+
+// La fecha completa manda sobre el año cargado a mano, que solo se usa cuando se conoce únicamente el año.
+function resolveHistoricalYear(date: string | null, manualYear: number | null): number | undefined {
+	return yearOfHistoricalDate(date) ?? manualYear ?? undefined;
 }
 
 // Variante para la página de perfil: agrega las fechas de la ficha sobre el `Author` base.
@@ -87,8 +93,8 @@ export function mapAuthorTeaser(
 		name: rawAuthorData.name,
 		bornOn: rawAuthorData.bornOn ? (rawAuthorData.bornOn as DateString) : undefined,
 		diedOn: rawAuthorData.diedOn ? (rawAuthorData.diedOn as DateString) : undefined,
-		bornOnYear: rawAuthorData.bornOnYear ?? undefined,
-		diedOnYear: rawAuthorData.diedOnYear ?? undefined,
+		bornOnYear: resolveHistoricalYear(rawAuthorData.bornOn, rawAuthorData.bornOnYear),
+		diedOnYear: resolveHistoricalYear(rawAuthorData.diedOn, rawAuthorData.diedOnYear),
 	};
 }
 
