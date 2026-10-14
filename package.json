@@ -1,7 +1,7 @@
 {
 	"name": "@cuentoneta/app",
 	"type": "module",
-	"version": "2.11.2",
+	"version": "2.11.3",
 	"imports": {
 		"#tailwind-theme": "./src/tailwind.css"
 	},
