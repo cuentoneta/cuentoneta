@@ -71,6 +71,13 @@ export const OPS_TASKS = Object.freeze({
 		acceptsArgs: false,
 		load: () => import('./tasks/delete-unused-assets').then((m) => m.task),
 	},
+	'author-years:census': {
+		description:
+			'Compara el año persistido de los autores con el derivado de su fecha (solo lectura; un dataset por corrida)',
+		destructive: false,
+		acceptsArgs: false,
+		load: () => import('../author-years-census/author-years-census').then((m) => m.task),
+	},
 	'drafts:remove-unpublished': {
 		description: 'Borra TODOS los borradores no publicados de Sanity (destructivo; requiere --no-dry-run)',
 		destructive: true,
