@@ -1,10 +1,8 @@
 // Core
 import { Component, computed, effect, forwardRef, inject, input, RESPONSE_INIT, signal } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { NgTemplateOutlet } from '@angular/common';
-
-// Utils
-import { ssrBlockingRxResource } from '@app-utils/ssr-resource';
 
 // Services
 import { AuthorApi } from '../../providers/author.provider';
@@ -44,16 +42,13 @@ export default class AuthorPage implements AuthorHost {
 	// Los 160 px que el diseño reserva para la biografía en la columna, sobre un interlineado de 20.
 	private readonly sidebarBiographyLines = 8;
 
-	// Los dos recursos bloquean el render del servidor: el nombre, la biografía y los enlaces a las obras
-	// son las invariantes que la página tiene que servir indexadas, y con un recurso progresivo el HTML se
-	// serializa antes de la respuesta.
-	private readonly authorResource = ssrBlockingRxResource({
+	private readonly authorResource = rxResource({
 		params: this.slug,
 		stream: ({ params }) => this.authorApi.getBySlug(params),
 		defaultValue: undefined,
 	});
 
-	private readonly literaryWorksResource = ssrBlockingRxResource({
+	private readonly literaryWorksResource = rxResource({
 		params: this.slug,
 		stream: ({ params }) => this.literaryWorkApi.getTeasers({ author: params }),
 		defaultValue: [],

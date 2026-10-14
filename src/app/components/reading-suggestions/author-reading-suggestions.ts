@@ -1,9 +1,9 @@
 import { Component, computed, inject, input } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
 
 import { AppRoutes } from '../../app.routes';
 import { LiteraryWorkApi } from '../../providers/literary-work.provider';
-import { progressiveRxResource } from '@app-utils/ssr-resource';
 import { ReadingSuggestionsList } from './reading-suggestions-list';
 import { pickReadingSuggestions } from './pick-reading-suggestions';
 import type { NavigationParams } from '@app-utils/navigation-params';
@@ -15,8 +15,8 @@ import type { NavigationParams } from '@app-utils/navigation-params';
  * Consume la vista de teaser y no la de navegación: es la única que transporta el extracto, que es lo
  * que la tarjeta pinta bajo el título.
  *
- * El recurso es deliberadamente progresivo (no bloquea el SSR): quien lo consume monta el bloque
- * dentro de un `@defer (on viewport)`, así el fetch ocurre una sola vez y ya en el cliente.
+ * El SSR no lo carga porque quien lo consume monta el bloque dentro de un `@defer (on viewport)`: el
+ * fetch ocurre una sola vez, ya en el cliente.
  */
 @Component({
 	selector: 'cuentoneta-author-reading-suggestions',
@@ -44,7 +44,7 @@ export class AuthorReadingSuggestions {
 
 	// El sorteo ocurre acá, en el stream, y no en un computed: así se resuelve una sola vez por fetch
 	// y las sugerencias no se rebarajan ante cualquier reevaluación.
-	private readonly suggestionsResource = progressiveRxResource({
+	private readonly suggestionsResource = rxResource({
 		// La obra en lectura entra en los params: al pasar a otra obra del mismo autor, el bloque
 		// vuelve a resolverse en vez de seguir sugiriendo la que se está leyendo.
 		params: () =>

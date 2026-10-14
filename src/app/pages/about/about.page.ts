@@ -1,10 +1,10 @@
 import { Component, computed, inject } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { NgOptimizedImage } from '@angular/common';
 
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 import { ContributorApi } from '../../providers/contributor.provider';
-import { progressiveRxResource } from '@app-utils/ssr-resource';
 
 @Component({
 	selector: 'cuentoneta-about',
@@ -30,8 +30,7 @@ export default class AboutPage {
 	private readonly metaTagsDirective = inject(HeadMetadataDirective);
 	private readonly contributorService = inject(ContributorApi);
 
-	// Ruta Server + `noindex, nofollow`: se maneja con carga progresiva.
-	private readonly contributorsResource = progressiveRxResource({
+	private readonly contributorsResource = rxResource({
 		stream: () => this.contributorService.getAllByArea(),
 		defaultValue: [],
 	});
