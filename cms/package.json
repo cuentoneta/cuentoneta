@@ -22,19 +22,17 @@
 		"sanity"
 	],
 	"dependencies": {
-		"@sanity/export": "^7.0.3",
 		"@sanity/icons": "^5.2.3",
-		"@sanity/import": "^7.0.4",
-		"@sanity/ui": "^3.5.5",
-		"@sanity/vision": "^5.31.2",
+		"@sanity/ui": "^4.4.4",
+		"@sanity/vision": "^6.19.0",
 		"date-fns": "^4.4.0",
 		"prop-types": "^15.8.1",
 		"react": "^19.3.0",
 		"react-dom": "^19.3.0",
 		"react-icons": "^5.7.0",
 		"react-is": "^19.3.0",
-		"sanity": "^5.31.2",
-		"sanity-plugin-markdown": "^9.0.15",
+		"sanity": "^6.19.0",
+		"sanity-plugin-markdown": "^9.0.17",
 		"sanity-plugin-singleton-management": "^1.1.1",
 		"styled-components": "^6.5.3"
 	},
