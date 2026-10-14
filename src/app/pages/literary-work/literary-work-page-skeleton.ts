@@ -37,5 +37,5 @@ import { Skeleton } from '@components/skeleton/skeleton';
 export class LiteraryWorkPageSkeleton {
 	// Silueta de carga, no una medida del texto real: el largo del cuerpo recién se conoce cuando la
 	// obra llegó.
-	protected readonly bodyLines = Array.from({ length: 8 });
+	private readonly bodyLines = Array.from({ length: 8 });
 }

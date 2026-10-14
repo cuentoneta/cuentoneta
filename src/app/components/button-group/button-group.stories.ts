@@ -37,7 +37,7 @@ class ButtonGroupStoryHostComponent {
 	public readonly initialSelectedId = input<string>();
 	public readonly size = input<ButtonSize>('md');
 
-	protected readonly selectedId = linkedSignal(() => this.initialSelectedId());
+	private readonly selectedId = linkedSignal(() => this.initialSelectedId());
 }
 
 const meta: Meta<ButtonGroup> = {

@@ -1,10 +1,8 @@
 // Core
 import { Component, computed, effect, forwardRef, inject, input, RESPONSE_INIT, signal } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { NgTemplateOutlet } from '@angular/common';
-
-// Utils
-import { ssrBlockingRxResource } from '@app-utils/ssr-resource';
 
 // Services
 import { AuthorApi } from '../../providers/author.provider';
@@ -39,21 +37,18 @@ export default class AuthorPage implements AuthorHost {
 
 	// Gatea la creación del contenido del panel deslizable: sin esto, la biografía entera y los enlaces
 	// a los recursos viajarían en el HTML del servidor, duplicando lo que la columna ya muestra.
-	protected readonly isBiographyDrawerOpen = signal(false);
+	private readonly isBiographyDrawerOpen = signal(false);
 
 	// Los 160 px que el diseño reserva para la biografía en la columna, sobre un interlineado de 20.
-	protected readonly sidebarBiographyLines = 8;
+	private readonly sidebarBiographyLines = 8;
 
-	// Los dos recursos bloquean el render del servidor: el nombre, la biografía y los enlaces a las obras
-	// son las invariantes que la página tiene que servir indexadas, y con un recurso progresivo el HTML se
-	// serializa antes de la respuesta.
-	private readonly authorResource = ssrBlockingRxResource({
+	private readonly authorResource = rxResource({
 		params: this.slug,
 		stream: ({ params }) => this.authorApi.getBySlug(params),
 		defaultValue: undefined,
 	});
 
-	private readonly literaryWorksResource = ssrBlockingRxResource({
+	private readonly literaryWorksResource = rxResource({
 		params: this.slug,
 		stream: ({ params }) => this.literaryWorkApi.getTeasers({ author: params }),
 		defaultValue: [],
@@ -63,10 +58,10 @@ export default class AuthorPage implements AuthorHost {
 	// El guard no es ceremonia: leer el valor de un recurso en error relanza la falla, y acá el throw
 	// saldría dentro del encabezado y del listado, derribando el render del servidor de una página
 	// indexable. Un catálogo que falla con el autor resuelto deja la ficha sin obras, no sin página.
-	protected readonly literaryWorks = computed(() =>
+	private readonly literaryWorks = computed(() =>
 		this.literaryWorksResource.hasValue() ? this.literaryWorksResource.value() : [],
 	);
-	protected readonly notFound = computed(() => this.authorResource.status() === 'error');
+	private readonly notFound = computed(() => this.authorResource.status() === 'error');
 
 	// Un fallo transitorio no puede salir 200: el borde cachearía una página vacía como si fuera la ficha
 	// del autor. Solo la ausencia real del autor es un 404.
@@ -78,12 +73,12 @@ export default class AuthorPage implements AuthorHost {
 		this.responseInit.status = error instanceof HttpErrorResponse && error.status === 404 ? 404 : 503;
 	});
 
-	protected readonly literaryWorksHeading = computed(() => {
+	private readonly literaryWorksHeading = computed(() => {
 		const total = this.literaryWorks().length;
 		return `${total} ${total === 1 ? 'obra' : 'obras'}`;
 	});
 
-	protected openBiographyDrawer(drawer: Drawer): void {
+	private openBiographyDrawer(drawer: Drawer): void {
 		this.isBiographyDrawerOpen.set(true);
 		drawer.open();
 	}

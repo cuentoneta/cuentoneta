@@ -12,6 +12,15 @@
 			"inputs": ["default", "^production"],
 			"cache": false
 		},
+		"e2e-ci--*": {
+			"cache": false
+		},
+		"e2e-ci--*/**": {
+			"cache": false
+		},
+		"e2e-ci": {
+			"cache": false
+		},
 		"build-storybook": {
 			"inputs": ["default", "^production", "{projectRoot}/.storybook/**/*", "{projectRoot}/tsconfig.storybook.json"],
 			"cache": true
@@ -114,6 +123,13 @@
 				"testMode": "run"
 			},
 			"exclude": ["cms/**"]
+		},
+		{
+			"plugin": "@nx/playwright/plugin",
+			"options": {
+				"targetName": "e2e",
+				"ciTargetName": "e2e-ci"
+			}
 		}
 	],
 	"analytics": false

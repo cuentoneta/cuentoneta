@@ -36,5 +36,5 @@ export class AuthorInfoPanelSkeleton {
 		transform: (value: number) => Math.min(10, Math.max(1, value)),
 	});
 
-	protected readonly biographyPlaceholders = computed(() => Array.from({ length: this.biographyLines() }));
+	private readonly biographyPlaceholders = computed(() => Array.from({ length: this.biographyLines() }));
 }

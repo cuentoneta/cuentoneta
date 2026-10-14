@@ -15,7 +15,7 @@
 | **Componentes**  | **Angular Testing Library** (`@testing-library/angular`) + `@testing-library/user-event` |
 | **Matchers DOM** | `@testing-library/jest-dom` — **no es Jest** (ver abajo)                                 |
 | **Mocks/timers** | Wrappers de **`@test-utils`** (`src/test-utils.ts`)                                      |
-| **Compilación**  | `@analogjs/vite-plugin-angular` (JIT en tests)                                           |
+| **Compilación**  | `@analogjs/vite-plugin-angular` (JIT con `fastCompile` en tests)                         |
 
 > **`@testing-library/jest-dom` no tiene relación con Jest.** El nombre viene de su origen, pero es una librería de matchers de DOM —`toBeInTheDocument`, `toHaveClass`, `toHaveAttribute`…— que se registra para Vitest en `src/test-setup.ts` (`import '@testing-library/jest-dom/vitest'`) y es parte del stack recomendado de Testing Library. Al barrer residuos de Jest del workspace, **no** es uno de ellos.
 
@@ -24,6 +24,42 @@ Archivos clave:
 - **`vitest.config.ts`** — `globals: true`, `environment: 'happy-dom'`, `setupFiles: ['src/test-setup.ts']`, y un `include` que además de `src/**` alcanza los specs de `scripts/`, de `e2e/_utils/` y de `tools/`. Los de `tools/` cubren las reglas propias de ESLint y de Stylelint —cada módulo tiene el suyo— y los alcanzan además los gates `typecheck` —junto con los `.js` de las reglas que ejercitan— y `lint`. Inlina `@sanity` y bundles `fesm` para que Vite los transforme. Coverage solo en CI (`CI=true`/`COVERAGE=true`).
 - **`src/test-setup.ts`** — inicializa el `TestBed` zoneless (Angular 22 corre zoneless por defecto cuando `zone.js` no está presente; no se llama a `provideZonelessChangeDetection()`). El `ErrorHandler` **relanza** cualquier error no manejado para que falle el test. Instala los stubs globales de `IntersectionObserver`, de `ResizeObserver` y de `document.fonts`.
 - **`src/test-utils.ts`** — los wrappers obligatorios (ver abajo).
+
+### Pool, workers y memoria
+
+`@analogjs/vite-plugin-angular` pone por defecto el pool **`vmThreads`**, el más rápido para esta suite. Su costo es la memoria: los contextos de VM se **acumulan** en cada worker durante toda la corrida, en vez de liberarse al terminar cada archivo. `vmMemoryLimit` no lo acota.
+
+Por eso `maxWorkers` está topeado en 8, sin superar nunca el default de Vitest (hilos − 1 en `vitest run`, la mitad en watch): por encima de unos 8 workers la suite ya no se acelera y la memoria sigue subiendo. Con menos workers el pico no baja proporcionalmente —con 4 y con 8 es el mismo—, así que bajar el tope no es la salida para poca RAM. En el runner de CI el tope coincide con el default.
+
+Medido sobre la suite completa en una máquina de 28 hilos:
+
+| Pool        | Workers | Tiempo | Pico de memoria |
+| ----------- | ------- | ------ | --------------- |
+| `vmThreads` | 27      | 15 s   | ~16 GiB         |
+| `vmThreads` | 8       | 15 s   | ~12 GiB         |
+| `forks`     | 27      | 28 s   | ~10 GiB         |
+| `threads`   | 7       | 40 s   | ~5 GiB          |
+
+En una máquina con poca RAM, el pool se cambia por línea de comandos, que le gana al default de Analog. `threads` libera la memoria de cada archivo al terminarlo y es el que menos consume, a cambio de casi el triple de tiempo:
+
+```bash
+pnpm exec vitest run --pool=threads
+```
+
+### Costo fijo y flujo de iteración
+
+Cada corrida paga un arranque antes del primer test: levantar Vite, cargar `src/test-setup.ts` y transformar lo que importa el spec. Con `fastCompile` el plugin transforma solo los archivos que la corrida carga. Sin él, compila primero el programa entero de `tsconfig.spec.json`, unos 5 s aunque se pida un solo spec.
+
+El transform de `fastCompile` deja `@Service()` e `@Injectable()` en la clase como decoradores estándar, que V8 no ejecuta. Analog apaga el paso de OXC de Vite, y declarar la clave `oxc` en la config lo vuelve a encender para todo `.ts` de la corrida, con `decorator.legacy` para bajar esos decoradores. Las dos opciones dependen en una sola dirección: `fastCompile` sin `oxc` rompe la carga de todo spec que importe un servicio, con un `SyntaxError: Invalid or unexpected token` sin stack. `oxc` sin `fastCompile` no rompe nada, pero vuelve al arranque lento.
+
+Para iterar sobre un spec, el flujo es `pnpm test:watch <ruta>`. Arranca una vez, y cada edición re-corre solo los specs afectados, sobre el server ya caliente:
+
+| Flujo (1 spec)                | Primer resultado | Cada edición |
+| ----------------------------- | ---------------- | ------------ |
+| `pnpm exec vitest run <ruta>` | ~2 s             | ~2 s         |
+| `pnpm test:watch <ruta>`      | ~3 s             | ~1,4 s       |
+
+Acotar por ruta no achica el pool ni el arranque: solo evita transformar y ejecutar el resto de los specs. `pnpm test` corre la suite completa y es lo que reproduce el gate de CI.
 
 > Esta es la config de **la app** (`@cuentoneta/app`). El Studio de Sanity (`cms/`) tiene su propia config de Vitest, independiente — ver [Segunda config de Vitest: el Studio (`cms/`)](#segunda-config-de-vitest-el-studio-cms).
 
@@ -405,7 +441,7 @@ Cubre **lógica Node pura del Studio**: resolvers de Desk Structure, utils que c
 - Los specs de `cms/` **importan `describe`/`it`/`expect` de `vitest` explícitamente** (`cms/vitest.config.ts` no declara `globals`), a diferencia de los specs de la app.
 - **No usan `@test-utils`.** Esos wrappers viven en el árbol de `node_modules` de la app; arrastrarlos a `cms/` acoplaría dos proyectos pnpm por casos que se resuelven con diez líneas.
 - Los dobles se escriben **a mano**, siguiendo la misma taxonomía por comportamiento del resto del repo — `Stub*`/`Fake*`/`Spy*`, **nunca** `Mock*` (ver [Naming](../../CLAUDE.md#naming)). El ejemplo vigente es `SpyGroqClient` en `cms/utils/landing-page.spec.ts`: registra la query y los params con los que se lo invocó, sin depender de `vi.fn()`.
-- `cms/` **sí** está cubierto por ESLint (el target `eslint:lint` de `project.json` corre sobre `./src ./e2e ./resources ./cms ./scripts`) y por su propio type-check (`cms/tsconfig.typecheck.json`, dentro del gate `studio-build`). Lo que sigue sin tener es `@test-utils`: los specs de `cms/` se mantienen deliberadamente simples, sin abstracciones de test propias y con dobles chicos anotados a mano.
+- `cms/` **sí** está cubierto por ESLint (el target `eslint:lint` de `project.json` corre sobre `./src ./e2e ./cms ./scripts ./tools`) y por su propio type-check (`cms/tsconfig.typecheck.json`, dentro del gate `studio-build`). Lo que sigue sin tener es `@test-utils`: los specs de `cms/` se mantienen deliberadamente simples, sin abstracciones de test propias y con dobles chicos anotados a mano.
 
 ```typescript
 import { describe, expect, it } from 'vitest';

@@ -144,11 +144,11 @@ En ESLint flat config, cuando **dos config objects aplican al mismo archivo** y 
 **Regla:** al acotar `no-restricted-syntax` (u otra regla de array) a un scope, **recomponer** las restricciones base en vez de redeclarar solo las nuevas — típicamente esparciendo la constante común:
 
 ```js
-// ✅ el bloque de páginas conserva commonRestrictedSyntax (enum, lifecycle hooks, estáticas, CommonJS)
-'no-restricted-syntax': ['error', ...commonRestrictedSyntax, ...pageFetchRestrictedSyntax],
+// ✅ el bloque de cms/ conserva commonRestrictedSyntax (enum, lifecycle hooks, estáticas, CommonJS)
+'no-restricted-syntax': ['error', ...commonRestrictedSyntax],
 ```
 
-Precedentes en el propio archivo: `test-utils-vi-exception` (recompone `commonRestrictedSyntax` al soltar `viRestrictedSyntax` para `src/test-utils.ts`), `ssr-fetch-must-decide-blocking` (recompone `commonRestrictedSyntax` al sumar las restricciones de fetch de página) y el bloque `cms` (recompone `commonRestrictedSyntax` soltando `viRestrictedSyntax` para todo `cms/**/*.ts`/`.tsx`, con un motivo propio: no es que `vi.*` no aplique ahí como en `test-utils-vi-exception`, sino que en `cms/` no existe `@test-utils` al que redirigir — sus dobles se escriben a mano). La única parte que **sí** se puede soltar sin recomponer es la que no aplica al scope (`viRestrictedSyntax` en un bloque que ya `ignores: ['**/*.spec.ts']`, porque `vi.*` solo aparece en specs).
+Precedentes en el propio archivo: `test-utils-vi-exception` (recompone `commonRestrictedSyntax` al soltar `viRestrictedSyntax` para `src/test-utils.ts`) y el bloque `cms` (recompone `commonRestrictedSyntax` soltando `viRestrictedSyntax` para todo `cms/**/*.ts`/`.tsx`, con un motivo propio: no es que `vi.*` no aplique ahí como en `test-utils-vi-exception`, sino que en `cms/` no existe `@test-utils` al que redirigir — sus dobles se escriben a mano). La única parte que **sí** se puede soltar sin recomponer es la que no aplica al scope (`viRestrictedSyntax` en un bloque que ya `ignores: ['**/*.spec.ts']`, porque `vi.*` solo aparece en specs).
 
 ---
 
@@ -158,10 +158,10 @@ Un import relativo con extensión `.ts` solo compila si el programa lo declara c
 
 En el repo esa forma la necesita **una sola cadena**: la del hook `PreToolUse`, que corre con `node` puro y por eso paga la exigencia de extensión explícita de ESM — ver [`scripts.md`](scripts.md). El flag va en los dos programas que incluyen `scripts/`, nunca en el `tsconfig.json` raíz:
 
-| Archivo                   | Qué declara                                                      | Por qué                                                                                                                                                                                                           |
-| ------------------------- | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `tsconfig.typecheck.json` | `allowImportingTsExtensions`                                     | Ya tiene `noEmit`, que es lo que `TS5096` pide. Es el programa del gate `typecheck`                                                                                                                               |
-| `tsconfig.spec.json`      | `allowImportingTsExtensions` + `rewriteRelativeImportExtensions` | Incluye `scripts/**/*.ts` para que Vitest resuelva sus `paths`. **No admite `noEmit`**: con él, el plugin de Angular deja de contar `src/test-setup.ts` como parte del programa y la suite entera falla al cargar |
+| Archivo                   | Qué declara                             | Por qué                                                                                                                                                                                          |
+| ------------------------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `tsconfig.typecheck.json` | `allowImportingTsExtensions`            | Ya tiene `noEmit`, que es lo que `TS5096` pide. Es el programa del gate `typecheck`                                                                                                              |
+| `tsconfig.spec.json`      | `allowImportingTsExtensions` + `noEmit` | Incluye `scripts/**/*.ts` para que Vitest resuelva sus `paths`. Nadie emite desde este programa: con `fastCompile`, el plugin de Angular transforma archivo por archivo y no compila el programa |
 
 ### `allowJs` en `tsconfig.typecheck.json`: por qué el gate mira `.js`
 

@@ -55,10 +55,10 @@ import { AuthorTeaserCardSkeleton } from '@components/author-teaser-card/author-
 })
 export class HighlightedAuthors {
 	// El mismo tope que el backend aplica a la curaduría: la grilla en carga dibuja la sección llena.
-	protected readonly skeletonCount = 6;
+	private readonly skeletonCount = 6;
 	// Una sola declaración para el <h2> y para el nombre de la región: dos literales se desincronizan.
-	protected readonly sectionHeading = 'Autores/as destacados/as';
-	protected readonly action: SectionHeaderAction = {
+	private readonly sectionHeading = 'Autores/as destacados/as';
+	private readonly action: SectionHeaderAction = {
 		link: ['/', AppRoutes.Authors],
 		accessibleSuffix: 'el índice de autores',
 	};

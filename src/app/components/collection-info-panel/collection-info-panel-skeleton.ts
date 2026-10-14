@@ -36,5 +36,5 @@ export class CollectionInfoPanelSkeleton {
 		transform: (value: number) => Math.min(10, Math.max(1, value)),
 	});
 
-	protected readonly descriptionPlaceholders = computed(() => Array.from({ length: this.descriptionLines() }));
+	private readonly descriptionPlaceholders = computed(() => Array.from({ length: this.descriptionLines() }));
 }

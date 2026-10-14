@@ -41,10 +41,10 @@ import { CollectionTeaserCardSkeleton } from '@components/collection-teaser-card
 	},
 })
 export class CollectionTeasersDeck {
-	protected readonly skeletonCount = 4;
+	private readonly skeletonCount = 4;
 	// Una sola declaración para el <h2> y para el nombre de la región: dos literales se desincronizan.
-	protected readonly sectionHeading = 'Colecciones';
-	protected readonly action: SectionHeaderAction = {
+	private readonly sectionHeading = 'Colecciones';
+	private readonly action: SectionHeaderAction = {
 		link: ['/', AppRoutes.Collection],
 		accessibleSuffix: 'el índice de colecciones',
 	};

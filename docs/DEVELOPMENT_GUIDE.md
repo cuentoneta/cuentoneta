@@ -217,6 +217,12 @@ Los tests de e2e corren contra el build SSR de producción (el `webServer` de Pl
 pnpm build && pnpm run test:e2e
 ```
 
+El target `e2e` lo infiere el plugin `@nx/playwright/plugin` y corre `playwright test` directo, sin instalar los browsers. La primera vez, o después de un bump de `@playwright/test`, instalalos con:
+
+```bash
+pnpm exec playwright install chromium firefox
+```
+
 Esto iniciará una corrida de tests de integración y end-to-end utilizando Playwright, mostrando los resultados en consola y generando un reporte, el cual se encontrará en la carpeta `dist/.playwright/playwright-report` al final de la corrida.
 
 ---

@@ -29,8 +29,7 @@ Dónde viven los servicios de estado:
 
 ```typescript
 // ✅ Correcto — el HTTP queda como Observable y se consume vía un rxResource (literary-work.page.ts).
-// En componentes de página se usa el wrapper `ssrBlockingRxResource` (ver §7), no `rxResource` crudo.
-private readonly literaryWorkResource = ssrBlockingRxResource({
+private readonly literaryWorkResource = rxResource({
 	params: this.slug,
 	stream: ({ params }) => this.literaryWorkApi.getBySlug(params),
 	defaultValue: undefined,
@@ -60,7 +59,7 @@ Los valores derivados son **`computed`** (o `toSignal` para fuentes observables)
 public readonly literaryWork = computed(() =>
 	this.literaryWorkResource.hasValue() ? this.literaryWorkResource.value() : undefined,
 ); // `public`: lo exige la interfaz LiteraryWorkHost
-protected readonly byline = computed(
+private readonly byline = computed(
 	() =>
 		this.literaryWork()
 			?.authors.map((author) => author.name)
@@ -68,7 +67,7 @@ protected readonly byline = computed(
 );
 
 // ❌ Incorrecto — segundo signal que hay que mantener en sync a mano
-protected readonly byline = signal('');
+private readonly byline = signal('');
 // ...y luego un effect/set por cada cambio de literaryWork → estado duplicado
 ```
 
@@ -143,40 +142,22 @@ Preferir un estado de error **por operación** a un único `string | null` compa
 
 > La regla base para los **errores atrapados** —preservar la causa (ESLint `preserve-caught-error`) y tipar el error por operación— es una restricción dura: ver la fila _Errores atrapados_ en [`CLAUDE.md` → Restricciones duras](../../CLAUDE.md#restricciones-duras-hard-constraints).
 
-### 7. Recursos de página: bloquear el SSR con `ssrBlockingRxResource`
+### 7. Recursos de página y el SSR
 
-En **componentes de página** (`src/app/pages/**`), los recursos que alimentan contenido indexable o meta tags por página se declaran con **`ssrBlockingRxResource`** (de [`@app-utils/ssr-resource`](../../src/app/utils/ssr-resource.ts)), no con `rxResource` crudo. El helper pipea el stream por `pendingUntilEvent`: registra una `PendingTask` que hace esperar la serialización del SSR (`ApplicationRef.whenStable()`) hasta que el fetch emite, completa o falla. Sin él, el server emite el skeleton con meta genérico y Google indexa una página vacía. En el browser no afecta el render, solo retrasa `isStable`, así que la carga progresiva in-app se conserva.
+Una página carga sus datos con **`rxResource`**, sin wrapper. El recurso registra su propia `PendingTask` al empezar a cargar y la libera con el primer valor, el error o el abort; `HttpClient` suma otra por request en vuelo. `@angular/ssr` —y el prerender de build— serializan recién cuando la app está estable, así que el HTML server-rendered llega con el contenido de cada recurso, o con su estado de error, incluso cuando un recurso depende de otro.
 
-Para **datos accesorios o no indexables** que deben seguir cargando progresivamente (p. ej. las colecciones sugeridas al pie de una colección, o los frames de navegación), usar **`progressiveRxResource`** — un alias explícito de `rxResource` que documenta que el no-bloqueo es una decisión, no un olvido.
+No hay un modo progresivo por recurso: todo `rxResource` se espera en el SSR. El criterio es **si el dato tiene que estar en el HTML que ve el crawler**. Si tiene que estar —contenido, meta, enlaces internos como las colecciones sugeridas de `CollectionPage`—, alcanza con el recurso. Si no, el bloque se monta dentro de un `@defer`, que en el SSR sirve su placeholder (p. ej. `AuthorReadingSuggestions`). `pendingUntilEvent(injector)` queda para lo que el recurso no cubre: un observable consumido fuera de un recurso (`toSignal`, `subscribe`) cuyo valor tiene que llegar al HTML.
 
-El criterio no es «principal vs. secundario» sino **si el dato tiene que estar en el HTML que ve el crawler**. El listado de obras de un autor lo tiene: son los enlaces internos de la página, así que bloquea igual que el perfil.
+Los Router resources (`resources` en la ruta + `withRouterResources()`, en developer preview) no se usan. En modo bloqueante, un recurso en error termina la navegación sin renderizar la página, así que se pierden el estado de error en página, el 404/503 de `RESPONSE_INIT` y el skeleton de la navegación del cliente. Con `nonBlocking()` el resultado es el de un `rxResource` en la página, con la carga declarada lejos de quien la usa.
 
-```typescript
-// ✅ Página: la colección bloquea el SSR; el catálogo del que salen las sugeridas es accesorio y
-// carga progresivamente — si falla, el bloque queda vacío y la página se sirve igual (collection.page.ts)
-private readonly collectionResource = ssrBlockingRxResource({
-	params: this.slug,
-	stream: ({ params }) => this.collectionApi.getBySlug(params),
-	defaultValue: undefined,
-});
-private readonly catalogResource = progressiveRxResource({
-	stream: () => this.collectionApi.getAll(),
-	defaultValue: [],
-});
-```
-
-**Leer el valor siempre guardado por `hasValue()`.** Un recurso en estado de error relanza la falla al leer `value()`, y `defaultValue` no protege: solo rige mientras el stream no emitió. En un recurso que bloquea el SSR ese throw ocurre dentro del template y derriba el render del servidor de una página indexable.
+**Leer el valor siempre guardado por `hasValue()`.** Un recurso en estado de error relanza la falla al leer `value()`, y `defaultValue` no protege: solo rige mientras el stream no emitió. Como el SSR espera al recurso, ese throw ocurre dentro del template y derriba el render del servidor de una página indexable.
 
 ```typescript
 // ✅ El guard decide explícitamente qué se muestra cuando el recurso falló
-protected readonly literaryWorks = computed(() =>
+private readonly literaryWorks = computed(() =>
 	this.literaryWorksResource.hasValue() ? this.literaryWorksResource.value() : [],
 );
 ```
-
-Cuándo **bloquear**: rutas cuyo HTML server-rendered debe traer contenido/meta reales — `RenderMode.Server` indexables y `Prerender` con contenido (el prerender de build gana contenido real en vez de skeleton). Cuándo **no**: rutas `noindex` servidas por request con meta estáticos (bloquear solo agrega latencia sin ganar indexación → `progressiveRxResource`), y datos secundarios.
-
-**Enforced por lint:** en `src/app/pages/**` está prohibido `rxResource`/`httpResource` crudo — el gate `lint` obliga a elegir `ssrBlockingRxResource` o `progressiveRxResource` (`no-restricted-syntax`, bloque `ssr-fetch-must-decide-blocking` de `eslint.config.mjs`).
 
 ### 8. Directivas de SEO de página: declarar el combo según la indexabilidad
 
@@ -200,7 +181,7 @@ Una página indexable **nunca** debe usar la forma no indexable: quedaría sin s
 - [ ] ¿El aplanado por defecto es `switchMap` (y cualquier otro está justificado)?
 - [ ] ¿El debounce/throttle/coordinación está en el servicio, no en el componente?
 - [ ] ¿Los errores están tipados por operación, no en un `string | null` global?
-- [ ] ¿Los recursos de página que alimentan contenido/meta indexable usan `ssrBlockingRxResource`, y los secundarios/`noindex` usan `progressiveRxResource` (nunca `rxResource` crudo en `pages/**`)?
+- [ ] ¿Lo que no tiene que estar en el HTML del crawler está dentro de un `@defer`, y no en un recurso, que el SSR espera de todos modos?
 - [ ] ¿La página declara sus `hostDirectives` de SEO según su indexabilidad (indexable: MetaTags + StructuredData; no indexable/`noindex`: HeadMetadataDirective + `setRobots('noindex...')`)? Lo verifica automáticamente `seo-host-directives.spec.ts`.
 
 ---

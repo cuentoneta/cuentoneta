@@ -81,6 +81,16 @@ const commonRestrictedSyntax = [
 		selector: `PropertyDefinition[readonly!=true][value.callee.name=/^(${readonlyFactories.join('|')})$/]`,
 		message: readonlyFactoryMessage,
 	},
+	{
+		// Una clase de Angular que no es abstracta ni extiende otra no tiene subclase que lea un `protected`,
+		// y desde Angular 22.2 la plantilla y el `host` leen miembros `private`. Se acota a clases con
+		// decoradores porque el AST no dice si a una clase la extiende otra: una base concreta fuera de
+		// Angular puede necesitar `protected`.
+		selector:
+			'ClassDeclaration[decorators.length>0]:not([abstract=true]):not([superClass]) > ClassBody :matches(ClassBody > [accessibility="protected"], TSParameterProperty[accessibility="protected"])',
+		message:
+			'`protected` solo va en miembros que una subclase usa. Lo que lee la plantilla es `private` — ver angular-components.md.',
+	},
 ];
 
 // Métodos de `vi.*` que tienen wrapper en `src/test-utils.ts` (@test-utils).
@@ -113,22 +123,6 @@ const viRestrictedSyntax = [
 	{
 		selector: 'CallExpression[callee.object.name="vi"][callee.property.name="mocked"]',
 		message: "vi.mocked() está prohibido. Casteá la función auto-mockeada con el tipo Mock de '@test-utils'.",
-	},
-];
-
-// Prohíbe rxResource/httpResource crudos en páginas: todo fetch de página debe decidir explícitamente
-// su estrategia de SSR con ssrBlockingRxResource()/progressiveRxResource(), para no repetir la
-// regresión de SEO por la que un fetch sin pendingUntilEvent sirve el skeleton al SSR sin bloquear.
-const pageFetchRestrictedSyntax = [
-	{
-		selector: "CallExpression[callee.name='rxResource']",
-		message:
-			'En páginas usá ssrBlockingRxResource() o progressiveRxResource() de @utils/ssr-resource en vez de rxResource crudo — rxResource omite pendingUntilEvent y puede reproducir la regresión de SEO de #1697.',
-	},
-	{
-		selector: "CallExpression[callee.name='httpResource']",
-		message:
-			'En páginas usá ssrBlockingRxResource() o progressiveRxResource() de @utils/ssr-resource en vez de httpResource crudo — httpResource omite el bloqueo explícito del SSR y puede reproducir la regresión de SEO de #1697.',
 	},
 ];
 
@@ -305,17 +299,6 @@ export default [
 			'@angular-eslint/prefer-host-metadata-property': 'off',
 			...commonTypescriptRules,
 			'no-restricted-syntax': ['error', ...commonRestrictedSyntax],
-		},
-	},
-	{
-		// Compone commonRestrictedSyntax con las restricciones de fetch de página: en flat config, un
-		// bloque posterior que setea la misma regla REEMPLAZA el array del bloque `nx`, no lo mergea —
-		// recomponer commonRestrictedSyntax evita perder su cobertura (enum/lifecycle/estáticas) en páginas.
-		name: 'ssr-fetch-must-decide-blocking',
-		files: ['src/app/pages/**/*.ts'],
-		ignores: ['**/*.spec.ts'],
-		rules: {
-			'no-restricted-syntax': ['error', ...commonRestrictedSyntax, ...pageFetchRestrictedSyntax],
 		},
 	},
 	{

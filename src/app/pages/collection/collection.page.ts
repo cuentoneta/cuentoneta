@@ -1,10 +1,8 @@
 // Core
 import { Component, computed, effect, forwardRef, inject, input, RESPONSE_INIT, signal } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { NgTemplateOutlet } from '@angular/common';
-
-// Utils
-import { progressiveRxResource, ssrBlockingRxResource } from '@app-utils/ssr-resource';
 
 // Services
 import { CollectionApi } from '../../providers/collection.provider';
@@ -50,22 +48,20 @@ export default class CollectionPage implements CollectionHost {
 	private readonly suggestedCollectionsCount = 3;
 
 	// Los 160 px que el diseño reserva para la descripción en la columna, sobre un interlineado de 20.
-	protected readonly sidebarDescriptionLines = 8;
+	private readonly sidebarDescriptionLines = 8;
 
 	// Gatea la creación del contenido del panel deslizable: sin esto, la descripción entera y tres
 	// enlaces internos viajarían en el HTML del servidor, duplicando lo que la columna ya muestra.
-	protected readonly isDescriptionDrawerOpen = signal(false);
+	private readonly isDescriptionDrawerOpen = signal(false);
 
-	// Bloquea el render del servidor: con un recurso progresivo el HTML se serializa antes de la
-	// respuesta, y una colección inexistente saldría 200 con esqueleto — un 404 blando y cacheable.
-	private readonly collectionResource = ssrBlockingRxResource({
+	private readonly collectionResource = rxResource({
 		params: this.slug,
 		stream: ({ params }) => this.collectionApi.getBySlug(params),
 		defaultValue: undefined,
 	});
 
 	// El catálogo es accesorio: si falla, el bloque de sugeridas queda vacío y la página se sirve igual.
-	private readonly catalogResource = progressiveRxResource({
+	private readonly catalogResource = rxResource({
 		stream: () => this.collectionApi.getAll(),
 		defaultValue: [],
 	});
@@ -73,9 +69,9 @@ export default class CollectionPage implements CollectionHost {
 	public readonly collection = computed(() =>
 		this.collectionResource.hasValue() ? this.collectionResource.value() : undefined,
 	);
-	protected readonly notFound = computed(() => this.collectionResource.status() === 'error');
+	private readonly notFound = computed(() => this.collectionResource.status() === 'error');
 
-	protected readonly suggestedCollections = computed(() => {
+	private readonly suggestedCollections = computed(() => {
 		const slug = this.slug();
 		const catalog = this.catalogResource.hasValue() ? this.catalogResource.value() : [];
 		return catalog.filter((collection) => collection.slug !== slug).slice(0, this.suggestedCollectionsCount);
@@ -92,9 +88,9 @@ export default class CollectionPage implements CollectionHost {
 	});
 
 	// Con el autor a la vista, al extracto le queda una línea menos.
-	protected readonly excerptLines = computed(() => (this.collection()?.config.showAuthors ? 3 : 4));
+	private readonly excerptLines = computed(() => (this.collection()?.config.showAuthors ? 3 : 4));
 
-	protected openDescriptionDrawer(drawer: Drawer): void {
+	private openDescriptionDrawer(drawer: Drawer): void {
 		this.isDescriptionDrawerOpen.set(true);
 		drawer.open();
 	}

@@ -90,7 +90,7 @@ export class ButtonGroup {
 	// El diseño dibuja el ícono dentro de un marco de 24px, pero el glifo ocupa alrededor de dos
 	// tercios de ese marco. `ng-icon` dimensiona el glifo y no el marco, así que pedirle los 24px del
 	// marco lo agranda a una vez y media lo que muestra el diseño.
-	protected readonly iconSize = '16px';
+	private readonly iconSize = '16px';
 
 	/** Id de la opción elegida por la persona usuaria. El grupo no la aplica: la emite. */
 	public readonly optionSelected = output<string>();

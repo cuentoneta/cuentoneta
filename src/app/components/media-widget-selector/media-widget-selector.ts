@@ -87,15 +87,15 @@ export class MediaWidgetSelector {
 		});
 	});
 
-	protected readonly options = computed<ButtonGroupOption[]>(() =>
+	private readonly options = computed<ButtonGroupOption[]>(() =>
 		this.entries().map(({ id, label, iconName }) => ({ id, label, iconName })),
 	);
 
 	// Sobre las opciones y no sobre los medios: es la misma lista que dibuja la fila, así que el
 	// título no puede anunciar una elección que la fila no ofrece.
-	protected readonly hasChoice = computed(() => this.options().length > 1);
+	private readonly hasChoice = computed(() => this.options().length > 1);
 
-	protected readonly heading = computed(() =>
+	private readonly heading = computed(() =>
 		this.hasChoice()
 			? 'Disfrutá de esta obra en diferentes formatos'
 			: 'También podés disfrutar de esta obra en otro formato',
@@ -103,12 +103,12 @@ export class MediaWidgetSelector {
 
 	// La elección vuelve al primer recurso cuando cambia la obra: sostenerla entre obras dejaría
 	// montado un widget que ya no pertenece a la que se está leyendo.
-	protected readonly selectedId = linkedSignal({
+	private readonly selectedId = linkedSignal({
 		source: this.entries,
 		computation: (entries) => entries[0]?.id,
 	});
 
-	protected readonly selectedWidget = computed(() => {
+	private readonly selectedWidget = computed(() => {
 		const selected = this.entries().find((entry) => entry.id === this.selectedId());
 		return selected ? toMediaWidgetOutlet(selected.media) : undefined;
 	});

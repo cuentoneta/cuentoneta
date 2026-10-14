@@ -97,7 +97,7 @@ export class MediaSelectors {
 		audioRecording: { iconName: 'faSolidFileAudio', label: 'Audio' },
 	};
 
-	protected readonly selectors = computed<MediaSelectorItem[]>(() => {
+	private readonly selectors = computed<MediaSelectorItem[]>(() => {
 		const media = this.media();
 		if (this.selectable()) {
 			return media.map((item) => ({ ...this.mediaPlatforms[item.type], count: 1, media: item }));
@@ -109,13 +109,13 @@ export class MediaSelectors {
 		return [...counts.entries()].map(([type, count]) => ({ ...this.mediaPlatforms[type], count }));
 	});
 
-	protected readonly containerClasses = computed(() =>
+	private readonly containerClasses = computed(() =>
 		this.orientation() === 'vertical' ? 'flex flex-col items-center gap-2.5' : 'flex items-center gap-2.5',
 	);
 
 	private readonly selectorBaseClasses = 'relative flex items-center justify-center rounded-lg px-2.5 py-2';
 
-	protected readonly selectorClasses = computed(() => {
+	private readonly selectorClasses = computed(() => {
 		const theme = (() => {
 			switch (this.theme()) {
 				case 'solid':
@@ -133,14 +133,14 @@ export class MediaSelectors {
 	// pueda marcarse como decorativo (aria-hidden). En modo seleccionable cada botón es un recurso
 	// distinto, así que nombra el suyo: entre dos de la misma plataforma, la etiqueta sola no los
 	// distingue.
-	protected ariaLabel(selector: MediaSelectorItem): string {
+	private ariaLabel(selector: MediaSelectorItem): string {
 		if (selector.media) {
 			return `${selector.label}: ${selector.media.title}`;
 		}
 		return selector.count > 1 ? `${selector.label} (${selector.count})` : selector.label;
 	}
 
-	protected readonly badgeClasses = computed(() => {
+	private readonly badgeClasses = computed(() => {
 		switch (this.theme()) {
 			case 'solid':
 				return 'border-2 border-neutral-100 bg-white';

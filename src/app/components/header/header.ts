@@ -81,15 +81,15 @@ type VisibilityState = (typeof VisibilityState)[keyof typeof VisibilityState];
 	imports: [RouterLink, NgOptimizedImage],
 })
 export class Header {
-	protected readonly homePath = `/${AppRoutes.Home}`;
-	protected readonly navLinks: InternalLink[] = [
+	private readonly homePath = `/${AppRoutes.Home}`;
+	private readonly navLinks: InternalLink[] = [
 		{ label: 'Inicio', path: this.homePath },
 		{ label: 'Obras', path: `/${AppRoutes.LiteraryWork}` },
 		{ label: 'Colecciones', path: `/${AppRoutes.Collection}` },
 		{ label: 'Autores', path: `/${AppRoutes.Authors}` },
 		{ label: 'Nosotros', path: `/${AppRoutes.About}` },
 	];
-	protected readonly displayMenu = signal(false);
+	private readonly displayMenu = signal(false);
 
 	// El easing viaja dentro del mapa, no en la clase estática, porque la barra usa una curva por
 	// dirección. La que gobierna la transición es la del estado **destino**: por eso `ease-out` —la de
@@ -103,9 +103,9 @@ export class Header {
 		transform: (value) => (value ? VisibilityState.Visible : VisibilityState.Hidden),
 	});
 
-	protected readonly visibilityClasses = computed(() => this.visibilityClassMap[this.isVisible()]);
+	private readonly visibilityClasses = computed(() => this.visibilityClassMap[this.isVisible()]);
 
-	protected readonly isHidden = computed(() => this.isVisible() === VisibilityState.Hidden);
+	private readonly isHidden = computed(() => this.isVisible() === VisibilityState.Hidden);
 
 	private readonly collapseMenuOnHideEffect = effect(() => {
 		if (this.isHidden()) {
@@ -113,7 +113,7 @@ export class Header {
 		}
 	});
 
-	protected onMenuTogglerClicked() {
+	private onMenuTogglerClicked() {
 		this.displayMenu.set(!this.displayMenu());
 	}
 }

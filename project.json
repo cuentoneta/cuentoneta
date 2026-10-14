@@ -100,7 +100,9 @@
 			"continuous": true
 		},
 		"eslint:lint": {
-			"command": "eslint ./src ./e2e ./cms ./scripts ./tools"
+			"command": "eslint ./src ./e2e ./cms ./scripts ./tools",
+			"cache": true,
+			"inputs": ["default", "{workspaceRoot}/cms/**/*"]
 		},
 		"stylelint": {
 			"executor": "nx-stylelint:lint",
@@ -135,17 +137,33 @@
 				}
 			}
 		},
-		"e2e": {
-			"executor": "@nx/playwright:playwright",
-			"outputs": ["{workspaceRoot}/playwright-report"],
-			"options": {
-				"config": "{projectRoot}/playwright.config.ts"
-			},
-			"configurations": {
-				"ci": {
-					"ci": true
+		"vitest:test": {
+			"inputs": [
+				"default",
+				"^production",
+				"{workspaceRoot}/cms/**/*",
+				{
+					"fileset": "{projectRoot}/tsconfig.spec.json",
+					"dependencies": true
+				},
+				{
+					"fileset": "{projectRoot}/tsconfig.storybook.json",
+					"dependencies": true
+				},
+				{
+					"externalDependencies": ["vitest"]
+				},
+				{
+					"env": "CI"
+				},
+				{
+					"env": "COVERAGE"
+				},
+				{
+					"dependentTasksOutputFiles": "**/*.js",
+					"transitive": true
 				}
-			}
+			]
 		}
 	}
 }

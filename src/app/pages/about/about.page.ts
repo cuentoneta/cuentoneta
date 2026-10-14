@@ -1,10 +1,10 @@
 import { Component, computed, inject } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { NgOptimizedImage } from '@angular/common';
 
 import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
 import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 import { ContributorApi } from '../../providers/contributor.provider';
-import { progressiveRxResource } from '@app-utils/ssr-resource';
 
 @Component({
 	selector: 'cuentoneta-about',
@@ -13,7 +13,7 @@ import { progressiveRxResource } from '@app-utils/ssr-resource';
 	templateUrl: './about.page.html',
 })
 export default class AboutPage {
-	protected readonly links = {
+	private readonly links = {
 		CONTRIBUTING: 'https://github.com/cuentoneta/cuentoneta/blob/master/CONTRIBUTING.md',
 		GITHUB_REPO: 'https://github.com/cuentoneta/cuentoneta',
 		FACEBOOK: 'https://facebook.com/cuentoneta',
@@ -30,13 +30,12 @@ export default class AboutPage {
 	private readonly metaTagsDirective = inject(HeadMetadataDirective);
 	private readonly contributorService = inject(ContributorApi);
 
-	// Ruta Server + `noindex, nofollow`: se maneja con carga progresiva.
-	private readonly contributorsResource = progressiveRxResource({
+	private readonly contributorsResource = rxResource({
 		stream: () => this.contributorService.getAllByArea(),
 		defaultValue: [],
 	});
 
-	protected readonly contributorsPerArea = computed(() => this.contributorsResource.value());
+	private readonly contributorsPerArea = computed(() => this.contributorsResource.value());
 
 	constructor() {
 		this.updateMetaTags();

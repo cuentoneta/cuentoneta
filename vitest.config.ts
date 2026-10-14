@@ -1,6 +1,15 @@
 /// <reference types="vitest" />
 import angular from '@analogjs/vite-plugin-angular';
+import { availableParallelism } from 'node:os';
 import { defineConfig } from 'vitest/config';
+
+// Por encima de ~8 workers de `vmThreads` la suite no se acelera y la memoria sigue creciendo (ver
+// "Pool, workers y memoria" en testing.md). El tope no debe superar el default de Vitest, que en
+// watch es la mitad de los hilos: el modo se infiere igual que Vitest, y si la inferencia falla solo
+// quedan menos workers.
+const threads = availableParallelism();
+const isWatch = !process.argv.includes('run') && !process.env['CI'] && process.stdin.isTTY;
+const maxWorkers = Math.max(1, Math.min(8, isWatch ? Math.floor(threads / 2) : threads - 1));
 
 // Configuración de Vitest para Angular zoneless (Nx 23 + builder vite/esbuild).
 // El plugin de Analog compila componentes/plantillas Angular en modo JIT durante los tests.
@@ -9,10 +18,17 @@ export default defineConfig({
 	// descubre proyectos recorriendo el árbol, y bajo `.claude/worktrees/` hay copias enteras del
 	// repo. Basta con que el tsconfig de una de ellas no le parsee para que aborte y deje de resolver
 	// alias en toda la corrida.
-	plugins: [angular()],
+	//
+	// `fastCompile` transforma archivo por archivo: sin él, cada corrida compila primero el programa
+	// entero de `tsconfig.spec.json`, aunque se pida un solo spec. Su transform deja `@Service()` e
+	// `@Injectable()` en la clase como decoradores estándar, que V8 no ejecuta. Analog apaga el paso de
+	// OXC de Vite; declarar `oxc` lo vuelve a encender, y con `legacy` baja esos decoradores.
+	plugins: [angular({ fastCompile: true })],
 	resolve: { tsconfigPaths: true },
+	oxc: { decorator: { legacy: true } },
 	test: {
 		globals: true,
+		maxWorkers,
 		environment: 'happy-dom',
 		// Por defecto happy-dom navega los frames hijos: cada <iframe> montado dispara un fetch real
 		// (p. ej. el embed de Spotify), que al desmontar el frame se aborta y emite un unhandled error
