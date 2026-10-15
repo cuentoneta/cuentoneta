@@ -55,6 +55,70 @@ describe('collectionController', () => {
 	});
 });
 
+describe('collectionController suggestions', () => {
+	it('serves the suggestions for a slug as teasers, leaving that collection out', async () => {
+		const response = await app.request(`/collection/${firstCollection?.slug}/suggested`);
+		const body = (await response.json()) as { slug: string; count: number; literaryWorks: unknown[] }[];
+
+		expect(response.status).toBe(200);
+		expect(body).toHaveLength(3);
+		expect(body.map(({ slug }) => slug)).not.toContain(firstCollection?.slug);
+		body.forEach((teaser) => {
+			expect(teaser.literaryWorks).toEqual([]);
+			expect(teaser.count).toBeGreaterThan(0);
+		});
+	});
+
+	it('honours the limit query param', async () => {
+		const response = await app.request(`/collection/${firstCollection?.slug}/suggested?limit=1`);
+		const body = (await response.json()) as { slug: string }[];
+
+		expect(body).toHaveLength(1);
+	});
+
+	it('accepts the top of the range, ten', async () => {
+		const response = await app.request(`/collection/${firstCollection?.slug}/suggested?limit=10`);
+		const body = (await response.json()) as unknown[];
+
+		expect(response.status).toBe(200);
+		expect(body.length).toBeGreaterThan(3);
+		expect(body.length).toBeLessThanOrEqual(10);
+	});
+
+	it('serves an empty list when the catalog has no other collection', async () => {
+		const singleCollection = appWith(new InMemoryCollectionRepository(onoffCollectionsMock.slice(0, 1)));
+		const response = await singleCollection.request(`/collection/${firstCollection?.slug}/suggested`);
+
+		expect(response.status).toBe(200);
+		await expect(response.json()).resolves.toEqual([]);
+	});
+
+	// El recorte se valida antes del handler: pedir cero sugerencias o más de las que la ruta promete
+	// es un pedido que no se puede satisfacer, no una lista vacía. El alfabeto es el decimal de
+	// `common.schemas.ts`, así que la coerción nativa de JS no cuenta: `0x2` y `1e1` no son valores.
+	it.each(['0', '11', 'abc', '1.5', '0x2', '1e1', '%203%20'])(
+		'rejects the limit value %j with a 400',
+		async (limit) => {
+			const response = await app.request(`/collection/${firstCollection?.slug}/suggested?limit=${limit}`);
+
+			expect(response.status).toBe(400);
+		},
+	);
+
+	it('answers 404 for a slug no collection carries', async () => {
+		const response = await app.request('/collection/inexistente/suggested');
+
+		expect(response.status).toBe(404);
+	});
+
+	it('answers a slug the schema rejects with the same 404 as an unknown one', async () => {
+		const response = await app.request('/collection/Con%20Espacios/suggested');
+
+		expect(response.status).toBe(404);
+		await expect(response.json()).resolves.toEqual({ error: new CollectionNotFoundError('Con Espacios').message });
+	});
+});
+
 describe('collectionController with malformed data', () => {
 	class FailingCollectionRepository implements CollectionRepository {
 		public async fetchBySlug(): Promise<never> {
@@ -68,7 +132,7 @@ describe('collectionController with malformed data', () => {
 	const failing = appWith(new FailingCollectionRepository());
 
 	// La colección existe: lo que falla es su curaduría, no el pedido.
-	it.each(['/collection/geometrias-del-desvelo', '/collection'])(
+	it.each(['/collection/geometrias-del-desvelo', '/collection', '/collection/geometrias-del-desvelo/suggested'])(
 		'answers 500 with a stable code for %s',
 		async (path) => {
 			const response = await failing.request(path);

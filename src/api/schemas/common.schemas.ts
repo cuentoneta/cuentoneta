@@ -7,6 +7,12 @@ export const slugValueSchema = z
 
 export const slugParamSchema = z.object({ slug: slugValueSchema });
 
+/**
+ * Un entero de query en su forma decimal: sólo dígitos, sin signo, exponente ni espacios. Los límites
+ * y el default los pone cada ruta.
+ */
+export const decimalIntegerQueryParamSchema = z.string().regex(/^\d+$/, 'must be a decimal integer').transform(Number);
+
 export const basePaginationSchema = z.object({
 	limit: z.string().regex(/^\d+$/, 'limit must be a positive integer').transform(Number),
 

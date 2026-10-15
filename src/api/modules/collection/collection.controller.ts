@@ -1,9 +1,11 @@
 import { Hono, type Context } from 'hono';
+import { zValidator } from '@hono/zod-validator';
 
 import { slugParamValidator } from '@middleware/slug-param-validator.middleware';
+import { collectionSuggestionsQuerySchema } from '@schemas/collection.schemas';
 import { CollectionNotFoundError, MalformedCollectionError } from './collection.errors';
 import type { CollectionRepository } from './collection.repository';
-import { getCollectionBySlug, getCollections } from './collection.service';
+import { getCollectionBySlug, getCollections, getSuggestedCollections } from './collection.service';
 
 // El error de curaduría responde con un código y no con su mensaje, a diferencia del de arriba: ese
 // mensaje nombra la colección culpable, que en un listado ni siquiera es la que el cliente pidió.
@@ -32,6 +34,17 @@ export function createCollectionController(repository?: CollectionRepository) {
 		async (c) => {
 			const { slug } = c.req.valid('param');
 			return respond(c, () => getCollectionBySlug(slug, repository));
+		},
+	);
+
+	controller.get(
+		'/:slug/suggested',
+		slugParamValidator((slug) => new CollectionNotFoundError(slug)),
+		zValidator('query', collectionSuggestionsQuerySchema),
+		async (c) => {
+			const { slug } = c.req.valid('param');
+			const { limit } = c.req.valid('query');
+			return respond(c, () => getSuggestedCollections(slug, limit, repository));
 		},
 	);
 

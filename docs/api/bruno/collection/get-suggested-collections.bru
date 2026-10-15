@@ -1,0 +1,32 @@
+meta {
+  name: Get suggested collections
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{apiUrl}}{{baseApiPath}}/collection/:slug/suggested?limit=3
+  body: none
+  auth: none
+}
+
+params:path {
+  slug: geometrias-del-desvelo
+}
+
+params:query {
+  limit: 3
+}
+
+docs {
+  Hasta `limit` colecciones sugeridas para la del slug, en vista de teaser: las mismas entradas que el
+  catálogo, sin la colección pedida.
+
+  El orden va por cercanía. Primero la cantidad de tags compartidos —por slug—, después el tamaño más
+  parecido y por último el orden del catálogo (título ascendente). Las colecciones sin tags en común
+  completan la lista, así que solo trae menos de `limit` si el catálogo no tiene tantas candidatas.
+
+  `limit` es opcional (tres por defecto) y acepta un entero de 1 a 10 escrito en dígitos; cualquier otro
+  valor responde 400. Un slug inexistente —o sin formato de slug— responde 404 con { error }, igual que
+  el detalle, y los errores de curaduría del catálogo son los mismos de `GET /collection`.
+}

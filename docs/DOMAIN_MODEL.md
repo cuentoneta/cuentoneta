@@ -76,8 +76,9 @@ GET /api/literary-work             # Catálogo de obras (teasers), filtrable por
 **Interfaces de API:**
 
 ```
-GET /api/collection                # Catálogo de colecciones, en vista de teaser
-GET /api/collection/:slug          # Colección completa, con sus obras literarias
+GET /api/collection                 # Catálogo de colecciones, en vista de teaser
+GET /api/collection/:slug           # Colección completa, con sus obras literarias
+GET /api/collection/:slug/suggested # Hasta N teasers ordenados por cercanía con la pedida
 ```
 
 ---
