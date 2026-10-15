@@ -95,6 +95,26 @@ export function createLiteraryWorkNavigationTeaser(
 	return Object.freeze({ ...options, slug: createSlug(options.slug) });
 }
 
+/**
+ * El nombre del autor que ancla un listado de sus obras: viaja dentro de ellas —cada una lo declara
+ * entre sus autores—, así que quien nombra el ámbito no necesita una lectura aparte del autor.
+ *
+ * Sin obras no hay nombre, y el vacío es la respuesta: el llamador decide qué encabezado queda.
+ */
+export function resolveAuthorName(
+	literaryWorks: ReadonlyArray<{ readonly authors: readonly AuthorTeaser[] }>,
+	authorSlug: string,
+): string {
+	for (const literaryWork of literaryWorks) {
+		for (const author of literaryWork.authors) {
+			if (author.slug === authorSlug) {
+				return author.name;
+			}
+		}
+	}
+	return '';
+}
+
 // "Anónimo" es un author real del catálogo: la obra anónima lo referencia explícitamente
 // en todas las capas (sin normalización en el ACL) — ver docs/LITERARY_WORK_DESIGN.md §10.
 // Se compara por slug (clave de negocio), nunca por _id (infraestructura).

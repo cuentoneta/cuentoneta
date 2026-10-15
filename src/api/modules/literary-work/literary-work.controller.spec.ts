@@ -1,5 +1,6 @@
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
+import { onoffCollectionsMock } from '@mocks/onoff-collections.mock';
 import { Hono } from 'hono';
 import { environment } from '../../_helpers/environment';
 import { readCacheHeaders } from '@middleware/read-cache-headers.middleware';
@@ -9,7 +10,7 @@ import { InMemoryLiteraryWorkRepository } from './literary-work.repository.mock'
 
 describe('literaryWorkController', () => {
 	const controller = createLiteraryWorkController(
-		new InMemoryLiteraryWorkRepository(onoffLiteraryWorksMock, onoffLiteraryWorkTeasersMock),
+		new InMemoryLiteraryWorkRepository(onoffLiteraryWorksMock, onoffLiteraryWorkTeasersMock, onoffCollectionsMock),
 	);
 	const knownSlug = onoffLiteraryWorksMock[0].slug;
 	const [knownAuthor] = onoffLiteraryWorkTeasersMock[0].authors;
@@ -152,6 +153,95 @@ describe('literaryWorkController', () => {
 			environment.readCacheSMaxAge = 900;
 
 			const response = await appUnderTest().request(`/literary-work?author=${knownAuthor.slug}`);
+
+			expect(response.headers.get('Vercel-CDN-Cache-Control')).toBe(
+				'public, s-maxage=900, stale-while-revalidate=604800',
+			);
+		});
+	});
+
+	describe('GET /:slug/suggestions', () => {
+		const [knownCollection] = onoffCollectionsMock;
+		const currentWorkSlug = onoffLiteraryWorksMock[0].slug;
+
+		function suggestionsOf(workSlug: string, scope: string): Promise<Response> {
+			return Promise.resolve(controller.request(`/${workSlug}/suggestions?${scope}`));
+		}
+
+		it('should serve the works of the author, headed by the author name, without the work being read', async () => {
+			const response = await suggestionsOf(currentWorkSlug, `author=${knownAuthor.slug}`);
+			const body = (await response.json()) as { title: string; suggestions: { slug: string }[] };
+
+			expect(response.status).toBe(200);
+			expect(body.title).toBe(knownAuthor.name);
+			expect(body.suggestions).toHaveLength(3);
+			expect(body.suggestions.map(({ slug }) => slug)).not.toContain(currentWorkSlug);
+		});
+
+		it('should serve the works of the collection, headed by its title', async () => {
+			const response = await suggestionsOf(currentWorkSlug, `collection=${knownCollection.slug}`);
+			const body = (await response.json()) as { title: string; suggestions: { slug: string }[] };
+
+			expect(response.status).toBe(200);
+			expect(body.title).toBe(knownCollection.title);
+			expect(body.suggestions.length).toBeGreaterThan(0);
+			expect(body.suggestions.length).toBeLessThanOrEqual(3);
+		});
+
+		it('should honour the limit query param', async () => {
+			const response = await suggestionsOf(currentWorkSlug, `author=${knownAuthor.slug}&limit=1`);
+			const body = (await response.json()) as { suggestions: unknown[] };
+
+			expect(body.suggestions).toHaveLength(1);
+		});
+
+		// Un ámbito sin obras no es un error: el bloque no se pinta, y esto es lo que impide que alguien
+		// lo convierta después en un 404.
+		it('should serve an empty block for a scope without works', async () => {
+			const response = await suggestionsOf(currentWorkSlug, 'author=sin-obras');
+
+			expect(response.status).toBe(200);
+			await expect(response.json()).resolves.toEqual({ title: '', suggestions: [] });
+		});
+
+		// El ámbito es excluyente: sin él no hay de dónde sugerir, y con los dos el pedido se contradice.
+		it.each(['', 'author=', 'limit=3', `author=${knownAuthor.slug}&collection=${knownCollection.slug}`])(
+			'should reject the query %j with a 400',
+			async (query) => {
+				const response = await suggestionsOf(currentWorkSlug, query);
+
+				expect(response.status).toBe(400);
+			},
+		);
+
+		it.each(['0', '11', 'abc', '1.5', '0x2', '1e1'])('should reject the limit value %j with a 400', async (limit) => {
+			const response = await suggestionsOf(currentWorkSlug, `author=${knownAuthor.slug}&limit=${limit}`);
+
+			expect(response.status).toBe(400);
+		});
+
+		// El ámbito es un criterio de filtro, no un recurso: un valor mal formado es un request inválido,
+		// y por eso responde 400 aunque el slug de ruta responda 404.
+		it('should reject a malformed scope slug with a 400', async () => {
+			const response = await suggestionsOf(currentWorkSlug, 'author=no%20es%20slug');
+
+			expect(response.status).toBe(400);
+		});
+
+		it('should answer a path slug the schema rejects with the 404 of the work', async () => {
+			const response = await controller.request('/no%20es%20slug/suggestions?author=un-autor');
+
+			expect(response.status).toBe(404);
+			await expect(response.json()).resolves.toEqual({ error: new LiteraryWorkNotFoundError('no es slug').message });
+		});
+
+		it('should emit the edge cache headers on the block in production', async () => {
+			environment.production = true;
+			environment.readCacheSMaxAge = 900;
+
+			const response = await appUnderTest().request(
+				`/literary-work/${currentWorkSlug}/suggestions?author=${knownAuthor.slug}`,
+			);
 
 			expect(response.headers.get('Vercel-CDN-Cache-Control')).toBe(
 				'public, s-maxage=900, stale-while-revalidate=604800',

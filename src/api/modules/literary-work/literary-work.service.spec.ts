@@ -6,10 +6,15 @@ import {
 	onoffLiteraryWorkTeasersMock,
 } from '@mocks/onoff-literary-work-teasers.mock';
 import * as literaryWorkService from './literary-work.service';
-import { getLiteraryWorkBySlug, getLiteraryWorkTeasers } from './literary-work.service';
+import { getLiteraryWorkBySlug, getLiteraryWorkTeasers, getReadingSuggestions } from './literary-work.service';
 import { LiteraryWorkNotFoundError, MalformedLiteraryWorkError } from './literary-work.errors';
 import { InMemoryLiteraryWorkRepository } from './literary-work.repository.mock';
-import type { LiteraryWorkRepository, LiteraryWorkTeaserListing } from './literary-work.repository';
+import type {
+	LiteraryWorkRepository,
+	LiteraryWorkSuggestionsListing,
+	LiteraryWorkTeaserListing,
+} from './literary-work.repository';
+import { onoffCollectionsMock } from '@mocks/onoff-collections.mock';
 import { environment } from '../../_helpers/environment';
 import { fetchClarityData } from '../../_helpers/clarity-connector';
 import { ClarityRequestError, ClarityResponseError } from '../../_helpers/clarity-connector.errors';
@@ -44,6 +49,27 @@ class StubLiteraryWorkRepository implements LiteraryWorkRepository {
 	}
 
 	public async fetchTeasers(): Promise<LiteraryWorkTeaserListing> {
+		return this.listing;
+	}
+
+	public async fetchSuggestions(): Promise<never> {
+		throw new Error('No participa de estos casos.');
+	}
+}
+
+// El listado del ámbito, canned y con su encabezado: la misma razón que el stub de arriba.
+class StubLiteraryWorkSuggestionsRepository implements LiteraryWorkRepository {
+	constructor(private readonly listing: LiteraryWorkSuggestionsListing) {}
+
+	public async fetchBySlug(): Promise<never> {
+		throw new Error('No participa de estos casos.');
+	}
+
+	public async fetchTeasers(): Promise<never> {
+		throw new Error('No participa de estos casos.');
+	}
+
+	public async fetchSuggestions(): Promise<LiteraryWorkSuggestionsListing> {
 		return this.listing;
 	}
 }
@@ -98,6 +124,64 @@ describe('getLiteraryWorkTeasers', () => {
 		});
 
 		expect(await getLiteraryWorkTeasers({ author: author.slug }, stub)).toEqual([]);
+	});
+});
+
+describe('getReadingSuggestions', () => {
+	const [reference, , third] = onoffLiteraryWorkTeasersMock;
+	const [author] = reference.authors;
+	const [collection] = onoffCollectionsMock;
+	const repository = new InMemoryLiteraryWorkRepository([], onoffLiteraryWorkTeasersMock, onoffCollectionsMock);
+
+	afterEach(() => restoreAllMocks());
+
+	it('devuelve las obras del autor, encabezadas por su nombre', async () => {
+		const { title, suggestions } = await getReadingSuggestions(reference.slug, { author: author.slug }, 3, repository);
+
+		expect(title).toBe(author.name);
+		expect(suggestions).toHaveLength(3);
+		expect(suggestions.map(({ slug }) => slug)).not.toContain(reference.slug);
+	});
+
+	it('devuelve las obras de la colección, encabezadas por su título', async () => {
+		const { title, suggestions } = await getReadingSuggestions(
+			collection.literaryWorks[0].slug,
+			{ collection: collection.slug },
+			3,
+			repository,
+		);
+
+		expect(title).toBe(collection.title);
+		expect(suggestions.length).toBeLessThanOrEqual(3);
+		expect(suggestions.map(({ slug }) => slug)).not.toContain(collection.literaryWorks[0].slug);
+	});
+
+	// Un ámbito sin obras no es un error: el bloque no se dibuja, y el encabezado vacío es lo que lo dice.
+	it('devuelve un listado vacío y sin encabezado para un ámbito sin obras', async () => {
+		const suggestions = await getReadingSuggestions(reference.slug, { author: 'sin-obras' }, 3, repository);
+
+		expect(suggestions).toEqual({ title: '', suggestions: [] });
+	});
+
+	it('devuelve las obras sanas y registra la descartada', async () => {
+		const warn = spyOn(console, 'warn').mockImplementation(() => undefined);
+		const malformed = new MalformedLiteraryWorkError('una-obra-rota', { cause: new Error('sin extracto') });
+		const stub = new StubLiteraryWorkSuggestionsRepository({
+			title: author.name,
+			literaryWorks: [reference, third],
+			malformed: [malformed],
+		});
+
+		const { suggestions } = await getReadingSuggestions('cualquiera', { author: author.slug }, 3, stub);
+
+		expect(suggestions.map(({ slug }) => slug)).toEqual(expect.arrayContaining([reference.slug, third.slug]));
+		expect(warn).toHaveBeenCalledWith(expect.stringContaining('una-obra-rota'), malformed.cause);
+	});
+
+	it('recorta el listado al límite pedido', async () => {
+		const { suggestions } = await getReadingSuggestions(reference.slug, { author: author.slug }, 1, repository);
+
+		expect(suggestions).toHaveLength(1);
 	});
 });
 // Registra si el caso de uso pide la landing: solo necesita lo más leído, y pedirla entera

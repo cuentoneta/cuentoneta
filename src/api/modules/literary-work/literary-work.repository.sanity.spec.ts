@@ -15,6 +15,7 @@ import {
 	onoffRawLiteraryWorksWithoutEditorialNote,
 	onoffRawLiteraryWorkTeasersMock,
 } from '@mocks/onoff-raw-literary-works.mock';
+import { onoffRawCollectionsMock } from '@mocks/onoff-raw-collections.mock';
 import { createMarkdown } from '@models/markdown.model';
 import { deriveSectionReadingTime } from '@models/reading-time-derivation.model';
 import { createReadingTime, sumReadingTimes } from '@models/reading-time.model';
@@ -287,5 +288,62 @@ describe('SanityLiteraryWorkRepository.fetchTeasers', () => {
 
 		expect(literaryWorks).toEqual([]);
 		expect(malformed[0]).toBeInstanceOf(MalformedLiteraryWorkError);
+	});
+});
+
+describe('SanityLiteraryWorkRepository.fetchSuggestions', () => {
+	// El nombre del autor del ámbito no se lee aparte: viaja en el listado de sus obras, que es lo que
+	// esta rama ya trae.
+	it('mapea las obras del autor con su nombre como encabezado', async () => {
+		const [rawTeaser] = onoffRawLiteraryWorkTeasersMock;
+		const [author] = rawTeaser.authors;
+
+		const { title, literaryWorks, malformed } = await repoReturning(onoffRawLiteraryWorkTeasersMock).fetchSuggestions({
+			author: author.slug,
+		});
+
+		expect(title).toBe(author.name);
+		expect(literaryWorks).toHaveLength(onoffRawLiteraryWorkTeasersMock.length);
+		expect(malformed).toEqual([]);
+	});
+
+	it('mapea las obras de la colección con su título como encabezado', async () => {
+		const rawCollection = onoffRawCollectionsMock[0];
+
+		const { title, literaryWorks, malformed } = await repoReturning(rawCollection).fetchSuggestions({
+			collection: rawCollection.slug,
+		});
+
+		expect(title).toBe(rawCollection.title);
+		expect(literaryWorks).toHaveLength(rawCollection.literaryWorks.length);
+		expect(malformed).toEqual([]);
+	});
+
+	it('devuelve un listado vacío y sin encabezado para un ámbito sin obras', async () => {
+		expect(await repoReturning([]).fetchSuggestions({ author: 'sin-obras' })).toEqual({
+			title: '',
+			literaryWorks: [],
+			malformed: [],
+		});
+		expect(await repoReturning(null).fetchSuggestions({ collection: 'sin-obras' })).toEqual({
+			title: '',
+			literaryWorks: [],
+			malformed: [],
+		});
+	});
+
+	it('reporta la obra mal curada sin llevarse puestas a las demás', async () => {
+		const [sane, ...rest] = onoffRawLiteraryWorkTeasersMock;
+		const broken = { ...sane, _id: `${sane._id}-rota`, slug: `${sane.slug}-rota`, totalReadingTime: null };
+		const [author] = sane.authors;
+
+		const { title, literaryWorks, malformed } = await repoReturning([broken, ...rest]).fetchSuggestions({
+			author: author.slug,
+		});
+
+		expect(title).toBe(author.name);
+		expect(literaryWorks).toHaveLength(rest.length);
+		expect(malformed).toHaveLength(1);
+		expect(malformed[0].slug).toBe(broken.slug);
 	});
 });

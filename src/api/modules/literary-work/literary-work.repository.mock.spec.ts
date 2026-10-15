@@ -1,5 +1,6 @@
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
+import { onoffCollectionsMock } from '@mocks/onoff-collections.mock';
 import { InMemoryLiteraryWorkRepository } from './literary-work.repository.mock';
 
 describe('InMemoryLiteraryWorkRepository.fetchBySlug', () => {
@@ -51,5 +52,55 @@ describe('InMemoryLiteraryWorkRepository.fetchTeasers', () => {
 		const { literaryWorks } = await new InMemoryLiteraryWorkRepository().fetchTeasers({ author: authorOfFirst.slug });
 
 		expect(literaryWorks).toEqual([]);
+	});
+});
+
+describe('InMemoryLiteraryWorkRepository.fetchSuggestions', () => {
+	const [firstTeaser] = onoffLiteraryWorkTeasersMock;
+	const [authorOfFirst] = firstTeaser.authors;
+	const [collection] = onoffCollectionsMock;
+	const repository = new InMemoryLiteraryWorkRepository([], onoffLiteraryWorkTeasersMock, onoffCollectionsMock);
+
+	it('devuelve las obras del autor, encabezadas por su nombre', async () => {
+		const { title, literaryWorks, malformed } = await repository.fetchSuggestions({ author: authorOfFirst.slug });
+
+		expect(title).toBe(authorOfFirst.name);
+		expect(literaryWorks.length).toBeGreaterThan(0);
+		literaryWorks.forEach(({ authors }) => {
+			expect(authors.some(({ slug }) => slug === authorOfFirst.slug)).toBe(true);
+		});
+		expect(malformed).toEqual([]);
+	});
+
+	// El doble sirve el ámbito de colección con las colecciones cargadas, que es lo que el adaptador de
+	// Sanity lee del documento: su título y sus obras.
+	it('devuelve las obras de la colección, encabezadas por su título', async () => {
+		const { title, literaryWorks } = await repository.fetchSuggestions({ collection: collection.slug });
+
+		expect(title).toBe(collection.title);
+		expect(literaryWorks).toEqual(collection.literaryWorks);
+	});
+
+	it('devuelve un listado vacío y sin encabezado para un ámbito sin obras', async () => {
+		await expect(repository.fetchSuggestions({ author: 'sin-obras' })).resolves.toEqual({
+			title: '',
+			literaryWorks: [],
+			malformed: [],
+		});
+		await expect(repository.fetchSuggestions({ collection: 'sin-obras' })).resolves.toEqual({
+			title: '',
+			literaryWorks: [],
+			malformed: [],
+		});
+	});
+
+	it('devuelve un listado vacío sin teasers ni colecciones cargadas', async () => {
+		const empty = new InMemoryLiteraryWorkRepository();
+
+		await expect(empty.fetchSuggestions({ author: authorOfFirst.slug })).resolves.toEqual({
+			title: '',
+			literaryWorks: [],
+			malformed: [],
+		});
 	});
 });

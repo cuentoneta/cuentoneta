@@ -1,8 +1,10 @@
 import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
+import type { ReadingSuggestions, ReadingSuggestionsScope } from '@models/reading-suggestions.model';
 import type { RotatingContent } from '@models/landing-page-content.model';
 import { LiteraryWorkNotFoundError } from './literary-work.errors';
 import type { LiteraryWorkRepository, LiteraryWorkTeaserFilter } from './literary-work.repository';
 import { SanityLiteraryWorkRepository } from './literary-work.repository.sanity';
+import { rankSuggestedLiteraryWorks } from './literary-work-suggestions';
 import type { ContentRepository } from '../content/content.repository';
 import { SanityContentRepository } from '../content/content.repository.sanity';
 import { getRotatingContent } from '../content/content.service';
@@ -36,6 +38,28 @@ export async function getLiteraryWorkTeasers(
 		console.warn(`[LiteraryWork] Obra descartada del listado de teasers: "${error.slug}"`, error.cause);
 	}
 	return literaryWorks;
+}
+
+/**
+ * Sirve las sugerencias de lectura al pie de una obra: las hermanas del ámbito con el que se llegó a
+ * ella, ya elegidas y recortadas a `limit`.
+ *
+ * La obra entra como referencia —se descarta de lo que se ofrece y presta sus tags para medir
+ * afinidad—, no como recurso: quien la lee ya la tiene, y el bloque se arma con lo que devuelve acá.
+ */
+export async function getReadingSuggestions(
+	currentWorkSlug: string,
+	scope: ReadingSuggestionsScope,
+	limit: number,
+	repository: LiteraryWorkRepository = new SanityLiteraryWorkRepository(),
+): Promise<ReadingSuggestions> {
+	const { title, literaryWorks, malformed } = await repository.fetchSuggestions(scope);
+	// La misma política de listado que el catálogo: la obra que el CMS dejó inconsistente se descarta
+	// del bloque accesorio en vez de tumbarlo, y queda registrada en el servidor.
+	for (const error of malformed) {
+		console.warn(`[LiteraryWork] Obra descartada de las sugerencias de lectura: "${error.slug}"`, error.cause);
+	}
+	return { title, suggestions: rankSuggestedLiteraryWorks(literaryWorks, currentWorkSlug, limit) };
 }
 
 // Clarity reporta la URL visitada, no el slug: puede traer querystring de campaña, un ancla a una

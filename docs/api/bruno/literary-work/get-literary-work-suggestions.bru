@@ -1,0 +1,51 @@
+meta {
+  name: Get literary work suggestions
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{apiUrl}}{{baseApiPath}}/literary-work/:slug/suggestions?collection=geometrias-del-desvelo
+  body: none
+  auth: none
+}
+
+params:path {
+  slug: geometria
+}
+
+params:query {
+  collection: geometrias-del-desvelo
+}
+
+docs {
+  Obtener las sugerencias de lectura al pie de una obra: el encabezado del ámbito con el que se
+  llegó a ella y hasta `limit` obras ya elegidas, sin la que se lee.
+
+  El ámbito es excluyente y viaja como query param, igual que el filtro del catálogo:
+  - `author=<slug>` — el nombre del autor encabeza el bloque y sus obras son las candidatas.
+  - `collection=<slug>` — el título de la colección lo encabeza y sus obras son las candidatas.
+
+  El criterio lo aplica el backend: primero las obras que más tags comparten con la que se lee
+  —por slug, sin contar repetidos—. A igual afinidad el orden rota según la obra que se lee, así
+  que un ámbito prolífico no ofrece siempre las mismas; la rotación es la misma en cada pedido,
+  porque sale de un hash del slug y no del azar. Las obras sin tags en común no se descartan:
+  completan la lista. El orden no depende del pedido, así que la respuesta es cacheable en el
+  borde.
+
+  La obra entra como referencia, no como recurso: se descarta de las sugerencias y presta sus tags
+  para medir afinidad. Si no está entre las candidatas —un contexto de navegación viejo, o de otro
+  ámbito— todas empatan en afinidad y el listado se sirve rotado por la obra que se lee, sin
+  descartar nada.
+
+  `limit` es opcional (tres por defecto) y acepta un entero de 1 a 10 escrito en dígitos; cualquier
+  otro valor responde 400, igual que un ámbito mal formado, ausente o doble. Un ámbito sin obras
+  —o inexistente— responde 200 con el encabezado vacío y ninguna sugerencia: el bloque no se pinta,
+  y la ausencia no es un error. Una obra que la curaduría dejó inconsistente se descarta del bloque
+  y se registra en el servidor, sin afectar a las demás.
+
+  Slugs del corpus de Onoff (fuente: src/mocks/onoff-literary-works.mock.ts):
+  - el-palacio-de-las-nueve-fronteras
+  - geometria
+  - los-peldanos
+}

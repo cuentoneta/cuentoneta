@@ -1,11 +1,12 @@
 import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 
-import { literaryWorkTeaserFilterSchema } from '@schemas/literary-work.schemas';
+import { literaryWorkSuggestionsQuerySchema, literaryWorkTeaserFilterSchema } from '@schemas/literary-work.schemas';
 import { slugParamValidator } from '@middleware/slug-param-validator.middleware';
+import type { ReadingSuggestionsScope } from '@models/reading-suggestions.model';
 import { LiteraryWorkNotFoundError } from './literary-work.errors';
 import type { LiteraryWorkRepository } from './literary-work.repository';
-import { getLiteraryWorkBySlug, getLiteraryWorkTeasers } from './literary-work.service';
+import { getLiteraryWorkBySlug, getLiteraryWorkTeasers, getReadingSuggestions } from './literary-work.service';
 
 export function createLiteraryWorkController(repository?: LiteraryWorkRepository) {
 	const controller = new Hono();
@@ -35,6 +36,23 @@ export function createLiteraryWorkController(repository?: LiteraryWorkRepository
 				}
 				throw error;
 			}
+		},
+	);
+
+	// Las sugerencias de lectura al pie de la obra, recortadas acá: el cliente no recibe candidatas que
+	// no vaya a mostrar ni elige cuáles son. El ámbito de la lectura —autor o colección— es excluyente y
+	// viaja como query param, igual que el filtro del catálogo.
+	controller.get(
+		'/:slug/suggestions',
+		slugParamValidator((slug) => new LiteraryWorkNotFoundError(slug)),
+		zValidator('query', literaryWorkSuggestionsQuerySchema),
+		async (c) => {
+			const { slug } = c.req.valid('param');
+			const query = c.req.valid('query');
+			const scope: ReadingSuggestionsScope =
+				'author' in query ? { author: query.author } : { collection: query.collection };
+
+			return c.json(await getReadingSuggestions(slug, scope, query.limit, repository));
 		},
 	);
 
