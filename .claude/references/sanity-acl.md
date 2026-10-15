@@ -38,8 +38,9 @@ queda contenido en el mapper; el dominio y el frontend no se enteran.
 > **Split de archivos de los módulos que ya divergen** — tres archivos, no uno: `<dominio>.repository.ts`
 > (el puerto, la interfaz), `<dominio>.repository.sanity.ts` (el adaptador, con la ACL en privados) y
 > `<dominio>.repository.mock.ts` (el doble en memoria). Los errores tipados van en
-> `<dominio>.errors.ts`. El cliente de Sanity se inyecta por el constructor con un default, que es el
-> seam por el que los specs pasan un doble sin mockear el módulo.
+> `<dominio>.errors.ts`. El cliente de Sanity y el resolver de imágenes (ver
+> [Helpers de imagen](#helpers-de-imagen-también-parte-de-la-capa-de-mappers)) se inyectan por el
+> constructor con un default, que es el seam por el que los specs pasan un doble sin mockear el módulo.
 >
 > El módulo `literary-work` está completo de punta a punta (repository → service → controller), con
 > el contrato en [`docs/LITERARY_WORK_DESIGN.md`](../../docs/LITERARY_WORK_DESIGN.md) §6.
@@ -308,8 +309,15 @@ export function urlFor(source: SanityImageSource): string {
 }
 ```
 
-Los mappers invocan `urlFor` y exponen al dominio un `imageUrl: string`, nunca el
-`SanityImageSource` crudo.
+Los mappers exponen al dominio un `imageUrl: string`, nunca el `SanityImageSource` crudo.
+
+**La resolución es un colaborador inyectable.** `urlFor` es la implementación real y el default de un
+`ImageUrlResolver = (source: SanityImageSource) => string`. Los mappers que resuelven imágenes lo
+reciben como **último parámetro** y los repositories como segundo argumento del constructor, igual que
+el `client`. Así un spec pasa su propio resolver (`stubImageUrlResolver`, de
+`@testing/image-url-resolver.stub`) sin sustituir el módulo de `@sanity/image-url`. Un mapper con
+resolver no sirve como `.map(mapX)` point-free —el índice de `map` caería en ese parámetro—: se
+escribe con lambda.
 
 **La URL sale del ACL sin parámetros de transformación.** El tamaño, el formato y la calidad los
 agrega el `IMAGE_LOADER` que la aplicación registra en `app.config.ts`
