@@ -516,7 +516,7 @@ interface ResourceType {
 
 > `url` es la razón de ser del recurso: sin un enlace válido, no hay nada que enlazar. El schema de Sanity la exige y valida su forma de URL, pero esa regla rige la **edición** en el Studio, no el dato ya persistido — un documento anterior a la regla, o escrito por script o migración, puede tenerla ausente o vacía sin que el Studio lo señale. El ACL cierra esa brecha en la frontera: `mapResources` descarta, con un `console.warn` para hacerlo visible en logs, todo recurso cuyo `url` no sea un string no vacío. Por eso `Author.resources` y `LiteraryWork.resources` nunca transportan un ítem incompleto — la garantía es del mapeo, no del schema.
 
-> El ícono que acompaña a un recurso en la interfaz lo resuelve el frontend a partir del `slug` del tipo, contra el mapa local de `@models/icon.model`. No viaja desde el CMS.
+> El ícono que acompaña a un recurso en la interfaz lo resuelve el frontend a partir del `slug` del tipo, contra el mapa local de `@app-models/icon.model`. No viaja desde el CMS.
 
 > El nombre `description` no implica un mismo tipo en todo el modelo: en `ResourceType` y en [`Tag`](#tag-etiqueta) es texto plano, mientras que `Media.description` es HTML saneado y `Collection.description` es Markdown saneado a HTML. Conviene mirar la interfaz antes de asumir el formato.
 
@@ -547,50 +547,6 @@ interface Tag {
 > El nombre `description` no implica un mismo tipo en todo el modelo: en `Tag` y en [`ResourceType`](#resource-recurso-externo) es texto plano, mientras que `Media.description` es HTML saneado y `Collection.description` es Markdown saneado a HTML. Conviene mirar la interfaz antes de asumir el formato.
 
 > Una etiqueta no lleva ícono: el componente `Tag` renderiza solo su título. El CMS supo tener un campo de ícono, pero ninguna superficie lo mostraba.
-
----
-
-### Icon (Ícono)
-
-**Propósito:** Referenciar iconos desde diferentes proveedores.
-
-> Ninguna entidad del dominio lo declara ya: ni `Tag` ni `ResourceType` llevan ícono. Otras superficies sí muestran íconos, cada una por su cuenta —el pie de página y los botones de compartir los nombran literalmente en el código—, pero ninguna usa este tipo.
-
-```typescript
-interface Icon {
-	name: string; // Identificador del ícono
-	provider: string; // Proveedor ('FontAwesome', 'SimpleIcons', etc.)
-}
-```
-
-**Proveedores soportados:**
-
-- FontAwesome - Iconos versátiles
-- SimpleIcons - Logos de marcas
-- Custom - Iconos personalizados
-
----
-
-### Link (Enlace)
-
-**Propósito:** Representar enlaces internos y externos.
-
-```typescript
-interface InternalLink {
-	path: string; // Ruta interna (ej: "/literary-work/la-casa-de-los-espíritus")
-	label: string; // Texto del enlace
-}
-
-interface UrlLink {
-	url: string; // URL externa
-	label: string; // Texto del enlace
-	ariaLabel: string; // Etiqueta de accesibilidad
-	icon: IconName; // Nombre de un ícono de los sets de @ng-icons instalados
-	alt: string; // Texto alternativo
-}
-```
-
-**Patrón:** Polimorfismo mediante tipos específicos.
 
 ---
 
@@ -787,9 +743,16 @@ La arquitectura de La Cuentoneta sigue un modelo de capas explícito:
 
 ### Responsabilidades por Capa
 
+**Kernel compartido (src/)**
+
+- `models/` - Modelo de dominio compartido por la app, el backend y el Studio (capa de dominio)
+- `utils/` - Utilidades puras compartidas
+- `sanity/` - Tipos generados del schema de Sanity
+- `mocks/` - Corpus de prueba compartido
+
 **Frontend (src/app)**
 
-- `models/` - Definición de tipos (capa de dominio)
+- `models/` - Tipos de configuración de UI (capa de presentación)
 - `providers/` - Servicios Angular (capa de aplicación)
 - `pages/` - Componentes de página (capa de presentación)
 - `components/` - Componentes reutilizables (capa de presentación)
