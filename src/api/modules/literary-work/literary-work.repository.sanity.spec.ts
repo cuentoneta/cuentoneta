@@ -16,8 +16,10 @@ import {
 	onoffRawLiteraryWorkTeasersMock,
 } from '@mocks/onoff-raw-literary-works.mock';
 import { createMarkdown } from '@models/markdown.model';
+import { isSpaceRecording } from '@models/media.model';
 import { deriveSectionReadingTime } from '@models/reading-time-derivation.model';
 import { createReadingTime, sumReadingTimes } from '@models/reading-time.model';
+import type { ImageUrlResolver } from '../../_utils/functions';
 import { MalformedLiteraryWorkError } from './literary-work.errors';
 import { SanityLiteraryWorkRepository } from './literary-work.repository.sanity';
 
@@ -26,6 +28,15 @@ import { SanityLiteraryWorkRepository } from './literary-work.repository.sanity'
 function repoReturning(raw: unknown): SanityLiteraryWorkRepository {
 	const client = { fetch: fn(() => Promise.resolve(raw)) } as unknown as SanityClient;
 	return new SanityLiteraryWorkRepository(client);
+}
+
+// Todo lo que el repository resuelve como imagen tiene que salir de este resolver y no del real: una URL
+// de `cdn.sanity.io` en la salida delata un camino que no lo recibió.
+const INJECTED_URL = 'https://images.example.org/injected.png';
+
+function repoWithImageResolver(raw: unknown): SanityLiteraryWorkRepository {
+	const client = { fetch: fn(() => Promise.resolve(raw)) } as unknown as SanityClient;
+	return new SanityLiteraryWorkRepository(client, fn<ImageUrlResolver>().mockReturnValue(INJECTED_URL));
 }
 
 describe('SanityLiteraryWorkRepository.fetchBySlug', () => {
@@ -38,6 +49,17 @@ describe('SanityLiteraryWorkRepository.fetchBySlug', () => {
 		expect(literaryWork?.content.map((section) => section.position)).toEqual([0, 1]);
 		expect(literaryWork?.sectionCount).toBe(2);
 		expect(literaryWork?.totalReadingTime).toBe(12);
+	});
+
+	it('resuelve la portada, el autor y el avatar del anfitrión con el resolver inyectado', async () => {
+		const [raw] = onoffRawLiteraryWorksWithMediaSources;
+
+		const literaryWork = await repoWithImageResolver(raw).fetchBySlug(raw.slug);
+
+		expect(literaryWork?.coverImage).toBe(INJECTED_URL);
+		expect(literaryWork?.authors.every((author) => author.imageUrl === INJECTED_URL)).toBe(true);
+		const [spaceRecording] = literaryWork?.mediaSources.filter(isSpaceRecording) ?? [];
+		expect(spaceRecording?.data.hostAvatar).toBe(INJECTED_URL);
 	});
 
 	// El dato que no entra al dominio existió: obras con la fecha de publicación sin hora, que el value
@@ -257,6 +279,13 @@ describe('SanityLiteraryWorkRepository.fetchTeasers', () => {
 			expect(Object.isFrozen(teaser)).toBe(true);
 			expect(teaser.excerpt.bodyHtml).not.toContain('**');
 		});
+	});
+
+	it('resuelve la portada y los autores de cada teaser con el resolver inyectado', async () => {
+		const { literaryWorks } = await repoWithImageResolver(onoffRawLiteraryWorkTeasersMock).fetchTeasers({});
+
+		expect(literaryWorks.every((teaser) => teaser.coverImage === INJECTED_URL)).toBe(true);
+		expect(literaryWorks.flatMap((teaser) => teaser.authors).every((a) => a.imageUrl === INJECTED_URL)).toBe(true);
 	});
 
 	it('devuelve un listado vacío para un autor sin obras', async () => {
