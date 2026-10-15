@@ -14,7 +14,7 @@ import type { Resource as ResourceModel } from '@models/resource.model';
 
 // Directives
 import { Tooltip } from '../../directives/tooltip.directive';
-import { iconMappers } from '@models/icon.model';
+import { iconMappers } from '@app-models/icon.model';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { NgComponentOutlet } from '@angular/common';
 
