@@ -61,6 +61,11 @@ Thumbs.db
 # skill se versiona extraída a su directorio; el ZIP es un intermediario que envejece aparte.
 .claude/skills/**/*.skill
 
+# OpenCode — config de proyecto local: apunta a archivos del home, así que no se versiona. Los patrones
+# cubren también `.opencode/`.
+opencode.jsonc
+opencode.json
+
 # Artefactos de Playwright MCP (snapshots/logs de inspección). No versionar: además, al
 # vivir dentro del repo, el escaneo de contenido de Tailwind v4 los vigila y su escritura
 # en vivo dispara rebuilds en bucle del dev server (HMR) si no se ignoran.
