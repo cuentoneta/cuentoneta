@@ -7,6 +7,7 @@ import {
 	overflowingRawHighlightedAuthors,
 	untaggedRawHighlightedAuthor,
 } from '@mocks/onoff-raw-landing-page.mock';
+import type { ImageUrlResolver } from '../../_utils/functions';
 import { mapAuthorTeaser } from '../../_utils/functions';
 import { landingPageContentQuery, rotatingContentQuery } from '../../_queries/content.query';
 import { literaryWorkTeasers } from '../../_queries/literary-work.query';
@@ -180,6 +181,29 @@ describe('SanityContentRepository.fetchLandingPageContent', () => {
 
 		expect(error?.message).toContain(LANDING_SLUG);
 		expect((error?.cause as Error).message).toContain(work.slug);
+	});
+});
+
+// Todo lo que el repository resuelve como imagen tiene que salir de este resolver y no del real: una URL
+// de `cdn.sanity.io` en la salida delata un camino que no lo recibió.
+describe('SanityContentRepository image resolution', () => {
+	const INJECTED_URL = 'https://images.example.org/injected.png';
+
+	it('resolves campaigns, navigation teasers and highlighted authors through the injected image resolver', async () => {
+		const resolveImageUrl = fn<ImageUrlResolver>().mockReturnValue(INJECTED_URL);
+		const { client } = stubSanityClient([[rotatingContentQuery, onoffRawRotatingContentMock]], onoffRawLandingPageMock);
+
+		const result = await new SanityContentRepository(client, resolveImageUrl).fetchLandingPageContent(LANDING_SLUG);
+
+		const imageUrls = [
+			...(result?.campaigns ?? []).flatMap(({ contents }) => [contents.xs.imageUrl, contents.md.imageUrl]),
+			...(result?.latestReads ?? []).map(({ coverImage }) => coverImage),
+			...(result?.highlightedAuthors ?? []).map(({ author }) => author.imageUrl),
+		];
+		expect(imageUrls.length).toBeGreaterThan(0);
+		expect(imageUrls.every((url) => url === INJECTED_URL || url === '')).toBe(true);
+		expect(imageUrls).toContain(INJECTED_URL);
+		expect(resolveImageUrl).toHaveBeenCalled();
 	});
 });
 
