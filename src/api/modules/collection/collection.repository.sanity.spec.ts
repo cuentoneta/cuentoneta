@@ -38,12 +38,11 @@ beforeEach(() => {
 	clearAllMocks();
 });
 
-// Todo lo que el repository resuelve como imagen tiene que salir de este resolver y no del real: una URL
-// de `cdn.sanity.io` en la salida delata un camino que no lo recibió.
-const INJECTED_URL = 'https://images.example.org/injected.png';
+// Deriva la URL de su fuente: un cruce entre campos (la portada por el retrato) no pasa inadvertido.
+const imageLabel = (source: unknown) => `resolved:${JSON.stringify(source)}`;
 
 function repoWithImageResolver(raw: unknown) {
-	const resolveImageUrl = fn<ImageUrlResolver>().mockReturnValue(INJECTED_URL);
+	const resolveImageUrl = fn<ImageUrlResolver>(imageLabel);
 	const fetch = fn(() => Promise.resolve(raw));
 	const repository = new SanityCollectionRepository({ fetch } as unknown as SanityClient, resolveImageUrl);
 	return { repository, resolveImageUrl };
@@ -119,10 +118,12 @@ describe('SanityCollectionRepository.fetchBySlug', () => {
 
 		const collection = await repository.fetchBySlug('geometrias-del-desvelo');
 
-		expect(collection?.imagery).toEqual({ kind: 'representative', image: INJECTED_URL });
-		expect(collection?.literaryWorks.every((work) => work.coverImage === INJECTED_URL)).toBe(true);
-		expect(collection?.literaryWorks.flatMap((work) => work.authors).every((a) => a.imageUrl === INJECTED_URL)).toBe(
-			true,
+		expect(collection?.imagery).toEqual({ kind: 'representative', image: imageLabel(withFeaturedImage.featuredImage) });
+		expect(collection?.literaryWorks.map((work) => work.coverImage)).toEqual(
+			withFeaturedImage.literaryWorks.map((work) => imageLabel(work.coverImage)),
+		);
+		expect(collection?.literaryWorks.flatMap((work) => work.authors.map((author) => author.imageUrl))).toEqual(
+			withFeaturedImage.literaryWorks.flatMap((work) => work.authors.map((author) => imageLabel(author.image))),
 		);
 		expect(resolveImageUrl).toHaveBeenCalledWith(withFeaturedImage.featuredImage);
 	});
@@ -226,13 +227,13 @@ describe('SanityCollectionRepository.fetchAll', () => {
 
 		const teasers = await repository.fetchAll();
 
-		expect(
-			teasers.every(({ imagery }) =>
-				imagery.kind === 'representative'
-					? imagery.image === INJECTED_URL
-					: imagery.images.every((url) => url === INJECTED_URL),
+		expect(teasers.map(({ imagery }) => imagery)).toEqual(
+			onoffRawCollectionTeasersMock.map((raw) =>
+				raw.featuredImage
+					? { kind: 'representative', image: imageLabel(raw.featuredImage) }
+					: { kind: 'sample', images: raw.literaryWorkCoverImages.slice(0, 3).map(imageLabel) },
 			),
-		).toBe(true);
+		);
 	});
 
 	it('maps every teaser of the listing', async () => {

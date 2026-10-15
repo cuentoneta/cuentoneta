@@ -217,6 +217,7 @@ secundarios ni I/O.
 // _utils/functions.ts
 export function mapAuthor(
 	rawAuthorData: Omit<NonNullable<AuthorBySlugQueryResult>, 'createdAt' | 'updatedAt'>,
+	resolveImageUrl: ImageUrlResolver = urlFor,
 ): Author {
 	const resources = mapResources(rawAuthorData.resources);
 	// El campo es requerido en el schema (markdown): sin fallback a cadena vacía. `createMarkdown`
@@ -228,10 +229,10 @@ export function mapAuthor(
 		slug: rawAuthorData.slug,
 		nationality: {
 			country: rawAuthorData.nationality?.country,
-			flag: urlFor(rawAuthorData.nationality.flag),
+			flag: resolveImageUrl(rawAuthorData.nationality.flag),
 		},
 		resources,
-		imageUrl: urlFor(rawAuthorData.image),
+		imageUrl: resolveImageUrl(rawAuthorData.image),
 		name: rawAuthorData.name,
 		biography,
 		// La fecha completa manda; el año cargado a mano es el respaldo cuando solo se conoce el año.
@@ -312,9 +313,12 @@ export function urlFor(source: SanityImageSource): string {
 Los mappers exponen al dominio un `imageUrl: string`, nunca el `SanityImageSource` crudo.
 
 **La resolución es un colaborador inyectable.** `urlFor` es la implementación real y el default de un
-`ImageUrlResolver = (source: SanityImageSource) => string`. Los mappers que resuelven imágenes lo
-reciben como **último parámetro** y los repositories como segundo argumento del constructor, igual que
-el `client`. Así un spec pasa su propio resolver (`stubImageUrlResolver`, de
+`ImageUrlResolver = (source: SanityImageSource) => string`. Los mappers de entrada que resuelven imágenes
+lo reciben como **último parámetro**, con `urlFor` por default, y los repositories como segundo argumento
+del constructor, igual que el `client`. Las funciones internas que solo llaman los repositories
+(`mapSharedCollectionFields`, `resolveCollectionImagery` y la cadena de medios) lo exigen sin default,
+para que un olvido rompa en `typecheck` en vez de caer al real; `mapAuthorProfile` y el módulo `author`
+siguen sobre el default. Así un spec pasa su propio resolver (`stubImageUrlResolver`, de
 `@testing/image-url-resolver.stub`) sin sustituir el módulo de `@sanity/image-url`. Un mapper con
 resolver no sirve como `.map(mapX)` point-free —el índice de `map` caería en ese parámetro—: se
 escribe con lambda.

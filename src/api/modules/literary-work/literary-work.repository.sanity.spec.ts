@@ -30,8 +30,6 @@ function repoReturning(raw: unknown): SanityLiteraryWorkRepository {
 	return new SanityLiteraryWorkRepository(client);
 }
 
-// Todo lo que el repository resuelve como imagen tiene que salir de este resolver y no del real: una URL
-// de `cdn.sanity.io` en la salida delata un camino que no lo recibió.
 const INJECTED_URL = 'https://images.example.org/injected.png';
 
 function repoWithImageResolver(raw: unknown): SanityLiteraryWorkRepository {
@@ -284,8 +282,11 @@ describe('SanityLiteraryWorkRepository.fetchTeasers', () => {
 	it('resuelve la portada y los autores de cada teaser con el resolver inyectado', async () => {
 		const { literaryWorks } = await repoWithImageResolver(onoffRawLiteraryWorkTeasersMock).fetchTeasers({});
 
+		const authors = literaryWorks.flatMap((teaser) => teaser.authors);
+		expect(literaryWorks.length).toBeGreaterThan(0);
+		expect(authors.length).toBeGreaterThan(0);
 		expect(literaryWorks.every((teaser) => teaser.coverImage === INJECTED_URL)).toBe(true);
-		expect(literaryWorks.flatMap((teaser) => teaser.authors).every((a) => a.imageUrl === INJECTED_URL)).toBe(true);
+		expect(authors.every((author) => author.imageUrl === INJECTED_URL)).toBe(true);
 	});
 
 	it('devuelve un listado vacío para un autor sin obras', async () => {

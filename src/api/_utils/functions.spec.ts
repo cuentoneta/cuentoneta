@@ -1,6 +1,4 @@
 import type { SanityImageSource } from '@sanity/image-url';
-import { fn } from '@test-utils';
-import type { ImageUrlResolver } from './functions';
 import { mapAuthor, mapAuthorTeaser, mapContentCampaigns, mapResources, mapTags, urlFor } from './functions';
 import { rawOnoffAuthor, rawOnoffAuthorTeaser } from '@mocks/onoff-raw-author.mock';
 import { onoffRawContentCampaignsMock } from '@mocks/onoff-raw-landing-page.mock';
@@ -8,11 +6,8 @@ import { onoffRawTagsMock } from '@mocks/onoff-raw-tags.mock';
 import { withoutUrl } from '@testing/resource-without-url';
 import { viewportElementSizes } from '@models/content-campaign.model';
 
-const INJECTED_URL = 'https://images.example.org/injected.png';
-
-function spyImageUrlResolver() {
-	return fn<ImageUrlResolver>().mockReturnValue(INJECTED_URL);
-}
+// Deriva la URL de su fuente: un cruce entre campos (el retrato por la bandera) no pasa inadvertido.
+const imageLabel = (source: unknown) => `resolved:${JSON.stringify(source)}`;
 
 describe('mapTags (ACL)', () => {
 	it('maps every raw Sanity tag of the corpus to its domain Tag', () => {
@@ -54,14 +49,10 @@ describe('mapAuthor (ACL)', () => {
 	});
 
 	it('resolves the portrait and the flag through the injected image resolver', () => {
-		const resolveImageUrl = spyImageUrlResolver();
+		const result = mapAuthor(rawOnoffAuthor, imageLabel);
 
-		const result = mapAuthor(rawOnoffAuthor, resolveImageUrl);
-
-		expect(result.imageUrl).toBe(INJECTED_URL);
-		expect(result.nationality.flag).toBe(INJECTED_URL);
-		expect(resolveImageUrl).toHaveBeenCalledWith(rawOnoffAuthor.image);
-		expect(resolveImageUrl).toHaveBeenCalledWith(rawOnoffAuthor.nationality.flag);
+		expect(result.imageUrl).toBe(imageLabel(rawOnoffAuthor.image));
+		expect(result.nationality.flag).toBe(imageLabel(rawOnoffAuthor.nationality.flag));
 	});
 });
 
@@ -71,14 +62,10 @@ describe('mapAuthorTeaser (ACL)', () => {
 	});
 
 	it('resolves the portrait and the flag through the injected image resolver', () => {
-		const resolveImageUrl = spyImageUrlResolver();
+		const result = mapAuthorTeaser(rawOnoffAuthorTeaser, imageLabel);
 
-		const result = mapAuthorTeaser(rawOnoffAuthorTeaser, resolveImageUrl);
-
-		expect(result.imageUrl).toBe(INJECTED_URL);
-		expect(result.nationality.flag).toBe(INJECTED_URL);
-		expect(resolveImageUrl).toHaveBeenCalledWith(rawOnoffAuthorTeaser.image);
-		expect(resolveImageUrl).toHaveBeenCalledWith(rawOnoffAuthorTeaser.nationality.flag);
+		expect(result.imageUrl).toBe(imageLabel(rawOnoffAuthorTeaser.image));
+		expect(result.nationality.flag).toBe(imageLabel(rawOnoffAuthorTeaser.nationality.flag));
 	});
 });
 
@@ -235,15 +222,12 @@ describe('mapContentCampaigns (ACL)', () => {
 	});
 
 	it('resolves each viewport image through the injected image resolver', () => {
-		const resolveImageUrl = spyImageUrlResolver();
 		const [campaign] = onoffRawContentCampaignsMock;
 
-		const [mapped] = mapContentCampaigns([campaign], resolveImageUrl);
+		const [mapped] = mapContentCampaigns([campaign], imageLabel);
 
-		expect(mapped.contents.xs.imageUrl).toBe(INJECTED_URL);
-		expect(mapped.contents.md.imageUrl).toBe(INJECTED_URL);
-		expect(resolveImageUrl).toHaveBeenCalledWith(campaign.contents.xs.image);
-		expect(resolveImageUrl).toHaveBeenCalledWith(campaign.contents.md.image);
+		expect(mapped.contents.xs.imageUrl).toBe(imageLabel(campaign.contents.xs.image));
+		expect(mapped.contents.md.imageUrl).toBe(imageLabel(campaign.contents.md.image));
 	});
 
 	it('throws when a viewport is missing', () => {

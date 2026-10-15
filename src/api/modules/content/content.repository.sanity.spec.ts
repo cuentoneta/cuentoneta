@@ -184,26 +184,32 @@ describe('SanityContentRepository.fetchLandingPageContent', () => {
 	});
 });
 
-// Todo lo que el repository resuelve como imagen tiene que salir de este resolver y no del real: una URL
-// de `cdn.sanity.io` en la salida delata un camino que no lo recibió.
+type LandingPageContent = NonNullable<Awaited<ReturnType<SanityContentRepository['fetchLandingPageContent']>>>;
+
+function imageUrlsOf(content: LandingPageContent): string[] {
+	return [
+		...content.campaigns.flatMap(({ contents }) => [contents.xs.imageUrl, contents.md.imageUrl]),
+		...content.collections.flatMap(({ imagery }) =>
+			imagery.kind === 'representative' ? [imagery.image] : imagery.images,
+		),
+		...content.mostRead.map(({ coverImage }) => coverImage),
+		...content.latestReads.map(({ coverImage }) => coverImage),
+		...content.highlightedAuthors.map(({ author }) => author.imageUrl),
+	];
+}
+
 describe('SanityContentRepository image resolution', () => {
 	const INJECTED_URL = 'https://images.example.org/injected.png';
 
-	it('resolves campaigns, navigation teasers and highlighted authors through the injected image resolver', async () => {
+	it('resolves campaigns, collections, navigation teasers and highlighted authors through the injected image resolver', async () => {
 		const resolveImageUrl = fn<ImageUrlResolver>().mockReturnValue(INJECTED_URL);
 		const { client } = stubSanityClient([[rotatingContentQuery, onoffRawRotatingContentMock]], onoffRawLandingPageMock);
 
 		const result = await new SanityContentRepository(client, resolveImageUrl).fetchLandingPageContent(LANDING_SLUG);
 
-		const imageUrls = [
-			...(result?.campaigns ?? []).flatMap(({ contents }) => [contents.xs.imageUrl, contents.md.imageUrl]),
-			...(result?.latestReads ?? []).map(({ coverImage }) => coverImage),
-			...(result?.highlightedAuthors ?? []).map(({ author }) => author.imageUrl),
-		];
+		const imageUrls = result ? imageUrlsOf(result) : [];
 		expect(imageUrls.length).toBeGreaterThan(0);
-		expect(imageUrls.every((url) => url === INJECTED_URL || url === '')).toBe(true);
-		expect(imageUrls).toContain(INJECTED_URL);
-		expect(resolveImageUrl).toHaveBeenCalled();
+		expect(imageUrls.every((url) => url === INJECTED_URL)).toBe(true);
 	});
 });
 

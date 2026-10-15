@@ -25,10 +25,6 @@ import { SanityLiteraryWorkRepository } from '../api/modules/literary-work/liter
 import { onoffLiteraryWorksMock } from './onoff-literary-works.mock';
 import { onoffRawLiteraryWorksMock } from './onoff-raw-literary-works.mock';
 
-// El resolver de imágenes apunta a la tabla de assets del corpus en vez de a una URL de `cdn.sanity.io`
-// que dependería del dataset del entorno. Así las dos capas dicen lo mismo sobre cada imagen y la
-// comparación no necesita dejar ningún campo afuera.
-
 function comparable(work: LiteraryWork): unknown {
 	return {
 		...work,
