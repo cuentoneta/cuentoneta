@@ -35,6 +35,7 @@ type UnwrapArray<A> = A extends unknown[] ? UnwrapArray<A[number]> : A;
 // dominio.
 export function mapAuthor(
 	rawAuthorData: Omit<NonNullable<AuthorBySlugQueryResult>, 'createdAt' | 'updatedAt'>,
+	resolveImageUrl: ImageUrlResolver = urlFor,
 ): Author {
 	const resources = mapResources(rawAuthorData.resources);
 	// Sin fallback a cadena vacía: el campo es requerido en el schema, y `createMarkdown` lanza si
@@ -46,11 +47,11 @@ export function mapAuthor(
 		slug: rawAuthorData.slug,
 		nationality: {
 			country: rawAuthorData.nationality?.country,
-			flag: urlFor(rawAuthorData.nationality.flag),
+			flag: resolveImageUrl(rawAuthorData.nationality.flag),
 		},
 		resources: resources,
 		tags: mapTags(rawAuthorData.tags),
-		imageUrl: urlFor(rawAuthorData.image),
+		imageUrl: resolveImageUrl(rawAuthorData.image),
 		name: rawAuthorData.name,
 		biography: biography,
 		bornOn: rawAuthorData.bornOn ? (rawAuthorData.bornOn as DateString) : undefined,
@@ -79,17 +80,18 @@ type AuthorTeaserForCollectionSubQuery =
 type AuthorTeaserForHighlightSubQuery = HighlightedAuthorsSubQuery[number]['author'];
 export function mapAuthorTeaser(
 	rawAuthorData: AuthorTeaserForListSubQuery | AuthorTeaserForCollectionSubQuery | AuthorTeaserForHighlightSubQuery,
+	resolveImageUrl: ImageUrlResolver = urlFor,
 ): AuthorTeaser {
 	return {
 		_id: rawAuthorData._id,
 		slug: rawAuthorData.slug,
 		nationality: {
 			country: rawAuthorData.nationality?.country,
-			flag: urlFor(rawAuthorData.nationality.flag),
+			flag: resolveImageUrl(rawAuthorData.nationality.flag),
 		},
 		resources: [],
 		tags: [],
-		imageUrl: urlFor(rawAuthorData.image),
+		imageUrl: resolveImageUrl(rawAuthorData.image),
 		name: rawAuthorData.name,
 		bornOn: rawAuthorData.bornOn ? (rawAuthorData.bornOn as DateString) : undefined,
 		diedOn: rawAuthorData.diedOn ? (rawAuthorData.diedOn as DateString) : undefined,
@@ -97,6 +99,9 @@ export function mapAuthorTeaser(
 		diedOnYear: resolveHistoricalYear(rawAuthorData.diedOn, rawAuthorData.diedOnYear),
 	};
 }
+
+/** Punto por el que el ACL recibe la URL de una imagen; `urlFor` es la implementación real. */
+export type ImageUrlResolver = (source: SanityImageSource) => string;
 
 /**
  * URL canónica del asset, sin parámetros de transformación: los agrega el `IMAGE_LOADER` del
@@ -178,7 +183,10 @@ export function mapTags(tags: TagsSubQuery): Tag[] {
 
 type HighlightedAuthorsSubQuery = NonNullable<LandingPageContentQueryResult>['highlightedAuthors'];
 type ContentCampaignsSubQuery = NonNullable<LandingPageContentQueryResult>['campaigns'];
-export function mapContentCampaigns(campaigns: ContentCampaignsSubQuery): ContentCampaign[] {
+export function mapContentCampaigns(
+	campaigns: ContentCampaignsSubQuery,
+	resolveImageUrl: ImageUrlResolver = urlFor,
+): ContentCampaign[] {
 	return campaigns.map((campaign) => {
 		const { xs, md } = campaign.contents;
 
@@ -192,12 +200,12 @@ export function mapContentCampaigns(campaigns: ContentCampaignsSubQuery): Conten
 			url: campaign.url,
 			contents: {
 				xs: {
-					imageUrl: xs.image ? urlFor(xs.image) : '',
+					imageUrl: xs.image ? resolveImageUrl(xs.image) : '',
 					imageWidth: viewportElementSizes.xs.imageWidth,
 					imageHeight: viewportElementSizes.xs.imageHeight,
 				},
 				md: {
-					imageUrl: md.image ? urlFor(md.image) : '',
+					imageUrl: md.image ? resolveImageUrl(md.image) : '',
 					imageWidth: viewportElementSizes.md.imageWidth,
 					imageHeight: viewportElementSizes.md.imageHeight,
 				},

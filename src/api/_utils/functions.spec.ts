@@ -1,10 +1,18 @@
 import type { SanityImageSource } from '@sanity/image-url';
+import { fn } from '@test-utils';
+import type { ImageUrlResolver } from './functions';
 import { mapAuthor, mapAuthorTeaser, mapContentCampaigns, mapResources, mapTags, urlFor } from './functions';
 import { rawOnoffAuthor, rawOnoffAuthorTeaser } from '@mocks/onoff-raw-author.mock';
 import { onoffRawContentCampaignsMock } from '@mocks/onoff-raw-landing-page.mock';
 import { onoffRawTagsMock } from '@mocks/onoff-raw-tags.mock';
 import { withoutUrl } from '@testing/resource-without-url';
 import { viewportElementSizes } from '@models/content-campaign.model';
+
+const INJECTED_URL = 'https://images.example.org/injected.png';
+
+function spyImageUrlResolver() {
+	return fn<ImageUrlResolver>().mockReturnValue(INJECTED_URL);
+}
 
 describe('mapTags (ACL)', () => {
 	it('maps every raw Sanity tag of the corpus to its domain Tag', () => {
@@ -44,11 +52,33 @@ describe('mapAuthor (ACL)', () => {
 	it('throws instead of serving an author whose biography arrived empty', () => {
 		expect(() => mapAuthor({ ...rawOnoffAuthor, biography: '' })).toThrow(/Markdown inválido/);
 	});
+
+	it('resolves the portrait and the flag through the injected image resolver', () => {
+		const resolveImageUrl = spyImageUrlResolver();
+
+		const result = mapAuthor(rawOnoffAuthor, resolveImageUrl);
+
+		expect(result.imageUrl).toBe(INJECTED_URL);
+		expect(result.nationality.flag).toBe(INJECTED_URL);
+		expect(resolveImageUrl).toHaveBeenCalledWith(rawOnoffAuthor.image);
+		expect(resolveImageUrl).toHaveBeenCalledWith(rawOnoffAuthor.nationality.flag);
+	});
 });
 
 describe('mapAuthorTeaser (ACL)', () => {
 	it('does not emit a biography: the teaser contract does not declare it', () => {
 		expect(mapAuthorTeaser(rawOnoffAuthorTeaser)).not.toHaveProperty('biography');
+	});
+
+	it('resolves the portrait and the flag through the injected image resolver', () => {
+		const resolveImageUrl = spyImageUrlResolver();
+
+		const result = mapAuthorTeaser(rawOnoffAuthorTeaser, resolveImageUrl);
+
+		expect(result.imageUrl).toBe(INJECTED_URL);
+		expect(result.nationality.flag).toBe(INJECTED_URL);
+		expect(resolveImageUrl).toHaveBeenCalledWith(rawOnoffAuthorTeaser.image);
+		expect(resolveImageUrl).toHaveBeenCalledWith(rawOnoffAuthorTeaser.nationality.flag);
 	});
 });
 
@@ -202,6 +232,18 @@ describe('mapContentCampaigns (ACL)', () => {
 		expect(campaign.contents.xs.imageHeight).toBe(viewportElementSizes.xs.imageHeight);
 		expect(campaign.contents.md.imageWidth).toBe(viewportElementSizes.md.imageWidth);
 		expect(campaign.contents.md.imageHeight).toBe(viewportElementSizes.md.imageHeight);
+	});
+
+	it('resolves each viewport image through the injected image resolver', () => {
+		const resolveImageUrl = spyImageUrlResolver();
+		const [campaign] = onoffRawContentCampaignsMock;
+
+		const [mapped] = mapContentCampaigns([campaign], resolveImageUrl);
+
+		expect(mapped.contents.xs.imageUrl).toBe(INJECTED_URL);
+		expect(mapped.contents.md.imageUrl).toBe(INJECTED_URL);
+		expect(resolveImageUrl).toHaveBeenCalledWith(campaign.contents.xs.image);
+		expect(resolveImageUrl).toHaveBeenCalledWith(campaign.contents.md.image);
 	});
 
 	it('throws when a viewport is missing', () => {

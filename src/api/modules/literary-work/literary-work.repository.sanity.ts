@@ -96,7 +96,7 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 			sectionCount: raw.sectionCount,
 			tags: mapTags(raw.tags),
 			mediaSources: mapMediaTeasers(raw.mediaSources),
-			authors: raw.authors.map(mapAuthorTeaser),
+			authors: raw.authors.map((author) => mapAuthorTeaser(author)),
 			excerpt: this.mapExcerpt(raw.slug, rawExcerpt),
 		});
 	}
@@ -141,7 +141,7 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 			_id: raw._id,
 			slug: createSlug(raw.slug),
 			title: raw.title,
-			authors: raw.authors.map(mapAuthor),
+			authors: raw.authors.map((author) => mapAuthor(author)),
 			coverImage: raw.coverImage ? urlFor(raw.coverImage) : '',
 			mediaSources: mapMediaSources(raw.mediaSources),
 			resources: mapResources(raw.resources),

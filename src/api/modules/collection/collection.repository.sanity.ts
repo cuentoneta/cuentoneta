@@ -92,7 +92,7 @@ export class SanityCollectionRepository implements CollectionRepository {
 			sectionCount: raw.sectionCount,
 			tags: mapTags(raw.tags),
 			mediaSources: mapMediaTeasers(raw.mediaSources),
-			authors: raw.authors.map(mapAuthorTeaser),
+			authors: raw.authors.map((author) => mapAuthorTeaser(author)),
 			excerpt: this.mapExcerpt(raw.slug, rawExcerpt),
 		});
 	}

@@ -177,7 +177,7 @@ export class SanityContentRepository implements ContentRepository {
 			sectionCount: raw.sectionCount,
 			tags: mapTags(raw.tags),
 			mediaSources: mapMediaTeasers(raw.mediaSources),
-			authors: raw.authors.map(mapAuthorTeaser),
+			authors: raw.authors.map((author) => mapAuthorTeaser(author)),
 		});
 	}
 

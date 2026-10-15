@@ -1,4 +1,5 @@
-import { spyOn } from '@test-utils';
+import { fn, spyOn } from '@test-utils';
+import type { ImageUrlResolver } from './functions';
 import { mapMediaSources, mapMediaTeasers } from './media-sources.functions';
 import { onoffRawCollectionsMock, onoffRawCollectionWorksWithMediaSources } from '@mocks/onoff-raw-collections.mock';
 import { onoffRawLiteraryWorksWithMediaSources } from '@mocks/onoff-raw-literary-works.mock';
@@ -36,6 +37,16 @@ describe('mapMediaSources', () => {
 		expect(spaceRecording.data.url).toBe(source.audioUrl);
 		expect(spaceRecording.data.duration).toBe(source.duration);
 		expect(spaceRecording.data.hostName).toBe(source.hostName);
+	});
+
+	it('resuelve el avatar del anfitrión del space recording con el resolver inyectado', () => {
+		const resolveImageUrl = fn<ImageUrlResolver>().mockReturnValue('https://images.example.org/host.png');
+		const source = rawSourceOfType('spaceRecording');
+
+		const [spaceRecording] = mapMediaSources(rawLiteraryWork.mediaSources, resolveImageUrl).filter(isSpaceRecording);
+
+		expect(spaceRecording.data.hostAvatar).toBe('https://images.example.org/host.png');
+		expect(resolveImageUrl).toHaveBeenCalledWith(source.hostAvatar);
 	});
 
 	it('mapea el episodio de podcast y el video con su dato propio', () => {
