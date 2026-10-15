@@ -148,7 +148,7 @@ export class SanityContentRepository implements ContentRepository {
 		return {
 			_id: raw._id,
 			config: raw.config,
-			collections: raw.collections.map(mapSanityCollectionTeaser),
+			collections: raw.collections.map((collection) => mapSanityCollectionTeaser(collection)),
 			campaigns: mapContentCampaigns(raw.campaigns),
 			mostRead,
 			latestReads: raw.latestLiteraryWorks.map((work) => this.mapNavigationTeaser(work)),

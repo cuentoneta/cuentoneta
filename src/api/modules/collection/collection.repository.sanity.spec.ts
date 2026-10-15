@@ -1,5 +1,6 @@
 import type { SanityClient } from '@sanity/client';
 import { clearAllMocks, fn } from '@test-utils';
+import type { ImageUrlResolver } from '../../_utils/functions';
 import { collectionBySlugQuery, collectionsQuery } from '../../_queries/collection.query';
 import {
 	descriptionlessRawCollection,
@@ -36,6 +37,17 @@ function repoReturning(raw: unknown): SanityCollectionRepository {
 beforeEach(() => {
 	clearAllMocks();
 });
+
+// Todo lo que el repository resuelve como imagen tiene que salir de este resolver y no del real: una URL
+// de `cdn.sanity.io` en la salida delata un camino que no lo recibió.
+const INJECTED_URL = 'https://images.example.org/injected.png';
+
+function repoWithImageResolver(raw: unknown) {
+	const resolveImageUrl = fn<ImageUrlResolver>().mockReturnValue(INJECTED_URL);
+	const fetch = fn(() => Promise.resolve(raw));
+	const repository = new SanityCollectionRepository({ fetch } as unknown as SanityClient, resolveImageUrl);
+	return { repository, resolveImageUrl };
+}
 
 // Un cruce de queries devolvería datos de la forma equivocada sin que ninguna aserción sobre el
 // resultado lo note: las dos proyectan la misma entidad.
@@ -100,6 +112,19 @@ describe('SanityCollectionRepository.fetchBySlug', () => {
 		expect(collection?.imagery.kind).toBe('sample');
 		expect(collection?.imagery.kind === 'sample' && collection.imagery.images).toEqual(expected);
 		expect(expected?.every((url) => url !== '')).toBe(true);
+	});
+
+	it('resolves every image of the aggregate through the injected image resolver', async () => {
+		const { repository, resolveImageUrl } = repoWithImageResolver(withFeaturedImage);
+
+		const collection = await repository.fetchBySlug('geometrias-del-desvelo');
+
+		expect(collection?.imagery).toEqual({ kind: 'representative', image: INJECTED_URL });
+		expect(collection?.literaryWorks.every((work) => work.coverImage === INJECTED_URL)).toBe(true);
+		expect(collection?.literaryWorks.flatMap((work) => work.authors).every((a) => a.imageUrl === INJECTED_URL)).toBe(
+			true,
+		);
+		expect(resolveImageUrl).toHaveBeenCalledWith(withFeaturedImage.featuredImage);
 	});
 
 	it('maps each work into a teaser with its excerpt', async () => {
@@ -196,6 +221,20 @@ describe('SanityCollectionRepository malformed data', () => {
 });
 
 describe('SanityCollectionRepository.fetchAll', () => {
+	it('resolves the imagery of every teaser through the injected image resolver', async () => {
+		const { repository } = repoWithImageResolver(onoffRawCollectionTeasersMock);
+
+		const teasers = await repository.fetchAll();
+
+		expect(
+			teasers.every(({ imagery }) =>
+				imagery.kind === 'representative'
+					? imagery.image === INJECTED_URL
+					: imagery.images.every((url) => url === INJECTED_URL),
+			),
+		).toBe(true);
+	});
+
 	it('maps every teaser of the listing', async () => {
 		const teasers = await repoReturning(onoffRawCollectionTeasersMock).fetchAll();
 

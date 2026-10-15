@@ -8,6 +8,7 @@ import { createReadingTime, type ReadingTime } from '@models/reading-time.model'
 import { createSectionTitle } from '@models/section-title.model';
 import { createSlug } from '@models/slug.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
+import type { ImageUrlResolver } from '../../_utils/functions';
 import { mapAuthorTeaser, mapTags, urlFor } from '../../_utils/functions';
 import { mapMediaTeasers } from '../../_utils/media-sources.functions';
 import { client as sanityClient } from '../../_helpers/sanity-connector';
@@ -27,7 +28,10 @@ type SanityCollectionWork = SanityCollection['literaryWorks'][number];
 type SanityExcerpt = SanityCollectionWork['excerpt'][number];
 
 export class SanityCollectionRepository implements CollectionRepository {
-	constructor(private readonly client: SanityClient = sanityClient) {}
+	constructor(
+		private readonly client: SanityClient = sanityClient,
+		private readonly resolveImageUrl: ImageUrlResolver = urlFor,
+	) {}
 
 	public async fetchBySlug(slug: string): Promise<Collection | null> {
 		const raw = await this.client.fetch(collectionBySlugQuery, { slug });
@@ -39,7 +43,7 @@ export class SanityCollectionRepository implements CollectionRepository {
 
 	public async fetchAll(): Promise<CollectionTeaser[]> {
 		const raw = await this.client.fetch(collectionsQuery);
-		return raw.map((teaser) => this.guard(teaser.slug, () => mapSanityCollectionTeaser(teaser)));
+		return raw.map((teaser) => this.guard(teaser.slug, () => mapSanityCollectionTeaser(teaser, this.resolveImageUrl)));
 	}
 
 	// Una colección mal curada tumba la llamada entera en vez de filtrarse: un listado que esconde
@@ -63,11 +67,12 @@ export class SanityCollectionRepository implements CollectionRepository {
 		const sampleCoverCount = 3;
 		const literaryWorks = raw.literaryWorks.map((work) => this.mapLiteraryWorkTeaser(work));
 		return createCollection({
-			...mapSharedCollectionFields(raw, markdownToSanitizedHtml),
+			...mapSharedCollectionFields(raw, markdownToSanitizedHtml, this.resolveImageUrl),
 			imagery: resolveCollectionImagery(
 				raw.slug,
 				raw.featuredImage,
 				literaryWorks.slice(0, sampleCoverCount).map((work) => work.coverImage),
+				this.resolveImageUrl,
 			),
 			literaryWorks,
 		});
@@ -87,12 +92,12 @@ export class SanityCollectionRepository implements CollectionRepository {
 			_id: raw._id,
 			slug: createSlug(raw.slug),
 			title: raw.title,
-			coverImage: raw.coverImage ? urlFor(raw.coverImage) : '',
+			coverImage: raw.coverImage ? this.resolveImageUrl(raw.coverImage) : '',
 			totalReadingTime: this.resolveTotalReadingTime(raw),
 			sectionCount: raw.sectionCount,
 			tags: mapTags(raw.tags),
 			mediaSources: mapMediaTeasers(raw.mediaSources),
-			authors: raw.authors.map((author) => mapAuthorTeaser(author)),
+			authors: raw.authors.map((author) => mapAuthorTeaser(author, this.resolveImageUrl)),
 			excerpt: this.mapExcerpt(raw.slug, rawExcerpt),
 		});
 	}

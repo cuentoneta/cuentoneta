@@ -1,8 +1,10 @@
 import type { CollectionsQueryResult } from '@sanity-types';
+import { fn } from '@test-utils';
 import {
 	onoffRawCollectionTeasersWithFeaturedImage,
 	onoffRawCollectionTeasersWithoutFeaturedImage,
 } from '@mocks/onoff-raw-collections.mock';
+import type { ImageUrlResolver } from '../../_utils/functions';
 import { mapSanityCollectionTeaser } from './collection-teaser.acl';
 import { MalformedCollectionError } from './collection.errors';
 
@@ -27,6 +29,23 @@ describe('mapSanityCollectionTeaser imagery', () => {
 			images: expect.arrayContaining([expect.any(String)]),
 		});
 		expect(teaser.imagery.kind === 'sample' && teaser.imagery.images).toHaveLength(3);
+	});
+
+	it('takes the editorial cover from the injected image resolver', () => {
+		const resolveImageUrl = fn<ImageUrlResolver>().mockReturnValue('https://images.example.org/cover.png');
+
+		const teaser = mapSanityCollectionTeaser(withFeaturedImage, resolveImageUrl);
+
+		expect(teaser.imagery).toEqual({ kind: 'representative', image: 'https://images.example.org/cover.png' });
+		expect(resolveImageUrl).toHaveBeenCalledWith(withFeaturedImage.featuredImage);
+	});
+
+	it('takes the fan of work covers from the injected image resolver', () => {
+		const resolveImageUrl = fn<ImageUrlResolver>().mockReturnValue('https://images.example.org/work.png');
+
+		const teaser = mapSanityCollectionTeaser(withoutFeaturedImage, resolveImageUrl);
+
+		expect(teaser.imagery).toEqual({ kind: 'sample', images: Array(3).fill('https://images.example.org/work.png') });
 	});
 
 	// Rellenar el abanico dejaría una imagen rota en la interfaz, así que el dato incompleto tumba el
