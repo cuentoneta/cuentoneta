@@ -9,19 +9,19 @@ import { createSanitizedHtml } from '@models/sanitized-html.model';
 import { htmlToPlainText } from '@utils/html-to-text.utils';
 import { AppRoutes } from '../../app.routes';
 import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
-import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
-import { CollectionMetaTagsDirective } from './collection-meta-tags.directive';
+import { HeadMetadata } from '../../directives/head-metadata.directive';
+import { CollectionMetaTags } from './collection-meta-tags.directive';
 import { COLLECTION_HOST } from './collection-host';
 
 // Con etiquetas, porque un caso afirma que las keywords las incluyen: sin el predicado, una
 // colección sin etiquetas dejaría ese `arrayContaining([])` pasando trivialmente.
 const [canon] = onoffCollectionsWithTagsMock;
 
-describe('CollectionMetaTagsDirective', () => {
+describe('CollectionMetaTags', () => {
 	const collectionSignal = signal<Collection | undefined>(undefined);
 
 	function instantiate(): void {
-		TestBed.runInInjectionContext(() => new CollectionMetaTagsDirective());
+		TestBed.runInInjectionContext(() => new CollectionMetaTags());
 	}
 
 	beforeEach(() => {
@@ -29,8 +29,8 @@ describe('CollectionMetaTagsDirective', () => {
 		collectionSignal.set(undefined);
 		TestBed.configureTestingModule({
 			providers: [
-				CollectionMetaTagsDirective,
-				HeadMetadataDirective,
+				CollectionMetaTags,
+				HeadMetadata,
 				{ provide: COLLECTION_HOST, useValue: { collection: collectionSignal.asReadonly() } },
 			],
 		});
@@ -57,7 +57,7 @@ describe('CollectionMetaTagsDirective', () => {
 
 	it('should set the description derived from the collection prose', () => {
 		collectionSignal.set(canon);
-		const descriptionSpy = spyOn(TestBed.inject(HeadMetadataDirective), 'setDescription');
+		const descriptionSpy = spyOn(TestBed.inject(HeadMetadata), 'setDescription');
 
 		instantiate();
 		TestBed.tick();
@@ -70,7 +70,7 @@ describe('CollectionMetaTagsDirective', () => {
 			...canon,
 			description: createSanitizedHtml('<p><img src="https://cdn.sanity.io/foto.jpg" alt="Foto"/></p>'),
 		});
-		const descriptionSpy = spyOn(TestBed.inject(HeadMetadataDirective), 'setDescription');
+		const descriptionSpy = spyOn(TestBed.inject(HeadMetadata), 'setDescription');
 
 		instantiate();
 		TestBed.tick();
@@ -82,7 +82,7 @@ describe('CollectionMetaTagsDirective', () => {
 
 	it('should set the canonical URL from the collection slug via buildCanonicalUrl', () => {
 		collectionSignal.set(canon);
-		const canonicalSpy = spyOn(TestBed.inject(HeadMetadataDirective), 'setCanonicalUrl');
+		const canonicalSpy = spyOn(TestBed.inject(HeadMetadata), 'setCanonicalUrl');
 
 		instantiate();
 		TestBed.tick();
@@ -94,7 +94,7 @@ describe('CollectionMetaTagsDirective', () => {
 	// se afirma solo y no de arrastre dentro de otro caso.
 	it('should declare the page as indexable', () => {
 		collectionSignal.set(canon);
-		const robotsSpy = spyOn(TestBed.inject(HeadMetadataDirective), 'setRobots');
+		const robotsSpy = spyOn(TestBed.inject(HeadMetadata), 'setRobots');
 
 		instantiate();
 		TestBed.tick();
@@ -104,7 +104,7 @@ describe('CollectionMetaTagsDirective', () => {
 
 	it('should include the collection tags in the keywords', () => {
 		collectionSignal.set(canon);
-		const keywordsSpy = spyOn(TestBed.inject(HeadMetadataDirective), 'setKeywords');
+		const keywordsSpy = spyOn(TestBed.inject(HeadMetadata), 'setKeywords');
 
 		instantiate();
 		TestBed.tick();

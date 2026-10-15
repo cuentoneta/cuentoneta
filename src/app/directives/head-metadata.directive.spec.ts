@@ -1,27 +1,27 @@
 import { spyOn } from '@test-utils';
-import { HeadMetadataDirective } from './head-metadata.directive';
+import { HeadMetadata } from './head-metadata.directive';
 import { TestBed } from '@angular/core/testing';
 import { Meta, Title } from '@angular/platform-browser';
 import { DOCUMENT } from '@angular/common';
 import { environment } from '../environments/environment';
 
-describe('HeadMetadataDirective', () => {
+describe('HeadMetadata', () => {
 	const BASE_URL = 'https://www.cuentoneta.ar';
 	const TEST_IMAGE_URL = 'assets/svg/collection.svg';
 	const TEST_IMAGE_ALT = 'Imagen de prueba';
 
-	let directive: HeadMetadataDirective;
+	let directive: HeadMetadata;
 	let metaService: Meta;
 	let titleService: Title;
 	let document: Document;
 
 	beforeEach(() => {
 		TestBed.configureTestingModule({
-			providers: [HeadMetadataDirective],
+			providers: [HeadMetadata],
 		});
 
 		TestBed.runInInjectionContext(() => {
-			directive = new HeadMetadataDirective();
+			directive = new HeadMetadata();
 			metaService = TestBed.inject(Meta);
 			titleService = TestBed.inject(Title);
 			document = TestBed.inject(DOCUMENT);

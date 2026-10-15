@@ -5,15 +5,15 @@ import { signal } from '@angular/core';
 
 import { onoffHighlightedAuthorsOfLength } from '@mocks/onoff-highlighted-authors.mock';
 import { type AuthorTeaser } from '@models/author.model';
-import { AuthorsStructuredDataDirective } from './authors-structured-data.directive';
+import { AuthorsStructuredData } from './authors-structured-data.directive';
 import { AUTHORS_HOST } from './authors-host';
 
-describe('AuthorsStructuredDataDirective', () => {
+describe('AuthorsStructuredData', () => {
 	const authors = onoffHighlightedAuthorsOfLength(3).map(({ author }) => author);
 	const authorsSignal = signal<readonly AuthorTeaser[]>([]);
 
 	function instantiate(): void {
-		TestBed.runInInjectionContext(() => new AuthorsStructuredDataDirective());
+		TestBed.runInInjectionContext(() => new AuthorsStructuredData());
 	}
 
 	function emittedSchema(schemaId: string): unknown {
@@ -25,10 +25,7 @@ describe('AuthorsStructuredDataDirective', () => {
 		clearAllMocks();
 		authorsSignal.set([]);
 		TestBed.configureTestingModule({
-			providers: [
-				AuthorsStructuredDataDirective,
-				{ provide: AUTHORS_HOST, useValue: { authors: authorsSignal.asReadonly() } },
-			],
+			providers: [AuthorsStructuredData, { provide: AUTHORS_HOST, useValue: { authors: authorsSignal.asReadonly() } }],
 		});
 	});
 

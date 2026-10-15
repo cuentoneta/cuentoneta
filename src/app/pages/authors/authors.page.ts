@@ -7,14 +7,14 @@ import type { AuthorTeaser } from '@models/author.model';
 import { RouterLink } from '@angular/router';
 import { AppRoutes } from '../../app.routes';
 import { AUTHORS_HOST, type AuthorsHost } from './authors-host';
-import { AuthorsMetaTagsDirective } from './authors-meta-tags.directive';
-import { AuthorsStructuredDataDirective } from './authors-structured-data.directive';
+import { AuthorsMetaTags } from './authors-meta-tags.directive';
+import { AuthorsStructuredData } from './authors-structured-data.directive';
 
 @Component({
 	selector: 'cuentoneta-authors',
 	imports: [RouterLink, NgOptimizedImage],
 	providers: [{ provide: AUTHORS_HOST, useExisting: forwardRef(() => AuthorsPage) }],
-	hostDirectives: [AuthorsMetaTagsDirective, AuthorsStructuredDataDirective],
+	hostDirectives: [AuthorsMetaTags, AuthorsStructuredData],
 	template: `
 		<div class="mx-auto mt-8 w-full max-w-310 px-4 pb-16 md:mt-20">
 			<article class="grid grid-cols-1 gap-8">

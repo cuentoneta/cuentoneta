@@ -3,7 +3,7 @@ import { Directive, effect, inject } from '@angular/core';
 import { SchemaOrgService } from '../providers/schema-org.service';
 
 @Directive()
-export abstract class AbstractStructuredDataDirective {
+export abstract class AbstractStructuredData {
 	protected readonly schemaOrg = inject(SchemaOrgService);
 
 	// eslint-disable-next-line @typescript-eslint/no-empty-function -- stub opcional: las páginas sin bloques propios no agregan structured data

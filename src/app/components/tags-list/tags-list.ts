@@ -11,13 +11,13 @@ import {
 import { isPlatformBrowser } from '@angular/common';
 
 import { Tag } from '../tag/tag';
-import { TagsOverflowDirective } from './tags-overflow.directive';
+import { TagsOverflow } from './tags-overflow.directive';
 
 /**
  * Lista de tags del Design System v3. Los tags se proyectan (`<ng-content>`) y, cuando no entran en el
  * ancho del contenedor, se colapsa el excedente detrás de un contador "+N" ubicado tras el último visible.
  *
- * La lógica de recorte vive en `TagsOverflowDirective`, aplicada como `hostDirective` (el host del
+ * La lógica de recorte vive en `TagsOverflow`, aplicada como `hostDirective` (el host del
  * componente es el contenedor — sin `<div>` wrapper). El componente proyecta el contenido, renderiza el
  * contador (toma la variante de los tags proyectados) y le mide el ancho a la directiva para que reserve
  * su espacio. `maxVisible` se expone vía la hostDirective.
@@ -34,7 +34,7 @@ import { TagsOverflowDirective } from './tags-overflow.directive';
 @Component({
 	selector: 'cuentoneta-tags-list',
 	imports: [Tag],
-	hostDirectives: [{ directive: TagsOverflowDirective, inputs: ['maxVisible'] }],
+	hostDirectives: [{ directive: TagsOverflow, inputs: ['maxVisible'] }],
 	template: `
 		<ng-content />
 		@if (overflow.hiddenCount() > 0) {
@@ -50,7 +50,7 @@ import { TagsOverflowDirective } from './tags-overflow.directive';
 	host: { class: 'flex items-center gap-1.5 overflow-hidden' },
 })
 export class TagsList {
-	private readonly overflow = inject(TagsOverflowDirective);
+	private readonly overflow = inject(TagsOverflow);
 	private readonly hostRef = inject<ElementRef<HTMLElement>>(ElementRef);
 	private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 

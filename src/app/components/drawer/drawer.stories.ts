@@ -3,8 +3,8 @@ import { moduleMetadata } from '@storybook/angular-vite';
 
 import type { DrawerDirection } from './drawer';
 import { Drawer } from './drawer';
-import { DrawerHeaderDirective } from './drawer-header.directive';
-import { DrawerFooterDirective } from './drawer-footer.directive';
+import { DrawerHeader } from './drawer-header.directive';
+import { DrawerFooter } from './drawer-footer.directive';
 import { CollectionInfoPanel } from '@components/collection-info-panel/collection-info-panel';
 import { NavigableCollectionTeaser } from '@components/navigable-collection-teaser/navigable-collection-teaser';
 import { Divider } from '@components/divider/divider';
@@ -26,7 +26,7 @@ const openButton = `<button type="button" (click)="drawer.open()" class="m-8 rou
 const meta: Meta<DrawerArgs> = {
 	component: Drawer,
 	title: 'Componentes V3/Drawer',
-	decorators: [moduleMetadata({ imports: [Drawer, DrawerHeaderDirective, DrawerFooterDirective] })],
+	decorators: [moduleMetadata({ imports: [Drawer, DrawerHeader, DrawerFooter] })],
 	parameters: {
 		layout: 'fullscreen',
 		docs: {

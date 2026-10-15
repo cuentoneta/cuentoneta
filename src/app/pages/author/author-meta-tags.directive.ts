@@ -2,15 +2,15 @@ import { Directive, inject, untracked } from '@angular/core';
 
 import { AppRoutes } from '../../app.routes';
 import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
-import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
-import { AbstractMetaTagsDirective } from '../../directives/abstract-meta-tags.directive';
+import { HeadMetadata } from '../../directives/head-metadata.directive';
+import { AbstractMetaTags } from '../../directives/abstract-meta-tags.directive';
 import { AUTHOR_HOST } from './author-host';
 
 @Directive({
 	selector: '[cuentonetaAuthorMetaTags]',
-	hostDirectives: [HeadMetadataDirective],
+	hostDirectives: [HeadMetadata],
 })
-export class AuthorMetaTagsDirective extends AbstractMetaTagsDirective {
+export class AuthorMetaTags extends AbstractMetaTags {
 	private readonly host = inject(AUTHOR_HOST);
 
 	protected applyMetaTags(): void {

@@ -7,7 +7,7 @@ import { environment } from '../environments/environment';
 	selector: '[cuentonetaHeadMetadata]',
 	standalone: true,
 })
-export class HeadMetadataDirective {
+export class HeadMetadata {
 	private readonly document = inject(DOCUMENT);
 	private readonly metaTagService = inject(Meta);
 	private readonly platformId = inject(PLATFORM_ID);

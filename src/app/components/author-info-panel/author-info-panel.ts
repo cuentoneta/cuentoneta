@@ -7,7 +7,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import type { Author } from '@models/author.model';
 
 // Directives
-import { ClampOverflowDirective } from '../../directives/clamp-overflow.directive';
+import { ClampOverflow } from '../../directives/clamp-overflow.directive';
 
 // Components
 import { Button } from '../button/button';
@@ -29,7 +29,7 @@ import { AuthorInfoPanelSkeleton } from './author-info-panel-skeleton';
  */
 @Component({
 	selector: 'cuentoneta-author-info-panel',
-	imports: [Button, ClampOverflowDirective, ImageProfile, NgOptimizedImage, Tag, TagsList, AuthorInfoPanelSkeleton],
+	imports: [Button, ClampOverflow, ImageProfile, NgOptimizedImage, Tag, TagsList, AuthorInfoPanelSkeleton],
 	host: { class: 'flex w-full flex-col gap-4' },
 	template: `
 		@if (author(); as author) {

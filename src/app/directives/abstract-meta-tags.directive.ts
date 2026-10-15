@@ -1,10 +1,10 @@
 import { Directive, effect, inject } from '@angular/core';
 
-import { HeadMetadataDirective } from './head-metadata.directive';
+import { HeadMetadata } from './head-metadata.directive';
 
 @Directive()
-export abstract class AbstractMetaTagsDirective {
-	protected readonly head = inject(HeadMetadataDirective);
+export abstract class AbstractMetaTags {
+	protected readonly head = inject(HeadMetadata);
 
 	protected abstract applyMetaTags(): void;
 

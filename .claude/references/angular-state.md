@@ -163,12 +163,12 @@ private readonly literaryWorks = computed(() =>
 
 Cada componente de página compone su SEO en el campo **`hostDirectives`** del decorador `@Component` (distinto de `host`, ver [`angular-components.md`](angular-components.md#host-element)). Hay exactamente **dos formas**, elegidas según si la ruta es indexable:
 
-- **Página indexable** (`RenderMode.Server`/`Prerender` sin `noindex`): `hostDirectives: [<Page>MetaTagsDirective, <Page>StructuredDataDirective]`. Ambas extienden `AbstractMetaTagsDirective`/`AbstractStructuredDataDirective`; la `<Page>MetaTagsDirective` emite `setRobots('index, follow')` y la `<Page>StructuredDataDirective` inyecta el JSON-LD. Ejemplos: `home`, `author`, `authors`, `literary-work`, `collection`.
-- **Página no indexable** (`noindex`): `hostDirectives: [HeadMetadataDirective]` (la directiva genérica, sin structured data) y el componente llama `setRobots('noindex, ...')` en su constructor. Ejemplos: `about`, `dmca`. La ausencia de structured data acá es intencional, no un hueco.
+- **Página indexable** (`RenderMode.Server`/`Prerender` sin `noindex`): `hostDirectives: [<Page>MetaTags, <Page>StructuredData]`. Ambas extienden `AbstractMetaTags`/`AbstractStructuredData`; la `<Page>MetaTags` emite `setRobots('index, follow')` y la `<Page>StructuredData` inyecta el JSON-LD. Ejemplos: `home`, `author`, `authors`, `literary-work`, `collection`.
+- **Página no indexable** (`noindex`): `hostDirectives: [HeadMetadata]` (la directiva genérica, sin structured data) y el componente llama `setRobots('noindex, ...')` en su constructor. Ejemplos: `about`, `dmca`. La ausencia de structured data acá es intencional, no un hueco.
 
 Una página indexable **nunca** debe usar la forma no indexable: quedaría sin structured data y sin `setRobots('index...')` de forma silenciosa.
 
-**Enforced por test:** el gate `test` corre `src/app/pages/seo-host-directives.spec.ts`, que descubre las páginas desde `app.routes.server.ts` (rutas `Server`/`Prerender`) resolviendo su fuente vía el `loadComponent` de `app.routes.ts`, y deriva la indexabilidad del propio código: una página que llama `setRobots('noindex...')` solo debe declarar `[HeadMetadataDirective]`; cualquier otra se considera indexable y debe declarar el combo MetaTags + StructuredData. No hay registro que mantener ni imports de componentes: una página nueva se chequea automáticamente y **rompe el test** si es indexable sin structured data (para saltearse el combo hay que emitir un `noindex` real, visible en el diff).
+**Enforced por test:** el gate `test` corre `src/app/pages/seo-host-directives.spec.ts`, que descubre las páginas desde `app.routes.server.ts` (rutas `Server`/`Prerender`) resolviendo su fuente vía el `loadComponent` de `app.routes.ts`, y deriva la indexabilidad del propio código: una página que llama `setRobots('noindex...')` solo debe declarar `[HeadMetadata]`; cualquier otra se considera indexable y debe declarar el combo MetaTags + StructuredData. No hay registro que mantener ni imports de componentes: una página nueva se chequea automáticamente y **rompe el test** si es indexable sin structured data (para saltearse el combo hay que emitir un `noindex` real, visible en el diff).
 
 ---
 
@@ -182,7 +182,7 @@ Una página indexable **nunca** debe usar la forma no indexable: quedaría sin s
 - [ ] ¿El debounce/throttle/coordinación está en el servicio, no en el componente?
 - [ ] ¿Los errores están tipados por operación, no en un `string | null` global?
 - [ ] ¿Lo que no tiene que estar en el HTML del crawler está dentro de un `@defer`, y no en un recurso, que el SSR espera de todos modos?
-- [ ] ¿La página declara sus `hostDirectives` de SEO según su indexabilidad (indexable: MetaTags + StructuredData; no indexable/`noindex`: HeadMetadataDirective + `setRobots('noindex...')`)? Lo verifica automáticamente `seo-host-directives.spec.ts`.
+- [ ] ¿La página declara sus `hostDirectives` de SEO según su indexabilidad (indexable: MetaTags + StructuredData; no indexable/`noindex`: HeadMetadata + `setRobots('noindex...')`)? Lo verifica automáticamente `seo-host-directives.spec.ts`.
 
 ---
 

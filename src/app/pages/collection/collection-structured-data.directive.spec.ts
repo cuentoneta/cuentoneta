@@ -5,16 +5,16 @@ import { signal } from '@angular/core';
 
 import { onoffCollectionsMock } from '@mocks/onoff-collections.mock';
 import { type Collection } from '@models/collection.model';
-import { CollectionStructuredDataDirective } from './collection-structured-data.directive';
+import { CollectionStructuredData } from './collection-structured-data.directive';
 import { COLLECTION_HOST } from './collection-host';
 
 const [canon] = onoffCollectionsMock;
 
-describe('CollectionStructuredDataDirective', () => {
+describe('CollectionStructuredData', () => {
 	const collectionSignal = signal<Collection | undefined>(undefined);
 
 	function instantiate(): void {
-		TestBed.runInInjectionContext(() => new CollectionStructuredDataDirective());
+		TestBed.runInInjectionContext(() => new CollectionStructuredData());
 	}
 
 	beforeEach(() => {
@@ -22,7 +22,7 @@ describe('CollectionStructuredDataDirective', () => {
 		collectionSignal.set(undefined);
 		TestBed.configureTestingModule({
 			providers: [
-				CollectionStructuredDataDirective,
+				CollectionStructuredData,
 				{ provide: COLLECTION_HOST, useValue: { collection: collectionSignal.asReadonly() } },
 			],
 		});

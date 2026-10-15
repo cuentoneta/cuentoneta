@@ -9,8 +9,8 @@ import { ContentApi } from '../../providers/content.provider';
 import { AppRoutes } from '../../app.routes';
 
 // SEO
-import { HomeMetaTagsDirective } from './home-meta-tags.directive';
-import { HomeStructuredDataDirective } from './home-structured-data.directive';
+import { HomeMetaTags } from './home-meta-tags.directive';
+import { HomeStructuredData } from './home-structured-data.directive';
 
 // Componentes
 import { Carousel } from '@components/carousel/carousel';
@@ -33,7 +33,7 @@ import { SectionHeader, type SectionHeaderAction } from '@components/section-hea
 		HighlightedAuthors,
 		SectionHeader,
 	],
-	hostDirectives: [HomeMetaTagsDirective, HomeStructuredDataDirective],
+	hostDirectives: [HomeMetaTags, HomeStructuredData],
 })
 export default class HomePage {
 	// Services

@@ -6,24 +6,21 @@ import { signal } from '@angular/core';
 import { authorMock } from '@mocks/author.mock';
 import { withoutUrl } from '@testing/resource-without-url';
 import { type AuthorProfile } from '@models/author.model';
-import { AuthorStructuredDataDirective } from './author-structured-data.directive';
+import { AuthorStructuredData } from './author-structured-data.directive';
 import { AUTHOR_HOST } from './author-host';
 
-describe('AuthorStructuredDataDirective', () => {
+describe('AuthorStructuredData', () => {
 	const authorSignal = signal<AuthorProfile | undefined>(undefined);
 
 	function instantiate(): void {
-		TestBed.runInInjectionContext(() => new AuthorStructuredDataDirective());
+		TestBed.runInInjectionContext(() => new AuthorStructuredData());
 	}
 
 	beforeEach(() => {
 		clearAllMocks();
 		authorSignal.set(undefined);
 		TestBed.configureTestingModule({
-			providers: [
-				AuthorStructuredDataDirective,
-				{ provide: AUTHOR_HOST, useValue: { author: authorSignal.asReadonly() } },
-			],
+			providers: [AuthorStructuredData, { provide: AUTHOR_HOST, useValue: { author: authorSignal.asReadonly() } }],
 		});
 	});
 

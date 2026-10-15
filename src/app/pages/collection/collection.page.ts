@@ -9,8 +9,8 @@ import { CollectionApi } from '../../providers/collection.provider';
 
 // SEO
 import { COLLECTION_HOST, type CollectionHost } from './collection-host';
-import { CollectionMetaTagsDirective } from './collection-meta-tags.directive';
-import { CollectionStructuredDataDirective } from './collection-structured-data.directive';
+import { CollectionMetaTags } from './collection-meta-tags.directive';
+import { CollectionStructuredData } from './collection-structured-data.directive';
 
 // Components
 import { CollectionInfoPanel } from '@components/collection-info-panel/collection-info-panel';
@@ -25,7 +25,7 @@ import { Skeleton } from '@components/skeleton/skeleton';
 	selector: 'cuentoneta-collection',
 	templateUrl: './collection.page.html',
 	providers: [{ provide: COLLECTION_HOST, useExisting: forwardRef(() => CollectionPage) }],
-	hostDirectives: [CollectionMetaTagsDirective, CollectionStructuredDataDirective],
+	hostDirectives: [CollectionMetaTags, CollectionStructuredData],
 	imports: [
 		CollectionInfoPanel,
 		Drawer,

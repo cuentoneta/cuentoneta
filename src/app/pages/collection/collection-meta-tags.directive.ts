@@ -2,16 +2,16 @@ import { Directive, inject, untracked } from '@angular/core';
 
 import { AppRoutes } from '../../app.routes';
 import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
-import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
-import { AbstractMetaTagsDirective } from '../../directives/abstract-meta-tags.directive';
+import { HeadMetadata } from '../../directives/head-metadata.directive';
+import { AbstractMetaTags } from '../../directives/abstract-meta-tags.directive';
 import { COLLECTION_HOST } from './collection-host';
 import { buildCollectionDescription } from './collection.schema';
 
 @Directive({
 	selector: '[cuentonetaCollectionMetaTags]',
-	hostDirectives: [HeadMetadataDirective],
+	hostDirectives: [HeadMetadata],
 })
-export class CollectionMetaTagsDirective extends AbstractMetaTagsDirective {
+export class CollectionMetaTags extends AbstractMetaTags {
 	private readonly host = inject(COLLECTION_HOST);
 
 	protected applyMetaTags(): void {
