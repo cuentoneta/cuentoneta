@@ -5,9 +5,11 @@ import { LiteraryWorkTeaserCard } from '@components/literary-work-teaser-card/li
 import { Button } from '@components/button/button';
 import { Divider } from '@components/divider/divider';
 import { Skeleton } from '@components/skeleton/skeleton';
-import { READING_SUGGESTIONS_COUNT } from './pick-reading-suggestions';
 import type { LiteraryWorkTeaser } from '@models/literary-work.model';
 import type { NavigationParams } from '@app-utils/navigation-params';
+
+// Cantidad de sugerencias del bloque: la reserva el estado de carga, que ocupa sus mismos slots.
+const READING_SUGGESTIONS_COUNT = 3;
 
 /**
  * Bloque "qué leer después" que cierra la lectura de una obra: un encabezado, una tríada de obras

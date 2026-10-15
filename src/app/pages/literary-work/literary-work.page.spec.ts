@@ -26,10 +26,11 @@ import {
 } from '@mocks/onoff-literary-works.mock';
 import { provideLiteraryWorkApiMock, StubLiteraryWorkApi } from '../../providers/literary-work.mock';
 import { onoffCollectionsMock } from '@mocks/onoff-collections.mock';
-import { provideCollectionApiMock, StubCollectionApi } from '../../providers/collection.mock';
+import { onoffReadingSuggestionsMock } from '@mocks/onoff-reading-suggestions.mock';
 import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
 import { provideRouter } from '@angular/router';
-import type { LiteraryWorkApi } from '../../providers/literary-work.provider';
+import type { LiteraryWorkApi, LiteraryWorkTeaserFilter } from '../../providers/literary-work.provider';
+import type { ReadingSuggestions, ReadingSuggestionsScope } from '@models/reading-suggestions.model';
 import { HeadMetadata } from '../../directives/head-metadata.directive';
 import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 import { AppRoutes } from '../../app.routes';
@@ -45,6 +46,28 @@ class StubFailingLiteraryWorkApi implements LiteraryWorkApi {
 	public getTeasers(): Observable<LiteraryWorkTeaser[]> {
 		return throwError(() => new HttpErrorResponse({ status: this.status, statusText: 'error' }));
 	}
+
+	public getSuggestions(): Observable<ReadingSuggestions> {
+		return throwError(() => new HttpErrorResponse({ status: this.status, statusText: 'error' }));
+	}
+}
+
+// El bloque de sugerencias lo arma el backend —su encabezado viene con las obras—, así que el doble de la
+// página lo deriva del corpus por ámbito y delega el resto en el doble del proveedor.
+class StubCorpusSuggestionsLiteraryWorkApi implements LiteraryWorkApi {
+	constructor(private readonly literaryWorkApi: StubLiteraryWorkApi) {}
+
+	public getBySlug(): Observable<LiteraryWork> {
+		return this.literaryWorkApi.getBySlug();
+	}
+
+	public getTeasers(filter: LiteraryWorkTeaserFilter = {}): Observable<LiteraryWorkTeaser[]> {
+		return this.literaryWorkApi.getTeasers(filter);
+	}
+
+	public getSuggestions(workSlug: string, scope: ReadingSuggestionsScope): Observable<ReadingSuggestions> {
+		return of(onoffReadingSuggestionsMock(scope, workSlug));
+	}
 }
 
 // Sustituye el timing del entorno, no el dato: el test decide cuándo llega la obra, que es lo único que
@@ -56,10 +79,14 @@ class ControllableLiteraryWorkApi implements LiteraryWorkApi {
 		return this.work.asObservable();
 	}
 
-	// El control es sobre la obra que se lee: las sugerencias del pie llegan resueltas del corpus,
-	// para que el estado intermedio que estos casos observan sea el de la obra y no el del bloque.
 	public getTeasers(): Observable<LiteraryWorkTeaser[]> {
 		return of([...onoffLiteraryWorkTeasersMock]);
+	}
+
+	// El control es sobre la obra que se lee: las sugerencias del pie llegan resueltas del corpus,
+	// para que el estado intermedio que estos casos observan sea el de la obra y no el del bloque.
+	public getSuggestions(workSlug: string, scope: ReadingSuggestionsScope): Observable<ReadingSuggestions> {
+		return of(onoffReadingSuggestionsMock(scope, workSlug));
 	}
 
 	public emit(literaryWork: LiteraryWork): void {
@@ -146,8 +173,12 @@ describe('LiteraryWorkPage', () => {
 	) => {
 		return await render(LiteraryWorkPage, {
 			providers: [
-				provideLiteraryWorkApiMock(options.api ?? new StubLiteraryWorkApi(literaryWork, onoffLiteraryWorkTeasersMock)),
-				provideCollectionApiMock(new StubCollectionApi(onoffCollectionsMock)),
+				provideLiteraryWorkApiMock(
+					options.api ??
+						new StubCorpusSuggestionsLiteraryWorkApi(
+							new StubLiteraryWorkApi(literaryWork, onoffLiteraryWorkTeasersMock),
+						),
+				),
 				provideRouter([]),
 				...(options.responseInit ? [{ provide: RESPONSE_INIT, useValue: options.responseInit }] : []),
 			],

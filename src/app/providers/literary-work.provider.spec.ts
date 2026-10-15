@@ -10,10 +10,13 @@ import {
 	onoffLiteraryWorksWithSectionTitles,
 } from '@mocks/onoff-literary-works.mock';
 import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
+import { onoffCollectionsMock } from '@mocks/onoff-collections.mock';
+import { onoffReadingSuggestionsMock } from '@mocks/onoff-reading-suggestions.mock';
 import { environment } from '../environments/environment';
 import { Endpoints } from './endpoints';
 import { HttpLiteraryWorkApi, LiteraryWorkApi, type LiteraryWorkTeaserFilter } from './literary-work.provider';
 import type { LiteraryWorkDto } from '@models/literary-work.dto';
+import type { ReadingSuggestions, ReadingSuggestionsScope } from '@models/reading-suggestions.model';
 import { provideLiteraryWorkApiMock, StubLiteraryWorkApi } from './literary-work.mock';
 
 // El DTO de wire es la serialización JSON del agregado: los métodos (toAnchor) y los brands se
@@ -226,6 +229,77 @@ describe('HttpLiteraryWorkApi', () => {
 				requestTeasers(
 					{ author: 'francois-onoff' },
 					`${environment.apiUrl}${Endpoints.LiteraryWork}?author=francois-onoff`,
+					malformed,
+				),
+			).rejects.toThrow();
+		});
+	});
+
+	describe('getSuggestions', () => {
+		const workSlug = onoffLiteraryWorkTeasersMock[0].slug;
+		const authorScope: ReadingSuggestionsScope = { author: 'francois-onoff' };
+		const collectionScope: ReadingSuggestionsScope = { collection: onoffCollectionsMock[0].slug };
+
+		function wireSuggestionsOf(scope: ReadingSuggestionsScope): object {
+			return JSON.parse(JSON.stringify(onoffReadingSuggestionsMock(scope, workSlug)));
+		}
+
+		function requestSuggestions(scope: ReadingSuggestionsScope, url: string, payload: object) {
+			const result = new Promise<ReadingSuggestions>((resolve, reject) => {
+				api.getSuggestions(workSlug, scope).subscribe({ next: resolve, error: reject });
+			});
+			http.expectOne(url).flush(payload);
+			return result;
+		}
+
+		it('requests the suggestions of the author scope with the work in the path', async () => {
+			const wire = wireSuggestionsOf(authorScope);
+
+			const rehydrated = await requestSuggestions(
+				authorScope,
+				`${environment.apiUrl}${Endpoints.LiteraryWork}/${workSlug}/suggestions?author=francois-onoff`,
+				wire,
+			);
+
+			expect(rehydrated.title).toBe(onoffReadingSuggestionsMock(authorScope, workSlug).title);
+			expect(rehydrated.suggestions).toHaveLength(3);
+		});
+
+		it('requests the suggestions of the collection scope', async () => {
+			const wire = wireSuggestionsOf(collectionScope);
+
+			const rehydrated = await requestSuggestions(
+				collectionScope,
+				`${environment.apiUrl}${Endpoints.LiteraryWork}/${workSlug}/suggestions?collection=${onoffCollectionsMock[0].slug}`,
+				wire,
+			);
+
+			expect(rehydrated.title).toBe(onoffCollectionsMock[0].title);
+			expect(rehydrated.suggestions.length).toBeGreaterThan(0);
+		});
+
+		// Las obras del bloque se rehidratan con el mismo mapper que el catálogo: los brands y el
+		// extracto saneado no cruzan el wire.
+		it('rehydrates each suggestion into a domain teaser', async () => {
+			const expected = onoffReadingSuggestionsMock(authorScope, workSlug);
+
+			const rehydrated = await requestSuggestions(
+				authorScope,
+				`${environment.apiUrl}${Endpoints.LiteraryWork}/${workSlug}/suggestions?author=francois-onoff`,
+				wireSuggestionsOf(authorScope),
+			);
+
+			expect(rehydrated.suggestions.map(({ slug }) => slug)).toEqual(expected.suggestions.map(({ slug }) => slug));
+			expect(rehydrated.suggestions[0].excerpt.bodyHtml).toBe(expected.suggestions[0].excerpt.bodyHtml);
+		});
+
+		it('errors the stream when a suggestion violates the DTO schema', async () => {
+			const malformed = { title: 'Un ámbito', suggestions: [{ slug: 'sin-el-resto' }] };
+
+			await expect(
+				requestSuggestions(
+					authorScope,
+					`${environment.apiUrl}${Endpoints.LiteraryWork}/${workSlug}/suggestions?author=francois-onoff`,
 					malformed,
 				),
 			).rejects.toThrow();

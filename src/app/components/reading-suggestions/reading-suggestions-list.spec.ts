@@ -3,7 +3,6 @@ import { provideRouter } from '@angular/router';
 import { clearAllMocks } from '@test-utils';
 
 import { ReadingSuggestionsList } from './reading-suggestions-list';
-import { READING_SUGGESTIONS_COUNT } from './pick-reading-suggestions';
 import type { LiteraryWorkTeaser } from '@models/literary-work.model';
 import { firstProseWord } from '@testing/corpus-prose';
 import type { NavigationParams } from '@app-utils/navigation-params';
@@ -63,7 +62,7 @@ describe('ReadingSuggestionsList', () => {
 		it('should separate the loading placeholders the same way', async () => {
 			await setup({ loading: true });
 
-			expect(screen.queryAllByTestId('suggestion-separator')).toHaveLength(READING_SUGGESTIONS_COUNT - 1);
+			expect(screen.queryAllByTestId('suggestion-separator')).toHaveLength(teasers.length - 1);
 		});
 	});
 

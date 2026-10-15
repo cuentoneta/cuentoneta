@@ -74,8 +74,6 @@ export default class LiteraryWorkPage implements LiteraryWorkHost {
 	// que referirse al mismo, y el byline une a todos con coma.
 	private readonly primaryAuthor = computed(() => this.literaryWork()?.authors[0]);
 
-	private readonly primaryAuthorName = computed(() => this.primaryAuthor()?.name ?? '');
-
 	// Sin contexto en la ruta se cae al autor de la obra: una obra abierta por URL directa igual
 	// ofrece a dónde seguir leyendo.
 	private readonly navigationParams = computed<NavigationParams>(() => {

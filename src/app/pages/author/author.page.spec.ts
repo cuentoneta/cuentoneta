@@ -24,6 +24,7 @@ import type { AuthorProfile, AuthorTeaser } from '@models/author.model';
 import type { AuthorApi } from '../../providers/author.provider';
 import type { LiteraryWorkApi } from '../../providers/literary-work.provider';
 import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
+import type { ReadingSuggestions } from '@models/reading-suggestions.model';
 
 const [literaryWorkMock] = onoffLiteraryWorksMock;
 
@@ -68,6 +69,11 @@ class StubFailingLiteraryWorkApi implements LiteraryWorkApi {
 	}
 
 	public getTeasers(): Observable<LiteraryWorkTeaser[]> {
+		return throwError(() => new HttpErrorResponse({ status: 500, statusText: 'error' }));
+	}
+
+	// La ficha de autor no monta el bloque de sugerencias, así que su fracaso no participa acá.
+	public getSuggestions(): Observable<ReadingSuggestions> {
 		return throwError(() => new HttpErrorResponse({ status: 500, statusText: 'error' }));
 	}
 }

@@ -9,8 +9,8 @@ import type { NavigationParams } from '@app-utils/navigation-params';
  * conoce las variantes ni el contexto de navegación que las elige, solo lo transporta.
  *
  * Cada variante vive en su propio `@defer`, así se descarga el bundle de la que se va a usar y no el
- * de la otra. El diferido también mantiene el bloque fuera del servidor: en SSR se sirve el
- * marcador de posición, sin instanciar la variante ni pedir datos.
+ * de la otra. El diferido también mantiene el bloque fuera del servidor: en SSR se sirve el marcador
+ * de posición, sin instanciar la variante ni pedir datos.
  */
 @Component({
 	selector: 'cuentoneta-reading-suggestions',
@@ -32,7 +32,6 @@ import type { NavigationParams } from '@app-utils/navigation-params';
 				@defer (on viewport) {
 					<cuentoneta-author-reading-suggestions
 						[authorSlug]="navigationParams().navigationSlug"
-						[authorName]="authorName()"
 						[currentWorkSlug]="currentWorkSlug()"
 					/>
 				} @placeholder {
@@ -45,10 +44,7 @@ import type { NavigationParams } from '@app-utils/navigation-params';
 export class ReadingSuggestions {
 	// Inputs
 	public readonly navigationParams = input.required<NavigationParams>();
-	// Requerido aunque la variante de colección no lo use: la de autor es la rama por defecto, así que
-	// cualquier consumidor puede terminar en ella y sin el nombre el encabezado quedaría a medias.
-	public readonly authorName = input.required<string>();
-	public readonly currentWorkSlug = input<string>();
+	public readonly currentWorkSlug = input.required<string>();
 
 	// Reserva el alto del bloque para que su aparición no empuje el pie de página.
 	//
