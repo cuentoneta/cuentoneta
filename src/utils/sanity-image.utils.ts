@@ -72,7 +72,8 @@ export function resolveSearchImage(url: string): SearchImage | undefined {
 	if (parsed.pathname.toLowerCase().endsWith('.svg')) {
 		return undefined;
 	}
-	const pixelArea = cropPixelArea(parsed.searchParams.get('rect')) ?? assetPixelArea(parsed.pathname);
+	const rect = parsed.searchParams.get('rect');
+	const pixelArea = rect === null ? assetPixelArea(parsed.pathname) : cropPixelArea(rect);
 	return {
 		url: withSanityImageParams(url, { fm: 'jpg' }),
 		...(pixelArea !== undefined ? { pixelArea } : {}),
@@ -80,9 +81,9 @@ export function resolveSearchImage(url: string): SearchImage | undefined {
 }
 
 // `rect` es `x,y,ancho,alto`: el recorte aplicado en el Studio, que es lo que el CDN sirve en lugar
-// del original.
-function cropPixelArea(rect: string | null): number | undefined {
-	const [, , width, height] = rect?.split(',').map(Number) ?? [];
+// del original. Uno ilegible no cae al área del original, que no es lo que se sirve.
+function cropPixelArea(rect: string): number | undefined {
+	const [, , width, height] = rect.split(',').map(Number);
 	return isPositiveInteger(width) && isPositiveInteger(height) ? width * height : undefined;
 }
 

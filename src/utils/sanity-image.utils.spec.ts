@@ -73,10 +73,8 @@ describe('resolveSearchImage', () => {
 			url: `${asset}-3000x2000.jpg?rect=0,0,200,200`,
 			expected: { url: `${asset}-3000x2000.jpg?rect=0,0,200,200&fm=jpg`, pixelArea: 40_000 },
 		},
-		{
-			url: `${asset}-3000x2000.jpg?rect=0,0,abc`,
-			expected: { url: `${asset}-3000x2000.jpg?rect=0,0,abc&fm=jpg`, pixelArea: 6_000_000 },
-		},
+		// Un recorte ilegible no permite saber qué se sirve: el área del original no lo describe.
+		{ url: `${asset}-3000x2000.jpg?rect=0,0,abc`, expected: { url: `${asset}-3000x2000.jpg?rect=0,0,abc&fm=jpg` } },
 		{ url: `${asset}.png`, expected: { url: `${asset}.png?fm=jpg` } },
 	])('should resolve "$url" to its JPG and its served area', ({ url, expected }) => {
 		expect(resolveSearchImage(url)).toEqual(expected);
