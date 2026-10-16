@@ -140,6 +140,7 @@ const commonTypescriptRules = {
 	'@typescript-eslint/no-non-null-assertion': 'error',
 	'@typescript-eslint/no-explicit-any': 'error',
 	'@typescript-eslint/no-require-imports': 'error',
+	'@typescript-eslint/consistent-type-imports': 'error',
 	'no-barrel-files/no-barrel-files': 'error',
 	'preserve-caught-error': 'error',
 };
@@ -497,16 +498,6 @@ export default [
 					allowGlobalLayersIn: ['src/app/components/header/header.ts', 'src/app/app.ts'],
 				},
 			],
-		},
-	},
-	{
-		// El alcance es todo `src/`, no solo el catálogo de stories donde se midió la deuda: la convención
-		// de imports type-only (ver typescript.md) vale para cada archivo, y declararla acá hace que el
-		// próximo archivo nazca cumpliéndola en vez de depender del recuerdo de quien lo escribe.
-		name: 'consistent-type-imports',
-		files: ['src/**/*.ts'],
-		rules: {
-			'@typescript-eslint/consistent-type-imports': 'error',
 		},
 	},
 	{
