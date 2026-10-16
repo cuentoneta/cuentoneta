@@ -125,7 +125,7 @@ en el canal **[#🚐 | la-cuentoneta][dc-channel]** en Discord.
 
 - Tener instalada una versión de [Node](https://nodejs.org/es/) **24** (Active LTS "Krypton") igual o superior a `v24.18.0` e **inferior a 25** (el `.npmrc` declara `engine-strict`, así que una versión fuera de ese rango **falla la instalación** en vez de solo advertir).
   El repo trae un `.nvmrc` (`nvm use` / `fnm use`). El proyecto no soporta Node 22 ni anteriores, y por ahora tampoco Node 25+ (Nx falla en el teardown de `libuv` bajo v26).
-- Instalar `pnpm`, un gestor de paquetes alternativo para Node: `npm install -g pnpm`. Se recomienda la versión `10.12.0` o superior.
+- Instalar `pnpm`, un gestor de paquetes alternativo para Node: `npm install -g pnpm`. Se recomienda la versión `10.12.0` o superior. Los settings de pnpm, como los `overrides` de dependencias, viven en `pnpm-workspace.yaml` (uno en la raíz y otro en `cms/`), no en el campo `pnpm` de `package.json`.
 - Instalar `nx`, un CLI para desarrollo de monorepos: `pnpm install -g nx`. Se recomienda la versión `23.0.0` o
   superior.
 - Tener un editor de texto o IDE ([Visual Studio Code](https://code.visualstudio.com/), [Vim](https://www.vim.org/), [WebStorm](https://www.jetbrains.com/es-es/webstorm/), etc).
