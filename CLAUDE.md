@@ -25,6 +25,7 @@
 | **Framework**          | Angular 22 (standalone, **zoneless**, OnPush, SSR/hidratación)    |
 | **Lenguaje**           | TypeScript (modo estricto)                                        |
 | **Monorepo**           | Nx 23.3 (single-project `@cuentoneta/app`) — builder vite/esbuild |
+| **Runtime**            | **Node 24.x ≥ 24.18** (`.nvmrc`); `engine-strict` rechaza 25+     |
 | **Gestor de paquetes** | **pnpm** (10.x). `npm`/`yarn` están bloqueados (`only-allow`)     |
 | **Backend**            | **Hono** (`src/api/`) + `@hono/zod-validator`                     |
 | **Persistencia/CMS**   | **Sanity** (GROQ) vía `@sanity/client`. Studio en `/cms`          |
