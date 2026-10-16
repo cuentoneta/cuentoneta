@@ -6,6 +6,7 @@ import {
 	type LiteraryWorkNavigationTeaserWithAuthors,
 } from '@models/literary-work.model';
 import { createReadingTime } from '@models/reading-time.model';
+import type { ImageUrlResolver } from '../../_utils/functions';
 import { mapAuthorTeaser, mapContentCampaigns, mapTags, urlFor } from '../../_utils/functions';
 import { mapMediaTeasers } from '../../_utils/media-sources.functions';
 import { client as sanityClient } from '../../_helpers/sanity-connector';
@@ -37,7 +38,10 @@ type SanityNavigationTeaser =
 const ROTATING_CONTENT_ID = 'rotatingContent';
 
 export class SanityContentRepository implements ContentRepository {
-	constructor(private readonly client: SanityClient = sanityClient) {}
+	constructor(
+		private readonly client: SanityClient = sanityClient,
+		private readonly resolveImageUrl: ImageUrlResolver = urlFor,
+	) {}
 
 	/** Entrega el contenido curado de una semana, con su bloque de lo más leído ya resuelto. */
 	public async fetchLandingPageContent(slug: string): Promise<LandingPageContent | null> {
@@ -148,8 +152,8 @@ export class SanityContentRepository implements ContentRepository {
 		return {
 			_id: raw._id,
 			config: raw.config,
-			collections: raw.collections.map(mapSanityCollectionTeaser),
-			campaigns: mapContentCampaigns(raw.campaigns),
+			collections: raw.collections.map((collection) => mapSanityCollectionTeaser(collection, this.resolveImageUrl)),
+			campaigns: mapContentCampaigns(raw.campaigns, this.resolveImageUrl),
 			mostRead,
 			latestReads: raw.latestLiteraryWorks.map((work) => this.mapNavigationTeaser(work)),
 			highlightedAuthors: this.mapHighlightedAuthors(raw.highlightedAuthors),
@@ -172,19 +176,19 @@ export class SanityContentRepository implements ContentRepository {
 			_id: raw._id,
 			slug: raw.slug,
 			title: raw.title,
-			coverImage: raw.coverImage ? urlFor(raw.coverImage) : '',
+			coverImage: raw.coverImage ? this.resolveImageUrl(raw.coverImage) : '',
 			totalReadingTime: createReadingTime(raw.totalReadingTime),
 			sectionCount: raw.sectionCount,
 			tags: mapTags(raw.tags),
 			mediaSources: mapMediaTeasers(raw.mediaSources),
-			authors: raw.authors.map(mapAuthorTeaser),
+			authors: raw.authors.map((author) => mapAuthorTeaser(author, this.resolveImageUrl)),
 		});
 	}
 
 	/** Traduce los autores que la semana destaca, con las etiquetas y el conteo que solo esta pantalla usa. */
 	private mapHighlightedAuthors(raw: SanityLandingPage['highlightedAuthors']): HighlightedAuthor[] {
 		return raw.map((entry) => ({
-			author: mapAuthorTeaser(entry.author),
+			author: mapAuthorTeaser(entry.author, this.resolveImageUrl),
 			// El teaser entrega su lista de etiquetas vacía en toda vista del repositorio, así que las del
 			// destacado se mapean acá aunque salgan del mismo autor.
 			tags: mapTags(entry.tags),

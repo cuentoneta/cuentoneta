@@ -18,17 +18,10 @@
 import type { Collection, CollectionTeaser } from '@models/collection.model';
 import type { SanityClient } from '@sanity/client';
 import { fn } from '@test-utils';
+import { stubImageUrlResolver } from '@testing/image-url-resolver.stub';
 import { SanityCollectionRepository } from '../api/modules/collection/collection.repository.sanity';
 import { onoffCollectionsMock, onoffCollectionTeasersMock } from './onoff-collections.mock';
 import { onoffRawCollectionsMock, onoffRawCollectionTeasersMock } from './onoff-raw-collections.mock';
-
-// Ver el spec homónimo de `LiteraryWork` para el porqué de sustituir el builder de imágenes.
-/* eslint-disable no-restricted-syntax -- vi.mock: el builder de imágenes de Sanity no tiene punto de inyección */
-vi.mock('@sanity/image-url', async () => {
-	const { stubImageUrlBuilderModule } = await import('@testing/sanity-image-url.stub');
-	return stubImageUrlBuilderModule();
-});
-/* eslint-enable no-restricted-syntax */
 
 function comparable(collection: Collection): unknown {
 	return {
@@ -47,7 +40,7 @@ function comparable(collection: Collection): unknown {
 
 function repoReturning(raw: unknown): SanityCollectionRepository {
 	const client = { fetch: fn(() => Promise.resolve(raw)) } as unknown as SanityClient;
-	return new SanityCollectionRepository(client);
+	return new SanityCollectionRepository(client, stubImageUrlResolver);
 }
 
 describe('el corpus de dominio de Collection coincide con el mapeo del ACL', () => {

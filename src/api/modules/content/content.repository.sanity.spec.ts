@@ -7,6 +7,7 @@ import {
 	overflowingRawHighlightedAuthors,
 	untaggedRawHighlightedAuthor,
 } from '@mocks/onoff-raw-landing-page.mock';
+import type { ImageUrlResolver } from '../../_utils/functions';
 import { mapAuthorTeaser } from '../../_utils/functions';
 import { landingPageContentQuery, rotatingContentQuery } from '../../_queries/content.query';
 import { literaryWorkTeasers } from '../../_queries/literary-work.query';
@@ -180,6 +181,35 @@ describe('SanityContentRepository.fetchLandingPageContent', () => {
 
 		expect(error?.message).toContain(LANDING_SLUG);
 		expect((error?.cause as Error).message).toContain(work.slug);
+	});
+});
+
+type LandingPageContent = NonNullable<Awaited<ReturnType<SanityContentRepository['fetchLandingPageContent']>>>;
+
+function imageUrlsOf(content: LandingPageContent): string[] {
+	return [
+		...content.campaigns.flatMap(({ contents }) => [contents.xs.imageUrl, contents.md.imageUrl]),
+		...content.collections.flatMap(({ imagery }) =>
+			imagery.kind === 'representative' ? [imagery.image] : imagery.images,
+		),
+		...content.mostRead.map(({ coverImage }) => coverImage),
+		...content.latestReads.map(({ coverImage }) => coverImage),
+		...content.highlightedAuthors.map(({ author }) => author.imageUrl),
+	];
+}
+
+describe('SanityContentRepository image resolution', () => {
+	const INJECTED_URL = 'https://images.example.org/injected.png';
+
+	it('resolves campaigns, collections, navigation teasers and highlighted authors through the injected image resolver', async () => {
+		const resolveImageUrl = fn<ImageUrlResolver>().mockReturnValue(INJECTED_URL);
+		const { client } = stubSanityClient([[rotatingContentQuery, onoffRawRotatingContentMock]], onoffRawLandingPageMock);
+
+		const result = await new SanityContentRepository(client, resolveImageUrl).fetchLandingPageContent(LANDING_SLUG);
+
+		const imageUrls = result ? imageUrlsOf(result) : [];
+		expect(imageUrls.length).toBeGreaterThan(0);
+		expect(imageUrls.every((url) => url === INJECTED_URL)).toBe(true);
 	});
 });
 

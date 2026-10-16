@@ -213,7 +213,7 @@ Nadie escribe una referencia ni una ruta a mano: las dos caras salen de la misma
 
 `../onoff-image-assets.mock.spec.ts` lo hace cumplir en cinco frentes: que el archivo exista, que la referencia parsee con el builder real, que el identificador corresponda a su clave, que no mienta sobre las dimensiones ni la extensión, y que **ninguna referencia de imagen del corpus quede fuera de la tabla** — con las fuentes enumeradas una por una, obras y colecciones y autor y campañas.
 
-**Qué habilita.** Que las dos capas resuelvan la misma imagen es lo que permite que los tres cruces del corpus de dominio contra el ACL (`../onoff-literary-works.acl-alignment.spec.ts`, `../onoff-collections.acl-alignment.spec.ts` y `../onoff-content-campaigns.acl-alignment.spec.ts`) sean **totales**: esos specs sustituyen el builder de imágenes por un resolutor sobre esta tabla y no excluyen ningún campo. El de campañas encadena además `auto()` en el doble, porque su mapeo resuelve las imágenes con formato automático.
+**Qué habilita.** Que las dos capas resuelvan la misma imagen es lo que permite que los cruces del corpus de dominio contra el ACL (`../onoff-*.acl-alignment.spec.ts`) sean **totales**: esos specs inyectan en el ACL un resolver de imágenes apoyado en esta tabla (`stubImageUrlResolver`) y no excluyen ningún campo.
 
 **Qué no habilita.** La guarda de referencias colgadas del generador sigue excluyendo los assets de imagen (ver [Las tres capas](#las-tres-capas)). Esa guarda exige que todo `_ref` resuelva a un documento del dataset, y la tabla no crea documentos `sanity.imageAsset` — son problemas distintos, y el de la guarda no vale la pena resolver mientras ninguna query dereferencie imágenes.
 
