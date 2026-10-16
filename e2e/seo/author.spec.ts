@@ -2,8 +2,8 @@
  * Tests e2e de SEO para la página de autor (`/author/:slug`).
  *
  * Sobre el HTML server-rendered (lo que ve el crawler, sin ejecutar JS):
- *  - A. Meta tags: <title> con el autor, description del perfil, og:/twitter: title y
- *       description, canonical a la URL del autor, robots indexable y keywords.
+ *  - A. Meta tags: <title> con el autor, description derivada de la biografía, og:/twitter: title y
+ *       description, og:image del retrato, canonical a la URL del autor, robots indexable y keywords.
  *  - B. Datos estructurados: JSON-LD ProfilePage (dateCreated, dateModified, mainEntity Person)
  *       y BreadcrumbList.
  *  - C. Bloques sitewide Organization y WebSite.
@@ -18,6 +18,7 @@ import { test } from '../_utils/test';
 
 import { parseJsonLdBlocks, getMetaContent, getTitleText, getCanonicalHref } from '../_utils/seo';
 import { assertValidJsonLd } from '@testing/json-ld-validation';
+import { resolveSearchImage } from '@utils/sanity-image.utils';
 import { collectIndexableHtmlViolations } from '../_utils/seo-invariants';
 import { STABLE_SLUGS, SCHEMA_IDS, SITEWIDE_SCHEMA_IDS } from '../_utils/seo-fixtures';
 
@@ -39,6 +40,22 @@ test('author — A: meta tags en el HTML server-rendered', async () => {
 	expect(getCanonicalHref(html)).toContain(authorPath);
 	expect(getMetaContent(html, 'robots')).toContain('index');
 	expect(getMetaContent(html, 'keywords')).toBeTruthy();
+});
+
+test('author — A: la description sale de la biografía, no de la plantilla del perfil', () => {
+	expect(getMetaContent(html, 'description')).not.toMatch(/^Perfil y obras de/);
+});
+
+// La expectativa sale del retrato que el mismo HTML declara en el Person, con la regla de la app: uno
+// raster del CDN se sirve como JPG; cualquier otro deja el og:image por defecto.
+test('author — A: og:image es el retrato raster o, si no lo hay, la imagen por defecto', () => {
+	const profilePage = parseJsonLdBlocks(html).get(SCHEMA_IDS.profilePage);
+	const person = profilePage?.['mainEntity'] as Record<string, unknown> | undefined;
+	const portraitUrl = resolveSearchImage(String(person?.['image'] ?? ''))?.url;
+
+	expect(getMetaContent(html, 'og:image')).toEqual(
+		portraitUrl ?? expect.stringMatching(/\/assets\/img\/og-default\.jpg$/),
+	);
 });
 
 test('author — B: JSON-LD ProfilePage y BreadcrumbList', async () => {

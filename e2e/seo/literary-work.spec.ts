@@ -4,8 +4,9 @@
  * Sobre el HTML server-rendered (lo que ve el crawler, sin ejecutar JS):
  *  - A. Status 404 real del SSR para una obra inexistente (no 200 con página vacía) y para un
  *       slug con un formato que el dominio rechaza (no 5xx).
- *  - B. Meta tags: <title> con la obra, description, og:/twitter: title y description,
- *       canonical a la URL de la obra, robots indexable, keywords y author (señal E-E-A-T).
+ *  - B. Meta tags: <title> con la obra, description derivada del texto, og:/twitter: title y
+ *       description, og:image de la portada, canonical a la URL de la obra, robots indexable, keywords
+ *       y author (señal E-E-A-T).
  *  - C. Datos estructurados: JSON-LD Article (headline, datePublished, author Person[],
  *       publisher Organization; LiteraryWork no expone updatedAt y el builder omite dateModified)
  *       y BreadcrumbList.
@@ -25,12 +26,14 @@ import type { HTMLElement } from 'node-html-parser';
 
 import { parseHtml, parseJsonLdBlocks, getMetaContent, getTitleText, getCanonicalHref } from '../_utils/seo';
 import { assertValidJsonLd } from '@testing/json-ld-validation';
+import { resolveSearchImage } from '@utils/sanity-image.utils';
 import { collectIndexableHtmlViolations, getInternalLinkHrefs } from '../_utils/seo-invariants';
 import { STABLE_SLUGS, SCHEMA_IDS, SITEWIDE_SCHEMA_IDS } from '../_utils/seo-fixtures';
 import { fetchLiteraryWork } from '../_utils/literary-work-fixtures';
 
 const literaryWorkPath = `/literary-work/${STABLE_SLUGS.literaryWork}`;
 const literaryWorkWithEpigraphsPath = `/literary-work/${STABLE_SLUGS.literaryWorkWithEpigraphs}`;
+const DEFAULT_OG_IMAGE_PATTERN = /\/assets\/img\/og-default\.jpg$/;
 const requiredJsonLdIds = [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.article, SCHEMA_IDS.breadcrumbLiteraryWork];
 
 test('literary-work — A: una obra inexistente responde 404 real en SSR', async ({ request }) => {
@@ -78,6 +81,23 @@ test.describe('literary-work — HTML server-rendered de una obra existente', ()
 		expect(article?.headline).toBeTruthy();
 		expect(article?.datePublished).toBeTruthy();
 		expect(String(article?.mainEntityOfPage)).toContain('/literary-work/');
+	});
+
+	test('B: la description sale del texto de la obra, no de la descripción genérica', () => {
+		expect(getMetaContent(html, 'description')).not.toMatch(/^Una lectura en La Cuentoneta/);
+	});
+
+	// La expectativa sale de la portada que sirve el API, con la regla de la app: una raster del CDN se
+	// declara como og:image, y la SVG genérica o su ausencia dejan el og:image por defecto. El Article
+	// declara esa misma portada o ninguna: cuándo la omite por tamaño lo cubren los specs unitarios.
+	test('B: og:image e image del Article siguen a la portada de la obra', async ({ request }) => {
+		const literaryWork = await fetchLiteraryWork(request, STABLE_SLUGS.literaryWork);
+		expect(literaryWork, `el API no sirve "${STABLE_SLUGS.literaryWork}": no habría con qué comparar`).toBeDefined();
+		const coverUrl = resolveSearchImage(literaryWork?.coverImage ?? '')?.url;
+		const article = parseJsonLdBlocks(html).get(SCHEMA_IDS.article);
+
+		expect(getMetaContent(html, 'og:image')).toEqual(coverUrl ?? expect.stringMatching(DEFAULT_OG_IMAGE_PATTERN));
+		expect([undefined, coverUrl]).toContain(article?.['image']);
 	});
 
 	test('C: JSON-LD BreadcrumbList', async () => {
