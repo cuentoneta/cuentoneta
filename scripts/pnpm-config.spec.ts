@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 
 const ROOT = join(__dirname, '..');
 
-// pnpm 11 ignora el campo `pnpm` de package.json y no avisa que un pin dejó de aplicar.
+// pnpm 11 ignora el campo `pnpm` de package.json y solo emite un warning: los pins dejarían de aplicar sin que nada falle.
 // La igualdad entre el yaml y el lockfile ya la impone `--frozen-lockfile` en CI.
 describe.each(['.', 'cms'])('settings de pnpm de %s', (project) => {
 	it('should not declare the pnpm field in package.json', () => {
