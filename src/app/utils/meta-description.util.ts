@@ -1,5 +1,5 @@
-import { type Author } from '@models/author.model';
-import { type LiteraryWork } from '@models/literary-work.model';
+import type { Author } from '@models/author.model';
+import type { LiteraryWork } from '@models/literary-work.model';
 import { htmlToPlainText } from '@utils/html-to-text.utils';
 import { excerptAtWordBoundary } from '@utils/text-excerpt.utils';
 

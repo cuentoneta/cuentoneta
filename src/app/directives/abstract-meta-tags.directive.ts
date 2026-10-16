@@ -1,6 +1,6 @@
 import { Directive, effect, inject } from '@angular/core';
 
-import { type SearchImage } from '@utils/sanity-image.utils';
+import type { SearchImage } from '@utils/sanity-image.utils';
 import { HeadMetadata } from './head-metadata.directive';
 
 @Directive()

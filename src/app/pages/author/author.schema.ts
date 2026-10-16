@@ -1,8 +1,8 @@
 import { Location } from '@angular/common';
-import { type BreadcrumbList, type PersonLeaf, type ProfilePage, type WithContext } from 'schema-dts';
+import type { BreadcrumbList, PersonLeaf, ProfilePage, WithContext } from 'schema-dts';
 
-import { type Author, type AuthorProfile } from '@models/author.model';
-import { type SanitizedHtml } from '@models/sanitized-html.model';
+import type { Author, AuthorProfile } from '@models/author.model';
+import type { SanitizedHtml } from '@models/sanitized-html.model';
 import { htmlToPlainText } from '@utils/html-to-text.utils';
 import { buildBreadcrumbSchema, buildPersonSchema } from '@utils/schema-org.builders';
 import { excerptAtWordBoundary } from '@utils/text-excerpt.utils';

@@ -1,7 +1,7 @@
 import { Location } from '@angular/common';
-import { type Article, type BreadcrumbList, type WithContext } from 'schema-dts';
+import type { Article, BreadcrumbList, WithContext } from 'schema-dts';
 
-import { type LiteraryWork } from '@models/literary-work.model';
+import type { LiteraryWork } from '@models/literary-work.model';
 import { resolveSearchImage } from '@utils/sanity-image.utils';
 import { buildBreadcrumbSchema, buildPersonSchema } from '@utils/schema-org.builders';
 

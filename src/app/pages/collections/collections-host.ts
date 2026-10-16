@@ -1,6 +1,6 @@
 import { InjectionToken, type Signal } from '@angular/core';
 
-import { type CollectionTeaser } from '@models/collection.model';
+import type { CollectionTeaser } from '@models/collection.model';
 
 export interface CollectionsHost {
 	readonly collections: Signal<readonly CollectionTeaser[]>;

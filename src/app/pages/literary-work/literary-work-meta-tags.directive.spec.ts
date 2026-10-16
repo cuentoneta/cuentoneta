@@ -4,7 +4,7 @@ import { signal } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
-import { type LiteraryWork } from '@models/literary-work.model';
+import type { LiteraryWork } from '@models/literary-work.model';
 import { cdnUrlForCorpusPath } from '@testing/sanity-cdn-url';
 import { AppRoutes } from '../../app.routes';
 import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';

@@ -4,7 +4,7 @@ import { signal } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 
 import { onoffCollectionsWithTagsMock } from '@mocks/onoff-collections.mock';
-import { type Collection } from '@models/collection.model';
+import type { Collection } from '@models/collection.model';
 import { createSanitizedHtml } from '@models/sanitized-html.model';
 import { htmlToPlainText } from '@utils/html-to-text.utils';
 import { AppRoutes } from '../../app.routes';

@@ -5,7 +5,7 @@ import { Title } from '@angular/platform-browser';
 
 import { authorMock } from '@mocks/author.mock';
 import { onoffImageAssets } from '@mocks/onoff-image-assets.mock';
-import { type AuthorProfile } from '@models/author.model';
+import type { AuthorProfile } from '@models/author.model';
 import { cdnUrlFor } from '@testing/sanity-cdn-url';
 import { AppRoutes } from '../../app.routes';
 import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';

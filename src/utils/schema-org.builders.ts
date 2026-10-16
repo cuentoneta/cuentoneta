@@ -1,6 +1,6 @@
-import { type BreadcrumbList, type PersonLeaf, type WithContext } from 'schema-dts';
+import type { BreadcrumbList, PersonLeaf, WithContext } from 'schema-dts';
 
-import { type Author } from '@models/author.model';
+import type { Author } from '@models/author.model';
 
 /** Ítem de un breadcrumb: etiqueta visible y URL absoluta de la página. */
 export interface BreadcrumbItem {

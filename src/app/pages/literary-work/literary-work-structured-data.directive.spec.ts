@@ -4,7 +4,7 @@ import { DOCUMENT } from '@angular/common';
 import { signal } from '@angular/core';
 
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
-import { type LiteraryWork } from '@models/literary-work.model';
+import type { LiteraryWork } from '@models/literary-work.model';
 import { LiteraryWorkStructuredData } from './literary-work-structured-data.directive';
 import { LITERARY_WORK_HOST } from './literary-work-host';
 

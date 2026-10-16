@@ -5,7 +5,7 @@ import { signal } from '@angular/core';
 
 import { authorMock } from '@mocks/author.mock';
 import { withoutUrl } from '@testing/resource-without-url';
-import { type AuthorProfile } from '@models/author.model';
+import type { AuthorProfile } from '@models/author.model';
 import { AuthorStructuredData } from './author-structured-data.directive';
 import { AUTHOR_HOST } from './author-host';
 

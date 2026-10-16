@@ -1,6 +1,6 @@
 import { type EnvironmentProviders, inject, provideAppInitializer } from '@angular/core';
 import { Location } from '@angular/common';
-import { type Organization, type WebSite, type WithContext } from 'schema-dts';
+import type { Organization, WebSite, WithContext } from 'schema-dts';
 
 import { SchemaOrgService } from './schema-org.service';
 import { environment } from '../environments/environment';
