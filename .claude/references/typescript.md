@@ -63,7 +63,7 @@ import { LiteraryWork } from '@models/literary-work.model';
 
 **Cuándo NO usar `type`:** clases usadas en runtime (constructores, métodos estáticos), funciones, constantes, o cualquier cosa usada en una expresión.
 
-**Enforcement activo:** la regla `@typescript-eslint/consistent-type-imports` rige donde rige `commonTypescriptRules` de [`eslint.config.mjs`](../../eslint.config.mjs): los bloques `nx` y `cms`, o sea todo el `.ts`/`.tsx` que lintea el gate `lint` (`src`, `e2e`, `cms`, `scripts`, `tools`). Un scope nuevo que esparza `commonTypescriptRules` la hereda, para que el próximo archivo nazca cumpliendo la convención.
+**Enforcement activo:** la regla `@typescript-eslint/consistent-type-imports` rige donde rige `commonTypescriptRules` de [`eslint.config.mjs`](../../eslint.config.mjs): los bloques `nx` y `cms`, o sea todo el `.ts`/`.tsx` que lintea el gate `lint` (`src`, `e2e`, `cms`, `scripts`, `tools`). Quedan fuera los `.js`/`.mjs` (la sintaxis `import type` no existe en JS) y los `.ts` de la raíz que el gate no recorre (`vitest.config.ts`, `playwright.config.ts`). Un scope nuevo que esparza `commonTypescriptRules` la hereda, para que el próximo archivo nazca cumpliendo la convención.
 
 ---
 
