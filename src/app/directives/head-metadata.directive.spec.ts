@@ -518,15 +518,17 @@ describe('HeadMetadata', () => {
 	});
 
 	describe('setOgImage', () => {
-		it('should set og:image without touching alt, dimensions or twitter:image', () => {
+		it('should set og:image and drop the logo alt, without touching dimensions or twitter:image', () => {
 			const updateSpy = spyOn(metaService, 'updateTag');
 			const removeSpy = spyOn(metaService, 'removeTag');
+			const portraitUrl = 'https://cdn.sanity.io/images/p/d/abc-1200x800.png?fm=jpg';
 
-			directive.setOgImage(TEST_IMAGE_URL);
+			directive.setOgImage(portraitUrl);
 
 			expect(updateSpy).toHaveBeenCalledTimes(1);
-			expect(updateSpy).toHaveBeenCalledWith({ property: 'og:image', content: TEST_IMAGE_URL });
-			expect(removeSpy).not.toHaveBeenCalled();
+			expect(updateSpy).toHaveBeenCalledWith({ property: 'og:image', content: portraitUrl });
+			expect(removeSpy).toHaveBeenCalledTimes(1);
+			expect(removeSpy).toHaveBeenCalledWith('property="og:image:alt"');
 		});
 	});
 

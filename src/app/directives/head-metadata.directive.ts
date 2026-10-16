@@ -192,10 +192,11 @@ export class HeadMetadata {
 		this.metaTagService.updateTag({ name: 'twitter:image', content: url });
 	}
 
-	// Solo og:image, la imagen representativa que leen los buscadores; deja intactos alt, dimensiones y
-	// twitter:image.
+	// La imagen representativa que leen los buscadores. Quita el alt, que describe al logo del default y
+	// no a esta imagen; deja intactos las dimensiones y twitter:image.
 	public setOgImage(url: string) {
 		this.metaTagService.updateTag({ property: 'og:image', content: url });
+		this.metaTagService.removeTag('property="og:image:alt"');
 	}
 
 	public removeImage() {
