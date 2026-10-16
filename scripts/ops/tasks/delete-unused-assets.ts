@@ -7,7 +7,7 @@
  * No tiene corrida en seco: sin el flag, el dispatcher la rechaza sin cargarla.
  */
 import { client } from '../../../src/api/_helpers/sanity-connector';
-import { Transaction } from '@sanity/client';
+import type { Transaction } from '@sanity/client';
 import type { OpsTask } from '../registry';
 
 const UNUSED_ASSETS_QUERY = `

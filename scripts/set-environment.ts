@@ -13,7 +13,7 @@
 // NodeJS & env
 import { writeFileSync, existsSync, mkdirSync, writeFile } from 'fs';
 import ErrnoException = NodeJS.ErrnoException;
-import { TEnvironmentType } from './vercel-environments.model';
+import type { TEnvironmentType } from './vercel-environments.model';
 import { join } from 'node:path';
 import type { OpsTask } from './ops/registry';
 
