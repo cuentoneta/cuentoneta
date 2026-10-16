@@ -1,4 +1,4 @@
-import { isSanityImageUrl, withSanityImageParams } from './sanity-image.utils';
+import { isSanityImageUrl, resolveSearchImage, withSanityImageParams } from './sanity-image.utils';
 
 describe('isSanityImageUrl', () => {
 	it.each([
@@ -58,5 +58,39 @@ describe('withSanityImageParams', () => {
 
 	it('should return an empty string as-is', () => {
 		expect(withSanityImageParams('', { w: 64 })).toBe('');
+	});
+});
+
+describe('resolveSearchImage', () => {
+	const asset = 'https://cdn.sanity.io/images/s4dbqkc5/production/abc';
+
+	it.each([
+		{ url: `${asset}-1200x800.jpg`, expected: { url: `${asset}-1200x800.jpg?fm=jpg`, pixelArea: 960_000 } },
+		{ url: `${asset}-400x600.webp`, expected: { url: `${asset}-400x600.webp?fm=jpg`, pixelArea: 240_000 } },
+		{ url: `${asset}-150x200.png`, expected: { url: `${asset}-150x200.png?fm=jpg`, pixelArea: 30_000 } },
+		// Con recorte del Studio, el CDN sirve el `rect` y no el original.
+		{
+			url: `${asset}-3000x2000.jpg?rect=0,0,200,200`,
+			expected: { url: `${asset}-3000x2000.jpg?rect=0,0,200,200&fm=jpg`, pixelArea: 40_000 },
+		},
+		{
+			url: `${asset}-3000x2000.jpg?rect=0,0,abc`,
+			expected: { url: `${asset}-3000x2000.jpg?rect=0,0,abc&fm=jpg`, pixelArea: 6_000_000 },
+		},
+		{ url: `${asset}.png`, expected: { url: `${asset}.png?fm=jpg` } },
+	])('should resolve "$url" to its JPG and its served area', ({ url, expected }) => {
+		expect(resolveSearchImage(url)).toEqual(expected);
+	});
+
+	it.each([
+		`${asset}-600x800.svg`,
+		`${asset}-600x800.SVG?rect=0,0,300,300`,
+		'',
+		'/assets/svg/cover-placeholder.svg',
+		'https://user-images.githubusercontent.com/1/2.png',
+		'http://cdn.sanity.io/images/s4dbqkc5/production/abc-1200x800.jpg',
+		'no es una url',
+	])('should not resolve "%s"', (url) => {
+		expect(resolveSearchImage(url)).toBeUndefined();
 	});
 });

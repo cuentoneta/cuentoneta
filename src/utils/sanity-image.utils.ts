@@ -26,6 +26,8 @@ export type SanityImageParams = {
 	auto?: 'format';
 	/** Calidad de recompresión, 0–100. Sin él, el CDN aplica la suya. */
 	q?: number;
+	/** Formato de salida forzado; sin él, el CDN sirve el formato del original. */
+	fm?: 'jpg' | 'png' | 'webp';
 };
 
 /**
@@ -47,4 +49,51 @@ export function withSanityImageParams(url: string, params: SanityImageParams): s
 	}
 	const separator = url.includes('?') ? '&' : '?';
 	return `${url}${separator}${query}`;
+}
+
+export type SearchImage = {
+	/** URL absoluta del CDN, convertida a JPG. */
+	url: string;
+	/** Ancho × alto en píxeles de lo que sirve `url`; ausente si la URL no permite deducirlo. */
+	pixelArea?: number;
+};
+
+// Nombre de un asset de imagen en el CDN: `<hash>-<ancho>x<alto>.<extensión>`.
+const ASSET_DIMENSIONS_PATTERN = /-(\d+)x(\d+)\.[a-z0-9]+$/i;
+
+/**
+ * Resuelve la imagen que una página declara a los buscadores a partir de la URL de un asset de Sanity:
+ * el original convertido a JPG, sin redimensionar. Devuelve `undefined` cuando la URL no es del CDN o el
+ * asset es un SVG, que los buscadores no usan como miniatura y que en el sitio es la portada genérica:
+ * en ambos casos la página no tiene una imagen propia que declarar.
+ */
+export function resolveSearchImage(url: string): SearchImage | undefined {
+	if (!isSanityImageUrl(url)) {
+		return undefined;
+	}
+	const parsed = new URL(url);
+	if (parsed.pathname.toLowerCase().endsWith('.svg')) {
+		return undefined;
+	}
+	const pixelArea = cropPixelArea(parsed.searchParams.get('rect')) ?? assetPixelArea(parsed.pathname);
+	return {
+		url: withSanityImageParams(url, { fm: 'jpg' }),
+		...(pixelArea !== undefined ? { pixelArea } : {}),
+	};
+}
+
+// `rect` es `x,y,ancho,alto`: el recorte aplicado en el Studio, que es lo que el CDN sirve en lugar
+// del original.
+function cropPixelArea(rect: string | null): number | undefined {
+	const [, , width, height] = rect?.split(',').map(Number) ?? [];
+	return isPositiveInteger(width) && isPositiveInteger(height) ? width * height : undefined;
+}
+
+function assetPixelArea(pathname: string): number | undefined {
+	const match = ASSET_DIMENSIONS_PATTERN.exec(pathname);
+	return match ? Number(match[1]) * Number(match[2]) : undefined;
+}
+
+function isPositiveInteger(value: number | undefined): value is number {
+	return value !== undefined && Number.isInteger(value) && value > 0;
 }
