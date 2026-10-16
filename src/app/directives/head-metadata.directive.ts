@@ -2,6 +2,7 @@ import { Directive, effect, inject, PLATFORM_ID, DOCUMENT } from '@angular/core'
 import { Meta, Title } from '@angular/platform-browser';
 import { isPlatformBrowser } from '@angular/common';
 import { environment } from '../environments/environment';
+import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 
 @Directive({
 	selector: '[cuentonetaHeadMetadata]',
@@ -175,10 +176,13 @@ export class HeadMetadata {
 		this.metaTagService.removeTag('name="robots"');
 	}
 
-	// El fallback de OG image coincide con el <meta property="og:image"> estático de indexFile.html.
-	// A diferencia del resto de los tags —que se eliminan al limpiar— la imagen se resetea al logo
-	// para que una página sin imagen dedicada siga exponiendo un og:image/twitter:image válido.
-	private readonly defaultOgImageUrl = 'assets/svg/logo.svg';
+	// Los fallbacks de imagen coinciden con los <meta> estáticos de indexFile.html. A diferencia del
+	// resto de los tags —que se eliminan al limpiar— la imagen se resetea para que una página sin imagen
+	// dedicada siga exponiendo un og:image/twitter:image válido. El de og:image es raster y absoluto
+	// porque es el que leen los buscadores; el de twitter:image conserva el logo hasta que las tarjetas
+	// sociales tengan su propia imagen.
+	private readonly defaultOgImageUrl = buildCanonicalUrl('assets/img/og-default.jpg');
+	private readonly defaultTwitterImageUrl = 'assets/svg/logo.svg';
 	private readonly defaultOgImageAlt = 'Logo de La Cuentoneta';
 
 	public setImage(url: string, alt: string, width?: number, height?: number) {
@@ -188,12 +192,18 @@ export class HeadMetadata {
 		this.metaTagService.updateTag({ name: 'twitter:image', content: url });
 	}
 
+	// Solo og:image, la imagen representativa que leen los buscadores; deja intactos alt, dimensiones y
+	// twitter:image.
+	public setOgImage(url: string) {
+		this.metaTagService.updateTag({ property: 'og:image', content: url });
+	}
+
 	public removeImage() {
 		this.metaTagService.updateTag({ property: 'og:image', content: this.defaultOgImageUrl });
 		this.metaTagService.updateTag({ property: 'og:image:alt', content: this.defaultOgImageAlt });
 		this.metaTagService.removeTag('property="og:image:width"');
 		this.metaTagService.removeTag('property="og:image:height"');
-		this.metaTagService.updateTag({ name: 'twitter:image', content: this.defaultOgImageUrl });
+		this.metaTagService.updateTag({ name: 'twitter:image', content: this.defaultTwitterImageUrl });
 	}
 
 	private setImageDimensions(width?: number, height?: number) {

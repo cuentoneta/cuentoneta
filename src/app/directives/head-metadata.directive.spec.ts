@@ -4,11 +4,13 @@ import { TestBed } from '@angular/core/testing';
 import { Meta, Title } from '@angular/platform-browser';
 import { DOCUMENT } from '@angular/common';
 import { environment } from '../environments/environment';
+import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 
 describe('HeadMetadata', () => {
 	const BASE_URL = 'https://www.cuentoneta.ar';
 	const TEST_IMAGE_URL = 'assets/svg/collection.svg';
 	const TEST_IMAGE_ALT = 'Imagen de prueba';
+	const DEFAULT_OG_IMAGE_URL = buildCanonicalUrl('assets/img/og-default.jpg');
 
 	let directive: HeadMetadata;
 	let metaService: Meta;
@@ -515,13 +517,26 @@ describe('HeadMetadata', () => {
 		});
 	});
 
+	describe('setOgImage', () => {
+		it('should set og:image without touching alt, dimensions or twitter:image', () => {
+			const updateSpy = spyOn(metaService, 'updateTag');
+			const removeSpy = spyOn(metaService, 'removeTag');
+
+			directive.setOgImage(TEST_IMAGE_URL);
+
+			expect(updateSpy).toHaveBeenCalledTimes(1);
+			expect(updateSpy).toHaveBeenCalledWith({ property: 'og:image', content: TEST_IMAGE_URL });
+			expect(removeSpy).not.toHaveBeenCalled();
+		});
+	});
+
 	describe('removeImage', () => {
-		it('should reset og:image and twitter:image to the static logo fallback', () => {
+		it('should reset og:image to the raster site default and twitter:image to the logo', () => {
 			const metaSpy = spyOn(metaService, 'updateTag');
 
 			directive.removeImage();
 
-			expect(metaSpy).toHaveBeenCalledWith({ property: 'og:image', content: 'assets/svg/logo.svg' });
+			expect(metaSpy).toHaveBeenCalledWith({ property: 'og:image', content: DEFAULT_OG_IMAGE_URL });
 			expect(metaSpy).toHaveBeenCalledWith({ name: 'twitter:image', content: 'assets/svg/logo.svg' });
 		});
 
@@ -573,8 +588,8 @@ describe('HeadMetadata', () => {
 			// Las dimensiones de OG image se eliminan al limpiar.
 			expect(removeSpy).toHaveBeenCalledWith('property="og:image:width"');
 			expect(removeSpy).toHaveBeenCalledWith('property="og:image:height"');
-			// La imagen se resetea al logo estático (no se elimina del todo).
-			expect(updateSpy).toHaveBeenCalledWith({ property: 'og:image', content: 'assets/svg/logo.svg' });
+			// La imagen se resetea a los fallbacks estáticos (no se elimina del todo).
+			expect(updateSpy).toHaveBeenCalledWith({ property: 'og:image', content: DEFAULT_OG_IMAGE_URL });
 			expect(updateSpy).toHaveBeenCalledWith({ property: 'og:image:alt', content: 'Logo de La Cuentoneta' });
 			expect(updateSpy).toHaveBeenCalledWith({ name: 'twitter:image', content: 'assets/svg/logo.svg' });
 			// El <link rel="canonical"> se quita del head y og:url se resetea al home (no se elimina).
