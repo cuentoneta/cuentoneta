@@ -47,7 +47,7 @@ function describe(type: MediaType): string {
 
 ## Imports type-only
 
-Usar la palabra clave `type` cuando un import se use **solo** como anotación de tipo. Es requisito de `isolatedModules` (activo en el repo) y reduce el bundle (los type imports se eliminan del output).
+Usar la palabra clave `type` cuando un import se use **solo** como anotación de tipo. Lo garantiza el compilador con `verbatimModuleSyntax` y reduce el bundle (los type imports se eliminan del output).
 
 ```typescript
 // ✅ Correcto
@@ -63,9 +63,36 @@ import { LiteraryWork } from '@models/literary-work.model';
 
 **Cuándo NO usar `type`:** clases usadas en runtime (constructores, métodos estáticos), funciones, constantes, o cualquier cosa usada en una expresión.
 
-**Enforcement activo:** la regla `@typescript-eslint/consistent-type-imports` cubre todo `*.ts` y `*.tsx` que lintea el gate `lint` —app, Studio, `scripts/`, `e2e/` y `tools/`— (bloque `consistent-type-imports` de [`eslint.config.mjs`](../../eslint.config.mjs)), para que el próximo archivo nazca cumpliendo la convención. En `scripts/` importa además en runtime: `node` descarta los tipos antes de ejecutar y un import de solo tipos sin `type` falla porque el export no existe. Los `.js`/`.mjs` quedan fuera: no admiten `import type`.
+### Garantía del compilador
 
-La regla acepta las dos formas, `import type { X }` y `import { type X }`; el autofix escribe la primera (`fixStyle: 'separate-type-imports'`).
+`verbatimModuleSyntax` está activo en `tsconfig.json` —lo heredan app, spec, editor, server, typecheck, Storybook, `scripts/`, `e2e/` y `tools/`— y en `cms/tsconfig.json`. Ante un binding de solo-tipo sin `type`, `tsc` emite TS1484 y fallan los gates `typecheck` y `studio-build`.
+
+Importa que sea el compilador y no solo el linter: `consistent-type-imports` se desactiva en los archivos con decoradores cuando el programa de typed-linting declara `emitDecoratorMetadata` + `experimentalDecorators` (el de Storybook), y ahí el lint pasa en verde con un import sin `type`.
+
+### Emisión bajo `verbatimModuleSyntax`
+
+Con la bandera, TS ya no borra por inferencia un import cuyos especificadores son todos `type`:
+
+| Fuente                                   | Emisión                                          |
+| ---------------------------------------- | ------------------------------------------------ |
+| `import type { A } from 'x'`             | (nada)                                           |
+| `import { valor, type A } from 'x'`      | `import { valor } from 'x'`                      |
+| `import { type A } from 'x'`             | `import {} from 'x'` (import por efecto lateral) |
+| `import { A } from 'x'` (`A` es un tipo) | `import { A } from 'x'` + error TS1484           |
+
+Por eso la regla complementaria `@typescript-eslint/no-import-type-side-effects` (mismo bloque de [`eslint.config.mjs`](../../eslint.config.mjs)) marca `import { type A } from 'x'`, y su autofix lo reescribe a `import type { A } from 'x'`. Cuando todos los especificadores son de tipo se usa `import type { A }`; la forma inline solo va mezclada con un valor.
+
+### Sintaxis que la bandera descarta
+
+No se usan `import x = require(...)` ni `export =`: son sintaxis CommonJS que no existe en un módulo ESM. Tampoco el alias `import X = NS.Y`, que no se borra al emitir; para el tipo de un namespace se declara `type X = NS.Y`.
+
+### Enforcement activo
+
+La regla `@typescript-eslint/consistent-type-imports` cubre todo `*.ts` y `*.tsx` que lintea el gate `lint` —app, Studio, `scripts/`, `e2e/` y `tools/`— (bloque `consistent-type-imports` de [`eslint.config.mjs`](../../eslint.config.mjs)), para que el próximo archivo nazca cumpliendo la convención. En `scripts/` importa además en runtime: `node` descarta los tipos antes de ejecutar y un import de solo tipos sin `type` falla porque el export no existe. Los `.js`/`.mjs` quedan fuera: no admiten `import type`.
+
+La regla acepta las dos formas, `import type { X }` y `import { type X }`; el autofix escribe la primera (`fixStyle: 'separate-type-imports'`). En un import mixto valen ambas: `import type { X } from 'x'` junto a `import { valor } from 'x'`, o `import { valor, type X } from 'x'`.
+
+Un spec ancla la bandera: [`tools/tsconfig/verbatim-module-syntax.spec.ts`](../../tools/tsconfig/verbatim-module-syntax.spec.ts) verifica que cada tsconfig del árbol (app, spec, editor, server, typecheck, Storybook y Studio) resuelva `verbatimModuleSyntax: true`, y que con esas opciones un binding de solo-tipo sin `type` produzca TS1484 mientras `import type { X }` e `import { type X }` no produzcan diagnóstico. Sin él, quitar la bandera de un tsconfig dejaría `typecheck` en verde sin que nada avise.
 
 ---
 

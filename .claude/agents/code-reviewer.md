@@ -80,7 +80,7 @@ Estos patrones son intencionales y correctos. NO los reportes como problemas:
 - [ ] Sin `enum` de TypeScript — usar `Object.freeze({...} as const)`
 - [ ] Sin lifecycle hooks (`OnInit`, etc.) — usar signals / `computed` / `effect` / `viewChild` / `contentChild`
 - [ ] Sin propiedades estáticas — usar un servicio singleton (`@Service()`)
-- [ ] Imports type-only con `type` cuando se usan solo como anotación de tipo (`isolatedModules`)
+- [ ] Imports type-only con `type` cuando se usan solo como anotación de tipo (`verbatimModuleSyntax`)
 - [ ] Sin literales de tiempo crudos — usar duration strings (`'15m'`, `'1h'`, `'7d'`)
 - [ ] Sin non-null assertion (`!`)
 - [ ] Errores atrapados que preservan la causa; errores tipados por operación
