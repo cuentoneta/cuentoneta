@@ -21,11 +21,11 @@ export function buildAuthorMetaDescription(author: Author): string {
  * no dicen de qué trata la obra. Si ninguna sección transportada tiene texto, la descripción genérica.
  */
 export function buildLiteraryWorkMetaDescription(literaryWork: LiteraryWork): string {
-	const plainText = literaryWork.content
-		.map((section) => htmlToPlainText(section.bodyHtml))
-		.find((text) => text !== '');
-	if (!plainText) {
-		return 'Una lectura en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.';
+	for (const section of literaryWork.content) {
+		const plainText = htmlToPlainText(section.bodyHtml);
+		if (plainText) {
+			return excerptAtWordBoundary(plainText, META_DESCRIPTION_MAX_LENGTH);
+		}
 	}
-	return excerptAtWordBoundary(plainText, META_DESCRIPTION_MAX_LENGTH);
+	return 'Una lectura en La Cuentoneta: Una iniciativa que busca fomentar y hacer accesible la lectura digital.';
 }
