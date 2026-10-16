@@ -44,6 +44,12 @@ Preferir `createIfNotExists` sobre `createOrReplace`: el segundo refresca el con
 
 **Si el origen puede ser un borrador, el prefijo de path se reaplica, no se concatena.** Sanity marca un borrador con `drafts.` **encabezando** el `_id`, así que derivar `drafts.<origen>` como `<prefijo>drafts.<origen>` produce un documento publicado con nombre de borrador — y publica contenido inédito sin que nada lo señale. Lo correcto es separar el path del identificador, derivar sobre lo que queda y volver a anteponerlo: `drafts.<prefijo><origen>`. El predicado de reconocimiento y el `filter` de la reversión tienen que contemplar ambas formas.
 
+### Crear documentos sin documento de origen
+
+Cuando no hay un tipo que recorrer —completar un catálogo desde archivos del repo, por caso—, `migrate` no va como objeto de helpers sino como **función generadora** (`AsyncIterableMigration`): recibe `documents()` —los documentos de `documentTypes`, borradores incluidos— y emite con `yield` las mutaciones que quiera. Recorrer el tipo destino sirve entonces para saber qué **omitir**, y las creaciones salen aparte. El `_id` se deriva de lo que identifica a cada elemento de la fuente (el nombre del archivo, p. ej.), con las mismas tres garantías de la tabla de arriba.
+
+**El cliente de la migración no sube assets.** `context.client` solo expone lecturas (`fetch`, `getDocument`, …) y lanza ante cualquier otro método, `assets` incluido. Para subir una imagen se arma un cliente completo con su misma configuración (`createClient({ ...context.client.config(), useCdn: false })`, de `@sanity/client`) y la subida se **saltea en el dry-run** (`context.dryRun`): de otro modo el dry-run escribe. Como Sanity deriva el `_id` de una imagen de su contenido y sus dimensiones (`image-<sha1>-<ancho>x<alto>-<formato>`), el dry-run puede emitir la misma referencia que la corrida real sin subir nada.
+
 Cuando más de una migración viva reconoce al mismo documento derivado, el predicado se declara **una sola vez** y lo importan todas: con una copia por consumidor, una divergencia entre definiciones podría dejar documentos sin alcanzar —o alcanzar de más—. Con un solo consumidor la copia vive en él, y la fuente compartida deja de pagarse. Y el guard va **dentro** de `migrate.document`, no solo en el `filter`: el filtro es una optimización del recorrido, no la garantía.
 
 ### Qué dice —y qué no— el contador de una corrida
