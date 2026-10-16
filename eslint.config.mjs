@@ -500,13 +500,16 @@ export default [
 		},
 	},
 	{
-		// El alcance es todo `src/`, no solo el catálogo de stories donde se midió la deuda: la convención
-		// de imports type-only (ver typescript.md) vale para cada archivo, y declararla acá hace que el
-		// próximo archivo nazca cumpliéndola en vez de depender del recuerdo de quien lo escribe.
+		// La convención de imports type-only (ver typescript.md) vale para cada archivo TypeScript, no solo
+		// para la app: el Studio, los scripts y los e2e también la necesitan, y en `scripts/` un import de
+		// solo tipos sin `type` falla en runtime porque `node` descarta los tipos antes de ejecutar.
 		name: 'consistent-type-imports',
-		files: ['src/**/*.ts'],
+		files: ['**/*.ts', '**/*.tsx'],
 		rules: {
-			'@typescript-eslint/consistent-type-imports': 'error',
+			'@typescript-eslint/consistent-type-imports': [
+				'error',
+				{ prefer: 'type-imports', fixStyle: 'separate-type-imports' },
+			],
 		},
 	},
 	{

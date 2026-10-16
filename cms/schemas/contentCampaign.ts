@@ -4,11 +4,8 @@ import { localizedRequire, validateRootRelativePath } from '../utils/validations
 import { campaignImageSizeValidation } from '../utils/content-campaign-image';
 
 // Models
-import {
-	ContentCampaignViewport,
-	ContentCampaignViewportKeys,
-	viewportElementSizes,
-} from '@models/content-campaign.model';
+import type { ContentCampaignViewport } from '@models/content-campaign.model';
+import { ContentCampaignViewportKeys, viewportElementSizes } from '@models/content-campaign.model';
 
 const generateContent = (viewport: ContentCampaignViewport) => {
 	return defineField({
