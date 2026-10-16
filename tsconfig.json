@@ -20,8 +20,8 @@
 			"@testing/*": ["./src/testing/*"]
 		},
 		"isolatedModules": true,
-		// El compilador, no solo el linter, rechaza un import de solo-tipo sin `type`; exige
-		// `@typescript-eslint/no-import-type-side-effects`, porque `import { type A }` deja de borrarse.
+		// El compilador, no solo el linter, rechaza un import de solo-tipo sin `type` (TS1484). Como
+		// `import { type A }` deja de borrarse, lo complementa `@typescript-eslint/no-import-type-side-effects`.
 		"verbatimModuleSyntax": true,
 		"skipLibCheck": true,
 		"strict": true

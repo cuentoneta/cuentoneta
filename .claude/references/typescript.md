@@ -52,7 +52,7 @@ Usar la palabra clave `type` cuando un import se use **solo** como anotación de
 ```typescript
 // ✅ Correcto
 import type { LiteraryWork } from '@models/literary-work.model';
-import { type Mock } from '@test-utils';
+import { fn, type Mock } from '@test-utils';
 import { createLiteraryWork } from '@models/literary-work.model'; // función, se usa en runtime → sin `type`
 
 // ❌ Incorrecto — falta `type` en imports solo-de-tipo
@@ -92,7 +92,7 @@ La regla `@typescript-eslint/consistent-type-imports` cubre todo `*.ts` y `*.tsx
 
 La regla acepta las dos formas, `import type { X }` y `import { type X }`; el autofix escribe la primera (`fixStyle: 'separate-type-imports'`). En un import mixto valen ambas: `import type { X } from 'x'` junto a `import { valor } from 'x'`, o `import { valor, type X } from 'x'`.
 
-Un spec ancla la bandera: [`tools/tsconfig/verbatim-module-syntax.spec.ts`](../../tools/tsconfig/verbatim-module-syntax.spec.ts) verifica que cada tsconfig del árbol (app, spec, editor, server, typecheck, Storybook y Studio) resuelva `verbatimModuleSyntax: true`, y que con esas opciones un binding de solo-tipo sin `type` produzca TS1484 mientras `import type { X }` e `import { type X }` no produzcan diagnóstico. Sin él, quitar la bandera de un tsconfig dejaría `typecheck` en verde sin que nada avise.
+Un spec ancla la bandera: [`tools/tsconfig/verbatim-module-syntax.spec.ts`](../../tools/tsconfig/verbatim-module-syntax.spec.ts) verifica que cada tsconfig versionado del repo resuelva `verbatimModuleSyntax: true`, y que con esas opciones un binding de solo-tipo sin `type` produzca TS1484 mientras `import type { X }` e `import { type X }` no lo produzcan. Falla también ante un tsconfig versionado que no figure en su lista, así que uno nuevo no queda sin cubrir. Sin él, quitar la bandera de un tsconfig dejaría `typecheck` en verde sin que nada avise.
 
 ---
 
