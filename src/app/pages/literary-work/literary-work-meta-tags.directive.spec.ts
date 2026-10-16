@@ -3,10 +3,9 @@ import { TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 
-import { onoffImageAssets } from '@mocks/onoff-image-assets.mock';
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 import { type LiteraryWork } from '@models/literary-work.model';
-import { cdnUrlFor } from '@testing/sanity-cdn-url';
+import { cdnUrlForCorpusPath } from '@testing/sanity-cdn-url';
 import { AppRoutes } from '../../app.routes';
 import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 import { buildLiteraryWorkMetaDescription } from '@app-utils/meta-description.util';
@@ -74,17 +73,8 @@ describe('LiteraryWorkMetaTags', () => {
 		expect(descriptionSpy).toHaveBeenCalledWith(buildLiteraryWorkMetaDescription(literaryWork));
 	});
 
-	// La portada del corpus, servida desde el CDN como la sirve el ACL.
-	function cdnCoverOf(literaryWork: LiteraryWork): string {
-		const asset = Object.values(onoffImageAssets).find(({ path }) => path === literaryWork.coverImage);
-		if (!asset) {
-			throw new Error(`El corpus no declara el asset de la portada de "${literaryWork.slug}"`);
-		}
-		return cdnUrlFor(asset);
-	}
-
 	it.each(onoffLiteraryWorksMock)('setea og:image con el JPG de la portada raster de "$slug"', (literaryWork) => {
-		const coverImage = cdnCoverOf(literaryWork);
+		const coverImage = cdnUrlForCorpusPath(literaryWork.coverImage);
 		literaryWorkSignal.set({ ...literaryWork, coverImage });
 		const ogImageSpy = spyOn(TestBed.inject(HeadMetadata), 'setOgImage');
 
@@ -97,7 +87,7 @@ describe('LiteraryWorkMetaTags', () => {
 	it.each([
 		{
 			cover: 'una portada SVG',
-			toCover: (literaryWork: LiteraryWork) => cdnCoverOf(literaryWork).replace(/\.\w+$/, '.svg'),
+			toCover: (literaryWork: LiteraryWork) => cdnUrlForCorpusPath(literaryWork.coverImage).replace(/\.\w+$/, '.svg'),
 		},
 		{ cover: 'sin portada', toCover: () => '' },
 	])('repone el og:image por defecto con $cover', ({ toCover }) => {
