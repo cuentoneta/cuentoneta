@@ -1,0 +1,23 @@
+/*
+	El UA ubica todo popover en el centro del viewport (`[popover] { inset: 0; margin: auto; border: solid }`):
+	el anclaje por anclas necesita limpiar ese inset y ese margen, y el borde lo pone el diseño (ninguno).
+*/
+.share-menu-panel {
+	/* La asociación con el disparador la crea la Popover API: `auto` es el opt-in explícito a esa ancla
+	   implícita, sin el cual las funciones `anchor()` no resuelven. */
+	position-anchor: auto;
+	inset: auto;
+	margin: 0;
+	border: none;
+
+	/* Pegado al borde derecho del disparador y separado de su borde inferior. */
+	top: calc(anchor(bottom) + 12px);
+	right: anchor(right);
+	position-try-fallbacks: --share-menu-above;
+}
+
+/* Sin lugar debajo del disparador, el panel se abre encima conservando la alineación derecha. */
+@position-try --share-menu-above {
+	top: auto;
+	bottom: calc(anchor(top) + 12px);
+}
