@@ -63,7 +63,7 @@ import { LiteraryWork } from '@models/literary-work.model';
 
 **Cuándo NO usar `type`:** clases usadas en runtime (constructores, métodos estáticos), funciones, constantes, o cualquier cosa usada en una expresión.
 
-**Enforcement activo:** la regla `@typescript-eslint/consistent-type-imports` cubre todo `src/**` (bloque `consistent-type-imports` de [`eslint.config.mjs`](../../eslint.config.mjs)). El alcance es todo el árbol de la app —no solo los stories donde se midió la deuda original— para que el próximo archivo nazca cumpliendo la convención.
+**Enforcement activo:** la regla `@typescript-eslint/consistent-type-imports` rige donde rige `commonTypescriptRules` de [`eslint.config.mjs`](../../eslint.config.mjs): los bloques `nx` y `cms`, o sea todo el `.ts`/`.tsx` que lintea el gate `lint` (`src`, `e2e`, `cms`, `scripts`, `tools`). Un scope nuevo que esparza `commonTypescriptRules` la hereda, para que el próximo archivo nazca cumpliendo la convención.
 
 ---
 
