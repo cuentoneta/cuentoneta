@@ -503,8 +503,7 @@ export default [
 		// La convención de imports type-only (ver typescript.md) vale para cada archivo TypeScript, no solo
 		// para la app: el Studio, los scripts y los e2e también la necesitan, y en `scripts/` un import de
 		// solo tipos sin `type` falla en runtime porque `node` descarta los tipos antes de ejecutar.
-		// `no-import-type-side-effects` es la contraparte de `verbatimModuleSyntax`: con la bandera,
-		// `import { type A } from 'x'` ya no se borra, queda emitido como `import {} from 'x'`.
+		// `no-import-type-side-effects` es la contraparte de `verbatimModuleSyntax` (ver typescript.md).
 		name: 'consistent-type-imports',
 		files: ['**/*.ts', '**/*.tsx'],
 		rules: {

@@ -91,9 +91,6 @@ No se usan `import x = require(...)` ni `export =`: son sintaxis CommonJS que no
 La regla `@typescript-eslint/consistent-type-imports` cubre todo `*.ts` y `*.tsx` que lintea el gate `lint` —app, Studio, `scripts/`, `e2e/` y `tools/`— (bloque `consistent-type-imports` de [`eslint.config.mjs`](../../eslint.config.mjs)), para que el próximo archivo nazca cumpliendo la convención. En `scripts/` importa además en runtime: `node` descarta los tipos antes de ejecutar y un import de solo tipos sin `type` falla porque el export no existe. Los `.js`/`.mjs` quedan fuera: no admiten `import type`.
 
 La regla acepta las dos formas, `import type { X }` y `import { type X }`; el autofix escribe la primera (`fixStyle: 'separate-type-imports'`). En un import mixto valen ambas: `import type { X } from 'x'` junto a `import { valor } from 'x'`, o `import { valor, type X } from 'x'`.
-
-Un spec ancla la bandera: [`tools/tsconfig/verbatim-module-syntax.spec.ts`](../../tools/tsconfig/verbatim-module-syntax.spec.ts) verifica que cada tsconfig versionado del repo resuelva `verbatimModuleSyntax: true`, y que con esas opciones un binding de solo-tipo sin `type` produzca TS1484 mientras `import type { X }` e `import { type X }` no lo produzcan. Falla también ante un tsconfig versionado que no figure en su lista, así que uno nuevo no queda sin cubrir. Sin él, quitar la bandera de un tsconfig dejaría `typecheck` en verde sin que nada avise.
-
 ---
 
 ## `zod/mini` como namespace en los DTO del frontend
