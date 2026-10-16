@@ -46,6 +46,20 @@ test('author — A: la description sale de la biografía, no de la plantilla del
 	expect(getMetaContent(html, 'description')).not.toMatch(/^Perfil y obras de/);
 });
 
+// Cada página describe su propio contenido: ni comparte la description del home ni la de una obra. La
+// unicidad entre autores y entre obras la cubren los specs unitarios, porque acá hay uno de cada uno.
+test('author — A: la description difiere de la del home y de la de una obra', async ({ request }) => {
+	const descriptionOf = async (path: string) => getMetaContent(await (await request.get(path)).text(), 'description');
+	const descriptions = [
+		getMetaContent(html, 'description'),
+		await descriptionOf('/'),
+		await descriptionOf(`/literary-work/${STABLE_SLUGS.literaryWork}`),
+	];
+
+	expect(descriptions.every(Boolean)).toBe(true);
+	expect(new Set(descriptions).size).toBe(descriptions.length);
+});
+
 // La expectativa sale del retrato que el mismo HTML declara en el Person, con la regla de la app: uno
 // raster del CDN se sirve como JPG; cualquier otro deja el og:image por defecto.
 test('author — A: og:image es el retrato raster o, si no lo hay, la imagen por defecto', () => {
