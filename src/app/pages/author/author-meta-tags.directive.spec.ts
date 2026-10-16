@@ -4,7 +4,7 @@ import { signal } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 
 import { authorMock } from '@mocks/author.mock';
-import { type AuthorProfile } from '@models/author.model';
+import type { AuthorProfile } from '@models/author.model';
 import { AppRoutes } from '../../app.routes';
 import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 import { HeadMetadata } from '../../directives/head-metadata.directive';

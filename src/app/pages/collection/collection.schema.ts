@@ -1,8 +1,8 @@
 import { Location } from '@angular/common';
-import { type BreadcrumbList, type CollectionPage, type WithContext } from 'schema-dts';
+import type { BreadcrumbList, CollectionPage, WithContext } from 'schema-dts';
 
-import { type Collection } from '@models/collection.model';
-import { type SanitizedHtml } from '@models/sanitized-html.model';
+import type { Collection } from '@models/collection.model';
+import type { SanitizedHtml } from '@models/sanitized-html.model';
 import { htmlToPlainText } from '@utils/html-to-text.utils';
 import { buildBreadcrumbSchema } from '@utils/schema-org.builders';
 

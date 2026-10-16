@@ -4,7 +4,7 @@ import { DOCUMENT } from '@angular/common';
 import { signal } from '@angular/core';
 
 import { onoffCollectionTeasersMock } from '@mocks/onoff-collections.mock';
-import { type CollectionTeaser } from '@models/collection.model';
+import type { CollectionTeaser } from '@models/collection.model';
 import { CollectionsStructuredData } from './collections-structured-data.directive';
 import { COLLECTIONS_HOST } from './collections-host';
 

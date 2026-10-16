@@ -1,7 +1,7 @@
 import { Location } from '@angular/common';
-import { type BreadcrumbList, type CollectionPage, type WithContext } from 'schema-dts';
+import type { BreadcrumbList, CollectionPage, WithContext } from 'schema-dts';
 
-import { type LiteraryWorkTeaser } from '@models/literary-work.model';
+import type { LiteraryWorkTeaser } from '@models/literary-work.model';
 import { buildBreadcrumbSchema } from '@utils/schema-org.builders';
 
 /**

@@ -1,6 +1,6 @@
 import { InjectionToken, type Signal } from '@angular/core';
 
-import { type LiteraryWork } from '@models/literary-work.model';
+import type { LiteraryWork } from '@models/literary-work.model';
 
 export interface LiteraryWorkHost {
 	readonly literaryWork: Signal<LiteraryWork | undefined>;

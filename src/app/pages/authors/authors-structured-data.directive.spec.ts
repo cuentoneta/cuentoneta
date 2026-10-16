@@ -4,7 +4,7 @@ import { DOCUMENT } from '@angular/common';
 import { signal } from '@angular/core';
 
 import { onoffHighlightedAuthorsOfLength } from '@mocks/onoff-highlighted-authors.mock';
-import { type AuthorTeaser } from '@models/author.model';
+import type { AuthorTeaser } from '@models/author.model';
 import { AuthorsStructuredData } from './authors-structured-data.directive';
 import { AUTHORS_HOST } from './authors-host';
 

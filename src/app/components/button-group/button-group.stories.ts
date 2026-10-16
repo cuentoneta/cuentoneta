@@ -1,5 +1,5 @@
 import { Component, input, linkedSignal } from '@angular/core';
-import { applicationConfig, Meta, moduleMetadata, StoryObj } from '@storybook/angular-vite';
+import { applicationConfig, type Meta, moduleMetadata, type StoryObj } from '@storybook/angular-vite';
 import { provideIcons } from '@ng-icons/core';
 import { faBrandSpotify, faBrandYoutube } from '@ng-icons/font-awesome/brands';
 import { ButtonGroup, type ButtonGroupOption } from './button-group';
