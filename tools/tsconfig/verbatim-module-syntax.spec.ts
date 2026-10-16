@@ -1,4 +1,5 @@
 import ts from 'typescript';
+import { execFileSync } from 'node:child_process';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
@@ -15,9 +16,8 @@ const TSCONFIGS = [
 	'.storybook/tsconfig.json',
 	'cms/tsconfig.json',
 	'cms/tsconfig.typecheck.json',
+	'tools/eslint/tsconfig.json',
 ];
-
-const UNMARKED_TYPE_ONLY_IMPORT = 1484;
 
 function resolveOptions(configPath: string): ts.CompilerOptions {
 	const parsed = ts.getParsedCommandLineOfConfigFile(
@@ -56,7 +56,19 @@ function diagnosticCodesForImport(options: ts.CompilerOptions, importLine: strin
 }
 
 describe('verbatimModuleSyntax', () => {
+	it('covers every versioned tsconfig', () => {
+		const versioned = execFileSync('git', ['ls-files', '--', 'tsconfig*.json', '**/tsconfig*.json'], {
+			encoding: 'utf8',
+		})
+			.split(/\r?\n/)
+			.filter(Boolean);
+
+		expect([...TSCONFIGS].sort()).toEqual(versioned.sort());
+	});
+
 	describe.each(TSCONFIGS)('%s', (configPath) => {
+		const UNMARKED_TYPE_ONLY_IMPORT = 1484;
+
 		it('está activa', () => {
 			expect(resolveOptions(configPath).verbatimModuleSyntax).toBe(true);
 		});
