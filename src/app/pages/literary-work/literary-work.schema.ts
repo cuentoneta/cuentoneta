@@ -33,13 +33,12 @@ export function buildLiteraryWorkArticleSchema(literaryWork: LiteraryWork, websi
 	};
 }
 
-// Google ignora la imagen de un `Article` por debajo de este área (ancho × alto, en píxeles). Una portada
-// de la que no se conocen las dimensiones no se declara: no se puede afirmar que lo alcanza.
-const ARTICLE_IMAGE_MIN_PIXEL_AREA = 50_000;
-
 function articleImageUrl(coverImage: string): string | undefined {
+	// Google ignora la imagen de un `Article` por debajo de este área (ancho × alto, en píxeles). Una
+	// portada de la que no se conocen las dimensiones no se declara: no se puede afirmar que lo alcanza.
+	const articleImageMinPixelArea = 50_000;
 	const image = resolveSearchImage(coverImage);
-	const meetsMinimum = (image?.pixelArea ?? 0) >= ARTICLE_IMAGE_MIN_PIXEL_AREA;
+	const meetsMinimum = (image?.pixelArea ?? 0) >= articleImageMinPixelArea;
 	return meetsMinimum ? image?.url : undefined;
 }
 

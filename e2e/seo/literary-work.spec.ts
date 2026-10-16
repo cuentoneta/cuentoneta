@@ -33,7 +33,6 @@ import { fetchLiteraryWork } from '../_utils/literary-work-fixtures';
 
 const literaryWorkPath = `/literary-work/${STABLE_SLUGS.literaryWork}`;
 const literaryWorkWithEpigraphsPath = `/literary-work/${STABLE_SLUGS.literaryWorkWithEpigraphs}`;
-const DEFAULT_OG_IMAGE_PATTERN = /\/assets\/img\/og-default\.jpg$/;
 const requiredJsonLdIds = [...SITEWIDE_SCHEMA_IDS, SCHEMA_IDS.article, SCHEMA_IDS.breadcrumbLiteraryWork];
 
 test('literary-work — A: una obra inexistente responde 404 real en SSR', async ({ request }) => {
@@ -96,7 +95,9 @@ test.describe('literary-work — HTML server-rendered de una obra existente', ()
 		const coverUrl = resolveSearchImage(literaryWork?.coverImage ?? '')?.url;
 		const article = parseJsonLdBlocks(html).get(SCHEMA_IDS.article);
 
-		expect(getMetaContent(html, 'og:image')).toEqual(coverUrl ?? expect.stringMatching(DEFAULT_OG_IMAGE_PATTERN));
+		expect(getMetaContent(html, 'og:image')).toEqual(
+			coverUrl ?? expect.stringMatching(/\/assets\/img\/og-default\.jpg$/),
+		);
 		expect([undefined, coverUrl]).toContain(article?.['image']);
 	});
 

@@ -58,9 +58,6 @@ export type SearchImage = {
 	pixelArea?: number;
 };
 
-// Nombre de un asset de imagen en el CDN: `<hash>-<ancho>x<alto>.<extensión>`.
-const ASSET_DIMENSIONS_PATTERN = /-(\d+)x(\d+)\.[a-z0-9]+$/i;
-
 /**
  * Resuelve la imagen que una página declara a los buscadores a partir de la URL de un asset de Sanity:
  * el original convertido a JPG, sin redimensionar. Devuelve `undefined` cuando la URL no es del CDN o el
@@ -90,7 +87,9 @@ function cropPixelArea(rect: string | null): number | undefined {
 }
 
 function assetPixelArea(pathname: string): number | undefined {
-	const match = ASSET_DIMENSIONS_PATTERN.exec(pathname);
+	// Nombre de un asset de imagen en el CDN: `<hash>-<ancho>x<alto>.<extensión>`.
+	const assetDimensionsPattern = /-(\d+)x(\d+)\.[a-z0-9]+$/i;
+	const match = assetDimensionsPattern.exec(pathname);
 	return match ? Number(match[1]) * Number(match[2]) : undefined;
 }
 
