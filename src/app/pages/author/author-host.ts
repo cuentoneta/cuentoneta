@@ -1,6 +1,6 @@
 import { InjectionToken, type Signal } from '@angular/core';
 
-import { type AuthorProfile } from '@models/author.model';
+import type { AuthorProfile } from '@models/author.model';
 
 export interface AuthorHost {
 	readonly author: Signal<AuthorProfile | undefined>;
