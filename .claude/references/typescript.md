@@ -67,7 +67,7 @@ import { LiteraryWork } from '@models/literary-work.model';
 
 `verbatimModuleSyntax` está activo en `tsconfig.json` —lo heredan app, spec, editor, server, typecheck, Storybook, `scripts/`, `e2e/` y `tools/`— y en `cms/tsconfig.json`. Ante un binding de solo-tipo sin `type`, `tsc` emite TS1484 y fallan los gates `typecheck` y `studio-build`.
 
-Importa que sea el compilador y no solo el linter: `consistent-type-imports` se desactiva en los archivos con decoradores cuando el programa de typed-linting declara `emitDecoratorMetadata` + `experimentalDecorators` (el de Storybook), y ahí el lint pasa en verde con un import sin `type`.
+La bandera es **incompatible con `emitDecoratorMetadata`**, y de ahí que ningún tsconfig del repo la encienda: la metadata emite el tipo de cada parámetro del constructor como valor de runtime, justo lo que `type` borra. `consistent-type-imports` conoce la tensión y, para no romper el runtime con su autofix, se calla en todo archivo con decoradores de un programa que declare esa opción — el lint pasaría en verde con un import sin `type`. El repo no usa DI por constructor, así que nada necesita esa metadata y las dos reglas rigen sin excepción.
 
 ### Emisión bajo `verbatimModuleSyntax`
 

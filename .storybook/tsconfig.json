@@ -1,9 +1,7 @@
 {
 	"extends": "../tsconfig.json",
 	"compilerOptions": {
-		"allowSyntheticDefaultImports": true,
-		"emitDecoratorMetadata": true,
-		"experimentalDecorators": true
+		"allowSyntheticDefaultImports": true
 	},
 
 	"exclude": ["../**/*.spec.ts"],

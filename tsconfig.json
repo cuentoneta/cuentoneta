@@ -1,6 +1,9 @@
 {
 	"compilerOptions": {
 		"moduleResolution": "bundler",
+		// Incompatible con `verbatimModuleSyntax`: la metadata necesita en runtime el tipo de cada
+		// parámetro del constructor, y ese import va con `type` y se borra. Ningún tsconfig hijo la
+		// enciende; el repo no usa DI por constructor, así que no hay a quién servirle esa metadata.
 		"emitDecoratorMetadata": false,
 		"target": "es2022",
 		"module": "preserve",
