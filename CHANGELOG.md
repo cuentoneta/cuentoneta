@@ -13,6 +13,50 @@ La lista de características futuras a implementar puede hallarse en la sección
 
 Los hitos futuros de desarrollo, en los cuales se detallan las funcionalidades a desarrollar y los cambios a implementar, pueden encontrarse en las secciones [milestones](https://github.com/cuentoneta/cuentoneta/milestones) y [projects](https://github.com/cuentoneta/cuentoneta/projects) del repositorio de Github del proyecto.
 
+## Versión 2.11.4 (2026-10-17)
+
+La versión 2.11.4 es un patch de mantenimiento con un cambio de cara a los buscadores: actualiza Sanity Studio a la v6, completa el catálogo de nacionalidades, deja que el compilador garantice los imports type-only y da a los perfiles de autor y a las obras una descripción e imagen propias.
+
+El primero es **Sanity**. El Studio pasa a la v6 con su CLI 8 y retira los dos plugins sin mantenimiento que lo trababan: los años de nacimiento y fallecimiento de un autor dejan de ser un campo calculado y se derivan de la fecha completa en el API, y las obras vuelven al panel nativo (#2579). El catálogo de nacionalidades queda completo: cada bandera disponible en `public/flags` tiene su documento en Sanity (#2334).
+
+El segundo es el **indexado**. Los perfiles de autor y las obras sirven una descripción derivada de su contenido en lugar de la plantilla común, y una imagen propia, en JPG y con URL absoluta, como `og:image` y `twitter:image`. Las páginas sin imagen usan una por defecto que también es absoluta y rasterizada, en vez del logo SVG relativo que Google no usa como miniatura (#2606).
+
+El tercero es el **tooling**. `verbatimModuleSyntax` pasa a verificar los imports type-only en el compilador y no solo en el linter, y `consistent-type-imports` rige sobre todo el árbol TypeScript (#2324, #1679, #2325). Las directivas y los pipes pierden el sufijo de su tipo, con una regla de lint que lo mantiene (#2404). Los specs del corpus ya no sustituyen `@sanity/image-url` con `vi.mock`: el ACL recibe un resolver de imágenes inyectable (#2366). Los overrides de pnpm pasan a `pnpm-workspace.yaml`, que es donde pnpm 11 los lee, y se cubren los avisos de `pnpm audit` que tienen versión parchada (#2320). Queda fijada la política de Node 24 (#2321), y la prosa del catálogo de Storybook se realinea con los nombres de página vigentes (#2467).
+
+### Cambios completos
+
+Ver el changelog completo en [2.11.4](https://github.com/cuentoneta/cuentoneta/releases/tag/2.11.4)
+
+### Cambios
+
+#### Sanity
+
+- [#2579] - Actualiza Sanity Studio a la v6 y retira los plugins `computed-field` y `bulk-actions-table`; el API deriva el año de la fecha completa.
+- [#2334] - Completa el catálogo de nacionalidades con las banderas de `public/flags`.
+
+#### Indexado
+
+- [#2606] - Da a perfiles y obras una descripción derivada de su contenido y un `og:image` / `twitter:image` propio, absoluto y rasterizado.
+
+#### Tooling
+
+- [#2324] - Activa `verbatimModuleSyntax` en la app y el Studio, y suma `no-import-type-side-effects`.
+- [#1679] - Extiende `consistent-type-imports` a todo el árbol TypeScript y migra los archivos que quedaban fuera.
+- [#2325] - Cubre `cms/` y `scripts/` con `consistent-type-imports`.
+- [#2404] - Quita el sufijo de tipo a directivas y pipes, y agrega la regla `class-name-without-type-suffix`.
+- [#2366] - Inyecta un resolver de imágenes en el ACL y retira los `vi.mock` de los specs del corpus.
+- [#2320] - Mueve los overrides de pnpm a `pnpm-workspace.yaml` y cubre los avisos de `pnpm audit` con versión parchada.
+- [#2321] - Documenta y fija la política de Node 24 con piso en 24.18.
+
+#### Documentación
+
+- [#2467] - Realinea la prosa de cuatro stories del catálogo con las páginas vigentes.
+
+#### Dependencias
+
+- [#2576] - Actualiza el grupo minor-and-patch (25 paquetes).
+- [#2589] - Actualiza `actions/setup-node` a 7.1.0.
+
 ## Versión 2.11.3 (2026-10-13)
 
 La versión 2.11.3 es un patch de mantenimiento: actualiza el framework, aprovecha lo que trae Angular 22.2 para simplificar la carga de datos y endurecer las plantillas, y hace más rápido y confiable el flujo local de tests y de caché.
