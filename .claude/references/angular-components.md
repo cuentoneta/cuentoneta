@@ -431,6 +431,8 @@ El `<main>` despeja con **padding** y no con margen: con margen, el margen negat
 
 Lo verifica el guardrail `src/app/pages/page-layout.spec.ts`, que recorre las páginas desde las rutas y falla ante cualquiera de las tres reglas, más la contracara sobre el shell y un barrido del catálogo de componentes.
 
+La barra tampoco pinta fondo propio mientras una banda de la página la cubre: el elemento que pinta a sangre la declara con la directiva `HeaderBand` —lo que hoy hace el hero de la página de inicio— y la barra la suelta hasta que sale de cuadro, con el borde acompañando al fondo sin cambiar de ancho. La caja de la barra es la misma en los dos estados, así que la transición no puede mover el contenido; y el contraste de su texto e íconos tiene que sostenerse sobre el fondo que la banda le ponga detrás.
+
 ---
 
 ## Escala de apilamiento (z-index)

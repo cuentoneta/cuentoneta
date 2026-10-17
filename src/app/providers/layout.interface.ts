@@ -16,6 +16,12 @@ export interface LayoutService {
 	readonly isHeaderVisible: Signal<boolean>;
 	readonly userHasScrolled$: Observable<Direction>;
 	readonly viewportHasChanged$: Observable<Event | null>;
+
+	// El encabezado pinta su fondo propio; mientras una banda de la página lo cubre, lo suelta. La
+	// banda es la única que mide su geometría: se declara acá al montarse y lo suelta al desmontarse.
+	readonly isHeaderOverBand: Signal<boolean>;
+	setHeaderOverBand(isOverBand: boolean): void;
+
 	isPlatformBrowser(): boolean;
 	isPlatformServer(): boolean;
 	setViewport(): void;
