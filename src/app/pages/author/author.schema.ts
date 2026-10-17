@@ -5,6 +5,7 @@ import type { Author, AuthorProfile } from '@models/author.model';
 import type { SanitizedHtml } from '@models/sanitized-html.model';
 import { htmlToPlainText } from '@utils/html-to-text.utils';
 import { buildBreadcrumbSchema, buildPersonSchema } from '@utils/schema-org.builders';
+import { excerptAtWordBoundary } from '@utils/text-excerpt.utils';
 
 /**
  * Aplana y recorta la biografía a texto plano para el `description` del Person, recortado en el último
@@ -12,17 +13,8 @@ import { buildBreadcrumbSchema, buildPersonSchema } from '@utils/schema-org.buil
  * en la información expuesta en JSON-LD, independiente de la biografía visible para el crawler en HTML
  */
 function buildBiographyDescription(biography: SanitizedHtml): string | undefined {
-	const maxLength = 300;
 	const plainText = htmlToPlainText(biography);
-	if (!plainText) {
-		return undefined;
-	}
-	if (plainText.length <= maxLength) {
-		return plainText;
-	}
-	const truncated = plainText.slice(0, maxLength);
-	const lastSpace = truncated.lastIndexOf(' ');
-	return `${truncated.slice(0, lastSpace > 0 ? lastSpace : maxLength).trimEnd()}…`;
+	return plainText ? excerptAtWordBoundary(plainText, 300) : undefined;
 }
 
 /**

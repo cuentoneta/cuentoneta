@@ -4,11 +4,13 @@ import { TestBed } from '@angular/core/testing';
 import { Meta, Title } from '@angular/platform-browser';
 import { DOCUMENT } from '@angular/common';
 import { environment } from '../environments/environment';
+import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 
 describe('HeadMetadata', () => {
 	const BASE_URL = 'https://www.cuentoneta.ar';
 	const TEST_IMAGE_URL = 'assets/svg/collection.svg';
 	const TEST_IMAGE_ALT = 'Imagen de prueba';
+	const DEFAULT_IMAGE_URL = buildCanonicalUrl('assets/img/og-default.jpg');
 
 	let directive: HeadMetadata;
 	let metaService: Meta;
@@ -515,14 +517,30 @@ describe('HeadMetadata', () => {
 		});
 	});
 
+	describe('setRepresentativeImage', () => {
+		it('should set og:image and twitter:image and drop the logo alt, without touching dimensions', () => {
+			const updateSpy = spyOn(metaService, 'updateTag');
+			const removeSpy = spyOn(metaService, 'removeTag');
+			const portraitUrl = 'https://cdn.sanity.io/images/p/d/abc-1200x800.png?fm=jpg';
+
+			directive.setRepresentativeImage(portraitUrl);
+
+			expect(updateSpy).toHaveBeenCalledTimes(2);
+			expect(updateSpy).toHaveBeenCalledWith({ property: 'og:image', content: portraitUrl });
+			expect(updateSpy).toHaveBeenCalledWith({ name: 'twitter:image', content: portraitUrl });
+			expect(removeSpy).toHaveBeenCalledTimes(1);
+			expect(removeSpy).toHaveBeenCalledWith('property="og:image:alt"');
+		});
+	});
+
 	describe('removeImage', () => {
-		it('should reset og:image and twitter:image to the static logo fallback', () => {
+		it('should reset og:image and twitter:image to the raster site default', () => {
 			const metaSpy = spyOn(metaService, 'updateTag');
 
 			directive.removeImage();
 
-			expect(metaSpy).toHaveBeenCalledWith({ property: 'og:image', content: 'assets/svg/logo.svg' });
-			expect(metaSpy).toHaveBeenCalledWith({ name: 'twitter:image', content: 'assets/svg/logo.svg' });
+			expect(metaSpy).toHaveBeenCalledWith({ property: 'og:image', content: DEFAULT_IMAGE_URL });
+			expect(metaSpy).toHaveBeenCalledWith({ name: 'twitter:image', content: DEFAULT_IMAGE_URL });
 		});
 
 		it('should reset og:image:alt to the logo fallback alt text', () => {
@@ -573,10 +591,10 @@ describe('HeadMetadata', () => {
 			// Las dimensiones de OG image se eliminan al limpiar.
 			expect(removeSpy).toHaveBeenCalledWith('property="og:image:width"');
 			expect(removeSpy).toHaveBeenCalledWith('property="og:image:height"');
-			// La imagen se resetea al logo estático (no se elimina del todo).
-			expect(updateSpy).toHaveBeenCalledWith({ property: 'og:image', content: 'assets/svg/logo.svg' });
+			// La imagen se resetea al default (no se elimina del todo).
+			expect(updateSpy).toHaveBeenCalledWith({ property: 'og:image', content: DEFAULT_IMAGE_URL });
 			expect(updateSpy).toHaveBeenCalledWith({ property: 'og:image:alt', content: 'Logo de La Cuentoneta' });
-			expect(updateSpy).toHaveBeenCalledWith({ name: 'twitter:image', content: 'assets/svg/logo.svg' });
+			expect(updateSpy).toHaveBeenCalledWith({ name: 'twitter:image', content: DEFAULT_IMAGE_URL });
 			// El <link rel="canonical"> se quita del head y og:url se resetea al home (no se elimina).
 			expect(document.querySelector(`link[rel='canonical']`)).toBeNull();
 			expect(updateSpy).toHaveBeenCalledWith({ property: 'og:url', content: environment.website });

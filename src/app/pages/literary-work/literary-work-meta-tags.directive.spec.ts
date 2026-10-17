@@ -5,8 +5,10 @@ import { Title } from '@angular/platform-browser';
 
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 import type { LiteraryWork } from '@models/literary-work.model';
+import { cdnUrlForCorpusPath } from '@testing/sanity-cdn-url';
 import { AppRoutes } from '../../app.routes';
 import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
+import { buildLiteraryWorkMetaDescription } from '@app-utils/meta-description.util';
 import { HeadMetadata } from '../../directives/head-metadata.directive';
 import { LiteraryWorkMetaTags } from './literary-work-meta-tags.directive';
 import { LITERARY_WORK_HOST } from './literary-work-host';
@@ -59,6 +61,47 @@ describe('LiteraryWorkMetaTags', () => {
 		TestBed.tick();
 
 		expect(canonicalSpy).toHaveBeenCalledWith(buildCanonicalUrl(`${AppRoutes.LiteraryWork}/${literaryWork.slug}`));
+	});
+
+	it.each(onoffLiteraryWorksMock)('setea la descripción desde el cuerpo de "$slug"', (literaryWork) => {
+		literaryWorkSignal.set(literaryWork);
+		const descriptionSpy = spyOn(TestBed.inject(HeadMetadata), 'setDescription');
+
+		instantiate();
+		TestBed.tick();
+
+		expect(descriptionSpy).toHaveBeenCalledWith(buildLiteraryWorkMetaDescription(literaryWork));
+	});
+
+	it.each(onoffLiteraryWorksMock)('setea la imagen representativa con el JPG de la portada raster de "$slug"', (literaryWork) => {
+		const coverImage = cdnUrlForCorpusPath(literaryWork.coverImage);
+		literaryWorkSignal.set({ ...literaryWork, coverImage });
+		const imageSpy = spyOn(TestBed.inject(HeadMetadata), 'setRepresentativeImage');
+
+		instantiate();
+		TestBed.tick();
+
+		expect(imageSpy).toHaveBeenCalledWith(`${coverImage}?fm=jpg`);
+	});
+
+	it.each([
+		{
+			cover: 'una portada SVG',
+			toCover: (literaryWork: LiteraryWork) => cdnUrlForCorpusPath(literaryWork.coverImage).replace(/\.\w+$/, '.svg'),
+		},
+		{ cover: 'sin portada', toCover: () => '' },
+	])('repone la imagen por defecto con $cover', ({ toCover }) => {
+		const [literaryWork] = onoffLiteraryWorksMock;
+		literaryWorkSignal.set({ ...literaryWork, coverImage: toCover(literaryWork) });
+		const head = TestBed.inject(HeadMetadata);
+		const imageSpy = spyOn(head, 'setRepresentativeImage');
+		const removeImageSpy = spyOn(head, 'removeImage');
+
+		instantiate();
+		TestBed.tick();
+
+		expect(imageSpy).not.toHaveBeenCalled();
+		expect(removeImageSpy).toHaveBeenCalled();
 	});
 
 	it('marca la página como indexable', () => {

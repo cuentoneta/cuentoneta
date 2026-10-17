@@ -4,9 +4,12 @@ import { signal } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 
 import { authorMock } from '@mocks/author.mock';
+import { onoffImageAssets } from '@mocks/onoff-image-assets.mock';
 import type { AuthorProfile } from '@models/author.model';
+import { cdnUrlFor } from '@testing/sanity-cdn-url';
 import { AppRoutes } from '../../app.routes';
 import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
+import { buildAuthorMetaDescription } from '@app-utils/meta-description.util';
 import { HeadMetadata } from '../../directives/head-metadata.directive';
 import { AuthorMetaTags } from './author-meta-tags.directive';
 import { AUTHOR_HOST } from './author-host';
@@ -57,6 +60,46 @@ describe('AuthorMetaTags', () => {
 		TestBed.tick();
 
 		expect(canonicalSpy).toHaveBeenCalledWith(buildCanonicalUrl(`${AppRoutes.Author}/${authorMock.slug}`));
+	});
+
+	it('should set the description from the biography', () => {
+		authorSignal.set(authorMock);
+		const descriptionSpy = spyOn(TestBed.inject(HeadMetadata), 'setDescription');
+
+		instantiate();
+		TestBed.tick();
+
+		expect(descriptionSpy).toHaveBeenCalledWith(buildAuthorMetaDescription(authorMock));
+	});
+
+	it.each([
+		{ portrait: 'large', imageUrl: cdnUrlFor(onoffImageAssets.francoisOnoffPortrait) },
+		// Sin piso de tamaño: un retrato chico es mejor señal que la imagen genérica del sitio.
+		{ portrait: 'small', imageUrl: cdnUrlFor(onoffImageAssets.franceFlag) },
+	])('should set the representative image to the JPG of a $portrait raster portrait', ({ imageUrl }) => {
+		authorSignal.set({ ...authorMock, imageUrl });
+		const imageSpy = spyOn(TestBed.inject(HeadMetadata), 'setRepresentativeImage');
+
+		instantiate();
+		TestBed.tick();
+
+		expect(imageSpy).toHaveBeenCalledWith(`${imageUrl}?fm=jpg`);
+	});
+
+	it.each([
+		{ portrait: 'an SVG', imageUrl: cdnUrlFor(onoffImageAssets.francoisOnoffPortrait).replace(/\.png$/, '.svg') },
+		{ portrait: 'no', imageUrl: '' },
+	])('should reset the image to the site default when the author has $portrait portrait', ({ imageUrl }) => {
+		authorSignal.set({ ...authorMock, imageUrl });
+		const head = TestBed.inject(HeadMetadata);
+		const imageSpy = spyOn(head, 'setRepresentativeImage');
+		const removeImageSpy = spyOn(head, 'removeImage');
+
+		instantiate();
+		TestBed.tick();
+
+		expect(imageSpy).not.toHaveBeenCalled();
+		expect(removeImageSpy).toHaveBeenCalled();
 	});
 
 	it('should re-apply the meta tags when the author signal changes', () => {

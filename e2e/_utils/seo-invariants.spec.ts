@@ -3,6 +3,7 @@ import {
 	checkInternalLink,
 	checkJsonLdBlocks,
 	checkNoSkeletonMarkers,
+	checkOgImage,
 	checkPrimaryContentLength,
 	checkPrimaryHeading,
 	checkRobotsIndexable,
@@ -20,6 +21,7 @@ const GOOD_HTML = `<!doctype html><html lang="es"><head>
 	<title>El Aleph — La Cuentoneta</title>
 	<link rel="canonical" href="https://www.cuentoneta.org/story/el-aleph" />
 	<meta name="robots" content="index, follow" />
+	<meta property="og:image" content="https://www.cuentoneta.org/assets/img/og-default.jpg" />
 	<script type="application/ld+json" data-schema-id="organization">{"@context":"https://schema.org","@type":"Organization","name":"La Cuentoneta","url":"https://x"}</script>
 	<script type="application/ld+json" data-schema-id="website">{"@context":"https://schema.org","@type":"WebSite","name":"La Cuentoneta","url":"https://x"}</script>
 </head><body>
@@ -100,6 +102,34 @@ describe('checkRobotsIndexable', () => {
 
 	it('viola cuando no hay meta robots', () => {
 		expect(checkRobotsIndexable('<head></head>')?.rule).toBe('robots-indexable');
+	});
+});
+
+describe('checkOgImage', () => {
+	const withOgImage = (content: string) => `<head><meta property="og:image" content="${content}" /></head>`;
+
+	it.each([
+		'https://www.cuentoneta.org/assets/img/og-default.jpg',
+		'https://cdn.sanity.io/images/p/d/abc-1200x800.png?fm=jpg',
+		// Lo que emite un build con `website` local, como el de los e2e.
+		'/assets/img/og-default.jpg',
+	])('acepta "%s"', (content) => {
+		expect(checkOgImage(withOgImage(content))).toBeNull();
+	});
+
+	it.each([
+		'assets/svg/logo.svg',
+		'https://www.cuentoneta.org/assets/svg/logo.svg',
+		'https://cdn.sanity.io/images/p/d/abc-600x800.SVG?rect=0,0,300,300',
+		'assets/img/og-default.jpg',
+		'http://www.cuentoneta.org/assets/img/og-default.jpg',
+		'//www.cuentoneta.org/assets/img/og-default.jpg',
+	])('rechaza "%s"', (content) => {
+		expect(checkOgImage(withOgImage(content))?.rule).toBe('og-image');
+	});
+
+	it('rechaza la ausencia del tag', () => {
+		expect(checkOgImage('<head></head>')?.rule).toBe('og-image');
 	});
 });
 
@@ -295,6 +325,7 @@ describe('collectIndexableHtmlViolations', () => {
 				'title',
 				'canonical',
 				'robots-indexable',
+				'og-image',
 				'primary-heading',
 				'primary-content',
 				'no-skeleton',
