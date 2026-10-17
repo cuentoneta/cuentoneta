@@ -10,6 +10,7 @@
 		"lib": ["dom", "es2022"],
 		"paths": {
 			"@api/*": ["./src/api/*"],
+			"@app-models/*": ["./src/app/models/*"],
 			"@app-utils/*": ["./src/app/utils/*"],
 			"@components/*": ["./src/app/components/*"],
 			"@middleware/*": ["./src/api/_middleware/*"],
