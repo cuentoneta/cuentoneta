@@ -9,10 +9,10 @@ import { onoffTagsWithShortTitles } from '@mocks/onoff-tags.mock';
 import { authorTeaserCardDocs } from '@components/author-teaser-card/author-teaser-card.docs';
 import { tagDocs } from '@components/tag/tag.docs';
 import { docsMention, docsRef } from '@testing/storybook-docs';
-import type { TagsOverflowDirective } from '@components/tags-list/tags-overflow.directive';
+import type { TagsOverflow } from '@components/tags-list/tags-overflow.directive';
 import { tagsListDocs } from './tags-list.docs';
 
-export type DocsSymbols = [TagsOverflowDirective];
+export type DocsSymbols = [TagsOverflow];
 
 type Args = TagsList & { tags: TagModel[]; variant: TagVariant; maxVisible?: number };
 
@@ -41,7 +41,7 @@ const meta: Meta<Args> = {
 				sourceState: 'shown',
 			},
 			description: {
-				component: `<div><p>El componente ${docsMention(tagsListDocs)} recibe instancias de ${docsRef(tagDocs)} por <strong>content projection</strong> (<code>&lt;ng-content&gt;</code>) y, cuando <strong>no entran en el ancho del contenedor</strong>, colapsa el excedente detrás de un contador <strong>"+N"</strong> de ancho fijo ubicado justo después del último tag visible.</p><p>El recorte es <strong>por ancho real</strong> (vía <code>IntersectionObserver</code>, sin <code>ResizeObserver</code>), no por cantidad, y vive en <code>TagsOverflowDirective</code> aplicada como <code>hostDirective</code>. <code>maxVisible</code> es un <strong>tope duro opcional</strong>.</p><p>Probá el <em>Playground</em> para arrastrar el ancho y ver el contador aparecer/desaparecer en vivo.</p></div>`,
+				component: `<div><p>El componente ${docsMention(tagsListDocs)} recibe instancias de ${docsRef(tagDocs)} por <strong>content projection</strong> (<code>&lt;ng-content&gt;</code>) y, cuando <strong>no entran en el ancho del contenedor</strong>, colapsa el excedente detrás de un contador <strong>"+N"</strong> de ancho fijo ubicado justo después del último tag visible.</p><p>El recorte es <strong>por ancho real</strong> (vía <code>IntersectionObserver</code>, sin <code>ResizeObserver</code>), no por cantidad, y vive en <code>TagsOverflow</code> aplicada como <code>hostDirective</code>. <code>maxVisible</code> es un <strong>tope duro opcional</strong>.</p><p>Probá el <em>Playground</em> para arrastrar el ancho y ver el contador aparecer/desaparecer en vivo.</p></div>`,
 			},
 		},
 		layout: 'padded',

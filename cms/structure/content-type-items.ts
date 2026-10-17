@@ -1,19 +1,14 @@
-import { BookIcon } from '@sanity/icons/Book';
-import { createBulkActionsTable } from 'sanity-plugin-bulk-actions-table';
 import type { StructureBuilder, StructureResolverContext } from 'sanity/structure';
 import { filteredDocumentListItems } from 'sanity-plugin-singleton-management';
 
 import { landingPageListItem } from './landing-page-list-item';
 
-// Los tipos de documento no-singleton, planos (sin carpeta intermedia), con overrides: literaryWork
-// usa la tabla de acciones masivas y landingPage el pane con badge de activa.
+// Los tipos de documento no-singleton, planos (sin carpeta intermedia), con overrides: landingPage usa
+// el pane con badge de activa y literaryWork conserva su título en plural.
 export const contentTypeItems = (S: StructureBuilder, context: StructureResolverContext) =>
 	filteredDocumentListItems({ S, context }).map((collection) => {
-		// La tabla trae su propio buscador, que solo mira los campos string de primer nivel: buscar el
-		// título de una obra deja de matchear dentro del cuerpo de sus secciones, como sí pasa en el
-		// pane nativo.
 		if (collection.getId() === 'literaryWork') {
-			return createBulkActionsTable({ type: 'literaryWork', S, context, title: 'Obras literarias', icon: BookIcon });
+			return collection.title('Obras literarias');
 		}
 		if (collection.getId() === 'landingPage') {
 			return landingPageListItem(S);

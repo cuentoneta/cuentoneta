@@ -13,7 +13,7 @@ import {
 import type { Resource as ResourceModel } from '@models/resource.model';
 
 // Directives
-import { TooltipDirective } from '../../directives/tooltip.directive';
+import { Tooltip } from '../../directives/tooltip.directive';
 import { iconMappers } from '@models/icon.model';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { NgComponentOutlet } from '@angular/common';
@@ -23,7 +23,7 @@ export type ResourceSize = 'md' | 'sm';
 
 @Component({
 	selector: 'cuentoneta-resource',
-	hostDirectives: [TooltipDirective],
+	hostDirectives: [Tooltip],
 	imports: [NgComponentOutlet],
 	template: `
 		<a
@@ -79,7 +79,7 @@ export class Resource {
 	private readonly NgIcon = NgIcon;
 
 	private readonly injector = inject(EnvironmentInjector);
-	private readonly tooltipDirective = inject(TooltipDirective);
+	private readonly tooltipDirective = inject(Tooltip);
 
 	private readonly syncTooltipEffect = effect(() => {
 		this.tooltipDirective.text.set(this.resource().title);

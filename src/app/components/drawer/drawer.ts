@@ -5,17 +5,17 @@ import { NgIcon, provideIcons } from '@ng-icons/core';
 import { faSolidXmark } from '@ng-icons/font-awesome/solid';
 
 import { DrawerTrackerService } from './drawer-tracker.service';
-import { DrawerTransitionDirective } from './drawer-transition.directive';
-import { DrawerPanelDirective } from './drawer-panel.directive';
-import { DrawerHeaderDirective } from './drawer-header.directive';
-import { DrawerFooterDirective } from './drawer-footer.directive';
+import { DrawerTransition } from './drawer-transition.directive';
+import { DrawerPanel } from './drawer-panel.directive';
+import { DrawerHeader } from './drawer-header.directive';
+import { DrawerFooter } from './drawer-footer.directive';
 
 export type DrawerDirection = 'left' | 'right' | 'top' | 'bottom';
 
 /**
  * Panel modal lateral del Design System v3. Se apoya en el elemento nativo `<dialog>` + `showModal()` (foco
  * atrapado, Escape y backdrop accesibles, sin dependencias) y compone tres piezas vía `hostDirectives`: la
- * transición (`DrawerTransitionDirective`), las clases por dirección (`DrawerPanelDirective`) y el registro
+ * transición (`DrawerTransition`), las clases por dirección (`DrawerPanel`) y el registro
  * global de un único drawer activo (`DrawerTrackerService`).
  *
  * El contenido va por `<ng-content>`; opcionalmente admite encabezado/pie por `cuentonetaDrawerHeader`/
@@ -26,7 +26,7 @@ export type DrawerDirection = 'left' | 'right' | 'top' | 'bottom';
 	selector: 'cuentoneta-drawer',
 	imports: [NgTemplateOutlet, NgIcon],
 	providers: [provideIcons({ faSolidXmark })],
-	hostDirectives: [DrawerTransitionDirective, { directive: DrawerPanelDirective, inputs: ['direction'] }],
+	hostDirectives: [DrawerTransition, { directive: DrawerPanel, inputs: ['direction'] }],
 	host: { class: 'contents' },
 	template: `
 		<dialog
@@ -82,8 +82,8 @@ export class Drawer {
 	private readonly dialogRef = viewChild.required<ElementRef<HTMLDialogElement>>('dialog');
 	private readonly dialogElement = computed(() => this.dialogRef().nativeElement);
 
-	private readonly headerTemplate = contentChild(DrawerHeaderDirective);
-	private readonly footerTemplate = contentChild(DrawerFooterDirective);
+	private readonly headerTemplate = contentChild(DrawerHeader);
+	private readonly footerTemplate = contentChild(DrawerFooter);
 
 	private readonly tracker = inject(DrawerTrackerService);
 	private readonly instanceId = this.tracker.nextId();
@@ -94,8 +94,8 @@ export class Drawer {
 	// (slot de encabezado o contenido plano) se cae a `ariaLabel`, con un rótulo genérico por defecto.
 	private readonly dialogAriaLabel = computed(() => this.ariaLabel() || (this.title() ? null : 'Panel lateral'));
 
-	private readonly transition = inject(DrawerTransitionDirective);
-	private readonly panel = inject(DrawerPanelDirective);
+	private readonly transition = inject(DrawerTransition);
+	private readonly panel = inject(DrawerPanel);
 
 	// El botón de cierre se ancla al borde interior del panel (el que da hacia el contenido, no hacia el borde del
 	// viewport): a la derecha en `left`, a la izquierda en `right`, y centrado al fondo/al top en `top`/`bottom`.

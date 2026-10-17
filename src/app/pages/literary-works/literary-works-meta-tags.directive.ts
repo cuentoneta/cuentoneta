@@ -2,14 +2,14 @@ import { Directive, untracked } from '@angular/core';
 
 import { AppRoutes } from '../../app.routes';
 import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
-import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
-import { AbstractMetaTagsDirective } from '../../directives/abstract-meta-tags.directive';
+import { HeadMetadata } from '../../directives/head-metadata.directive';
+import { AbstractMetaTags } from '../../directives/abstract-meta-tags.directive';
 
 @Directive({
 	selector: '[cuentonetaLiteraryWorksMetaTags]',
-	hostDirectives: [HeadMetadataDirective],
+	hostDirectives: [HeadMetadata],
 })
-export class LiteraryWorksMetaTagsDirective extends AbstractMetaTagsDirective {
+export class LiteraryWorksMetaTags extends AbstractMetaTags {
 	// No inyecta el host: nada de lo que emite depende del catálogo, y el catálogo puede fallar.
 	protected applyMetaTags(): void {
 		untracked(() => {

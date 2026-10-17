@@ -1,6 +1,8 @@
+import { onoffImageAssets } from '@mocks/onoff-image-assets.mock';
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 
 import { assertValidJsonLd } from '@testing/json-ld-validation';
+import { cdnUrlFor, cdnUrlForCorpusPath } from '@testing/sanity-cdn-url';
 import { buildLiteraryWorkArticleSchema, buildLiteraryWorkBreadcrumb } from './literary-work.schema';
 
 const WEBSITE = 'https://test.cuentoneta.ar';
@@ -29,6 +31,41 @@ describe('read.schema', () => {
 			const authors = Array.isArray(article.author) ? article.author : [article.author];
 			expect(authors).toHaveLength(literaryWork.authors.length);
 			expect(authors[0]).toMatchObject({ '@type': 'Person', name: literaryWork.authors[0].name });
+		});
+
+		it.each(onoffLiteraryWorksMock)('declara como image el JPG de la portada raster de "$slug"', (literaryWork) => {
+			const coverImage = cdnUrlForCorpusPath(literaryWork.coverImage);
+
+			const article = buildLiteraryWorkArticleSchema({ ...literaryWork, coverImage }, WEBSITE);
+
+			expect(article.image).toBe(`${coverImage}?fm=jpg`);
+		});
+
+		it('sigue siendo un Article válido con image', async () => {
+			const coverImage = cdnUrlForCorpusPath(representativeLiteraryWork.coverImage);
+
+			await expect(
+				assertValidJsonLd(buildLiteraryWorkArticleSchema({ ...representativeLiteraryWork, coverImage }, WEBSITE)),
+			).resolves.toBeUndefined();
+		});
+
+		it.each([
+			// Por debajo del área mínima que Google admite para la imagen de un Article.
+			{ cover: 'una portada raster chica', coverImage: cdnUrlFor(onoffImageAssets.franceFlag) },
+			{
+				cover: 'una portada sin dimensiones en la URL',
+				coverImage: cdnUrlForCorpusPath(representativeLiteraryWork.coverImage).replace(/-\d+x\d+/, ''),
+			},
+			{
+				cover: 'una portada SVG',
+				coverImage: cdnUrlForCorpusPath(representativeLiteraryWork.coverImage).replace(/\.\w+$/, '.svg'),
+			},
+			{ cover: 'la portada local del corpus', coverImage: representativeLiteraryWork.coverImage },
+			{ cover: 'sin portada', coverImage: '' },
+		])('omite image con $cover', ({ coverImage }) => {
+			const article = buildLiteraryWorkArticleSchema({ ...representativeLiteraryWork, coverImage }, WEBSITE);
+
+			expect('image' in article).toBe(false);
 		});
 
 		it.each(onoffLiteraryWorksMock)(

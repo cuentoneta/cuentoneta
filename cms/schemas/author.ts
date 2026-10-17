@@ -1,10 +1,8 @@
 import { UsersIcon } from '@sanity/icons/Users';
 import { resource } from './resourceType';
 import { defineArrayMember, defineField, defineType } from 'sanity';
-import type { ComputedNumberDefinition } from 'sanity-plugin-computed-field';
+import { HISTORICAL_YEAR_RANGE } from '@utils/historical-date.utils';
 import { validateHistoricalDate, validateSlugFormat } from '../utils/validations';
-
-type HistoricalYearReducer = ComputedNumberDefinition['options']['reduceQueryResult'];
 
 const defaultAuthorImage = {
 	asset: {
@@ -12,16 +10,6 @@ const defaultAuthorImage = {
 		_ref: 'image-76250a3cd5acc91a1013e2acd1f97df69b33825c-360x360-jpg',
 	},
 };
-
-const reduceHistoricalYear =
-	<K extends string>(fieldName: K): HistoricalYearReducer =>
-	(result: { draft?: Record<K, string>; published: Record<K, string> }) => {
-		const value = result.draft?.[fieldName] || result.published?.[fieldName];
-		const match = value && /^(-?\d{4})-/.exec(value);
-		// Sin fecha, el año queda en `null`, el estado de "año desconocido". El plugin tipa el resultado
-		// como `number`, pero lo guarda tal cual con `set()`.
-		return match ? parseInt(match[1], 10) : (null as unknown as number);
-	};
 
 export default defineType({
 	name: 'author',
@@ -73,16 +61,11 @@ export default defineType({
 		defineField({
 			name: 'bornOnYear',
 			title: 'Año de nacimiento',
-			type: 'computedNumber',
+			type: 'number',
 			description:
-				'Se calcula automáticamente desde la fecha completa. Ingrese manualmente si solo conoce el año (use valores negativos para a.C.).',
-			validation: (Rule) => Rule.min(-3000).max(2100).integer(),
-			readOnly: ({ document }) => !!document?.bornOn,
-			options: {
-				buttonText: 'Recalcular desde fecha',
-				documentQuerySelection: `_id, _type, bornOn`,
-				reduceQueryResult: reduceHistoricalYear('bornOn'),
-			},
+				'Cargar solo si se conoce únicamente el año (valores negativos para a.C.). Si se completa la fecha, este campo se oculta y el año se deriva de ella.',
+			validation: (Rule) => Rule.min(HISTORICAL_YEAR_RANGE.min).max(HISTORICAL_YEAR_RANGE.max).integer(),
+			hidden: ({ document }) => !!document?.bornOn,
 		}),
 		defineField({
 			name: 'diedOn',
@@ -95,16 +78,11 @@ export default defineType({
 		defineField({
 			name: 'diedOnYear',
 			title: 'Año de fallecimiento',
-			type: 'computedNumber',
+			type: 'number',
 			description:
-				'Se calcula automáticamente desde la fecha completa. Ingrese manualmente si solo conoce el año (use valores negativos para a.C.).',
-			validation: (Rule) => Rule.min(-3000).max(2100).integer(),
-			readOnly: ({ document }) => !!document?.diedOn,
-			options: {
-				buttonText: 'Recalcular desde fecha',
-				documentQuerySelection: `_id, _type, diedOn`,
-				reduceQueryResult: reduceHistoricalYear('diedOn'),
-			},
+				'Cargar solo si se conoce únicamente el año (valores negativos para a.C.). Si se completa la fecha, este campo se oculta y el año se deriva de ella.',
+			validation: (Rule) => Rule.min(HISTORICAL_YEAR_RANGE.min).max(HISTORICAL_YEAR_RANGE.max).integer(),
+			hidden: ({ document }) => !!document?.diedOn,
 		}),
 		defineField({
 			name: 'biography',

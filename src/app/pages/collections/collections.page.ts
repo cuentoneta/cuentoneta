@@ -4,8 +4,8 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { CollectionApi } from '../../providers/collection.provider';
 
 import { COLLECTIONS_HOST, type CollectionsHost } from './collections-host';
-import { CollectionsMetaTagsDirective } from './collections-meta-tags.directive';
-import { CollectionsStructuredDataDirective } from './collections-structured-data.directive';
+import { CollectionsMetaTags } from './collections-meta-tags.directive';
+import { CollectionsStructuredData } from './collections-structured-data.directive';
 
 import { CollectionFilters } from '@components/collection-filters/collection-filters';
 import { CollectionTeaserCard } from '@components/collection-teaser-card/collection-teaser-card';
@@ -57,7 +57,7 @@ import { Divider } from '@components/divider/divider';
 		</div>
 	`,
 	providers: [{ provide: COLLECTIONS_HOST, useExisting: forwardRef(() => CollectionsPage) }],
-	hostDirectives: [CollectionsMetaTagsDirective, CollectionsStructuredDataDirective],
+	hostDirectives: [CollectionsMetaTags, CollectionsStructuredData],
 	imports: [CollectionFilters, CollectionTeaserCard, CollectionTeaserCardSkeleton, Divider],
 })
 export default class CollectionsPage implements CollectionsHost {

@@ -30,7 +30,7 @@ import { provideCollectionApiMock, StubCollectionApi } from '../../providers/col
 import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
 import { provideRouter } from '@angular/router';
 import type { LiteraryWorkApi } from '../../providers/literary-work.provider';
-import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
+import { HeadMetadata } from '../../directives/head-metadata.directive';
 import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 import { AppRoutes } from '../../app.routes';
 import LiteraryWorkPage from './literary-work.page';
@@ -412,7 +412,7 @@ describe('LiteraryWorkPage', () => {
 	// observable a través de ellas y el borde sin obra, donde ambas hacen early-return.
 	describe('metadata de la cabecera', () => {
 		it('marca la página como indexable', async () => {
-			const robotsSpy = spyOn(HeadMetadataDirective.prototype, 'setRobots');
+			const robotsSpy = spyOn(HeadMetadata.prototype, 'setRobots');
 
 			await setup(representativeLiteraryWork);
 
@@ -422,7 +422,7 @@ describe('LiteraryWorkPage', () => {
 		// Sin obra no hay señal que escribir: las directivas no emiten nada y rige el default del
 		// documento hasta que los datos llegan.
 		it('no emite robots cuando la obra no carga', async () => {
-			const robotsSpy = spyOn(HeadMetadataDirective.prototype, 'setRobots');
+			const robotsSpy = spyOn(HeadMetadata.prototype, 'setRobots');
 
 			await setup(representativeLiteraryWork, { api: new StubFailingLiteraryWorkApi(404) });
 
@@ -430,7 +430,7 @@ describe('LiteraryWorkPage', () => {
 		});
 
 		it('titula la página con el título de la obra y su byline', async () => {
-			const titleSpy = spyOn(HeadMetadataDirective.prototype, 'setTitle');
+			const titleSpy = spyOn(HeadMetadata.prototype, 'setTitle');
 
 			await setup(representativeLiteraryWork);
 
@@ -439,7 +439,7 @@ describe('LiteraryWorkPage', () => {
 		});
 
 		it('emite un canonical self-referencial derivado del slug de la obra', async () => {
-			const canonicalSpy = spyOn(HeadMetadataDirective.prototype, 'setCanonicalUrl');
+			const canonicalSpy = spyOn(HeadMetadata.prototype, 'setCanonicalUrl');
 
 			await setup(representativeLiteraryWork);
 

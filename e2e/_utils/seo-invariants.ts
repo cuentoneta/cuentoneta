@@ -83,6 +83,29 @@ function robotsIndexable(root: HTMLElement): SeoInvariantViolation | null {
 	};
 }
 
+// La imagen que leen los buscadores tiene que ser raster y no depender de la URL de la página. Una ruta
+// relativa al documento (`assets/...`) resuelve distinto en cada página. La relativa a la raíz se acepta
+// porque es lo que emite un build con `website` local, como el de los e2e; en producción el host es
+// absoluto y la URL sale con `https://`.
+function ogImage(root: HTMLElement): SeoInvariantViolation | null {
+	const content = root.querySelector('meta[property="og:image"]')?.getAttribute('content') ?? '';
+	const problem = ogImageProblem(content);
+	return problem ? { rule: 'og-image', message: `El og:image "${content}" ${problem}.` } : null;
+}
+
+function ogImageProblem(content: string): string | null {
+	if (!content) {
+		return 'está ausente';
+	}
+	if (content.split('?')[0].toLowerCase().endsWith('.svg')) {
+		return 'es un SVG, que los buscadores no usan como miniatura';
+	}
+	if (!/^(https:\/\/|\/(?!\/))/.test(content)) {
+		return 'no es absoluta con https ni relativa a la raíz';
+	}
+	return null;
+}
+
 function primaryHeading(root: HTMLElement, pattern?: RegExp): SeoInvariantViolation | null {
 	const headings = (root.querySelector('main')?.querySelectorAll('h1') ?? [])
 		.map((h1) => h1.text.trim())
@@ -210,6 +233,10 @@ export function checkRobotsIndexable(html: string): SeoInvariantViolation | null
 	return robotsIndexable(parseHtml(html));
 }
 
+export function checkOgImage(html: string): SeoInvariantViolation | null {
+	return ogImage(parseHtml(html));
+}
+
 export function checkPrimaryHeading(html: string, pattern?: RegExp): SeoInvariantViolation | null {
 	return primaryHeading(parseHtml(html), pattern);
 }
@@ -271,6 +298,7 @@ export async function collectIndexableHtmlViolations(
 		title(root, expectations.titlePattern),
 		canonical(root, expectations.canonicalContains ?? expectations.path),
 		robotsIndexable(root),
+		ogImage(root),
 		primaryHeading(root, expectations.h1Pattern),
 		...emptyBodyViolations(root, expectations.minPrimaryContentLength),
 		expectations.requiredInternalLinkPrefix ? internalLink(root, expectations.requiredInternalLinkPrefix) : null,

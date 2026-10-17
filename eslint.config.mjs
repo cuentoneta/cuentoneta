@@ -15,6 +15,7 @@ import zIndexScale from './tools/eslint/z-index-scale.js';
 import noFullZodInBrowser from './tools/eslint/no-full-zod-in-browser.js';
 import noTsExtensionImports from './tools/eslint/no-ts-extension-imports.js';
 import componentLocationAndName from './tools/eslint/component-location-and-name.js';
+import classNameWithoutTypeSuffix from './tools/eslint/class-name-without-type-suffix.js';
 import opsCatalogSynced from './tools/eslint/ops-catalog-synced.js';
 
 // Las reglas propias comparten un único objeto de plugin: ESLint rechaza redefinir un namespace
@@ -24,6 +25,7 @@ const cuentonetaPlugin = {
 		'no-full-zod-in-browser': noFullZodInBrowser,
 		'no-ts-extension-imports': noTsExtensionImports,
 		'component-location-and-name': componentLocationAndName,
+		'class-name-without-type-suffix': classNameWithoutTypeSuffix,
 		'ops-catalog-synced': opsCatalogSynced,
 	},
 };
@@ -269,6 +271,16 @@ export default [
 		},
 	},
 	{
+		// El typegen de Sanity emite una `interface SanityQueries extends globalThis.SanityQueries {}`
+		// vacía a propósito: es el puente que lee el registro global desde `@sanity/client`.
+		name: 'sanity-typegen-output',
+		files: ['src/sanity/types.ts'],
+		rules: {
+			'@typescript-eslint/no-empty-object-type': 'off',
+			'@typescript-eslint/no-empty-interface': 'off',
+		},
+	},
+	{
 		// El plugin entra por esta única regla: su config `recommended` no está adoptado, y registrar el
 		// namespace no enciende nada por sí solo. El scope nombra todas las extensiones que el gate
 		// lintea, no solo el `**/*.ts` del bloque `nx`: la regla mide forma del código y no framework ni
@@ -433,6 +445,18 @@ export default [
 		},
 	},
 	{
+		// Mismo scope que `component-location-and-name`: la regla mira cualquier `@Directive` o `@Pipe` de `src/`, y
+		// la exención de specs y stories vive dentro de ella.
+		name: 'class-name-without-type-suffix',
+		files: ['src/**/*.ts'],
+		plugins: {
+			cuentoneta: cuentonetaPlugin,
+		},
+		rules: {
+			'cuentoneta/class-name-without-type-suffix': 'error',
+		},
+	},
+	{
 		// La tabla del catálogo de `pnpm ops` se escribe a mano: una tarea sin fila, o una fila sin tarea,
 		// envejecen en silencio. El scope es el registro porque el catálogo es Markdown, que ESLint no lintea.
 		name: 'ops-catalog-synced',
@@ -476,13 +500,18 @@ export default [
 		},
 	},
 	{
-		// El alcance es todo `src/`, no solo el catálogo de stories donde se midió la deuda: la convención
-		// de imports type-only (ver typescript.md) vale para cada archivo, y declararla acá hace que el
-		// próximo archivo nazca cumpliéndola en vez de depender del recuerdo de quien lo escribe.
+		// La convención de imports type-only (ver typescript.md) vale para cada archivo TypeScript, no solo
+		// para la app: el Studio, los scripts y los e2e también la necesitan, y en `scripts/` un import de
+		// solo tipos sin `type` falla en runtime porque `node` descarta los tipos antes de ejecutar.
+		// `no-import-type-side-effects` es la contraparte de `verbatimModuleSyntax` (ver typescript.md).
 		name: 'consistent-type-imports',
-		files: ['src/**/*.ts'],
+		files: ['**/*.ts', '**/*.tsx'],
 		rules: {
-			'@typescript-eslint/consistent-type-imports': 'error',
+			'@typescript-eslint/consistent-type-imports': [
+				'error',
+				{ prefer: 'type-imports', fixStyle: 'separate-type-imports' },
+			],
+			'@typescript-eslint/no-import-type-side-effects': 'error',
 		},
 	},
 	{

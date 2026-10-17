@@ -6,7 +6,7 @@ import { provideRouter, RouterOutlet } from '@angular/router';
 import { Header } from '@components/header/header';
 import { Footer } from '@components/footer/footer';
 import { AnalyticsService } from './providers/analytics/analytics.service';
-import { AnalyticsMockService } from './providers/analytics/analytics.mock.service';
+import { StubAnalyticsService } from './providers/analytics/analytics.mock.service';
 import { LayoutService } from './providers/layout.interface';
 import { ControllableLayoutService } from './providers/layout.mock';
 
@@ -16,7 +16,7 @@ describe('App', () => {
 			componentImports: [Header, Footer, NgOptimizedImage, RouterOutlet],
 			providers: [
 				provideRouter([]),
-				{ provide: AnalyticsService, useClass: AnalyticsMockService },
+				{ provide: AnalyticsService, useClass: StubAnalyticsService },
 				{ provide: LayoutService, useValue: new ControllableLayoutService() },
 			],
 		});

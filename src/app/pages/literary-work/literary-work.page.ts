@@ -10,8 +10,8 @@ import { createAttributedText } from '@models/attributed-text.model';
 import { LiteraryWorkApi } from '../../providers/literary-work.provider';
 
 // SEO
-import { LiteraryWorkMetaTagsDirective } from './literary-work-meta-tags.directive';
-import { LiteraryWorkStructuredDataDirective } from './literary-work-structured-data.directive';
+import { LiteraryWorkMetaTags } from './literary-work-meta-tags.directive';
+import { LiteraryWorkStructuredData } from './literary-work-structured-data.directive';
 import { LITERARY_WORK_HOST, type LiteraryWorkHost } from './literary-work-host';
 
 // Components
@@ -31,7 +31,7 @@ import { toNavigationContext, type NavigationContext, type NavigationParams } fr
 	selector: 'cuentoneta-literary-work',
 	templateUrl: './literary-work.page.html',
 	providers: [{ provide: LITERARY_WORK_HOST, useExisting: forwardRef(() => LiteraryWorkPage) }],
-	hostDirectives: [LiteraryWorkMetaTagsDirective, LiteraryWorkStructuredDataDirective],
+	hostDirectives: [LiteraryWorkMetaTags, LiteraryWorkStructuredData],
 	imports: [
 		LiteraryWorkHeroHeader,
 		Button,

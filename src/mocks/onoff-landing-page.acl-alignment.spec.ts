@@ -14,25 +14,18 @@
  */
 import type { SanityClient } from '@sanity/client';
 import { fn } from '@test-utils';
+import { stubImageUrlResolver } from '@testing/image-url-resolver.stub';
 import { SanityContentRepository } from '../api/modules/content/content.repository.sanity';
 import { rotatingContentQuery } from '../api/_queries/content.query';
 import { onoffCollectionTeasersMock } from './onoff-collections.mock';
 import { onoffLiteraryWorkNavigationTeasersWithAuthorsMock } from './onoff-literary-work-teasers.mock';
 import { onoffRawLandingPageMock, onoffRawRotatingContentMock } from './onoff-raw-landing-page.mock';
 
-// Ver el spec homónimo de `LiteraryWork` para el porqué de sustituir el builder de imágenes.
-/* eslint-disable no-restricted-syntax -- vi.mock: el builder de imágenes de Sanity no tiene punto de inyección */
-vi.mock('@sanity/image-url', async () => {
-	const { stubImageUrlBuilderModule } = await import('@testing/sanity-image-url.stub');
-	return stubImageUrlBuilderModule();
-});
-/* eslint-enable no-restricted-syntax */
-
 function repository(): SanityContentRepository {
 	const fetch = fn((query: unknown) =>
 		Promise.resolve(query === rotatingContentQuery ? onoffRawRotatingContentMock : onoffRawLandingPageMock),
 	);
-	return new SanityContentRepository({ fetch } as unknown as SanityClient);
+	return new SanityContentRepository({ fetch } as unknown as SanityClient, stubImageUrlResolver);
 }
 
 // El corpus de dominio declara el elenco entero; la landing destaca un subconjunto, elegido por su

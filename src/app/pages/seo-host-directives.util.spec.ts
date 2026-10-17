@@ -3,22 +3,22 @@ import { collectSeoViolations, extractHostDirectiveNames, extractRobotsLiteral }
 describe('seo-host-directives.util', () => {
 	describe('extractHostDirectiveNames', () => {
 		it('should extract the directive names from a single-line hostDirectives array', () => {
-			const source = `hostDirectives: [HomeMetaTagsDirective, HomeStructuredDataDirective],`;
-			expect(extractHostDirectiveNames(source)).toEqual(['HomeMetaTagsDirective', 'HomeStructuredDataDirective']);
+			const source = `hostDirectives: [HomeMetaTags, HomeStructuredData],`;
+			expect(extractHostDirectiveNames(source)).toEqual(['HomeMetaTags', 'HomeStructuredData']);
 		});
 
 		it('should extract the directive names from a multi-line hostDirectives array', () => {
 			const source = `
 				hostDirectives: [
-					AuthorMetaTagsDirective,
-					AuthorStructuredDataDirective,
+					AuthorMetaTags,
+					AuthorStructuredData,
 				],
 			`;
-			expect(extractHostDirectiveNames(source)).toEqual(['AuthorMetaTagsDirective', 'AuthorStructuredDataDirective']);
+			expect(extractHostDirectiveNames(source)).toEqual(['AuthorMetaTags', 'AuthorStructuredData']);
 		});
 
 		it('should extract a single directive name', () => {
-			expect(extractHostDirectiveNames(`hostDirectives: [HeadMetadataDirective],`)).toEqual(['HeadMetadataDirective']);
+			expect(extractHostDirectiveNames(`hostDirectives: [HeadMetadata],`)).toEqual(['HeadMetadata']);
 		});
 
 		it('should return an empty array when hostDirectives is absent', () => {
@@ -30,7 +30,7 @@ describe('seo-host-directives.util', () => {
 		});
 
 		it('should tolerate a trailing comma inside the array', () => {
-			expect(extractHostDirectiveNames(`hostDirectives: [HeadMetadataDirective,],`)).toEqual(['HeadMetadataDirective']);
+			expect(extractHostDirectiveNames(`hostDirectives: [HeadMetadata,],`)).toEqual(['HeadMetadata']);
 		});
 	});
 
@@ -48,13 +48,13 @@ describe('seo-host-directives.util', () => {
 		});
 
 		it('should return undefined when there is no setRobots call', () => {
-			expect(extractRobotsLiteral(`hostDirectives: [HomeMetaTagsDirective]`)).toBeUndefined();
+			expect(extractRobotsLiteral(`hostDirectives: [HomeMetaTags]`)).toBeUndefined();
 		});
 	});
 
 	describe('collectSeoViolations', () => {
-		const indexableSource = `hostDirectives: [HomeMetaTagsDirective, HomeStructuredDataDirective],`;
-		const noindexSource = `hostDirectives: [HeadMetadataDirective],\nsetRobots('noindex, follow');`;
+		const indexableSource = `hostDirectives: [HomeMetaTags, HomeStructuredData],`;
+		const noindexSource = `hostDirectives: [HeadMetadata],\nsetRobots('noindex, follow');`;
 
 		it('should report no violations for a conformant indexable page', () => {
 			expect(collectSeoViolations(indexableSource)).toEqual([]);
@@ -65,13 +65,13 @@ describe('seo-host-directives.util', () => {
 		});
 
 		it('should flag an indexable page missing the StructuredData directive', () => {
-			const violations = collectSeoViolations(`hostDirectives: [HomeMetaTagsDirective],`);
+			const violations = collectSeoViolations(`hostDirectives: [HomeMetaTags],`);
 			expect(violations).toHaveLength(1);
-			expect(violations[0]).toContain('StructuredDataDirective');
+			expect(violations[0]).toContain('StructuredData');
 		});
 
 		it('should flag an indexable page missing both SEO directives', () => {
-			expect(collectSeoViolations(`hostDirectives: [HeadMetadataDirective],`)).toHaveLength(2);
+			expect(collectSeoViolations(`hostDirectives: [HeadMetadata],`)).toHaveLength(2);
 		});
 
 		it('should treat a page without noindex as indexable and require the combo', () => {
@@ -84,15 +84,15 @@ describe('seo-host-directives.util', () => {
 		it('should flag a noindex page that declares the indexable combo', () => {
 			const violations = collectSeoViolations(`${indexableSource}\nsetRobots('noindex, follow');`);
 			expect(violations).toHaveLength(1);
-			expect(violations[0]).toContain('HeadMetadataDirective');
+			expect(violations[0]).toContain('HeadMetadata');
 		});
 
 		it('should flag a noindex page with an extra host directive', () => {
 			const violations = collectSeoViolations(
-				`hostDirectives: [HeadMetadataDirective, FooDirective],\nsetRobots('noindex, follow');`,
+				`hostDirectives: [HeadMetadata, FooDirective],\nsetRobots('noindex, follow');`,
 			);
 			expect(violations).toHaveLength(1);
-			expect(violations[0]).toContain('HeadMetadataDirective');
+			expect(violations[0]).toContain('HeadMetadata');
 		});
 	});
 });

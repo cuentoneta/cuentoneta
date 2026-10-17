@@ -2,14 +2,14 @@ import { Component, computed, inject } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { NgOptimizedImage } from '@angular/common';
 
-import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
+import { HeadMetadata } from '../../directives/head-metadata.directive';
 import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 import { ContributorApi } from '../../providers/contributor.provider';
 
 @Component({
 	selector: 'cuentoneta-about',
 	imports: [NgOptimizedImage],
-	hostDirectives: [HeadMetadataDirective],
+	hostDirectives: [HeadMetadata],
 	templateUrl: './about.page.html',
 })
 export default class AboutPage {
@@ -27,7 +27,7 @@ export default class AboutPage {
 		GITHUB_CONTRIBUTORS: 'https://github.com/cuentoneta/cuentoneta/graphs/contributors',
 	};
 
-	private readonly metaTagsDirective = inject(HeadMetadataDirective);
+	private readonly metaTagsDirective = inject(HeadMetadata);
 	private readonly contributorService = inject(ContributorApi);
 
 	private readonly contributorsResource = rxResource({

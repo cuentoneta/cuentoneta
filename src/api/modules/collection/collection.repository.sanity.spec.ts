@@ -1,5 +1,6 @@
 import type { SanityClient } from '@sanity/client';
 import { clearAllMocks, fn } from '@test-utils';
+import type { ImageUrlResolver } from '../../_utils/functions';
 import { collectionBySlugQuery, collectionsQuery } from '../../_queries/collection.query';
 import {
 	descriptionlessRawCollection,
@@ -36,6 +37,16 @@ function repoReturning(raw: unknown): SanityCollectionRepository {
 beforeEach(() => {
 	clearAllMocks();
 });
+
+// Deriva la URL de su fuente: un cruce entre campos (la portada por el retrato) no pasa inadvertido.
+const imageLabel = (source: unknown) => `resolved:${JSON.stringify(source)}`;
+
+function repoWithImageResolver(raw: unknown) {
+	const resolveImageUrl = fn<ImageUrlResolver>(imageLabel);
+	const fetch = fn(() => Promise.resolve(raw));
+	const repository = new SanityCollectionRepository({ fetch } as unknown as SanityClient, resolveImageUrl);
+	return { repository, resolveImageUrl };
+}
 
 // Un cruce de queries devolvería datos de la forma equivocada sin que ninguna aserción sobre el
 // resultado lo note: las dos proyectan la misma entidad.
@@ -100,6 +111,21 @@ describe('SanityCollectionRepository.fetchBySlug', () => {
 		expect(collection?.imagery.kind).toBe('sample');
 		expect(collection?.imagery.kind === 'sample' && collection.imagery.images).toEqual(expected);
 		expect(expected?.every((url) => url !== '')).toBe(true);
+	});
+
+	it('resolves every image of the aggregate through the injected image resolver', async () => {
+		const { repository, resolveImageUrl } = repoWithImageResolver(withFeaturedImage);
+
+		const collection = await repository.fetchBySlug('geometrias-del-desvelo');
+
+		expect(collection?.imagery).toEqual({ kind: 'representative', image: imageLabel(withFeaturedImage.featuredImage) });
+		expect(collection?.literaryWorks.map((work) => work.coverImage)).toEqual(
+			withFeaturedImage.literaryWorks.map((work) => imageLabel(work.coverImage)),
+		);
+		expect(collection?.literaryWorks.flatMap((work) => work.authors.map((author) => author.imageUrl))).toEqual(
+			withFeaturedImage.literaryWorks.flatMap((work) => work.authors.map((author) => imageLabel(author.image))),
+		);
+		expect(resolveImageUrl).toHaveBeenCalledWith(withFeaturedImage.featuredImage);
 	});
 
 	it('maps each work into a teaser with its excerpt', async () => {
@@ -196,6 +222,20 @@ describe('SanityCollectionRepository malformed data', () => {
 });
 
 describe('SanityCollectionRepository.fetchAll', () => {
+	it('resolves the imagery of every teaser through the injected image resolver', async () => {
+		const { repository } = repoWithImageResolver(onoffRawCollectionTeasersMock);
+
+		const teasers = await repository.fetchAll();
+
+		expect(teasers.map(({ imagery }) => imagery)).toEqual(
+			onoffRawCollectionTeasersMock.map((raw) =>
+				raw.featuredImage
+					? { kind: 'representative', image: imageLabel(raw.featuredImage) }
+					: { kind: 'sample', images: raw.literaryWorkCoverImages.slice(0, 3).map(imageLabel) },
+			),
+		);
+	});
+
 	it('maps every teaser of the listing', async () => {
 		const teasers = await repoReturning(onoffRawCollectionTeasersMock).fetchAll();
 

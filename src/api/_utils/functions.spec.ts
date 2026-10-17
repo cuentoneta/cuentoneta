@@ -6,6 +6,9 @@ import { onoffRawTagsMock } from '@mocks/onoff-raw-tags.mock';
 import { withoutUrl } from '@testing/resource-without-url';
 import { viewportElementSizes } from '@models/content-campaign.model';
 
+// Deriva la URL de su fuente: un cruce entre campos (el retrato por la bandera) no pasa inadvertido.
+const imageLabel = (source: unknown) => `resolved:${JSON.stringify(source)}`;
+
 describe('mapTags (ACL)', () => {
 	it('maps every raw Sanity tag of the corpus to its domain Tag', () => {
 		const result = mapTags(onoffRawTagsMock);
@@ -44,11 +47,70 @@ describe('mapAuthor (ACL)', () => {
 	it('throws instead of serving an author whose biography arrived empty', () => {
 		expect(() => mapAuthor({ ...rawOnoffAuthor, biography: '' })).toThrow(/Markdown inválido/);
 	});
+
+	it('resolves the portrait and the flag through the injected image resolver', () => {
+		const result = mapAuthor(rawOnoffAuthor, imageLabel);
+
+		expect(result.imageUrl).toBe(imageLabel(rawOnoffAuthor.image));
+		expect(result.nationality.flag).toBe(imageLabel(rawOnoffAuthor.nationality.flag));
+	});
 });
 
 describe('mapAuthorTeaser (ACL)', () => {
 	it('does not emit a biography: the teaser contract does not declare it', () => {
 		expect(mapAuthorTeaser(rawOnoffAuthorTeaser)).not.toHaveProperty('biography');
+	});
+
+	it('resolves the portrait and the flag through the injected image resolver', () => {
+		const result = mapAuthorTeaser(rawOnoffAuthorTeaser, imageLabel);
+
+		expect(result.imageUrl).toBe(imageLabel(rawOnoffAuthorTeaser.image));
+		expect(result.nationality.flag).toBe(imageLabel(rawOnoffAuthorTeaser.nationality.flag));
+	});
+});
+
+describe.each([
+	['mapAuthor', (raw: typeof rawOnoffAuthor) => mapAuthor(raw), rawOnoffAuthor],
+	['mapAuthorTeaser', (raw: typeof rawOnoffAuthorTeaser) => mapAuthorTeaser(raw), rawOnoffAuthorTeaser],
+] as const)('%s: birth and death years (ACL)', (_name, map, canon) => {
+	type Raw = typeof canon;
+	const years = (raw: Raw) => {
+		const { bornOnYear, diedOnYear } = map(raw as never);
+		return { bornOnYear, diedOnYear };
+	};
+
+	it('keeps the corpus years coherent with its full dates', () => {
+		expect(years(canon)).toEqual({ bornOnYear: canon.bornOnYear, diedOnYear: canon.diedOnYear });
+	});
+
+	it('derives the year from the full date when no manual year was loaded', () => {
+		expect(years({ ...canon, bornOnYear: null, diedOnYear: null })).toEqual({ bornOnYear: 1948, diedOnYear: 1994 });
+	});
+
+	it('serves the manual year when there is no date', () => {
+		expect(years({ ...canon, bornOn: null, bornOnYear: 1500, diedOn: null, diedOnYear: 1580 })).toEqual({
+			bornOnYear: 1500,
+			diedOnYear: 1580,
+		});
+	});
+
+	it('lets the full date win over a divergent persisted year', () => {
+		expect(years({ ...canon, bornOnYear: 1900, diedOnYear: 1900 })).toEqual({ bornOnYear: 1948, diedOnYear: 1994 });
+	});
+
+	it('serves no year when there is neither a date nor a manual year', () => {
+		expect(years({ ...canon, bornOn: null, bornOnYear: null, diedOn: null, diedOnYear: null })).toEqual({
+			bornOnYear: undefined,
+			diedOnYear: undefined,
+		});
+	});
+
+	it('keeps the historical numbering for a BCE date', () => {
+		expect(years({ ...canon, bornOn: '-0043-03-20', bornOnYear: null }).bornOnYear).toBe(-43);
+	});
+
+	it('falls back to the manual year when the date is malformed', () => {
+		expect(years({ ...canon, bornOn: '1948-1-1', bornOnYear: 1950 }).bornOnYear).toBe(1950);
 	});
 });
 
@@ -157,6 +219,15 @@ describe('mapContentCampaigns (ACL)', () => {
 		expect(campaign.contents.xs.imageHeight).toBe(viewportElementSizes.xs.imageHeight);
 		expect(campaign.contents.md.imageWidth).toBe(viewportElementSizes.md.imageWidth);
 		expect(campaign.contents.md.imageHeight).toBe(viewportElementSizes.md.imageHeight);
+	});
+
+	it('resolves each viewport image through the injected image resolver', () => {
+		const [campaign] = onoffRawContentCampaignsMock;
+
+		const [mapped] = mapContentCampaigns([campaign], imageLabel);
+
+		expect(mapped.contents.xs.imageUrl).toBe(imageLabel(campaign.contents.xs.image));
+		expect(mapped.contents.md.imageUrl).toBe(imageLabel(campaign.contents.md.image));
 	});
 
 	it('throws when a viewport is missing', () => {

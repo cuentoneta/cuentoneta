@@ -4,9 +4,10 @@ import { argsToTemplate, moduleMetadata } from '@storybook/angular-vite';
 import { Tag } from './tag';
 import { TagSkeleton } from './tag-skeleton';
 import { authorTeaserCardDocs } from '@components/author-teaser-card/author-teaser-card.docs';
-import { collectionTeaserCardDocs } from '@components/collection-teaser-card/collection-teaser-card.docs';
-import { literaryWorkTeaserCardDocs } from '@components/literary-work-teaser-card/literary-work-teaser-card.docs';
-import { literaryWorkTeaserHomeCardDocs } from '@components/literary-work-teaser-home-card/literary-work-teaser-home-card.docs';
+import { authorInfoPanelDocs } from '@components/author-info-panel/author-info-panel.docs';
+import { collectionInfoPanelDocs } from '@components/collection-info-panel/collection-info-panel.docs';
+import { literaryWorkHeroHeaderDocs } from '@components/literary-work-hero-header/literary-work-hero-header.docs';
+import { navigableCollectionTeaserDocs } from '@components/navigable-collection-teaser/navigable-collection-teaser.docs';
 import { docsMention, docsRef } from '@testing/storybook-docs';
 import { tagDocs } from './tag.docs';
 
@@ -43,7 +44,7 @@ export const Soft: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Variante <strong>soft</strong> (default): solo texto en brand-500, sin fondo. Comportamiento (Figma): la primera letra del texto en mayúscula y el resto en minúsculas (sentence-case).</p><p><strong>Usos:</strong> Home (en ${docsRef(collectionTeaserCardDocs)} y ${docsRef(literaryWorkTeaserHomeCardDocs)}); Story, Story List y Author Profile (en ${docsRef(literaryWorkTeaserCardDocs)}).</p>`,
+				story: `<p>Variante <strong>soft</strong> (default): solo texto en brand-500, sin fondo. Comportamiento (Figma): la primera letra del texto en mayúscula y el resto en minúsculas (sentence-case).</p><p><strong>Usos:</strong> ${docsRef(navigableCollectionTeaserDocs)}, en la página de colección.</p>`,
 			},
 		},
 	},
@@ -55,7 +56,7 @@ export const Filled: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Variante <strong>filled</strong>: pill brand-50 con el texto en mayúsculas (aplicadas vía CSS). Comportamiento (Figma): todo el texto en mayúsculas.</p><p><strong>Usos:</strong> Home (en ${docsRef(authorTeaserCardDocs)}), Story List y Author Profile.</p>`,
+				story: `<p>Variante <strong>filled</strong>: pill brand-50 con el texto en mayúsculas (aplicadas vía CSS). Comportamiento (Figma): todo el texto en mayúsculas.</p><p><strong>Usos:</strong> ${docsRef(authorTeaserCardDocs)} en la página de inicio, ${docsRef(collectionInfoPanelDocs)} en la página de colección y ${docsRef(authorInfoPanelDocs)} en la página de autor.</p>`,
 			},
 		},
 	},
@@ -67,7 +68,7 @@ export const Gray: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Variante <strong>gray</strong>: pill translúcido oscuro con texto claro, pensado para mostrarse sobre imágenes. Comportamiento (Figma): la primera letra del texto en mayúscula y el resto en minúsculas (sentence-case).</p><p><strong>Usos:</strong> Story.</p>`,
+				story: `<p>Variante <strong>gray</strong>: pill translúcido oscuro con texto claro, pensado para mostrarse sobre imágenes. Comportamiento (Figma): la primera letra del texto en mayúscula y el resto en minúsculas (sentence-case).</p><p><strong>Usos:</strong> ${docsRef(literaryWorkHeroHeaderDocs)} en la página de lectura.</p>`,
 			},
 		},
 	},

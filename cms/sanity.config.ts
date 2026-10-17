@@ -9,7 +9,6 @@ import { RobotIcon } from '@sanity/icons/Robot';
 // Plugins
 import { structureTool } from 'sanity/structure';
 import { visionTool } from '@sanity/vision';
-import { sanityComputedField } from 'sanity-plugin-computed-field';
 import { markdownSchema } from 'sanity-plugin-markdown';
 import { singletonTools } from 'sanity-plugin-singleton-management';
 
@@ -28,7 +27,6 @@ export default defineConfig([
 					return deskStructure(S, context);
 				},
 			}),
-			sanityComputedField(),
 			visionTool(),
 			markdownSchema(),
 			singletonTools(),
@@ -51,7 +49,6 @@ export default defineConfig([
 					return deskStructure(S, context);
 				},
 			}),
-			sanityComputedField(),
 			visionTool(),
 			markdownSchema(),
 			singletonTools(),
@@ -73,7 +70,6 @@ export default defineConfig([
 					return deskStructure(S, context);
 				},
 			}),
-			sanityComputedField(),
 			visionTool(),
 			markdownSchema(),
 		],

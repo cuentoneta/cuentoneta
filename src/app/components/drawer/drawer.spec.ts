@@ -6,12 +6,12 @@ import userEvent, { type UserEvent } from '@testing-library/user-event';
 
 import type { DrawerDirection } from './drawer';
 import { Drawer } from './drawer';
-import { DrawerHeaderDirective } from './drawer-header.directive';
-import { DrawerFooterDirective } from './drawer-footer.directive';
+import { DrawerHeader } from './drawer-header.directive';
+import { DrawerFooter } from './drawer-footer.directive';
 import { DrawerTrackerService } from './drawer-tracker.service';
 
 @Component({
-	imports: [Drawer, DrawerHeaderDirective, DrawerFooterDirective],
+	imports: [Drawer, DrawerHeader, DrawerFooter],
 	template: `
 		<button (click)="drawer.open()" type="button">Abrir</button>
 		<cuentoneta-drawer

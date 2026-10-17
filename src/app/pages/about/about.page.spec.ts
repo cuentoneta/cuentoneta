@@ -5,7 +5,7 @@ import AboutPage from './about.page';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideContributorApiMock } from '../../providers/contributor.mock';
-import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
+import { HeadMetadata } from '../../directives/head-metadata.directive';
 import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 
 describe('AboutPage', () => {
@@ -23,7 +23,7 @@ describe('AboutPage', () => {
 	});
 
 	it('should set the canonical URL for /about via buildCanonicalUrl', async () => {
-		const canonicalSpy = spyOn(HeadMetadataDirective.prototype, 'setCanonicalUrl');
+		const canonicalSpy = spyOn(HeadMetadata.prototype, 'setCanonicalUrl');
 
 		await setup();
 
@@ -31,7 +31,7 @@ describe('AboutPage', () => {
 	});
 
 	it('should keep the page out of the index without following its links', async () => {
-		const robotsSpy = spyOn(HeadMetadataDirective.prototype, 'setRobots');
+		const robotsSpy = spyOn(HeadMetadata.prototype, 'setRobots');
 
 		await setup();
 

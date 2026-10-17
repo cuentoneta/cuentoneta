@@ -11,6 +11,7 @@ import { createReadingTime, type ReadingTime } from '@models/reading-time.model'
 import { createSlug } from '@models/slug.model';
 import { createIsoDateTime } from '@utils/date.utils';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
+import type { ImageUrlResolver } from '../../_utils/functions';
 import { mapAuthor, mapAuthorTeaser, mapResources, mapTags, urlFor } from '../../_utils/functions';
 import { mapMediaSources, mapMediaTeasers } from '../../_utils/media-sources.functions';
 import { client as sanityClient } from '../../_helpers/sanity-connector';
@@ -30,7 +31,10 @@ type SanityLiteraryWorkTeaser = LiteraryWorkTeasersResult[number];
 type SanityTeaserExcerpt = SanityLiteraryWorkTeaser['excerpt'][number];
 
 export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
-	constructor(private readonly client: SanityClient = sanityClient) {}
+	constructor(
+		private readonly client: SanityClient = sanityClient,
+		private readonly resolveImageUrl: ImageUrlResolver = urlFor,
+	) {}
 
 	public async fetchBySlug(slug: string): Promise<LiteraryWork | null> {
 		const raw = await this.client.fetch(literaryWorkBySlugQuery, { slug });
@@ -91,12 +95,12 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 			_id: raw._id,
 			slug: createSlug(raw.slug),
 			title: raw.title,
-			coverImage: raw.coverImage ? urlFor(raw.coverImage) : '',
+			coverImage: raw.coverImage ? this.resolveImageUrl(raw.coverImage) : '',
 			totalReadingTime: this.resolveTotalReadingTime(raw),
 			sectionCount: raw.sectionCount,
 			tags: mapTags(raw.tags),
 			mediaSources: mapMediaTeasers(raw.mediaSources),
-			authors: raw.authors.map(mapAuthorTeaser),
+			authors: raw.authors.map((author) => mapAuthorTeaser(author, this.resolveImageUrl)),
 			excerpt: this.mapExcerpt(raw.slug, rawExcerpt),
 		});
 	}
@@ -141,9 +145,9 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 			_id: raw._id,
 			slug: createSlug(raw.slug),
 			title: raw.title,
-			authors: raw.authors.map(mapAuthor),
-			coverImage: raw.coverImage ? urlFor(raw.coverImage) : '',
-			mediaSources: mapMediaSources(raw.mediaSources),
+			authors: raw.authors.map((author) => mapAuthor(author, this.resolveImageUrl)),
+			coverImage: raw.coverImage ? this.resolveImageUrl(raw.coverImage) : '',
+			mediaSources: mapMediaSources(raw.mediaSources, this.resolveImageUrl),
 			resources: mapResources(raw.resources),
 			badLanguage: raw.badLanguage,
 			tags: mapTags(raw.tags),

@@ -4,15 +4,15 @@ import { DOCUMENT } from '@angular/common';
 import { signal } from '@angular/core';
 
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
-import { type LiteraryWork } from '@models/literary-work.model';
-import { LiteraryWorkStructuredDataDirective } from './literary-work-structured-data.directive';
+import type { LiteraryWork } from '@models/literary-work.model';
+import { LiteraryWorkStructuredData } from './literary-work-structured-data.directive';
 import { LITERARY_WORK_HOST } from './literary-work-host';
 
-describe('LiteraryWorkStructuredDataDirective', () => {
+describe('LiteraryWorkStructuredData', () => {
 	const literaryWorkSignal = signal<LiteraryWork | undefined>(undefined);
 
 	function instantiate(): void {
-		TestBed.runInInjectionContext(() => new LiteraryWorkStructuredDataDirective());
+		TestBed.runInInjectionContext(() => new LiteraryWorkStructuredData());
 	}
 
 	beforeEach(() => {
@@ -20,7 +20,7 @@ describe('LiteraryWorkStructuredDataDirective', () => {
 		literaryWorkSignal.set(undefined);
 		TestBed.configureTestingModule({
 			providers: [
-				LiteraryWorkStructuredDataDirective,
+				LiteraryWorkStructuredData,
 				{ provide: LITERARY_WORK_HOST, useValue: { literaryWork: literaryWorkSignal.asReadonly() } },
 			],
 		});

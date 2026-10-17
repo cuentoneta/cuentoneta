@@ -3,18 +3,18 @@ import { TestBed } from '@angular/core/testing';
 
 import { AppRoutes } from '../../app.routes';
 import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
-import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
-import { HomeMetaTagsDirective } from './home-meta-tags.directive';
+import { HeadMetadata } from '../../directives/head-metadata.directive';
+import { HomeMetaTags } from './home-meta-tags.directive';
 
-describe('HomeMetaTagsDirective', () => {
-	let head: HeadMetadataDirective;
+describe('HomeMetaTags', () => {
+	let head: HeadMetadata;
 
 	beforeEach(() => {
 		clearAllMocks();
 		TestBed.configureTestingModule({
-			providers: [HomeMetaTagsDirective, HeadMetadataDirective],
+			providers: [HomeMetaTags, HeadMetadata],
 		});
-		head = TestBed.inject(HeadMetadataDirective);
+		head = TestBed.inject(HeadMetadata);
 	});
 
 	it('should apply the static home meta tags', () => {
@@ -24,7 +24,7 @@ describe('HomeMetaTagsDirective', () => {
 		const canonicalSpy = spyOn(head, 'setCanonicalUrl');
 		const robotsSpy = spyOn(head, 'setRobots');
 
-		TestBed.runInInjectionContext(() => new HomeMetaTagsDirective());
+		TestBed.runInInjectionContext(() => new HomeMetaTags());
 		TestBed.tick();
 
 		expect(titleSpy).toHaveBeenCalledWith('Cuentos y relatos breves para leer en línea | La Cuentoneta');

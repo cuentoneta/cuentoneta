@@ -4,15 +4,15 @@ import { DOCUMENT } from '@angular/common';
 import { signal } from '@angular/core';
 
 import { onoffCollectionTeasersMock } from '@mocks/onoff-collections.mock';
-import { type CollectionTeaser } from '@models/collection.model';
-import { CollectionsStructuredDataDirective } from './collections-structured-data.directive';
+import type { CollectionTeaser } from '@models/collection.model';
+import { CollectionsStructuredData } from './collections-structured-data.directive';
 import { COLLECTIONS_HOST } from './collections-host';
 
-describe('CollectionsStructuredDataDirective', () => {
+describe('CollectionsStructuredData', () => {
 	const collectionsSignal = signal<readonly CollectionTeaser[]>([]);
 
 	function instantiate(): void {
-		TestBed.runInInjectionContext(() => new CollectionsStructuredDataDirective());
+		TestBed.runInInjectionContext(() => new CollectionsStructuredData());
 	}
 
 	beforeEach(() => {
@@ -20,7 +20,7 @@ describe('CollectionsStructuredDataDirective', () => {
 		collectionsSignal.set([]);
 		TestBed.configureTestingModule({
 			providers: [
-				CollectionsStructuredDataDirective,
+				CollectionsStructuredData,
 				{ provide: COLLECTIONS_HOST, useValue: { collections: collectionsSignal.asReadonly() } },
 			],
 		});

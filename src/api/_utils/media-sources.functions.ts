@@ -11,6 +11,7 @@ import type {
 	SpotifyPodcastEpisode,
 	YouTubeVideo,
 } from '@models/media.model';
+import type { ImageUrlResolver } from './functions';
 import { urlFor } from './functions';
 import { createMarkdown } from '@models/markdown.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
@@ -32,12 +33,15 @@ type SpaceRecordingSource = Extract<MediaSource, { _type: 'spaceRecording' }>;
 type SpotifyPodcastEpisodeSource = Extract<MediaSource, { _type: 'spotifyPodcastEpisode' }>;
 type YouTubeVideoSource = Extract<MediaSource, { _type: 'youTubeVideo' }>;
 
-export function mapMediaSources(mediaSources: LiteraryWorkMediaSources | CollectionMediaSources): Media[] {
+export function mapMediaSources(
+	mediaSources: LiteraryWorkMediaSources | CollectionMediaSources,
+	resolveImageUrl: ImageUrlResolver = urlFor,
+): Media[] {
 	if (!mediaSources) return [];
 
 	const media: Media[] = [];
 	for (const mediaSource of mediaSources) {
-		const mapped = mapMediaSourceOrDiscard(mediaSource);
+		const mapped = mapMediaSourceOrDiscard(mediaSource, resolveImageUrl);
 		if (mapped) {
 			media.push(mapped);
 		}
@@ -81,9 +85,9 @@ function toMediaTypeKeyOrDiscard(type: CollectionWorkMediaSources[number]['_type
 // respuesta entera. `Rule.required()` no se aplica retroactivamente a documentos ya publicados, así que
 // mientras el contenido cargado no migre puede llegar una descripción vacía o en el formato viejo: eso
 // debe costar un widget, no la página. Misma contención que ya aplica el tipo no modelado.
-function mapMediaSourceOrDiscard(mediaSource: MediaSource): Media | undefined {
+function mapMediaSourceOrDiscard(mediaSource: MediaSource, resolveImageUrl: ImageUrlResolver): Media | undefined {
 	try {
-		return mapMediaSource(mediaSource);
+		return mapMediaSource(mediaSource, resolveImageUrl);
 	} catch (error) {
 		console.warn(`mediaSource descartado: su descripción no pudo mapearse`, {
 			_key: mediaSource._key,
@@ -94,12 +98,12 @@ function mapMediaSourceOrDiscard(mediaSource: MediaSource): Media | undefined {
 	}
 }
 
-function mapMediaSource(mediaSource: MediaSource): Media | undefined {
+function mapMediaSource(mediaSource: MediaSource, resolveImageUrl: ImageUrlResolver): Media | undefined {
 	switch (mediaSource._type) {
 		case 'audioRecording':
 			return getAudioRecordingData(mediaSource);
 		case 'spaceRecording':
-			return getSpaceRecordingData(mediaSource);
+			return getSpaceRecordingData(mediaSource, resolveImageUrl);
 		case 'spotifyPodcastEpisode':
 			return getSpotifyPodcastEpisodeData(mediaSource);
 		case 'youTubeVideo':
@@ -128,7 +132,7 @@ function getAudioRecordingData(mediaSource: AudioRecordingSource): AudioRecordin
 	};
 }
 
-function getSpaceRecordingData(mediaSource: SpaceRecordingSource): SpaceRecording {
+function getSpaceRecordingData(mediaSource: SpaceRecordingSource, resolveImageUrl: ImageUrlResolver): SpaceRecording {
 	return {
 		title: mediaSource.title,
 		type: mediaSource._type,
@@ -139,7 +143,7 @@ function getSpaceRecordingData(mediaSource: SpaceRecordingSource): SpaceRecordin
 			url: mediaSource.audioUrl,
 			duration: mediaSource.duration,
 			hostName: mediaSource.hostName,
-			hostAvatar: mediaSource.hostAvatar ? urlFor(mediaSource.hostAvatar) : undefined,
+			hostAvatar: mediaSource.hostAvatar ? resolveImageUrl(mediaSource.hostAvatar) : undefined,
 			date: mediaSource.date,
 		},
 	};

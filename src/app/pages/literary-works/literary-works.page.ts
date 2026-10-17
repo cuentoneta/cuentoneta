@@ -5,8 +5,8 @@ import { RouterLink } from '@angular/router';
 import { AppRoutes } from '../../app.routes';
 import { LiteraryWorkApi } from '../../providers/literary-work.provider';
 import { LITERARY_WORKS_HOST, type LiteraryWorksHost } from './literary-works-host';
-import { LiteraryWorksMetaTagsDirective } from './literary-works-meta-tags.directive';
-import { LiteraryWorksStructuredDataDirective } from './literary-works-structured-data.directive';
+import { LiteraryWorksMetaTags } from './literary-works-meta-tags.directive';
+import { LiteraryWorksStructuredData } from './literary-works-structured-data.directive';
 import { Skeleton } from '@components/skeleton/skeleton';
 
 @Component({
@@ -81,7 +81,7 @@ import { Skeleton } from '@components/skeleton/skeleton';
 		</div>
 	`,
 	providers: [{ provide: LITERARY_WORKS_HOST, useExisting: forwardRef(() => LiteraryWorksPage) }],
-	hostDirectives: [LiteraryWorksMetaTagsDirective, LiteraryWorksStructuredDataDirective],
+	hostDirectives: [LiteraryWorksMetaTags, LiteraryWorksStructuredData],
 	imports: [RouterLink, Skeleton],
 })
 export default class LiteraryWorksPage implements LiteraryWorksHost {

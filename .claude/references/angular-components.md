@@ -66,7 +66,7 @@ Los hermanos de un componente —`.html`, `.css`, `.spec.ts`, `.stories.ts`, `.d
 
 **Los componentes host declarados dentro de un `*.spec.ts` o un `*.stories.ts` quedan fuera de esta convención**, con nombre y ubicación libres (p. ej. `HostComponent`, `ClampHostComponent`, `ButtonGroupStoryHostComponent`). Son andamiaje local de ese archivo —no se importan desde ningún otro lado, no se rutean ni se catalogan— y no componentes de la aplicación.
 
-**Alcance:** la convención rige **solo** para `@Component`. Directivas, pipes y servicios conservan su convención propia (`x.directive.ts` + `XDirective`, etc.); la regla que la verifica no los mira.
+**Alcance:** esta sección rige **solo** para `@Component`. Las directivas y los pipes siguen su propia convención de nombre, en [Nombre de directivas y pipes](#nombre-de-directivas-y-pipes); la regla de arriba no los mira.
 
 **Rationale.** La guía de estilo de Angular deja de recomendar el sufijo `Component` a partir de la v20. `Page` se conserva, pero como sufijo de **rol** y no de tipo: una página tiene obligaciones que un componente no tiene —la cargan las rutas y declara las directivas de SEO (ver [`angular-state.md` §8](./angular-state.md#8-directivas-de-seo-de-página-declarar-el-combo-según-la-indexabilidad))— y los guardrails de layout y de SEO la descubren por su fuente. Por eso el sufijo queda **reservado** a los archivos `.page.ts`: una clase que no vive en uno no puede terminar en `Page`, y un `.page.ts` fuera de `src/app/pages/` tampoco es válido.
 
@@ -89,6 +89,33 @@ export class AuthorTeaserCard {
 
 ---
 
+## Nombre de directivas y pipes
+
+Una clase `@Directive` o `@Pipe` se nombra **sin** el sufijo de su decorador: `Tooltip`, no `TooltipDirective`; `Repeat`, no `RepeatPipe`. El **archivo** conserva su marcador de rol (`tooltip.directive.ts`, `repeat.pipe.ts`): agrupa por rol en el árbol y en los globs, igual que `.page.ts`, `.provider.ts` o `.model.ts`, y no forma parte de esta convención.
+
+| Decorador                      | Archivo                           | Clase                                    |
+| ------------------------------ | --------------------------------- | ---------------------------------------- |
+| `@Directive`                   | `tooltip.directive.ts`            | `export class Tooltip`                   |
+| `@Directive` abstracta         | `abstract-meta-tags.directive.ts` | `export abstract class AbstractMetaTags` |
+| Directiva de SEO de una página | `home-meta-tags.directive.ts`     | `export class HomeMetaTags`              |
+| `@Pipe`                        | `repeat.pipe.ts`                  | `export class Repeat`                    |
+
+**Rationale.** Es el mismo cambio de la guía de estilo que para los componentes: el sufijo repite el decorador que la clase ya lleva, y una directiva o un pipe se usa por su selector o su `name`, nunca por el nombre de la clase.
+
+**Qué no alcanza.**
+
+- **Los servicios** (`@Injectable`/`@Service`). `Service` es en este repo un **rol de arquitectura** (controller → service → repository): nombra el contrato (`LayoutService`) y lo distingue de su implementación. Sin el sufijo quedarían nombres como `Layout` o `Analytics`, que ocultan que son servicios. Los services del backend, además, son funciones.
+- **Los prefijos de Qualified Implementation** (`Sanity*`, `Http*`, `Stub*`, `Fake*`, `Spy*`) no son sufijos de tipo: la regla solo mira el **final** del nombre contra el sufijo de su propio decorador. Tampoco lo son los sufijos de rol `Page`, `Skeleton` y `Api`.
+- **Los nombres de archivo**, como se dijo arriba.
+
+**Acoplamiento por nombre.** Si algo identifica estas clases por su nombre, el renombre lo rompe sin que el compilador avise. Hoy es el caso del guardrail de SEO (`seo-host-directives.util.ts`), que reconoce las directivas de una página por su nombre: el final (`MetaTags`, `StructuredData`) o el nombre completo (`HeadMetadata`).
+
+**Enforcement.** La regla de ESLint `cuentoneta/class-name-without-type-suffix` (`tools/eslint/class-name-without-type-suffix.js`), activa en el gate `lint` sobre `src/**`, falla ante una clase `@Directive` o `@Pipe` cuyo nombre termina en el sufijo de su propio decorador. Los `*.spec.ts` y `*.stories.ts` quedan exentos. No tiene autofix, porque renombrar una clase obliga a tocar sus referencias en otros archivos. Ampliarla a otro decorador es editar su lista, y se ve en el diff.
+
+**Puntos ciegos declarados:** los servicios y los nombres de archivo, por lo dicho; y lo que la regla no ve por construcción: un decorador referenciado por un miembro (`@ng.Directive()`), importado con alias (`import { Directive as D }`) o aplicado a una class expression. El schematic de Angular puede reintroducir el sufijo al generar una directiva o un pipe; el gate `lint` lo atrapa.
+
+---
+
 ## Visibilidad de campos
 
 Regla central: **un campo de componente nunca es `public` por defecto.** Desde Angular 22.2 la plantilla, los host bindings y el type-check de ambos pueden leer miembros `private`, así que lo que solo consume la plantilla es `private`, igual que el resto de los internos.
@@ -96,7 +123,7 @@ Regla central: **un campo de componente nunca es `public` por defecto.** Desde A
 | Visibilidad | Cuándo                                                                                                                                                                               |
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `private`   | Todo lo que no es API: lo que lee la plantilla o el `host` (rutas de navegación, helpers de formato, flags de UI) y los internos (servicios inyectados, effects, estado interno).    |
-| `protected` | **Solo** miembros que una subclase lee o sobrescribe, como los de las directivas abstractas `AbstractMetaTagsDirective` y `AbstractStructuredDataDirective`.                         |
+| `protected` | **Solo** miembros que una subclase lee o sobrescribe, como los de las directivas abstractas `AbstractMetaTags` y `AbstractStructuredData`.                                           |
 | `public`    | **Solo** inputs/outputs/models de signals (`input()`, `output()`, `model()`), **API imperativa** llamada por padres (`open()`, `close()`), y miembros **requeridos por interfaces**. |
 
 ```typescript
@@ -128,7 +155,7 @@ private readonly icon = computed(() => /* … */); // la plantilla lo interpola
 private readonly isExpanded = signal(false); // estado interno, no llega a la plantilla
 ```
 
-`public` queda reservado a las dos excepciones que ya fija la tabla: un miembro **requerido por una interfaz** (p. ej. `literaryWork` en `LiteraryWorkPage`, exigido por `LiteraryWorkHost`) o **consumido por otro componente** (p. ej. `hiddenCount` de `TagsOverflowDirective`, que lee `TagsList`). Exponer una signal en `public` "por las dudas" agranda la API del componente sin que nadie la consuma.
+`public` queda reservado a las dos excepciones que ya fija la tabla: un miembro **requerido por una interfaz** (p. ej. `literaryWork` en `LiteraryWorkPage`, exigido por `LiteraryWorkHost`) o **consumido por otro componente** (p. ej. `hiddenCount` de `TagsOverflow`, que lee `TagsList`). Exponer una signal en `public` "por las dudas" agranda la API del componente sin que nadie la consuma.
 
 ---
 
@@ -234,14 +261,14 @@ El reemplazo de `ngOnDestroy` por un `effect()` nombrado con `onCleanup` es el p
 
 ```typescript
 // ❌ Antes
-export class MetaTagsDirective implements OnDestroy {
+export class MetaTags implements OnDestroy {
 	ngOnDestroy() {
 		this.resetTags();
 	}
 }
 
 // ✅ Después — field initializer nombrado, sin comentario que reitere el reemplazo
-export class MetaTagsDirective {
+export class MetaTags {
 	private readonly resetTagsOnDestroy = effect((onCleanup) => {
 		onCleanup(() => this.resetTags());
 	});
@@ -369,7 +396,7 @@ Todo lo que afecte al elemento anfitrión (host) se declara en la propiedad **`h
 		'(mouseleave)': 'onMouseLeave()',
 	},
 })
-export class TooltipDirective {
+export class Tooltip {
 	private onMouseEnter() {
 		/* ... */
 	}
@@ -381,7 +408,7 @@ export class TooltipDirective {
 
 Notas:
 
-- Los métodos/propiedades referenciados por string desde `host` son **`private`** (no `public`). Distinto es el caso de las directivas cuya API la consumen los anfitriones vía `hostDirectives` + `inject(Directive)` (p. ej. `TooltipDirective.text.set(...)`): esas signals **sí** son `public` por ser API imperativa.
+- Los métodos/propiedades referenciados por string desde `host` son **`private`** (no `public`). Distinto es el caso de las directivas cuya API la consumen los anfitriones vía `hostDirectives` + `inject(Directive)` (p. ej. `Tooltip.text.set(...)`): esas signals **sí** son `public` por ser API imperativa.
 - El bloque `:host` en `styles` se reserva para lo que **no** es `@apply`: CSS crudo (`font-family`, `transition`, …), `:host ::ng-deep ...` y `:host(.clase)` condicionales. Esas reglas **no** se mueven a `host`.
 - Si el componente ya tiene `host: { class: '...' }`, **agregar** las utilidades al string existente, no reemplazarlo.
 - **`hostDirectives`** (campo del decorador, distinto de `host`) es el mecanismo de composición de directivas del anfitrión. En **componentes de página** es cómo se declaran las directivas de SEO (meta tags + structured data): la forma correcta depende de la indexabilidad de la ruta y está **enforced por test** — ver [`angular-state.md` §8](./angular-state.md#8-directivas-de-seo-de-página-declarar-el-combo-según-la-indexabilidad).
@@ -463,6 +490,7 @@ La utilidad `z` de Tailwind resuelve cualquier número sin consultar el tema, as
 ## Checklist al crear/modificar un componente
 
 - [ ] Ubicación y nombre según [Ubicación y nombre de componentes](#ubicación-y-nombre-de-componentes): sin sufijo `Component`, `x.ts`/`x.page.ts` en la carpeta que corresponde a su rol.
+- [ ] Si es una directiva o un pipe, sin el sufijo `Directive`/`Pipe` en la clase — ver [Nombre de directivas y pipes](#nombre-de-directivas-y-pipes).
 - [ ] Selector `cuentoneta-…`; sin declarar `changeDetection` (OnPush es el default de v22).
 - [ ] Inputs/outputs con `input()`/`input.required()`/`output()`/`model()`; queries con `viewChild()`/`contentChild()`.
 - [ ] Campos `private` (plantilla e internos); `protected` solo para lo que usa una subclase; `public` solo para API (inputs/outputs/imperativa/interfaces).

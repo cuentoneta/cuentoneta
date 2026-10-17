@@ -1,0 +1,8 @@
+overrides:
+  'uuid': '>=11.1.1'
+  'ws': '>=8.20.1'
+  'brace-expansion@5': '>=5.0.6'
+  'prismjs@1': '>=1.30.0 <2'
+  'js-yaml@3': '>=3.15.2 <4'
+  'smol-toml@1': '>=1.9.0 <2'
+  'source-map-js@1': '>=1.2.2 <2'

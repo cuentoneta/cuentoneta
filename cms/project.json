@@ -68,7 +68,7 @@
 			"executor": "nx:run-commands",
 			"outputs": ["{projectRoot}/schema.json"],
 			"options": {
-				"command": "pnpm exec sanity schema extract --enforce-required-fields --workspace=production",
+				"command": "pnpm exec sanity schema extract --enforce-required-fields --workspace=production --force",
 				"cwd": "cms"
 			}
 		},

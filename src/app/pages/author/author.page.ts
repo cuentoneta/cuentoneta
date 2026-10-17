@@ -10,8 +10,8 @@ import { LiteraryWorkApi } from '../../providers/literary-work.provider';
 
 // SEO
 import { AUTHOR_HOST, type AuthorHost } from './author-host';
-import { AuthorMetaTagsDirective } from './author-meta-tags.directive';
-import { AuthorStructuredDataDirective } from './author-structured-data.directive';
+import { AuthorMetaTags } from './author-meta-tags.directive';
+import { AuthorStructuredData } from './author-structured-data.directive';
 
 // Components
 import { AuthorInfoPanel } from '@components/author-info-panel/author-info-panel';
@@ -25,7 +25,7 @@ import { Skeleton } from '@components/skeleton/skeleton';
 	selector: 'cuentoneta-author',
 	templateUrl: './author.page.html',
 	providers: [{ provide: AUTHOR_HOST, useExisting: forwardRef(() => AuthorPage) }],
-	hostDirectives: [AuthorMetaTagsDirective, AuthorStructuredDataDirective],
+	hostDirectives: [AuthorMetaTags, AuthorStructuredData],
 	imports: [AuthorInfoPanel, Divider, Drawer, LiteraryWorkTeaserCard, NgTemplateOutlet, Resource, Skeleton],
 })
 export default class AuthorPage implements AuthorHost {

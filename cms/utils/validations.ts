@@ -1,5 +1,6 @@
 import { isValid, parseISO } from 'date-fns';
 import { isSlug } from '@models/slug.model';
+import { HISTORICAL_YEAR_RANGE, parseHistoricalDate } from '@utils/historical-date.utils';
 
 export const localizedRequire = (value: unknown): true | string => {
 	if (!value) return 'Este campo es requerido';
@@ -8,13 +9,14 @@ export const localizedRequire = (value: unknown): true | string => {
 
 export function validateHistoricalDate(value?: string): true | string {
 	if (!value) return true;
-	const match = /^(-?)(\d{4})-(\d{2})-(\d{2})$/.exec(value);
-	if (!match) return 'Formato inválido. Usar YYYY-MM-DD o -YYYY-MM-DD para fechas a.C.';
-	const [, sign, y, m, d] = match;
-	const year = parseInt(sign + y, 10);
+	const parts = parseHistoricalDate(value);
+	if (!parts) return 'Formato inválido. Usar YYYY-MM-DD o -YYYY-MM-DD para fechas a.C.';
+	const { year, yearDigits, month, day, isBce } = parts;
 	if (year === 0) return 'No existe el año 0 en numeración histórica (1 a.C. precede a 1 d.C.).';
-	if (year < -3000 || year > 2100) return 'Año fuera de rango admitido (-3000 a 2100).';
-	const iso = sign === '-' ? `-${y.padStart(6, '0')}-${m}-${d}` : `${y}-${m}-${d}`;
+	if (year < HISTORICAL_YEAR_RANGE.min || year > HISTORICAL_YEAR_RANGE.max) {
+		return `Año fuera de rango admitido (${HISTORICAL_YEAR_RANGE.min} a ${HISTORICAL_YEAR_RANGE.max}).`;
+	}
+	const iso = isBce ? `-${yearDigits.padStart(6, '0')}-${month}-${day}` : `${yearDigits}-${month}-${day}`;
 	if (!isValid(parseISO(iso))) return 'Fecha calendario inválida (revisar día y mes para el año indicado).';
 	return true;
 }

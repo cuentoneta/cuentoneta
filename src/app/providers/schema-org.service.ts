@@ -1,5 +1,5 @@
 import { DOCUMENT, inject, Service } from '@angular/core';
-import { type Thing, type WithContext } from 'schema-dts';
+import type { Thing, WithContext } from 'schema-dts';
 
 /**
  * Gestiona los bloques `<script type="application/ld+json">` del `<head>`.

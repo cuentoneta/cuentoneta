@@ -4,18 +4,18 @@ import { Title } from '@angular/platform-browser';
 
 import { AppRoutes } from '../../app.routes';
 import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
-import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
-import { CollectionsMetaTagsDirective } from './collections-meta-tags.directive';
+import { HeadMetadata } from '../../directives/head-metadata.directive';
+import { CollectionsMetaTags } from './collections-meta-tags.directive';
 
-describe('CollectionsMetaTagsDirective', () => {
+describe('CollectionsMetaTags', () => {
 	function instantiate(): void {
-		TestBed.runInInjectionContext(() => new CollectionsMetaTagsDirective());
+		TestBed.runInInjectionContext(() => new CollectionsMetaTags());
 	}
 
 	beforeEach(() => {
 		clearAllMocks();
 		TestBed.configureTestingModule({
-			providers: [CollectionsMetaTagsDirective, HeadMetadataDirective],
+			providers: [CollectionsMetaTags, HeadMetadata],
 		});
 	});
 
@@ -29,7 +29,7 @@ describe('CollectionsMetaTagsDirective', () => {
 	});
 
 	it('should set the canonical URL of the catalogue', () => {
-		const canonicalSpy = spyOn(TestBed.inject(HeadMetadataDirective), 'setCanonicalUrl');
+		const canonicalSpy = spyOn(TestBed.inject(HeadMetadata), 'setCanonicalUrl');
 
 		instantiate();
 		TestBed.tick();
@@ -38,7 +38,7 @@ describe('CollectionsMetaTagsDirective', () => {
 	});
 
 	it('should declare the page as indexable', () => {
-		const robotsSpy = spyOn(TestBed.inject(HeadMetadataDirective), 'setRobots');
+		const robotsSpy = spyOn(TestBed.inject(HeadMetadata), 'setRobots');
 
 		instantiate();
 		TestBed.tick();
@@ -47,7 +47,7 @@ describe('CollectionsMetaTagsDirective', () => {
 	});
 
 	it('should set a description of its own', () => {
-		const descriptionSpy = spyOn(TestBed.inject(HeadMetadataDirective), 'setDescription');
+		const descriptionSpy = spyOn(TestBed.inject(HeadMetadata), 'setDescription');
 
 		instantiate();
 		TestBed.tick();
@@ -56,7 +56,7 @@ describe('CollectionsMetaTagsDirective', () => {
 	});
 
 	it('should set keywords', () => {
-		const keywordsSpy = spyOn(TestBed.inject(HeadMetadataDirective), 'setKeywords');
+		const keywordsSpy = spyOn(TestBed.inject(HeadMetadata), 'setKeywords');
 
 		instantiate();
 		TestBed.tick();

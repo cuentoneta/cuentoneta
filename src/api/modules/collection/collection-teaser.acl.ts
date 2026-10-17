@@ -3,6 +3,7 @@ import { createCollectionTeaser, type CollectionImagery, type CollectionTeaser }
 import { createMarkdown, type Markdown } from '@models/markdown.model';
 import type { SanitizedHtml } from '@models/sanitized-html.model';
 import { markdownToLinklessSanitizedHtml } from '@utils/markdown-pipeline.utils';
+import type { ImageUrlResolver } from '../../_utils/functions';
 import { mapTags, urlFor } from '../../_utils/functions';
 import { mapMediaSources } from '../../_utils/media-sources.functions';
 import { MalformedCollectionError } from './collection.errors';
@@ -21,13 +22,17 @@ type SanityCollectionTeaserSource =
 	CollectionsQueryResult[number] | NonNullable<LandingPageContentQueryResult>['collections'][number];
 type SanityFeaturedImage = NonNullable<CollectionBySlugQueryResult>['featuredImage'];
 
-export function mapSanityCollectionTeaser(raw: SanityCollectionTeaserSource): CollectionTeaser {
+export function mapSanityCollectionTeaser(
+	raw: SanityCollectionTeaserSource,
+	resolveImageUrl: ImageUrlResolver = urlFor,
+): CollectionTeaser {
 	return createCollectionTeaser({
-		...mapSharedCollectionFields(raw, markdownToLinklessSanitizedHtml),
+		...mapSharedCollectionFields(raw, markdownToLinklessSanitizedHtml, resolveImageUrl),
 		imagery: resolveCollectionImagery(
 			raw.slug,
 			raw.featuredImage,
-			raw.literaryWorkCoverImages.map((cover) => (cover ? urlFor(cover) : '')),
+			raw.literaryWorkCoverImages.map((cover) => (cover ? resolveImageUrl(cover) : '')),
+			resolveImageUrl,
 		),
 		// Cero cuando la colección no tiene obras, que es el caso que la factory rechaza.
 		count: raw.count,
@@ -42,6 +47,7 @@ export function mapSanityCollectionTeaser(raw: SanityCollectionTeaserSource): Co
 export function mapSharedCollectionFields(
 	raw: NonNullable<CollectionBySlugQueryResult> | SanityCollectionTeaserSource,
 	toSanitizedHtml: (markdown: Markdown) => SanitizedHtml,
+	resolveImageUrl: ImageUrlResolver,
 ) {
 	return {
 		_id: raw._id,
@@ -50,7 +56,7 @@ export function mapSharedCollectionFields(
 		description: toSanitizedHtml(createMarkdown(raw.description)),
 		tags: mapTags(raw.tags),
 		config: { showAuthors: raw.config.showAuthors },
-		mediaSources: mapMediaSources(raw.mediaSources),
+		mediaSources: mapMediaSources(raw.mediaSources, resolveImageUrl),
 	};
 }
 
@@ -61,8 +67,9 @@ export function resolveCollectionImagery(
 	slug: string,
 	featuredImage: SanityFeaturedImage,
 	coverUrls: string[],
+	resolveImageUrl: ImageUrlResolver,
 ): CollectionImagery {
-	const image = featuredImage ? urlFor(featuredImage) : '';
+	const image = featuredImage ? resolveImageUrl(featuredImage) : '';
 	if (image !== '') {
 		return { kind: 'representative', image };
 	}

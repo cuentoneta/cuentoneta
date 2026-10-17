@@ -20,19 +20,10 @@
 import type { LiteraryWork } from '@models/literary-work.model';
 import type { SanityClient } from '@sanity/client';
 import { fn } from '@test-utils';
+import { stubImageUrlResolver } from '@testing/image-url-resolver.stub';
 import { SanityLiteraryWorkRepository } from '../api/modules/literary-work/literary-work.repository.sanity';
 import { onoffLiteraryWorksMock } from './onoff-literary-works.mock';
 import { onoffRawLiteraryWorksMock } from './onoff-raw-literary-works.mock';
-
-// El builder de imágenes resuelve la referencia al asset local que la tabla del corpus le asocia, en vez
-// de a una URL de `cdn.sanity.io` que dependería del dataset del entorno. Así las dos capas dicen lo
-// mismo sobre cada imagen y la comparación no necesita dejar ningún campo afuera.
-/* eslint-disable no-restricted-syntax -- vi.mock: el builder de imágenes de Sanity no tiene punto de inyección */
-vi.mock('@sanity/image-url', async () => {
-	const { stubImageUrlBuilderModule } = await import('@testing/sanity-image-url.stub');
-	return stubImageUrlBuilderModule();
-});
-/* eslint-enable no-restricted-syntax */
 
 function comparable(work: LiteraryWork): unknown {
 	return {
@@ -45,7 +36,7 @@ function comparable(work: LiteraryWork): unknown {
 
 function repoReturning(raw: unknown): SanityLiteraryWorkRepository {
 	const client = { fetch: fn(() => Promise.resolve(raw)) } as unknown as SanityClient;
-	return new SanityLiteraryWorkRepository(client);
+	return new SanityLiteraryWorkRepository(client, stubImageUrlResolver);
 }
 
 describe('el corpus de dominio de LiteraryWork coincide con el mapeo del ACL', () => {

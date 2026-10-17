@@ -1,12 +1,23 @@
 import { Directive, effect, inject } from '@angular/core';
 
-import { HeadMetadataDirective } from './head-metadata.directive';
+import type { SearchImage } from '@utils/sanity-image.utils';
+import { HeadMetadata } from './head-metadata.directive';
 
 @Directive()
-export abstract class AbstractMetaTagsDirective {
-	protected readonly head = inject(HeadMetadataDirective);
+export abstract class AbstractMetaTags {
+	protected readonly head = inject(HeadMetadata);
 
 	protected abstract applyMetaTags(): void;
+
+	// Sin imagen propia se repone el default: en la navegación entre páginas del mismo tipo la directiva
+	// no se destruye, y la imagen de la entidad anterior quedaría en la cabecera.
+	protected applySearchImage(image: SearchImage | undefined): void {
+		if (image) {
+			this.head.setRepresentativeImage(image.url);
+		} else {
+			this.head.removeImage();
+		}
+	}
 
 	private readonly metaTagsEffect = effect(() => {
 		this.applyMetaTags();

@@ -11,17 +11,10 @@
 import type { LiteraryWorkTeaser } from '@models/literary-work.model';
 import type { SanityClient } from '@sanity/client';
 import { fn } from '@test-utils';
+import { stubImageUrlResolver } from '@testing/image-url-resolver.stub';
 import { SanityLiteraryWorkRepository } from '../api/modules/literary-work/literary-work.repository.sanity';
 import { onoffLiteraryWorkTeasersMock } from './onoff-literary-work-teasers.mock';
 import { onoffRawLiteraryWorkTeasersMock } from './onoff-raw-literary-works.mock';
-
-// Ver el spec homónimo de `LiteraryWork` para el porqué de sustituir el builder de imágenes.
-/* eslint-disable no-restricted-syntax -- vi.mock: el builder de imágenes de Sanity no tiene punto de inyección; darle uno y retirar esta supresión es #2366 */
-vi.mock('@sanity/image-url', async () => {
-	const { stubImageUrlBuilderModule } = await import('@testing/sanity-image-url.stub');
-	return stubImageUrlBuilderModule();
-});
-/* eslint-enable no-restricted-syntax */
 
 function comparable(teaser: LiteraryWorkTeaser): unknown {
 	return {
@@ -37,7 +30,7 @@ function comparable(teaser: LiteraryWorkTeaser): unknown {
 
 function repoReturning(raw: unknown): SanityLiteraryWorkRepository {
 	const client = { fetch: fn(() => Promise.resolve(raw)) } as unknown as SanityClient;
-	return new SanityLiteraryWorkRepository(client);
+	return new SanityLiteraryWorkRepository(client, stubImageUrlResolver);
 }
 
 describe('el corpus de dominio de los teasers de obra coincide con el mapeo del ACL', () => {

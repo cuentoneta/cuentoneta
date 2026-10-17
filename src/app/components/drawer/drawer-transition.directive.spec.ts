@@ -1,15 +1,15 @@
 import { fn, runOnlyPendingTimers, useFakeTimers, useRealTimers } from '@test-utils';
 
-import { DrawerTransitionDirective } from './drawer-transition.directive';
+import { DrawerTransition } from './drawer-transition.directive';
 
 const nextFrame = (): Promise<void> => new Promise((resolve) => requestAnimationFrame(() => resolve()));
 
-describe('DrawerTransitionDirective', () => {
-	let directive: DrawerTransitionDirective;
+describe('DrawerTransition', () => {
+	let directive: DrawerTransition;
 	let dialog: HTMLDialogElement;
 
 	beforeEach(() => {
-		directive = new DrawerTransitionDirective();
+		directive = new DrawerTransition();
 		dialog = document.createElement('dialog');
 		document.body.appendChild(dialog);
 	});

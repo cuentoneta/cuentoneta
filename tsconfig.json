@@ -1,6 +1,9 @@
 {
 	"compilerOptions": {
 		"moduleResolution": "bundler",
+		// Incompatible con `verbatimModuleSyntax`: la metadata necesita en runtime el tipo de cada
+		// parámetro del constructor, y ese import va con `type` y se borra. Ningún tsconfig hijo la
+		// enciende; el repo no usa DI por constructor, así que no hay a quién servirle esa metadata.
 		"emitDecoratorMetadata": false,
 		"target": "es2022",
 		"module": "preserve",
@@ -20,6 +23,9 @@
 			"@testing/*": ["./src/testing/*"]
 		},
 		"isolatedModules": true,
+		// El compilador, no solo el linter, rechaza un import de solo-tipo sin `type` (TS1484). Como
+		// `import { type A }` deja de borrarse, lo complementa `@typescript-eslint/no-import-type-side-effects`.
+		"verbatimModuleSyntax": true,
 		"skipLibCheck": true,
 		"strict": true
 	},

@@ -3,18 +3,18 @@ import { TestBed } from '@angular/core/testing';
 import { DOCUMENT } from '@angular/common';
 
 import { SchemaOrgService } from '../../providers/schema-org.service';
-import { HomeStructuredDataDirective } from './home-structured-data.directive';
+import { HomeStructuredData } from './home-structured-data.directive';
 
 const CONTEXT = 'https://schema.org';
 
-describe('HomeStructuredDataDirective', () => {
+describe('HomeStructuredData', () => {
 	function instantiate(): void {
-		TestBed.runInInjectionContext(() => new HomeStructuredDataDirective());
+		TestBed.runInInjectionContext(() => new HomeStructuredData());
 	}
 
 	beforeEach(() => {
 		clearAllMocks();
-		TestBed.configureTestingModule({ providers: [HomeStructuredDataDirective] });
+		TestBed.configureTestingModule({ providers: [HomeStructuredData] });
 	});
 
 	afterEach(() => {

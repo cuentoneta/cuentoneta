@@ -176,7 +176,7 @@ documentos (a mano)  →  (groq-js, query real)  →  raw (generado)  →  (ACL 
 
 El spec `src/mocks/onoff-documents.mock.spec.ts` es el **gate de frescura**: vuelve a evaluar esas mismas queries y compara, por valor, contra las fixtures raw commiteadas. Corre dentro de `pnpm test` (gate `test`) — no es un gate de CI aparte. El detalle completo —comando, qué se genera y la guarda contra referencias colgadas— vive en [`src/mocks/onoff/README.md`](../../src/mocks/onoff/README.md).
 
-Las **imágenes** del corpus atraviesan las tres capas por una única tabla, `src/mocks/onoff-image-assets.mock.ts`: cada entrada asocia la referencia que declara el documento con la ruta del asset local que declara el dominio. Los specs de cruce contra el ACL (`onoff-*.acl-alignment.spec.ts`, uno por agregado) sustituyen el builder de imágenes de Sanity por un resolutor sobre esa tabla, y por eso comparan portadas, retrato, bandera, avatar y banners de campaña **sin excluir ningún campo**. Un cruce que necesitara volver a excluir una imagen sería la señal de que la tabla quedó incompleta, no de que la comparación pide una excepción.
+Las **imágenes** del corpus atraviesan las tres capas por una única tabla, `src/mocks/onoff-image-assets.mock.ts`: cada entrada asocia la referencia que declara el documento con la ruta del asset local que declara el dominio. Los specs de cruce contra el ACL (`onoff-*.acl-alignment.spec.ts`, uno por agregado) reciben un resolver de imágenes inyectado (`stubImageUrlResolver`, de `@testing/image-url-resolver.stub`) apoyado en esa tabla, y por eso comparan portadas, retrato, bandera, avatar y banners de campaña **sin excluir ningún campo**. Un cruce que necesitara volver a excluir una imagen sería la señal de que la tabla quedó incompleta, no de que la comparación pide una excepción.
 
 ---
 
@@ -282,7 +282,7 @@ Variantes: `queryBy*` (cuando se espera ausencia, no lanza), `findBy*` (async, e
 
 `happy-dom` trae un `IntersectionObserver` que no hace nada: alcanza para renderizar, pero nunca entrega un callback. `src/test-setup.ts` instala un **stub global** (`src/testing/intersection-observer.stub.ts`) que sí lo entrega bajo control del spec.
 
-Los specs que necesitan **simular overflow** (p. ej. `TagsList` / `TagsOverflowDirective`, que recorta tags por ancho con `IntersectionObserver`) reutilizan los helpers del mismo stub:
+Los specs que necesitan **simular overflow** (p. ej. `TagsList` / `TagsOverflow`, que recorta tags por ancho con `IntersectionObserver`) reutilizan los helpers del mismo stub:
 
 | Helper                              | Efecto                                                                 |
 | ----------------------------------- | ---------------------------------------------------------------------- |
@@ -295,7 +295,7 @@ Los specs que necesitan **simular overflow** (p. ej. `TagsList` / `TagsOverflowD
 import { render, screen } from '@testing-library/angular';
 import { installIntersectionObserverStub, markOutsideViewport } from '../../testing/intersection-observer.stub';
 
-describe('TagsOverflowDirective', () => {
+describe('TagsOverflow', () => {
 	beforeEach(() => installIntersectionObserverStub());
 
 	it('should hide the tags the observer reports outside the container', async () => {
@@ -318,7 +318,7 @@ describe('TagsOverflowDirective', () => {
 
 `happy-dom` trae un `ResizeObserver` que no hace nada y **no computa layout**: todas las medidas dan cero y ningún resize ocurre. `src/test-setup.ts` instala un **stub global** (`src/testing/resize-observer.stub.ts`) que no está para poder renderizar —el no-op alcanza para eso— sino para **controlar** la medición.
 
-Los specs que necesitan **simular una medición** (p. ej. `ClampOverflowDirective`, que decide si ofrecer un "Leer más") reutilizan los helpers del mismo stub:
+Los specs que necesitan **simular una medición** (p. ej. `ClampOverflow`, que decide si ofrecer un "Leer más") reutilizan los helpers del mismo stub:
 
 | Helper                        | Efecto                                                                                     |
 | ----------------------------- | ------------------------------------------------------------------------------------------ |
@@ -337,7 +337,7 @@ detectChanges();
 expect(screen.getByRole('button', { name: 'Leer más' })).toBeInTheDocument();
 ```
 
-El `detectChanges()` aporta **sincronía**, no repintado: la escritura de la signal programa la detección igual, pero el spec asserta en la misma vuelta. La alternativa es esperarla —`await fixture.whenStable()`, como hace el spec de `TagsOverflowDirective`—; lo que no funciona es assertar sin ninguna de las dos.
+El `detectChanges()` aporta **sincronía**, no repintado: la escritura de la signal programa la detección igual, pero el spec asserta en la misma vuelta. La alternativa es esperarla —`await fixture.whenStable()`, como hace el spec de `TagsOverflow`—; lo que no funciona es assertar sin ninguna de las dos.
 
 ### Cuál de los dos observers, y por qué no da igual
 

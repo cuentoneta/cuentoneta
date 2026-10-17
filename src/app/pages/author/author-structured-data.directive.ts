@@ -1,14 +1,14 @@
 import { Directive, inject, untracked } from '@angular/core';
 
 import { environment } from '../../environments/environment';
-import { AbstractStructuredDataDirective } from '../../directives/abstract-structured-data.directive';
+import { AbstractStructuredData } from '../../directives/abstract-structured-data.directive';
 import { AUTHOR_HOST } from './author-host';
 import { buildAuthorBreadcrumb, buildAuthorProfilePageSchema } from './author.schema';
 
 @Directive({
 	selector: '[cuentonetaAuthorStructuredData]',
 })
-export class AuthorStructuredDataDirective extends AbstractStructuredDataDirective {
+export class AuthorStructuredData extends AbstractStructuredData {
 	private readonly host = inject(AUTHOR_HOST);
 
 	protected applyStructuredData(): void {

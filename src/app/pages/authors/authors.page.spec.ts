@@ -9,7 +9,7 @@ import { of, throwError } from 'rxjs';
 import AuthorsPage from './authors.page';
 import type { AuthorApi } from '../../providers/author.provider';
 import { provideAuthorApiMock } from '../../providers/author.mock';
-import { HeadMetadataDirective } from '../../directives/head-metadata.directive';
+import { HeadMetadata } from '../../directives/head-metadata.directive';
 import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 import { AppRoutes } from '../../app.routes';
 
@@ -56,7 +56,7 @@ describe('AuthorsPage', () => {
 	});
 
 	it('should set the canonical URL of the index', async () => {
-		const canonicalSpy = spyOn(HeadMetadataDirective.prototype, 'setCanonicalUrl');
+		const canonicalSpy = spyOn(HeadMetadata.prototype, 'setCanonicalUrl');
 
 		await renderPage();
 

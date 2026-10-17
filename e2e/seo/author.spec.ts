@@ -2,8 +2,8 @@
  * Tests e2e de SEO para la página de autor (`/author/:slug`).
  *
  * Sobre el HTML server-rendered (lo que ve el crawler, sin ejecutar JS):
- *  - A. Meta tags: <title> con el autor, description del perfil, og:/twitter: title y
- *       description, canonical a la URL del autor, robots indexable y keywords.
+ *  - A. Meta tags: <title> con el autor, description derivada de la biografía, og:/twitter: title y
+ *       description, og:image del retrato, canonical a la URL del autor, robots indexable y keywords.
  *  - B. Datos estructurados: JSON-LD ProfilePage (dateCreated, dateModified, mainEntity Person)
  *       y BreadcrumbList.
  *  - C. Bloques sitewide Organization y WebSite.
@@ -18,6 +18,7 @@ import { test } from '../_utils/test';
 
 import { parseJsonLdBlocks, getMetaContent, getTitleText, getCanonicalHref } from '../_utils/seo';
 import { assertValidJsonLd } from '@testing/json-ld-validation';
+import { resolveSearchImage } from '@utils/sanity-image.utils';
 import { collectIndexableHtmlViolations } from '../_utils/seo-invariants';
 import { STABLE_SLUGS, SCHEMA_IDS, SITEWIDE_SCHEMA_IDS } from '../_utils/seo-fixtures';
 
@@ -39,6 +40,37 @@ test('author — A: meta tags en el HTML server-rendered', async () => {
 	expect(getCanonicalHref(html)).toContain(authorPath);
 	expect(getMetaContent(html, 'robots')).toContain('index');
 	expect(getMetaContent(html, 'keywords')).toBeTruthy();
+});
+
+test('author — A: la description sale de la biografía, no de la plantilla del perfil', () => {
+	expect(getMetaContent(html, 'description')).not.toMatch(/^Perfil y obras de/);
+});
+
+// Cada página describe su propio contenido: ni comparte la description del home ni la de una obra. La
+// unicidad entre autores y entre obras la cubren los specs unitarios, porque acá hay uno de cada uno.
+test('author — A: la description difiere de la del home y de la de una obra', async ({ request }) => {
+	const descriptionOf = async (path: string) => getMetaContent(await (await request.get(path)).text(), 'description');
+	const descriptions = [
+		getMetaContent(html, 'description'),
+		await descriptionOf('/'),
+		await descriptionOf(`/literary-work/${STABLE_SLUGS.literaryWork}`),
+	];
+
+	expect(descriptions.every(Boolean)).toBe(true);
+	expect(new Set(descriptions).size).toBe(descriptions.length);
+});
+
+// La expectativa sale del retrato que el mismo HTML declara en el Person, con la regla de la app: uno
+// raster del CDN se sirve como JPG; cualquier otro deja la imagen por defecto. X lee twitter:image antes
+// que og:image, así que ambos declaran la misma.
+test('author — A: og:image y twitter:image son el retrato raster o, si no lo hay, la imagen por defecto', () => {
+	const profilePage = parseJsonLdBlocks(html).get(SCHEMA_IDS.profilePage);
+	const person = profilePage?.['mainEntity'] as Record<string, unknown> | undefined;
+	const portraitUrl = resolveSearchImage(String(person?.['image'] ?? ''))?.url;
+	const ogImage = getMetaContent(html, 'og:image');
+
+	expect(ogImage).toEqual(portraitUrl ?? expect.stringMatching(/\/assets\/img\/og-default\.jpg$/));
+	expect(getMetaContent(html, 'twitter:image')).toBe(ogImage);
 });
 
 test('author — B: JSON-LD ProfilePage y BreadcrumbList', async () => {

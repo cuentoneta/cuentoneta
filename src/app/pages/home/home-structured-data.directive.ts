@@ -1,11 +1,11 @@
 import { Directive } from '@angular/core';
 
-import { AbstractStructuredDataDirective } from '../../directives/abstract-structured-data.directive';
+import { AbstractStructuredData } from '../../directives/abstract-structured-data.directive';
 
 @Directive({
 	selector: '[cuentonetaHomeStructuredData]',
 })
-export class HomeStructuredDataDirective extends AbstractStructuredDataDirective {
+export class HomeStructuredData extends AbstractStructuredData {
 	protected applyStructuredData(): void {
 		this.schemaOrg.removePageScopedJsonLd();
 	}
