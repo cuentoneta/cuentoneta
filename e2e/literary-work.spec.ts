@@ -18,6 +18,13 @@ import { fetchCollectionCatalog, type CollectionCatalogEntry } from './_utils/co
 import { DESKTOP_VIEWPORT } from './_utils/viewports';
 import { STABLE_SLUGS } from './_utils/seo-fixtures';
 
+declare global {
+	interface Window {
+		/** Intenciones de compartir que registra el doble de `window.open` de este spec. */
+		sharedIntents?: [string, string, string][];
+	}
+}
+
 const ROUTE = `/literary-work/${STABLE_SLUGS.literaryWork}`;
 const MEDIA_ROUTE = `/literary-work/${STABLE_SLUGS.literaryWorkWithMedia}`;
 
@@ -315,4 +322,195 @@ test('literary-work — el aviso de obra inexistente no queda tapado por el enca
 	await expect(heading).toBeVisible();
 
 	await expectClearOfHeader(page, heading, 'el aviso de obra inexistente quedó tapado por el encabezado fijo');
+});
+
+/**
+ * Separaciones entre el panel y el disparador —debajo y encima, según qué lado eligió el
+ * posicionamiento— y desalineación entre sus bordes derechos. Se leen como cajas: el anclaje es
+ * geometría, no una clase.
+ */
+async function anchorOffsets(
+	trigger: Locator,
+	panel: Locator,
+): Promise<{ gapBelow: number; gapAbove: number; rightOffset: number }> {
+	const emptyBox = { x: 0, y: 0, width: 0, height: 0 };
+	const buttonBox = (await trigger.boundingBox()) ?? emptyBox;
+	const panelBox = (await panel.boundingBox()) ?? emptyBox;
+	expect(buttonBox.width, 'el botón de compartir no tiene caja').toBeGreaterThan(0);
+	expect(panelBox.width, 'el panel abierto no tiene caja').toBeGreaterThan(0);
+
+	return {
+		gapBelow: panelBox.y - (buttonBox.y + buttonBox.height),
+		gapAbove: buttonBox.y - (panelBox.y + panelBox.height),
+		rightOffset: Math.abs(panelBox.x + panelBox.width - (buttonBox.x + buttonBox.width)),
+	};
+}
+
+/**
+ * El menú de compartir existe recién con la página hidratada y lo abre y lo cierra la Popover API del
+ * navegador —con el anclaje por CSS que lo pega al botón—, así que es lo que ninguna otra capa puede ver.
+ * Las URL de cada red las fija el spec del componente; acá se ejercita que la intención salga con el
+ * enlace de la obra y no con el del navegador.
+ */
+test('literary-work — el menú de compartir abre anclado al borde derecho del botón', async ({ page }) => {
+	// eslint-disable-next-line playwright/no-skipped-test -- la ausencia del fixture ya la reporta la guarda de arriba; repetirla acá sería el mismo fallo dos veces
+	test.skip(status !== 200, `"${ROUTE}" no responde 200 en el dataset`);
+
+	await openWork(page, ROUTE);
+
+	const trigger = page.getByRole('button', { name: 'Compartir' });
+	const menu = page.getByRole('menu');
+	await expect(menu, 'el panel nace abierto').toBeHidden();
+
+	await trigger.click();
+	await expect(menu).toBeVisible();
+	await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+
+	const { gapBelow, rightOffset } = await anchorOffsets(trigger, menu);
+	expect(gapBelow, 'el panel no cuelga debajo del botón').toBeGreaterThanOrEqual(0);
+	expect(rightOffset, 'el panel no está anclado al borde derecho del botón').toBeLessThanOrEqual(1);
+});
+
+// El anclaje elige el lado con lugar: un panel que no entra debajo del disparador se sale del viewport,
+// porque el top layer no scrollea con la página.
+test('literary-work — sin lugar debajo del botón, el panel se abre encima', async ({ page }) => {
+	// eslint-disable-next-line playwright/no-skipped-test -- la ausencia del fixture ya la reporta la guarda de arriba; repetirla acá sería el mismo fallo dos veces
+	test.skip(status !== 200, `"${ROUTE}" no responde 200 en el dataset`);
+
+	// Viewport que deja la barra de lectura al ras del borde inferior, con el scroll a mano: el
+	// `click` de Playwright desplazaría la página para dejar el botón a la vista y volvería a haber
+	// lugar debajo del panel.
+	await page.setViewportSize({ width: 400, height: 400 });
+	await page.goto(ROUTE);
+	await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+	await page.evaluate(() => {
+		window.scrollTo(0, 0);
+		document.querySelector<HTMLButtonElement>('button[popovertarget]')?.click();
+	});
+
+	const trigger = page.getByRole('button', { name: 'Compartir' });
+	const menu = page.getByRole('menu');
+	await expect(menu).toBeVisible();
+	const { gapBelow, gapAbove, rightOffset } = await anchorOffsets(trigger, menu);
+	expect(gapBelow, 'el panel se abrió debajo de un botón pegado al borde inferior').toBeLessThan(0);
+	expect(gapAbove, 'el panel no se abrió encima del botón').toBeGreaterThanOrEqual(0);
+	expect(rightOffset, 'el panel no está anclado al borde derecho del botón').toBeLessThanOrEqual(1);
+});
+
+test('literary-work — el menú de compartir cierra con Escape y con click afuera', async ({ page }) => {
+	// eslint-disable-next-line playwright/no-skipped-test -- la ausencia del fixture ya la reporta la guarda de arriba; repetirla acá sería el mismo fallo dos veces
+	test.skip(status !== 200, `"${ROUTE}" no responde 200 en el dataset`);
+
+	await openWork(page, ROUTE);
+
+	const trigger = page.getByRole('button', { name: 'Compartir' });
+	const menu = page.getByRole('menu');
+
+	await trigger.click();
+	await expect(menu).toBeVisible();
+	await page.keyboard.press('Escape');
+	await expect(menu).toBeHidden();
+	await expect(trigger, 'el foco no volvió al disparador').toBeFocused();
+
+	await trigger.click();
+	await expect(menu).toBeVisible();
+	await page.getByRole('heading', { level: 1 }).click();
+	await expect(menu, 'el click afuera no cerró el panel').toBeHidden();
+});
+
+test('literary-work — el menú de compartir es operable por teclado', async ({ page }) => {
+	// eslint-disable-next-line playwright/no-skipped-test -- la ausencia del fixture ya la reporta la guarda de arriba; repetirla acá sería el mismo fallo dos veces
+	test.skip(status !== 200, `"${ROUTE}" no responde 200 en el dataset`);
+
+	await openWork(page, ROUTE);
+
+	const trigger = page.getByRole('button', { name: 'Compartir' });
+	await trigger.focus();
+	await page.keyboard.press('Enter');
+
+	await expect(page.getByRole('menu')).toBeVisible();
+	await expect(page.getByRole('menuitem', { name: 'Facebook' }), 'el foco no entró al menú').toBeFocused();
+
+	await page.keyboard.press('ArrowDown');
+	await expect(page.getByRole('menuitem', { name: 'Whatsapp' })).toBeFocused();
+
+	await page.keyboard.press('End');
+	await expect(page.getByRole('menuitem', { name: 'Copiar link' })).toBeFocused();
+
+	await page.keyboard.press('Escape');
+	await expect(page.getByRole('menu')).toBeHidden();
+	await expect(trigger).toBeFocused();
+
+	// Un `menu` no retiene el foco: salir con `Tab` lo cierra en vez de dejarlo abierto detrás.
+	await page.keyboard.press('Enter');
+	await expect(page.getByRole('menuitem', { name: 'Facebook' })).toBeFocused();
+	await page.keyboard.press('Tab');
+	await expect(page.getByRole('menu'), 'el menú quedó abierto con el foco afuera').toBeHidden();
+});
+
+test('literary-work — las redes comparten la URL canónica de la obra, sin el contexto de navegación', async ({
+	page,
+}) => {
+	// eslint-disable-next-line playwright/no-skipped-test -- la ausencia del fixture ya la reporta la guarda de arriba; repetirla acá sería el mismo fallo dos veces
+	test.skip(status !== 200, `"${ROUTE}" no responde 200 en el dataset`);
+	// eslint-disable-next-line playwright/no-skipped-test -- ídem
+	test.skip(!work, `el API no sirve "${STABLE_SLUGS.literaryWork}"`);
+
+	// El doble de `window.open` registra la intención en vez de abrir la ventana de la red: ninguna
+	// navegación externa entra en la aserción, solo la URL con la que el menú la invoca.
+	await page.addInitScript(() => {
+		window.sharedIntents = [];
+		window.open = (url?: string | URL, target?: string, features?: string): Window | null => {
+			window.sharedIntents?.push([String(url), String(target), String(features)]);
+			return null;
+		};
+	});
+
+	await page.setViewportSize(DESKTOP_VIEWPORT);
+	await page.goto(`${ROUTE}?navigation=author&navigationSlug=${work?.authors[0]?.slug}`);
+	await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+
+	const trigger = page.getByRole('button', { name: 'Compartir' });
+	for (const destination of ['Facebook', 'Whatsapp', 'X']) {
+		await trigger.click();
+		await page.getByRole('menuitem', { name: destination }).click();
+	}
+
+	const intents = await page.evaluate(() => window.sharedIntents ?? []);
+	const canonicalUrl = new URL(ROUTE, page.url()).href;
+	expect(intents, `no se registraron las tres intenciones: ${JSON.stringify(intents)}`).toHaveLength(3);
+	expect(
+		intents.every(([intent]) => decodeURIComponent(intent).includes(canonicalUrl)),
+		`alguna intención no lleva la URL canónica de la obra: ${JSON.stringify(intents)}`,
+	).toBe(true);
+	expect(
+		intents.some(([intent]) => intent.includes('navigation')),
+		`la intención compartida arrastra el contexto de navegación: ${JSON.stringify(intents)}`,
+	).toBe(false);
+});
+
+test('literary-work — copiar link deja la URL canónica en el portapapeles y lo confirma', async ({
+	page,
+	context,
+	browserName,
+}) => {
+	// eslint-disable-next-line playwright/no-skipped-test -- la ausencia del fixture ya la reporta la guarda de arriba; repetirla acá sería el mismo fallo dos veces
+	test.skip(status !== 200, `"${ROUTE}" no responde 200 en el dataset`);
+
+	// Playwright solo otorga `clipboard-read` en Chromium —en Firefox responde `Unknown permission`—,
+	// y ahí el contexto de confianza alcanza para leer el portapapeles.
+	const chromiumPermissions = ['clipboard-read', 'clipboard-write'];
+	await context.grantPermissions(browserName === 'chromium' ? chromiumPermissions : []);
+
+	await openWork(page, ROUTE);
+
+	await page.getByRole('button', { name: 'Compartir' }).click();
+	await page.getByRole('menuitem', { name: 'Copiar link' }).click();
+
+	await expect(page.getByRole('button', { name: 'Copiado' }), 'no confirmó el copiado').toBeVisible();
+	await expect(page.getByRole('status')).toHaveText('Enlace copiado al portapapeles');
+	expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(new URL(ROUTE, page.url()).href);
+
+	// La confirmación es transitoria: el botón vuelve a ofrecer compartir.
+	await expect(page.getByRole('button', { name: 'Compartir' })).toBeVisible({ timeout: 5_000 });
 });

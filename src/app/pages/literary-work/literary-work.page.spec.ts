@@ -6,6 +6,7 @@ import { renderDeferBlocks } from '@testing/defer-blocks';
 // 3rd party modules
 import { render, screen, within } from '@testing-library/angular';
 import { restoreAllMocks, spyOn } from '@test-utils';
+import { By } from '@angular/platform-browser';
 import { of, Subject, throwError, type Observable } from 'rxjs';
 
 // Models
@@ -33,6 +34,7 @@ import type { LiteraryWorkApi } from '../../providers/literary-work.provider';
 import { HeadMetadata } from '../../directives/head-metadata.directive';
 import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 import { AppRoutes } from '../../app.routes';
+import { ShareMenu } from '@components/share-menu/share-menu';
 import LiteraryWorkPage from './literary-work.page';
 
 class StubFailingLiteraryWorkApi implements LiteraryWorkApi {
@@ -446,6 +448,24 @@ describe('LiteraryWorkPage', () => {
 			expect(canonicalSpy).toHaveBeenCalledWith(
 				buildCanonicalUrl(`${AppRoutes.LiteraryWork}/${representativeLiteraryWork.slug}`),
 			);
+		});
+	});
+
+	// El menú comparte el mismo canonical que declara la cabecera: los query params de contexto —que sí
+	// llevan los enlaces de navegación— no viajan en él. La cadena completa, con el click incluido, la
+	// verifica el e2e, que es donde existe la Popover API que el panel necesita para cerrarse.
+	describe('menú de compartir', () => {
+		it('entrega al menú el enlace canónico de la obra', async () => {
+			const { fixture } = await setup(representativeLiteraryWork, {
+				navigation: 'collection',
+				navigationSlug: 'verano-2022',
+			});
+
+			await screen.findByRole('button', { name: 'Compartir' });
+			const shareMenu = fixture.debugElement.query(By.css('cuentoneta-share-menu')).injector.get(ShareMenu);
+
+			expect(shareMenu.url()).toBe(buildCanonicalUrl(`${AppRoutes.LiteraryWork}/${representativeLiteraryWork.slug}`));
+			expect(shareMenu.message()).toContain(representativeLiteraryWork.title);
 		});
 	});
 
