@@ -16,6 +16,7 @@ import { provideSanityImageLoader } from './providers/sanity-image-loader';
 
 // SEO providers
 import { provideSchemaOrgInitializer } from './providers/schema-org.initializer';
+import { provideDefaultOgImageInitializer } from './providers/default-og-image.initializer';
 
 registerLocaleData(localeEs);
 
@@ -41,5 +42,6 @@ export const appConfig: ApplicationConfig = {
 
 		// SEO providers
 		provideSchemaOrgInitializer(),
+		provideDefaultOgImageInitializer(),
 	],
 };

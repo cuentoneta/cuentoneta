@@ -29,6 +29,7 @@ import {
 	checkNoSkeletonMarkers,
 	checkInternalLink,
 	checkJsonLdBlocks,
+	checkOgImage,
 } from '../_utils/seo-invariants';
 import { SCHEMA_IDS, SITEWIDE_SCHEMA_IDS } from '../_utils/seo-fixtures';
 
@@ -79,6 +80,18 @@ test('home — E: enlaza los hubs del catálogo en el HTML server-rendered', asy
 	expect(hrefs).toContain('/authors');
 });
 
+// La imagen por defecto no viene en el HTML estático: la declara el SSR con el host del build. Se
+// afirma que resuelve contra el host que sirve la página y que el archivo existe ahí, que es lo que
+// una URL fija a producción rompía en preview y staging.
+test('home — og:image por defecto servido por el mismo host', async ({ request, baseURL }) => {
+	const ogImage = getMetaContent(html, 'og:image') ?? '';
+	expect(ogImage).toMatch(/\/assets\/img\/og-default\.jpg$/);
+
+	const imageUrl = new URL(ogImage, baseURL);
+	expect(imageUrl.origin).toBe(new URL(baseURL ?? '').origin);
+	expect((await request.get(imageUrl.href)).status()).toBe(200);
+});
+
 test('home — invariantes de indexado para crawlers (ssr, h1 real, contenido primario, jsonld sitewide)', async () => {
 	// La canónica la cubre el test A.
 	const violations: SeoInvariantViolation[] = [
@@ -90,6 +103,7 @@ test('home — invariantes de indexado para crawlers (ssr, h1 real, contenido pr
 		// Que no haya esqueletos dice que los decks no difieren; que haya un enlace a una obra dice que
 		// además trajeron contenido. Sin esto, una página que sirviera los decks vacíos pasaría igual.
 		checkInternalLink(html, '/literary-work/'),
+		checkOgImage(html),
 		...(await checkJsonLdBlocks(html, SITEWIDE_SCHEMA_IDS)),
 	].filter((violation): violation is SeoInvariantViolation => violation !== null);
 	expect(violations).toEqual([]);
