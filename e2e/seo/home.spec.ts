@@ -83,9 +83,10 @@ test('home — E: enlaza los hubs del catálogo en el HTML server-rendered', asy
 // La imagen por defecto no viene en el HTML estático: la declara el SSR con el host del build. Se
 // afirma que resuelve contra el host que sirve la página y que el archivo existe ahí, que es lo que
 // una URL fija a producción rompía en preview y staging.
-test('home — og:image por defecto servido por el mismo host', async ({ request, baseURL }) => {
+test('home — imagen por defecto servida por el mismo host', async ({ request, baseURL }) => {
 	const ogImage = getMetaContent(html, 'og:image') ?? '';
 	expect(ogImage).toMatch(/\/assets\/img\/og-default\.jpg$/);
+	expect(getMetaContent(html, 'twitter:image')).toBe(ogImage);
 
 	const imageUrl = new URL(ogImage, baseURL);
 	expect(imageUrl.origin).toBe(new URL(baseURL ?? '').origin);

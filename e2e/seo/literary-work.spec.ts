@@ -87,17 +87,18 @@ test.describe('literary-work — HTML server-rendered de una obra existente', ()
 	});
 
 	// La expectativa sale de la portada que sirve el API, con la regla de la app: una raster del CDN se
-	// declara como og:image, y la SVG genérica o su ausencia dejan el og:image por defecto. El Article
-	// declara esa misma portada o ninguna: cuándo la omite por tamaño lo cubren los specs unitarios.
-	test('B: og:image e image del Article siguen a la portada de la obra', async ({ request }) => {
+	// declara como og:image y twitter:image, y la SVG genérica o su ausencia dejan la imagen por defecto.
+	// El Article declara esa misma portada o ninguna: cuándo la omite por tamaño lo cubren los specs
+	// unitarios.
+	test('B: og:image, twitter:image e image del Article siguen a la portada de la obra', async ({ request }) => {
 		const literaryWork = await fetchLiteraryWork(request, STABLE_SLUGS.literaryWork);
 		expect(literaryWork, `el API no sirve "${STABLE_SLUGS.literaryWork}": no habría con qué comparar`).toBeDefined();
 		const coverUrl = resolveSearchImage(literaryWork?.coverImage ?? '')?.url;
 		const article = parseJsonLdBlocks(html).get(SCHEMA_IDS.article);
+		const ogImage = getMetaContent(html, 'og:image');
 
-		expect(getMetaContent(html, 'og:image')).toEqual(
-			coverUrl ?? expect.stringMatching(/\/assets\/img\/og-default\.jpg$/),
-		);
+		expect(ogImage).toEqual(coverUrl ?? expect.stringMatching(/\/assets\/img\/og-default\.jpg$/));
+		expect(getMetaContent(html, 'twitter:image')).toBe(ogImage);
 		expect([undefined, coverUrl]).toContain(article?.['image']);
 	});
 

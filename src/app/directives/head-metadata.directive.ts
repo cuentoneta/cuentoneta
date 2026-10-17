@@ -2,7 +2,7 @@ import { Directive, effect, inject, PLATFORM_ID, DOCUMENT } from '@angular/core'
 import { Meta, Title } from '@angular/platform-browser';
 import { isPlatformBrowser } from '@angular/common';
 import { environment } from '../environments/environment';
-import { applyDefaultOgImage } from '../providers/default-og-image.initializer';
+import { applyDefaultImage } from '../providers/default-image.initializer';
 
 @Directive({
 	selector: '[cuentonetaHeadMetadata]',
@@ -176,12 +176,6 @@ export class HeadMetadata {
 		this.metaTagService.removeTag('name="robots"');
 	}
 
-	// A diferencia del resto de los tags —que se eliminan al limpiar— la imagen se resetea para que una
-	// página sin imagen dedicada siga exponiendo un og:image/twitter:image válido. El de og:image es el
-	// mismo que declara el initializer al bootstrap; el de twitter:image coincide con el <meta> estático de
-	// indexFile.html y conserva el logo hasta que las tarjetas sociales tengan su propia imagen.
-	private readonly defaultTwitterImageUrl = 'assets/svg/logo.svg';
-
 	public setImage(url: string, alt: string, width?: number, height?: number) {
 		this.metaTagService.updateTag({ property: 'og:image', content: url });
 		this.metaTagService.updateTag({ property: 'og:image:alt', content: alt });
@@ -189,18 +183,20 @@ export class HeadMetadata {
 		this.metaTagService.updateTag({ name: 'twitter:image', content: url });
 	}
 
-	// La imagen representativa que leen los buscadores. Quita el alt, que describe al logo del default y
-	// no a esta imagen; deja intactos las dimensiones y twitter:image.
-	public setOgImage(url: string) {
+	// La imagen representativa de la página, para buscadores y tarjetas sociales. Quita el alt, que
+	// describe al logo del default y no a esta imagen; deja intactas las dimensiones.
+	public setRepresentativeImage(url: string) {
 		this.metaTagService.updateTag({ property: 'og:image', content: url });
 		this.metaTagService.removeTag('property="og:image:alt"');
+		this.metaTagService.updateTag({ name: 'twitter:image', content: url });
 	}
 
+	// A diferencia del resto de los tags —que se eliminan al limpiar— la imagen se resetea al default para
+	// que una página sin imagen dedicada siga exponiendo una válida.
 	public removeImage() {
-		applyDefaultOgImage(this.metaTagService);
+		applyDefaultImage(this.metaTagService);
 		this.metaTagService.removeTag('property="og:image:width"');
 		this.metaTagService.removeTag('property="og:image:height"');
-		this.metaTagService.updateTag({ name: 'twitter:image', content: this.defaultTwitterImageUrl });
 	}
 
 	private setImageDimensions(width?: number, height?: number) {

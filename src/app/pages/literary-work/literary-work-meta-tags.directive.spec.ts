@@ -73,15 +73,15 @@ describe('LiteraryWorkMetaTags', () => {
 		expect(descriptionSpy).toHaveBeenCalledWith(buildLiteraryWorkMetaDescription(literaryWork));
 	});
 
-	it.each(onoffLiteraryWorksMock)('setea og:image con el JPG de la portada raster de "$slug"', (literaryWork) => {
+	it.each(onoffLiteraryWorksMock)('setea la imagen representativa con el JPG de la portada raster de "$slug"', (literaryWork) => {
 		const coverImage = cdnUrlForCorpusPath(literaryWork.coverImage);
 		literaryWorkSignal.set({ ...literaryWork, coverImage });
-		const ogImageSpy = spyOn(TestBed.inject(HeadMetadata), 'setOgImage');
+		const imageSpy = spyOn(TestBed.inject(HeadMetadata), 'setRepresentativeImage');
 
 		instantiate();
 		TestBed.tick();
 
-		expect(ogImageSpy).toHaveBeenCalledWith(`${coverImage}?fm=jpg`);
+		expect(imageSpy).toHaveBeenCalledWith(`${coverImage}?fm=jpg`);
 	});
 
 	it.each([
@@ -90,17 +90,17 @@ describe('LiteraryWorkMetaTags', () => {
 			toCover: (literaryWork: LiteraryWork) => cdnUrlForCorpusPath(literaryWork.coverImage).replace(/\.\w+$/, '.svg'),
 		},
 		{ cover: 'sin portada', toCover: () => '' },
-	])('repone el og:image por defecto con $cover', ({ toCover }) => {
+	])('repone la imagen por defecto con $cover', ({ toCover }) => {
 		const [literaryWork] = onoffLiteraryWorksMock;
 		literaryWorkSignal.set({ ...literaryWork, coverImage: toCover(literaryWork) });
 		const head = TestBed.inject(HeadMetadata);
-		const ogImageSpy = spyOn(head, 'setOgImage');
+		const imageSpy = spyOn(head, 'setRepresentativeImage');
 		const removeImageSpy = spyOn(head, 'removeImage');
 
 		instantiate();
 		TestBed.tick();
 
-		expect(ogImageSpy).not.toHaveBeenCalled();
+		expect(imageSpy).not.toHaveBeenCalled();
 		expect(removeImageSpy).toHaveBeenCalled();
 	});
 

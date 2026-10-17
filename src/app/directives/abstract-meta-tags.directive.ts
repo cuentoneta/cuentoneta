@@ -10,10 +10,10 @@ export abstract class AbstractMetaTags {
 	protected abstract applyMetaTags(): void;
 
 	// Sin imagen propia se repone el default: en la navegación entre páginas del mismo tipo la directiva
-	// no se destruye, y el og:image de la entidad anterior quedaría en la cabecera.
+	// no se destruye, y la imagen de la entidad anterior quedaría en la cabecera.
 	protected applySearchImage(image: SearchImage | undefined): void {
 		if (image) {
-			this.head.setOgImage(image.url);
+			this.head.setRepresentativeImage(image.url);
 		} else {
 			this.head.removeImage();
 		}

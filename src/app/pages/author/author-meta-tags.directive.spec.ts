@@ -76,29 +76,29 @@ describe('AuthorMetaTags', () => {
 		{ portrait: 'large', imageUrl: cdnUrlFor(onoffImageAssets.francoisOnoffPortrait) },
 		// Sin piso de tamaño: un retrato chico es mejor señal que la imagen genérica del sitio.
 		{ portrait: 'small', imageUrl: cdnUrlFor(onoffImageAssets.franceFlag) },
-	])('should set og:image to the JPG of a $portrait raster portrait', ({ imageUrl }) => {
+	])('should set the representative image to the JPG of a $portrait raster portrait', ({ imageUrl }) => {
 		authorSignal.set({ ...authorMock, imageUrl });
-		const ogImageSpy = spyOn(TestBed.inject(HeadMetadata), 'setOgImage');
+		const imageSpy = spyOn(TestBed.inject(HeadMetadata), 'setRepresentativeImage');
 
 		instantiate();
 		TestBed.tick();
 
-		expect(ogImageSpy).toHaveBeenCalledWith(`${imageUrl}?fm=jpg`);
+		expect(imageSpy).toHaveBeenCalledWith(`${imageUrl}?fm=jpg`);
 	});
 
 	it.each([
 		{ portrait: 'an SVG', imageUrl: cdnUrlFor(onoffImageAssets.francoisOnoffPortrait).replace(/\.png$/, '.svg') },
 		{ portrait: 'no', imageUrl: '' },
-	])('should reset og:image to the site default when the author has $portrait portrait', ({ imageUrl }) => {
+	])('should reset the image to the site default when the author has $portrait portrait', ({ imageUrl }) => {
 		authorSignal.set({ ...authorMock, imageUrl });
 		const head = TestBed.inject(HeadMetadata);
-		const ogImageSpy = spyOn(head, 'setOgImage');
+		const imageSpy = spyOn(head, 'setRepresentativeImage');
 		const removeImageSpy = spyOn(head, 'removeImage');
 
 		instantiate();
 		TestBed.tick();
 
-		expect(ogImageSpy).not.toHaveBeenCalled();
+		expect(imageSpy).not.toHaveBeenCalled();
 		expect(removeImageSpy).toHaveBeenCalled();
 	});
 

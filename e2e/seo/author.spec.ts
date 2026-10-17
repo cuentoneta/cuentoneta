@@ -61,15 +61,16 @@ test('author — A: la description difiere de la del home y de la de una obra', 
 });
 
 // La expectativa sale del retrato que el mismo HTML declara en el Person, con la regla de la app: uno
-// raster del CDN se sirve como JPG; cualquier otro deja el og:image por defecto.
-test('author — A: og:image es el retrato raster o, si no lo hay, la imagen por defecto', () => {
+// raster del CDN se sirve como JPG; cualquier otro deja la imagen por defecto. X lee twitter:image antes
+// que og:image, así que ambos declaran la misma.
+test('author — A: og:image y twitter:image son el retrato raster o, si no lo hay, la imagen por defecto', () => {
 	const profilePage = parseJsonLdBlocks(html).get(SCHEMA_IDS.profilePage);
 	const person = profilePage?.['mainEntity'] as Record<string, unknown> | undefined;
 	const portraitUrl = resolveSearchImage(String(person?.['image'] ?? ''))?.url;
+	const ogImage = getMetaContent(html, 'og:image');
 
-	expect(getMetaContent(html, 'og:image')).toEqual(
-		portraitUrl ?? expect.stringMatching(/\/assets\/img\/og-default\.jpg$/),
-	);
+	expect(ogImage).toEqual(portraitUrl ?? expect.stringMatching(/\/assets\/img\/og-default\.jpg$/));
+	expect(getMetaContent(html, 'twitter:image')).toBe(ogImage);
 });
 
 test('author — B: JSON-LD ProfilePage y BreadcrumbList', async () => {
