@@ -254,6 +254,19 @@ describe('WindowLayoutService', () => {
 			});
 		});
 	});
+	describe('banda sobre la barra (deriva el signal isHeaderOverBand)', () => {
+		it('should start without a band over the bar', () => {
+			expect(service.isHeaderOverBand()).toBe(false);
+		});
+
+		it('should follow what the band declares', () => {
+			service.setHeaderOverBand(true);
+			expect(service.isHeaderOverBand()).toBe(true);
+
+			service.setHeaderOverBand(false);
+			expect(service.isHeaderOverBand()).toBe(false);
+		});
+	});
 });
 
 describe('WindowLayoutService — paridad de superficie con el contrato LayoutService', () => {

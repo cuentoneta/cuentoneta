@@ -11,13 +11,16 @@ import { LayoutService } from './providers/layout.interface';
 import { ControllableLayoutService } from './providers/layout.mock';
 
 describe('App', () => {
+	let layout: ControllableLayoutService;
+
 	const renderShell = async () => {
+		layout = new ControllableLayoutService();
 		return await render(App, {
 			componentImports: [Header, Footer, NgOptimizedImage, RouterOutlet],
 			providers: [
 				provideRouter([]),
 				{ provide: AnalyticsService, useClass: StubAnalyticsService },
-				{ provide: LayoutService, useValue: new ControllableLayoutService() },
+				{ provide: LayoutService, useValue: layout },
 			],
 		});
 	};
@@ -62,6 +65,18 @@ describe('App', () => {
 			await user.tab();
 
 			expect(screen.getByRole('link', { name: 'Saltar al contenido principal' })).toHaveFocus();
+		});
+	});
+
+	// Sin este cableado, la banda de la página no llega al encabezado: el shell es el único que ve a los dos.
+	describe('encabezado sobre la banda', () => {
+		it('should hand the band state of the layout to the header', async () => {
+			const { detectChanges } = await renderShell();
+
+			layout.isHeaderOverBand.set(true);
+			detectChanges();
+
+			expect(screen.getByRole('banner')).not.toHaveClass('bg-neutral-50');
 		});
 	});
 });

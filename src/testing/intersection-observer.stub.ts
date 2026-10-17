@@ -1,5 +1,5 @@
 // Stub global de IntersectionObserver para tests (el entorno de tests no lo implementa). Se instala en
-// test-setup para que `TagsOverflow` —hoy el único consumidor de IO— se pueda renderizar.
+// test-setup para que los componentes que observan intersecciones se puedan renderizar.
 // Captura el callback y las opciones del último observer creado, y expone helpers para simular que
 // ciertos elementos entran o no en el contenedor.
 //
@@ -40,7 +40,7 @@ export function installIntersectionObserverStub(): void {
 /** Simula que los elementos quedaron fuera del contenedor (no entran). */
 export function markOutsideViewport(...elements: Element[]): void {
 	callback?.(
-		elements.map((target) => ({ target, intersectionRatio: 0 }) as IntersectionObserverEntry),
+		elements.map((target) => ({ target, isIntersecting: false, intersectionRatio: 0 }) as IntersectionObserverEntry),
 		{} as IntersectionObserver,
 	);
 }
@@ -48,7 +48,7 @@ export function markOutsideViewport(...elements: Element[]): void {
 /** Simula que los elementos volvieron a entrar completos en el contenedor. */
 export function markInsideViewport(...elements: Element[]): void {
 	callback?.(
-		elements.map((target) => ({ target, intersectionRatio: 1 }) as IntersectionObserverEntry),
+		elements.map((target) => ({ target, isIntersecting: true, intersectionRatio: 1 }) as IntersectionObserverEntry),
 		{} as IntersectionObserver,
 	);
 }

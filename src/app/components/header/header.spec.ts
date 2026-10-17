@@ -128,6 +128,55 @@ describe('Header', () => {
 		});
 	});
 
+	// El fondo propio —y el borde, que viaja con él— se sueltan mientras una banda de la página cubre su
+	// franja: sin eso, la banda no llega al borde superior de la ventana. Los dos estados se comparan con
+	// renders independientes: ATL no reevalúa los bindings del host al reusar el fixture, así que la
+	// transición —lo que ocurre al scrollear más allá de la banda— la verifica el e2e, en un navegador.
+	describe('fondo sobre una banda de la página', () => {
+		const renderOverBand = (isOverBand: boolean) =>
+			render(Header, {
+				componentImports: [CommonModule, NgOptimizedImage, RouterLink],
+				providers: [provideRouter([])],
+				inputs: { isOverBand },
+			});
+
+		it('should paint its own background and border while nothing covers it', async () => {
+			const { fixture } = await renderHeader();
+
+			expect(screen.getByRole('banner')).toHaveClass('bg-neutral-50');
+			expect(fixture.nativeElement).toHaveClass('border-neutral-200');
+			expect(fixture.nativeElement).not.toHaveClass('border-transparent');
+			expect(screen.getAllByRole('listitem')[0]).toHaveClass('hover:text-neutral-900/60');
+		});
+
+		it('should drop both while a band covers the bar', async () => {
+			const { fixture } = await renderOverBand(true);
+
+			expect(screen.getByRole('banner')).not.toHaveClass('bg-neutral-50');
+			expect(fixture.nativeElement).toHaveClass('border-transparent');
+			expect(fixture.nativeElement).not.toHaveClass('border-neutral-200');
+		});
+
+		// Sobre la banda el alfa del hover sube: el 60% del resto del sitio mide 4,4:1 sobre `brand-200`,
+		// por debajo del 4,5:1 que AA exige para texto normal.
+		it('should raise the hover opacity while a band covers the bar', async () => {
+			await renderOverBand(true);
+
+			const navLink = screen.getAllByRole('listitem')[0];
+			expect(navLink).toHaveClass('hover:text-neutral-900/70');
+			expect(navLink).not.toHaveClass('hover:text-neutral-900/60');
+		});
+
+		// Los bindings no pueden pisar la lista estática: sin las clases de layout, la barra deja de ser
+		// la capa fija sobre la que el resto del sitio se apoya.
+		it('should keep its layout classes while a band covers the bar', async () => {
+			const { fixture } = await renderOverBand(true);
+
+			expect(fixture.nativeElement).toHaveClass('fixed', 'top-0', 'w-full', 'border-b-1');
+			expect(screen.getByRole('banner')).toHaveClass('grid', 'px-5');
+		});
+	});
+
 	// Lo que las clases de colapso no expresan: una barra que la interfaz declara ausente tampoco puede
 	// existir para el teclado. `happy-dom` consulta los ancestros `inert` al enfocar, así que acá se afirma
 	// comportamiento y no solo el atributo emitido; el clic y el árbol de accesibilidad los decide el

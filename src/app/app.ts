@@ -20,7 +20,7 @@ import { LayoutService } from './providers/layout.interface';
 		>
 			Saltar al contenido principal
 		</a>
-		<cuentoneta-header [isVisible]="isHeaderVisible()" />
+		<cuentoneta-header [isVisible]="isHeaderVisible()" [isOverBand]="isHeaderOverBand()" />
 		<!-- Padding y no margen: el opt-out de una página depende de eso — ver angular-components.md,
 		     "Layout del shell". -->
 		<main id="main-content" class="pt-header-height" tabindex="-1">
@@ -38,6 +38,7 @@ import { LayoutService } from './providers/layout.interface';
 export class App {
 	private readonly analytics = inject(AnalyticsService);
 	private readonly isHeaderVisible = inject(LayoutService).isHeaderVisible;
+	private readonly isHeaderOverBand = inject(LayoutService).isHeaderOverBand;
 
 	constructor() {
 		if (environment.environment === 'production') {
