@@ -23,18 +23,18 @@
 	],
 	"dependencies": {
 		"@sanity/icons": "^5.2.3",
-		"@sanity/ui": "^4.4.4",
+		"@sanity/ui": "^4.4.9",
 		"@sanity/vision": "^6.19.0",
 		"date-fns": "^4.4.0",
 		"prop-types": "^15.8.1",
-		"react": "^19.3.0",
-		"react-dom": "^19.3.0",
+		"react": "^19.3.1",
+		"react-dom": "^19.3.1",
 		"react-icons": "^5.7.0",
-		"react-is": "^19.3.0",
+		"react-is": "^19.3.1",
 		"sanity": "^6.19.0",
 		"sanity-plugin-markdown": "^9.0.17",
 		"sanity-plugin-singleton-management": "^1.1.1",
-		"styled-components": "^6.5.3"
+		"styled-components": "^6.6.0"
 	},
 	"devDependencies": {
 		"@types/node": "^24.19.2",
@@ -43,6 +43,6 @@
 		"groq-js": "^2.0.0",
 		"tsx": "^4.23.15",
 		"typescript": "6.0.3",
-		"vitest": "^5.0.3"
+		"vitest": "^5.0.5"
 	}
 }
