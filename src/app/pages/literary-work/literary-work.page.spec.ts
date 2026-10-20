@@ -30,6 +30,7 @@ import { provideCollectionApiMock, StubCollectionApi } from '../../providers/col
 import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
 import { provideRouter } from '@angular/router';
 import type { LiteraryWorkApi } from '../../providers/literary-work.provider';
+import { EMPTY_READING_SUGGESTIONS, type ReadingSuggestions } from '@models/reading-suggestions.model';
 import { HeadMetadata } from '../../directives/head-metadata.directive';
 import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
 import { AppRoutes } from '../../app.routes';
@@ -43,6 +44,10 @@ class StubFailingLiteraryWorkApi implements LiteraryWorkApi {
 	}
 
 	public getTeasers(): Observable<LiteraryWorkTeaser[]> {
+		return throwError(() => new HttpErrorResponse({ status: this.status, statusText: 'error' }));
+	}
+
+	public getSuggestions(): Observable<ReadingSuggestions> {
 		return throwError(() => new HttpErrorResponse({ status: this.status, statusText: 'error' }));
 	}
 }
@@ -60,6 +65,11 @@ class ControllableLiteraryWorkApi implements LiteraryWorkApi {
 	// para que el estado intermedio que estos casos observan sea el de la obra y no el del bloque.
 	public getTeasers(): Observable<LiteraryWorkTeaser[]> {
 		return of([...onoffLiteraryWorkTeasersMock]);
+	}
+
+	// El bloque todavía no consume el endpoint en este slice: devuelve el vacío del que no se pinta.
+	public getSuggestions(): Observable<ReadingSuggestions> {
+		return of(EMPTY_READING_SUGGESTIONS);
 	}
 
 	public emit(literaryWork: LiteraryWork): void {

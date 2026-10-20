@@ -5,6 +5,7 @@ import { of, throwError, type Observable } from 'rxjs';
 
 import type { AuthorProfile, AuthorTeaser } from '@models/author.model';
 import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
+import { EMPTY_READING_SUGGESTIONS, type ReadingSuggestions } from '@models/reading-suggestions.model';
 import { createMarkdown } from '@models/markdown.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import { authorMock, authorTeaserMock } from '@mocks/author.mock';
@@ -68,6 +69,12 @@ class CorpusLiteraryWorkApi implements LiteraryWorkApi {
 
 	public getTeasers(filter: LiteraryWorkTeaserFilter = {}): Observable<LiteraryWorkTeaser[]> {
 		return of(filter.author === authorWithoutWorks.slug ? [] : [...onoffLiteraryWorkTeasersMock]);
+	}
+
+	// La ficha de autor no monta el bloque de sugerencias: devuelve el vacío, del que el bloque no se
+	// pinta si alguna vez se lo montara.
+	public getSuggestions(): Observable<ReadingSuggestions> {
+		return of(EMPTY_READING_SUGGESTIONS);
 	}
 }
 

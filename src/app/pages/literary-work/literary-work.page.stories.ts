@@ -17,6 +17,7 @@ import { embedPlaceholdersDecorator, withEmbedPlaceholders } from '@testing/stor
 import { provideLiteraryWorkApiMock } from '../../providers/literary-work.mock';
 import { provideCollectionApiMock, StubCollectionApi } from '../../providers/collection.mock';
 import type { LiteraryWorkApi, LiteraryWorkTeaserFilter } from '../../providers/literary-work.provider';
+import { EMPTY_READING_SUGGESTIONS, type ReadingSuggestions } from '@models/reading-suggestions.model';
 import LiteraryWorkPage from './literary-work.page';
 import { literaryWorkPageDocs } from './literary-work.page.docs';
 import { mediaWidgetSelectorDocs } from '@components/media-widget-selector/media-widget-selector.docs';
@@ -49,6 +50,11 @@ class CorpusLiteraryWorkApi implements LiteraryWorkApi {
 				? onoffLiteraryWorkTeasersMock.filter(({ authors }) => authors.some(({ slug }) => slug === filter.author))
 				: [...onoffLiteraryWorkTeasersMock],
 		);
+	}
+
+	// En este slice el bloque todavía usa el picker: el endpoint queda expuesto sin consumidor.
+	public getSuggestions(): Observable<ReadingSuggestions> {
+		return of(EMPTY_READING_SUGGESTIONS);
 	}
 }
 
