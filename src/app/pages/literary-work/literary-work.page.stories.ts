@@ -12,12 +12,12 @@ import {
 } from '@mocks/onoff-literary-works.mock';
 import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
 import { onoffCollectionsMock } from '@mocks/onoff-collections.mock';
+import { onoffReadingSuggestionsMock } from '@mocks/onoff-reading-suggestions.mock';
 import { embedPlaceholdersDecorator, withEmbedPlaceholders } from '@testing/storybook-embed-placeholders';
 
 import { provideLiteraryWorkApiMock } from '../../providers/literary-work.mock';
-import { provideCollectionApiMock, StubCollectionApi } from '../../providers/collection.mock';
 import type { LiteraryWorkApi, LiteraryWorkTeaserFilter } from '../../providers/literary-work.provider';
-import { EMPTY_READING_SUGGESTIONS, type ReadingSuggestions } from '@models/reading-suggestions.model';
+import type { ReadingSuggestions, ReadingSuggestionsScope } from '@models/reading-suggestions.model';
 import LiteraryWorkPage from './literary-work.page';
 import { literaryWorkPageDocs } from './literary-work.page.docs';
 import { mediaWidgetSelectorDocs } from '@components/media-widget-selector/media-widget-selector.docs';
@@ -52,9 +52,11 @@ class CorpusLiteraryWorkApi implements LiteraryWorkApi {
 		);
 	}
 
-	// En este slice el bloque todavía usa el picker: el endpoint queda expuesto sin consumidor.
-	public getSuggestions(): Observable<ReadingSuggestions> {
-		return of(EMPTY_READING_SUGGESTIONS);
+	// El bloque lo arma el backend: el doble del catálogo devuelve lo que la ruta promete —el encabezado
+	// del ámbito y hasta tres de sus obras, sin la que se lee— para que las variantes se puedan mirar
+	// enteras sin levantar la API.
+	public getSuggestions(workSlug: string, scope: ReadingSuggestionsScope): Observable<ReadingSuggestions> {
+		return of(onoffReadingSuggestionsMock(scope, workSlug));
 	}
 }
 
@@ -80,11 +82,7 @@ const meta: Meta<LiteraryWorkPageArgs> = {
 	title: 'Páginas/LiteraryWorkPage',
 	decorators: [
 		applicationConfig({
-			providers: [
-				provideRouter([]),
-				provideLiteraryWorkApiMock(new CorpusLiteraryWorkApi()),
-				provideCollectionApiMock(new StubCollectionApi(onoffCollectionsMock)),
-			],
+			providers: [provideRouter([]), provideLiteraryWorkApiMock(new CorpusLiteraryWorkApi())],
 		}),
 		...embedPlaceholdersDecorator,
 	],

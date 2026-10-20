@@ -4,28 +4,33 @@ import type { Observable } from 'rxjs';
 import { of, Subject, throwError } from 'rxjs';
 
 import { CollectionReadingSuggestions } from './collection-reading-suggestions';
-import { READING_SUGGESTIONS_COUNT } from './pick-reading-suggestions';
-import { CollectionApi } from '../../providers/collection.provider';
-import type { Collection } from '@models/collection.model';
-
+import { LiteraryWorkApi } from '../../providers/literary-work.provider';
+import type { ReadingSuggestions, ReadingSuggestionsScope } from '@models/reading-suggestions.model';
 import { onoffCollectionsMock } from '@mocks/onoff-collections.mock';
-import { clearAllMocks, fn, restoreAllMocks, spyOn } from '@test-utils';
+import { clearAllMocks, fn, restoreAllMocks } from '@test-utils';
 import { firstProseWord } from '@testing/corpus-prose';
 
-// La colección se toma del canon: el agregado ya transporta sus obras como teasers, con el extracto
-// del que la tarjeta deriva lo que pinta.
+// La colección se toma del canon: es la que el backend devuelve como encabezado, con sus obras ya
+// elegidas.
 const [collectionMock] = onoffCollectionsMock;
+const suggestionsMock: ReadingSuggestions = {
+	title: collectionMock.title,
+	suggestions: collectionMock.literaryWorks.slice(0, 3),
+};
+
+type GetSuggestions = (workSlug: string, scope: ReadingSuggestionsScope) => Observable<ReadingSuggestions>;
 
 const setup = async (
-	get: (slug: string) => Observable<Collection>,
+	getSuggestions: GetSuggestions,
 	inputs: { collectionSlug?: string; currentWorkSlug?: string } = {},
 ) => {
 	const view = await render(CollectionReadingSuggestions, {
 		inputs: {
 			collectionSlug: collectionMock.slug,
+			currentWorkSlug: 'la-obra-que-se-lee',
 			...inputs,
 		},
-		providers: [provideRouter([]), { provide: CollectionApi, useValue: { getBySlug: get } }],
+		providers: [provideRouter([]), { provide: LiteraryWorkApi, useValue: { getSuggestions } }],
 	});
 	view.detectChanges();
 	return view;
@@ -34,57 +39,70 @@ const setup = async (
 describe('CollectionReadingSuggestions', () => {
 	beforeEach(() => {
 		clearAllMocks();
-		// Azar determinista: el barajado toma siempre el primer candidato disponible, así las
-		// aserciones citan las primeras obras del corpus.
-		spyOn(Math, 'random').mockReturnValue(0);
 	});
 
 	afterEach(() => {
 		restoreAllMocks();
 	});
 
-	it('should fetch the navigation teasers of the collection', async () => {
-		const get = fn<(slug: string) => Observable<Collection>>();
-		get.mockReturnValue(of(collectionMock));
+	it('should fetch the suggestions of the collection for the work being read', async () => {
+		const getSuggestions = fn<GetSuggestions>();
+		getSuggestions.mockReturnValue(of(suggestionsMock));
 
-		await setup(get);
+		await setup(getSuggestions);
 
-		expect(get).toHaveBeenCalledWith(collectionMock.slug);
+		expect(getSuggestions).toHaveBeenCalledWith('la-obra-que-se-lee', { collection: collectionMock.slug });
 	});
 
 	it('should not fetch when there is no collection slug', async () => {
-		const get = fn<(slug: string) => Observable<Collection>>();
-		get.mockReturnValue(of(collectionMock));
+		const getSuggestions = fn<GetSuggestions>();
+		getSuggestions.mockReturnValue(of(suggestionsMock));
 
-		await setup(get, { collectionSlug: '' });
+		await setup(getSuggestions, { collectionSlug: '' });
 
-		expect(get).not.toHaveBeenCalled();
+		expect(getSuggestions).not.toHaveBeenCalled();
 	});
 
-	it('should render the works of the collection as suggestions', async () => {
-		await setup(() => of(collectionMock));
+	it('should render the works of the response as suggestions', async () => {
+		await setup(() => of(suggestionsMock));
 
-		for (const story of collectionMock.literaryWorks.slice(0, READING_SUGGESTIONS_COUNT)) {
+		for (const story of suggestionsMock.suggestions) {
 			expect(screen.getByRole('link', { name: story.title })).toBeInTheDocument();
 		}
 	});
 
-	it('should suggest as many works as the block renders', async () => {
-		await setup(() => of(collectionMock));
+	it('should suggest as many works as the backend returns', async () => {
+		await setup(() => of(suggestionsMock));
 
-		expect(screen.getAllByRole('listitem')).toHaveLength(READING_SUGGESTIONS_COUNT);
+		expect(screen.getAllByRole('listitem')).toHaveLength(suggestionsMock.suggestions.length);
 	});
 
-	it('should exclude the work being read', async () => {
-		const [current] = collectionMock.literaryWorks;
+	// El recorte y el descarte de la obra que se lee los hace el backend: acá no se filtra nada, y el
+	// caso lo fija un listado que ya viene sin ella.
+	it('should draw the works of the response, in the order it arrives', async () => {
+		await setup(() => of(suggestionsMock));
 
-		await setup(() => of(collectionMock), { currentWorkSlug: current.slug });
-
-		expect(screen.queryByRole('link', { name: current.title })).not.toBeInTheDocument();
+		expect(screen.getAllByRole('listitem').map((item) => item.textContent)).toEqual(
+			suggestionsMock.suggestions.map(({ title }) => expect.stringContaining(title)),
+		);
 	});
 
-	it('should head the block with the collection title and link to it', async () => {
-		await setup(() => of(collectionMock));
+	it('should resolve them again when the work being read changes', async () => {
+		const getSuggestions = fn<GetSuggestions>();
+		getSuggestions.mockReturnValue(of(suggestionsMock));
+
+		const view = await setup(getSuggestions);
+		await view.rerender({
+			inputs: { collectionSlug: collectionMock.slug, currentWorkSlug: 'otra-obra' },
+		});
+		await view.fixture.whenStable();
+
+		expect(getSuggestions).toHaveBeenCalledTimes(2);
+		expect(getSuggestions).toHaveBeenLastCalledWith('otra-obra', { collection: collectionMock.slug });
+	});
+
+	it('should head the block with the title the backend returns and link to the collection', async () => {
+		await setup(() => of(suggestionsMock));
 
 		expect(screen.getByRole('heading', { name: `Más obras de ${collectionMock.title}` })).toBeInTheDocument();
 		expect(screen.getByRole('link', { name: `Ver más de ${collectionMock.title}` })).toHaveAttribute(
@@ -93,23 +111,21 @@ describe('CollectionReadingSuggestions', () => {
 		);
 	});
 
-	it('should show the loading state until the collection arrives', async () => {
-		const collection = new Subject<Collection>();
+	it('should show the loading state until the suggestions arrive', async () => {
+		const suggestions = new Subject<ReadingSuggestions>();
 
-		const view = await setup(() => collection);
+		const view = await setup(() => suggestions);
 
 		expect(screen.getByTestId('reading-suggestions')).toHaveAttribute('aria-busy', 'true');
 
-		collection.next(collectionMock);
+		suggestions.next(suggestionsMock);
 		await view.fixture.whenStable();
 
 		expect(screen.getByTestId('reading-suggestions')).toHaveAttribute('aria-busy', 'false');
 	});
 
-	it('should stay hidden when the collection has no other work to suggest', async () => {
-		const [onlyWork] = collectionMock.literaryWorks;
-
-		await setup(() => of({ ...collectionMock, literaryWorks: [onlyWork] }), { currentWorkSlug: onlyWork.slug });
+	it('should stay hidden when the scope has no works to suggest', async () => {
+		await setup(() => of({ title: '', suggestions: [] }));
 
 		expect(screen.queryByTestId('reading-suggestions')).not.toBeInTheDocument();
 	});
@@ -121,9 +137,9 @@ describe('CollectionReadingSuggestions', () => {
 	});
 
 	it('should carry the collection context into each suggestion link', async () => {
-		await setup(() => of(collectionMock));
+		await setup(() => of(suggestionsMock));
 
-		const [suggestion] = collectionMock.literaryWorks;
+		const [suggestion] = suggestionsMock.suggestions;
 
 		expect(screen.getByRole('link', { name: suggestion.title })).toHaveAttribute(
 			'href',
@@ -132,24 +148,22 @@ describe('CollectionReadingSuggestions', () => {
 	});
 
 	it('should show the author of each suggestion, since a collection can gather several', async () => {
-		await setup(() => of(collectionMock));
+		await setup(() => of(suggestionsMock));
 
-		expect(screen.getAllByTestId('author')).toHaveLength(READING_SUGGESTIONS_COUNT);
+		expect(screen.getAllByTestId('author')).toHaveLength(suggestionsMock.suggestions.length);
 	});
 
-	// El extracto se verifica sobre lo que produce el camino real —proveedor → picker → adapter → bloque
-	// → tarjeta—, no sobre un teaser del corpus armado a mano.
-	// Con la fuente nativa el extracto viaja dentro del teaser, así que la palabra a buscar se deriva
-	// de su propio HTML saneado. El caso "proyección sin cuerpo" se retiró: la vista de teaser exige el
-	// extracto por tipo, y la obra que llega sin él la descarta el ACL del backend con su propio spec.
+	// El extracto se verifica sobre lo que produce el camino real —proveedor → adapter → bloque →
+	// tarjeta—, no sobre un teaser del corpus armado a mano. Con la fuente nativa el extracto viaja
+	// dentro del teaser, así que la palabra a buscar se deriva de su propio HTML saneado.
 	it('should show the excerpt of each suggested work', async () => {
-		await setup(() => of(collectionMock));
+		await setup(() => of(suggestionsMock));
 
 		const excerpts = screen.getAllByTestId('description');
 
-		expect(excerpts).toHaveLength(READING_SUGGESTIONS_COUNT);
+		expect(excerpts).toHaveLength(suggestionsMock.suggestions.length);
 		for (const [index, excerpt] of excerpts.entries()) {
-			expect(excerpt.textContent).toContain(firstProseWord(collectionMock.literaryWorks[index].excerpt.bodyHtml));
+			expect(excerpt.textContent).toContain(firstProseWord(suggestionsMock.suggestions[index].excerpt.bodyHtml));
 		}
 	});
 });
