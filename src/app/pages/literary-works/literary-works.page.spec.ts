@@ -10,6 +10,7 @@ import { LITERARY_WORKS_HOST } from './literary-works-host';
 import type { LiteraryWorkApi } from '../../providers/literary-work.provider';
 import { provideLiteraryWorkApiMock, StubLiteraryWorkApi } from '../../providers/literary-work.mock';
 import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
+import type { ReadingSuggestions } from '@models/reading-suggestions.model';
 import { createSlug } from '@models/slug.model';
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
@@ -22,6 +23,11 @@ class FailingLiteraryWorkApi implements LiteraryWorkApi {
 	public getTeasers(): Observable<LiteraryWorkTeaser[]> {
 		return throwError(() => new Error('sin catálogo'));
 	}
+
+	// El catálogo no monta el bloque de sugerencias, así que su fracaso no participa acá.
+	public getSuggestions(): Observable<ReadingSuggestions> {
+		return throwError(() => new Error('sin catálogo'));
+	}
 }
 
 // Retener la emisión es la única forma de sostener el estado de carga a la vista: el recurso queda
@@ -32,6 +38,10 @@ class PendingLiteraryWorkApi implements LiteraryWorkApi {
 	}
 
 	public getTeasers(): Observable<LiteraryWorkTeaser[]> {
+		return NEVER;
+	}
+
+	public getSuggestions(): Observable<ReadingSuggestions> {
 		return NEVER;
 	}
 }

@@ -23,6 +23,12 @@ import {
 	type LiteraryWorkSectionDto,
 } from '@models/literary-work.dto';
 import type { LiteraryWorkTeaser } from '@models/literary-work.model';
+import { readingSuggestionsDtoSchema, type ReadingSuggestionsDto } from '@models/reading-suggestions.dto';
+import {
+	READING_SUGGESTIONS_COUNT,
+	type ReadingSuggestions,
+	type ReadingSuggestionsScope,
+} from '@models/reading-suggestions.model';
 import type { ApiUrl } from './endpoints';
 import { Endpoints } from './endpoints';
 
@@ -35,6 +41,7 @@ export interface LiteraryWorkTeaserFilter {
 export interface LiteraryWorkApi {
 	getBySlug(slug: string): Observable<LiteraryWork>;
 	getTeasers(filter?: LiteraryWorkTeaserFilter): Observable<LiteraryWorkTeaser[]>;
+	getSuggestions(workSlug: string, scope: ReadingSuggestionsScope): Observable<ReadingSuggestions>;
 }
 
 @Service()
@@ -52,6 +59,18 @@ export class HttpLiteraryWorkApi implements LiteraryWorkApi {
 		return this.http
 			.get<LiteraryWorkTeaserDto[]>(this.url, { params: filter.author ? { author: filter.author } : {} })
 			.pipe(map((response) => literaryWorkTeaserListDtoSchema.parse(response).map(toLiteraryWorkTeaser)));
+	}
+
+	// El bloque de sugerencias al pie de una obra: cuáles son y cuántas las decide el backend, así que
+	// acá solo se transporta el ámbito y la obra que se lee, y se rehidrata lo que vuelve. La obra viaja
+	// en el path porque es la referencia del recorte: el backend la descarta y mide afinidad contra sus
+	// tags.
+	public getSuggestions(workSlug: string, scope: ReadingSuggestionsScope): Observable<ReadingSuggestions> {
+		return this.http
+			.get<ReadingSuggestionsDto>(`${this.url}/${workSlug}/suggestions`, {
+				params: { ...scope, limit: READING_SUGGESTIONS_COUNT },
+			})
+			.pipe(map((response) => this.toReadingSuggestions(readingSuggestionsDtoSchema.parse(response))));
 	}
 
 	private toSection(dto: LiteraryWorkSectionDto): LiteraryWorkSection {
@@ -94,6 +113,12 @@ export class HttpLiteraryWorkApi implements LiteraryWorkApi {
 			publishedAt: createIsoDateTime(dto.publishedAt),
 			editorialNote: dto.editorialNote ? createSanitizedHtml(dto.editorialNote) : undefined,
 		});
+	}
+
+	// Las obras del bloque las rehidrata el mismo mapper que el catálogo: son la misma vista de teaser,
+	// y el encabezado es texto plano del ámbito.
+	private toReadingSuggestions(dto: ReadingSuggestionsDto): ReadingSuggestions {
+		return { title: dto.title, suggestions: dto.suggestions.map(toLiteraryWorkTeaser) };
 	}
 }
 

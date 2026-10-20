@@ -3,6 +3,7 @@ import { provideRouter } from '@angular/router';
 import { NEVER, of, throwError, type Observable } from 'rxjs';
 
 import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
+import { EMPTY_READING_SUGGESTIONS, type ReadingSuggestions } from '@models/reading-suggestions.model';
 import {
 	onoffLiteraryWorkTeasersMock,
 	onoffLiteraryWorkTeasersWithMediaSourcesMock,
@@ -42,6 +43,11 @@ class StubScenarioLiteraryWorkApi implements LiteraryWorkApi {
 			return NEVER;
 		}
 		return of([...catalogues[this.scenario]]);
+	}
+
+	// El catálogo no monta el bloque de sugerencias: el estado que este doble escenifica es el del listado.
+	public getSuggestions(): Observable<ReadingSuggestions> {
+		return of(EMPTY_READING_SUGGESTIONS);
 	}
 }
 

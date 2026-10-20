@@ -6,6 +6,7 @@ import { of } from 'rxjs';
 
 // Models
 import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
+import { EMPTY_READING_SUGGESTIONS, type ReadingSuggestions } from '@models/reading-suggestions.model';
 import { LiteraryWorkApi, type LiteraryWorkTeaserFilter } from './literary-work.provider';
 
 export class StubLiteraryWorkApi implements LiteraryWorkApi {
@@ -24,6 +25,12 @@ export class StubLiteraryWorkApi implements LiteraryWorkApi {
 				? this.teasers.filter(({ authors }) => authors.some((author) => author.slug === filter.author))
 				: [...this.teasers],
 		);
+	}
+
+	// Sin bloque cargado devuelve el vacío, que es el estado del que el consumidor no se pinta; los specs
+	// que necesitan verlo le pasan su propio doble.
+	public getSuggestions(): Observable<ReadingSuggestions> {
+		return of(EMPTY_READING_SUGGESTIONS);
 	}
 }
 
