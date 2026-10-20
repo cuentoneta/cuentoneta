@@ -119,7 +119,7 @@
 		"eslint-plugin-testing-library": "^7.16.2",
 		"eslint-plugin-unicorn": "^77.0.0",
 		"groq-js": "^2.0.0",
-		"happy-dom": "^20.14.6",
+		"happy-dom": "^21.0.3",
 		"husky": "^9.1.7",
 		"jsonld": "^9.0.0",
 		"node-html-parser": "^9.0.4",
