@@ -5,33 +5,42 @@ import { of } from 'rxjs';
 
 import { ReadingSuggestions } from './reading-suggestions';
 import { LiteraryWorkApi } from '../../providers/literary-work.provider';
-import { CollectionApi } from '../../providers/collection.provider';
-import type { NavigationParams } from '@app-utils/navigation-params';
+import type {
+	ReadingSuggestions as ReadingSuggestionsModel,
+	ReadingSuggestionsScope,
+} from '@models/reading-suggestions.model';
 import { onoffCollectionsMock } from '@mocks/onoff-collections.mock';
 import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
 import { authorTeaserMock } from '@mocks/author.mock';
-import { clearAllMocks, restoreAllMocks, spyOn } from '@test-utils';
+import { clearAllMocks } from '@test-utils';
 
 const [collectionMock] = onoffCollectionsMock;
 
-const setup = async (navigationParams: NavigationParams) =>
+// El backend resuelve el encabezado y las obras del ámbito, así que el doble responde por contexto: así
+// cada variante montada se distingue por la respuesta que le corresponde.
+const suggestionsByContext: Record<string, ReadingSuggestionsModel> = {
+	author: { title: authorTeaserMock.name, suggestions: onoffLiteraryWorkTeasersMock.slice(0, 3) },
+	collection: { title: collectionMock.title, suggestions: collectionMock.literaryWorks.slice(0, 3) },
+};
+
+const setup = async (navigationParams: { navigation: 'author' | 'collection'; navigationSlug: string }) =>
 	render(ReadingSuggestions, {
-		inputs: { navigationParams, authorName: authorTeaserMock.name, currentWorkSlug: 'una-obra-cualquiera' },
+		inputs: { navigationParams, currentWorkSlug: 'la-obra-que-se-lee' },
 		providers: [
 			provideRouter([]),
-			{ provide: LiteraryWorkApi, useValue: { getTeasers: () => of(onoffLiteraryWorkTeasersMock) } },
-			{ provide: CollectionApi, useValue: { getBySlug: () => of(collectionMock) } },
+			{
+				provide: LiteraryWorkApi,
+				useValue: {
+					getSuggestions: (_workSlug: string, scope: ReadingSuggestionsScope) =>
+						of('author' in scope ? suggestionsByContext.author : suggestionsByContext.collection),
+				},
+			},
 		],
 	});
 
 describe('ReadingSuggestions', () => {
 	beforeEach(() => {
 		clearAllMocks();
-		spyOn(Math, 'random').mockReturnValue(0);
-	});
-
-	afterEach(() => {
-		restoreAllMocks();
 	});
 
 	it('should keep the suggestions out of the initial render, deferred until the viewport reaches them', async () => {
@@ -62,7 +71,7 @@ describe('ReadingSuggestions', () => {
 		expect(screen.queryByRole('heading', { name: `Más obras de ${authorTeaserMock.name}` })).not.toBeInTheDocument();
 	});
 
-	it('should hand the author variant the slug it has to fetch by', async () => {
+	it('should hand the author variant the slug it has to ask by', async () => {
 		const { fixture } = await setup({ navigation: 'author', navigationSlug: authorTeaserMock.slug });
 
 		await renderDeferBlocks(fixture);
@@ -73,7 +82,7 @@ describe('ReadingSuggestions', () => {
 		);
 	});
 
-	it('should hand the collection variant the slug it has to fetch by', async () => {
+	it('should hand the collection variant the slug it has to ask by', async () => {
 		const { fixture } = await setup({ navigation: 'collection', navigationSlug: collectionMock.slug });
 
 		await renderDeferBlocks(fixture);
@@ -82,27 +91,5 @@ describe('ReadingSuggestions', () => {
 			'href',
 			`/collection/${collectionMock.slug}`,
 		);
-	});
-
-	it('should exclude the work being read from whichever variant renders', async () => {
-		const [current] = onoffLiteraryWorkTeasersMock;
-		const { fixture } = await render(ReadingSuggestions, {
-			inputs: {
-				navigationParams: { navigation: 'author', navigationSlug: authorTeaserMock.slug },
-				authorName: authorTeaserMock.name,
-				currentWorkSlug: current.slug,
-			},
-			providers: [
-				provideRouter([]),
-				{
-					provide: LiteraryWorkApi,
-					useValue: { getTeasers: () => of(onoffLiteraryWorkTeasersMock) },
-				},
-			],
-		});
-
-		await renderDeferBlocks(fixture);
-
-		expect(screen.queryByRole('link', { name: current.title })).not.toBeInTheDocument();
 	});
 });

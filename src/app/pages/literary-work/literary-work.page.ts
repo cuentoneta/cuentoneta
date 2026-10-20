@@ -70,11 +70,9 @@ export default class LiteraryWorkPage implements LiteraryWorkHost {
 
 	private readonly notFound = computed(() => this.literaryWorkResource.status() === 'error');
 
-	// El primer autor y no el `byline`: el nombre y el slug que consume la variante de autor tienen
-	// que referirse al mismo, y el byline une a todos con coma.
+	// El primer autor y no el `byline`: la variante de autor pide por su slug, y el byline une a todos
+	// con coma.
 	private readonly primaryAuthor = computed(() => this.literaryWork()?.authors[0]);
-
-	private readonly primaryAuthorName = computed(() => this.primaryAuthor()?.name ?? '');
 
 	// Sin contexto en la ruta se cae al autor de la obra: una obra abierta por URL directa igual
 	// ofrece a dónde seguir leyendo.

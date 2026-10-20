@@ -3,7 +3,7 @@ import { provideRouter } from '@angular/router';
 import { clearAllMocks } from '@test-utils';
 
 import { ReadingSuggestionsList } from './reading-suggestions-list';
-import { READING_SUGGESTIONS_COUNT } from './pick-reading-suggestions';
+import { READING_SUGGESTIONS_COUNT } from '@models/reading-suggestions.model';
 import type { LiteraryWorkTeaser } from '@models/literary-work.model';
 import { firstProseWord } from '@testing/corpus-prose';
 import type { NavigationParams } from '@app-utils/navigation-params';

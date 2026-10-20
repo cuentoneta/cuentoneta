@@ -90,7 +90,7 @@ const navigationArgTypes = {
 };
 
 // Las cuatro cantidades que el diseño enumera como variantes del bloque. Más de tres no es alcanzable
-// en producción —el selector recorta a la cantidad acordada—, pero se ofrece igual: es lo que hace
+// en producción —el default de `limit` del endpoint recorta ahí—, pero se ofrece igual: es lo que hace
 // explícito que el intercalado del separador no está cableado a tres.
 const suggestionCountArgType = {
 	suggestionCount: {

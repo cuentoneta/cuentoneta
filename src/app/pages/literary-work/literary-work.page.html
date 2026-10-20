@@ -46,11 +46,7 @@
 
 	<!-- Se monta bajo el `@if` de la obra: sin obra no hay autor de reserva y el bloque pediría sugerencias de un slug vacío. -->
 	<section class="mx-auto flex w-full max-w-3xl flex-col px-4 pb-12">
-		<cuentoneta-reading-suggestions
-			[navigationParams]="navigationParams()"
-			[authorName]="primaryAuthorName()"
-			[currentWorkSlug]="literaryWork.slug"
-		/>
+		<cuentoneta-reading-suggestions [navigationParams]="navigationParams()" [currentWorkSlug]="literaryWork.slug" />
 	</section>
 </article>
 } @else if (notFound()) {

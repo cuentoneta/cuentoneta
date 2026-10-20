@@ -5,7 +5,7 @@ import { LiteraryWorkTeaserCard } from '@components/literary-work-teaser-card/li
 import { Button } from '@components/button/button';
 import { Divider } from '@components/divider/divider';
 import { Skeleton } from '@components/skeleton/skeleton';
-import { READING_SUGGESTIONS_COUNT } from './pick-reading-suggestions';
+import { READING_SUGGESTIONS_COUNT } from '@models/reading-suggestions.model';
 import type { LiteraryWorkTeaser } from '@models/literary-work.model';
 import type { NavigationParams } from '@app-utils/navigation-params';
 
