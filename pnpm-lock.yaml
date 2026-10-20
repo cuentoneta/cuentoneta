@@ -164,8 +164,8 @@ importers:
         specifier: ~7.8.1
         version: 7.8.2
       satori:
-        specifier: ^0.56.1
-        version: 0.56.1
+        specifier: ^0.62.0
+        version: 0.62.0
       satori-html:
         specifier: ^0.3.2
         version: 0.3.2
@@ -7692,8 +7692,8 @@ packages:
   satori-html@0.3.2:
     resolution: {integrity: sha512-wjTh14iqADFKDK80e51/98MplTGfxz2RmIzh0GqShlf4a67+BooLywF17TvJPD6phO0Hxm7Mf1N5LtRYvdkYRA==}
 
-  satori@0.56.1:
-    resolution: {integrity: sha512-1ARgCVs7Tf0uAwuqo8fXfkCv+89CL80ORINjJ0FKf+Y2iwmNPZjTF+NltvbfbGAn6kzP6rOQ+6eosu/lf7rM7A==}
+  satori@0.62.0:
+    resolution: {integrity: sha512-6w3G54svVX9B3RY3S7XgZ3i9ZNtvO7Z8AWWUPcHM3HMhgvmYAZOl5TkWBqE8moxRxHW0i2XPbjI1mUsUmWGriA==}
     engines: {node: '>=16'}
 
   sax@1.4.4:
@@ -16643,7 +16643,7 @@ snapshots:
     dependencies:
       ultrahtml: 1.2.0
 
-  satori@0.56.1:
+  satori@0.62.0:
     dependencies:
       '@shuding/opentype.js': 1.4.0-beta.0
       css-background-parser: 0.1.0
