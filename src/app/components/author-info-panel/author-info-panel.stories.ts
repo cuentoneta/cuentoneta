@@ -37,6 +37,15 @@ const authorWithShortBiography = {
 	),
 };
 
+const authorWithLinkedBiography = {
+	...authorMock,
+	biography: markdownToSanitizedHtml(
+		createMarkdown(
+			'**François Onoff** dirigió la editorial que lleva su apellido. Su obra completa puede consultarse en el [archivo de la editorial](https://example.com/archivo).',
+		),
+	),
+};
+
 const meta: Meta<AuthorInfoPanel> = {
 	title: 'Componentes V3/AuthorInfoPanel',
 	component: AuthorInfoPanel,
@@ -130,6 +139,24 @@ export const BiografiaCorta: Story = {
 		docs: {
 			description: {
 				story: `<p>Una biografía que entra completa en su recorte: el acceso a leerla entera <strong>no aparece</strong>, porque no hay nada más que leer. Es el escenario que el diseño rotula "Few stories and info".</p><p>La medición depende del layout real, así que este comportamiento solo se puede mirar acá — el entorno de tests no computa alturas.</p>`,
+			},
+		},
+	},
+};
+
+export const BiografiaConEnlace: Story = {
+	render: (args) => ({
+		props: args,
+		template: `<cuentoneta-author-info-panel ${argsToTemplate(args)} />`,
+	}),
+	args: {
+		author: authorWithLinkedBiography,
+		biographyLines: 8,
+	},
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>Una biografía con un enlace en su texto. El enlace se ve subrayado: el color solo no alcanza para señalar que un fragmento es interactivo.</p>`,
 			},
 		},
 	},

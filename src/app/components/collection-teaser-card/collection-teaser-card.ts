@@ -37,6 +37,7 @@ import { CollectionCover } from '../collection-cover/collection-cover';
 					<div
 						[innerHTML]="safeDescription()"
 						class="line-clamp-4 font-inter text-sm text-ellipsis text-neutral-700"
+						data-markdown
 						data-testid="description"
 					></div>
 					<footer class="flex flex-col gap-1 font-inter text-xs text-neutral-600 sm:flex-row">

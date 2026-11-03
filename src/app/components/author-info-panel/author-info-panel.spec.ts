@@ -10,10 +10,13 @@ import { cuentoTagMock, ensayoTagMock, novelaTagMock } from '@mocks/onoff-tags.m
 
 // Modelos
 import type { Author } from '@models/author.model';
+import { createMarkdown } from '@models/markdown.model';
 
 // Utilidades de test
 import { clearAllMocks, fn } from '@test-utils';
+import { installMarkdownLinksSheet } from '@testing/markdown-links-sheet';
 import { installResizeObserverStub, setMeasuredSize, triggerResize } from '@testing/resize-observer.stub';
+import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 
 const availableTags = [cuentoTagMock, novelaTagMock, ensayoTagMock];
 
@@ -25,6 +28,7 @@ describe('AuthorInfoPanel', () => {
 	beforeEach(() => {
 		clearAllMocks();
 		installResizeObserverStub();
+		installMarkdownLinksSheet();
 	});
 
 	describe('sin autor', () => {
@@ -67,6 +71,19 @@ describe('AuthorInfoPanel', () => {
 			expect(biography).not.toBeEmptyDOMElement();
 			expect(within(biography).getAllByRole('paragraph').length).toBeGreaterThan(0);
 			expect(within(biography).getByText(authorMock.name).tagName).toBe('STRONG');
+		});
+
+		it('should underline the links of the biography', async () => {
+			const label = 'sitio del autor';
+			const author = {
+				...authorMock,
+				biography: markdownToSanitizedHtml(createMarkdown(`Más en el [${label}](https://example.com/autor).`)),
+			};
+
+			await render(AuthorInfoPanel, { inputs: { author } });
+
+			const link = within(screen.getByTestId('biography')).getByRole('link', { name: label });
+			expect(link).toHaveStyle('text-decoration-line: underline');
 		});
 
 		// Todas las etiquetas del dominio, no la primera: recortar acá escondería en silencio las demás.
