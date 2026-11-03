@@ -257,6 +257,16 @@ await render(LiteraryWorkPage, {
 expect(await screen.findByText(literaryWorkMock.title)).toBeInTheDocument();
 ```
 
+### Estilos de una hoja global
+
+`happy-dom` no carga `src/styles.css`, así que un spec que quiera afirmar el estilo computado de un nodo (`toHaveStyle`) tiene que inyectar la hoja. Tres hechos condicionan cómo:
+
+- **Solo CSS plano.** `getComputedStyle` resuelve contra un `<style>` inyectado, pero con `@layer` o selectores anidados el computado queda vacío.
+- **La hoja se lee del disco.** Un `?raw` llega vacío en Vitest, y no hay motivo para esperar otra cosa de un `import` común: se lee con `fs`.
+- **Un selector de elemento global no matchea.** Angular Testing Library monta el componente dentro de un `div`, no bajo su selector, así que una regla anclada a `cuentoneta-xxx` nunca aplica. Una regla anclada a un atributo de un elemento de la propia plantilla sí.
+
+`installMarkdownLinksSheet()` (`src/testing/markdown-links-sheet.ts`) aplica los tres: inyecta la hoja que subraya los enlaces del HTML de Markdown. Lo que el entorno no puede observar es la capa: que la regla le gane al preflight lo decide el `layer()` con el que `styles.css` importa la hoja, y lo fija un spec aparte (`src/app/markdown-links.spec.ts`).
+
 ---
 
 ## Prioridad de queries
@@ -353,16 +363,6 @@ Un centinela dentro del `-webkit-box` del clamp alteraría el conteo de líneas 
 ### `document.fonts` en tests
 
 `happy-dom` no lo expone. `src/test-setup.ts` instala un doble **controlable** (`src/testing/document-fonts.stub.ts`), que deja `document.fonts.ready` pendiente hasta que el spec llame a `resolveFontsReady()`. Es lo que hace afirmable el caso de la fuente que carga tarde: con un `leading` explícito la caja no cambia de alto, así que el `ResizeObserver` no dispara y solo crece el contenido.
-
-### Estilos de una hoja global en tests
-
-`happy-dom` no carga `src/styles.css`, así que un spec que quiera afirmar el estilo computado de un nodo (`toHaveStyle`) tiene que inyectar la hoja. Tres hechos condicionan cómo:
-
-- **Solo CSS plano.** `getComputedStyle` resuelve contra un `<style>` inyectado, pero con `@layer` o selectores anidados el computado queda vacío.
-- **El CSS importado llega vacío.** Ni `import` ni `?raw` entregan el contenido de una hoja en Vitest; se lee del disco con `fs`.
-- **Un selector de elemento global no matchea.** Angular Testing Library monta el componente dentro de un `div`, no bajo su selector, así que una regla anclada a `cuentoneta-xxx` nunca aplica. Una regla anclada a un atributo de un elemento de la propia plantilla sí.
-
-`installMarkdownLinksSheet()` (`src/testing/markdown-links-sheet.ts`) aplica los tres: inyecta la hoja que subraya los enlaces del HTML de Markdown. Lo que el entorno no puede observar es la capa: que la regla le gane al preflight lo decide el `layer()` con el que `styles.css` importa la hoja, y lo fija un spec aparte (`src/app/markdown-links.spec.ts`).
 
 ---
 
@@ -632,6 +632,7 @@ Si el componente **renderiza su propio skeleton** según un input (p. ej. cuando
 - **Mocks/timers** → siempre desde `@test-utils`; `clearAllMocks()` en `beforeEach`.
 - **Componente que usa `IntersectionObserver`** → `installIntersectionObserverStub()` en `beforeEach`; simular overflow con `markOutsideViewport` / `markInsideViewport`.
 - **Directiva que mide su host** → `installResizeObserverStub()` en `beforeEach`; fijar medidas con `setMeasuredSize`, entregar el callback con `triggerResize()` y llamar a `detectChanges()`; afirmar la desconexión con `activeObserverCount()`.
+- **Spec que afirma el estilo de HTML inyectado por `[innerHTML]`** → `installMarkdownLinksSheet()` en `beforeEach` y `toHaveStyle` sobre el nodo; ver [Estilos de una hoja global](#estilos-de-una-hoja-global).
 - **Lógica Node pura de `cms/`** → spec propio con Vitest standalone (`pnpm sanity:test`); dobles escritos a mano (`Spy*`/`Stub*`/`Fake*`), sin `@test-utils`.
 - **Migración de datos de Sanity (`cms/migrations/<slug>/`)** → `index.spec.ts` co-locado que ejercita `migrate.document`; corre con `pnpm sanity:test` dentro del gate `studio-build`; sin `@test-utils` (imports explícitos de `vitest`, igual que el resto de `cms/`) — ver [`sanity-migrations.md`](sanity-migrations.md).
 - **Document type de Sanity (`cms/schemas/<tipo>.ts`)** → **sin spec**. Un test que afirma que un campo se declara con cierto tipo, o que otro no está, repite lo que el archivo de al lado dice literalmente. Lo que sí protege contra una regresión ya existe: `cms/schema.json` y `src/sanity/types.ts` están versionados, así que un cambio de forma aparece en el diff de los generados, y el gate `studio-build` compila el Studio.
