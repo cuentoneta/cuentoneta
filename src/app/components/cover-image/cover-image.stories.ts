@@ -18,7 +18,7 @@ const meta: Meta<CoverImage> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>Imagen de portada (cover) de una obra, usada por las tarjetas del Design System v3 (${docsRef(literaryWorkTeaserCardDocs)} y ${docsRef(literaryWorkTeaserHomeCardDocs)}). Tamaño fijo 118×164; si no se provee <code>src</code>, muestra el placeholder del Design System. Es decorativa: el click se delega al enlace de la tarjeta.</p></div>`,
+				component: `<div><p>Imagen de portada (cover) de una obra, usada por las tarjetas del Design System v3 (${docsRef(literaryWorkTeaserCardDocs)} y ${docsRef(literaryWorkTeaserHomeCardDocs)}). Tamaño fijo 118×164; la imagen cubre la caja entera y recorta lo que sobra, sea cual sea su proporción. Si no se provee <code>src</code>, muestra el placeholder del Design System. Es decorativa: el click se delega al enlace de la tarjeta.</p></div>`,
 			},
 		},
 		layout: 'padded',
@@ -63,6 +63,32 @@ export const Interactiva: StoryObj<CoverImage & { coverIndex: number }> = {
 			description: {
 				story:
 					'Elegí la <strong>Obra</strong> para visualizar su portada entre las covers del corpus disponibles en los assets del proyecto.',
+			},
+		},
+	},
+};
+
+// El corpus trae portadas de la proporción de la caja: para ver imágenes más apaisadas se usan
+// assets de otras proporciones.
+const squareImageUrl = 'assets/img/mocks/author/francois-onoff.png';
+const wideImageUrl = 'assets/img/mocks/banners/banner-el-palacio-mobile.png';
+
+export const Apaisadas: Story = {
+	render: () => ({
+		props: { sources: [coverImageUrl, squareImageUrl, wideImageUrl] },
+		template: `
+			<div class="flex gap-4">
+				@for (source of sources; track source) {
+					<cuentoneta-cover-image [src]="source" />
+				}
+			</div>
+		`,
+	}),
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'Tres imágenes de proporciones distintas en la misma caja: la de la portada, una cuadrada y una muy apaisada. Las tres cubren la caja entera, sin fondo gris, y recortan lo que sobra.',
 			},
 		},
 	},
