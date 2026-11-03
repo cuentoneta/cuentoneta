@@ -1,5 +1,6 @@
-import { render, screen } from '@testing-library/angular';
+import { render, screen, within } from '@testing-library/angular';
 
+import { installMarkdownLinksSheet } from '@testing/markdown-links-sheet';
 import { LiteraryWorkSectionBody } from './literary-work-section-body';
 import { onoffLiteraryWorksMock, onoffLiteraryWorksWithBlockquotes } from '@mocks/onoff-literary-works.mock';
 import { createMarkdown } from '@models/markdown.model';
@@ -13,6 +14,8 @@ async function setup(body = anyLiteraryWork.content[0].bodyHtml) {
 }
 
 describe('LiteraryWorkSectionBody', () => {
+	beforeEach(installMarkdownLinksSheet);
+
 	it('pinta el cuerpo como marcado y no como texto', async () => {
 		await setup();
 
@@ -43,5 +46,14 @@ describe('LiteraryWorkSectionBody', () => {
 		const image = screen.getByAltText('Retrato');
 		expect(image.getAttribute('loading')).toBe('lazy');
 		expect(image.getAttribute('decoding')).toBe('async');
+	});
+
+	it('subraya los enlaces del cuerpo', async () => {
+		const label = 'Proyecto Territorio';
+		await setup(markdownToSanitizedHtml(createMarkdown(`Más en [${label}](https://example.com/territorio).`)));
+
+		const link = within(screen.getByTestId('literary-work-section-body')).getByRole('link', { name: label });
+
+		expect(link).toHaveStyle('text-decoration-line: underline');
 	});
 });
