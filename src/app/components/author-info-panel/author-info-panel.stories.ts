@@ -156,7 +156,7 @@ export const BiografiaConEnlace: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Una biografía con un enlace en su texto: el enlace se ve <strong>subrayado</strong>, porque el color solo no alcanza para señalar que un fragmento es interactivo. El subrayado lo aporta una regla global anclada al contenedor del HTML de Markdown, no el componente.</p>`,
+				story: `<p>Una biografía con un enlace en su texto. El enlace se ve subrayado: el color solo no alcanza para señalar que un fragmento es interactivo.</p>`,
 			},
 		},
 	},

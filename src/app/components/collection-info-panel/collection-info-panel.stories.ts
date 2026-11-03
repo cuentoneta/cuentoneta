@@ -197,7 +197,7 @@ export const DescripcionConEnlace: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Una descripción con enlaces en su texto: se ven <strong>subrayados</strong>, porque el color solo no alcanza para señalar que un fragmento es interactivo. El subrayado lo aporta una regla global anclada al contenedor del HTML de Markdown, no el componente.</p>`,
+				story: `<p>Una descripción con enlaces en su texto. Los enlaces se ven subrayados: el color solo no alcanza para señalar que un fragmento es interactivo.</p>`,
 			},
 		},
 	},

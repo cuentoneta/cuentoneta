@@ -89,7 +89,7 @@ export const NoteWithLinks: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Una nota con enlaces en el texto y en la referencia: se ven <strong>subrayados</strong> en los dos lugares, porque el color solo no alcanza para señalar que un fragmento es interactivo. El subrayado lo aporta una regla global anclada al contenedor del HTML de Markdown, no el componente, y rige igual en la variante <strong>highlight</strong>.</p>`,
+				story: `<p>Una nota con enlaces en el texto y en la referencia. Se ven subrayados en los dos lugares, y también en la variante <strong>highlight</strong>: el color solo no alcanza para señalar que un fragmento es interactivo.</p>`,
 			},
 		},
 	},
