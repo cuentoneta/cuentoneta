@@ -76,6 +76,27 @@ export const Abanico: Story = {
 	},
 };
 
+export const AbanicoConProporcionesMixtas: Story = {
+	render,
+	args: {
+		imagery: {
+			kind: 'sample',
+			images: [
+				sampleImages[0],
+				'assets/img/mocks/author/francois-onoff.png',
+				'assets/img/mocks/banners/banner-el-palacio-mobile.png',
+			],
+		},
+	},
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>El abanico con una portada de la proporción habitual, una cuadrada y una muy apaisada. Cada portada toma el ancho que le da su imagen, así que las laterales, ancladas a los bordes de la caja, se ven más o menos tapadas por la del frente.</p>`,
+			},
+		},
+	},
+};
+
 export const AltoConstante: Story = {
 	render: (args) => ({
 		props: { ...args, representativeImagery, sampleImagery },
