@@ -68,21 +68,22 @@ export const Interactiva: StoryObj<CoverImage & { coverIndex: number }> = {
 	},
 };
 
-// El corpus solo trae portadas de la proporción por defecto, que es donde el ancho no cambia.
-const squareImageUrl = 'assets/img/mocks/author/francois-onoff.png';
-const wideImageUrl = 'assets/img/mocks/banners/banner-el-palacio-mobile.png';
-
 export const Apaisadas: Story = {
-	render: () => ({
-		props: { sources: [coverImageUrl, squareImageUrl, wideImageUrl] },
-		template: `
-			<div class="flex gap-4">
-				@for (source of sources; track source) {
-					<cuentoneta-cover-image [src]="source" />
-				}
-			</div>
-		`,
-	}),
+	render: () => {
+		// Las portadas del corpus comparten proporción, así que las otras salen de assets propios.
+		const squareImageUrl = 'assets/img/mocks/author/francois-onoff.png';
+		const wideImageUrl = 'assets/img/mocks/banners/banner-el-palacio-mobile.png';
+		return {
+			props: { sources: [coverImageUrl, squareImageUrl, wideImageUrl] },
+			template: `
+					<div class="flex gap-4">
+						@for (source of sources; track source) {
+							<cuentoneta-cover-image [src]="source" />
+						}
+					</div>
+				`,
+		};
+	},
 	parameters: {
 		docs: {
 			description: {
