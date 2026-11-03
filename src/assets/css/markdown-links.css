@@ -1,0 +1,14 @@
+/*
+  Subrayado de los enlaces del HTML que el pipeline de Markdown inyecta por `[innerHTML]`.
+
+  El preflight de Tailwind quita el subrayado de todo enlace, y el color solo no alcanza como indicador de
+  que un fragmento es interactivo. Los `<a>` los emite el pipeline sin clases, así que ninguna utilidad
+  los alcanza.
+
+  La regla se ancla al atributo `data-markdown` y no a los componentes que poseen el HTML: una superficie
+  nueva se suma poniendo el atributo en su contenedor, sin tocar CSS. Es CSS plano, sin `@apply` ni
+  anidado, porque los specs inyectan esta misma hoja para verificar el subrayado.
+*/
+[data-markdown] a {
+	text-decoration-line: underline;
+}
