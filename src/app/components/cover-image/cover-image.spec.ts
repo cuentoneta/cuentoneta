@@ -43,8 +43,10 @@ describe('CoverImage', () => {
 		it('should fix the height of the image and let its width follow the proportions', async () => {
 			await render(CoverImage, { inputs: { src: 'https://example.com/cover.jpg' } });
 			const image = screen.getByTestId('cover-image');
-			expect(image).toHaveClass('h-full', 'w-auto', 'object-cover');
-			expect(image).not.toHaveClass('h-auto', 'w-full', 'size-full');
+			expect(image).toHaveClass('h-full', 'w-auto', 'object-cover', 'max-w-full');
+			for (const removed of ['h-auto', 'w-full', 'size-full']) {
+				expect(image).not.toHaveClass(removed);
+			}
 		});
 
 		it('should fix the height of the box and fit its width to the image up to a maximum', async () => {

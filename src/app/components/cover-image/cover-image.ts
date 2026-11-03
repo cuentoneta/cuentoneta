@@ -5,11 +5,12 @@ import type { SanityImageLoaderParams } from '../../providers/sanity-image-loade
 
 /**
  * Imagen de portada (cover) de una obra para las tarjetas del Design System v3. El host ES la
- * caja de la portada: de alto fijo (164) y de ancho el que resulte de la proporción de la imagen,
- * hasta un máximo de 164 —pasado el tope se recorta el excedente—. Sin `src` muestra el placeholder
- * del Design System, con el ancho por defecto de 118. El consumidor controla su ubicación dentro de la
- * tarjeta con clases utilitarias (p. ej. `order-last`). Es decorativa: el click se delega al enlace de
- * la tarjeta, por eso el `alt` queda vacío.
+ * caja de la portada: de alto fijo y de ancho el que resulte de la proporción de la imagen. El tope
+ * de ancho evita que una imagen muy apaisada ocupe la tarjeta y deje sin lugar a su columna de texto;
+ * pasado el tope se recorta el excedente. Sin `src` muestra el placeholder del Design System, con el
+ * ancho por defecto de 118. El consumidor controla su ubicación dentro de la tarjeta con clases
+ * utilitarias (p. ej. `order-last`). Es decorativa: el click se delega al enlace de la tarjeta, por eso
+ * el `alt` queda vacío.
  */
 @Component({
 	selector: 'cuentoneta-cover-image',
@@ -23,7 +24,7 @@ import type { SanityImageLoaderParams } from '../../providers/sanity-image-loade
 				[ngSrc]="url"
 				[priority]="priority()"
 				[loaderParams]="loaderParams"
-				class="h-full w-auto object-cover"
+				class="h-full w-auto max-w-full object-cover"
 				width="118"
 				height="164"
 				alt=""
