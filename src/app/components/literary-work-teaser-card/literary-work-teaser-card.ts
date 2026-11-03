@@ -62,6 +62,7 @@ export type LiteraryWorkTeaserCardContent =
 								<div
 									[innerHTML]="literaryWork.excerpt.bodyHtml"
 									[class]="'line-clamp-' + excerptLines()"
+									data-markdown
 									data-testid="description"
 									class="overflow-hidden font-inter text-sm font-medium text-ellipsis text-neutral-600"
 								></div>

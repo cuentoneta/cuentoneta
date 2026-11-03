@@ -22,6 +22,7 @@ import type { SpotifyPodcastEpisode } from '@models/media.model';
 			></iframe>
 			<figcaption
 				[innerHTML]="media().description"
+				data-markdown
 				data-testid="media-description"
 				class="font-inter text-xs font-medium text-brand-500"
 			></figcaption>

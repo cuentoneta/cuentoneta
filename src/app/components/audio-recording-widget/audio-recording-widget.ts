@@ -10,6 +10,7 @@ import type { AudioRecording } from '@models/media.model';
 			<audio [src]="media().data.url" data-testid="audio-recording" controls class="mb-2 block w-full"></audio>
 			<figcaption
 				[innerHTML]="media().description"
+				data-markdown
 				data-testid="media-description"
 				class="font-inter text-xs font-medium text-brand-500"
 			></figcaption>

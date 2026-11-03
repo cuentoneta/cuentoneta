@@ -51,6 +51,7 @@ import type { SpaceRecording } from '@models/media.model';
 			</div>
 			<figcaption
 				[innerHTML]="media().description"
+				data-markdown
 				data-testid="media-description"
 				class="font-inter text-xs font-medium text-brand-500"
 			></figcaption>
