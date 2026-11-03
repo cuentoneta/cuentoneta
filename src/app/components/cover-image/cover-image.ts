@@ -19,7 +19,7 @@ import { NgOptimizedImage } from '@angular/common';
 			<img
 				[ngSrc]="url"
 				[priority]="priority()"
-				class="h-auto w-full"
+				class="size-full object-cover"
 				width="118"
 				height="164"
 				alt=""

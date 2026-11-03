@@ -21,4 +21,14 @@ describe('CoverImage', () => {
 		expect(image).toHaveAttribute('width', '118');
 		expect(image).toHaveAttribute('height', '164');
 	});
+
+	// La imagen cubre la caja entera, sea cual sea su proporción: con el alto derivado del ancho, una
+	// imagen más apaisada que la caja dejaba ver el fondo gris. Se afirman las clases y no el estilo
+	// computado porque happy-dom no carga las hojas de estilo.
+	it('should cover the whole box regardless of the image proportions', async () => {
+		await render(CoverImage, { inputs: { src: 'https://example.com/cover.jpg' } });
+		const image = screen.getByTestId('cover-image');
+		expect(image).toHaveClass('size-full', 'object-cover');
+		expect(image).not.toHaveClass('h-auto');
+	});
 });
