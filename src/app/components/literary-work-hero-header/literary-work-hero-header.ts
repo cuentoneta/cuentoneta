@@ -79,9 +79,10 @@ export class LiteraryWorkHeroHeader {
 
 	public readonly literaryWork = input<LiteraryWork>();
 
-	// El ancho es el de la portada en primer plano, para que las dos pidan la misma URL y compartan una
-	// sola descarga. El fondo va difuminado y bajo un velo, así que no pierde nada con esa medida. Que
-	// sigan coincidiendo lo afirma el spec comparando lo que renderiza cada una, no una constante
-	// compartida: acá el número es una decisión de este componente y no un contrato con `CoverImage`.
-	private readonly backgroundLoaderParams: SanityImageLoaderParams = { width: 118 };
+	// La medida es la de la portada en primer plano, que se pide por alto: así las dos piden la misma URL
+	// y comparten una sola descarga. El fondo va difuminado y bajo un velo, así que no pierde nada con
+	// esa medida. Que sigan coincidiendo lo afirma el spec comparando lo que renderiza cada una, no una
+	// constante compartida: acá los números son una decisión de este componente y no un contrato con
+	// `CoverImage`.
+	private readonly backgroundLoaderParams: SanityImageLoaderParams = { width: 118, heightRatio: 164 / 118 };
 }

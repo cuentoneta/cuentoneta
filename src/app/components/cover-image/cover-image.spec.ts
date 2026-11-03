@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/angular';
 
 import { CoverImage } from './cover-image';
+import { provideSanityImageLoader } from '../../providers/sanity-image-loader';
 
 describe('CoverImage', () => {
 	it('should render the image when a src is provided', async () => {
@@ -20,6 +21,20 @@ describe('CoverImage', () => {
 		const image = screen.getByTestId('cover-image');
 		expect(image).toHaveAttribute('width', '118');
 		expect(image).toHaveAttribute('height', '164');
+	});
+
+	// El ancho de la caja depende de la imagen, así que se pide por alto: por ancho, una apaisada
+	// llegaría con menos resolución de la que se pinta.
+	it('should request the image by height at both densities', async () => {
+		await render(CoverImage, {
+			inputs: { src: 'https://cdn.sanity.io/images/x/cover-1024x1536.png' },
+			providers: [provideSanityImageLoader()],
+		});
+
+		const srcset = screen.getByTestId('cover-image').getAttribute('srcset');
+		expect(srcset).toContain('h=164');
+		expect(srcset).toContain('h=328');
+		expect(srcset).not.toContain('w=');
 	});
 
 	// Se afirman las clases y no el estilo computado: happy-dom no carga las hojas de estilo ni mide
