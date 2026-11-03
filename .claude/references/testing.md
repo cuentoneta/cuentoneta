@@ -354,6 +354,16 @@ Un centinela dentro del `-webkit-box` del clamp alteraría el conteo de líneas 
 
 `happy-dom` no lo expone. `src/test-setup.ts` instala un doble **controlable** (`src/testing/document-fonts.stub.ts`), que deja `document.fonts.ready` pendiente hasta que el spec llame a `resolveFontsReady()`. Es lo que hace afirmable el caso de la fuente que carga tarde: con un `leading` explícito la caja no cambia de alto, así que el `ResizeObserver` no dispara y solo crece el contenido.
 
+### Estilos de una hoja global en tests
+
+`happy-dom` no carga `src/styles.css`, así que un spec que quiera afirmar el estilo computado de un nodo (`toHaveStyle`) tiene que inyectar la hoja. Tres hechos condicionan cómo:
+
+- **Solo CSS plano.** `getComputedStyle` resuelve contra un `<style>` inyectado, pero con `@layer` o selectores anidados el computado queda vacío.
+- **El CSS importado llega vacío.** Ni `import` ni `?raw` entregan el contenido de una hoja en Vitest; se lee del disco con `fs`.
+- **Un selector de elemento global no matchea.** Angular Testing Library monta el componente dentro de un `div`, no bajo su selector, así que una regla anclada a `cuentoneta-xxx` nunca aplica. Una regla anclada a un atributo de un elemento de la propia plantilla sí.
+
+`installMarkdownLinksSheet()` (`src/testing/markdown-links-sheet.ts`) aplica los tres: inyecta la hoja que subraya los enlaces del HTML de Markdown. Lo que el entorno no puede observar es la capa: que la regla le gane al preflight lo decide el `layer()` con el que `styles.css` importa la hoja, y lo fija un spec aparte (`src/app/markdown-links.spec.ts`).
+
 ---
 
 ## Timers

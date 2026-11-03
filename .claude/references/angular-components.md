@@ -376,6 +376,12 @@ Puntos ciegos: los nombres sin mayúsculas (`(optionselected)` sigue compilando)
 >
 > **Punto ciego:** olvidar el `()` en una **plantilla** no lo atrapa el lint — `@angular-eslint/no-uncalled-signals` solo cubre código **TS** (ver [`angular-state.md`](./angular-state.md)). `strictTemplates` tampoco lo detecta: `mySignal.length` es type-válido (lee `Function.length`, un `number`). En plantillas, invocar el signal queda como disciplina de revisión.
 
+### HTML de Markdown inyectado
+
+Todo elemento que recibe por `[innerHTML]` el HTML que emite el pipeline de Markdown lleva el atributo `data-markdown`. Es el ancla de `src/assets/css/markdown-links.css`, que subraya los enlaces de ese HTML: el preflight de Tailwind se los quita, y el color solo no alcanza para señalar que un fragmento es interactivo. Los `<a>` los emite el pipeline sin clases, así que ninguna utilidad los alcanza.
+
+Una superficie nueva se suma poniendo el atributo en su contenedor, sin tocar CSS. `src/app/markdown-links.spec.ts` falla si algún `[innerHTML]` de una plantilla de `src/app/` no lo lleva.
+
 ---
 
 ## Host element
