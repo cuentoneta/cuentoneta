@@ -5,6 +5,8 @@ import { EditorialNote } from './editorial-note';
 import { attributedTextSelectArgType, corpusAttributedTexts } from '@mocks/onoff-corpus.storybook';
 import { onoffLiteraryWorkEpigraphsMock } from '@mocks/onoff-literary-works.mock';
 import { createAttributedText } from '@models/attributed-text.model';
+import { createMarkdown } from '@models/markdown.model';
+import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import { editorialNoteDocs } from './editorial-note.docs';
 import { docsMention } from '@testing/storybook-docs';
 import type { LiteraryWork } from '../../../sanity/types';
@@ -14,6 +16,14 @@ export type DocsSymbols = [LiteraryWork];
 // Del canon: un epígrafe cualquiera trae texto y referencia; la variante sin atribución reusa su texto.
 const [noteWithReference] = onoffLiteraryWorkEpigraphsMock;
 const note = createAttributedText({ text: noteWithReference.text });
+
+// El texto y la referencia pasan por el mismo pipeline que el del backend, para que el HTML sea el real.
+const noteWithLinks = createAttributedText({
+	text: markdownToSanitizedHtml(
+		createMarkdown('La edición original se consulta en el [archivo de la editorial](https://example.com/archivo).'),
+	),
+	reference: markdownToSanitizedHtml(createMarkdown('[Catálogo de la editorial](https://example.com/catalogo)')),
+});
 
 const meta: Meta<EditorialNote> = {
 	component: EditorialNote,
@@ -68,6 +78,18 @@ export const NoteWithReference: Story = {
 		docs: {
 			description: {
 				story: `<p>Variante <strong>note</strong> con pie de referencia: la tarjeta neutra con el pie en cursiva alineado a la derecha. El pie es agnóstico a la variante (se muestra cuando el <code>note</code> trae <code>reference</code>), no una variante propia del componente.</p><p><strong>Usos:</strong> sin consumidor todavía; una nota editorial que cite su fuente (<code>editorialNote</code> no transporta referencia).</p>`,
+			},
+		},
+	},
+};
+
+export const NoteWithLinks: Story = {
+	render: (args) => ({ props: args, template: `<cuentoneta-editorial-note ${argsToTemplate(args)} />` }),
+	args: { note: noteWithLinks, variant: 'note' },
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>Una nota con enlaces en el texto y en la referencia: se ven <strong>subrayados</strong> en los dos lugares, porque el color solo no alcanza para señalar que un fragmento es interactivo. El subrayado lo aporta una regla global anclada al contenedor del HTML de Markdown, no el componente, y rige igual en la variante <strong>highlight</strong>.</p>`,
 			},
 		},
 	},

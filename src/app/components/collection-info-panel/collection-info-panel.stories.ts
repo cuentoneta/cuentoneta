@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/angular-vite';
 import { argsToTemplate, componentWrapperDecorator } from '@storybook/angular-vite';
 import { CollectionInfoPanel } from './collection-info-panel';
 import {
+	onoffCollectionsWithLinkedDescriptionMock,
 	onoffCollectionsWithRepresentativeImageryMock,
 	onoffCollectionsWithSampleImageryMock,
 } from '@mocks/onoff-collections.mock';
@@ -25,6 +26,7 @@ import { collectionInfoPanelDocs } from './collection-info-panel.docs';
 
 export type DocsSymbols = [CollectionInfoPanelSkeleton];
 
+const [linkedDescriptionCollection] = onoffCollectionsWithLinkedDescriptionMock;
 const [representativeCollection] = onoffCollectionsWithRepresentativeImageryMock;
 const [sampleCollection] = onoffCollectionsWithSampleImageryMock;
 
@@ -178,6 +180,24 @@ export const DescripcionDeVariosParrafos: Story = {
 		docs: {
 			description: {
 				story: `<p>El montaje sin recorte, con una descripción de varios párrafos: es la única superficie donde se ve el ritmo vertical de la prosa. Las colecciones del corpus traen un solo párrafo, así que el resto de las entradas no lo muestran.</p><p>La separación entre párrafos es una línea en blanco, la misma que dibuja el diseño. El HTML lo emite el pipeline de Markdown sin clases, así que la regla vive en una hoja global anclada al componente.</p>`,
+			},
+		},
+	},
+};
+
+export const DescripcionConEnlace: Story = {
+	render: (args) => ({
+		props: args,
+		template: `<cuentoneta-collection-info-panel ${argsToTemplate(args)} />`,
+	}),
+	args: {
+		collection: linkedDescriptionCollection,
+		showTitle: false,
+	},
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>Una descripción con enlaces en su texto: se ven <strong>subrayados</strong>, porque el color solo no alcanza para señalar que un fragmento es interactivo. El subrayado lo aporta una regla global anclada al contenedor del HTML de Markdown, no el componente.</p>`,
 			},
 		},
 	},
