@@ -248,6 +248,20 @@ describe('LiteraryWorkPage', () => {
 		},
 	);
 
+	// Se afirma la clase y no el peso computado: happy-dom no carga las hojas de estilo.
+	it.each(onoffLiteraryWorksWithSectionTitles)(
+		'pinta en negrita los títulos de sección de "$slug"',
+		async (literaryWork) => {
+			await setup(literaryWork);
+
+			for (const section of literaryWork.content) {
+				if (section.title === undefined) continue;
+				const heading = await screen.findByRole('heading', { level: 2, name: section.title.value });
+				expect(heading).toHaveClass('font-inter', 'text-2xl', 'font-bold');
+			}
+		},
+	);
+
 	it.each(onoffLiteraryWorksWithEditorialNote)(
 		'renderiza la nota editorial de "$slug" en el bloque del Design System',
 		async (literaryWork) => {
