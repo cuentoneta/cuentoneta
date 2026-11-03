@@ -25,7 +25,7 @@ describe('EditorialNote', () => {
 	beforeEach(installMarkdownLinksSheet);
 
 	// El contenedor del texto cambia de elemento según la variante, y la referencia es un nodo aparte:
-	// los tres sitios reciben HTML del pipeline y los tres tienen que subrayar sus enlaces.
+	// los dos reciben HTML del pipeline y los dos tienen que subrayar sus enlaces.
 	it.each<EditorialNoteVariant>(['note', 'highlight'])(
 		'should underline the links of the text and the reference in the %s variant',
 		async (variant) => {
