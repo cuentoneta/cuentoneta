@@ -15,20 +15,33 @@ describe('CoverImage', () => {
 		expect(screen.queryByTestId('cover-image')).not.toBeInTheDocument();
 	});
 
-	it('should render the cover at the fixed 118×164 dimensions', async () => {
+	it('should keep 118×164 as the reserved dimensions of the image', async () => {
 		await render(CoverImage, { inputs: { src: 'https://example.com/cover.jpg' } });
 		const image = screen.getByTestId('cover-image');
 		expect(image).toHaveAttribute('width', '118');
 		expect(image).toHaveAttribute('height', '164');
 	});
 
-	// La imagen cubre la caja entera, sea cual sea su proporción: con el alto derivado del ancho, una
-	// imagen más apaisada que la caja dejaba ver el fondo gris. Se afirman las clases y no el estilo
-	// computado porque happy-dom no carga las hojas de estilo.
-	it('should cover the whole box regardless of the image proportions', async () => {
-		await render(CoverImage, { inputs: { src: 'https://example.com/cover.jpg' } });
-		const image = screen.getByTestId('cover-image');
-		expect(image).toHaveClass('size-full', 'object-cover');
-		expect(image).not.toHaveClass('h-auto');
+	// Se afirman las clases y no el estilo computado: happy-dom no carga las hojas de estilo ni mide
+	// layout, así que el ancho que resulta de cada proporción solo se ve en Storybook.
+	describe('box sizing', () => {
+		it('should fix the height of the image and let its width follow the proportions', async () => {
+			await render(CoverImage, { inputs: { src: 'https://example.com/cover.jpg' } });
+			const image = screen.getByTestId('cover-image');
+			expect(image).toHaveClass('h-full', 'w-auto', 'object-cover');
+			expect(image).not.toHaveClass('h-auto', 'w-full', 'size-full');
+		});
+
+		it('should fix the height of the box and fit its width to the image up to a maximum', async () => {
+			await render('<cuentoneta-cover-image data-testid="cover" src="https://example.com/cover.jpg" />', {
+				imports: [CoverImage],
+			});
+			expect(screen.getByTestId('cover')).toHaveClass('h-41', 'w-fit', 'max-w-41');
+		});
+
+		it('should give the placeholder the default cover width', async () => {
+			await render(CoverImage);
+			expect(screen.getByTestId('cover-placeholder')).toHaveClass('w-29.5');
+		});
 	});
 });
