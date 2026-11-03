@@ -380,7 +380,9 @@ Puntos ciegos: los nombres sin mayúsculas (`(optionselected)` sigue compilando)
 
 Todo elemento que recibe por `[innerHTML]` el HTML que emite el pipeline de Markdown lleva el atributo `data-markdown`. Es el ancla de `src/assets/css/markdown-links.css`, que subraya los enlaces de ese HTML: el preflight de Tailwind se los quita, y el color solo no alcanza para señalar que un fragmento es interactivo. Los `<a>` los emite el pipeline sin clases, así que ninguna utilidad los alcanza.
 
-Una superficie nueva se suma poniendo el atributo en su contenedor, sin tocar CSS. `src/app/markdown-links.spec.ts` falla si algún `[innerHTML]` de una plantilla de `src/app/` no lo lleva.
+Una superficie nueva se suma poniendo el atributo en su contenedor, sin tocar CSS. `src/app/markdown-links.spec.ts` falla si el contenedor de un `[innerHTML]` o `bind-innerHTML` de una plantilla de `src/app/` no lo lleva, venga o no el HTML del pipeline.
+
+**Puntos ciegos:** la guarda lee el texto de las plantillas, no las entiende. No ve un `host: { '[innerHTML]': … }`, ni la asignación imperativa a `innerHTML` (`tooltip.directive.ts`), ni una plantilla armada por concatenación. Tampoco comprueba que el atributo produzca el subrayado: eso lo fija el spec de cada superficie, y no todas lo tienen.
 
 ---
 
