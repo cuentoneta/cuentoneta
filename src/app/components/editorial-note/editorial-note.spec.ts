@@ -1,8 +1,11 @@
-import { render, screen } from '@testing-library/angular';
+import { render, screen, within } from '@testing-library/angular';
 
-import { EditorialNote } from './editorial-note';
+import { EditorialNote, type EditorialNoteVariant } from './editorial-note';
 import { onoffLiteraryWorkEpigraphsMock } from '@mocks/onoff-literary-works.mock';
 import { createAttributedText } from '@models/attributed-text.model';
+import { createMarkdown } from '@models/markdown.model';
+import { installMarkdownLinksSheet } from '@testing/markdown-links-sheet';
+import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 
 // Un texto atribuido cualquiera del canon y su versión sin atribución: los casos que no dependen del
 // contenido toman este par en vez de una obra concreta.
@@ -19,6 +22,27 @@ function firstWordOf(html: string): string {
 }
 
 describe('EditorialNote', () => {
+	beforeEach(installMarkdownLinksSheet);
+
+	// El contenedor del texto cambia de elemento según la variante, y la referencia es un nodo aparte:
+	// los tres sitios reciben HTML del pipeline y los tres tienen que subrayar sus enlaces.
+	it.each<EditorialNoteVariant>(['note', 'highlight'])(
+		'should underline the links of the text and the reference in the %s variant',
+		async (variant) => {
+			const linked = (label: string) => markdownToSanitizedHtml(createMarkdown(`[${label}](https://example.com)`));
+			const note = createAttributedText({ text: linked('en el texto'), reference: linked('en la referencia') });
+
+			await render(EditorialNote, { inputs: { note, variant } });
+
+			const textLink = within(screen.getByTestId('content')).getByRole('link', { name: 'en el texto' });
+			const referenceLink = within(screen.getByTestId('reference-source')).getByRole('link', {
+				name: 'en la referencia',
+			});
+			expect(textLink).toHaveStyle('text-decoration-line: underline');
+			expect(referenceLink).toHaveStyle('text-decoration-line: underline');
+		},
+	);
+
 	it('should render the sanitized html content', async () => {
 		await render(EditorialNote, { inputs: { note } });
 

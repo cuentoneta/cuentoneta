@@ -16,13 +16,13 @@ export type EditorialNoteVariant = 'note' | 'highlight';
 		<div class="contents" data-nosnippet data-testid="snippet-exclusion">
 			<figure [class]="bodyClasses()" data-testid="body">
 				@if (variant() === 'highlight') {
-					<blockquote [innerHTML]="safeContent()" data-testid="content"></blockquote>
+					<blockquote [innerHTML]="safeContent()" data-markdown data-testid="content"></blockquote>
 				} @else {
-					<aside [innerHTML]="safeContent()" [attr.aria-label]="label()" data-testid="content"></aside>
+					<aside [innerHTML]="safeContent()" [attr.aria-label]="label()" data-markdown data-testid="content"></aside>
 				}
 				@if (safeReference(); as reference) {
 					<figcaption class="text-end italic" data-testid="reference">
-						<cite [innerHTML]="reference" data-testid="reference-source"></cite>
+						<cite [innerHTML]="reference" data-markdown data-testid="reference-source"></cite>
 					</figcaption>
 				}
 			</figure>
