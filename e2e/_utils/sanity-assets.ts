@@ -33,10 +33,10 @@ export const PLACEHOLDER_CONTENT_TYPE = 'image/svg+xml';
 /**
  * Imagen transparente con la que se responde el asset de `url`, del mismo tamaño que el original.
  *
- * Las dimensiones no son cosmética: cuando el alto de una imagen no está fijado, el navegador lo
- * deriva de la relación de aspecto de la imagen que llegó. Un sustituto cuadrado la achica, la
- * página se acorta y los specs que miden geometría fallan por la sustitución en vez de por lo que
- * miden. Un SVG vacío lleva su tamaño declarado en el documento, sin tener que generar un raster por
+ * Las dimensiones no son cosmética: cuando una dimensión de una imagen no está fijada, el navegador
+ * la deriva de la relación de aspecto de la imagen que llegó. Las portadas fijan el alto y derivan el
+ * ancho, así que un sustituto cuadrado las ensancha y corre la columna de texto, y los specs que
+ * miden geometría fallan por la sustitución en vez de por lo que miden. Un SVG vacío lleva su tamaño declarado en el documento, sin tener que generar un raster por
  * cada medida.
  *
  * Un asset sin dimensiones en el nombre —los `/files/*`, que no son imágenes— cae a 1×1: no hay
