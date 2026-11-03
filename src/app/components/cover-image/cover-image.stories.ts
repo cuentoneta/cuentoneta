@@ -18,7 +18,7 @@ const meta: Meta<CoverImage> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>Imagen de portada (cover) de una obra, usada por las tarjetas del Design System v3 (${docsRef(literaryWorkTeaserCardDocs)} y ${docsRef(literaryWorkTeaserHomeCardDocs)}). Tamaño fijo 118×164; la imagen cubre la caja entera y recorta lo que sobra, sea cual sea su proporción. Si no se provee <code>src</code>, muestra el placeholder del Design System. Es decorativa: el click se delega al enlace de la tarjeta.</p></div>`,
+				component: `<div><p>Imagen de portada (cover) de una obra, usada por las tarjetas del Design System v3 (${docsRef(literaryWorkTeaserCardDocs)} y ${docsRef(literaryWorkTeaserHomeCardDocs)}). El alto es fijo (164) y el ancho sigue la proporción de la imagen, hasta un máximo de 164 que recorta el excedente. Si no se provee <code>src</code>, muestra el placeholder del Design System. Es decorativa: el click se delega al enlace de la tarjeta.</p></div>`,
 			},
 		},
 		layout: 'padded',
@@ -68,8 +68,7 @@ export const Interactiva: StoryObj<CoverImage & { coverIndex: number }> = {
 	},
 };
 
-// El corpus trae portadas de la proporción de la caja: para ver imágenes más apaisadas se usan
-// assets de otras proporciones.
+// El corpus solo trae portadas de la proporción por defecto, que es donde el ancho no cambia.
 const squareImageUrl = 'assets/img/mocks/author/francois-onoff.png';
 const wideImageUrl = 'assets/img/mocks/banners/banner-el-palacio-mobile.png';
 
@@ -88,7 +87,7 @@ export const Apaisadas: Story = {
 		docs: {
 			description: {
 				story:
-					'Tres imágenes de proporciones distintas en la misma caja: la de la portada, una cuadrada y una muy apaisada. Las tres cubren la caja entera, sin fondo gris, y recortan lo que sobra.',
+					'Tres imágenes de proporciones distintas con el mismo alto: la de la portada, una cuadrada y una muy apaisada. Cada caja toma el ancho que le da su imagen, sin fondo gris; la muy apaisada llega al máximo de 164 y recorta lo que lo excede.',
 			},
 		},
 	},
