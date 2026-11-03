@@ -20,6 +20,14 @@ describe('sanityImageLoader', () => {
 		expect(sanityImageLoader({ src: CDN, width: 236, loaderParams })).toBe(`${CDN}?h=328&auto=format&q=75`);
 	});
 
+	it('respeta el recorte del Studio al pedir por alto', () => {
+		const cropped = `${CDN}?rect=0,0,660,660`;
+
+		expect(sanityImageLoader({ src: cropped, width: 118, loaderParams: { heightRatio: 164 / 118 } })).toBe(
+			`${cropped}&h=164&auto=format&q=75`,
+		);
+	});
+
 	it('toma el ancho del consumidor, y no el del <img>, para calcular el alto', () => {
 		const loaderParams = { width: 118, heightRatio: 164 / 118 };
 
