@@ -115,10 +115,16 @@ export function buildSourceIndex(docs: Iterable<SanityDocument>): Map<string, So
 	return index;
 }
 
-/** Compara un documento del destino con su origen; `undefined` es un documento que el destino no tiene. */
+/**
+ * Compara un documento del destino con su origen; `undefined` es un documento que el destino no tiene.
+ * Lanza si el documento llega sin `_rev`: sin revisión no hay escritura condicionada posible.
+ */
 export function diffAgainstDestination(source: SourceEntry, destination: SanityDocument | undefined): DocumentDiff {
 	if (!destination) {
 		return { kind: 'missing' };
+	}
+	if (!destination._rev) {
+		throw new Error(`El documento ${destination._id} del destino llegó sin _rev.`);
 	}
 	const unsetPaths = findReferenceSlots(destination)
 		.filter((slot) => slot.weak && source.strongPaths.has(slot.path))
@@ -126,5 +132,5 @@ export function diffAgainstDestination(source: SourceEntry, destination: SanityD
 	const linksAnAsset = (object: JsonObject) => isJsonObject(object['asset']) && '_ref' in object['asset'];
 	const linkedAssets = new Set(findPathsWhere(destination, linksAnAsset));
 	const unresolvedAssets = source.assetPaths.filter((path) => !linkedAssets.has(path));
-	return { kind: 'present', rev: destination._rev ?? '', unsetPaths, unresolvedAssets };
+	return { kind: 'present', rev: destination._rev, unsetPaths, unresolvedAssets };
 }

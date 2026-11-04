@@ -121,6 +121,12 @@ describe('diffAgainstDestination', () => {
 		expect(diff).toMatchObject({ unsetPaths: ['authors[0]._weak', 'content.tags[0]._weak'] });
 	});
 
+	it('refuses a destination document without a revision', () => {
+		const withoutRevision = { ...importedWork, _rev: undefined };
+
+		expect(() => diffAgainstDestination(sourceOf(exportedWork), withoutRevision)).toThrow('work-1');
+	});
+
 	it('reports a document the destination does not have', () => {
 		expect(diffAgainstDestination(sourceOf(exportedWork), undefined)).toEqual({ kind: 'missing' });
 	});
