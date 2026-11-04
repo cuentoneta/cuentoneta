@@ -3,6 +3,11 @@ name: Sync datasets (production → staging + development)
 # Replica el dataset `production` de Sanity hacia `staging` y `development` como espejo exacto
 # (wipe + import), para que los entornos no acumulen documentos huérfanos.
 #
+# Después de cada import, `cms/scripts/strengthen-weak-references/` fortalece las referencias que el
+# import dejó débiles: el import las fortalece con una ráfaga paralela que supera el límite de
+# mutaciones por IP de Sanity y se rinde ante el 429. Ese script es además el que decide si el
+# dataset quedó como espejo: verifica también que no falten documentos ni assets del origen.
+#
 # Prerequisitos (secrets del repo — se configuran una sola vez, ver el PR del issue #1493):
 #   - SANITY_AUTH_TOKEN: robot token de manage.sanity.io con permisos para administrar datasets
 #     (crear/borrar/importar) y leer `production` (que es privado).
@@ -55,6 +60,7 @@ jobs:
       CI: 'true'
       SOURCE_DATASET: production
       TARBALL: production.tar.gz
+      SOURCE_NDJSON: production.ndjson
       # Umbral mínimo: un export real de producción pesa varios MB; por debajo de 50 KB asumimos un
       # export fallido o un dataset vacío y abortamos sin tocar los targets.
       MIN_TARBALL_BYTES: 51200
@@ -102,6 +108,13 @@ jobs:
             exit 1
           fi
           echo "Tarball válido: ${actual_bytes} bytes."
+          # Los documentos del origen son la referencia contra la que se verifica cada destino. Extraerlos
+          # antes del wipe comprueba además que el tarball se pueda leer.
+          tar -xzOf "$TARBALL" --wildcards '*/data.ndjson' > "$SOURCE_NDJSON"
+          if [ ! -s "$SOURCE_NDJSON" ]; then
+            echo "::error::El tarball no trae un data.ndjson con documentos. Se aborta para no borrar los targets." >&2
+            exit 1
+          fi
 
       # Se sube ANTES del wipe: si un import falla tras el delete, el tarball queda disponible para
       # restaurar el dataset manualmente sin re-exportar production.
@@ -136,8 +149,29 @@ jobs:
             # --visibility public preserva la visibilidad actual: staging y development son públicos
             # (los lee el frontend de esos entornos sin token); production es el privado.
             pnpm exec sanity dataset create "$dataset" --visibility public
-            pnpm exec sanity dataset import "$TARBALL" "$dataset"
+            # Un import que falla no corta acá: el caso esperable es que falle al fortalecer referencias,
+            # que es justo lo que repara el paso siguiente. El veredicto del dataset lo da ese paso, que
+            # también falla si faltan documentos o assets.
+            import_status=0
+            pnpm exec sanity dataset import "$TARBALL" "$dataset" || import_status=$?
+            repair_status=0
+            SANITY_STUDIO_DATASET="$dataset" pnpm exec sanity exec \
+              scripts/strengthen-weak-references/strengthen-weak-references.ts --with-user-token \
+              -- --source="$SOURCE_NDJSON" --apply 2>&1 | tee "strengthen-$dataset.txt" || repair_status=$?
+            {
+              echo "## Referencias del dataset $dataset"
+              echo '```'
+              cat "strengthen-$dataset.txt"
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
             echo "::endgroup::"
+            if [ "$repair_status" -ne 0 ]; then
+              echo "::error::El dataset $dataset no quedó como espejo de $SOURCE_DATASET (ver el resumen del job)." >&2
+              exit 1
+            fi
+            if [ "$import_status" -ne 0 ]; then
+              echo "::warning::El import de $dataset salió con $import_status, pero la verificación de documentos, assets y referencias lo dio por completo."
+            fi
           done
           echo "Sync completado para: $datasets"
 
@@ -147,3 +181,7 @@ jobs:
           echo "::error::La sincronización falló. Si un dataset quedó vacío tras el delete, restauralo:" >&2
           echo "::error::  1) descargá el artefacto 'production-tarball' de este run;" >&2
           echo "::error::  2) cd cms && pnpm exec sanity dataset import production.tar.gz <target>" >&2
+          echo "::error::Si el import terminó pero quedaron referencias débiles, alcanza con fortalecerlas, sin reimportar:" >&2
+          echo "::error::  1) extraé los documentos del tarball: tar -xzOf production.tar.gz --wildcards '*/data.ndjson' > production.ndjson" >&2
+          echo "::error::  2) cd cms && SANITY_STUDIO_DATASET=<target> pnpm exec sanity exec scripts/strengthen-weak-references/strengthen-weak-references.ts --with-user-token -- --source=<ruta a production.ndjson> [--apply]" >&2
+          echo "::error::     Sin --apply solo reporta. No repara documentos ni assets faltantes: para eso hay que reimportar." >&2
