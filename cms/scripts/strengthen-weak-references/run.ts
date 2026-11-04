@@ -1,5 +1,5 @@
 import { buildSourceIndex, diffAgainstDestination, type SanityDocument, type SourceEntry } from './references';
-import { runWithBackoff, toMilliseconds, type Attempt, type Clock } from './retry';
+import { isRetriable, runWithBackoff, toMilliseconds, type Attempt, type Clock } from './retry';
 
 /** Lee del dataset destino los documentos pedidos; los que no existen simplemente no vuelven. */
 export interface DestinationReader {
@@ -128,28 +128,60 @@ function createPacedCommit(writer: ReferenceWriter, clock: Clock) {
 	};
 }
 
-// Un lote que falla sin reintento posible se reparte de a un documento, para que una revisión vencida
-// o un documento roto no arrastren a los otros veintinueve.
-async function applyPending(pending: readonly UnsetPatch[], commit: ReturnType<typeof createPacedCommit>) {
+type PacedCommit = ReturnType<typeof createPacedCommit>;
+
+/**
+ * `aborted` indica que una escritura agotó los reintentos con un error transitorio (límite de tasa,
+ * error del servidor, red): el destino no está aceptando escrituras y seguir solo sumaría esperas.
+ */
+interface ApplyResult {
+	readonly written: number;
+	readonly failed: Failure[];
+	readonly aborted: boolean;
+}
+
+async function applyOneByOne(batch: readonly UnsetPatch[], commit: PacedCommit): Promise<ApplyResult> {
+	let written = 0;
+	const failed: Failure[] = [];
+	for (const patch of batch) {
+		const result = await commit([patch]);
+		if (result.ok) {
+			written++;
+			continue;
+		}
+		failed.push({ id: patch.id, reason: describeError(result.error) });
+		if (isRetriable(result.error)) {
+			return { written, failed, aborted: true };
+		}
+	}
+	return { written, failed, aborted: false };
+}
+
+// Un lote rechazado por un error que no se reintenta se reparte de a un documento, para que una
+// revisión vencida o un documento roto no arrastren al resto del lote.
+async function applyPending(pending: readonly UnsetPatch[], commit: PacedCommit): Promise<ApplyResult> {
 	// El mismo tamaño de lote que usa el import para fortalecer.
 	const writeBatchSize = 30;
 	let written = 0;
 	const failed: Failure[] = [];
 	for (const batch of chunk(pending, writeBatchSize)) {
-		if ((await commit(batch)).ok) {
+		const result = await commit(batch);
+		if (result.ok) {
 			written += batch.length;
 			continue;
 		}
-		for (const patch of batch) {
-			const result = await commit([patch]);
-			if (result.ok) {
-				written++;
-			} else {
-				failed.push({ id: patch.id, reason: describeError(result.error) });
-			}
+		if (isRetriable(result.error)) {
+			const reason = describeError(result.error);
+			return { written, failed: [...failed, ...batch.map((patch) => ({ id: patch.id, reason }))], aborted: true };
+		}
+		const isolated = await applyOneByOne(batch, commit);
+		written += isolated.written;
+		failed.push(...isolated.failed);
+		if (isolated.aborted) {
+			return { written, failed, aborted: true };
 		}
 	}
-	return { written, failed };
+	return { written, failed, aborted: false };
 }
 
 /**
@@ -169,10 +201,12 @@ export async function runStrengthen(params: {
 	let detection = await detect(index, params.reader);
 	let strengthened = 0;
 	let failed: Failure[] = [];
-	for (let pass = 0; params.apply && pass < maxPasses && detection.pending.length > 0; pass++) {
+	let aborted = false;
+	for (let pass = 0; params.apply && !aborted && pass < maxPasses && detection.pending.length > 0; pass++) {
 		const result = await applyPending(detection.pending, commit);
 		strengthened += result.written;
 		failed = result.failed;
+		aborted = result.aborted;
 		detection = await detect(index, params.reader);
 	}
 	const stillPending = new Set(detection.pending.map((patch) => patch.id));

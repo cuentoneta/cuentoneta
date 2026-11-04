@@ -226,6 +226,29 @@ describe('runStrengthen', () => {
 		expect(exitCodeFor(report, { apply: true })).toBe(1);
 	});
 
+	it('stops instead of splitting a batch when the destination keeps failing transiently', async () => {
+		const { source, destination } = corpusOf(2);
+		const batches: number[] = [];
+		const unavailable: ReferenceWriter = {
+			commitUnsets: async (batch) => {
+				batches.push(batch.length);
+				throw httpError(503);
+			},
+		};
+
+		const report = await runStrengthen({
+			sourceDocuments: source,
+			reader: destination,
+			writer: unavailable,
+			apply: true,
+			clock: new SpySleeper(),
+		});
+
+		expect(batches).toEqual([2, 2, 2, 2, 2, 2]);
+		expect(report.failed.map((failure) => failure.id)).toEqual(['work-0', 'work-1']);
+		expect(exitCodeFor(report, { apply: true })).toBe(1);
+	});
+
 	it('only detects in dry run', async () => {
 		const { source, destination } = corpusOf(2);
 
