@@ -39,6 +39,8 @@ export interface StrengthenReport {
 export interface StrengthenOptions {
 	readonly source: string;
 	readonly apply: boolean;
+	/** Archivo al que se agregan solo los conteos, sin ids ni errores (p. ej. el resumen del job). */
+	readonly summary?: string;
 }
 
 interface Detection {
@@ -58,23 +60,29 @@ export function assertNotProductionDataset(dataset: string | undefined): string 
 	return dataset;
 }
 
-/** Lee `--source=<ruta>` (obligatorio) y `--apply`; lanza ante cualquier otro argumento. */
+function valueOf(arg: string, flag: string): string | undefined {
+	const prefix = `${flag}=`;
+	return arg.startsWith(prefix) && arg.length > prefix.length ? arg.slice(prefix.length) : undefined;
+}
+
+/** Lee `--source=<ruta>` (obligatorio), `--summary=<ruta>` y `--apply`; lanza ante cualquier otro argumento. */
 export function parseArgs(argv: readonly string[]): StrengthenOptions {
 	let source: string | undefined;
+	let summary: string | undefined;
 	let apply = false;
 	for (const arg of argv) {
-		if (arg === '--apply') {
-			apply = true;
-		} else if (arg.startsWith('--source=') && arg.length > '--source='.length) {
-			source = arg.slice('--source='.length);
-		} else {
+		const isKnown = arg === '--apply' || valueOf(arg, '--source') || valueOf(arg, '--summary');
+		if (!isKnown) {
 			throw new Error(`Argumento no reconocido: "${arg}"`);
 		}
+		apply ||= arg === '--apply';
+		source = valueOf(arg, '--source') ?? source;
+		summary = valueOf(arg, '--summary') ?? summary;
 	}
 	if (!source) {
 		throw new Error('Falta --source=<ruta al data.ndjson del export de origen>.');
 	}
-	return { source, apply };
+	return summary ? { source, apply, summary } : { source, apply };
 }
 
 function chunk<T>(items: readonly T[], size: number): T[][] {
@@ -237,8 +245,11 @@ function listed(label: string, items: readonly string[]): string[] {
 	return [`${label}:`, ...items.slice(0, listedIds).map((item) => `  · ${item}`), ...rest];
 }
 
-/** Las líneas del reporte para el log y el resumen del job. */
-export function formatReport(report: StrengthenReport, options: { apply: boolean; dataset: string }): string[] {
+/**
+ * Solo conteos: no nombra ningún documento ni repite errores de la API, así que puede ir a un canal más
+ * expuesto que el log, como el resumen del job.
+ */
+export function formatSummary(report: StrengthenReport, options: { apply: boolean; dataset: string }): string[] {
 	return [
 		`Referencias débiles — dataset ${options.dataset}, modo ${options.apply ? 'APLICAR' : 'seco'}`,
 		`Documentos inspeccionados: ${report.inspected}`,
@@ -246,6 +257,14 @@ export function formatReport(report: StrengthenReport, options: { apply: boolean
 		`Documentos con referencias débiles pendientes: ${report.pending.length}`,
 		`Documentos faltantes: ${report.missing.length}`,
 		`Assets sin enlazar: ${report.unresolvedAssets.length}`,
+		`Documentos fallidos: ${report.failed.length}`,
+	];
+}
+
+/** El resumen más el detalle: qué documentos quedaron pendientes, faltan o fallaron, y por qué. */
+export function formatReport(report: StrengthenReport, options: { apply: boolean; dataset: string }): string[] {
+	return [
+		...formatSummary(report, options),
 		...listed('Pendientes', report.pending.map((patch) => `${patch.id} (${patch.paths.length})`)),
 		...listed('Faltantes', report.missing),
 		...listed('Assets sin enlazar', report.unresolvedAssets),

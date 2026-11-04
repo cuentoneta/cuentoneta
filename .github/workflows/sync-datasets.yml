@@ -155,15 +155,12 @@ jobs:
             import_status=0
             pnpm exec sanity dataset import "$TARBALL" "$dataset" || import_status=$?
             repair_status=0
+            # El resumen del job lleva solo conteos: production es privado, y el detalle con ids de
+            # documentos queda en el log del paso.
+            echo "## Referencias del dataset $dataset" >> "$GITHUB_STEP_SUMMARY"
             SANITY_STUDIO_DATASET="$dataset" pnpm exec sanity exec \
               scripts/strengthen-weak-references/strengthen-weak-references.ts --with-user-token \
-              -- --source="$SOURCE_NDJSON" --apply 2>&1 | tee "strengthen-$dataset.txt" || repair_status=$?
-            {
-              echo "## Referencias del dataset $dataset"
-              echo '```'
-              cat "strengthen-$dataset.txt"
-              echo '```'
-            } >> "$GITHUB_STEP_SUMMARY"
+              -- --source="$SOURCE_NDJSON" --summary="$GITHUB_STEP_SUMMARY" --apply || repair_status=$?
             echo "::endgroup::"
             if [ "$repair_status" -ne 0 ]; then
               echo "::error::El dataset $dataset no quedó como espejo de $SOURCE_DATASET (ver el resumen del job)." >&2

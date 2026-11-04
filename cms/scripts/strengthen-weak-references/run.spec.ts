@@ -5,6 +5,8 @@ import { toMilliseconds, type Clock } from './retry';
 import {
 	assertNotProductionDataset,
 	exitCodeFor,
+	formatReport,
+	formatSummary,
 	parseArgs,
 	runStrengthen,
 	type DestinationReader,
@@ -303,9 +305,44 @@ describe('parseArgs', () => {
 		expect(parseArgs(['--source=data.ndjson', '--apply'])).toEqual({ source: 'data.ndjson', apply: true });
 	});
 
+	it('reads the summary file when given', () => {
+		expect(parseArgs(['--source=data.ndjson', '--summary=summary.md'])).toEqual({
+			source: 'data.ndjson',
+			apply: false,
+			summary: 'summary.md',
+		});
+	});
+
 	it('requires the source and rejects unknown arguments', () => {
 		expect(() => parseArgs(['--apply'])).toThrow('--source');
 		expect(() => parseArgs(['--source='])).toThrow();
 		expect(() => parseArgs(['--source=a', '--force'])).toThrow('--force');
+	});
+});
+
+describe('formatSummary', () => {
+	const report = {
+		inspected: 3,
+		strengthened: 1,
+		missing: ['drafts.work-9'],
+		unresolvedAssets: ['work-2 coverImage'],
+		pending: [{ id: 'work-1', rev: 'rev-1', paths: ['publication._weak'] }],
+		failed: [{ id: 'work-1', reason: 'Document "work-1" has unexpected revision' }],
+	};
+	const options = { apply: true, dataset: 'staging' };
+
+	it('counts each outcome without naming any document or API error', () => {
+		const summary = formatSummary(report, options).join('\n');
+
+		expect(summary).toContain('Documentos con referencias débiles pendientes: 1');
+		expect(summary).toContain('Documentos fallidos: 1');
+		expect(summary).not.toMatch(/work-\d|unexpected revision/);
+	});
+
+	it('leaves the detail to the full report', () => {
+		const detail = formatReport(report, options).join('\n');
+
+		expect(detail).toContain('drafts.work-9');
+		expect(detail).toContain('work-1: Document "work-1" has unexpected revision');
 	});
 });
