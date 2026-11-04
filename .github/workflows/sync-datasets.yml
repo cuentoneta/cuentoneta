@@ -148,10 +148,28 @@ jobs:
               exit 1
             fi
             echo "::group::Sync $dataset"
-            pnpm exec sanity dataset delete "$dataset" --force
+            # Un sync anterior puede haber dejado el destino borrado: se recrea igual.
+            existing=$(pnpm exec sanity dataset list)
+            if grep -qxF "$dataset" <<< "$existing"; then
+              pnpm exec sanity dataset delete "$dataset" --force
+            fi
+            # El delete termina de forma asíncrona, y crear antes de que termine falla con "is being
+            # deleted": se reintenta hasta que el nombre quede libre.
             # --visibility public preserva la visibilidad actual: staging y development son públicos
             # (los lee el frontend de esos entornos sin token); production es el privado.
-            pnpm exec sanity dataset create "$dataset" --visibility public
+            created=false
+            for attempt in $(seq 1 12); do
+              if pnpm exec sanity dataset create "$dataset" --visibility public; then
+                created=true
+                break
+              fi
+              echo "El dataset $dataset todavía no se puede crear (intento $attempt); se reintenta en 10 s."
+              sleep 10
+            done
+            if [ "$created" != true ]; then
+              echo "::error::No se pudo recrear el dataset $dataset después del delete." >&2
+              exit 1
+            fi
             pnpm exec sanity dataset import "$TARBALL" "$dataset"
             if ! SANITY_STUDIO_DATASET="$dataset" pnpm exec sanity exec scripts/dataset-fingerprint/dataset-fingerprint.ts \
               --with-user-token -- --source="$SOURCE_NDJSON" --compare="$SOURCE_FINGERPRINT"; then
