@@ -111,8 +111,8 @@ jobs:
             echo "::error::El tarball no trae un data.ndjson con documentos. Se aborta para no borrar los targets." >&2
             exit 1
           fi
-          fingerprint=$(pnpm exec sanity exec scripts/dataset-fingerprint/dataset-fingerprint.ts -- --source="$SOURCE_NDJSON")
-          if ! [[ "$fingerprint" =~ ^[0-9a-f]{64}$ ]]; then
+          if ! fingerprint=$(pnpm exec sanity exec scripts/dataset-fingerprint/dataset-fingerprint.ts -- --source="$SOURCE_NDJSON") \
+            || ! [[ "$fingerprint" =~ ^[0-9a-f]{64}$ ]]; then
             echo "::error::No se pudo calcular la huella del export. Se aborta para no borrar los targets." >&2
             exit 1
           fi
