@@ -6,8 +6,8 @@
  *     scripts/strengthen-weak-references/strengthen-weak-references.ts --with-user-token \
  *     -- --source=<data.ndjson del export> [--apply]
  *
- * Sin `--apply` solo reporta. Sale con 0 si el destino quedó como el origen, 1 si quedan referencias
- * débiles aplicando o si faltan documentos o assets, y 2 en seco cuando hay algo para fortalecer.
+ * Sin `--apply` solo reporta. Sale con 0 si el destino quedó como el origen y con 1 si quedan
+ * referencias débiles o faltan documentos o assets; qué falló lo dice el reporte.
  */
 import { createReadStream } from 'node:fs';
 import { stat } from 'node:fs/promises';
@@ -72,4 +72,4 @@ const report = await runStrengthen({
 });
 
 process.stdout.write(`${formatReport(report, { apply: options.apply, dataset }).join('\n')}\n`);
-process.exitCode = exitCodeFor(report, options);
+process.exitCode = exitCodeFor(report);

@@ -139,7 +139,7 @@ describe('runStrengthen', () => {
 		expect(report).toMatchObject({ inspected: 3, strengthened: 3, pending: [], failed: [] });
 		expect(destination.document('work-1')).toMatchObject({ publication: reference('publication-1') });
 		expect(destination.document('work-1')?.['publication']).not.toHaveProperty('_weak');
-		expect(exitCodeFor(report, { apply: true })).toBe(0);
+		expect(exitCodeFor(report)).toBe(0);
 	});
 
 	it('keeps weak a reference that is weak in the source', async () => {
@@ -223,7 +223,7 @@ describe('runStrengthen', () => {
 
 		expect(report.failed.map((failure) => failure.id)).toEqual(['work-0', 'work-1']);
 		expect(report.pending).toHaveLength(2);
-		expect(exitCodeFor(report, { apply: true })).toBe(1);
+		expect(exitCodeFor(report)).toBe(1);
 	});
 
 	it('stops instead of splitting a batch when the destination keeps failing transiently', async () => {
@@ -246,7 +246,7 @@ describe('runStrengthen', () => {
 
 		expect(batches).toEqual([2, 2, 2, 2, 2, 2]);
 		expect(report.failed.map((failure) => failure.id)).toEqual(['work-0', 'work-1']);
-		expect(exitCodeFor(report, { apply: true })).toBe(1);
+		expect(exitCodeFor(report)).toBe(1);
 	});
 
 	it('only detects in dry run', async () => {
@@ -262,7 +262,7 @@ describe('runStrengthen', () => {
 
 		expect(destination.transactions).toEqual([]);
 		expect(report.pending.map((patch) => patch.id)).toEqual(['work-0', 'work-1']);
-		expect(exitCodeFor(report, { apply: false })).toBe(2);
+		expect(exitCodeFor(report)).toBe(1);
 	});
 
 	it('fails when the destination lacks a document or an asset', async () => {
@@ -281,7 +281,7 @@ describe('runStrengthen', () => {
 		});
 
 		expect(report).toMatchObject({ missing: ['work-1'], unresolvedAssets: ['work-0 coverImage'] });
-		expect(exitCodeFor(report, { apply: true })).toBe(1);
+		expect(exitCodeFor(report)).toBe(1);
 	});
 });
 

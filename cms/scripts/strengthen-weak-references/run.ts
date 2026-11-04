@@ -219,17 +219,13 @@ export async function runStrengthen(params: {
 }
 
 /**
- * 0 si el destino quedó como el origen; 1 si faltan documentos o assets, o si aplicando quedaron
- * referencias débiles; 2 en seco cuando hay algo para fortalecer.
+ * 0 si el destino quedó como el origen; 1 si faltan documentos o assets, o si quedan referencias
+ * débiles. En seco, "quedan" es lo que habría para fortalecer. Qué causó el 1 lo dice el reporte.
  */
-export function exitCodeFor(report: StrengthenReport, options: { apply: boolean }): number {
-	if (report.missing.length > 0 || report.unresolvedAssets.length > 0) {
-		return 1;
-	}
-	if (report.pending.length > 0) {
-		return options.apply ? 1 : 2;
-	}
-	return 0;
+export function exitCodeFor(report: StrengthenReport): number {
+	const mirrorsSource =
+		report.missing.length === 0 && report.unresolvedAssets.length === 0 && report.pending.length === 0;
+	return mirrorsSource ? 0 : 1;
 }
 
 function listed(label: string, items: readonly string[]): string[] {
