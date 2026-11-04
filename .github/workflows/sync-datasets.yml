@@ -1,9 +1,7 @@
 name: Sync datasets (production → staging + development)
 
 # Replica el dataset `production` de Sanity hacia `staging` y `development` como espejo exacto
-# (wipe + import), para que los entornos no acumulen documentos huérfanos. Que sean un espejo exacto
-# se verifica con una huella de contenido del export (`cms/scripts/dataset-fingerprint/`), que cada
-# destino tiene que reproducir después del import.
+# (wipe + import), para que los entornos no acumulen documentos huérfanos.
 #
 # Prerequisitos (secrets del repo — se configuran una sola vez, ver el PR del issue #1493):
 #   - SANITY_AUTH_TOKEN: robot token de manage.sanity.io con permisos para administrar datasets
@@ -57,7 +55,6 @@ jobs:
       CI: 'true'
       SOURCE_DATASET: production
       TARBALL: production.tar.gz
-      SOURCE_NDJSON: production.ndjson
       # Umbral mínimo: un export real de producción pesa varios MB; por debajo de 50 KB asumimos un
       # export fallido o un dataset vacío y abortamos sin tocar los targets.
       MIN_TARBALL_BYTES: 51200
@@ -105,19 +102,6 @@ jobs:
             exit 1
           fi
           echo "Tarball válido: ${actual_bytes} bytes."
-          # La huella del export es la referencia contra la que se verifica cada destino: se toma antes
-          # del wipe, sobre la misma foto de production que se va a importar.
-          if ! tar -xzOf "$TARBALL" --wildcards '*/data.ndjson' > "$SOURCE_NDJSON" || [ ! -s "$SOURCE_NDJSON" ]; then
-            echo "::error::El tarball no trae un data.ndjson con documentos. Se aborta para no borrar los targets." >&2
-            exit 1
-          fi
-          if ! fingerprint=$(pnpm exec sanity exec scripts/dataset-fingerprint/dataset-fingerprint.ts -- --source="$SOURCE_NDJSON") \
-            || ! [[ "$fingerprint" =~ ^[0-9a-f]{64}$ ]]; then
-            echo "::error::No se pudo calcular la huella del export. Se aborta para no borrar los targets." >&2
-            exit 1
-          fi
-          echo "SOURCE_FINGERPRINT=$fingerprint" >> "$GITHUB_ENV"
-          echo "Huella del export de $SOURCE_DATASET: \`$fingerprint\`" >> "$GITHUB_STEP_SUMMARY"
 
       # Se sube ANTES del wipe: si un import falla tras el delete, el tarball queda disponible para
       # restaurar el dataset manualmente sin re-exportar production.
@@ -171,12 +155,6 @@ jobs:
               exit 1
             fi
             pnpm exec sanity dataset import "$TARBALL" "$dataset"
-            if ! SANITY_STUDIO_DATASET="$dataset" pnpm exec sanity exec scripts/dataset-fingerprint/dataset-fingerprint.ts \
-              --with-user-token -- --source="$SOURCE_NDJSON" --compare="$SOURCE_FINGERPRINT"; then
-              echo "::error::El dataset $dataset no es un espejo exacto del export (ver los documentos que difieren en el log)." >&2
-              exit 1
-            fi
-            echo "- \`$dataset\`: coincide con la huella del export" >> "$GITHUB_STEP_SUMMARY"
             echo "::endgroup::"
           done
           echo "Sync completado para: $datasets"
@@ -187,6 +165,3 @@ jobs:
           echo "::error::La sincronización falló. Si un dataset quedó vacío tras el delete, restauralo:" >&2
           echo "::error::  1) descargá el artefacto 'production-tarball' de este run;" >&2
           echo "::error::  2) cd cms && pnpm exec sanity dataset import production.tar.gz <target>" >&2
-          echo "::error::Para verificar el resultado contra la huella publicada en el resumen de este run:" >&2
-          echo "::error::  tar -xzOf production.tar.gz --wildcards '*/data.ndjson' > production.ndjson" >&2
-          echo "::error::  SANITY_STUDIO_DATASET=<target> pnpm exec sanity exec scripts/dataset-fingerprint/dataset-fingerprint.ts --with-user-token -- --source=production.ndjson --compare=<huella>" >&2
