@@ -18,6 +18,7 @@ export class ControllableLayoutService implements LayoutService {
 	private readonly viewport: WritableSignal<Viewport> = signal('lg');
 
 	public readonly isHeaderVisible = signal(true);
+	public readonly isHeaderOverBand = signal(false);
 
 	public readonly userHasScrolled$: Observable<Direction> = EMPTY;
 	public readonly viewportHasChanged$: Observable<Event | null> = EMPTY;
@@ -28,6 +29,11 @@ export class ControllableLayoutService implements LayoutService {
 
 	public isPlatformServer(): boolean {
 		return false;
+	}
+
+	/** Operación del **contrato**: el doble guarda la declaración de la banda en la signal que expone, así un test la lee igual que el real. */
+	public setHeaderOverBand(isOverBand: boolean): void {
+		this.isHeaderOverBand.set(isOverBand);
 	}
 
 	/** Operación del **contrato**: en el real detecta el viewport desde `window`; el doble no tiene entorno que detectar. */

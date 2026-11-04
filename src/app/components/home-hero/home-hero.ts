@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 
+import { HeaderBand } from '../../directives/header-band.directive';
+
 /**
  * Encabezado de la página de inicio del Design System v3: la banda que abre la página —con su trazo de
  * fondo, el título y la bajada— y el carrusel de campañas proyectado debajo.
@@ -11,6 +13,7 @@ import { NgOptimizedImage } from '@angular/common';
 @Component({
 	selector: 'cuentoneta-home-hero',
 	imports: [NgOptimizedImage],
+	hostDirectives: [HeaderBand],
 	template: `
 		<!--
 			El trazo del diseño viaja como imagen y no como marcado: la curva no tiene semántica y su
