@@ -58,13 +58,18 @@ if (expected === undefined) {
 	const destinationHashes = hashDocuments(await destination.read());
 	const differing = differingIds(sourceHashes, destinationHashes);
 	const matches = sourceFingerprint === expected && differing.length === 0;
+	// El log de un repo público es visible para cualquiera y estos ids salen de production, que es
+	// privado: alcanzan unos pocos para diagnosticar, el resto se cuenta.
+	const listed = 20;
+	const rest = differing.length > listed ? [`  … y ${differing.length - listed} más`] : [];
 	process.stdout.write(
 		[
 			`Huella esperada: ${expected}`,
 			`Huella del export: ${sourceFingerprint}`,
 			`Huella de ${destination.dataset}: ${datasetHash(destinationHashes)}`,
 			`Documentos que difieren: ${differing.length}`,
-			...differing.map((id) => `  · ${id}`),
+			...differing.slice(0, listed).map((id) => `  · ${id}`),
+			...rest,
 			'',
 		].join('\n'),
 	);
