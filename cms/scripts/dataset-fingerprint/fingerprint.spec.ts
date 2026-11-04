@@ -44,6 +44,10 @@ describe('assetIdFromExport', () => {
 		expect(assetIdFromExport('file@file://./files/3e0d43-m4a.bin')).toBe('file-3e0d43-m4a');
 	});
 
+	it('maps a file whose extension has no digit, which the export keeps as is', () => {
+		expect(assetIdFromExport('file@file://./files/3e0d43.wav')).toBe('file-3e0d43-wav');
+	});
+
 	it('rejects a path it does not know', () => {
 		expect(() => assetIdFromExport('image@https://example.com/cover.jpg')).toThrow('cover.jpg');
 	});

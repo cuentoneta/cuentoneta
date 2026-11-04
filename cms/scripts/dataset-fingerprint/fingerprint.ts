@@ -14,9 +14,12 @@ type JsonObject = Record<string, unknown>;
  *
  *   image@file://./images/<sha1>-<ancho>x<alto>.<ext>  →  image-<sha1>-<ancho>x<alto>-<ext>
  *   file@file://./files/<sha1>-<ext>.bin               →  file-<sha1>-<ext>
+ *   file@file://./files/<sha1>.<ext>                   →  file-<sha1>-<ext>
+ *
+ * El export usa la forma con `.bin` solo cuando la extensión lleva un dígito (`m4a`, `mp3`).
  */
 export function assetIdFromExport(sanityAsset: string): string {
-	const match = /^(image|file)@file:\/\/\.\/(?:images|files)\/([0-9a-f]+)-(.+)$/.exec(sanityAsset);
+	const match = /^(image|file)@file:\/\/\.\/(?:images|files)\/([0-9a-f]+)[-.](.+)$/.exec(sanityAsset);
 	if (!match) {
 		throw new Error(`Asset exportado con una forma desconocida: "${sanityAsset}"`);
 	}
