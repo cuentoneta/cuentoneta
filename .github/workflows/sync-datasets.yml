@@ -49,6 +49,9 @@ jobs:
       github.event_name == 'workflow_dispatch' ||
       (github.event.workflow_run.event == 'schedule' && github.event.workflow_run.conclusion != 'cancelled')
     runs-on: ubuntu-latest
+    # Muy por encima de lo que tarda un sync normal: el techo solo evita que un Sanity degradado retenga
+    # el runner y la cola de `concurrency` las seis horas del default.
+    timeout-minutes: 90
 
     env:
       SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
@@ -110,8 +113,7 @@ jobs:
           echo "Tarball válido: ${actual_bytes} bytes."
           # Los documentos del origen son la referencia contra la que se verifica cada destino. Extraerlos
           # antes del wipe comprueba además que el tarball se pueda leer.
-          tar -xzOf "$TARBALL" --wildcards '*/data.ndjson' > "$SOURCE_NDJSON"
-          if [ ! -s "$SOURCE_NDJSON" ]; then
+          if ! tar -xzOf "$TARBALL" --wildcards '*/data.ndjson' > "$SOURCE_NDJSON" || [ ! -s "$SOURCE_NDJSON" ]; then
             echo "::error::El tarball no trae un data.ndjson con documentos. Se aborta para no borrar los targets." >&2
             exit 1
           fi
@@ -173,7 +175,8 @@ jobs:
           echo "Sync completado para: $datasets"
 
       - name: Instrucciones de recuperación ante fallo
-        if: failure()
+        # `cancelled()` cubre el corte por `timeout-minutes`, que puede llegar con un dataset a medio sincronizar.
+        if: failure() || cancelled()
         run: |
           echo "::error::La sincronización falló. Si un dataset quedó vacío tras el delete, restauralo:" >&2
           echo "::error::  1) descargá el artefacto 'production-tarball' de este run;" >&2
