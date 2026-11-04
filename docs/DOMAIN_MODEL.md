@@ -51,9 +51,10 @@ Un **Contexto Acotado** (Bounded Context) es un límite explícito dentro del cu
 **Interfaces de API:**
 
 ```
-GET /api/author/:slug              # Obtener autor completo
-GET /api/literary-work/:slug       # Obtener obra literaria completa
-GET /api/literary-work             # Catálogo de obras (teasers), filtrable por query params
+GET /api/author/:slug                    # Obtener autor completo
+GET /api/literary-work/:slug             # Obtener obra literaria completa
+GET /api/literary-work                   # Catálogo de obras (teasers), filtrable por query params
+GET /api/literary-work/:slug/suggestions # Sugerencias de lectura, en el ámbito de un autor o una colección
 ```
 
 ---

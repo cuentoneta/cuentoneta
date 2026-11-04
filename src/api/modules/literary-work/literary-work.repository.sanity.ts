@@ -1,5 +1,9 @@
 import type { SanityClient } from '@sanity/client';
-import type { LiteraryWorkBySlugQueryResult, LiteraryWorkTeasersResult } from '@sanity-types';
+import type {
+	CollectionBySlugQueryResult,
+	LiteraryWorkBySlugQueryResult,
+	LiteraryWorkTeasersResult,
+} from '@sanity-types';
 import { createLiteraryWork, type LiteraryWork, type LiteraryWorkTeaser } from '@models/literary-work.model';
 import { createAttributedText, type AttributedText } from '@models/attributed-text.model';
 import { createLiteraryWorkExcerpt, type LiteraryWorkExcerpt } from '@models/literary-work-excerpt.model';
@@ -9,26 +13,34 @@ import { createMarkdown } from '@models/markdown.model';
 import { deriveSectionReadingTime } from '@models/reading-time-derivation.model';
 import { createReadingTime, type ReadingTime } from '@models/reading-time.model';
 import { createSlug } from '@models/slug.model';
+import type { ReadingSuggestionsScope } from '@models/reading-suggestions.model';
 import { createIsoDateTime } from '@utils/date.utils';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import type { ImageUrlResolver } from '../../_utils/functions';
 import { mapAuthor, mapAuthorTeaser, mapResources, mapTags, urlFor } from '../../_utils/functions';
 import { mapMediaSources, mapMediaTeasers } from '../../_utils/media-sources.functions';
 import { client as sanityClient } from '../../_helpers/sanity-connector';
+import { collectionBySlugQuery } from '../../_queries/collection.query';
 import { literaryWorkBySlugQuery, literaryWorkTeasers } from '../../_queries/literary-work.query';
 import { MalformedLiteraryWorkError } from './literary-work.errors';
-import type {
-	LiteraryWorkRepository,
-	LiteraryWorkTeaserFilter,
-	LiteraryWorkTeaserListing,
+import {
+	resolveAuthorName,
+	type LiteraryWorkRepository,
+	type LiteraryWorkSuggestionCandidate,
+	type LiteraryWorkSuggestionsListing,
+	type LiteraryWorkTeaserFilter,
+	type LiteraryWorkTeaserListing,
 } from './literary-work.repository';
 
 type SanityLiteraryWork = NonNullable<LiteraryWorkBySlugQueryResult>;
 type SanityLiteraryWorkSection = SanityLiteraryWork['content'][number];
 type SanityEpigraph = NonNullable<SanityLiteraryWorkSection['epigraphs']>[number];
 type SanityLiteraryWorkMetadata = Omit<SanityLiteraryWork, 'content'>;
-type SanityLiteraryWorkTeaser = LiteraryWorkTeasersResult[number];
-type SanityTeaserExcerpt = SanityLiteraryWorkTeaser['excerpt'][number];
+// La vista de teaser la proyectan el catálogo y las obras de una colección: el mapper se tipa contra
+// la unión para que ninguna de las dos proyecciones pueda divergir sin que el typecheck lo denuncie.
+type SanityTeaser =
+	LiteraryWorkTeasersResult[number] | NonNullable<CollectionBySlugQueryResult>['literaryWorks'][number];
+type SanityTeaserExcerpt = SanityTeaser['excerpt'][number];
 
 export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 	constructor(
@@ -61,17 +73,66 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 			slugs: filter.slugs ? [...filter.slugs] : null,
 		});
 
+		return this.mapTeaserListing(raw);
+	}
+
+	// Trae las obras del ámbito con el que se llegó a la lectura, encabezadas por el nombre de ese
+	// ámbito: el del autor viaja dentro de sus propias obras, y el de la colección en el documento que
+	// además las transporta. Un ámbito sin obras deja el encabezado vacío —no hay a qué invitar—, que
+	// es el estado del que el bloque de sugerencias no se pinta.
+	public async fetchSuggestions(
+		scope: ReadingSuggestionsScope,
+		select: (candidates: readonly LiteraryWorkSuggestionCandidate[]) => readonly string[],
+		limit: number,
+	): Promise<LiteraryWorkSuggestionsListing> {
+		if ('collection' in scope) {
+			const raw = await this.client.fetch(collectionBySlugQuery, { slug: scope.collection });
+			return raw
+				? { title: raw.title, ...this.mapSelectedTeasers(raw.literaryWorks, select, limit) }
+				: { title: '', literaryWorks: [], malformed: [] };
+		}
+
+		const raw = await this.client.fetch(literaryWorkTeasers, { author: scope.author, slugs: null });
+		return { title: resolveAuthorName(raw, scope.author), ...this.mapSelectedTeasers(raw, select, limit) };
+	}
+
+	// Traduce solo las obras que el service eligió, en su orden: las descartadas no pagan el saneado
+	// del extracto. Una obra que no se puede traducir se reporta y el bloque sigue con la siguiente,
+	// así completa `limit` con obras sanas.
+	private mapSelectedTeasers(
+		raw: readonly SanityTeaser[],
+		select: (candidates: readonly LiteraryWorkSuggestionCandidate[]) => readonly string[],
+		limit: number,
+	): LiteraryWorkTeaserListing {
+		// Dos documentos publicados pueden compartir slug —la query del catálogo lo documenta—, así que el
+		// mapa conserva la lista y cada slug consumido toma la siguiente: indexar por slug fundiría una obra.
+		const bySlug = new Map<string, SanityTeaser[]>();
+		for (const teaser of raw) {
+			const group = bySlug.get(teaser.slug);
+			if (group) {
+				group.push(teaser);
+			} else {
+				bySlug.set(teaser.slug, [teaser]);
+			}
+		}
+		const candidates = raw.map(({ slug, tags }) => ({ slug, tags: mapTags(tags) }));
 		const literaryWorks: LiteraryWorkTeaser[] = [];
 		const malformed: MalformedLiteraryWorkError[] = [];
-		for (const rawTeaser of raw) {
+		for (const slug of select(candidates)) {
+			if (literaryWorks.length === limit) {
+				break;
+			}
+			const rawTeaser = bySlug.get(slug)?.shift();
+			if (!rawTeaser) {
+				continue;
+			}
 			try {
 				literaryWorks.push(this.mapLiteraryWorkTeaser(rawTeaser));
 			} catch (error) {
-				// El mapeo por obra no se ablanda: la intraducible se acumula en vez de propagarse,
-				// porque qué hacer con ella —descartarla de un listado, tumbar el agregado que la
-				// cura— lo decide quien conoce el caso de uso, no este adaptador. El slug viaja en el
-				// error porque, sobre el catálogo entero, saber que "algo" está mal no alcanza para
-				// arreglarlo.
+				// El mapeo por obra no se ablanda: la intraducible se acumula en vez de propagarse, porque
+				// qué hacer con ella —descartarla de un listado, tumbar el agregado que la cura— lo decide
+				// quien conoce el caso de uso, no este adaptador. El slug viaja en el error porque, sobre el
+				// catálogo entero, saber que "algo" está mal no alcanza para arreglarlo.
 				malformed.push(
 					error instanceof MalformedLiteraryWorkError
 						? error
@@ -82,7 +143,12 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 		return { literaryWorks, malformed };
 	}
 
-	private mapLiteraryWorkTeaser(raw: SanityLiteraryWorkTeaser): LiteraryWorkTeaser {
+	// Traduce un listado crudo a teasers, reportando las obras que no se pudieron traducir.
+	private mapTeaserListing(raw: readonly SanityTeaser[]): LiteraryWorkTeaserListing {
+		return this.mapSelectedTeasers(raw, (candidates) => candidates.map(({ slug }) => slug), raw.length);
+	}
+
+	private mapLiteraryWorkTeaser(raw: SanityTeaser): LiteraryWorkTeaser {
 		const [rawExcerpt] = raw.excerpt;
 		if (!rawExcerpt) {
 			// Sin sección de apertura el teaser es inconstruible: es la contracara de la invariante
@@ -106,7 +172,7 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 	}
 
 	// El tiempo total de lectura de la obra, tal como lo persiste el CMS.
-	private resolveTotalReadingTime(raw: SanityLiteraryWorkTeaser): ReadingTime {
+	private resolveTotalReadingTime(raw: SanityTeaser): ReadingTime {
 		// Ausente, la obra es intraducible: no hay derivación que sirva de reemplazo, porque en una
 		// obra de texto el total es la suma de sus secciones y en una recitada es la duración del
 		// medio. Cualquier cálculo acierta en una y falla en la otra.
