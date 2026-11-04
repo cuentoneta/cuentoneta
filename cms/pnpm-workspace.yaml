@@ -9,7 +9,9 @@ overrides:
 
 # El sync de datasets fortalece las referencias con una ráfaga que supera el límite de mutaciones por
 # IP de Sanity, y el import se rinde ante el 429 sin esperar lo suficiente. El parche baja la
-# concurrencia y alarga el reintento. Va sin versión a propósito: si un bump del paquete deja de
-# aceptarlo, el install falla en vez de quedar sin parche en silencio.
+# concurrencia de ese paso y alarga el reintento, que es compartido por todo el import: también los
+# assets y la escritura de documentos esperan más, y un error que no se resuelve reintentando tarda
+# más en fallar. Va sin versión para que un bump del paquete lo siga aplicando; si el bump cambia esas
+# líneas, el install falla.
 patchedDependencies:
   '@sanity/import': patches/@sanity__import.patch

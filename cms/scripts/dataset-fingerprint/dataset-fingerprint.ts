@@ -40,6 +40,8 @@ async function readNdjson(path: string): Promise<SanityDocument[]> {
 
 function readDestination() {
 	const client = getCliClient({ apiVersion: '2025-02-19' }).withConfig({ useCdn: false, perspective: 'raw' });
+	// Los documentos de asset no van al ndjson del export y el import los recrea con metadatos propios:
+	// lo que dice que un asset es el mismo es el id con sha1 que cada documento referencia.
 	const query = `*[!(_type in ["sanity.imageAsset", "sanity.fileAsset"]) && _id > $after] | order(_id) [0...200]`;
 	return {
 		dataset: client.config().dataset,
