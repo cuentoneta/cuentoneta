@@ -23,9 +23,12 @@ import { MediaWidgetSelector } from '@components/media-widget-selector/media-wid
 import { MediaWidgetSelectorSkeleton } from '@components/media-widget-selector/media-widget-selector-skeleton';
 import { Divider } from '@components/divider/divider';
 import { ReadingSuggestions } from '@components/reading-suggestions/reading-suggestions';
+import { ShareMenu } from '@components/share-menu/share-menu';
 import { LiteraryWorkPageSkeleton } from './literary-work-page-skeleton';
 import { RouterLink } from '@angular/router';
 import { toNavigationContext, type NavigationContext, type NavigationParams } from '@app-utils/navigation-params';
+import { buildCanonicalUrl } from '@app-utils/build-canonical-url.util';
+import { AppRoutes } from '../../app.routes';
 
 @Component({
 	selector: 'cuentoneta-literary-work',
@@ -42,6 +45,7 @@ import { toNavigationContext, type NavigationContext, type NavigationParams } fr
 		MediaWidgetSelectorSkeleton,
 		LiteraryWorkPageSkeleton,
 		ReadingSuggestions,
+		ShareMenu,
 		RouterLink,
 	],
 })
@@ -93,6 +97,23 @@ export default class LiteraryWorkPage implements LiteraryWorkHost {
 				?.authors.map((author) => author.name)
 				.join(', ') ?? '',
 	);
+
+	// El enlace que se comparte es el canónico de la obra —el mismo que declara la directiva de meta
+	// tags, y derivado de la misma fuente—: los query params de contexto de navegación quedarían fuera
+	// de él, y dos personas que llegan por caminos distintos tienen que compartir el mismo enlace.
+	private readonly shareUrl = computed(() => {
+		const slug = this.literaryWork()?.slug;
+
+		return slug ? buildCanonicalUrl(`${AppRoutes.LiteraryWork}/${slug}`) : '';
+	});
+
+	private readonly shareMessage = computed(() => {
+		const title = this.literaryWork()?.title;
+
+		return title
+			? `Leí "${title}" de ${this.byline()} en La Cuentoneta y te lo comparto. Sumate a leer este y otros cuentos en este link:`
+			: '';
+	});
 
 	// TODO(#1471): mover esta lógica a un service y revisar si hace falta declarar tipos de rendering.
 	private readonly sections = computed(

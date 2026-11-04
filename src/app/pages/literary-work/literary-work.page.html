@@ -7,7 +7,7 @@
 		<div class="flex flex-col gap-7 pt-7">
 			<div class="flex items-center justify-between">
 				<span class="font-inter text-xs font-semibold">{{ literaryWork.totalReadingTime }} minutos de lectura</span>
-				<button cuentoneta-button variant="subtle" size="xs">Compartir</button>
+				<cuentoneta-share-menu [message]="shareMessage()" [url]="shareUrl()" />
 			</div>
 			<cuentoneta-divider />
 		</div>
