@@ -47,14 +47,6 @@ interface Detection {
 	readonly pending: UnsetPatch[];
 }
 
-const READ_BATCH_SIZE = 100;
-// El mismo tamaño de lote que usa el import para fortalecer.
-const WRITE_BATCH_SIZE = 30;
-const MAX_PASSES = 3;
-// Las transacciones van de a una: esta pausa deja el ritmo muy por debajo del límite de mutaciones
-// por segundo que Sanity aplica por IP, que es justo el que la ráfaga del import supera.
-const PAUSE_BETWEEN_TRANSACTIONS = '200ms';
-
 /** Devuelve el dataset si es un destino válido; lanza si falta o si es `production`, que solo se lee. */
 export function assertNotProductionDataset(dataset: string | undefined): string {
 	if (!dataset) {
@@ -90,8 +82,9 @@ function chunk<T>(items: readonly T[], size: number): T[][] {
 }
 
 async function detect(index: ReadonlyMap<string, SourceEntry>, reader: DestinationReader): Promise<Detection> {
+	const readBatchSize = 100;
 	const detection: Detection = { missing: [], unresolvedAssets: [], pending: [] };
-	for (const ids of chunk([...index.keys()], READ_BATCH_SIZE)) {
+	for (const ids of chunk([...index.keys()], readBatchSize)) {
 		const found = new Map((await reader.fetchDocuments(ids)).map((doc) => [doc._id, doc] as const));
 		for (const id of ids) {
 			recordDiff(detection, id, index.get(id), found.get(id));
@@ -122,10 +115,13 @@ function describeError(error: unknown): string {
 // Espacia todas las transacciones del run, incluidas las de aislamiento: el límite es por IP y no
 // distingue un lote de un documento suelto.
 function createPacedCommit(writer: ReferenceWriter, clock: Clock) {
+	// Las transacciones van de a una: esta pausa deja el ritmo muy por debajo del límite de mutaciones
+	// por segundo que Sanity aplica por IP, que es justo el que la ráfaga del import supera.
+	const pauseBetweenTransactions = '200ms';
 	let first = true;
 	return async (batch: readonly UnsetPatch[]): Promise<Attempt<void>> => {
 		if (!first) {
-			await clock.sleep(toMilliseconds(PAUSE_BETWEEN_TRANSACTIONS));
+			await clock.sleep(toMilliseconds(pauseBetweenTransactions));
 		}
 		first = false;
 		return runWithBackoff(() => writer.commitUnsets(batch), clock);
@@ -135,9 +131,11 @@ function createPacedCommit(writer: ReferenceWriter, clock: Clock) {
 // Un lote que falla sin reintento posible se reparte de a un documento, para que una revisión vencida
 // o un documento roto no arrastren a los otros veintinueve.
 async function applyPending(pending: readonly UnsetPatch[], commit: ReturnType<typeof createPacedCommit>) {
+	// El mismo tamaño de lote que usa el import para fortalecer.
+	const writeBatchSize = 30;
 	let written = 0;
 	const failed: Failure[] = [];
-	for (const batch of chunk(pending, WRITE_BATCH_SIZE)) {
+	for (const batch of chunk(pending, writeBatchSize)) {
 		if ((await commit(batch)).ok) {
 			written += batch.length;
 			continue;
@@ -165,12 +163,13 @@ export async function runStrengthen(params: {
 	apply: boolean;
 	clock: Clock;
 }): Promise<StrengthenReport> {
+	const maxPasses = 3;
 	const index = buildSourceIndex(params.sourceDocuments);
 	const commit = createPacedCommit(params.writer, params.clock);
 	let detection = await detect(index, params.reader);
 	let strengthened = 0;
 	let failed: Failure[] = [];
-	for (let pass = 0; params.apply && pass < MAX_PASSES && detection.pending.length > 0; pass++) {
+	for (let pass = 0; params.apply && pass < maxPasses && detection.pending.length > 0; pass++) {
 		const result = await applyPending(detection.pending, commit);
 		strengthened += result.written;
 		failed = result.failed;
@@ -199,14 +198,13 @@ export function exitCodeFor(report: StrengthenReport, options: { apply: boolean 
 	return 0;
 }
 
-const LISTED_IDS = 20;
-
 function listed(label: string, items: readonly string[]): string[] {
+	const listedIds = 20;
 	if (items.length === 0) {
 		return [];
 	}
-	const rest = items.length > LISTED_IDS ? [`  … y ${items.length - LISTED_IDS} más`] : [];
-	return [`${label}:`, ...items.slice(0, LISTED_IDS).map((item) => `  · ${item}`), ...rest];
+	const rest = items.length > listedIds ? [`  … y ${items.length - listedIds} más`] : [];
+	return [`${label}:`, ...items.slice(0, listedIds).map((item) => `  · ${item}`), ...rest];
 }
 
 /** Las líneas del reporte para el log y el resumen del job. */

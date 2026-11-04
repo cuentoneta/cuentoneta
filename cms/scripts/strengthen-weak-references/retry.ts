@@ -12,11 +12,6 @@ export type Attempt<T> =
 	| { readonly ok: true; readonly value: T; readonly attempts: number }
 	| { readonly ok: false; readonly error: unknown; readonly attempts: number };
 
-const MAX_ATTEMPTS = 6;
-const BACKOFF_BASE: Duration = '1s';
-// Techo del backoff calculado, no del `Retry-After`: lo que pide el servidor se respeta aunque lo supere.
-const BACKOFF_CEILING: Duration = '30s';
-
 /** Resuelve una duración en milisegundos o segundos (`'200ms'`, `'1s'`); lanza ante otra forma. */
 export function toMilliseconds(duration: Duration): number {
 	const match = /^(\d+)(ms|s)$/.exec(duration);
@@ -72,16 +67,20 @@ export function isRetriable(error: unknown): boolean {
 
 /** Espera exponencial para el intento `attempt` (desde 1), acotada por un techo. */
 export function backoffFor(attempt: number): number {
-	return Math.min(toMilliseconds(BACKOFF_BASE) * 2 ** (attempt - 1), toMilliseconds(BACKOFF_CEILING));
+	const base: Duration = '1s';
+	// Techo del backoff calculado, no del `Retry-After`: lo que pide el servidor se respeta aunque lo supere.
+	const ceiling: Duration = '30s';
+	return Math.min(toMilliseconds(base) * 2 ** (attempt - 1), toMilliseconds(ceiling));
 }
 
 /** Corre `operation` hasta que tenga éxito, falle con un error no reintentable o agote los intentos. */
 export async function runWithBackoff<T>(operation: () => Promise<T>, clock: Clock): Promise<Attempt<T>> {
+	const maxAttempts = 6;
 	for (let attempt = 1; ; attempt++) {
 		try {
 			return { ok: true, value: await operation(), attempts: attempt };
 		} catch (error) {
-			if (!isRetriable(error) || attempt === MAX_ATTEMPTS) {
+			if (!isRetriable(error) || attempt === maxAttempts) {
 				return { ok: false, error, attempts: attempt };
 			}
 			await clock.sleep(Math.max(readRetryAfter(error, clock.now()) ?? 0, backoffFor(attempt)));

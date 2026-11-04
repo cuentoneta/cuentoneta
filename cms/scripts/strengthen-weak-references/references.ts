@@ -96,14 +96,12 @@ function findPathsWhere(doc: SanityDocument, matches: (object: JsonObject) => bo
 	return paths;
 }
 
-const exportsAnAsset = (object: JsonObject) => '_sanityAsset' in object;
-const linksAnAsset = (object: JsonObject) => isJsonObject(object['asset']) && '_ref' in object['asset'];
-
 /**
  * Indexa por `_id` los documentos que el import escribe. Una referencia débil en el origen no entra en
  * `strongPaths`: es débil a propósito y tiene que seguir así en el destino.
  */
 export function buildSourceIndex(docs: Iterable<SanityDocument>): Map<string, SourceEntry> {
+	const exportsAnAsset = (object: JsonObject) => '_sanityAsset' in object;
 	const index = new Map<string, SourceEntry>();
 	for (const doc of docs) {
 		if (!isImportedDocument(doc)) {
@@ -125,6 +123,7 @@ export function diffAgainstDestination(source: SourceEntry, destination: SanityD
 	const unsetPaths = findReferenceSlots(destination)
 		.filter((slot) => slot.weak && source.strongPaths.has(slot.path))
 		.map((slot) => `${slot.path}._weak`);
+	const linksAnAsset = (object: JsonObject) => isJsonObject(object['asset']) && '_ref' in object['asset'];
 	const linkedAssets = new Set(findPathsWhere(destination, linksAnAsset));
 	const unresolvedAssets = source.assetPaths.filter((path) => !linkedAssets.has(path));
 	return { kind: 'present', rev: destination._rev ?? '', unsetPaths, unresolvedAssets };
