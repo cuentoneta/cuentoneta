@@ -166,7 +166,8 @@ jobs:
       - name: Instrucciones de recuperación ante fallo
         if: failure()
         run: |
-          echo "::error::La sincronización falló. Si un dataset quedó vacío tras el delete, restauralo:" >&2
-          echo "::error::  1) descargá el artefacto 'production-tarball' de este run;" >&2
-          echo "::error::  2) cd cms && pnpm exec sanity dataset create <target> --visibility public (si no existe)" >&2
+          echo "::error::La sincronización falló. Si un dataset quedó vacío o a medio importar, volvé a correr este workflow con ese target: lo borra si existe y lo reimporta." >&2
+          echo "::error::Para restaurarlo a mano con el export de este run (artefacto 'production-tarball'), desde cms/:" >&2
+          echo "::error::  1) pnpm exec sanity dataset delete <target> --force (si existe)" >&2
+          echo "::error::  2) pnpm exec sanity dataset create <target> --visibility public" >&2
           echo "::error::  3) SANITY_STUDIO_DATASET=<target> pnpm exec sanity exec scripts/import-dataset/import-dataset.ts --with-user-token -- --source=production.tar.gz" >&2
