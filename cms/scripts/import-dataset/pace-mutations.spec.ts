@@ -27,29 +27,47 @@ function spyPace() {
 	return { pace, calls };
 }
 
-// Con la forma encadenable de los builders de @sanity/client: cada método devuelve `this`.
+// Con la forma de los builders de @sanity/client: cada método devuelve `this`, y el estado vive en
+// campos privados, que fallan si el método se llama con el proxy como `this` en vez del original.
 class SpyBuilder {
-	public readonly operations: string[] = [];
-	public committed = 0;
+	readonly #operations: string[] = [];
+	#committed = 0;
+
+	public get operations(): readonly string[] {
+		return this.#operations;
+	}
+
+	public get committed(): number {
+		return this.#committed;
+	}
 
 	public set(field: string) {
-		this.operations.push(`set ${field}`);
+		this.#operations.push(`set ${field}`);
 		return this;
 	}
 
 	public patch(id: string) {
-		this.operations.push(`patch ${id}`);
+		this.#operations.push(`patch ${id}`);
 		return this;
 	}
 
 	public async commit() {
-		this.committed++;
+		this.#committed++;
 		return { ok: true };
 	}
 }
 
 class SpyClient {
-	public readonly builders: SpyBuilder[] = [];
+	readonly #builders: SpyBuilder[] = [];
+	readonly #actions: string[] = [];
+
+	public get builders(): readonly SpyBuilder[] {
+		return this.#builders;
+	}
+
+	public get actions(): readonly string[] {
+		return this.#actions;
+	}
 
 	public transaction() {
 		return this.track();
@@ -57,6 +75,11 @@ class SpyClient {
 
 	public patch(id: string) {
 		return this.track().patch(id);
+	}
+
+	public async action(type: string) {
+		this.#actions.push(type);
+		return { ok: true };
 	}
 
 	public withConfig() {
@@ -69,7 +92,7 @@ class SpyClient {
 
 	private track() {
 		const builder = new SpyBuilder();
-		this.builders.push(builder);
+		this.#builders.push(builder);
 		return builder;
 	}
 }
@@ -127,6 +150,16 @@ describe('paceMutations', () => {
 
 		expect(calls).toHaveLength(1);
 		expect(client.builders[0]?.committed).toBe(1);
+	});
+
+	it('paces an action, which is how releases are imported', async () => {
+		const client = new SpyClient();
+		const { pace, calls } = spyPace();
+
+		await paceMutations(client, pace).action('sanity.action.release.import');
+
+		expect(calls).toHaveLength(1);
+		expect(client.actions).toEqual(['sanity.action.release.import']);
 	});
 
 	it('keeps the pace on a client derived with withConfig', async () => {

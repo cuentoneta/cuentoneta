@@ -50,9 +50,9 @@ function paceCommit<T extends object>(builder: T, pace: Pace): T {
 }
 
 /**
- * Devuelve el mismo cliente, con cada `commit` de una transacción o de un patch pasado por `pace`.
- * Son las únicas vías por las que `@sanity/import` muta documentos, y las mutaciones son las que
- * Sanity limita por IP. Los clientes que deriva (`withConfig`, `clone`) conservan el ritmo.
+ * Devuelve el mismo cliente, con cada escritura pasada por `pace`: el `commit` de una transacción o de
+ * un patch, y cada `action`. Son las vías por las que `@sanity/import` escribe documentos, y Sanity las
+ * limita juntas por IP. Los clientes que deriva (`withConfig`, `clone`) conservan el ritmo.
  */
 export function paceMutations<T extends object>(client: T, pace: Pace): T {
 	return new Proxy(client, {
@@ -62,6 +62,9 @@ export function paceMutations<T extends object>(client: T, pace: Pace): T {
 				return value;
 			}
 			const method = value as Method;
+			if (property === 'action') {
+				return (...args: unknown[]) => pace(() => Promise.resolve(method.apply(target, args)));
+			}
 			return (...args: unknown[]) => {
 				const result = method.apply(target, args);
 				if (property === 'transaction' || property === 'patch') {
