@@ -6,12 +6,3 @@ overrides:
   'js-yaml@3': '>=3.15.2 <4'
   'smol-toml@1': '>=1.9.0 <2'
   'source-map-js@1': '>=1.2.2 <2'
-
-# El sync de datasets fortalece las referencias con una ráfaga que supera el límite de mutaciones por
-# IP de Sanity, y el import se rinde ante el 429 sin esperar lo suficiente. El parche baja la
-# concurrencia de ese paso y alarga el reintento, que es compartido por todo el import: también los
-# assets y la escritura de documentos esperan más, y un error que no se resuelve reintentando tarda
-# más en fallar. Va sin versión para que un bump del paquete lo siga aplicando; si el bump cambia esas
-# líneas, el install falla.
-patchedDependencies:
-  '@sanity/import': patches/@sanity__import.patch

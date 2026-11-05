@@ -154,7 +154,11 @@ jobs:
               echo "::error::No se pudo recrear el dataset $dataset después del delete." >&2
               exit 1
             fi
-            pnpm exec sanity dataset import "$TARBALL" "$dataset"
+            # No es `sanity dataset import`: el del CLI fortalece las referencias con una ráfaga que supera
+            # el límite de mutaciones por IP de Sanity, y el script le pasa al mismo import un cliente
+            # que espacia las mutaciones.
+            SANITY_STUDIO_DATASET="$dataset" pnpm exec sanity exec scripts/import-dataset/import-dataset.ts \
+              --with-user-token -- --source="$TARBALL"
             echo "::endgroup::"
           done
           echo "Sync completado para: $datasets"
@@ -164,4 +168,5 @@ jobs:
         run: |
           echo "::error::La sincronización falló. Si un dataset quedó vacío tras el delete, restauralo:" >&2
           echo "::error::  1) descargá el artefacto 'production-tarball' de este run;" >&2
-          echo "::error::  2) cd cms && pnpm exec sanity dataset import production.tar.gz <target>" >&2
+          echo "::error::  2) cd cms && pnpm exec sanity dataset create <target> --visibility public (si no existe)" >&2
+          echo "::error::  3) SANITY_STUDIO_DATASET=<target> pnpm exec sanity exec scripts/import-dataset/import-dataset.ts --with-user-token -- --source=production.tar.gz" >&2

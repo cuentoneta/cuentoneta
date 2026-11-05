@@ -13,11 +13,6 @@ overrides:
   smol-toml@1: '>=1.9.0 <2'
   source-map-js@1: '>=1.2.2 <2'
 
-patchedDependencies:
-  '@sanity/import':
-    hash: 791a37eb1b414927f6c24d3056ea57363e4de3b69691db9ae068b5df6513fc28
-    path: patches/@sanity__import.patch
-
 importers:
 
   .:
@@ -62,6 +57,9 @@ importers:
         specifier: ^6.6.0
         version: 6.6.0(css-to-react-native@3.2.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
     devDependencies:
+      '@sanity/import':
+        specifier: ^7.1.0
+        version: 7.1.0(@sanity/client@8.14.1(vitest@5.0.5(@types/node@24.19.2)(jsdom@29.1.1(@noble/hashes@2.4.0))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))))(@types/react@19.3.0)(vitest@5.0.5(@types/node@24.19.2)(jsdom@29.1.1(@noble/hashes@2.4.0))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)))
       '@types/node':
         specifier: ^24.19.2
         version: 24.19.2
@@ -6441,7 +6439,7 @@ snapshots:
       '@sanity/export': 7.1.0(vitest@5.0.5(@types/node@24.19.2)(jsdom@29.1.1(@noble/hashes@2.4.0))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)))
       '@sanity/generate-help-url': 4.0.0
       '@sanity/id-utils': 1.1.0
-      '@sanity/import': 7.1.0(patch_hash=791a37eb1b414927f6c24d3056ea57363e4de3b69691db9ae068b5df6513fc28)(@sanity/client@8.14.1(vitest@5.0.5(@types/node@24.19.2)(jsdom@29.1.1(@noble/hashes@2.4.0))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))))(@types/react@19.3.0)(vitest@5.0.5(@types/node@24.19.2)(jsdom@29.1.1(@noble/hashes@2.4.0))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)))
+      '@sanity/import': 7.1.0(@sanity/client@8.14.1(vitest@5.0.5(@types/node@24.19.2)(jsdom@29.1.1(@noble/hashes@2.4.0))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))))(@types/react@19.3.0)(vitest@5.0.5(@types/node@24.19.2)(jsdom@29.1.1(@noble/hashes@2.4.0))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)))
       '@sanity/migrate': 8.0.5(@types/react@19.3.0)(vitest@5.0.5(@types/node@24.19.2)(jsdom@29.1.1(@noble/hashes@2.4.0))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)))(xstate@5.33.3)
       '@sanity/runtime-cli': 17.18.0(daf91389949eca20f6bf84bd310ff67d)
       '@sanity/schema': 6.21.0(@types/react@19.3.0)(vitest@5.0.5(@types/node@24.19.2)(jsdom@29.1.1(@noble/hashes@2.4.0))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)))
@@ -6642,7 +6640,7 @@ snapshots:
     dependencies:
       '@sanity/signed-urls': 2.0.5
 
-  '@sanity/import@7.1.0(patch_hash=791a37eb1b414927f6c24d3056ea57363e4de3b69691db9ae068b5df6513fc28)(@sanity/client@8.14.1(vitest@5.0.5(@types/node@24.19.2)(jsdom@29.1.1(@noble/hashes@2.4.0))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))))(@types/react@19.3.0)(vitest@5.0.5(@types/node@24.19.2)(jsdom@29.1.1(@noble/hashes@2.4.0))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)))':
+  '@sanity/import@7.1.0(@sanity/client@8.14.1(vitest@5.0.5(@types/node@24.19.2)(jsdom@29.1.1(@noble/hashes@2.4.0))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))))(@types/react@19.3.0)(vitest@5.0.5(@types/node@24.19.2)(jsdom@29.1.1(@noble/hashes@2.4.0))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)))':
     dependencies:
       '@sanity/asset-utils': 2.3.0
       '@sanity/client': 8.14.1(vitest@5.0.5(@types/node@24.19.2)(jsdom@29.1.1(@noble/hashes@2.4.0))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)))
