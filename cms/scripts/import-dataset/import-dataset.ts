@@ -16,6 +16,7 @@ import { sanityImport } from '@sanity/import';
 import { getCliClient } from 'sanity/cli';
 
 import { createPace, paceMutations } from './pace-mutations';
+import { assertTargetDataset } from './target-dataset';
 
 const source = process.argv
 	.slice(2)
@@ -26,10 +27,8 @@ if (!source) {
 }
 
 const client = getCliClient({ apiVersion: '2025-02-19' });
-const { dataset, projectId } = client.config();
-if (!dataset || dataset === 'production') {
-	throw new Error(`Destino inválido: "${dataset ?? ''}". production es el origen del sync y nunca se escribe.`);
-}
+const { dataset: configuredDataset, projectId } = client.config();
+const dataset = assertTargetDataset(configuredDataset);
 
 // Muy por debajo del límite de mutaciones por segundo que Sanity aplica por IP.
 const pace = createPace('100ms', { now: () => Date.now(), sleep: (milliseconds) => sleep(milliseconds) });
