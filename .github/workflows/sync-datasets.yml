@@ -132,11 +132,33 @@ jobs:
               exit 1
             fi
             echo "::group::Sync $dataset"
-            pnpm exec sanity dataset delete "$dataset" --force
+            # Un sync anterior puede haber dejado el destino borrado: se recrea igual.
+            existing=$(pnpm exec sanity dataset list)
+            if grep -qxF "$dataset" <<< "$existing"; then
+              pnpm exec sanity dataset delete "$dataset" --force
+            fi
+            # El delete termina de forma asíncrona, y crear antes de que termine falla con "is being
+            # deleted": se reintenta hasta que el nombre quede libre.
             # --visibility public preserva la visibilidad actual: staging y development son públicos
             # (los lee el frontend de esos entornos sin token); production es el privado.
-            pnpm exec sanity dataset create "$dataset" --visibility public
-            pnpm exec sanity dataset import "$TARBALL" "$dataset"
+            created=false
+            for attempt in $(seq 1 12); do
+              if pnpm exec sanity dataset create "$dataset" --visibility public; then
+                created=true
+                break
+              fi
+              echo "El dataset $dataset todavía no se puede crear (intento $attempt); se reintenta en 10 s."
+              sleep 10
+            done
+            if [ "$created" != true ]; then
+              echo "::error::No se pudo recrear el dataset $dataset después del delete." >&2
+              exit 1
+            fi
+            # No es `sanity dataset import`: el del CLI fortalece las referencias con una ráfaga que supera
+            # el límite de mutaciones por IP de Sanity, y el script le pasa al mismo import un cliente
+            # que espacia las mutaciones.
+            SANITY_STUDIO_DATASET="$dataset" pnpm exec sanity exec scripts/import-dataset/import-dataset.ts \
+              --with-user-token -- --source="$TARBALL"
             echo "::endgroup::"
           done
           echo "Sync completado para: $datasets"
@@ -144,6 +166,8 @@ jobs:
       - name: Instrucciones de recuperación ante fallo
         if: failure()
         run: |
-          echo "::error::La sincronización falló. Si un dataset quedó vacío tras el delete, restauralo:" >&2
-          echo "::error::  1) descargá el artefacto 'production-tarball' de este run;" >&2
-          echo "::error::  2) cd cms && pnpm exec sanity dataset import production.tar.gz <target>" >&2
+          echo "::error::La sincronización falló. Si un dataset quedó vacío o a medio importar, volvé a correr este workflow con ese target: lo borra si existe y lo reimporta." >&2
+          echo "::error::Para restaurarlo a mano con el export de este run (artefacto 'production-tarball'), desde cms/:" >&2
+          echo "::error::  1) pnpm exec sanity dataset delete <target> --force (si existe)" >&2
+          echo "::error::  2) pnpm exec sanity dataset create <target> --visibility public" >&2
+          echo "::error::  3) SANITY_STUDIO_DATASET=<target> pnpm exec sanity exec scripts/import-dataset/import-dataset.ts --with-user-token -- --source=production.tar.gz" >&2
