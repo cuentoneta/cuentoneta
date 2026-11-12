@@ -90,7 +90,7 @@
 		"@nx/playwright": "23.3.0",
 		"@nx/storybook": "23.3.0",
 		"@nx/vitest": "23.3.0",
-		"@nx/workspace": "23.3.0",
+		"@nx/workspace": "24.0.5",
 		"@playwright/test": "^1.65.0",
 		"@storybook/addon-docs": "10.6.6",
 		"@storybook/angular-vite": "10.6.6",
