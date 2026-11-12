@@ -123,7 +123,7 @@
 		"husky": "^9.1.7",
 		"jsonld": "^9.0.0",
 		"node-html-parser": "^9.0.7",
-		"nx": "23.3.0",
+		"nx": "24.0.5",
 		"nx-stylelint": "^18.0.2",
 		"only-allow": "^1.2.2",
 		"postcss": "8.5.32",
