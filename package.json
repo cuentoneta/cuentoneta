@@ -85,7 +85,7 @@
 		"@googleapis/searchconsole": "^11.0.1",
 		"@nx/devkit": "23.3.0",
 		"@nx/eslint": "23.3.0",
-		"@nx/eslint-plugin": "23.3.0",
+		"@nx/eslint-plugin": "24.0.5",
 		"@nx/js": "23.3.0",
 		"@nx/playwright": "23.3.0",
 		"@nx/storybook": "23.3.0",
