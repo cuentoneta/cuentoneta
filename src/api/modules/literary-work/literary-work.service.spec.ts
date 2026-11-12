@@ -1,12 +1,13 @@
 import { clearAllMocks, type Mock, restoreAllMocks, spyOn } from '@test-utils';
 import type { LandingPageContent } from '@models/landing-page-content.model';
+import { onoffLiteraryWorkCatalogMock } from '@mocks/onoff-literary-work-catalog.mock';
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 import {
 	onoffLiteraryWorkNavigationTeasersWithAuthorsMock,
 	onoffLiteraryWorkTeasersMock,
 } from '@mocks/onoff-literary-work-teasers.mock';
 import * as literaryWorkService from './literary-work.service';
-import { getLiteraryWorkBySlug, getLiteraryWorkTeasers } from './literary-work.service';
+import { getLiteraryWorkBySlug, getLiteraryWorkCatalog, getLiteraryWorkTeasers } from './literary-work.service';
 import { LiteraryWorkNotFoundError, MalformedLiteraryWorkError } from './literary-work.errors';
 import { InMemoryLiteraryWorkRepository } from './literary-work.repository.mock';
 import type { LiteraryWorkCatalogEntry } from '@models/literary-work.model';
@@ -112,6 +113,50 @@ describe('getLiteraryWorkTeasers', () => {
 		expect(await getLiteraryWorkTeasers({ author: author.slug }, stub)).toEqual([]);
 	});
 });
+describe('getLiteraryWorkCatalog', () => {
+	const [firstEntry] = onoffLiteraryWorkCatalogMock;
+	const [author] = firstEntry.authors;
+	const repository = new InMemoryLiteraryWorkRepository([], [], onoffLiteraryWorkCatalogMock);
+	const noTeasers = { literaryWorks: [], malformed: [] };
+
+	afterEach(() => restoreAllMocks());
+
+	it('devuelve el catálogo entero sin filtro', async () => {
+		expect(await getLiteraryWorkCatalog({}, repository)).toEqual(onoffLiteraryWorkCatalogMock);
+	});
+
+	it('devuelve las entradas de las obras del autor filtrado', async () => {
+		const literaryWorks = await getLiteraryWorkCatalog({ author: author.slug }, repository);
+
+		expect(literaryWorks.length).toBeGreaterThan(0);
+		literaryWorks.forEach(({ authors }) => {
+			expect(authors.some(({ slug }) => slug === author.slug)).toBe(true);
+		});
+	});
+
+	// Misma política que el listado de teasers: la obra mal curada se descarta y queda registrada.
+	it('devuelve las obras sanas y registra la descartada', async () => {
+		const warn = spyOn(console, 'warn').mockImplementation(() => undefined);
+		const malformed = new MalformedLiteraryWorkError('una-obra-rota', { cause: new Error('sin tiempo de lectura') });
+		const stub = new StubLiteraryWorkRepository(noTeasers, { literaryWorks: [firstEntry], malformed: [malformed] });
+
+		const literaryWorks = await getLiteraryWorkCatalog({}, stub);
+
+		expect(literaryWorks).toEqual([firstEntry]);
+		expect(warn).toHaveBeenCalledWith(expect.stringContaining('una-obra-rota'), malformed.cause);
+	});
+
+	it('devuelve un listado vacío cuando todas las obras están mal curadas', async () => {
+		spyOn(console, 'warn').mockImplementation(() => undefined);
+		const stub = new StubLiteraryWorkRepository(noTeasers, {
+			literaryWorks: [],
+			malformed: [new MalformedLiteraryWorkError('una'), new MalformedLiteraryWorkError('otra')],
+		});
+
+		expect(await getLiteraryWorkCatalog({}, stub)).toEqual([]);
+	});
+});
+
 // Registra si el caso de uso pide la landing: solo necesita lo más leído, y pedirla entera
 // arrastraría el conteo por autor destacado que la proyección calcula en caliente.
 class SpyContentRepository extends InMemoryContentRepository {
