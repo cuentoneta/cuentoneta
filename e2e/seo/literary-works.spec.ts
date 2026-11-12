@@ -88,4 +88,16 @@ test.describe('literary-work — HTML server-rendered del catálogo', () => {
 	test('E: se renderiza por request, no desde un artefacto del build', () => {
 		expect(html).toContain('ng-server-context="ssr"');
 	});
+
+	// El SSR descarta toda respuesta de la API que supere el tope de HttpClient (1 MiB, el default privado
+	// de Angular), y la página sale con 503. Se pide el listado sin `view` a propósito: es el que consume
+	// el SSR del catálogo, y es el único caso que ve crecer el contenido real.
+	test('F: el listado por defecto deja la mitad del tope de respuesta del SSR libre', async ({ request }) => {
+		const ssrResponseBodyLimit = 1024 * 1024;
+
+		const response = await request.get('/api/literary-work');
+
+		expect(response.status()).toBe(200);
+		expect((await response.body()).byteLength).toBeLessThan(ssrResponseBodyLimit / 2);
+	});
 });
