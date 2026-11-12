@@ -12,6 +12,7 @@ import {
 	unmaterializedRawLiteraryWork,
 } from '@mocks/onoff-raw-literary-works.mock';
 import {
+	onoffRawLiteraryWorkCatalogMock,
 	onoffRawLiteraryWorksWithoutEditorialNote,
 	onoffRawLiteraryWorkTeasersMock,
 } from '@mocks/onoff-raw-literary-works.mock';
@@ -317,5 +318,46 @@ describe('SanityLiteraryWorkRepository.fetchTeasers', () => {
 
 		expect(literaryWorks).toEqual([]);
 		expect(malformed[0]).toBeInstanceOf(MalformedLiteraryWorkError);
+	});
+});
+
+describe('SanityLiteraryWorkRepository.fetchCatalog', () => {
+	it('mapea el catálogo a entradas congeladas, sin nada que reportar', async () => {
+		const { literaryWorks, malformed } = await repoReturning(onoffRawLiteraryWorkCatalogMock).fetchCatalog({});
+
+		expect(literaryWorks).toHaveLength(onoffRawLiteraryWorkCatalogMock.length);
+		expect(malformed).toEqual([]);
+		literaryWorks.forEach((entry) => expect(Object.isFrozen(entry)).toBe(true));
+	});
+
+	it('pasa el autor del filtro a la query', async () => {
+		const fetch = fn(() => Promise.resolve([]));
+		const repository = new SanityLiteraryWorkRepository({ fetch } as unknown as SanityClient);
+
+		await repository.fetchCatalog({ author: 'francois-onoff' });
+
+		expect(fetch).toHaveBeenCalledWith(expect.any(String), { author: 'francois-onoff' });
+	});
+
+	it('reporta la obra sin tiempo de lectura sin llevarse puestas a las demás', async () => {
+		const [sane, ...rest] = onoffRawLiteraryWorkCatalogMock;
+		const broken = { ...sane, slug: `${sane.slug}-rota`, totalReadingTime: null };
+
+		const { literaryWorks, malformed } = await repoReturning([broken, ...rest]).fetchCatalog({});
+
+		expect(literaryWorks).toHaveLength(rest.length);
+		expect(malformed).toHaveLength(1);
+		expect(malformed[0].slug).toBe(broken.slug);
+	});
+
+	it('reporta como mal curada a la obra con un slug inválido', async () => {
+		const [sane] = onoffRawLiteraryWorkCatalogMock;
+		const badSlug = { ...sane, slug: 'Slug Inválido' };
+
+		const { literaryWorks, malformed } = await repoReturning([badSlug]).fetchCatalog({});
+
+		expect(literaryWorks).toEqual([]);
+		expect(malformed[0]).toBeInstanceOf(MalformedLiteraryWorkError);
+		expect(malformed[0].slug).toBe(badSlug.slug);
 	});
 });

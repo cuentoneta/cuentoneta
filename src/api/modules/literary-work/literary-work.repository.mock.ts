@@ -1,5 +1,7 @@
-import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
+import type { LiteraryWork, LiteraryWorkCatalogEntry, LiteraryWorkTeaser } from '@models/literary-work.model';
 import type {
+	LiteraryWorkCatalogFilter,
+	LiteraryWorkListing,
 	LiteraryWorkRepository,
 	LiteraryWorkTeaserFilter,
 	LiteraryWorkTeaserListing,
@@ -8,10 +10,16 @@ import type {
 export class InMemoryLiteraryWorkRepository implements LiteraryWorkRepository {
 	private readonly literaryWorks: ReadonlyArray<LiteraryWork>;
 	private readonly teasers: ReadonlyArray<LiteraryWorkTeaser>;
+	private readonly catalog: ReadonlyArray<LiteraryWorkCatalogEntry>;
 
-	constructor(literaryWorks: ReadonlyArray<LiteraryWork> = [], teasers: ReadonlyArray<LiteraryWorkTeaser> = []) {
+	constructor(
+		literaryWorks: ReadonlyArray<LiteraryWork> = [],
+		teasers: ReadonlyArray<LiteraryWorkTeaser> = [],
+		catalog: ReadonlyArray<LiteraryWorkCatalogEntry> = [],
+	) {
 		this.literaryWorks = literaryWorks;
 		this.teasers = teasers;
+		this.catalog = catalog;
 	}
 
 	public async fetchBySlug(slug: string): Promise<LiteraryWork | null> {
@@ -24,11 +32,22 @@ export class InMemoryLiteraryWorkRepository implements LiteraryWorkRepository {
 		// Los dos criterios se acumulan, y ninguno reordena: la query filtra por pertenencia y entrega en
 		// orden de documento, así que el doble entrega en orden de almacenamiento. Respetar el orden en
 		// que vinieran los slugs taparía a un consumidor que dependa de un orden que Sanity no da.
-		const byAuthor = filter.author
-			? this.teasers.filter(({ authors }) => authors.some((author) => author.slug === filter.author))
-			: this.teasers;
+		const byAuthor = this.byAuthor(this.teasers, filter.author);
 		const slugs = filter.slugs;
 		const literaryWorks = slugs ? byAuthor.filter(({ slug }) => slugs.includes(slug)) : byAuthor;
 		return { literaryWorks, malformed: [] };
+	}
+
+	public async fetchCatalog(
+		filter: LiteraryWorkCatalogFilter,
+	): Promise<LiteraryWorkListing<LiteraryWorkCatalogEntry>> {
+		return { literaryWorks: this.byAuthor(this.catalog, filter.author), malformed: [] };
+	}
+
+	private byAuthor<T extends { readonly authors: readonly { readonly slug: string }[] }>(
+		literaryWorks: ReadonlyArray<T>,
+		author: string | undefined,
+	): ReadonlyArray<T> {
+		return author ? literaryWorks.filter(({ authors }) => authors.some(({ slug }) => slug === author)) : literaryWorks;
 	}
 }

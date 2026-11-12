@@ -9,7 +9,12 @@ import * as literaryWorkService from './literary-work.service';
 import { getLiteraryWorkBySlug, getLiteraryWorkTeasers } from './literary-work.service';
 import { LiteraryWorkNotFoundError, MalformedLiteraryWorkError } from './literary-work.errors';
 import { InMemoryLiteraryWorkRepository } from './literary-work.repository.mock';
-import type { LiteraryWorkRepository, LiteraryWorkTeaserListing } from './literary-work.repository';
+import type { LiteraryWorkCatalogEntry } from '@models/literary-work.model';
+import type {
+	LiteraryWorkListing,
+	LiteraryWorkRepository,
+	LiteraryWorkTeaserListing,
+} from './literary-work.repository';
 import { environment } from '../../_helpers/environment';
 import { fetchClarityData } from '../../_helpers/clarity-connector';
 import { ClarityRequestError, ClarityResponseError } from '../../_helpers/clarity-connector.errors';
@@ -37,7 +42,10 @@ describe('getLiteraryWorkBySlug', () => {
 // Devuelve un listado canned con `malformed` poblado: el doble en memoria traduce de verdad y nunca
 // produce esa rama, así que la política de descarte solo se puede ejercitar con un stub.
 class StubLiteraryWorkRepository implements LiteraryWorkRepository {
-	constructor(private readonly listing: LiteraryWorkTeaserListing) {}
+	constructor(
+		private readonly listing: LiteraryWorkTeaserListing,
+		private readonly catalog: LiteraryWorkListing<LiteraryWorkCatalogEntry> = { literaryWorks: [], malformed: [] },
+	) {}
 
 	public async fetchBySlug(): Promise<never> {
 		throw new Error('No participa de estos casos.');
@@ -45,6 +53,10 @@ class StubLiteraryWorkRepository implements LiteraryWorkRepository {
 
 	public async fetchTeasers(): Promise<LiteraryWorkTeaserListing> {
 		return this.listing;
+	}
+
+	public async fetchCatalog(): Promise<LiteraryWorkListing<LiteraryWorkCatalogEntry>> {
+		return this.catalog;
 	}
 }
 
