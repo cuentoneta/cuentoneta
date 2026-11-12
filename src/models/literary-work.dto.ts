@@ -1,6 +1,6 @@
 import * as z from 'zod/mini';
 import type { Author, AuthorTeaser } from './author.model';
-import type { LiteraryWorkTeaser } from './literary-work.model';
+import type { LiteraryWorkCatalogEntry, LiteraryWorkTeaser } from './literary-work.model';
 import type { Media, MediaTeaser } from './media.model';
 import type { Resource } from './resource.model';
 import type { Tag } from './tag.model';
@@ -71,8 +71,20 @@ export const literaryWorkTeaserDtoSchema = z.object({
 
 export const literaryWorkTeaserListDtoSchema = z.array(literaryWorkTeaserDtoSchema);
 
+// La vista de catálogo. A diferencia del teaser, la autoría se valida campo por campo: son dos strings
+// y no un objeto de dominio que el wire transporte opaco.
+export const literaryWorkCatalogEntryDtoSchema = z.object({
+	slug: z.string(),
+	title: z.string(),
+	totalReadingTime: z.number(),
+	authors: z.array(z.object({ slug: z.string(), name: z.string() })),
+});
+
+export const literaryWorkCatalogListDtoSchema = z.array(literaryWorkCatalogEntryDtoSchema);
+
 export type LiteraryWorkEpigraphDto = z.infer<typeof literaryWorkEpigraphDtoSchema>;
 export type LiteraryWorkTeaserDto = z.infer<typeof literaryWorkTeaserDtoSchema>;
+export type LiteraryWorkCatalogEntryDto = z.infer<typeof literaryWorkCatalogEntryDtoSchema>;
 export type LiteraryWorkSectionDto = z.infer<typeof literaryWorkSectionDtoSchema>;
 export type LiteraryWorkExcerptDto = z.infer<typeof literaryWorkExcerptDtoSchema>;
 export type LiteraryWorkDto = z.infer<typeof literaryWorkDtoSchema>;
@@ -87,4 +99,13 @@ export function toLiteraryWorkTeaser(dto: LiteraryWorkTeaserDto): LiteraryWorkTe
 			bodyHtml: createSanitizedHtml(dto.excerpt.bodyHtml),
 		}),
 	};
+}
+
+export function toLiteraryWorkCatalogEntry(dto: LiteraryWorkCatalogEntryDto): LiteraryWorkCatalogEntry {
+	return Object.freeze({
+		slug: createSlug(dto.slug),
+		title: dto.title,
+		totalReadingTime: createReadingTime(dto.totalReadingTime),
+		authors: dto.authors,
+	});
 }

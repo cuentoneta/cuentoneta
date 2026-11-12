@@ -5,13 +5,14 @@ import type { Observable } from 'rxjs';
 import { of } from 'rxjs';
 
 // Models
-import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
+import type { LiteraryWork, LiteraryWorkCatalogEntry, LiteraryWorkTeaser } from '@models/literary-work.model';
 import { LiteraryWorkApi, type LiteraryWorkTeaserFilter } from './literary-work.provider';
 
 export class StubLiteraryWorkApi implements LiteraryWorkApi {
 	constructor(
 		private readonly literaryWork: LiteraryWork,
 		private readonly teasers: readonly LiteraryWorkTeaser[] = [],
+		private readonly catalog: readonly LiteraryWorkCatalogEntry[] = [],
 	) {}
 
 	public getBySlug(): Observable<LiteraryWork> {
@@ -19,11 +20,18 @@ export class StubLiteraryWorkApi implements LiteraryWorkApi {
 	}
 
 	public getTeasers(filter: LiteraryWorkTeaserFilter = {}): Observable<LiteraryWorkTeaser[]> {
-		return of(
-			filter.author
-				? this.teasers.filter(({ authors }) => authors.some((author) => author.slug === filter.author))
-				: [...this.teasers],
-		);
+		return of(this.byAuthor(this.teasers, filter.author));
+	}
+
+	public getCatalog(filter: LiteraryWorkTeaserFilter = {}): Observable<LiteraryWorkCatalogEntry[]> {
+		return of(this.byAuthor(this.catalog, filter.author));
+	}
+
+	private byAuthor<T extends { readonly authors: readonly { readonly slug: string }[] }>(
+		literaryWorks: readonly T[],
+		author: string | undefined,
+	): T[] {
+		return author ? literaryWorks.filter(({ authors }) => authors.some(({ slug }) => slug === author)) : [...literaryWorks];
 	}
 }
 

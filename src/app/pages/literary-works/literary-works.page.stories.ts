@@ -2,7 +2,8 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular-
 import { provideRouter } from '@angular/router';
 import { NEVER, of, throwError, type Observable } from 'rxjs';
 
-import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
+import type { LiteraryWork, LiteraryWorkCatalogEntry, LiteraryWorkTeaser } from '@models/literary-work.model';
+import { onoffLiteraryWorkCatalogMock } from '@mocks/onoff-literary-work-catalog.mock';
 import {
 	onoffLiteraryWorkTeasersMock,
 	onoffLiteraryWorkTeasersWithMediaSourcesMock,
@@ -42,6 +43,16 @@ class StubScenarioLiteraryWorkApi implements LiteraryWorkApi {
 			return NEVER;
 		}
 		return of([...catalogues[this.scenario]]);
+	}
+
+	public getCatalog(): Observable<LiteraryWorkCatalogEntry[]> {
+		if (this.scenario === 'failure') {
+			return throwError(() => new Error('sin catálogo'));
+		}
+		if (this.scenario === 'loading') {
+			return NEVER;
+		}
+		return of(this.scenario === 'empty' ? [] : [...onoffLiteraryWorkCatalogMock]);
 	}
 }
 
