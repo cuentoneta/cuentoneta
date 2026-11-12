@@ -86,7 +86,7 @@
 		"@nx/devkit": "23.3.0",
 		"@nx/eslint": "23.3.0",
 		"@nx/eslint-plugin": "23.3.0",
-		"@nx/js": "23.3.0",
+		"@nx/js": "24.0.5",
 		"@nx/playwright": "23.3.0",
 		"@nx/storybook": "23.3.0",
 		"@nx/vitest": "23.3.0",
