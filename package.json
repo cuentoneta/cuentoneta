@@ -89,7 +89,7 @@
 		"@nx/js": "23.3.0",
 		"@nx/playwright": "23.3.0",
 		"@nx/storybook": "23.3.0",
-		"@nx/vitest": "23.3.0",
+		"@nx/vitest": "24.0.5",
 		"@nx/workspace": "23.3.0",
 		"@playwright/test": "^1.65.0",
 		"@storybook/addon-docs": "10.6.6",
