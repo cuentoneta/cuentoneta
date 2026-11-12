@@ -18,7 +18,9 @@ import type { LiteraryWorkTeaserCardVariant } from './literary-work-teaser-card'
 	host: { class: 'block' },
 	template: `
 		<article [class]="rowWrapperClasses()">
-			<cuentoneta-cover-image-skeleton [class.order-last]="variant() === 'highlighted'" />
+			<div class="flex w-33 shrink-0 justify-center" [class.order-last]="variant() === 'highlighted'">
+				<cuentoneta-cover-image-skeleton />
+			</div>
 			<div [class]="rowColumnClasses()">
 				@if (showAuthor()) {
 					<ng-container [ngTemplateOutlet]="author" />

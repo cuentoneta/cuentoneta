@@ -53,7 +53,7 @@ describe('CoverImage', () => {
 			await render('<cuentoneta-cover-image data-testid="cover" src="https://example.com/cover.jpg" />', {
 				imports: [CoverImage],
 			});
-			expect(screen.getByTestId('cover')).toHaveClass('h-41', 'w-fit', 'max-w-41');
+			expect(screen.getByTestId('cover')).toHaveClass('h-41', 'w-fit', 'max-w-33');
 		});
 
 		it('should give the placeholder the default cover width', async () => {

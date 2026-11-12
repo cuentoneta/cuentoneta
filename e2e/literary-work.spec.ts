@@ -21,7 +21,7 @@ import { STABLE_SLUGS } from './_utils/seo-fixtures';
 const ROUTE = `/literary-work/${STABLE_SLUGS.literaryWork}`;
 const MEDIA_ROUTE = `/literary-work/${STABLE_SLUGS.literaryWorkWithMedia}`;
 const COVER_HEIGHT = 164;
-const COVER_MAX_WIDTH = 164;
+const COVER_MAX_WIDTH = 132;
 
 let status = 0;
 let work: LiteraryWorkDto | undefined;

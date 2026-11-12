@@ -16,7 +16,7 @@ import type { SanityImageLoaderParams } from '../../providers/sanity-image-loade
 	selector: 'cuentoneta-cover-image',
 	imports: [NgOptimizedImage],
 	host: {
-		class: 'block h-41 w-fit max-w-41 shrink-0 overflow-hidden rounded-lg bg-neutral-300',
+		class: 'block h-41 w-fit max-w-33 shrink-0 overflow-hidden rounded-lg bg-neutral-300',
 	},
 	template: `
 		@if (src(); as url) {

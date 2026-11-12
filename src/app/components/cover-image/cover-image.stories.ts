@@ -18,7 +18,7 @@ const meta: Meta<CoverImage> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>Imagen de portada (cover) de una obra, usada por las tarjetas del Design System v3 (${docsRef(literaryWorkTeaserCardDocs)} y ${docsRef(literaryWorkTeaserHomeCardDocs)}). El alto es fijo (164) y el ancho sigue la proporción de la imagen, hasta un máximo de 164 que recorta el excedente. Si no se provee <code>src</code>, muestra el placeholder del Design System. Es decorativa: el click se delega al enlace de la tarjeta.</p></div>`,
+				component: `<div><p>Imagen de portada (cover) de una obra, usada por las tarjetas del Design System v3 (${docsRef(literaryWorkTeaserCardDocs)} y ${docsRef(literaryWorkTeaserHomeCardDocs)}). El alto es fijo (164) y el ancho sigue la proporción de la imagen, hasta un máximo de 132 que recorta el excedente. Si no se provee <code>src</code>, muestra el placeholder del Design System. Es decorativa: el click se delega al enlace de la tarjeta.</p></div>`,
 			},
 		},
 		layout: 'padded',
@@ -88,7 +88,7 @@ export const Apaisadas: Story = {
 		docs: {
 			description: {
 				story:
-					'Tres imágenes de proporciones distintas con el mismo alto: la de la portada, una cuadrada y una muy apaisada. Cada caja toma el ancho que le da su imagen, sin fondo gris; la muy apaisada llega al máximo de 164 y recorta lo que lo excede.',
+					'Tres imágenes de proporciones distintas con el mismo alto: la de la portada, una cuadrada y una muy apaisada. Cada caja toma el ancho que le da su imagen, sin fondo gris, hasta el máximo de 132: la cuadrada y la muy apaisada lo alcanzan y recortan lo que lo excede.',
 			},
 		},
 	},
