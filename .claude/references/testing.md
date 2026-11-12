@@ -441,7 +441,7 @@ Reglas del patrón:
 
 ### Qué cubre y qué no
 
-Cubre **lógica Node pura del Studio**: resolvers de Desk Structure, utils que corren dentro del proceso del Studio (p. ej. `cms/utils/landing-page.ts`), y las migraciones de datos de `cms/migrations/` (ver [`sanity-migrations.md`](sanity-migrations.md)). No cubre la declaración de un document type: ver el checklist al pie. No hay nada de Angular, ni Angular Testing Library, ni `happy-dom` — el Studio no renderiza componentes Angular ni corre en un DOM simulado con esa configuración.
+Cubre **lógica Node pura del Studio**: resolvers de Desk Structure, utils que corren dentro del proceso del Studio (p. ej. `cms/utils/landing-page.ts`), las migraciones de datos de `cms/migrations/` (ver [`sanity-migrations.md`](sanity-migrations.md)) y los scripts de `cms/scripts/` que un workflow corre con `sanity exec` (ver [`scripts.md`](scripts.md)). No cubre la declaración de un document type: ver el checklist al pie. No hay nada de Angular, ni Angular Testing Library, ni `happy-dom` — el Studio no renderiza componentes Angular ni corre en un DOM simulado con esa configuración.
 
 ### Por qué es una config aparte
 
