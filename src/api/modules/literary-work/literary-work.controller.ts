@@ -1,21 +1,25 @@
 import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 
-import { literaryWorkTeaserFilterSchema } from '@schemas/literary-work.schemas';
+import { LiteraryWorkListingView } from '@models/literary-work.model';
+import { literaryWorkListingQuerySchema } from '@schemas/literary-work.schemas';
 import { slugParamValidator } from '@middleware/slug-param-validator.middleware';
 import { LiteraryWorkNotFoundError } from './literary-work.errors';
 import type { LiteraryWorkRepository } from './literary-work.repository';
-import { getLiteraryWorkBySlug, getLiteraryWorkTeasers } from './literary-work.service';
+import { getLiteraryWorkBySlug, getLiteraryWorkCatalog, getLiteraryWorkTeasers } from './literary-work.service';
 
 export function createLiteraryWorkController(repository?: LiteraryWorkRepository) {
 	const controller = new Hono();
 
-	// El catálogo, filtrable por query params: un criterio nuevo es un campo más del schema, no una
-	// sub-ruta por atributo. Sin ramas de error propias — un filtro sin resultados es un listado
-	// vacío, y la obra mal curada la descarta el service.
-	controller.get('/', zValidator('query', literaryWorkTeaserFilterSchema), async (c) => {
-		const filter = c.req.valid('query');
-		const literaryWorks = await getLiteraryWorkTeasers(filter, repository);
+	// El listado de obras, filtrable por query params: un criterio nuevo es un campo más del schema, no
+	// una sub-ruta por atributo. La vista elige la proyección. Sin ramas de error propias — un filtro sin
+	// resultados es un listado vacío, y la obra mal curada la descarta el service.
+	controller.get('/', zValidator('query', literaryWorkListingQuerySchema), async (c) => {
+		const { view, ...filter } = c.req.valid('query');
+		const literaryWorks =
+			view === LiteraryWorkListingView.Teaser
+				? await getLiteraryWorkTeasers(filter, repository)
+				: await getLiteraryWorkCatalog(filter, repository);
 		return c.json(literaryWorks);
 	});
 
