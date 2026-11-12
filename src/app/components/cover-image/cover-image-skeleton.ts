@@ -3,8 +3,9 @@ import { Component } from '@angular/core';
 import { Skeleton } from '@components/skeleton/skeleton';
 
 /**
- * Estado de carga (esqueleto) de CoverImage: reproduce la caja de la portada (118×164) con
- * un placeholder de cuentoneta-skeleton para evitar saltos de layout mientras la obra carga.
+ * Estado de carga (esqueleto) de CoverImage: reproduce la caja de la portada con su alto y
+ * su ancho por defecto (118), con un placeholder de cuentoneta-skeleton para evitar saltos de layout
+ * mientras la obra carga.
  */
 @Component({
 	selector: 'cuentoneta-cover-image-skeleton',

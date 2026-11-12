@@ -147,6 +147,19 @@ describe('LiteraryWorkTeaserCard', () => {
 			expect(screen.getByTestId('cover-placeholder')).toBeInTheDocument();
 		});
 
+		// happy-dom no mide layout: se afirma la clase de la ranura, no la posición de la columna de texto.
+		it('should place the cover in a fixed-width slot so the text column starts at the same place in every card', async () => {
+			await render(LiteraryWorkTeaserCard, {
+				inputs: {
+					literaryWork: { ...teaser, coverImage: 'https://example.com/cover.jpg' },
+					navigationParams,
+				},
+			});
+			const slot = screen.getByTestId('cover-slot');
+			expect(slot).toHaveClass('w-33', 'shrink-0');
+			expect(slot).toContainElement(screen.getByTestId('cover-image'));
+		});
+
 		it('should keep the cover decorative, leaving a single accessible literary work link when the author is hidden', async () => {
 			await render(LiteraryWorkTeaserCard, {
 				inputs: {
