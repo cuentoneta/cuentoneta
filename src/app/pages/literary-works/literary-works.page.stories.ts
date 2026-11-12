@@ -4,10 +4,6 @@ import { NEVER, of, throwError, type Observable } from 'rxjs';
 
 import type { LiteraryWork, LiteraryWorkCatalogEntry, LiteraryWorkTeaser } from '@models/literary-work.model';
 import { onoffLiteraryWorkCatalogMock } from '@mocks/onoff-literary-work-catalog.mock';
-import {
-	onoffLiteraryWorkTeasersMock,
-	onoffLiteraryWorkTeasersWithMediaSourcesMock,
-} from '@mocks/onoff-literary-work-teasers.mock';
 
 import { provideLiteraryWorkApiMock } from '../../providers/literary-work.mock';
 import type { LiteraryWorkApi } from '../../providers/literary-work.provider';
@@ -17,12 +13,9 @@ import { literaryWorkPageDocs } from '../literary-work/literary-work.page.docs';
 import { skeletonDocs } from '@components/skeleton/skeleton.docs';
 import { docsMention, docsRef } from '@testing/storybook-docs';
 
-// Ninguna obra del canon declara multimedia, así que el catálogo enriquecido es el único escenario
-// donde los selectores de formato de las tarjetas tienen algo que dibujar.
 const catalogues = {
-	corpus: onoffLiteraryWorkTeasersMock,
-	multimedia: onoffLiteraryWorkTeasersWithMediaSourcesMock,
-	empty: [] as readonly LiteraryWorkTeaser[],
+	corpus: onoffLiteraryWorkCatalogMock,
+	empty: [] as readonly LiteraryWorkCatalogEntry[],
 } as const;
 
 type Scenario = keyof typeof catalogues | 'loading' | 'failure';
@@ -35,6 +28,10 @@ class StubScenarioLiteraryWorkApi implements LiteraryWorkApi {
 	}
 
 	public getTeasers(): Observable<LiteraryWorkTeaser[]> {
+		return throwError(() => new Error('El catálogo no consulta teasers'));
+	}
+
+	public getCatalog(): Observable<LiteraryWorkCatalogEntry[]> {
 		if (this.scenario === 'failure') {
 			return throwError(() => new Error('sin catálogo'));
 		}
@@ -43,16 +40,6 @@ class StubScenarioLiteraryWorkApi implements LiteraryWorkApi {
 			return NEVER;
 		}
 		return of([...catalogues[this.scenario]]);
-	}
-
-	public getCatalog(): Observable<LiteraryWorkCatalogEntry[]> {
-		if (this.scenario === 'failure') {
-			return throwError(() => new Error('sin catálogo'));
-		}
-		if (this.scenario === 'loading') {
-			return NEVER;
-		}
-		return of(this.scenario === 'empty' ? [] : [...onoffLiteraryWorkCatalogMock]);
 	}
 }
 
@@ -85,8 +72,8 @@ const meta: Meta<LiteraryWorksPageArgs> = {
 		scenario: {
 			name: 'Catálogo',
 			control: { type: 'inline-radio' },
-			options: ['corpus', 'multimedia', 'loading', 'empty', 'failure'],
-			table: { type: { summary: "'corpus' | 'multimedia' | 'loading' | 'empty' | 'failure'" } },
+			options: ['corpus', 'loading', 'empty', 'failure'],
+			table: { type: { summary: "'corpus' | 'loading' | 'empty' | 'failure'" } },
 		},
 	},
 };

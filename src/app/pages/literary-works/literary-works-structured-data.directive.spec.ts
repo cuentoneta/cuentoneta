@@ -3,13 +3,13 @@ import { TestBed } from '@angular/core/testing';
 import { DOCUMENT } from '@angular/common';
 import { signal } from '@angular/core';
 
-import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
-import type { LiteraryWorkTeaser } from '@models/literary-work.model';
+import { onoffLiteraryWorkCatalogMock } from '@mocks/onoff-literary-work-catalog.mock';
+import type { LiteraryWorkCatalogEntry } from '@models/literary-work.model';
 import { LiteraryWorksStructuredData } from './literary-works-structured-data.directive';
 import { LITERARY_WORKS_HOST } from './literary-works-host';
 
 describe('LiteraryWorksStructuredData', () => {
-	const literaryWorksSignal = signal<readonly LiteraryWorkTeaser[]>([]);
+	const literaryWorksSignal = signal<readonly LiteraryWorkCatalogEntry[]>([]);
 
 	function instantiate(): void {
 		TestBed.runInInjectionContext(() => new LiteraryWorksStructuredData());
@@ -40,7 +40,7 @@ describe('LiteraryWorksStructuredData', () => {
 	});
 
 	it('should emit the CollectionPage and breadcrumb JSON-LD when the catalogue resolves', () => {
-		literaryWorksSignal.set(onoffLiteraryWorkTeasersMock);
+		literaryWorksSignal.set(onoffLiteraryWorkCatalogMock);
 
 		instantiate();
 		TestBed.tick();
@@ -63,14 +63,14 @@ describe('LiteraryWorksStructuredData', () => {
 		const head = TestBed.inject(DOCUMENT).head;
 		expect(head.querySelector('script[data-schema-id="literary-work-catalog"]')).toBeNull();
 
-		literaryWorksSignal.set(onoffLiteraryWorkTeasersMock);
+		literaryWorksSignal.set(onoffLiteraryWorkCatalogMock);
 		TestBed.tick();
 
 		expect(head.querySelector('script[data-schema-id="literary-work-catalog"]')).not.toBeNull();
 	});
 
 	it('should not emit under the schema ids the collection catalogue uses', () => {
-		literaryWorksSignal.set(onoffLiteraryWorkTeasersMock);
+		literaryWorksSignal.set(onoffLiteraryWorkCatalogMock);
 
 		instantiate();
 		TestBed.tick();
@@ -81,7 +81,7 @@ describe('LiteraryWorksStructuredData', () => {
 	});
 
 	it('should remove both JSON-LD blocks when destroyed', () => {
-		literaryWorksSignal.set(onoffLiteraryWorkTeasersMock);
+		literaryWorksSignal.set(onoffLiteraryWorkCatalogMock);
 		instantiate();
 		TestBed.tick();
 		const head = TestBed.inject(DOCUMENT).head;
