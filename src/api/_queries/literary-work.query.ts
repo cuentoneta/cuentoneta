@@ -161,10 +161,27 @@ export const readingTimeBackfillCandidatesQuery = defineQuery(`
     'content': coalesce(content[]{ _key, body, readingTime }, [])
 }`);
 
-// El catálogo de obras como teasers, filtrable por criterios — hoy solo `author`; la paginación
-// (limit/offset) y el filtrado por tags se sumarán acá mismo. Cada criterio es un parámetro nullable
-// y no una query aparte: una condición acá y un query param en el endpoint, no una sub-ruta ni otra
-// proyección duplicada.
+// El catálogo de obras: lo justo para listarlas (título, autoría y tiempo de lectura). Es la vista por
+// defecto del listado porque el SSR descarta toda respuesta de la API que supere 1 MiB, y con el
+// catálogo completo solo una proyección angosta queda lejos de ese tope. Filtra por `$author` igual que
+// `literaryWorkTeasers`. `totalReadingTime` va sin `coalesce`: una obra sin él no tiene un valor de
+// reemplazo válido, y es el ACL el que la reporta como mal curada.
+export const literaryWorkCatalog = defineQuery(`
+*[_type == 'literaryWork' && !(_id in path('drafts.**')) && ($author == null || $author in authors[]->slug.current)]
+{
+    'slug': slug.current,
+    title,
+    totalReadingTime,
+    'authors': coalesce(authors[]->{
+        'slug': slug.current,
+        name
+    }, [])
+} | order(title asc)`);
+
+// Las obras como teasers de tarjeta (portada, tags, multimedia, autoría completa y extracto),
+// filtrables por criterios — hoy `author` y `slugs`; la paginación (limit/offset) y el filtrado por tags
+// se sumarán acá mismo. Cada criterio es un parámetro nullable y no una query aparte: una condición acá
+// y un query param en el endpoint, no una sub-ruta ni otra proyección duplicada.
 //
 // `$author == null` cubre el listado sin filtro; con filtro se recorre `authors[]` porque una obra admite
 // varios, así que la pertenencia es de conjunto y no una igualdad. `$slugs` sigue la misma forma, y filtra
