@@ -1,0 +1,28 @@
+meta {
+  name: Get literary work teasers
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{apiUrl}}{{baseApiPath}}/literary-work?author=francois-onoff&view=teaser
+  body: none
+  auth: none
+}
+
+params:query {
+  author: francois-onoff
+  view: teaser
+}
+
+docs {
+  Obtener las obras de un autor como teasers (la forma de tarjeta, con extracto). Es la petición
+  que hacen la página de autor y las sugerencias de lectura: piden siempre `view=teaser`, porque
+  sin `view` el listado responde la vista de catálogo.
+
+  Cada teaser trae portada, etiquetas, autores resumidos, medios resumidos y el extracto del
+  arranque de la obra. Ordenado por título. Un autor inexistente responde 200 con un arreglo
+  vacío, no un 404. Un `author` mal formado o un `view` desconocido responden 400.
+
+  Para el listado por defecto (catálogo) ver get-literary-works.
+}

@@ -5,22 +5,32 @@ meta {
 }
 
 get {
-  url: {{apiUrl}}{{baseApiPath}}/literary-work?author=francois-onoff
+  url: {{apiUrl}}{{baseApiPath}}/literary-work
   body: none
   auth: none
 }
 
 params:query {
-  author: francois-onoff
+  ~author: francois-onoff
+  ~view: catalog
 }
 
 docs {
-  Obtener el catálogo de obras como teasers, filtrable por query params. Sin filtros devuelve
-  todas las obras; `author` acota a las de un autor. Cada criterio de filtrado nuevo es un query
-  param más, no una sub-ruta. Un `author` mal formado (sin formato de slug) responde 400.
+  Obtener el listado de obras, filtrable por query params. Sin filtros devuelve todas las obras;
+  `author` acota a las de un autor. Cada criterio de filtrado nuevo es un query param más, no
+  una sub-ruta. Un `author` mal formado (sin formato de slug) responde 400.
+
+  `view` elige la forma de cada entrada y es opcional. Sin `view` (o con `view=catalog`) responde
+  la vista de catálogo: slug, título, tiempo de lectura total y autores resumidos (slug y nombre),
+  sin portada, etiquetas ni extracto. Es la vista por defecto porque el SSR de Angular descarta
+  toda respuesta de HttpClient de más de 1 MiB, y el listado entero con la forma de tarjeta no
+  entra. `view=teaser` responde la forma de tarjeta, con extracto — ver get-literary-work-teasers.
+  Un valor de `view` desconocido responde 400. `author` compone con ambas vistas.
 
   Devuelve el listado completo, ordenado por título: quién elige las que se muestran es del
   consumidor. Un filtro sin resultados (o un autor inexistente) responde 200 con un arreglo
   vacío — la ausencia de obras es legítima, no un 404. Una obra que la curaduría dejó
   inconsistente se descarta del listado y se registra en el servidor, sin afectar a las demás.
+
+  Los params de la colección están deshabilitados: activá el que quieras ejercitar.
 }

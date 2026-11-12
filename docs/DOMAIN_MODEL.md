@@ -53,7 +53,7 @@ Un **Contexto Acotado** (Bounded Context) es un límite explícito dentro del cu
 ```
 GET /api/author/:slug              # Obtener autor completo
 GET /api/literary-work/:slug       # Obtener obra literaria completa
-GET /api/literary-work             # Catálogo de obras (teasers), filtrable por query params
+GET /api/literary-work             # Listado de obras, filtrable por query params: catálogo por defecto; ?view=teaser para teasers
 ```
 
 ---
@@ -205,10 +205,11 @@ Borrador en Sanity → Publicación → Accesible para lectura en /literary-work
 
 - `LiteraryWork` - Vista completa (todas las secciones, autores completos)
 - `LiteraryWorkTeaser` - Vista resumida: expone un **extracto** del arranque de la obra (`excerpt`), que no declara tiempo de lectura ni posición porque su cuerpo va recortado
+- `LiteraryWorkCatalogEntry` - Vista angosta del listado por defecto: slug, título, tiempo de lectura total y autoría resumida (slug y nombre). No extiende la base compartida: no lleva portada, etiquetas, `sectionCount`, `mediaSources` ni extracto, porque el SSR descarta toda respuesta de la API de más de 1 MiB y el catálogo entero tiene que entrar holgado
 - `LiteraryWorkNavigationTeaser` - Vista mínima para navegación
 - `LiteraryWorkNavigationTeaserWithAuthors` - Vista mínima con autores resumidos
 
-`mediaSources` lo exponen **todas** las vistas, cada una con el tipo de su vista: `LiteraryWork` transporta `Media[]` (la vista completa, con la carga del recurso); `LiteraryWorkTeaser`, `LiteraryWorkNavigationTeaser` y `LiteraryWorkNavigationTeaserWithAuthors` transportan `MediaTeaser[]` (solo el `type`), que es lo único que la tarjeta de listado necesita para pintar el ícono de la plataforma — ver [Media](#media-contenido-multimedia).
+`mediaSources` lo exponen todas las vistas salvo `LiteraryWorkCatalogEntry`, cada una con el tipo de su vista: `LiteraryWork` transporta `Media[]` (la vista completa, con la carga del recurso); `LiteraryWorkTeaser`, `LiteraryWorkNavigationTeaser` y `LiteraryWorkNavigationTeaserWithAuthors` transportan `MediaTeaser[]` (solo el `type`), que es lo único que la tarjeta de listado necesita para pintar el ícono de la plataforma — ver [Media](#media-contenido-multimedia).
 
 ---
 
@@ -656,6 +657,9 @@ LiteraryWork → incluye secciones, autores completos
 
 // Vista para listados
 LiteraryWorkTeaser → extracto del arranque, sin secciones completas
+
+// Vista de catálogo (listado por defecto)
+LiteraryWorkCatalogEntry → slug, título, tiempo de lectura y autoría resumida
 
 // Vista para navegación
 LiteraryWorkNavigationTeaser → información mínima

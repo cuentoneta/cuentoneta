@@ -107,6 +107,7 @@ Archivos:
 - **Agregador:** `../onoff-literary-works.mock.ts` → `onoffLiteraryWorksMock: LiteraryWork[]`.
 - **Teasers derivados:** `literary-work/literary-work-teasers.mock.ts` (`toTeaser`) → `<slugCamelCase>LiteraryWorkTeaserMock`, uno por obra. Viven acá y no en el agregador por ser handles nombrados por identidad (ver [Cómo está organizado](#cómo-está-organizado)).
 - **Agregador de teasers:** `../onoff-literary-work-teasers.mock.ts` → `onoffLiteraryWorkTeasersMock`, sus variantes de navegación y los selectores por capacidad (`onoffLiteraryWorkTeasersWithExcerptMock`, los dos de multimedia).
+- **Catálogo:** `../onoff-literary-work-catalog.mock.ts` → `onoffLiteraryWorkCatalogMock`, derivado de `onoffLiteraryWorksMock`. Su par crudo, `onoffRawLiteraryWorkCatalogMock` (`../onoff-raw-literary-works.mock.ts`), no se genera: lo produce `literaryWorkCatalogEntryFrom` sobre las obras crudas, en el orden de la query, y `onoff-documents.mock.spec.ts` verifica que coincide con lo que la query devuelve. El cruce con el ACL lo hace `onoff-literary-work-catalog.acl-alignment.spec.ts`.
 
 ## Corpus de dominio: `Author`
 
