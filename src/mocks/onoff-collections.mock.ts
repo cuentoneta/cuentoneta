@@ -60,11 +60,14 @@ export const onoffCollectionsWithMultipleTagsMock: Collection[] = onoffCollectio
 );
 
 // Compara títulos porque es el texto lo que se pinta: una obra cuya primera etiqueta coincide con la de
-// su colección no deja distinguir cuál de las dos se está mostrando.
+// su colección no deja distinguir cuál de las dos se está mostrando. Una obra sin etiquetas no cuenta
+// como divergente: no tiene etiqueta propia que comparar.
 export const onoffCollectionsWithDivergentLiteraryWorkTagsMock: Collection[] = onoffCollectionsMock.filter(
 	(collection) =>
 		collection.tags.length > 0 &&
-		collection.literaryWorks.some((literaryWork) => literaryWork.tags[0]?.title !== collection.tags[0]?.title),
+		collection.literaryWorks.some(
+			(literaryWork) => literaryWork.tags.length > 0 && literaryWork.tags[0]?.title !== collection.tags[0]?.title,
+		),
 );
 
 // Criterio de curaduría: a partir de este largo un título deja de entrar en una línea en la caja

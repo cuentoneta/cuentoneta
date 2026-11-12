@@ -95,11 +95,14 @@ describe('CollectionPage', () => {
 			const cards = literaryWorkCards();
 			const [collectionTag] = divergentTags.tags;
 			expect(cards).toHaveLength(divergentTags.literaryWorks.length);
-			divergentTags.literaryWorks.forEach((literaryWork, index) => {
-				const [ownTag] = literaryWork.tags;
-				expect(within(cards[index]).getByText(ownTag.title)).toBeInTheDocument();
+			// Una obra sin etiquetas tiene su propio caso abajo: acá solo se comparan las que llevan una.
+			const labelledCards = divergentTags.literaryWorks.flatMap((literaryWork, index) =>
+				literaryWork.tags.slice(0, 1).map((ownTag) => ({ card: cards[index], ownTag })),
+			);
+			labelledCards.forEach(({ card, ownTag }) => {
+				expect(within(card).getByText(ownTag.title)).toBeInTheDocument();
 				if (ownTag.title !== collectionTag.title) {
-					expect(within(cards[index]).queryByText(collectionTag.title)).not.toBeInTheDocument();
+					expect(within(card).queryByText(collectionTag.title)).not.toBeInTheDocument();
 				}
 			});
 		});
