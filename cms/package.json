@@ -22,16 +22,16 @@
 		"sanity"
 	],
 	"dependencies": {
-		"@sanity/icons": "^5.2.3",
+		"@sanity/icons": "^5.3.0",
 		"@sanity/ui": "^4.4.10",
-		"@sanity/vision": "^6.19.0",
+		"@sanity/vision": "^6.22.0",
 		"date-fns": "^4.4.0",
 		"prop-types": "^15.8.1",
 		"react": "^19.3.1",
 		"react-dom": "^19.3.1",
 		"react-icons": "^5.7.0",
 		"react-is": "^19.3.1",
-		"sanity": "^6.21.0",
+		"sanity": "^6.22.0",
 		"sanity-plugin-markdown": "^9.0.18",
 		"sanity-plugin-singleton-management": "^1.1.2",
 		"styled-components": "^6.6.0"
@@ -43,6 +43,6 @@
 		"groq-js": "^2.0.1",
 		"tsx": "^4.23.15",
 		"typescript": "6.0.3",
-		"vitest": "^5.0.5"
+		"vitest": "^5.1.0"
 	}
 }
