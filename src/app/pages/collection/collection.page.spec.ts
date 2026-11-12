@@ -6,7 +6,7 @@ import { provideRouter } from '@angular/router';
 import CollectionPage from './collection.page';
 
 // Providers
-import { provideCollectionApiMock, StubCollectionApi } from '../../providers/collection.mock';
+import { provideCollectionApiMock, InMemoryCollectionApi } from '../../providers/collection.mock';
 
 // Modelos
 import { createCollection, type Collection } from '@models/collection.model';
@@ -42,7 +42,7 @@ const literaryWorkCards = () => within(screen.getByTestId('literary-works')).get
 const renderPage = (slug: string, collections: readonly Collection[] = onoffCollectionsMock) =>
 	render(CollectionPage, {
 		inputs: { slug },
-		providers: [provideRouter([]), provideCollectionApiMock(new StubCollectionApi(collections))],
+		providers: [provideRouter([]), provideCollectionApiMock(new InMemoryCollectionApi(collections))],
 	});
 
 describe('CollectionPage', () => {
