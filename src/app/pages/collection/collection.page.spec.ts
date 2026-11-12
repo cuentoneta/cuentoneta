@@ -9,13 +9,15 @@ import CollectionPage from './collection.page';
 import { provideCollectionApiMock, StubCollectionApi } from '../../providers/collection.mock';
 
 // Modelos
-import type { Collection } from '@models/collection.model';
+import { createCollection, type Collection } from '@models/collection.model';
 
 // Mocks
 import {
 	onoffCollectionsHidingAuthorsMock,
 	onoffCollectionsMock,
 	onoffCollectionsShowingAuthorsMock,
+	onoffCollectionsWithDivergentLiteraryWorkTagsMock,
+	onoffCollectionsWithTagsMock,
 } from '@mocks/onoff-collections.mock';
 
 // Utilidades de test
@@ -23,6 +25,19 @@ import { clearAllMocks } from '@test-utils';
 
 const [showingAuthors] = onoffCollectionsShowingAuthorsMock;
 const [hidingAuthors] = onoffCollectionsHidingAuthorsMock;
+const [divergentTags] = onoffCollectionsWithDivergentLiteraryWorkTagsMock;
+const [tagged] = onoffCollectionsWithTagsMock;
+
+// Ninguna obra del canon carece de etiquetas, así que se deriva una sobre una colección que sí las
+// tiene. El slug propio evita que conviva con su homónima en el catálogo del doble.
+const [firstTaggedWork, ...restTaggedWorks] = tagged.literaryWorks;
+const collectionWithUntaggedLiteraryWork = createCollection({
+	...tagged,
+	slug: `${tagged.slug}-obra-sin-etiquetas`,
+	literaryWorks: [{ ...firstTaggedWork, tags: [] }, ...restTaggedWorks],
+});
+
+const literaryWorkCards = () => within(screen.getByTestId('literary-works')).getAllByRole('article');
 
 const renderPage = (slug: string, collections: readonly Collection[] = onoffCollectionsMock) =>
 	render(CollectionPage, {
@@ -68,6 +83,42 @@ describe('CollectionPage', () => {
 
 			const panel = screen.getByTestId('collection-info');
 			expect(within(panel).getByTestId('description')).toBeInTheDocument();
+		});
+	});
+
+	// Las aserciones se acotan a cada tarjeta porque la etiqueta de la colección también se pinta en el
+	// panel lateral.
+	describe('etiqueta de cada obra', () => {
+		it('should label each work with its own first tag', async () => {
+			await renderPage(divergentTags.slug);
+
+			const cards = literaryWorkCards();
+			const [collectionTag] = divergentTags.tags;
+			expect(cards).toHaveLength(divergentTags.literaryWorks.length);
+			divergentTags.literaryWorks.forEach((literaryWork, index) => {
+				const [ownTag] = literaryWork.tags;
+				expect(within(cards[index]).getByText(ownTag.title)).toBeInTheDocument();
+				if (ownTag.title !== collectionTag.title) {
+					expect(within(cards[index]).queryByText(collectionTag.title)).not.toBeInTheDocument();
+				}
+			});
+		});
+
+		it('should not label a work without tags even when the collection has some', async () => {
+			await renderPage(collectionWithUntaggedLiteraryWork.slug, [
+				...onoffCollectionsMock,
+				collectionWithUntaggedLiteraryWork,
+			]);
+
+			// El heading confirma que se renderizó la colección derivada y no el estado de no encontrada.
+			expect(
+				screen.getByRole('heading', { level: 1, name: collectionWithUntaggedLiteraryWork.title }),
+			).toBeInTheDocument();
+			const [untaggedCard] = literaryWorkCards();
+			expect(
+				within(untaggedCard).queryByText(collectionWithUntaggedLiteraryWork.tags[0].title),
+			).not.toBeInTheDocument();
+			expect(within(untaggedCard).getByTestId('reading-time')).toBeInTheDocument();
 		});
 	});
 
