@@ -26,7 +26,7 @@ import {
 } from '@mocks/onoff-literary-works.mock';
 import { provideLiteraryWorkApiMock, StubLiteraryWorkApi } from '../../providers/literary-work.mock';
 import { onoffCollectionsMock } from '@mocks/onoff-collections.mock';
-import { provideCollectionApiMock, StubCollectionApi } from '../../providers/collection.mock';
+import { provideCollectionApiMock, InMemoryCollectionApi } from '../../providers/collection.mock';
 import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
 import { provideRouter } from '@angular/router';
 import type { LiteraryWorkApi } from '../../providers/literary-work.provider';
@@ -147,7 +147,7 @@ describe('LiteraryWorkPage', () => {
 		return await render(LiteraryWorkPage, {
 			providers: [
 				provideLiteraryWorkApiMock(options.api ?? new StubLiteraryWorkApi(literaryWork, onoffLiteraryWorkTeasersMock)),
-				provideCollectionApiMock(new StubCollectionApi(onoffCollectionsMock)),
+				provideCollectionApiMock(new InMemoryCollectionApi(onoffCollectionsMock)),
 				provideRouter([]),
 				...(options.responseInit ? [{ provide: RESPONSE_INIT, useValue: options.responseInit }] : []),
 			],

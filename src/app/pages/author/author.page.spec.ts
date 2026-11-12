@@ -46,7 +46,7 @@ function renderPage(author: AuthorProfile = authorMock, literaryWorkApi?: Litera
 	});
 }
 
-// Los `Stub*` nunca fallan: sin un doble que lance, un caso de error montado sobre ellos daría verde sin
+// `StubAuthorApi` nunca falla: sin un doble que lance, un caso de error montado sobre él daría verde sin
 // ejercitar nada.
 class StubFailingAuthorApi implements AuthorApi {
 	constructor(private readonly status: number) {}
