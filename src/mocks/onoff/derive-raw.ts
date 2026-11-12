@@ -22,11 +22,13 @@ import type {
 	CollectionsQueryResult,
 	LandingPageContentQueryResult,
 	LiteraryWorkBySlugQueryResult,
+	LiteraryWorkCatalogResult,
 	LiteraryWorkTeasersResult,
 } from '@sanity-types';
 
 type RawLiteraryWork = NonNullable<LiteraryWorkBySlugQueryResult>;
 type RawLiteraryWorkTeaser = LiteraryWorkTeasersResult[number];
+type RawLiteraryWorkCatalogEntry = LiteraryWorkCatalogResult[number];
 type RawLandingLiteraryWork = NonNullable<LandingPageContentQueryResult>['latestLiteraryWorks'][number];
 type RawCollection = NonNullable<CollectionBySlugQueryResult>;
 type RawCollectionTeaser = CollectionsQueryResult[number];
@@ -60,6 +62,16 @@ export function literaryWorkTeaserFrom(work: RawLiteraryWork): Omit<RawLiteraryW
 		// que transporta la url, la descripción y el asset dereferenciado.
 		mediaSources: work.mediaSources.map(({ _type, title }) => ({ _type, title })),
 		authors: work.authors.map(embeddedAuthorFrom),
+	};
+}
+
+/** La entrada del catálogo de una obra: un recorte de su raw completo, sin nada calculado. */
+export function literaryWorkCatalogEntryFrom(work: RawLiteraryWork): RawLiteraryWorkCatalogEntry {
+	return {
+		slug: work.slug,
+		title: work.title,
+		totalReadingTime: work.totalReadingTime,
+		authors: work.authors.map(({ slug, name }) => ({ slug, name })),
 	};
 }
 

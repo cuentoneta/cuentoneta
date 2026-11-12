@@ -59,6 +59,23 @@ export interface LiteraryWorkNavigationTeaserWithAuthors extends LiteraryWorkBas
 	readonly mediaSources: readonly MediaTeaser[];
 }
 
+// Una entrada del catálogo de obras: lo justo para listarla. No extiende LiteraryWorkBase a propósito
+// —portada, tags y conteo de secciones son justamente el peso que el catálogo no transporta—, y su
+// autoría trae solo lo que se enlaza y se lee.
+export interface LiteraryWorkCatalogEntry {
+	readonly slug: Slug;
+	readonly title: string;
+	readonly totalReadingTime: ReadingTime;
+	readonly authors: readonly Pick<AuthorTeaser, 'slug' | 'name'>[];
+}
+
+// Las vistas en las que se puede pedir el listado de obras. El catálogo es la vista por defecto.
+export const LiteraryWorkListingView = Object.freeze({
+	Catalog: 'catalog',
+	Teaser: 'teaser',
+} as const);
+export type LiteraryWorkListingView = (typeof LiteraryWorkListingView)[keyof typeof LiteraryWorkListingView];
+
 interface CreateLiteraryWorkNavigationTeaserOptions {
 	_id: string;
 	slug: string;
