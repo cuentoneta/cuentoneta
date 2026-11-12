@@ -41,7 +41,8 @@ const catalogue: readonly Collection[] = [...onoffCollectionsMock, collectionWit
 
 // Resuelve por slug contra el corpus, en vez de devolver siempre la misma colección: así el control
 // mueve la página entera, y un slug que no existe cae en el estado de colección inexistente, que también
-// es parte de lo que hay que poder mirar. El doble del provider no sirve acá porque nunca falla.
+// es parte de lo que hay que poder mirar. No es el doble del provider porque el catálogo de sugeridas
+// sale de los teasers del canon: la variante de descripción larga se puede leer pero no se sugiere.
 class CorpusCollectionApi implements CollectionApi {
 	public getBySlug(slug: string): Observable<Collection> {
 		const collection = catalogue.find((candidate) => candidate.slug === slug);
