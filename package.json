@@ -88,7 +88,7 @@
 		"@nx/eslint-plugin": "23.3.0",
 		"@nx/js": "23.3.0",
 		"@nx/playwright": "23.3.0",
-		"@nx/storybook": "23.3.0",
+		"@nx/storybook": "24.0.5",
 		"@nx/vitest": "23.3.0",
 		"@nx/workspace": "23.3.0",
 		"@playwright/test": "^1.65.0",
