@@ -66,7 +66,6 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 		}
 	}
 
-	// Trae las obras que satisfacen el filtro, traducidas a la vista de teaser.
 	public async fetchTeasers(filter: LiteraryWorkTeaserFilter): Promise<LiteraryWorkTeaserListing> {
 		const raw = await this.client.fetch(literaryWorkTeasers, {
 			author: filter.author ?? null,
@@ -76,7 +75,6 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 		return this.translateEach(raw, (rawTeaser) => this.mapLiteraryWorkTeaser(rawTeaser));
 	}
 
-	// Trae el catálogo de obras que satisfacen el filtro, traducidas a la vista de catálogo.
 	public async fetchCatalog(
 		filter: LiteraryWorkCatalogFilter,
 	): Promise<LiteraryWorkListing<LiteraryWorkCatalogEntry>> {
@@ -84,6 +82,8 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 		return this.translateEach(raw, (rawEntry) => this.mapCatalogEntry(rawEntry));
 	}
 
+	// Traduce cada obra por separado: nunca lanza por una intraducible, la reporta en `malformed` junto a
+	// las sanas.
 	private translateEach<R extends { readonly slug: string }, T>(
 		raws: readonly R[],
 		map: (raw: R) => T,

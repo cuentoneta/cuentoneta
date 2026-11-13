@@ -161,10 +161,8 @@ export const readingTimeBackfillCandidatesQuery = defineQuery(`
     'content': coalesce(content[]{ _key, body, readingTime }, [])
 }`);
 
-// El catálogo de obras: lo justo para listarlas (título, autoría y tiempo de lectura). Es la vista por
-// defecto del listado porque el SSR descarta toda respuesta de la API que supere 1 MiB, y con el
-// catálogo completo solo una proyección angosta queda lejos de ese tope. Filtra por `$author` igual que
-// `literaryWorkTeasers`. `totalReadingTime` va sin `coalesce`: una obra sin él no tiene un valor de
+// El catálogo de obras: lo justo para listarlas (título, autoría y tiempo de lectura), sin portada,
+// tags, multimedia ni extracto. Filtra por `$author` igual que `literaryWorkTeasers`. `totalReadingTime` va sin `coalesce`: una obra sin él no tiene un valor de
 // reemplazo válido, y es el ACL el que la reporta como mal curada.
 export const literaryWorkCatalog = defineQuery(`
 *[_type == 'literaryWork' && !(_id in path('drafts.**')) && ($author == null || $author in authors[]->slug.current)]

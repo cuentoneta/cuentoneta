@@ -28,7 +28,6 @@ export async function getLiteraryWorkBySlug(
 	return literaryWork;
 }
 
-// Sirve las obras que satisfacen el filtro, como teasers.
 export async function getLiteraryWorkTeasers(
 	filter: LiteraryWorkTeaserFilter,
 	repository: LiteraryWorkRepository = new SanityLiteraryWorkRepository(),
@@ -36,7 +35,6 @@ export async function getLiteraryWorkTeasers(
 	return discardMalformed(await repository.fetchTeasers(filter), 'teasers');
 }
 
-// Sirve el catálogo de obras que satisfacen el filtro.
 export async function getLiteraryWorkCatalog(
 	filter: LiteraryWorkCatalogFilter,
 	repository: LiteraryWorkRepository = new SanityLiteraryWorkRepository(),

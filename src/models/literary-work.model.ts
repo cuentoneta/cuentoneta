@@ -69,7 +69,7 @@ export interface LiteraryWorkCatalogEntry {
 	readonly authors: readonly Pick<AuthorTeaser, 'slug' | 'name'>[];
 }
 
-// Las vistas en las que se puede pedir el listado de obras. El catálogo es la vista por defecto.
+// Las vistas en las que se puede pedir el listado de obras.
 export const LiteraryWorkListingView = Object.freeze({
 	Catalog: 'catalog',
 	Teaser: 'teaser',
