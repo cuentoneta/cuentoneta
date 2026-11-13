@@ -125,11 +125,13 @@ describe('literaryWorkCatalog', () => {
 		});
 	});
 
-	it('should order the catalog by title', async () => {
+	// `order(title asc)` compara por punto de código, no con colación: el orden alfabético con plegado de
+	// acentos lo repone la página.
+	it('should order the catalog by title, by code point', async () => {
 		const entries = await run(literaryWorkCatalog, dataset, { author: null });
 
 		const titles = entries.map(({ title }: { title: string }) => title);
-		expect(titles).toEqual([...titles].sort((a, b) => a.localeCompare(b)));
+		expect(titles).toEqual([...titles].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0)));
 	});
 
 	// Es la vista que el SSR pide sin filtro, y el SSR descarta la respuesta pasado el tope de 1 MiB: las

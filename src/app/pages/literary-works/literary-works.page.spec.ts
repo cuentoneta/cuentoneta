@@ -46,7 +46,7 @@ class PendingLiteraryWorkApi implements LiteraryWorkApi {
 
 // Sirve el catálogo y hace fallar los teasers: si la página volviera a pedir la vista de tarjeta —la
 // que con el catálogo entero supera el tope de respuesta del SSR—, caería en la rama de error.
-class CatalogOnlyLiteraryWorkApi extends StubLiteraryWorkApi {
+class StubCatalogOnlyLiteraryWorkApi extends StubLiteraryWorkApi {
 	public override getTeasers(): Observable<LiteraryWorkTeaser[]> {
 		return throwError(() => new Error('el catálogo no pide teasers'));
 	}
@@ -56,7 +56,7 @@ const [canonicalWork] = onoffLiteraryWorksMock;
 const [canonicalEntry] = onoffLiteraryWorkCatalogMock;
 
 const stubbing = (catalog: readonly LiteraryWorkCatalogEntry[]) =>
-	new CatalogOnlyLiteraryWorkApi(canonicalWork, [], catalog);
+	new StubCatalogOnlyLiteraryWorkApi(canonicalWork, [], catalog);
 
 const withTitle = (title: string, slug: string): LiteraryWorkCatalogEntry => ({
 	...canonicalEntry,

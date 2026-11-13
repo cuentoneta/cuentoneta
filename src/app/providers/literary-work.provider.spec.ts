@@ -241,29 +241,19 @@ describe('HttpLiteraryWorkApi', () => {
 	describe('getCatalog', () => {
 		const wireCatalog = JSON.parse(JSON.stringify(onoffLiteraryWorkCatalogMock)) as unknown[];
 
-		function requestCatalog(filter: LiteraryWorkTeaserFilter, url: string, payload: unknown[]) {
+		function requestCatalog(url: string, payload: unknown[]) {
 			const result = new Promise<LiteraryWorkCatalogEntry[]>((resolve, reject) => {
-				api.getCatalog(filter).subscribe({ next: resolve, error: reject });
+				api.getCatalog().subscribe({ next: resolve, error: reject });
 			});
 			http.expectOne(url).flush(payload);
 			return result;
 		}
 
 		// Sin `view` a propósito: el catálogo es el default del contrato, así que no se nombra.
-		it('requests the listing with no query params when there is no filter', async () => {
-			const catalog = await requestCatalog({}, `${environment.apiUrl}${Endpoints.LiteraryWork}`, wireCatalog);
+		it('requests the listing with no query params', async () => {
+			const catalog = await requestCatalog(`${environment.apiUrl}${Endpoints.LiteraryWork}`, wireCatalog);
 
 			expect(catalog).toEqual(onoffLiteraryWorkCatalogMock);
-		});
-
-		it('requests the catalog of the author when filtered', async () => {
-			const catalog = await requestCatalog(
-				{ author: 'francois-onoff' },
-				`${environment.apiUrl}${Endpoints.LiteraryWork}?author=francois-onoff`,
-				wireCatalog,
-			);
-
-			expect(catalog).toHaveLength(onoffLiteraryWorkCatalogMock.length);
 		});
 
 		it('errors the stream when an entry violates the DTO schema', async () => {
@@ -271,7 +261,7 @@ describe('HttpLiteraryWorkApi', () => {
 			const malformed = [{ ...first, totalReadingTime: 'dos' }, ...rest];
 
 			await expect(
-				requestCatalog({}, `${environment.apiUrl}${Endpoints.LiteraryWork}`, malformed),
+				requestCatalog(`${environment.apiUrl}${Endpoints.LiteraryWork}`, malformed),
 			).rejects.toThrow();
 		});
 
@@ -280,7 +270,7 @@ describe('HttpLiteraryWorkApi', () => {
 			const malformed = [{ ...first, slug: 'Slug Inválido' }, ...rest];
 
 			await expect(
-				requestCatalog({}, `${environment.apiUrl}${Endpoints.LiteraryWork}`, malformed),
+				requestCatalog(`${environment.apiUrl}${Endpoints.LiteraryWork}`, malformed),
 			).rejects.toThrow();
 		});
 	});

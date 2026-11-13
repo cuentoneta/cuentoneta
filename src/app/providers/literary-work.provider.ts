@@ -43,7 +43,7 @@ export interface LiteraryWorkTeaserFilter {
 export interface LiteraryWorkApi {
 	getBySlug(slug: string): Observable<LiteraryWork>;
 	getTeasers(filter?: LiteraryWorkTeaserFilter): Observable<LiteraryWorkTeaser[]>;
-	getCatalog(filter?: LiteraryWorkTeaserFilter): Observable<LiteraryWorkCatalogEntry[]>;
+	getCatalog(): Observable<LiteraryWorkCatalogEntry[]>;
 }
 
 @Service()
@@ -61,19 +61,15 @@ export class HttpLiteraryWorkApi implements LiteraryWorkApi {
 	public getTeasers(filter: LiteraryWorkTeaserFilter = {}): Observable<LiteraryWorkTeaser[]> {
 		return this.http
 			.get<LiteraryWorkTeaserDto[]>(this.url, {
-				params: { ...this.toParams(filter), view: LiteraryWorkListingView.Teaser },
+				params: { ...(filter.author ? { author: filter.author } : {}), view: LiteraryWorkListingView.Teaser },
 			})
 			.pipe(map((response) => literaryWorkTeaserListDtoSchema.parse(response).map(toLiteraryWorkTeaser)));
 	}
 
-	public getCatalog(filter: LiteraryWorkTeaserFilter = {}): Observable<LiteraryWorkCatalogEntry[]> {
+	public getCatalog(): Observable<LiteraryWorkCatalogEntry[]> {
 		return this.http
-			.get<LiteraryWorkCatalogEntryDto[]>(this.url, { params: this.toParams(filter) })
+			.get<LiteraryWorkCatalogEntryDto[]>(this.url)
 			.pipe(map((response) => literaryWorkCatalogListDtoSchema.parse(response).map(toLiteraryWorkCatalogEntry)));
-	}
-
-	private toParams(filter: LiteraryWorkTeaserFilter): Record<string, string> {
-		return filter.author ? { author: filter.author } : {};
 	}
 
 	private toSection(dto: LiteraryWorkSectionDto): LiteraryWorkSection {

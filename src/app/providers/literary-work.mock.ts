@@ -20,18 +20,15 @@ export class StubLiteraryWorkApi implements LiteraryWorkApi {
 	}
 
 	public getTeasers(filter: LiteraryWorkTeaserFilter = {}): Observable<LiteraryWorkTeaser[]> {
-		return of(this.byAuthor(this.teasers, filter.author));
+		return of(
+			filter.author
+				? this.teasers.filter(({ authors }) => authors.some((author) => author.slug === filter.author))
+				: [...this.teasers],
+		);
 	}
 
-	public getCatalog(filter: LiteraryWorkTeaserFilter = {}): Observable<LiteraryWorkCatalogEntry[]> {
-		return of(this.byAuthor(this.catalog, filter.author));
-	}
-
-	private byAuthor<T extends { readonly authors: readonly { readonly slug: string }[] }>(
-		literaryWorks: readonly T[],
-		author: string | undefined,
-	): T[] {
-		return author ? literaryWorks.filter(({ authors }) => authors.some(({ slug }) => slug === author)) : [...literaryWorks];
+	public getCatalog(): Observable<LiteraryWorkCatalogEntry[]> {
+		return of([...this.catalog]);
 	}
 }
 
