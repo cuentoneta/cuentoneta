@@ -13,6 +13,7 @@ import { expect, type Locator, type Page } from '@playwright/test';
 import { test } from './_utils/test';
 import {
 	fetchCollectionCatalog,
+	fetchCollectionDescription,
 	pickMostDescriptiveCollection,
 	type CollectionCatalogEntry,
 } from './_utils/collection-fixtures';
@@ -119,17 +120,26 @@ async function settleIn(drawer: Locator): Promise<void> {
 	);
 }
 
-test('collection — el panel muestra la descripción completa', async ({ page }) => {
+test('collection — el panel muestra la descripción completa', async ({ page, request }) => {
 	// eslint-disable-next-line playwright/no-skipped-test -- la ausencia del fixture ya la reportan las guardas de arriba; repetirla acá sería el mismo fallo dos veces
 	test.skip(!readMoreIsVisible, 'ninguna colección del dataset desborda el recorte');
 
 	const drawer = await openDescriptionDrawer(page);
+	const description = await fetchCollectionDescription(request, mostDescriptive?.slug ?? '');
+	// Se serializa con el mismo serializador que `innerHTML`: el backend escribe las entidades de otra forma
+	// (`&#x26;` por `&amp;`), y la diferencia sería de escritura, no de contenido.
+	const expected = await page.evaluate((html) => {
+		const template = document.createElement('template');
+		template.innerHTML = html;
+		return template.innerHTML;
+	}, description);
 
 	// Se compara el marcado y no el texto: la descripción llega saneada desde el backend y el panel la
 	// pinta tal cual, así que la igualdad afirma a la vez que se muestra entera —el recorte de la columna
-	// es visual, y un `toContainText` pasaría igual con las ocho líneas— y que conserva su prosa.
+	// es visual, y un `toContainText` pasaría igual con las ocho líneas— y que conserva su prosa y sus
+	// enlaces. Se compara contra el detalle de la colección y no contra el catálogo, que la trae sin enlaces.
 	const shown = await drawer.getByTestId('description').innerHTML();
-	expect(shown).toBe(mostDescriptive?.description);
+	expect(shown).toBe(expected);
 });
 
 // El cierre se afirma con `toBeHidden` y no leyendo el atributo `open`: el drawer llama a `close()` recién
