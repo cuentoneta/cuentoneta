@@ -3,7 +3,7 @@ import { provideRouter } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { NEVER, of, throwError, type Observable } from 'rxjs';
 
-import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
+import type { LiteraryWork, LiteraryWorkCatalogEntry, LiteraryWorkTeaser } from '@models/literary-work.model';
 import {
 	onoffLiteraryWorksMock,
 	onoffLiteraryWorksWithMultipleMediaSources,
@@ -49,6 +49,10 @@ class CorpusLiteraryWorkApi implements LiteraryWorkApi {
 				? onoffLiteraryWorkTeasersMock.filter(({ authors }) => authors.some(({ slug }) => slug === filter.author))
 				: [...onoffLiteraryWorkTeasersMock],
 		);
+	}
+
+	public getCatalog(): Observable<LiteraryWorkCatalogEntry[]> {
+		return throwError(() => new Error('La página de obra no consulta el catálogo'));
 	}
 }
 

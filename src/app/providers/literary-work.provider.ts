@@ -7,7 +7,12 @@ import { map, type Observable } from 'rxjs';
 import { environment } from '../environments/environment';
 
 // Models
-import { createLiteraryWork, type LiteraryWork } from '@models/literary-work.model';
+import {
+	createLiteraryWork,
+	LiteraryWorkListingView,
+	type LiteraryWork,
+	type LiteraryWorkCatalogEntry,
+} from '@models/literary-work.model';
 import { createAttributedText } from '@models/attributed-text.model';
 import { createLiteraryWorkSection, type LiteraryWorkSection } from '@models/literary-work-section.model';
 import { createSectionTitle } from '@models/section-title.model';
@@ -15,9 +20,12 @@ import { createReadingTime } from '@models/reading-time.model';
 import { createSanitizedHtml } from '@models/sanitized-html.model';
 import { createIsoDateTime } from '@utils/date.utils';
 import {
+	literaryWorkCatalogListDtoSchema,
 	literaryWorkDtoSchema,
 	literaryWorkTeaserListDtoSchema,
+	toLiteraryWorkCatalogEntry,
 	toLiteraryWorkTeaser,
+	type LiteraryWorkCatalogEntryDto,
 	type LiteraryWorkDto,
 	type LiteraryWorkTeaserDto,
 	type LiteraryWorkSectionDto,
@@ -35,6 +43,7 @@ export interface LiteraryWorkTeaserFilter {
 export interface LiteraryWorkApi {
 	getBySlug(slug: string): Observable<LiteraryWork>;
 	getTeasers(filter?: LiteraryWorkTeaserFilter): Observable<LiteraryWorkTeaser[]>;
+	getCatalog(): Observable<LiteraryWorkCatalogEntry[]>;
 }
 
 @Service()
@@ -48,10 +57,19 @@ export class HttpLiteraryWorkApi implements LiteraryWorkApi {
 			.pipe(map((response) => this.toLiteraryWork(literaryWorkDtoSchema.parse(response))));
 	}
 
+	// El listado sin `view` responde el catálogo, que no trae extracto: la vista de tarjeta se pide explícita.
 	public getTeasers(filter: LiteraryWorkTeaserFilter = {}): Observable<LiteraryWorkTeaser[]> {
 		return this.http
-			.get<LiteraryWorkTeaserDto[]>(this.url, { params: filter.author ? { author: filter.author } : {} })
+			.get<LiteraryWorkTeaserDto[]>(this.url, {
+				params: { ...(filter.author ? { author: filter.author } : {}), view: LiteraryWorkListingView.Teaser },
+			})
 			.pipe(map((response) => literaryWorkTeaserListDtoSchema.parse(response).map(toLiteraryWorkTeaser)));
+	}
+
+	public getCatalog(): Observable<LiteraryWorkCatalogEntry[]> {
+		return this.http
+			.get<LiteraryWorkCatalogEntryDto[]>(this.url)
+			.pipe(map((response) => literaryWorkCatalogListDtoSchema.parse(response).map(toLiteraryWorkCatalogEntry)));
 	}
 
 	private toSection(dto: LiteraryWorkSectionDto): LiteraryWorkSection {

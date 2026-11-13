@@ -5,13 +5,14 @@ import type { Observable } from 'rxjs';
 import { of } from 'rxjs';
 
 // Models
-import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
+import type { LiteraryWork, LiteraryWorkCatalogEntry, LiteraryWorkTeaser } from '@models/literary-work.model';
 import { LiteraryWorkApi, type LiteraryWorkTeaserFilter } from './literary-work.provider';
 
 export class StubLiteraryWorkApi implements LiteraryWorkApi {
 	constructor(
 		private readonly literaryWork: LiteraryWork,
 		private readonly teasers: readonly LiteraryWorkTeaser[] = [],
+		private readonly catalog: readonly LiteraryWorkCatalogEntry[] = [],
 	) {}
 
 	public getBySlug(): Observable<LiteraryWork> {
@@ -24,6 +25,10 @@ export class StubLiteraryWorkApi implements LiteraryWorkApi {
 				? this.teasers.filter(({ authors }) => authors.some((author) => author.slug === filter.author))
 				: [...this.teasers],
 		);
+	}
+
+	public getCatalog(): Observable<LiteraryWorkCatalogEntry[]> {
+		return of([...this.catalog]);
 	}
 }
 

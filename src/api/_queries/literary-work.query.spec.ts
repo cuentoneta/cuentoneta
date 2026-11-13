@@ -6,7 +6,7 @@ import {
 	onoffLiteraryWorkDocumentsMock,
 } from '@mocks/onoff-documents.mock';
 
-import { literaryWorkTeasers } from './literary-work.query';
+import { literaryWorkCatalog, literaryWorkTeasers } from './literary-work.query';
 
 async function run(query: string, dataset: unknown[], params: Record<string, unknown> = {}) {
 	const result = await evaluate(parse(query), { dataset, params });
@@ -106,5 +106,48 @@ describe('literaryWorkTeasers', () => {
 		const works = await run(literaryWorkTeasers, [...dataset, draft], { author: null, slugs: null });
 
 		expect(works.every(({ _id }: { _id: string }) => !_id.startsWith('drafts.'))).toBe(true);
+	});
+});
+
+describe('literaryWorkCatalog', () => {
+	it('should return the whole catalog when no author filter is given', async () => {
+		const entries = await run(literaryWorkCatalog, dataset, { author: null });
+
+		expect(entries).toHaveLength(onoffLiteraryWorkDocumentsMock.length);
+	});
+
+	it('should return only the works of the author when filtered', async () => {
+		const entries = await run(literaryWorkCatalog, dataset, { author: authorSlug });
+
+		expect(entries.length).toBeGreaterThan(0);
+		entries.forEach((entry: { authors: { slug: string }[] }) => {
+			expect(entry.authors.some(({ slug }) => slug === authorSlug)).toBe(true);
+		});
+	});
+
+	// `order(title asc)` compara por punto de código, no con colación: el orden alfabético con plegado de
+	// acentos lo repone la página.
+	it('should order the catalog by title, by code point', async () => {
+		const entries = await run(literaryWorkCatalog, dataset, { author: null });
+
+		const titles = entries.map(({ title }: { title: string }) => title);
+		expect(titles).toEqual([...titles].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0)));
+	});
+
+	// Es la vista que el SSR pide sin filtro, y el SSR descarta la respuesta pasado el tope de 1 MiB: las
+	// keys se fijan enteras para que un campo pesado (extracto, portada, nacionalidad) no se cuele.
+	it('should project only what the catalog lists', async () => {
+		const [entry] = await run(literaryWorkCatalog, dataset, { author: null });
+
+		expect(Object.keys(entry).sort()).toEqual(['authors', 'slug', 'title', 'totalReadingTime']);
+		expect(Object.keys(entry.authors[0]).sort()).toEqual(['name', 'slug']);
+	});
+
+	it('should leave drafts out', async () => {
+		const draft = { ...onoffLiteraryWorkDocumentsMock[0], _id: 'drafts.una-obra-en-borrador' };
+
+		const entries = await run(literaryWorkCatalog, [...dataset, draft], { author: null });
+
+		expect(entries).toHaveLength(onoffLiteraryWorkDocumentsMock.length);
 	});
 });

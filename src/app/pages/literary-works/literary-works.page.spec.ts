@@ -9,13 +9,17 @@ import LiteraryWorksPage from './literary-works.page';
 import { LITERARY_WORKS_HOST } from './literary-works-host';
 import type { LiteraryWorkApi } from '../../providers/literary-work.provider';
 import { provideLiteraryWorkApiMock, StubLiteraryWorkApi } from '../../providers/literary-work.mock';
-import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
+import type { LiteraryWork, LiteraryWorkCatalogEntry, LiteraryWorkTeaser } from '@models/literary-work.model';
 import { createSlug } from '@models/slug.model';
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
-import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
+import { onoffLiteraryWorkCatalogMock } from '@mocks/onoff-literary-work-catalog.mock';
 
 class FailingLiteraryWorkApi implements LiteraryWorkApi {
 	public getBySlug(): Observable<LiteraryWork> {
+		return throwError(() => new Error('sin catálogo'));
+	}
+
+	public getCatalog(): Observable<LiteraryWorkCatalogEntry[]> {
 		return throwError(() => new Error('sin catálogo'));
 	}
 
@@ -31,18 +35,31 @@ class PendingLiteraryWorkApi implements LiteraryWorkApi {
 		return NEVER;
 	}
 
+	public getCatalog(): Observable<LiteraryWorkCatalogEntry[]> {
+		return NEVER;
+	}
+
 	public getTeasers(): Observable<LiteraryWorkTeaser[]> {
 		return NEVER;
 	}
 }
 
+// Sirve el catálogo y hace fallar los teasers: si la página volviera a pedir la vista de tarjeta —la
+// que con el catálogo entero supera el tope de respuesta del SSR—, caería en la rama de error.
+class StubCatalogOnlyLiteraryWorkApi extends StubLiteraryWorkApi {
+	public override getTeasers(): Observable<LiteraryWorkTeaser[]> {
+		return throwError(() => new Error('el catálogo no pide teasers'));
+	}
+}
+
 const [canonicalWork] = onoffLiteraryWorksMock;
-const [canonicalTeaser] = onoffLiteraryWorkTeasersMock;
+const [canonicalEntry] = onoffLiteraryWorkCatalogMock;
 
-const stubbing = (teasers: readonly LiteraryWorkTeaser[]) => new StubLiteraryWorkApi(canonicalWork, teasers);
+const stubbing = (catalog: readonly LiteraryWorkCatalogEntry[]) =>
+	new StubCatalogOnlyLiteraryWorkApi(canonicalWork, [], catalog);
 
-const withTitle = (title: string, slug: string): LiteraryWorkTeaser => ({
-	...canonicalTeaser,
+const withTitle = (title: string, slug: string): LiteraryWorkCatalogEntry => ({
+	...canonicalEntry,
 	title,
 	slug: createSlug(slug),
 });
@@ -59,19 +76,19 @@ describe('LiteraryWorksPage', () => {
 
 	afterEach(() => restoreAllMocks());
 
-	const renderPage = (api: LiteraryWorkApi = stubbing(onoffLiteraryWorkTeasersMock)) =>
+	const renderPage = (api: LiteraryWorkApi = stubbing(onoffLiteraryWorkCatalogMock)) =>
 		render(LiteraryWorksPage, { providers: [provideRouter([]), provideLiteraryWorkApiMock(api)] });
 
 	it('should headline the catalogue with how many works it lists', async () => {
 		await renderPage();
 
 		expect(
-			screen.getByRole('heading', { level: 1, name: `${onoffLiteraryWorkTeasersMock.length} Obras` }),
+			screen.getByRole('heading', { level: 1, name: `${onoffLiteraryWorkCatalogMock.length} Obras` }),
 		).toBeInTheDocument();
 	});
 
 	it('should put the count in singular when the catalogue lists one work', async () => {
-		await renderPage(stubbing([canonicalTeaser]));
+		await renderPage(stubbing([canonicalEntry]));
 
 		expect(screen.getByRole('heading', { level: 1, name: '1 Obra' })).toBeInTheDocument();
 	});
@@ -80,8 +97,8 @@ describe('LiteraryWorksPage', () => {
 		await renderPage();
 
 		const hrefs = readingHrefs();
-		expect(hrefs).toHaveLength(onoffLiteraryWorkTeasersMock.length);
-		onoffLiteraryWorkTeasersMock.forEach(({ slug }) => {
+		expect(hrefs).toHaveLength(onoffLiteraryWorkCatalogMock.length);
+		onoffLiteraryWorkCatalogMock.forEach(({ slug }) => {
 			expect(hrefs).toContain(`/literary-work/${slug}`);
 		});
 	});
@@ -146,7 +163,7 @@ describe('LiteraryWorksPage', () => {
 		const hrefs = within(screen.getByTestId('literary-works'))
 			.getAllByRole('link')
 			.map((link) => link.getAttribute('href'));
-		onoffLiteraryWorkTeasersMock.forEach(({ authors }) => {
+		onoffLiteraryWorkCatalogMock.forEach(({ authors }) => {
 			authors.forEach(({ slug }) => {
 				expect(hrefs).toContain(`/author/${slug}`);
 			});
@@ -157,7 +174,7 @@ describe('LiteraryWorksPage', () => {
 		await renderPage();
 
 		const listing = within(screen.getByTestId('literary-works'));
-		onoffLiteraryWorkTeasersMock.forEach(({ totalReadingTime }) => {
+		onoffLiteraryWorkCatalogMock.forEach(({ totalReadingTime }) => {
 			expect(listing.getAllByText(`${totalReadingTime} min`).length).toBeGreaterThan(0);
 		});
 	});
@@ -200,7 +217,7 @@ describe('LiteraryWorksPage', () => {
 		it('should leave the status untouched when the catalogue resolves', async () => {
 			const responseInit: { status?: number } = {};
 
-			await renderWithResponseInit(stubbing(onoffLiteraryWorkTeasersMock), responseInit);
+			await renderWithResponseInit(stubbing(onoffLiteraryWorkCatalogMock), responseInit);
 
 			expect(responseInit.status).toBeUndefined();
 		});

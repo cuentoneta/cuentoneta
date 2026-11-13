@@ -82,6 +82,14 @@ export interface LiteraryWorkTeaser extends LiteraryWorkBase {
 	readonly mediaSources: readonly MediaTeaser[]; // tag + título; la tarjeta pinta el ícono y nombra el recurso, no lo reproduce
 	// …
 }
+
+// No extiende la base: sin portada, etiquetas ni extracto. Es la vista por defecto del listado.
+export interface LiteraryWorkCatalogEntry {
+	readonly slug: Slug;
+	readonly title: string;
+	readonly totalReadingTime: ReadingTime;
+	readonly authors: readonly Pick<AuthorTeaser, 'slug' | 'name'>[];
+}
 ```
 
 **`mediaSources` no vive en `LiteraryWorkBase`, igual que `authors`:** cada vista lo declara con su propio tipo, porque su proyección GROQ difiere. La vista completa trae `Media[]` (con `data` obligatorio); las vistas de teaser/navegación traen `MediaTeaser[]` (solo `type`), que es lo único que su proyección resuelve — detalle completo en [`docs/DOMAIN_MODEL.md`](../../docs/DOMAIN_MODEL.md#media-contenido-multimedia).
@@ -138,7 +146,8 @@ Un agregado expone **múltiples interfaces** para distintos casos de uso, optimi
 
 ```typescript
 LiteraryWork; // vista completa: secciones, autores completos, tags
-LiteraryWorkTeaser; // extracto del arranque + autores resumidos, para listados
+LiteraryWorkTeaser; // extracto del arranque + autores resumidos, para tarjetas de listado
+LiteraryWorkCatalogEntry; // angosta: slug, título, tiempo de lectura y autoría resumida, para el catálogo
 LiteraryWorkNavigationTeaser; // mínima, sin autores, para navegación
 LiteraryWorkNavigationTeaserWithAuthors; // mínima + autores resumidos
 ```

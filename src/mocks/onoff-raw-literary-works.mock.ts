@@ -1,4 +1,9 @@
-import type { LiteraryWorkBySlugQueryResult, LiteraryWorkTeasersResult } from '@sanity-types';
+import type {
+	LiteraryWorkBySlugQueryResult,
+	LiteraryWorkCatalogResult,
+	LiteraryWorkTeasersResult,
+} from '@sanity-types';
+import { literaryWorkCatalogEntryFrom } from './onoff/derive-raw';
 import { palacioNueveFronterasSectionTitle } from './onoff/literary-work/el-palacio-de-las-nueve-fronteras.epigraph';
 import {
 	palacioFirstSectionReadingTime,
@@ -133,3 +138,10 @@ export const onoffRawLiteraryWorkTeasersMock: LiteraryWorkTeasersResult = [
 		onoffRawCollectionsMock.flatMap(({ literaryWorks }) => literaryWorks).map((teaser) => [teaser._id, teaser]),
 	).values(),
 ];
+
+// El catálogo crudo de obra, derivado de las obras crudas y en el orden de la query: `order(title asc)`
+// compara por punto de código, así que el orden se repone con una comparación de strings y no con
+// `localeCompare`.
+export const onoffRawLiteraryWorkCatalogMock: LiteraryWorkCatalogResult = onoffRawLiteraryWorksMock
+	.map(literaryWorkCatalogEntryFrom)
+	.sort((a, b) => (a.title < b.title ? -1 : a.title > b.title ? 1 : 0));

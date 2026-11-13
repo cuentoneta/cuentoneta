@@ -1,3 +1,4 @@
+import { onoffLiteraryWorkCatalogMock } from '@mocks/onoff-literary-work-catalog.mock';
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
 import { InMemoryLiteraryWorkRepository } from './literary-work.repository.mock';
@@ -49,6 +50,34 @@ describe('InMemoryLiteraryWorkRepository.fetchTeasers', () => {
 
 	it('devuelve un listado vacío sin teasers cargados', async () => {
 		const { literaryWorks } = await new InMemoryLiteraryWorkRepository().fetchTeasers({ author: authorOfFirst.slug });
+
+		expect(literaryWorks).toEqual([]);
+	});
+});
+
+describe('InMemoryLiteraryWorkRepository.fetchCatalog', () => {
+	const [firstEntry] = onoffLiteraryWorkCatalogMock;
+	const [authorOfFirst] = firstEntry.authors;
+	const repository = new InMemoryLiteraryWorkRepository([], [], onoffLiteraryWorkCatalogMock);
+
+	it('devuelve el catálogo entero sin filtro, en orden de almacenamiento', async () => {
+		const { literaryWorks, malformed } = await repository.fetchCatalog({});
+
+		expect(literaryWorks).toEqual(onoffLiteraryWorkCatalogMock);
+		expect(malformed).toEqual([]);
+	});
+
+	it('devuelve solo las entradas de las obras del autor filtrado', async () => {
+		const { literaryWorks } = await repository.fetchCatalog({ author: authorOfFirst.slug });
+
+		expect(literaryWorks.length).toBeGreaterThan(0);
+		literaryWorks.forEach(({ authors }) => {
+			expect(authors.some(({ slug }) => slug === authorOfFirst.slug)).toBe(true);
+		});
+	});
+
+	it('devuelve un listado vacío para un autor sin obras', async () => {
+		const { literaryWorks } = await repository.fetchCatalog({ author: 'sin-obras' });
 
 		expect(literaryWorks).toEqual([]);
 	});

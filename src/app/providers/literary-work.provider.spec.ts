@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
+import type { LiteraryWork, LiteraryWorkCatalogEntry, LiteraryWorkTeaser } from '@models/literary-work.model';
 import {
 	onoffLiteraryWorksMock,
 	onoffLiteraryWorksWithEditorialNote,
@@ -9,6 +9,7 @@ import {
 	onoffLiteraryWorksWithEpigraphs,
 	onoffLiteraryWorksWithSectionTitles,
 } from '@mocks/onoff-literary-works.mock';
+import { onoffLiteraryWorkCatalogMock } from '@mocks/onoff-literary-work-catalog.mock';
 import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
 import { environment } from '../environments/environment';
 import { Endpoints } from './endpoints';
@@ -186,8 +187,13 @@ describe('HttpLiteraryWorkApi', () => {
 			return result;
 		}
 
-		it('requests the catalog with no query params when there is no filter', async () => {
-			const rehydrated = await requestTeasers({}, `${environment.apiUrl}${Endpoints.LiteraryWork}`, wireTeasers);
+		// La vista de tarjeta se pide explícita: sin `view`, el endpoint responde el catálogo, que no trae extracto.
+		it('requests the teaser view when there is no filter', async () => {
+			const rehydrated = await requestTeasers(
+				{},
+				`${environment.apiUrl}${Endpoints.LiteraryWork}?view=teaser`,
+				wireTeasers,
+			);
 
 			expect(rehydrated).toHaveLength(onoffLiteraryWorkTeasersMock.length);
 		});
@@ -195,7 +201,7 @@ describe('HttpLiteraryWorkApi', () => {
 		it('rehydrates the listing filtered by author into domain teasers', async () => {
 			const rehydrated = await requestTeasers(
 				{ author: 'francois-onoff' },
-				`${environment.apiUrl}${Endpoints.LiteraryWork}?author=francois-onoff`,
+				`${environment.apiUrl}${Endpoints.LiteraryWork}?author=francois-onoff&view=teaser`,
 				wireTeasers,
 			);
 
@@ -209,7 +215,7 @@ describe('HttpLiteraryWorkApi', () => {
 		it('resolves an empty listing as an empty array', async () => {
 			const listing = await requestTeasers(
 				{ author: 'sin-obras' },
-				`${environment.apiUrl}${Endpoints.LiteraryWork}?author=sin-obras`,
+				`${environment.apiUrl}${Endpoints.LiteraryWork}?author=sin-obras&view=teaser`,
 				[],
 			);
 
@@ -225,10 +231,43 @@ describe('HttpLiteraryWorkApi', () => {
 			await expect(
 				requestTeasers(
 					{ author: 'francois-onoff' },
-					`${environment.apiUrl}${Endpoints.LiteraryWork}?author=francois-onoff`,
+					`${environment.apiUrl}${Endpoints.LiteraryWork}?author=francois-onoff&view=teaser`,
 					malformed,
 				),
 			).rejects.toThrow();
+		});
+	});
+
+	describe('getCatalog', () => {
+		const wireCatalog = JSON.parse(JSON.stringify(onoffLiteraryWorkCatalogMock)) as unknown[];
+
+		function requestCatalog(url: string, payload: unknown[]) {
+			const result = new Promise<LiteraryWorkCatalogEntry[]>((resolve, reject) => {
+				api.getCatalog().subscribe({ next: resolve, error: reject });
+			});
+			http.expectOne(url).flush(payload);
+			return result;
+		}
+
+		// Sin `view` a propósito: el catálogo es el default del contrato, así que no se nombra.
+		it('requests the listing with no query params', async () => {
+			const catalog = await requestCatalog(`${environment.apiUrl}${Endpoints.LiteraryWork}`, wireCatalog);
+
+			expect(catalog).toEqual(onoffLiteraryWorkCatalogMock);
+		});
+
+		it('errors the stream when an entry violates the DTO schema', async () => {
+			const [first, ...rest] = wireCatalog as Array<Record<string, unknown>>;
+			const malformed = [{ ...first, totalReadingTime: 'dos' }, ...rest];
+
+			await expect(requestCatalog(`${environment.apiUrl}${Endpoints.LiteraryWork}`, malformed)).rejects.toThrow();
+		});
+
+		it('errors the stream when an entry carries an invalid slug', async () => {
+			const [first, ...rest] = wireCatalog as Array<Record<string, unknown>>;
+			const malformed = [{ ...first, slug: 'Slug Inválido' }, ...rest];
+
+			await expect(requestCatalog(`${environment.apiUrl}${Endpoints.LiteraryWork}`, malformed)).rejects.toThrow();
 		});
 	});
 });

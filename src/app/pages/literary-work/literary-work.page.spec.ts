@@ -9,7 +9,12 @@ import { restoreAllMocks, spyOn } from '@test-utils';
 import { of, Subject, throwError, type Observable } from 'rxjs';
 
 // Models
-import { createLiteraryWork, type LiteraryWork, type LiteraryWorkTeaser } from '@models/literary-work.model';
+import {
+	createLiteraryWork,
+	type LiteraryWork,
+	type LiteraryWorkCatalogEntry,
+	type LiteraryWorkTeaser,
+} from '@models/literary-work.model';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';
 import { createMarkdown } from '@models/markdown.model';
 import { createReadingTime } from '@models/reading-time.model';
@@ -45,6 +50,10 @@ class StubFailingLiteraryWorkApi implements LiteraryWorkApi {
 	public getTeasers(): Observable<LiteraryWorkTeaser[]> {
 		return throwError(() => new HttpErrorResponse({ status: this.status, statusText: 'error' }));
 	}
+
+	public getCatalog(): Observable<LiteraryWorkCatalogEntry[]> {
+		return throwError(() => new HttpErrorResponse({ status: this.status, statusText: 'error' }));
+	}
 }
 
 // Sustituye el timing del entorno, no el dato: el test decide cuándo llega la obra, que es lo único que
@@ -60,6 +69,10 @@ class ControllableLiteraryWorkApi implements LiteraryWorkApi {
 	// para que el estado intermedio que estos casos observan sea el de la obra y no el del bloque.
 	public getTeasers(): Observable<LiteraryWorkTeaser[]> {
 		return of([...onoffLiteraryWorkTeasersMock]);
+	}
+
+	public getCatalog(): Observable<LiteraryWorkCatalogEntry[]> {
+		return throwError(() => new Error('La página de obra no consulta el catálogo'));
 	}
 
 	public emit(literaryWork: LiteraryWork): void {

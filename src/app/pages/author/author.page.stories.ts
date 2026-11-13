@@ -4,7 +4,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { of, throwError, type Observable } from 'rxjs';
 
 import type { AuthorProfile, AuthorTeaser } from '@models/author.model';
-import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
+import type { LiteraryWork, LiteraryWorkCatalogEntry, LiteraryWorkTeaser } from '@models/literary-work.model';
 import { createMarkdown } from '@models/markdown.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import { authorMock, authorTeaserMock } from '@mocks/author.mock';
@@ -68,6 +68,10 @@ class CorpusLiteraryWorkApi implements LiteraryWorkApi {
 
 	public getTeasers(filter: LiteraryWorkTeaserFilter = {}): Observable<LiteraryWorkTeaser[]> {
 		return of(filter.author === authorWithoutWorks.slug ? [] : [...onoffLiteraryWorkTeasersMock]);
+	}
+
+	public getCatalog(): Observable<LiteraryWorkCatalogEntry[]> {
+		return throwError(() => new Error('La página de autor no consulta el catálogo'));
 	}
 }
 
