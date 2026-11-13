@@ -38,9 +38,7 @@ export class InMemoryLiteraryWorkRepository implements LiteraryWorkRepository {
 		return { literaryWorks, malformed: [] };
 	}
 
-	public async fetchCatalog(
-		filter: LiteraryWorkCatalogFilter,
-	): Promise<LiteraryWorkListing<LiteraryWorkCatalogEntry>> {
+	public async fetchCatalog(filter: LiteraryWorkCatalogFilter): Promise<LiteraryWorkListing<LiteraryWorkCatalogEntry>> {
 		return { literaryWorks: this.byAuthor(this.catalog, filter.author), malformed: [] };
 	}
 

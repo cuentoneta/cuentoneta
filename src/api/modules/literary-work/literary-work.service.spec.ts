@@ -1,5 +1,6 @@
 import { clearAllMocks, type Mock, restoreAllMocks, spyOn } from '@test-utils';
 import type { LandingPageContent } from '@models/landing-page-content.model';
+import type { LiteraryWorkCatalogEntry } from '@models/literary-work.model';
 import { onoffLiteraryWorkCatalogMock } from '@mocks/onoff-literary-work-catalog.mock';
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 import {
@@ -10,7 +11,6 @@ import * as literaryWorkService from './literary-work.service';
 import { getLiteraryWorkBySlug, getLiteraryWorkCatalog, getLiteraryWorkTeasers } from './literary-work.service';
 import { LiteraryWorkNotFoundError, MalformedLiteraryWorkError } from './literary-work.errors';
 import { InMemoryLiteraryWorkRepository } from './literary-work.repository.mock';
-import type { LiteraryWorkCatalogEntry } from '@models/literary-work.model';
 import type {
 	LiteraryWorkListing,
 	LiteraryWorkRepository,
@@ -113,6 +113,7 @@ describe('getLiteraryWorkTeasers', () => {
 		expect(await getLiteraryWorkTeasers({ author: author.slug }, stub)).toEqual([]);
 	});
 });
+
 describe('getLiteraryWorkCatalog', () => {
 	const [firstEntry] = onoffLiteraryWorkCatalogMock;
 	const [author] = firstEntry.authors;

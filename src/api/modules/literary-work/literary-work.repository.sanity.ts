@@ -75,9 +75,7 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 		return this.translateEach(raw, (rawTeaser) => this.mapLiteraryWorkTeaser(rawTeaser));
 	}
 
-	public async fetchCatalog(
-		filter: LiteraryWorkCatalogFilter,
-	): Promise<LiteraryWorkListing<LiteraryWorkCatalogEntry>> {
+	public async fetchCatalog(filter: LiteraryWorkCatalogFilter): Promise<LiteraryWorkListing<LiteraryWorkCatalogEntry>> {
 		const raw = await this.client.fetch(literaryWorkCatalog, { author: filter.author ?? null });
 		return this.translateEach(raw, (rawEntry) => this.mapCatalogEntry(rawEntry));
 	}
@@ -100,7 +98,9 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 				// error porque, sobre el catálogo entero, saber que "algo" está mal no alcanza para
 				// arreglarlo.
 				malformed.push(
-					error instanceof MalformedLiteraryWorkError ? error : new MalformedLiteraryWorkError(raw.slug, { cause: error }),
+					error instanceof MalformedLiteraryWorkError
+						? error
+						: new MalformedLiteraryWorkError(raw.slug, { cause: error }),
 				);
 			}
 		}
@@ -140,7 +140,10 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 	}
 
 	// El tiempo total de lectura de la obra, tal como lo persiste el CMS.
-	private resolveTotalReadingTime(raw: { readonly slug: string; readonly totalReadingTime: number | null }): ReadingTime {
+	private resolveTotalReadingTime(raw: {
+		readonly slug: string;
+		readonly totalReadingTime: number | null;
+	}): ReadingTime {
 		// Ausente, la obra es intraducible: no hay derivación que sirva de reemplazo, porque en una
 		// obra de texto el total es la suma de sus secciones y en una recitada es la duración del
 		// medio. Cualquier cálculo acierta en una y falla en la otra.

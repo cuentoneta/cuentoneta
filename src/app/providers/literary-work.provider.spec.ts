@@ -260,18 +260,14 @@ describe('HttpLiteraryWorkApi', () => {
 			const [first, ...rest] = wireCatalog as Array<Record<string, unknown>>;
 			const malformed = [{ ...first, totalReadingTime: 'dos' }, ...rest];
 
-			await expect(
-				requestCatalog(`${environment.apiUrl}${Endpoints.LiteraryWork}`, malformed),
-			).rejects.toThrow();
+			await expect(requestCatalog(`${environment.apiUrl}${Endpoints.LiteraryWork}`, malformed)).rejects.toThrow();
 		});
 
 		it('errors the stream when an entry carries an invalid slug', async () => {
 			const [first, ...rest] = wireCatalog as Array<Record<string, unknown>>;
 			const malformed = [{ ...first, slug: 'Slug Inválido' }, ...rest];
 
-			await expect(
-				requestCatalog(`${environment.apiUrl}${Endpoints.LiteraryWork}`, malformed),
-			).rejects.toThrow();
+			await expect(requestCatalog(`${environment.apiUrl}${Endpoints.LiteraryWork}`, malformed)).rejects.toThrow();
 		});
 	});
 });

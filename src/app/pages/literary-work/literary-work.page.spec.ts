@@ -9,7 +9,12 @@ import { restoreAllMocks, spyOn } from '@test-utils';
 import { of, Subject, throwError, type Observable } from 'rxjs';
 
 // Models
-import { createLiteraryWork, type LiteraryWork, type LiteraryWorkCatalogEntry, type LiteraryWorkTeaser } from '@models/literary-work.model';
+import {
+	createLiteraryWork,
+	type LiteraryWork,
+	type LiteraryWorkCatalogEntry,
+	type LiteraryWorkTeaser,
+} from '@models/literary-work.model';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';
 import { createMarkdown } from '@models/markdown.model';
 import { createReadingTime } from '@models/reading-time.model';
