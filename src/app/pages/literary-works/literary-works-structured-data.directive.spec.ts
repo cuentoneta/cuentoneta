@@ -32,11 +32,15 @@ describe('LiteraryWorksStructuredData', () => {
 			.forEach((el) => el.remove());
 	});
 
-	it('should not emit JSON-LD while the catalogue is empty', () => {
+	it('should emit the breadcrumb but not the CollectionPage while the catalogue is empty', () => {
 		instantiate();
 		TestBed.tick();
 
-		expect(TestBed.inject(DOCUMENT).head.querySelector('script[data-schema-id="literary-work-catalog"]')).toBeNull();
+		const head = TestBed.inject(DOCUMENT).head;
+		expect(head.querySelector('script[data-schema-id="literary-work-catalog"]')).toBeNull();
+		expect(
+			JSON.parse(head.querySelector('script[data-schema-id="breadcrumb-literary-work-catalog"]')?.textContent ?? '{}'),
+		).toMatchObject({ '@type': 'BreadcrumbList' });
 	});
 
 	it('should emit the CollectionPage and breadcrumb JSON-LD when the catalogue resolves', () => {
