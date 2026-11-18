@@ -7,9 +7,9 @@ describe('Tag', () => {
 		expect(screen.getByText('Crónica')).toBeInTheDocument();
 	});
 
-	it('should apply the soft variant by default and capitalize only the first letter of the label', async () => {
+	it('should apply the soft variant by default and keep the label text as-is', async () => {
 		await render(Tag, { inputs: { label: 'crónica', variant: 'soft' } });
-		const tag = screen.getByText('Crónica');
+		const tag = screen.getByText('crónica');
 		expect(tag).toHaveClass('text-xs', 'text-brand-500');
 		expect(tag).not.toHaveClass('bg-brand-50');
 	});
@@ -24,8 +24,8 @@ describe('Tag', () => {
 		expect(screen.getByText('crónica')).toHaveClass('bg-brand-50', 'text-brand-500', 'text-xxs', 'uppercase');
 	});
 
-	it('should apply the gray variant chrome and capitalize only the first letter of the label', async () => {
+	it('should apply the gray variant chrome and keep the label text as-is', async () => {
 		await render(Tag, { inputs: { label: 'crónica', variant: 'gray' } });
-		expect(screen.getByText('Crónica')).toHaveClass('bg-neutral-950-40', 'text-neutral-50', 'text-xxs');
+		expect(screen.getByText('crónica')).toHaveClass('bg-neutral-950-40', 'text-neutral-50', 'text-xxs');
 	});
 });
