@@ -7,11 +7,16 @@ describe('Tag', () => {
 		expect(screen.getByText('Crónica')).toBeInTheDocument();
 	});
 
-	it('should apply the soft variant by default and sentence-case the label', async () => {
-		await render(Tag, { inputs: { label: 'CRÓNICA', variant: 'soft' } });
+	it('should apply the soft variant by default and capitalize only the first letter of the label', async () => {
+		await render(Tag, { inputs: { label: 'crónica', variant: 'soft' } });
 		const tag = screen.getByText('Crónica');
 		expect(tag).toHaveClass('text-xs', 'text-brand-500');
 		expect(tag).not.toHaveClass('bg-brand-50');
+	});
+
+	it('should preserve internal capitals of multi-word proper nouns', async () => {
+		await render(Tag, { inputs: { label: 'Buenos Aires', variant: 'soft' } });
+		expect(screen.getByText('Buenos Aires')).toBeInTheDocument();
 	});
 
 	it('should apply the filled variant chrome and keep the label text (uppercase via CSS)', async () => {
@@ -19,7 +24,7 @@ describe('Tag', () => {
 		expect(screen.getByText('crónica')).toHaveClass('bg-brand-50', 'text-brand-500', 'text-xxs', 'uppercase');
 	});
 
-	it('should apply the gray variant chrome and sentence-case the label', async () => {
+	it('should apply the gray variant chrome and capitalize only the first letter of the label', async () => {
 		await render(Tag, { inputs: { label: 'crónica', variant: 'gray' } });
 		expect(screen.getByText('Crónica')).toHaveClass('bg-neutral-950-40', 'text-neutral-50', 'text-xxs');
 	});
