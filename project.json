@@ -6,61 +6,6 @@
 	"prefix": "cuentoneta",
 	"tags": [],
 	"targets": {
-		"build": {
-			"executor": "@angular/build:application",
-			"outputs": ["{options.outputPath}"],
-			"options": {
-				"clearScreen": true,
-				"outputPath": "dist/cuentoneta/",
-				"security": {
-					"allowedHosts": ["cuentoneta-*-reset-*.vercel.app", "cuentoneta.ar", "*.cuentoneta.ar"]
-				},
-				"index": "./src/indexFile.html",
-				"browser": "./src/main.ts",
-				"polyfills": [],
-				"tsConfig": "./tsconfig.app.json",
-				"inlineStyleLanguage": "css",
-				"assets": [
-					"./src/favicon.ico",
-					"./src/assets",
-					{
-						"glob": "**/*",
-						"input": "public"
-					}
-				],
-				"server": "./src/main.server.ts",
-				"styles": ["./src/styles.css", "./src/assets/css/typography.css"],
-				"scripts": [],
-				"ssr": {
-					"entry": "./src/server.ts"
-				},
-				"outputMode": "server"
-			},
-			"configurations": {
-				"production": {
-					"budgets": [
-						{
-							"type": "initial",
-							"maximumWarning": "350kb",
-							"maximumError": "500kb"
-						},
-						{
-							"type": "anyComponentStyle",
-							"maximumWarning": "2kb",
-							"maximumError": "4kb"
-						}
-					],
-					"outputHashing": "all"
-				},
-				"development": {
-					"optimization": false,
-					"extractLicenses": false,
-					"sourceMap": true,
-					"namedChunks": true
-				}
-			},
-			"defaultConfiguration": "production"
-		},
 		"storybook": {
 			"executor": "@nx/storybook:storybook",
 			"options": {
@@ -85,19 +30,6 @@
 					"quiet": true
 				}
 			}
-		},
-		"serve": {
-			"executor": "@angular/build:dev-server",
-			"configurations": {
-				"production": {
-					"buildTarget": "@cuentoneta/app:build:production"
-				},
-				"development": {
-					"buildTarget": "@cuentoneta/app:build:development"
-				}
-			},
-			"defaultConfiguration": "development",
-			"continuous": true
 		},
 		"eslint:lint": {
 			"command": "eslint ./src ./e2e ./cms ./scripts ./tools",
