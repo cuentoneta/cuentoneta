@@ -211,7 +211,7 @@ jobs:
       # se fija acá `staging` para que sea el dataset que ve el crawler. Gana sobre el `development` del
       # .env porque process.loadEnvFile() no pisa variables ya presentes en el entorno.
       - name: Run Tests
-        run: npx nx run @cuentoneta/app:e2e
+        run: pnpm test:e2e
         env:
           SANITY_STUDIO_DATASET: staging
           SANITY_STUDIO_PROJECT_ID: ${{ secrets.SANITY_STUDIO_PROJECT_ID || 's4dbqkc5' }}
