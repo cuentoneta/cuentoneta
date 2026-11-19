@@ -2,6 +2,7 @@
 	"version": 2,
 	"name": "cuentoneta",
 	"installCommand": "pnpm install",
+	"buildCommand": "pnpm build",
 	"devCommand": "pnpm run dev",
 	"rewrites": [{ "source": "/(.*)", "destination": "/api" }],
 	"functions": {
