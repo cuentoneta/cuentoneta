@@ -3,6 +3,5 @@
 /dist
 /coverage
 
-
 # Los reescribe pnpm en cada install: formatearlos solo produce un diff enorme que se revierte solo.
 pnpm-lock.yaml
