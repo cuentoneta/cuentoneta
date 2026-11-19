@@ -41,7 +41,7 @@
 
 ## Comandos comunes
 
-Usar **siempre `pnpm`** para instalar y ejecutar scripts. Los scripts invocan cada herramienta directo (Angular CLI sobre `angular.json`, Vitest, Stylelint, Playwright), salvo `pnpm lint`, `pnpm typecheck`, `pnpm storybook`, `pnpm storybook:build` y los `pnpm sanity:*`, que todavía envuelven targets de Nx.
+Usar **siempre `pnpm`** para instalar y ejecutar scripts. Los scripts invocan cada herramienta directo (Angular CLI sobre `angular.json`, Vitest, Stylelint, Playwright, Storybook), salvo `pnpm lint`, `pnpm typecheck` y los `pnpm sanity:*`, que todavía envuelven targets de Nx.
 
 | Comando                                   | Descripción                                                                                                                                                                                                       |
 | ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
