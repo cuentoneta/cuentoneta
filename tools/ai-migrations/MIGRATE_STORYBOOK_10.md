@@ -57,14 +57,14 @@ B. Convert `require()` to import
 // FROM (CJS):
 
 ```
-const { nxViteTsPaths } = require('@nx/vite/plugins/nx-tsconfig-paths.plugin');
+const tsconfigPaths = require('vite-tsconfig-paths');
 const { mergeConfig } = require('vite');
 ```
 
 // TO (ESM):
 
 ```
-import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
+import tsconfigPaths from 'vite-tsconfig-paths';
 import { mergeConfig } from 'vite';
 ```
 
