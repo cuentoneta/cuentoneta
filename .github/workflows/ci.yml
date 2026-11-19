@@ -147,7 +147,7 @@ jobs:
             nx-cache-typecheck-
 
       - name: Run typecheck
-        run: npx nx typecheck
+        run: pnpm typecheck
 
   e2e:
     runs-on: ubuntu-latest
