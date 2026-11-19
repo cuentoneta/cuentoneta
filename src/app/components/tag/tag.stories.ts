@@ -20,7 +20,7 @@ const meta: Meta<Tag> = {
 				sourceState: 'shown',
 			},
 			description: {
-				component: `<div><p>La etiqueta (tag) del Design System v3, ${docsMention(tagDocs)}: muestra un texto breve con el estilo y la capitalización correspondientes a la variante elegida (input <code>variant</code>).</p><ul><li><strong>soft</strong> (default): solo texto en brand-500, sin fondo; sentence-case.</li><li><strong>filled</strong>: pill brand-50 con el texto en mayúsculas.</li><li><strong>gray</strong>: pill translúcido oscuro con texto claro, pensado para mostrarse sobre imágenes; sentence-case.</li></ul></div>`,
+				component: `<div><p>La etiqueta (tag) del Design System v3, ${docsMention(tagDocs)}: muestra un texto breve con el estilo correspondiente a la variante elegida (input <code>variant</code>).</p><ul><li><strong>soft</strong> (default): solo texto en brand-500, sin fondo; el texto se muestra tal como está cargado.</li><li><strong>filled</strong>: pill brand-50 con el texto en mayúsculas (vía CSS).</li><li><strong>gray</strong>: pill translúcido oscuro con texto claro, pensado para mostrarse sobre imágenes; el texto se muestra tal como está cargado.</li></ul></div>`,
 			},
 		},
 		layout: 'padded',
@@ -44,7 +44,7 @@ export const Soft: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Variante <strong>soft</strong> (default): solo texto en brand-500, sin fondo. Comportamiento (Figma): la primera letra del texto en mayúscula y el resto en minúsculas (sentence-case).</p><p><strong>Usos:</strong> ${docsRef(navigableCollectionTeaserDocs)}, en la página de colección.</p>`,
+				story: `<p>Variante <strong>soft</strong> (default): solo texto en brand-500, sin fondo. El texto se muestra tal como está cargado en Sanity, sin transformar su capitalización.</p><p><strong>Usos:</strong> ${docsRef(navigableCollectionTeaserDocs)}, en la página de colección.</p>`,
 			},
 		},
 	},
@@ -68,7 +68,7 @@ export const Gray: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Variante <strong>gray</strong>: pill translúcido oscuro con texto claro, pensado para mostrarse sobre imágenes. Comportamiento (Figma): la primera letra del texto en mayúscula y el resto en minúsculas (sentence-case).</p><p><strong>Usos:</strong> ${docsRef(literaryWorkHeroHeaderDocs)} en la página de lectura.</p>`,
+				story: `<p>Variante <strong>gray</strong>: pill translúcido oscuro con texto claro, pensado para mostrarse sobre imágenes. El texto se muestra tal como está cargado en Sanity, sin transformar su capitalización.</p><p><strong>Usos:</strong> ${docsRef(literaryWorkHeroHeaderDocs)} en la página de lectura.</p>`,
 			},
 		},
 	},
