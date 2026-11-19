@@ -6,11 +6,6 @@
 	"prefix": "cuentoneta",
 	"tags": [],
 	"targets": {
-		"eslint:lint": {
-			"command": "eslint ./src ./e2e ./cms ./scripts ./tools",
-			"cache": true,
-			"inputs": ["default", "{workspaceRoot}/cms/**/*"]
-		},
 		"typecheck": {
 			"executor": "nx:run-commands",
 			"options": {

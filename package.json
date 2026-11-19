@@ -19,7 +19,7 @@
 		"ops": "node --import tsx --env-file-if-exists=.env ./scripts/ops/run.ts",
 		"storybook": "storybook dev -p 4400 --no-open --no-version-updates",
 		"storybook:build": "storybook build -o dist/storybook/cuentoneta",
-		"lint": "nx eslint:lint",
+		"lint": "eslint ./src ./e2e ./cms ./scripts ./tools",
 		"stylelint": "stylelint \"src/**/*.css\" --report-needless-disables",
 		"test": "vitest run",
 		"typecheck": "nx typecheck",

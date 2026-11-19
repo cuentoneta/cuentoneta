@@ -88,13 +88,5 @@
 		}
 	},
 	"defaultProject": "@cuentoneta/app",
-	"plugins": [
-		{
-			"plugin": "@nx/eslint/plugin",
-			"options": {
-				"targetName": "eslint:lint"
-			}
-		}
-	],
 	"analytics": false
 }

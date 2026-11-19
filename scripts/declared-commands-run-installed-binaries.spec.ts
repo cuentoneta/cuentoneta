@@ -112,7 +112,7 @@ describe('comandos declarados en el repo', () => {
 		const sources = new Set(declaredCommands.map(({ source }) => source));
 
 		expect(sources).toContain('package.json › preinstall');
-		expect(sources).toContain('project.json › eslint:lint');
+		expect(sources).toContain('project.json › typecheck');
 		expect(sources).toContain('cms/project.json › typegen');
 		expect(sources).toContain('vercel.json › installCommand');
 		expect(sources).toContain('.github/workflows/ci.yml');

@@ -95,7 +95,7 @@ jobs:
             nx-cache-lint-
 
       - name: Run Linter
-        run: npx nx eslint:lint
+        run: pnpm lint
 
   check-agents:
     runs-on: ubuntu-latest
