@@ -1,5 +1,9 @@
 import playwright from 'eslint-plugin-playwright';
-import nx from '@nx/eslint-plugin';
+import js from '@eslint/js';
+import globals from 'globals';
+import tseslint from 'typescript-eslint';
+import angular from 'angular-eslint';
+import eslintConfigPrettier from 'eslint-config-prettier/flat';
 import stylisticJs from '@stylistic/eslint-plugin';
 import storybook from 'eslint-plugin-storybook';
 import vitest from '@vitest/eslint-plugin';
@@ -144,6 +148,34 @@ const commonTypescriptRules = {
 	'preserve-caught-error': 'error',
 };
 
+const TYPESCRIPT_FILES = ['**/*.ts', '**/*.tsx', '**/*.cts', '**/*.mts'];
+const JAVASCRIPT_FILES = ['**/*.js', '**/*.jsx', '**/*.cjs', '**/*.mjs'];
+
+// Aplica cada config a `files` reemplazando el suyo, no intersectándolo: así un config pensado para
+// TypeScript, como `typescript-eslint/eslint-recommended`, rige también sobre los .js del repo.
+function withFiles(files, configs) {
+	return configs.map((config) => ({ ...config, files }));
+}
+
+// Desvíos de `typescript-eslint/recommended` que el lint del repo hereda desde typescript-eslint v5.
+// Casi todos los pisan después `commonTypescriptRules` y el bloque de convenciones.
+const inheritedTypescriptOverrides = {
+	'@typescript-eslint/explicit-member-accessibility': 'off',
+	'@typescript-eslint/explicit-module-boundary-types': 'off',
+	'@typescript-eslint/explicit-function-return-type': 'off',
+	'@typescript-eslint/no-parameter-properties': 'off',
+	'@typescript-eslint/no-non-null-assertion': 'warn',
+	'@typescript-eslint/adjacent-overload-signatures': 'error',
+	'@typescript-eslint/prefer-namespace-keyword': 'error',
+	'no-empty-function': 'off',
+	'@typescript-eslint/no-empty-function': 'error',
+	'@typescript-eslint/no-inferrable-types': 'error',
+	'@typescript-eslint/no-unused-vars': 'warn',
+	'@typescript-eslint/no-empty-interface': 'error',
+	'@typescript-eslint/no-explicit-any': 'warn',
+	'@typescript-eslint/no-require-imports': 'off',
+};
+
 export default [
 	{
 		// Un bloque `ignores` global (sin `files`) REEMPLAZA los ignores implícitos de ESLint, incluido
@@ -152,12 +184,43 @@ export default [
 		name: 'ignores',
 		ignores: ['!**/*', '.nx', 'dist', 'cms/node_modules/**', 'cms/dist/**', 'cms/.sanity/**'],
 	},
-	...nx.configs['flat/base'],
-	...nx.configs['flat/typescript'],
-	...nx.configs['flat/javascript'],
+	...withFiles(TYPESCRIPT_FILES, [js.configs.recommended, ...tseslint.configs.recommended]),
+	{
+		name: 'typescript',
+		files: TYPESCRIPT_FILES,
+		plugins: { '@typescript-eslint': tseslint.plugin },
+		languageOptions: {
+			parser: tseslint.parser,
+			ecmaVersion: 2020,
+			sourceType: 'module',
+			parserOptions: { tsconfigRootDir: import.meta.dirname },
+		},
+		rules: inheritedTypescriptOverrides,
+	},
+	...withFiles(JAVASCRIPT_FILES, [js.configs.recommended, ...tseslint.configs.recommended]),
+	{
+		name: 'javascript',
+		files: JAVASCRIPT_FILES,
+		plugins: { '@typescript-eslint': tseslint.plugin },
+		languageOptions: {
+			parser: tseslint.parser,
+			ecmaVersion: 2020,
+			sourceType: 'module',
+			globals: { ...globals.browser, ...globals.node },
+		},
+		rules: { ...inheritedTypescriptOverrides, '@typescript-eslint/no-var-requires': 'off' },
+	},
+	eslintConfigPrettier,
 	...storybook.configs['flat/recommended'],
-	...nx.configs['flat/angular'],
-	...nx.configs['flat/angular-template'],
+	...angular.configs.tsRecommended.map((config) => ({ files: ['**/*.ts'], ...config })),
+	{
+		name: 'angular',
+		files: ['**/*.ts'],
+		languageOptions: { globals: { ...globals.browser, ...globals.es2015, ...globals.node } },
+		processor: angular.processInlineTemplates,
+		plugins: { '@angular-eslint': angular.tsPlugin },
+	},
+	...withFiles(['**/*.html'], [...angular.configs.templateRecommended, ...angular.configs.templateAccessibility]),
 	{
 		name: 'testing',
 		files: ['**/src/**/?(*.)+(spec|test).ts', '**/e2e/_utils/**/?(*.)+(spec|test).ts'],
@@ -515,7 +578,7 @@ export default [
 		},
 	},
 	{
-		// projectService auto-detecta el tsconfig de cada archivo; el parser ya lo fija el preset de nx.
+		// projectService auto-detecta el tsconfig de cada archivo; el parser ya lo fija el bloque `typescript` de esta config.
 		name: 'typed-linting',
 		files: ['src/**/*.ts'],
 		languageOptions: {
