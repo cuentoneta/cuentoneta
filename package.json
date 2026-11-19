@@ -21,7 +21,7 @@
 		"storybook:build": "nx run @cuentoneta/app:build-storybook",
 		"lint": "nx eslint:lint",
 		"stylelint": "nx stylelint @cuentoneta/app",
-		"test": "nx vitest:test",
+		"test": "vitest run",
 		"typecheck": "nx typecheck",
 		"test:watch": "vitest",
 		"test:ui": "vitest --ui",

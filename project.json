@@ -20,7 +20,9 @@
 		},
 		"build-storybook": {
 			"executor": "@nx/storybook:build",
-			"outputs": ["{options.outputDir}"],
+			"outputs": [
+				"{options.outputDir}"
+			],
 			"options": {
 				"outputDir": "dist/storybook/cuentoneta",
 				"configDir": "./.storybook"
@@ -34,13 +36,20 @@
 		"eslint:lint": {
 			"command": "eslint ./src ./e2e ./cms ./scripts ./tools",
 			"cache": true,
-			"inputs": ["default", "{workspaceRoot}/cms/**/*"]
+			"inputs": [
+				"default",
+				"{workspaceRoot}/cms/**/*"
+			]
 		},
 		"stylelint": {
 			"executor": "nx-stylelint:lint",
-			"outputs": ["{options.outputFile}"],
+			"outputs": [
+				"{options.outputFile}"
+			],
 			"options": {
-				"lintFilePatterns": ["src/**/*.css"]
+				"lintFilePatterns": [
+					"src/**/*.css"
+				]
 			}
 		},
 		"typecheck": {
@@ -57,7 +66,9 @@
 		},
 		"static-storybook": {
 			"executor": "@nx/web:file-server",
-			"dependsOn": ["build-storybook"],
+			"dependsOn": [
+				"build-storybook"
+			],
 			"options": {
 				"buildTarget": "@cuentoneta/app:build-storybook",
 				"staticFilePath": "dist/storybook/cuentoneta",
@@ -68,34 +79,6 @@
 					"buildTarget": "@cuentoneta/app:build-storybook:ci"
 				}
 			}
-		},
-		"vitest:test": {
-			"inputs": [
-				"default",
-				"^production",
-				"{workspaceRoot}/cms/**/*",
-				{
-					"fileset": "{projectRoot}/tsconfig.spec.json",
-					"dependencies": true
-				},
-				{
-					"fileset": "{projectRoot}/tsconfig.storybook.json",
-					"dependencies": true
-				},
-				{
-					"externalDependencies": ["vitest"]
-				},
-				{
-					"env": "CI"
-				},
-				{
-					"env": "COVERAGE"
-				},
-				{
-					"dependentTasksOutputFiles": "**/*.js",
-					"transitive": true
-				}
-			]
 		}
 	}
 }
