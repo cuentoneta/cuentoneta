@@ -359,7 +359,8 @@ export default [
 	{
 		// El Studio es React: las reglas de Angular buscan decoradores que no existen ahí. Se apagan de
 		// forma explícita en vez de confiar en que nunca disparen. El bloque `typescript-conventions`
-		// declara `**/*.ts`, que no matchea `.tsx`, así que sin este bloque los componentes del Studio quedan sin ninguna regla.
+		// declara `**/*.ts`, que no matchea `.tsx`, así que sin este bloque los componentes del Studio
+		// quedan sin ninguna regla.
 		// Recompone commonRestrictedSyntax soltando viRestrictedSyntax: en cms/ no existe @test-utils al
 		// que redirigir, y sus dobles se escriben a mano.
 		name: 'cms',
@@ -578,7 +579,8 @@ export default [
 		},
 	},
 	{
-		// projectService auto-detecta el tsconfig de cada archivo; el parser ya lo fija el bloque `typescript` de esta config.
+		// projectService auto-detecta el tsconfig de cada archivo; el parser ya lo fija el bloque
+		// `typescript` de esta config.
 		name: 'typed-linting',
 		files: ['src/**/*.ts'],
 		languageOptions: {
