@@ -39,16 +39,6 @@ jobs:
       - name: Setup workspace
         uses: ./.github/actions/setup-workspace
 
-      # Cache de Actions sobre el cache local de Nx (.nx/cache): único mecanismo de cacheo del CI,
-      # da hits entre corridas hidratando el cache que Nx escribe en disco.
-      - name: Cache de Nx local
-        uses: actions/cache@v6
-        with:
-          path: .nx/cache
-          key: nx-cache-test-${{ github.sha }}
-          restore-keys: |
-            nx-cache-test-
-
       - name: Run Tests
         run: pnpm test
 
@@ -86,14 +76,6 @@ jobs:
       - name: Setup workspace
         uses: ./.github/actions/setup-workspace
 
-      - name: Cache de Nx local
-        uses: actions/cache@v6
-        with:
-          path: .nx/cache
-          key: nx-cache-lint-${{ github.sha }}
-          restore-keys: |
-            nx-cache-lint-
-
       - name: Run Linter
         run: pnpm lint
 
@@ -118,14 +100,6 @@ jobs:
       - name: Setup workspace
         uses: ./.github/actions/setup-workspace
 
-      - name: Cache de Nx local
-        uses: actions/cache@v6
-        with:
-          path: .nx/cache
-          key: nx-cache-stylelint-${{ github.sha }}
-          restore-keys: |
-            nx-cache-stylelint-
-
       - name: Run stylelint
         run: pnpm stylelint
 
@@ -138,14 +112,6 @@ jobs:
       - name: Setup workspace
         uses: ./.github/actions/setup-workspace
 
-      - name: Cache de Nx local
-        uses: actions/cache@v6
-        with:
-          path: .nx/cache
-          key: nx-cache-typecheck-${{ github.sha }}
-          restore-keys: |
-            nx-cache-typecheck-
-
       - name: Run typecheck
         run: pnpm typecheck
 
@@ -157,14 +123,6 @@ jobs:
 
       - name: Setup workspace
         uses: ./.github/actions/setup-workspace
-
-      - name: Cache de Nx local
-        uses: actions/cache@v6
-        with:
-          path: .nx/cache
-          key: nx-cache-e2e-${{ github.sha }}
-          restore-keys: |
-            nx-cache-e2e-
 
       # Regenera environment.ts con la postura indexable de producción (SEO_INDEXABLE=true) pero sin
       # tocar las URLs: el entorno sigue siendo `development` (apiUrl/website locales, contra el server
@@ -233,14 +191,6 @@ jobs:
       - name: Setup workspace
         uses: ./.github/actions/setup-workspace
 
-      - name: Cache de Nx local
-        uses: actions/cache@v6
-        with:
-          path: .nx/cache
-          key: nx-cache-build-${{ github.sha }}
-          restore-keys: |
-            nx-cache-build-
-
       - name: Run build
         run: pnpm build
         env:
@@ -262,14 +212,6 @@ jobs:
 
       - name: Setup workspace
         uses: ./.github/actions/setup-workspace
-
-      - name: Cache de Nx local
-        uses: actions/cache@v6
-        with:
-          path: .nx/cache
-          key: nx-cache-storybook-${{ github.sha }}
-          restore-keys: |
-            nx-cache-storybook-
 
       - name: Run Storybook build
         run: pnpm storybook:build
