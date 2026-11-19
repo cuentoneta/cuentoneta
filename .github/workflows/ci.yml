@@ -127,7 +127,7 @@ jobs:
             nx-cache-stylelint-
 
       - name: Run stylelint
-        run: npx nx stylelint @cuentoneta/app
+        run: pnpm stylelint
 
   typecheck:
     runs-on: ubuntu-latest

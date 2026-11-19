@@ -25,10 +25,6 @@
 			"inputs": ["default", "^production", "{projectRoot}/.storybook/**/*", "{projectRoot}/tsconfig.storybook.json"],
 			"cache": true
 		},
-		"stylelint": {
-			"inputs": ["default", "{workspaceRoot}/.stylelintrc(.(json|yml|yaml|js))?"],
-			"cache": true
-		},
 		"typecheck": {
 			"inputs": ["default", "^default"],
 			"cache": true
