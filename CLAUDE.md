@@ -41,7 +41,7 @@
 
 ## Comandos comunes
 
-Usar **siempre `pnpm`** para instalar y ejecutar scripts. Los scripts envuelven targets de Nx del proyecto `@cuentoneta/app`, salvo `pnpm dev` y `pnpm build`, que corren Angular CLI sobre `angular.json`.
+Usar **siempre `pnpm`** para instalar y ejecutar scripts. Los scripts envuelven targets de Nx del proyecto `@cuentoneta/app`, salvo `pnpm dev` y `pnpm build`, que corren Angular CLI sobre `angular.json`, y `pnpm test`, `pnpm stylelint` y `pnpm test:e2e`, que invocan Vitest, Stylelint y Playwright directo.
 
 | Comando                                   | Descripción                                                                                                                                                                                                       |
 | ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -52,9 +52,9 @@ Usar **siempre `pnpm`** para instalar y ejecutar scripts. Los scripts envuelven 
 | `pnpm ops`                                | Punto de entrada de los scripts del repo; sin argumentos imprime el catálogo de tareas y con un id corre la tarea (`--no-dry-run` habilita la escritura) → [`ops.md`](.claude/references/ops.md)                  |
 | `pnpm stylelint`                          | Stylelint sobre CSS                                                                                                                                                                                               |
 | `pnpm typecheck`                          | Type-check estricto (`tsc --noEmit`)                                                                                                                                                                              |
-| `pnpm test`                               | Tests unitarios (Vitest). Envuelve el target Nx **`vitest:test`**, inferido por el plugin `@nx/vitest` — no `test`, que es el nombre que Nx ya le da a este mismo script                                          |
-| `pnpm test:watch`                         | Tests en watch (invoca Vitest directo, sin Nx)                                                                                                                                                                    |
-| `pnpm test:ui`                            | Interfaz web de Vitest en watch (`@vitest/ui`), sin Nx                                                                                                                                                            |
+| `pnpm test`                               | Tests unitarios (Vitest, `vitest run`)                                                                                                                                                                            |
+| `pnpm test:watch`                         | Tests en watch (Vitest)                                                                                                                                                                                           |
+| `pnpm test:ui`                            | Interfaz web de Vitest en watch (`@vitest/ui`)                                                                                                                                                                    |
 | `pnpm test:e2e`                           | E2E (Playwright)                                                                                                                                                                                                  |
 | `pnpm storybook` / `pnpm storybook:build` | Storybook dev / build                                                                                                                                                                                             |
 | `pnpm sanity:dev`                         | Studio de Sanity (`@cuentoneta/cms`)                                                                                                                                                                              |
