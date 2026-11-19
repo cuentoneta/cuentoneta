@@ -18,8 +18,8 @@ export default defineConfig({
 	forbidOnly: isCI,
 	retries: isCI ? 2 : 0,
 	workers: isCI ? 1 : undefined,
-	// `list` es el único reporter que deja la corrida legible en el log de CI: el `html` no imprime nada
-	// en consola, solo el reporte que el job sube como artefacto.
+	// `list` lista cada test en el log de CI; el `html` solo informa en consola dónde dejó el reporte que el
+	// job sube como artefacto.
 	reporter: [['list'], ['html', { outputFolder: 'dist/.playwright/playwright-report', open: 'on-failure' }]],
 	// El loader de Playwright transpila los specs por su cuenta y no aplica los `paths` del tsconfig
 	// sin esta opción explícita: la declara para resolver los aliases del repo (p. ej. @testing) en runtime.
