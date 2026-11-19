@@ -26,7 +26,6 @@
   - **La garantía no se pierde:** el `git commit` está dentro de la rama exitosa, así que un commit roto sigue siendo imposible. Se usa `if`/`else` y no `a && b || c` porque en esa forma un fallo del propio `git commit` imprimiría el log de una verificación que estuvo verde.
   - **Silenciado en verde**, igual que la Fase 4: la verificación no vuelca nada al contexto cuando pasa. La salida de `git commit` sí queda visible — es corta y confirma el resultado.
   - **El mensaje va por archivo, nunca `-m`:** `workspace/<number>/commit-msg.txt`, dentro del namespace del issue. Los mensajes en español llevan acentuación normal y `-m` la corrompe en Windows.
-  - **Sin `NX_DAEMON=false`:** son `pnpm exec` directos sobre `tsc` y `vitest`, no targets de Nx.
   - **Cuándo no aplica:** los commits **solo-doc / solo-config de tooling** (sin efecto en runtime) saltean la verificación entera y commitean directo. La cadena tampoco aplica si el staging no tiene archivos TS — `vitest related` sin entradas relevantes no debe leerse como un pase.
 
 - Nunca mensajes no descriptivos ("WIP", "fix", "update").
