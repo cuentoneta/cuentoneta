@@ -20,7 +20,7 @@
 		"storybook": "nx run @cuentoneta/app:storybook",
 		"storybook:build": "nx run @cuentoneta/app:build-storybook",
 		"lint": "nx eslint:lint",
-		"stylelint": "stylelint \"src/**/*.css\" --cache --report-needless-disables",
+		"stylelint": "stylelint \"src/**/*.css\" --report-needless-disables",
 		"test": "vitest run",
 		"typecheck": "nx typecheck",
 		"test:watch": "vitest",
