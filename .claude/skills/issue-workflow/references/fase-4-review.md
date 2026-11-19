@@ -2,7 +2,7 @@
 
 **Propósito:** verificar que pasen los gates de CI y correr los agentes de review.
 
-1. Correr **el tier local** de los [gates de CI](../../../../CLAUDE.md#comandos-comunes) (con `pnpm`, nunca `nx` directo). Los gates se reparten en dos tiers, porque el borrador que abrió la Fase 3 ya está corriendo los diez en GitHub Actions:
+1. Correr **el tier local** de los [gates de CI](../../../../CLAUDE.md#comandos-comunes) (con `pnpm`). Los gates se reparten en dos tiers, porque el borrador que abrió la Fase 3 ya está corriendo los diez en GitHub Actions:
 
    | Tier                      | Gates                                                       | Por qué                                                                                                                                                                                                                                                         |
    | ------------------------- | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
