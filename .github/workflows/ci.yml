@@ -272,7 +272,7 @@ jobs:
             nx-cache-storybook-
 
       - name: Run Storybook build
-        run: npx nx run @cuentoneta/app:build-storybook
+        run: pnpm storybook:build
 
   studio-build:
     runs-on: ubuntu-latest
