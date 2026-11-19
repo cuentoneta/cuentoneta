@@ -17,7 +17,7 @@
 		"dev": "ng serve --configuration development",
 		"build": "ng build --configuration production",
 		"ops": "node --import tsx --env-file-if-exists=.env ./scripts/ops/run.ts",
-		"storybook": "storybook dev -p 4400",
+		"storybook": "storybook dev -p 4400 --no-open --no-version-updates",
 		"storybook:build": "storybook build -o dist/storybook/cuentoneta",
 		"lint": "nx eslint:lint",
 		"stylelint": "stylelint \"src/**/*.css\" --report-needless-disables",
