@@ -18,7 +18,8 @@ Debe actualizarse Angular para utilizar la nueva versión `X.Y` del framework.
   - [ ] ng-icons
   - [ ] angular-eslint
   - [ ] Storybook (`@storybook/angular-vite`)
-  - [ ] Plugin de Vitest de Analog
+  - [ ] Plugins de Analog para Vitest
+  - [ ] TypeScript y typescript-eslint
 
 ### Tareas derivadas
 

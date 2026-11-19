@@ -175,7 +175,7 @@ Ramificación tras la respuesta:
 
 ## Restricciones (todas las fases)
 
-- Usar `pnpm <script>`; no invocar a mano la herramienta que el script envuelve.
+- Usar `pnpm <script>` para ejecutar tareas.
 - Nunca prefijar comandos git con `cd` — el working dir ya está resuelto; regla completa en [`coding-agent-policies.md`](../../references/coding-agent-policies.md) Sección 8.
 - Nunca correr migraciones de Sanity automáticamente: mutan producción, son paso manual del usuario.
 - Nunca mergear `develop → master` desde el skill: ese es el gatillo del release y lo hace el usuario.

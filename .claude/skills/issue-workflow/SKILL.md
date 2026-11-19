@@ -158,7 +158,7 @@ Las fases 1 a 6 y el modo worktree viven en `references/`, un archivo por fase. 
 
 ## Restricciones (todas las fases)
 
-- Usar `pnpm <script>` para ejecutar tareas; no invocar a mano la herramienta que el script envuelve.
+- Usar `pnpm <script>` para ejecutar tareas.
 - Nunca prefijar comandos git con `cd` — el working dir ya está resuelto (raíz del repo, o del worktree según el entorno); regla completa en [`coding-agent-policies.md`](../../references/coding-agent-policies.md) Sección 8.
 - Nunca **marcar listo** (`gh pr ready`) un PR antes de que pasen los gates de CI —el tier local **y** los checks del borrador— y haya corrido el `code-reviewer`. Crear el PR **en borrador** al cerrar la Fase 3 es parte del flujo y no cuenta como abrirlo: la licencia y sus tres condiciones están en [`coding-agent-policies.md`](../../references/coding-agent-policies.md) Sección 2.
 - Nunca marcar listo un PR sin el keyword de cierre (`Closes #<issue>`) en el cuerpo enlazando el issue de origen.

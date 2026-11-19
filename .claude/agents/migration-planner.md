@@ -51,8 +51,8 @@ pnpm outdated
 
 ### Consideraciones específicas del tooling
 
-- La app es un solo proyecto que Angular CLI compila sobre `angular.json`; el Studio (`cms/`) es un proyecto pnpm aparte, con su propio lockfile. Los scripts de `package.json` invocan cada herramienta directo, sin task runner de por medio.
-- Sin un task runner que fije versiones en conjunto, cada herramienta se sube por separado: verificar la compatibilidad entre Angular, TypeScript, Vitest (y el plugin de Analog), Storybook, angular-eslint y typescript-eslint.
+- La app es un solo proyecto que Angular CLI compila sobre `angular.json`; el Studio (`cms/`) es un proyecto pnpm aparte, con su propio lockfile. Los scripts de `package.json` invocan cada herramienta directo.
+- Cada herramienta se sube por separado: verificar la compatibilidad entre Angular, TypeScript, Vitest (y los plugins de Analog), Storybook, angular-eslint y typescript-eslint.
 
 ### Consideraciones específicas de Angular
 
