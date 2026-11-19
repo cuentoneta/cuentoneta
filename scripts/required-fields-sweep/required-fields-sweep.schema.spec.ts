@@ -3,9 +3,6 @@ import { join } from 'node:path';
 
 import { scanRequiredFields } from './required-fields-sweep.schema';
 
-// El schema se lee en runtime y no por import: un `import` de `cms/**` desde acá le agrega a Nx una
-// dependencia de proyecto, y el build de la app pasa a exigir el del Studio, que tiene su propio
-// `node_modules` y no se instala en ese job.
 const schema = JSON.parse(readFileSync(join(process.cwd(), 'cms', 'schema.json'), 'utf8'));
 
 function pathsOf(documentType: string) {

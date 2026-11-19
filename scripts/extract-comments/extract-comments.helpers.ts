@@ -113,7 +113,6 @@ export const EXCLUDED_DIRECTORIES: ReadonlySet<string> = new Set([
 	'dist',
 	'.git',
 	'.angular',
-	'.nx',
 	'coverage',
 	'worktrees',
 	'workspace',
