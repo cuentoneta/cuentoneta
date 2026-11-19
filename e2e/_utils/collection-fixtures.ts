@@ -7,7 +7,7 @@
  */
 import type { APIRequestContext } from '@playwright/test';
 
-import { collectionTeaserListDtoSchema, type CollectionTeaserDto } from '@models/collection.dto';
+import { collectionDtoSchema, collectionTeaserListDtoSchema, type CollectionTeaserDto } from '@models/collection.dto';
 
 const CATALOG_ROUTE = '/api/collection';
 
@@ -34,6 +34,24 @@ export async function fetchCollectionCatalog(request: APIRequestContext): Promis
 		throw new Error(`"${CATALOG_ROUTE}" no cumple el contrato del catálogo: ${catalog.error.message}`);
 	}
 	return catalog.data;
+}
+
+/**
+ * La descripción de una colección tal como la pinta su página. No es la del catálogo: el listado la
+ * entrega sin enlaces, porque cada tarjeta ya es un enlace, y la página la entrega con ellos.
+ */
+export async function fetchCollectionDescription(request: APIRequestContext, slug: string): Promise<string> {
+	const route = `${CATALOG_ROUTE}/${slug}`;
+	const response = await request.get(route);
+	if (response.status() !== 200) {
+		throw new Error(`"${route}" respondió ${response.status()}: la colección no está`);
+	}
+
+	const collection = collectionDtoSchema.safeParse(await response.json());
+	if (!collection.success) {
+		throw new Error(`"${route}" no cumple el contrato de la colección: ${collection.error.message}`);
+	}
+	return collection.data.description;
 }
 
 /** Texto plano de una descripción saneada, para compararla contra lo que se lee en pantalla. */
