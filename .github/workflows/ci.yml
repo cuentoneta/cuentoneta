@@ -2,9 +2,8 @@ name: CI
 
 on:
   pull_request:
-  # Push a develop: corre el CI al mergear y, sobre todo, guarda el cache de Nx en la rama default.
-  # Por el scoping de actions/cache, ese cache base lo pueden restaurar todos los PRs (warm desde
-  # el primer push), no solo los pushes de un mismo PR.
+  # Push a develop: da señal de CI sobre lo mergeado y sube a Codecov la cobertura que los PRs usan
+  # como base de comparación.
   push:
     branches: [develop]
   # Permite dispararlo manualmente y desde `prepare-release-pr.yml`: el PR `develop → master` lo crea
@@ -16,15 +15,13 @@ on:
 # review, así que un mismo PR acumula varias corridas. Sin esto, cada push encola un run nuevo sin
 # cancelar el anterior y ambos compiten por runners para un resultado que ya no interesa.
 #
-# En `push` a `develop` NO se cancela: ese run es el que guarda el cache de Nx en la rama default (ver
-# el comentario del trigger), y cancelarlo dejaría a todos los PRs sin cache base.
 # El `group` incluye el evento a propósito: sin eso, el `workflow_dispatch` que dispara
 # `prepare-release-pr.yml` sobre `develop` cae en el mismo grupo que el `push` a `develop`, queda
 # encolado detrás de él, y un merge posterior lo cancela en silencio — justo la corrida que le da
 # señal de CI al release.
 concurrency:
   group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  cancel-in-progress: true
 
 jobs:
   test:
