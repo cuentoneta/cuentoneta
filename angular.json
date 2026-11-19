@@ -13,9 +13,6 @@
 			"sourceRoot": "src",
 			"prefix": "cuentoneta",
 			"schematics": {
-				"@schematics/angular:component": {
-					"style": "css"
-				},
 				"@schematics/angular:directive": {
 					"type": "directive",
 					"addTypeToClassName": false
@@ -27,9 +24,6 @@
 					"typeSeparator": "."
 				},
 				"@schematics/angular:interceptor": {
-					"typeSeparator": "."
-				},
-				"@schematics/angular:module": {
 					"typeSeparator": "."
 				},
 				"@schematics/angular:pipe": {
