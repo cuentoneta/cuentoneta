@@ -34,7 +34,7 @@ export class Tooltip {
 
 	private createTooltipPopup() {
 		const popup = document.createElement('p');
-		popup.innerHTML = this.text();
+		popup.textContent = this.text();
 		popup.classList.add('tooltip-container');
 
 		const arrowElem = document.createElement('span');
