@@ -25,14 +25,8 @@ runs:
         node-version: 24.18.0
         cache: 'pnpm'
 
+    # Corre también los scripts: los builds que autoriza `allowBuilds`, el `postinstall` que genera el
+    # environment y el `prepare` de husky.
     - name: Install dependencies
       shell: bash
-      run: pnpm install --force --frozen-lockfile --ignore-scripts
-
-    - name: Generate testing environment file
-      shell: bash
-      run: pnpm ops config
-
-    - name: Rebuild and prepare
-      shell: bash
-      run: pnpm rebuild && pnpm run prepare --if-present
+      run: pnpm install --force --frozen-lockfile
