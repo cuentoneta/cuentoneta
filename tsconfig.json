@@ -54,6 +54,8 @@
 		"strictInputAccessModifiers": true,
 		"typeCheckHostBindings": true,
 		"strictTemplates": true,
-		"strictUnclaimedEventNames": true
+		"strictUnclaimedEventNames": true,
+		"strictUnknownElements": true,
+		"strictNgTemplateTypes": true
 	}
 }
