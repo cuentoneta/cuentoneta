@@ -122,21 +122,18 @@ jobs:
       - name: Setup workspace
         uses: ./.github/actions/setup-workspace
 
-      # Regenera environment.ts con la postura indexable de producción (SEO_INDEXABLE=true) pero sin
-      # tocar las URLs: el entorno sigue siendo `development` (apiUrl/website locales, contra el server
-      # SSR en localhost), lo que permite que los specs de SEO afirmen el HTML indexable del crawler.
-      - name: Generate e2e environment (postura indexable, URLs locales)
-        run: pnpm ops config
-        env:
-          SEO_INDEXABLE: 'true'
-
       # El webServer de Playwright levanta el build SSR de producción (fidelidad con el crawler), así
       # que hay que compilarlo acá. Los e2e corren contra `staging` (espejo de producción, aislado del
       # `development` compartido que los devs mutan) para reducir la fragilidad por curación de contenido
       # (#1722); en local se usa `development` (default del .env). staging es público → no requiere token.
+      #
+      # El `prebuild` regenera environment.ts con este entorno: SEO_INDEXABLE=true le da la postura
+      # indexable de producción sin tocar las URLs, que siguen siendo las locales del server SSR en
+      # localhost, y así los specs de SEO afirman el HTML indexable del crawler.
       - name: Build de producción para e2e (SSR real)
         run: pnpm build
         env:
+          SEO_INDEXABLE: 'true'
           SANITY_STUDIO_DATASET: staging
           SANITY_STUDIO_PROJECT_ID: ${{ secrets.SANITY_STUDIO_PROJECT_ID || 's4dbqkc5' }}
           SANITY_STUDIO_TOKEN: ${{ secrets.SANITY_STUDIO_TOKEN }}
