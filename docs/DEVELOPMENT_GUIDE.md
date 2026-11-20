@@ -122,9 +122,13 @@ en el canal **[#🚐 | la-cuentoneta][dc-channel]** en Discord.
 
 ### Requerimientos
 
-- Tener instalada una versión de [Node](https://nodejs.org/es/) **24** (Active LTS "Krypton") igual o superior a `v24.18.0` e **inferior a 25** (el `.npmrc` declara `engine-strict`, así que una versión fuera de ese rango **falla la instalación** en vez de solo advertir).
+- Tener instalada una versión de [Node](https://nodejs.org/es/) **24** (Active LTS "Krypton") igual o superior a `v24.18.0` e **inferior a 25** (`pnpm-workspace.yaml` declara `engineStrict`, así que una versión fuera de ese rango **falla la instalación** en vez de solo advertir).
   El repo trae un `.nvmrc` (`nvm use` / `fnm use`). El proyecto no soporta Node 22 ni anteriores, ni Node 25+.
-- Instalar `pnpm`, un gestor de paquetes alternativo para Node: `npm install -g pnpm`. Se recomienda la versión `10.12.0` o superior. Los settings de pnpm, como los `overrides` de dependencias, viven en `pnpm-workspace.yaml` (uno en la raíz y otro en `cms/`), no en el campo `pnpm` de `package.json`.
+- Instalar [pnpm](https://pnpm.io/es/installation) **12**: `npm install -g pnpm@12`, o el script de instalación de pnpm.io. El repo fija la versión exacta en el campo `packageManager` de `package.json`, y pnpm cambia solo a esa versión al correr en el proyecto. No uses Corepack: pnpm 12 es un ejecutable nativo y lo desaconseja.
+  Después de instalarlo, corré `pnpm setup` una vez, para que los binarios globales de pnpm queden en el `PATH`.
+- Los settings de pnpm viven en `pnpm-workspace.yaml` (uno en la raíz y otro en `cms/`): los `overrides` de dependencias, `engineStrict` y `allowBuilds`. pnpm ya no los lee del campo `pnpm` de `package.json` ni de `.npmrc`, que solo admite registro y autenticación. Dos consecuencias para el día a día:
+  - Una dependencia nueva que trae scripts de instalación **hace fallar el install** hasta declararla en `allowBuilds`: `true` si necesita correr su script, `false` si funciona sin él.
+  - pnpm no instala versiones publicadas hace menos de 24 horas (`minimumReleaseAge`), y la regla también aplica a las que ya están en el lockfile. Después de un `git pull` que trajo un bump reciente, `pnpm install` falla, y cada `pnpm <script>` muestra el mismo error, porque antes de correr verifica las dependencias. Lo normal es esperar a que el paquete cumpla el plazo. Si no podés esperar, `pnpm_config_minimum_release_age=0 pnpm install` saltea la regla para ese comando.
 - Tener un editor de texto o IDE ([Visual Studio Code](https://code.visualstudio.com/), [Vim](https://www.vim.org/), [WebStorm](https://www.jetbrains.com/es-es/webstorm/), etc).
 - Tener una cuenta en [GitHub](https://docs.github.com/es/get-started/signing-up-for-github/signing-up-for-a-new-github-account).
 - Leer y seguir el [código de conducta][doc-code_of_conduct].

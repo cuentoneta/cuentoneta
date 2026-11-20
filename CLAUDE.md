@@ -25,8 +25,8 @@
 | **Framework**          | Angular 22 (standalone, **zoneless**, OnPush, SSR/hidratación)         |
 | **Lenguaje**           | TypeScript (modo estricto)                                             |
 | **Build**              | Angular CLI (`angular.json`) — builder `@angular/build` (esbuild/vite) |
-| **Runtime**            | **Node 24.x ≥ 24.18** (`.nvmrc`); `engine-strict` rechaza 25+          |
-| **Gestor de paquetes** | **pnpm** (10.x). `npm`/`yarn` están bloqueados (`only-allow`)          |
+| **Runtime**            | **Node 24.x ≥ 24.18** (`.nvmrc`); `engineStrict` rechaza 25+           |
+| **Gestor de paquetes** | **pnpm** (12.x). `npm`/`yarn` están bloqueados (`only-allow`)          |
 | **Backend**            | **Hono** (`src/api/`) + `@hono/zod-validator`                          |
 | **Persistencia/CMS**   | **Sanity** (GROQ) vía `@sanity/client`. Studio en `/cms`               |
 | **Testing**            | **Vitest** + Angular Testing Library + `@test-utils`                   |
