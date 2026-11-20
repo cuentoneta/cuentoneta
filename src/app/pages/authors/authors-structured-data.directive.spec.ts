@@ -35,11 +35,12 @@ describe('AuthorsStructuredData', () => {
 			.forEach((el) => el.remove());
 	});
 
-	it('should not emit JSON-LD while the index is empty', () => {
+	it('should emit the breadcrumb but not the CollectionPage while the index is empty', () => {
 		instantiate();
 		TestBed.tick();
 
 		expect(TestBed.inject(DOCUMENT).head.querySelector('script[data-schema-id="author-catalog"]')).toBeNull();
+		expect(emittedSchema('breadcrumb-author-catalog')).toMatchObject({ '@type': 'BreadcrumbList' });
 	});
 
 	it('should emit the CollectionPage and breadcrumb JSON-LD when the index resolves', () => {
