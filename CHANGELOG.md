@@ -13,6 +13,66 @@ La lista de características futuras a implementar puede hallarse en la sección
 
 Los hitos futuros de desarrollo, en los cuales se detallan las funcionalidades a desarrollar y los cambios a implementar, pueden encontrarse en las secciones [milestones](https://github.com/cuentoneta/cuentoneta/milestones) y [projects](https://github.com/cuentoneta/cuentoneta/projects) del repositorio de Github del proyecto.
 
+## Versión 2.11.5 (2026-11-20)
+
+La versión 2.11.5 corrige defectos visuales de la lectura, vuelve a servir el catálogo de obras renderizado en el servidor, cierra dos huecos de seguridad y saca Nx del proyecto, que pasa a correr cada herramienta directo, sobre Angular 22.3 y pnpm 12.
+
+El primero es la **lectura**. Los enlaces del texto Markdown pasan a subrayarse (#2632), las portadas de obras y colecciones cubren su caja sin dejar una franja gris cuando la imagen es más apaisada (#2633) y los títulos de sección de las obras vuelven a verse en negrita (#2634). En la página de colección, cada obra muestra su propia etiqueta en lugar de la de la colección (#2653), y las etiquetas en sus variantes suaves dejan de pasar a minúscula los nombres propios (#2640). Los títulos de las tarjetas de colección bajan a `h3`, un nivel por debajo del encabezado de su sección, en la home y en `/collection` (#2698).
+
+El segundo es el **catálogo de obras**. Su listado superaba el límite de 1 MiB que `HttpClient` acepta en el render del servidor, y la página respondía 503: el extracto de cada obra queda acotado a 200 caracteres visibles, recortado sobre el HTML ya saneado (#2658, #2656). Los catálogos publican su `BreadcrumbList` aunque el listado esté vacío (#2393), y el panel de descripción de la colección se compara contra la descripción con enlaces en los e2e (#2657).
+
+El tercero es la **seguridad**. El tooltip sanitiza su contenido antes de inyectarlo como HTML, para que pueda conectarse a texto no confiable (#2035). pnpm pasa a la versión 12, que dejó de leer la configuración en `.npmrc`: los settings se migran a `pnpm-workspace.yaml`, se podan los overrides que ya no cambiaban ninguna resolución y queda activa la regla que no instala versiones publicadas hace menos de 24 horas (#2597).
+
+El cuarto es el **tooling**. El proyecto deja de usar Nx: el build, el dev server y el SSR corren con Angular CLI, y Vitest, Stylelint, Playwright, Storybook, ESLint y los scripts del Studio, cada uno directo; CI deja de invocar Nx y de cachear un directorio que no guardaba nada (#2673). Angular sube a 22.3, salen `webpack` y `@angular-devkit/build-angular`, y se activan `strictUnknownElements` y `strictNgTemplateTypes` (#2672). El sync de datasets fortalece las referencias que el import deja débiles con un ritmo que el API acepta (#2638), los modelos de configuración de UI salen del kernel compartido (#2522), y se retiran comentarios que citaban issues cerrados (#2445).
+
+### Cambios completos
+
+Ver el changelog completo en [2.11.5](https://github.com/cuentoneta/cuentoneta/releases/tag/2.11.5)
+
+### Cambios
+
+#### Lectura
+
+- [#2632] - Subraya los enlaces del texto Markdown.
+- [#2633] - Cubre el alto de las portadas de obras y colecciones sin dejar fondo gris.
+- [#2634] - Pone en negrita los títulos de sección de la obra.
+- [#2653] - Muestra en cada obra de la página de colección su propia etiqueta.
+- [#2640] - Deja de pasar a minúscula los nombres propios en las variantes suaves de la etiqueta.
+- [#2698] - Baja a `h3` el título de la tarjeta de colección y le da encabezado al listado de `/collection`.
+
+#### Catálogo de obras
+
+- [#2658] - Acota el extracto del teaser de obra a 200 caracteres visibles; resuelve el 503 del catálogo (#2656).
+- [#2393] - Publica el `BreadcrumbList` de los catálogos aunque el listado esté vacío.
+- [#2657] - Compara el panel de descripción de la colección contra la descripción con enlaces.
+
+#### Seguridad
+
+- [#2035] - Sanitiza el sink `innerHTML` de la directiva de tooltip.
+- [#2597] - Actualiza pnpm a 12.21.0, migra la configuración a `pnpm-workspace.yaml` y poda los overrides sin efecto.
+- [#2704] - Genera el environment en el build de Storybook y en CI sin depender del `postinstall`, que pnpm 12 saltea cuando el install no tiene nada que hacer.
+- [#2705] - Genera el environment antes del build de la app, con la postura indexable en el job `e2e`.
+
+#### Tooling
+
+- [#2673] - Saca Nx del proyecto: build y dev server con Angular CLI (#2674), Vitest, Stylelint y Playwright directos (#2675), Storybook sin executor (#2676), ESLint sin presets de Nx (#2677), scripts del Studio sin Nx (#2678), CI sin Nx (#2679), dependencias y configuración (#2680) y documentación (#2681).
+- [#2672] - Actualiza Angular a 22.3, retira `webpack` y `@angular-devkit/build-angular`, y activa los flags estrictos de plantillas.
+- [#2638] - Fortalece con throttle las referencias débiles del sync de datasets.
+- [#2522] - Saca del kernel los modelos de configuración de UI.
+- [#2445] - Retira los comentarios que citaban issues cerrados.
+
+#### Dependencias
+
+- [#2631] - Actualiza el grupo minor-and-patch (51 paquetes).
+- [#2643] - Actualiza el grupo minor-and-patch (35 paquetes).
+- [#2701] - Actualiza el grupo minor-and-patch (15 paquetes).
+- [#2630] - Actualiza el grupo minor-and-patch del Studio (10 paquetes).
+- [#2690] - Actualiza el grupo minor-and-patch del Studio (6 paquetes).
+- [#2642] - Actualiza el grupo minor-and-patch del Studio (4 paquetes).
+- [#2530] - Actualiza `@googleapis/searchconsole` a 11.0.1.
+- [#2531] - Actualiza `eslint-plugin-unicorn` a 77.0.0.
+- [#2641] - Actualiza `pnpm/action-setup` a 6.1.1.
+
 ## Versión 2.11.4 (2026-10-17)
 
 La versión 2.11.4 es un patch de mantenimiento con un cambio de cara a los buscadores: actualiza Sanity Studio a la v6, completa el catálogo de nacionalidades, deja que el compilador garantice los imports type-only y da a los perfiles de autor y a las obras una descripción e imagen propias.
