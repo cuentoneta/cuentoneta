@@ -34,6 +34,8 @@ describe.each(['.', 'cms'])('settings de pnpm de %s', (project) => {
 					.filter((line) => line !== '' && !line.startsWith('#'))
 			: [];
 
-		expect(settings.filter((line) => !/^(@[\w-]+:)?registry=|^\/\/.+:_authToken=/.test(line))).toEqual([]);
+		const registryOrAuth =
+			/^(@[\w-]+:)?registry=|^\/\/[^=]+:(_authToken|_auth|_password|username|email|certfile|keyfile)=/;
+		expect(settings.filter((line) => !registryOrAuth.test(line))).toEqual([]);
 	});
 });

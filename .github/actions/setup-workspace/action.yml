@@ -25,8 +25,8 @@ runs:
         node-version: 24.18.0
         cache: 'pnpm'
 
-    # Corre también los scripts: los builds que autoriza `allowBuilds`, el `postinstall` que genera el
-    # environment y el `prepare` de husky.
+    # Sin `--ignore-scripts`: `allowBuilds` ya acota qué dependencias corren scripts, así que el install deja
+    # el workspace listo, con los binarios, el environment generado y los hooks.
     - name: Install dependencies
       shell: bash
       run: pnpm install --force --frozen-lockfile

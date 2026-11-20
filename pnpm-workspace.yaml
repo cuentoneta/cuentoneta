@@ -3,8 +3,9 @@
 # máquina por debajo del piso instala igual y el guardarraíl degrada en abierto, sin aviso.
 engineStrict: true
 
-# Dependencias autorizadas a correr scripts de instalación; las que figuran en `false` se instalan sin
-# ellos porque no los necesitan para funcionar.
+# Va en `false` la dependencia que ya trae su binario precompilado por plataforma y usa el script solo
+# para compilar desde fuente cuando falta. Va en `true` la que necesita el script para funcionar:
+# el `postinstall` de esbuild verifica e instala el binario de la plataforma.
 allowBuilds:
   esbuild: true
   '@parcel/watcher': false

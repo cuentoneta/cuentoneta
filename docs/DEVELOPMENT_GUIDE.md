@@ -128,7 +128,7 @@ en el canal **[#🚐 | la-cuentoneta][dc-channel]** en Discord.
   Después de instalarlo, corré `pnpm setup` una vez, para que los binarios globales de pnpm queden en el `PATH`.
 - Los settings de pnpm viven en `pnpm-workspace.yaml` (uno en la raíz y otro en `cms/`): los `overrides` de dependencias, `engineStrict` y `allowBuilds`. pnpm ya no los lee del campo `pnpm` de `package.json` ni de `.npmrc`, que solo admite registro y autenticación. Dos consecuencias para el día a día:
   - Una dependencia nueva que trae scripts de instalación **hace fallar el install** hasta declararla en `allowBuilds`: `true` si necesita correr su script, `false` si funciona sin él.
-  - pnpm no instala versiones publicadas hace menos de 24 horas (`minimumReleaseAge`). Si un bump recién publicado falla por eso, esperá a que cumpla el plazo.
+  - pnpm no instala versiones publicadas hace menos de 24 horas (`minimumReleaseAge`), y la regla también aplica a las que ya están en el lockfile. Después de un `git pull` que trajo un bump reciente, `pnpm install` falla, y cada `pnpm <script>` muestra el mismo error, porque antes de correr verifica las dependencias. Lo normal es esperar a que el paquete cumpla el plazo. Si no podés esperar, `pnpm_config_minimum_release_age=0 pnpm install` saltea la regla para ese comando.
 - Tener un editor de texto o IDE ([Visual Studio Code](https://code.visualstudio.com/), [Vim](https://www.vim.org/), [WebStorm](https://www.jetbrains.com/es-es/webstorm/), etc).
 - Tener una cuenta en [GitHub](https://docs.github.com/es/get-started/signing-up-for-github/signing-up-for-a-new-github-account).
 - Leer y seguir el [código de conducta][doc-code_of_conduct].
