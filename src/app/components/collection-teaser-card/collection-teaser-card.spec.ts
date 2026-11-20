@@ -100,34 +100,14 @@ describe('CollectionTeaserCard', () => {
 	});
 
 	describe('Título de la colección', () => {
-		it('should render the title as a heading that links to the collection', async () => {
+		it('should render the title as a level 3 heading that links to the collection', async () => {
 			await render(CollectionTeaserCard, {
 				inputs: { collection: representativeMock },
-				providers: defaultProviders,
-			});
-
-			const heading = screen.getByRole('heading', { name: representativeMock.title });
-			expect(within(heading).getByRole('link')).toHaveAttribute('href', `/collection/${representativeMock.slug}`);
-		});
-
-		it('should title at level 2 by default', async () => {
-			await render(CollectionTeaserCard, {
-				inputs: { collection: representativeMock },
-				providers: defaultProviders,
-			});
-
-			expect(screen.getByRole('heading', { level: 2, name: representativeMock.title })).toBeInTheDocument();
-		});
-
-		it('should title at level 3 under a section heading, keeping the link inside', async () => {
-			await render(CollectionTeaserCard, {
-				inputs: { collection: representativeMock, headingLevel: 3 },
 				providers: defaultProviders,
 			});
 
 			const heading = screen.getByRole('heading', { level: 3, name: representativeMock.title });
 			expect(within(heading).getByRole('link')).toHaveAttribute('href', `/collection/${representativeMock.slug}`);
-			expect(screen.queryByRole('heading', { level: 2 })).not.toBeInTheDocument();
 		});
 	});
 

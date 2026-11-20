@@ -1,6 +1,5 @@
 // Core
 import { Component, computed, inject, input } from '@angular/core';
-import { NgTemplateOutlet } from '@angular/common';
 import { DomSanitizer } from '@angular/platform-browser';
 
 // Router
@@ -15,7 +14,7 @@ import { CollectionCover } from '../collection-cover/collection-cover';
 
 @Component({
 	selector: 'cuentoneta-collection-teaser-card',
-	imports: [NgTemplateOutlet, RouterLink, CollectionCover],
+	imports: [RouterLink, CollectionCover],
 
 	template: `
 		<article class="relative flex items-start gap-5">
@@ -24,23 +23,16 @@ import { CollectionCover } from '../collection-cover/collection-cover';
 					<cuentoneta-collection-cover [imagery]="collection.imagery" />
 				</section>
 				<section class="flex flex-1 flex-col gap-1 overflow-hidden">
-					@if (headingLevel() === 3) {
-						<h3 [class]="titleClasses">
-							<ng-container [ngTemplateOutlet]="titleLink" />
-						</h3>
-					} @else {
-						<h2 [class]="titleClasses">
-							<ng-container [ngTemplateOutlet]="titleLink" />
-						</h2>
-					}
-					<ng-template #titleLink>
+					<!-- h3: la tarjeta siempre cuelga del encabezado de una sección, el del deck en la home o el del
+					  listado en /collections. -->
+					<h3 class="line-clamp-2 font-inter text-lg leading-6 font-bold text-neutral-900">
 						<a
 							[routerLink]="['/' + appRoutes.Collection, collection.slug]"
 							class="hover:text-interactive-500 after:absolute after:inset-0 after:content-['']"
 						>
 							{{ collection.title }}
 						</a>
-					</ng-template>
+					</h3>
 					<div
 						[innerHTML]="safeDescription()"
 						class="line-clamp-4 font-inter text-sm text-ellipsis text-neutral-700"
@@ -69,10 +61,6 @@ export class CollectionTeaserCard {
 	private readonly sanitizer = inject(DomSanitizer);
 
 	public readonly collection = input<CollectionTeaser>();
-	/** 2 cuando la tarjeta cuelga del `<h1>` de la página; 3 cuando cuelga del encabezado de una sección. */
-	public readonly headingLevel = input<2 | 3>(2);
-
-	private readonly titleClasses = 'line-clamp-2 font-inter text-lg leading-6 font-bold text-neutral-900';
 
 	private readonly safeDescription = computed(() => {
 		const collection = this.collection();
