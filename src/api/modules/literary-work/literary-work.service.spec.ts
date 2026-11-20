@@ -1,15 +1,24 @@
 import { clearAllMocks, type Mock, restoreAllMocks, spyOn } from '@test-utils';
 import type { LandingPageContent } from '@models/landing-page-content.model';
+import type { LiteraryWorkTeaser } from '@models/literary-work.model';
+import type { ReadingSuggestionsScope } from '@models/reading-suggestions.model';
+import { createSlug } from '@models/slug.model';
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 import {
 	onoffLiteraryWorkNavigationTeasersWithAuthorsMock,
 	onoffLiteraryWorkTeasersMock,
 } from '@mocks/onoff-literary-work-teasers.mock';
+import { onoffCollectionsMock } from '@mocks/onoff-collections.mock';
 import * as literaryWorkService from './literary-work.service';
-import { getLiteraryWorkBySlug, getLiteraryWorkTeasers } from './literary-work.service';
+import { getLiteraryWorkBySlug, getLiteraryWorkTeasers, getReadingSuggestions } from './literary-work.service';
 import { LiteraryWorkNotFoundError, MalformedLiteraryWorkError } from './literary-work.errors';
 import { InMemoryLiteraryWorkRepository } from './literary-work.repository.mock';
-import type { LiteraryWorkRepository, LiteraryWorkTeaserListing } from './literary-work.repository';
+import type {
+	LiteraryWorkRepository,
+	LiteraryWorkSuggestionCandidate,
+	LiteraryWorkSuggestionsListing,
+	LiteraryWorkTeaserListing,
+} from './literary-work.repository';
 import { environment } from '../../_helpers/environment';
 import { fetchClarityData } from '../../_helpers/clarity-connector';
 import { ClarityRequestError, ClarityResponseError } from '../../_helpers/clarity-connector.errors';
@@ -23,7 +32,7 @@ vi.mock('../../_helpers/clarity-connector', () => ({ fetchClarityData: vi.fn() }
 /* eslint-enable no-restricted-syntax */
 
 describe('getLiteraryWorkBySlug', () => {
-	const repository = new InMemoryLiteraryWorkRepository(onoffLiteraryWorksMock);
+	const repository = new InMemoryLiteraryWorkRepository(onoffLiteraryWorksMock, [], []);
 
 	it.each(onoffLiteraryWorksMock)('devuelve el agregado de dominio para "$slug"', async (literaryWork) => {
 		expect(await getLiteraryWorkBySlug(literaryWork.slug, repository)).toBe(literaryWork);
@@ -46,12 +55,16 @@ class StubLiteraryWorkRepository implements LiteraryWorkRepository {
 	public async fetchTeasers(): Promise<LiteraryWorkTeaserListing> {
 		return this.listing;
 	}
+
+	public async fetchSuggestions(): Promise<never> {
+		throw new Error('No participa de estos casos.');
+	}
 }
 
 describe('getLiteraryWorkTeasers', () => {
 	const [firstTeaser] = onoffLiteraryWorkTeasersMock;
 	const [author] = firstTeaser.authors;
-	const repository = new InMemoryLiteraryWorkRepository([], onoffLiteraryWorkTeasersMock);
+	const repository = new InMemoryLiteraryWorkRepository([], onoffLiteraryWorkTeasersMock, []);
 
 	afterEach(() => restoreAllMocks());
 
@@ -100,6 +113,247 @@ describe('getLiteraryWorkTeasers', () => {
 		expect(await getLiteraryWorkTeasers({ author: author.slug }, stub)).toEqual([]);
 	});
 });
+
+// El listado del ámbito, canned: el doble en memoria traduce de verdad y nunca produce `malformed`, así
+// que la política de descarte y el recorte se ejercitan con un stub.
+class StubLiteraryWorkSuggestionsRepository implements LiteraryWorkRepository {
+	constructor(private readonly listing: LiteraryWorkSuggestionsListing) {}
+
+	public async fetchBySlug(): Promise<never> {
+		throw new Error('No participa de estos casos.');
+	}
+
+	public async fetchTeasers(): Promise<never> {
+		throw new Error('No participa de estos casos.');
+	}
+
+	public async fetchSuggestions(
+		_scope: ReadingSuggestionsScope,
+		select: (candidates: readonly LiteraryWorkSuggestionCandidate[]) => readonly string[],
+		limit: number,
+	): Promise<LiteraryWorkSuggestionsListing> {
+		const bySlug = new Map<string, LiteraryWorkTeaser[]>();
+		for (const literaryWork of this.listing.literaryWorks) {
+			const group = bySlug.get(literaryWork.slug);
+			if (group) {
+				group.push(literaryWork);
+			} else {
+				bySlug.set(literaryWork.slug, [literaryWork]);
+			}
+		}
+		const candidates = this.listing.literaryWorks.map(({ slug, tags }) => ({ slug, tags }));
+		const literaryWorks = select(candidates)
+			.map((slug) => bySlug.get(slug)?.shift())
+			.filter((literaryWork): literaryWork is LiteraryWorkTeaser => literaryWork !== undefined)
+			.slice(0, limit);
+		return { title: this.listing.title, literaryWorks, malformed: this.listing.malformed };
+	}
+}
+
+describe('getReadingSuggestions', () => {
+	const [canon] = onoffLiteraryWorkTeasersMock;
+	const [author] = canon.authors;
+	const [collection] = onoffCollectionsMock;
+	const repository = new InMemoryLiteraryWorkRepository([], onoffLiteraryWorkTeasersMock, onoffCollectionsMock);
+
+	// Las fixtures descomponen una obra del canon cambiándole lo único que el criterio mira —slug y
+	// tags—, en vez de inventar una obra de prueba: el resto de los campos sigue validado por el corpus.
+	function fixture(slug: string, tagSlugs: readonly string[]): LiteraryWorkTeaser {
+		return {
+			...canon,
+			slug: createSlug(slug),
+			tags: tagSlugs.map((tagSlug) => ({ title: tagSlug, slug: tagSlug, description: tagSlug })),
+		};
+	}
+
+	async function rankedSlugsOf(
+		candidates: readonly LiteraryWorkTeaser[],
+		currentWorkSlug: string,
+		limit = 3,
+	): Promise<string[]> {
+		const stub = new StubLiteraryWorkSuggestionsRepository({
+			title: 'Un ámbito',
+			literaryWorks: candidates,
+			malformed: [],
+		});
+		const { suggestions } = await getReadingSuggestions(currentWorkSlug, { author: 'un-autor' }, limit, stub);
+		return suggestions.map(({ slug }) => slug);
+	}
+
+	// El orden dentro de un empate rota, así que lo que se afirma de él es el ciclo: el mismo listado,
+	// empezando en otro punto. Un reordenamiento libre —ordenar por otro criterio, o barajar— no lo
+	// cumpliría.
+	function isRotationOf(listing: readonly string[], candidate: readonly string[]): boolean {
+		return listing.some(
+			(_, offset) => [...listing.slice(offset), ...listing.slice(0, offset)].join() === candidate.join(),
+		);
+	}
+
+	afterEach(() => restoreAllMocks());
+
+	it('devuelve las obras del autor, encabezadas por su nombre y sin la que se lee', async () => {
+		const { title, suggestions } = await getReadingSuggestions(canon.slug, { author: author.slug }, 3, repository);
+
+		expect(title).toBe(author.name);
+		expect(suggestions).toHaveLength(3);
+		expect(suggestions.map(({ slug }) => slug)).not.toContain(canon.slug);
+	});
+
+	it('devuelve las obras de la colección, encabezadas por su título', async () => {
+		const [currentWork] = collection.literaryWorks;
+
+		const { title, suggestions } = await getReadingSuggestions(
+			currentWork.slug,
+			{ collection: collection.slug },
+			3,
+			repository,
+		);
+
+		expect(title).toBe(collection.title);
+		expect(suggestions.length).toBeGreaterThan(0);
+		expect(suggestions.map(({ slug }) => slug)).not.toContain(currentWork.slug);
+	});
+
+	it('devuelve un listado vacío y sin encabezado para un ámbito sin obras', async () => {
+		await expect(getReadingSuggestions(canon.slug, { author: 'sin-obras' }, 3, repository)).resolves.toEqual({
+			title: '',
+			suggestions: [],
+		});
+		await expect(getReadingSuggestions(canon.slug, { collection: 'sin-obras' }, 3, repository)).resolves.toEqual({
+			title: '',
+			suggestions: [],
+		});
+	});
+
+	it('ordena por tags compartidos, de mayor a menor', async () => {
+		const reference = fixture('referencia', ['ensayo', 'teatro']);
+
+		const slugs = await rankedSlugsOf(
+			[fixture('un-tag', ['ensayo']), reference, fixture('dos-tags', ['ensayo', 'teatro'])],
+			'referencia',
+		);
+
+		expect(slugs).toEqual(['dos-tags', 'un-tag']);
+	});
+
+	it('cuenta una sola vez un tag repetido', async () => {
+		const reference = fixture('referencia', ['ensayo', 'teatro']);
+
+		const slugs = await rankedSlugsOf(
+			[fixture('dos-veces', ['ensayo', 'ensayo']), fixture('una-vez', ['ensayo', 'teatro']), reference],
+			'referencia',
+		);
+
+		expect(slugs).toEqual(['una-vez', 'dos-veces']);
+	});
+
+	it('no descarta las obras sin afinidad: completan el listado', async () => {
+		const reference = fixture('referencia', ['ensayo']);
+
+		const slugs = await rankedSlugsOf([fixture('una', []), reference, fixture('otra', ['ensayo'])], 'referencia');
+
+		expect(slugs).toEqual(['otra', 'una']);
+	});
+
+	it('recorta el listado al límite pedido', async () => {
+		const reference = fixture('referencia', ['ensayo']);
+		const candidates = [reference, fixture('una', []), fixture('otra', []), fixture('tercera', [])];
+
+		expect(await rankedSlugsOf(candidates, 'referencia', 2)).toHaveLength(2);
+	});
+
+	it('devuelve menos sugerencias que el límite cuando el ámbito no alcanza', async () => {
+		const reference = fixture('referencia', ['ensayo']);
+
+		expect(await rankedSlugsOf([reference, fixture('unica', ['ensayo'])], 'referencia', 5)).toHaveLength(1);
+	});
+
+	it('no devuelve nada cuando el ámbito solo tiene la obra que se lee', async () => {
+		const reference = fixture('referencia', ['ensayo']);
+
+		expect(await rankedSlugsOf([reference], 'referencia')).toEqual([]);
+	});
+
+	it('no reordena el listado que recibe', async () => {
+		const reference = fixture('referencia', ['ensayo']);
+		const candidates = [fixture('una', []), reference, fixture('otra', ['ensayo'])];
+		const before = [...candidates];
+
+		await rankedSlugsOf(candidates, 'referencia');
+
+		expect(candidates).toEqual(before);
+	});
+
+	// A igual afinidad el orden rota: un ámbito prolífico cuyas obras comparten los mismos tags no ofrece
+	// siempre las mismas. Cada obra que se lee arranca el empate en su propio punto.
+	it('rota el empate según la obra que se lee, de forma estable entre pedidos', async () => {
+		const candidates = [fixture('una', []), fixture('otra', []), fixture('tercera', [])];
+		const canonicalOrder = ['una', 'otra', 'tercera'];
+		const rotations = await Promise.all(
+			['el-odio', 'geometria', 'los-peldanos'].map((slug) => rankedSlugsOf(candidates, slug)),
+		);
+
+		rotations.forEach((rotation) => expect(isRotationOf(canonicalOrder, rotation)).toBe(true));
+		// No se comparan dos slugs puntuales: lo que se afirma es que el empate no es el mismo para todas
+		// las obras que se leen, sin depender de que dos hashes concretos difieran.
+		expect(new Set(rotations.map((rotation) => rotation.join())).size).toBeGreaterThan(1);
+		expect(await rankedSlugsOf(candidates, 'el-odio')).toEqual(rotations[0]);
+	});
+
+	// Un contexto de navegación viejo —o de otro ámbito— deja la obra que se lee fuera del listado: no
+	// hay afinidad que medir ni nada que descartar, así que todas empatan y la rotación es la que reparte.
+	it('rota todo el listado cuando la obra que se lee no está entre las candidatas', async () => {
+		const candidates = [fixture('primera', ['ensayo']), fixture('segunda', ['ensayo']), fixture('tercera', ['ensayo'])];
+
+		const slugs = await rankedSlugsOf(candidates, 'no-esta');
+
+		expect(isRotationOf(['primera', 'segunda', 'tercera'], slugs)).toBe(true);
+	});
+
+	// El canon: las dos obras que comparten dos tags con la que se lee van primero —en el orden que la
+	// rotación decida— y la tercera sale del empate de un solo tag compartido.
+	it('ordena el canon por los tags que comparte con la obra que se lee', async () => {
+		const slugs = await rankedSlugsOf(onoffLiteraryWorkTeasersMock, canon.slug);
+
+		expect(new Set(slugs.slice(0, 2))).toEqual(new Set(['el-odio', 'las-dos-antorchas']));
+		expect(['geometria', 'las-escaleras', 'el-tratado-de-los-placeres']).toContain(slugs[2]);
+	});
+
+	it('devuelve las obras sanas y registra la descartada', async () => {
+		const warn = spyOn(console, 'warn').mockImplementation(() => undefined);
+		const malformed = new MalformedLiteraryWorkError('una-obra-rota', { cause: new Error('sin extracto') });
+		const stub = new StubLiteraryWorkSuggestionsRepository({
+			title: author.name,
+			literaryWorks: [canon],
+			malformed: [malformed],
+		});
+
+		const { title, suggestions } = await getReadingSuggestions('cualquiera', { author: author.slug }, 3, stub);
+
+		expect(title).toBe(author.name);
+		expect(suggestions).toEqual([canon]);
+		expect(warn).toHaveBeenCalledWith(expect.stringContaining('una-obra-rota'), malformed.cause);
+	});
+
+	// La colección existe: su título encabeza el bloque aunque no quede ninguna obra que ofrecer. El
+	// bloque no se pinta por la lista vacía, no por un encabezado ausente.
+	it('conserva el encabezado de la colección cuando todas sus obras están mal curadas', async () => {
+		const warn = spyOn(console, 'warn').mockImplementation(() => undefined);
+		const malformed = new MalformedLiteraryWorkError('una-obra-rota', { cause: new Error('sin extracto') });
+		const stub = new StubLiteraryWorkSuggestionsRepository({
+			title: 'Una colección',
+			literaryWorks: [],
+			malformed: [malformed],
+		});
+
+		const { title, suggestions } = await getReadingSuggestions('cualquiera', { collection: 'una-coleccion' }, 3, stub);
+
+		expect(title).toBe('Una colección');
+		expect(suggestions).toEqual([]);
+		expect(warn).toHaveBeenCalledWith(expect.stringContaining('una-obra-rota'), malformed.cause);
+	});
+});
+
 // Registra si el caso de uso pide la landing: solo necesita lo más leído, y pedirla entera
 // arrastraría el conteo por autor destacado que la proyección calcula en caliente.
 class SpyContentRepository extends InMemoryContentRepository {

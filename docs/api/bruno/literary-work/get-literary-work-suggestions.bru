@@ -1,0 +1,37 @@
+meta {
+  name: Get literary work suggestions
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{apiUrl}}{{baseApiPath}}/literary-work/:slug/suggestions?collection=geometrias-del-desvelo
+  body: none
+  auth: none
+}
+
+params:path {
+  slug: geometria
+}
+
+params:query {
+  collection: geometrias-del-desvelo
+}
+
+docs {
+  Las sugerencias de lectura al pie de una obra: el encabezado del ámbito con el que se llegó a
+  ella y hasta `limit` obras ya elegidas, sin la que se lee.
+
+  El ámbito es excluyente: `author=<slug>` o `collection=<slug>`. `limit` es opcional (tres por
+  defecto, 1..10); un ámbito ausente, doble o mal formado y un `limit` fuera de rango responden 400.
+  Un ámbito sin obras responde 200 con `{ "title": "", "suggestions": [] }`: el bloque no se pinta.
+
+  Las obras se ordenan por tags compartidos con la que se lee y, a igual afinidad, rotan de forma
+  estable por el slug de esa obra; el orden no depende del pedido, así que la respuesta es cacheable
+  en el borde.
+
+  Slugs del corpus de Onoff (fuente: src/mocks/onoff-literary-works.mock.ts):
+  - el-palacio-de-las-nueve-fronteras
+  - geometria
+  - los-peldanos
+}

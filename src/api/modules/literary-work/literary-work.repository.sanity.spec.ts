@@ -15,11 +15,13 @@ import {
 	onoffRawLiteraryWorksWithoutEditorialNote,
 	onoffRawLiteraryWorkTeasersMock,
 } from '@mocks/onoff-raw-literary-works.mock';
+import { onoffRawCollectionsMock } from '@mocks/onoff-raw-collections.mock';
 import { createMarkdown } from '@models/markdown.model';
 import { isSpaceRecording } from '@models/media.model';
 import { deriveSectionReadingTime } from '@models/reading-time-derivation.model';
 import { createReadingTime, sumReadingTimes } from '@models/reading-time.model';
 import type { ImageUrlResolver } from '../../_utils/functions';
+import type { LiteraryWorkSuggestionCandidate } from './literary-work.repository';
 import { MalformedLiteraryWorkError } from './literary-work.errors';
 import { SanityLiteraryWorkRepository } from './literary-work.repository.sanity';
 
@@ -31,6 +33,9 @@ function repoReturning(raw: unknown): SanityLiteraryWorkRepository {
 }
 
 const INJECTED_URL = 'https://images.example.org/injected.png';
+
+const selectAll = (candidates: readonly LiteraryWorkSuggestionCandidate[]): readonly string[] =>
+	candidates.map(({ slug }) => slug);
 
 function repoWithImageResolver(raw: unknown): SanityLiteraryWorkRepository {
 	const client = { fetch: fn(() => Promise.resolve(raw)) } as unknown as SanityClient;
@@ -317,5 +322,127 @@ describe('SanityLiteraryWorkRepository.fetchTeasers', () => {
 
 		expect(literaryWorks).toEqual([]);
 		expect(malformed[0]).toBeInstanceOf(MalformedLiteraryWorkError);
+	});
+});
+
+describe('SanityLiteraryWorkRepository.fetchSuggestions', () => {
+	// El nombre del autor del ámbito no se lee aparte: viaja en el listado de sus obras, que es lo que
+	// esta rama ya trae.
+	it('mapea las obras del autor con su nombre como encabezado', async () => {
+		const [rawTeaser] = onoffRawLiteraryWorkTeasersMock;
+		const [author] = rawTeaser.authors;
+
+		const { title, literaryWorks, malformed } = await repoReturning(onoffRawLiteraryWorkTeasersMock).fetchSuggestions(
+			{ author: author.slug },
+			selectAll,
+			onoffRawLiteraryWorkTeasersMock.length,
+		);
+
+		expect(title).toBe(author.name);
+		expect(literaryWorks).toHaveLength(onoffRawLiteraryWorkTeasersMock.length);
+		expect(malformed).toEqual([]);
+	});
+
+	it('mapea las obras de la colección con su título como encabezado', async () => {
+		const rawCollection = onoffRawCollectionsMock[0];
+
+		const { title, literaryWorks, malformed } = await repoReturning(rawCollection).fetchSuggestions(
+			{ collection: rawCollection.slug },
+			selectAll,
+			rawCollection.literaryWorks.length,
+		);
+
+		expect(title).toBe(rawCollection.title);
+		expect(literaryWorks).toHaveLength(rawCollection.literaryWorks.length);
+		expect(malformed).toEqual([]);
+	});
+
+	it('devuelve un listado vacío y sin encabezado para un ámbito sin obras', async () => {
+		expect(await repoReturning([]).fetchSuggestions({ author: 'sin-obras' }, selectAll, 3)).toEqual({
+			title: '',
+			literaryWorks: [],
+			malformed: [],
+		});
+		expect(await repoReturning(null).fetchSuggestions({ collection: 'sin-obras' }, selectAll, 3)).toEqual({
+			title: '',
+			literaryWorks: [],
+			malformed: [],
+		});
+	});
+
+	it('reporta la obra mal curada sin llevarse puestas a las demás', async () => {
+		const [sane, ...rest] = onoffRawLiteraryWorkTeasersMock;
+		const broken = { ...sane, _id: `${sane._id}-rota`, slug: `${sane.slug}-rota`, totalReadingTime: null };
+		const [author] = sane.authors;
+
+		const { title, literaryWorks, malformed } = await repoReturning([broken, ...rest]).fetchSuggestions(
+			{ author: author.slug },
+			selectAll,
+			3,
+		);
+
+		expect(title).toBe(author.name);
+		expect(literaryWorks).toHaveLength(3);
+		expect(literaryWorks.map(({ slug }) => slug)).not.toContain(broken.slug);
+		expect(malformed).toHaveLength(1);
+		expect(malformed[0].slug).toBe(broken.slug);
+	});
+	it('traduce solo las obras elegidas, en su orden', async () => {
+		const [first, , third] = onoffRawLiteraryWorkTeasersMock;
+		const [author] = first.authors;
+
+		const { literaryWorks } = await repoReturning(onoffRawLiteraryWorkTeasersMock).fetchSuggestions(
+			{ author: author.slug },
+			() => [third.slug, first.slug],
+			2,
+		);
+
+		expect(literaryWorks.map(({ slug }) => slug)).toEqual([third.slug, first.slug]);
+	});
+
+	// La obra rota que el criterio descartó no se traduce: su extracto no se sanea ni se reporta.
+	it('no traduce ni reporta las obras descartadas por el criterio', async () => {
+		const [sane] = onoffRawLiteraryWorkTeasersMock;
+		const [author] = sane.authors;
+		const broken = { ...sane, _id: `${sane._id}-rota`, slug: `${sane.slug}-rota`, totalReadingTime: null };
+
+		const { literaryWorks, malformed } = await repoReturning([sane, broken]).fetchSuggestions(
+			{ author: author.slug },
+			() => [sane.slug],
+			3,
+		);
+
+		expect(literaryWorks.map(({ slug }) => slug)).toEqual([sane.slug]);
+		expect(malformed).toEqual([]);
+	});
+	// Dos documentos publicados pueden compartir slug: la selección los conserva como dos obras.
+	it('conserva dos obras publicadas con el mismo slug', async () => {
+		const [first] = onoffRawLiteraryWorkTeasersMock;
+		const [author] = first.authors;
+		const second = { ...first, _id: `${first._id}-segunda` };
+
+		const { literaryWorks } = await repoReturning([first, second]).fetchSuggestions(
+			{ author: author.slug },
+			selectAll,
+			2,
+		);
+
+		expect(literaryWorks.map(({ _id }) => _id)).toEqual([first._id, second._id]);
+	});
+
+	it('reporta la primera de dos obras con el mismo slug y conserva la segunda', async () => {
+		const [sane] = onoffRawLiteraryWorkTeasersMock;
+		const [author] = sane.authors;
+		const broken = { ...sane, _id: `${sane._id}-rota`, totalReadingTime: null };
+
+		const { literaryWorks, malformed } = await repoReturning([broken, sane]).fetchSuggestions(
+			{ author: author.slug },
+			selectAll,
+			2,
+		);
+
+		expect(literaryWorks.map(({ _id }) => _id)).toEqual([sane._id]);
+		expect(malformed).toHaveLength(1);
+		expect(malformed[0].slug).toBe(sane.slug);
 	});
 });

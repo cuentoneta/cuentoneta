@@ -1,17 +1,28 @@
 import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
-import type {
-	LiteraryWorkRepository,
-	LiteraryWorkTeaserFilter,
-	LiteraryWorkTeaserListing,
+import type { Collection } from '@models/collection.model';
+import type { ReadingSuggestionsScope } from '@models/reading-suggestions.model';
+import {
+	resolveAuthorName,
+	type LiteraryWorkRepository,
+	type LiteraryWorkSuggestionCandidate,
+	type LiteraryWorkSuggestionsListing,
+	type LiteraryWorkTeaserFilter,
+	type LiteraryWorkTeaserListing,
 } from './literary-work.repository';
 
 export class InMemoryLiteraryWorkRepository implements LiteraryWorkRepository {
 	private readonly literaryWorks: ReadonlyArray<LiteraryWork>;
 	private readonly teasers: ReadonlyArray<LiteraryWorkTeaser>;
+	private readonly collections: ReadonlyArray<Collection>;
 
-	constructor(literaryWorks: ReadonlyArray<LiteraryWork> = [], teasers: ReadonlyArray<LiteraryWorkTeaser> = []) {
+	constructor(
+		literaryWorks: ReadonlyArray<LiteraryWork>,
+		teasers: ReadonlyArray<LiteraryWorkTeaser>,
+		collections: ReadonlyArray<Collection>,
+	) {
 		this.literaryWorks = literaryWorks;
 		this.teasers = teasers;
+		this.collections = collections;
 	}
 
 	public async fetchBySlug(slug: string): Promise<LiteraryWork | null> {
@@ -31,4 +42,53 @@ export class InMemoryLiteraryWorkRepository implements LiteraryWorkRepository {
 		const literaryWorks = slugs ? byAuthor.filter(({ slug }) => slugs.includes(slug)) : byAuthor;
 		return { literaryWorks, malformed: [] };
 	}
+
+	// El ámbito de autor sale de los teasers ya cargados y el de colección, de las colecciones: el doble
+	// lee de donde lee el adaptador, así que un ámbito sin nada que ofrecer deja el encabezado vacío.
+	public async fetchSuggestions(
+		scope: ReadingSuggestionsScope,
+		select: (candidates: readonly LiteraryWorkSuggestionCandidate[]) => readonly string[],
+		limit: number,
+	): Promise<LiteraryWorkSuggestionsListing> {
+		if ('collection' in scope) {
+			const collection = this.collections.find((candidate) => candidate.slug === scope.collection);
+			return collection
+				? {
+						title: collection.title,
+						literaryWorks: selectedTeasers(collection.literaryWorks, select, limit),
+						malformed: [],
+					}
+				: { title: '', literaryWorks: [], malformed: [] };
+		}
+
+		const literaryWorks = this.teasers.filter(({ authors }) => authors.some(({ slug }) => slug === scope.author));
+		return {
+			title: resolveAuthorName(literaryWorks, scope.author),
+			literaryWorks: selectedTeasers(literaryWorks, select, limit),
+			malformed: [],
+		};
+	}
+}
+
+function selectedTeasers(
+	literaryWorks: readonly LiteraryWorkTeaser[],
+	select: (candidates: readonly LiteraryWorkSuggestionCandidate[]) => readonly string[],
+	limit: number,
+): readonly LiteraryWorkTeaser[] {
+	// El slug no es único entre documentos: el doble conserva la lista por slug y consume una por vez,
+	// igual que el adaptador.
+	const bySlug = new Map<string, LiteraryWorkTeaser[]>();
+	for (const literaryWork of literaryWorks) {
+		const group = bySlug.get(literaryWork.slug);
+		if (group) {
+			group.push(literaryWork);
+		} else {
+			bySlug.set(literaryWork.slug, [literaryWork]);
+		}
+	}
+	const candidates = literaryWorks.map(({ slug, tags }) => ({ slug, tags }));
+	return select(candidates)
+		.map((slug) => bySlug.get(slug)?.shift())
+		.filter((literaryWork): literaryWork is LiteraryWorkTeaser => literaryWork !== undefined)
+		.slice(0, limit);
 }
