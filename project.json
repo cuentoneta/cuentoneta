@@ -4,13 +4,5 @@
 	"projectType": "application",
 	"sourceRoot": "./src",
 	"prefix": "cuentoneta",
-	"tags": [],
-	"targets": {
-		"typecheck": {
-			"executor": "nx:run-commands",
-			"options": {
-				"command": "tsc -p tsconfig.typecheck.json --noEmit"
-			}
-		}
-	}
+	"tags": []
 }
