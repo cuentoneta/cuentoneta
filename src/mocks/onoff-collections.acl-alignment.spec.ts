@@ -19,6 +19,8 @@ import type { Collection, CollectionTeaser } from '@models/collection.model';
 import type { SanityClient } from '@sanity/client';
 import { fn } from '@test-utils';
 import { stubImageUrlResolver } from '@testing/image-url-resolver.stub';
+import { visibleText } from '@testing/corpus-prose';
+import { LITERARY_WORK_EXCERPT_MAX_LENGTH } from '@models/literary-work-excerpt.model';
 import { SanityCollectionRepository } from '../api/modules/collection/collection.repository.sanity';
 import { onoffCollectionsMock, onoffCollectionTeasersMock } from './onoff-collections.mock';
 import { onoffRawCollectionsMock, onoffRawCollectionTeasersMock } from './onoff-raw-collections.mock';
@@ -64,5 +66,15 @@ describe('el corpus de teasers de Collection coincide con el mapeo del listado',
 
 		expect(expected).toBeDefined();
 		expect(mapped.find((teaser) => teaser.slug === slug)).toEqual(expected as CollectionTeaser);
+	});
+});
+
+describe('el extracto de las obras embebidas en las colecciones del corpus', () => {
+	it.each(
+		onoffCollectionsMock.flatMap((collection) =>
+			collection.literaryWorks.map((work) => [work.slug, work.excerpt.bodyHtml]),
+		),
+	)('keeps the excerpt of "%s" within the visible limit', (_, bodyHtml) => {
+		expect(visibleText(bodyHtml).length).toBeLessThanOrEqual(LITERARY_WORK_EXCERPT_MAX_LENGTH);
 	});
 });

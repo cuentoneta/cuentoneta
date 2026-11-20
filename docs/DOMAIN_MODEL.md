@@ -204,7 +204,7 @@ Borrador en Sanity → Publicación → Accesible para lectura en /literary-work
 **Vistas Polimórficas:**
 
 - `LiteraryWork` - Vista completa (todas las secciones, autores completos)
-- `LiteraryWorkTeaser` - Vista resumida: expone un **extracto** del arranque de la obra (`excerpt`), que no declara tiempo de lectura ni posición porque su cuerpo va recortado
+- `LiteraryWorkTeaser` - Vista resumida: expone un **extracto** del arranque de la obra (`excerpt`), que no declara tiempo de lectura ni posición porque su cuerpo va recortado, a lo sumo a `LITERARY_WORK_EXCERPT_MAX_LENGTH` caracteres visibles
 - `LiteraryWorkNavigationTeaser` - Vista mínima para navegación
 - `LiteraryWorkNavigationTeaserWithAuthors` - Vista mínima con autores resumidos
 

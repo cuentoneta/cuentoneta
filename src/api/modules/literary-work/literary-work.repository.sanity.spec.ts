@@ -16,6 +16,8 @@ import {
 	onoffRawLiteraryWorkTeasersMock,
 } from '@mocks/onoff-raw-literary-works.mock';
 import { createMarkdown } from '@models/markdown.model';
+import { LITERARY_WORK_EXCERPT_MAX_LENGTH } from '@models/literary-work-excerpt.model';
+import { visibleText } from '@testing/corpus-prose';
 import { isSpaceRecording } from '@models/media.model';
 import { deriveSectionReadingTime } from '@models/reading-time-derivation.model';
 import { createReadingTime, sumReadingTimes } from '@models/reading-time.model';
@@ -307,6 +309,22 @@ describe('SanityLiteraryWorkRepository.fetchTeasers', () => {
 		expect(literaryWorks).toHaveLength(rest.length);
 		expect(malformed).toHaveLength(1);
 		expect(malformed[0].slug).toBe(broken.slug);
+	});
+
+	// Una obra sin líneas en blanco —poesía, o un cuerpo de un solo párrafo— llega de la query con la
+	// sección entera como extracto.
+	it('acota el extracto de un cuerpo sin líneas en blanco al largo visible máximo', async () => {
+		const [sane] = onoffRawLiteraryWorkTeasersMock;
+		const [opening] = sane.excerpt;
+		const unbrokenBody = Array.from({ length: 10 }, () => opening.body).join('\n');
+
+		const { literaryWorks } = await repoReturning([
+			{ ...sane, excerpt: [{ ...opening, body: unbrokenBody }] },
+		]).fetchTeasers({});
+		const { bodyHtml } = literaryWorks[0].excerpt;
+
+		expect(visibleText(bodyHtml).length).toBeLessThanOrEqual(LITERARY_WORK_EXCERPT_MAX_LENGTH);
+		expect(bodyHtml.endsWith('…</p>')).toBe(true);
 	});
 
 	it('reporta como mal curada a la obra sin sección de apertura', async () => {

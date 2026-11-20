@@ -5,7 +5,9 @@ import remarkRehype from 'remark-rehype';
 import rehypeSanitize, { defaultSchema, type Options } from 'rehype-sanitize';
 import rehypeStringify from 'rehype-stringify';
 import type { Markdown } from '@models/markdown.model';
+import { LITERARY_WORK_EXCERPT_MAX_LENGTH } from '@models/literary-work-excerpt.model';
 import { createSanitizedHtml, type SanitizedHtml } from '@models/sanitized-html.model';
+import { rehypeTruncate } from '@utils/rehype-truncate.utils';
 
 // Tipado estructural mínimo del hast: alcanza para el walker sin acoplar @types/hast.
 interface HtmlNode {
@@ -70,7 +72,7 @@ const linklessSanitizationSchema: Options = {
 };
 
 // Singletons de módulo: construir el procesador unified es costoso y el pipeline es inmutable.
-function buildPipeline(schema: Options) {
+function buildPipeline(schema: Options, maxVisibleLength = Infinity) {
 	return (
 		unified()
 			.use(remarkParse)
@@ -80,15 +82,26 @@ function buildPipeline(schema: Options) {
 			.use(remarkRehype)
 			.use(rehypeSanityImages)
 			.use(rehypeSanitize, schema)
+			.use(rehypeTruncate, maxVisibleLength)
 			.use(rehypeStringify)
 	);
 }
 
 const pipeline = buildPipeline(literaryWorkSanitizationSchema);
 const linklessPipeline = buildPipeline(linklessSanitizationSchema);
+const excerptPipeline = buildPipeline(literaryWorkSanitizationSchema, LITERARY_WORK_EXCERPT_MAX_LENGTH);
 
 export function markdownToSanitizedHtml(markdown: Markdown): SanitizedHtml {
 	return createSanitizedHtml(String(pipeline.processSync(markdown)));
+}
+
+/**
+ * Igual que `markdownToSanitizedHtml`, recortado a `LITERARY_WORK_EXCERPT_MAX_LENGTH` caracteres visibles en
+ * límite de palabra y terminado en `…`. Un texto que ya cabe sale idéntico a `markdownToSanitizedHtml`.
+ * Lo que queda después del corte se descarta entero, imágenes incluidas.
+ */
+export function markdownToExcerptHtml(markdown: Markdown): SanitizedHtml {
+	return createSanitizedHtml(String(excerptPipeline.processSync(markdown)));
 }
 
 /**

@@ -7,7 +7,7 @@ import { createMarkdown } from '@models/markdown.model';
 import { createReadingTime, type ReadingTime } from '@models/reading-time.model';
 import { createSectionTitle } from '@models/section-title.model';
 import { createSlug } from '@models/slug.model';
-import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
+import { markdownToExcerptHtml, markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import type { ImageUrlResolver } from '../../_utils/functions';
 import { mapAuthorTeaser, mapTags, urlFor } from '../../_utils/functions';
 import { mapMediaTeasers } from '../../_utils/media-sources.functions';
@@ -119,7 +119,7 @@ export class SanityCollectionRepository implements CollectionRepository {
 		}
 		return createLiteraryWorkExcerpt({
 			title: raw.title ? createSectionTitle(raw.title) : undefined,
-			bodyHtml: markdownToSanitizedHtml(createMarkdown(raw.body)),
+			bodyHtml: markdownToExcerptHtml(createMarkdown(raw.body)),
 		});
 	}
 }

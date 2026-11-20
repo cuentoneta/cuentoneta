@@ -71,7 +71,7 @@ export interface LiteraryWork extends LiteraryWorkBase {
 export interface LiteraryWorkTeaser extends LiteraryWorkBase {
 	readonly authors: readonly AuthorTeaser[];
 	readonly mediaSources: readonly MediaTeaser[]; // tag + título; la tarjeta pinta el ícono y nombra el recurso, no lo reproduce
-	readonly excerpt: LiteraryWorkExcerpt; // arranque de la sección de apertura, recortado
+	readonly excerpt: LiteraryWorkExcerpt; // arranque de la sección de apertura, acotado a LITERARY_WORK_EXCERPT_MAX_LENGTH caracteres visibles
 }
 
 export interface LiteraryWorkNavigationTeaser extends LiteraryWorkBase {
@@ -97,7 +97,7 @@ export interface LiteraryWorkNavigationTeaserWithAuthors extends LiteraryWorkBas
 
 **Decisiones de las vistas:**
 
-- `LiteraryWorkTeaser` expone un **extracto** del arranque de la obra (`excerpt`), recortado al primer párrafo en la query; por eso el tipo no declara `readingTime` ni `position` — declararlos obligaría a inventarlos.
+- `LiteraryWorkTeaser` expone un **extracto** del arranque de la obra (`excerpt`), acotado al primer bloque en la query y a `LITERARY_WORK_EXCERPT_MAX_LENGTH` caracteres visibles en el ACL, en límite de palabra y con `…`; por eso el tipo no declara `readingTime` ni `position` — declararlos obligaría a inventarlos.
 - `authors` es 1..N; el anonimato se expresa con el author "Anónimo" (ver [§10](#10-autoría-y-obra-anónima)).
 - `totalReadingTime` es **derivado del texto** (suma de los `readingTime` de sus secciones, ensamblado en la factory) y **materializado write-once** en Sanity — ver [§5](#5-helper-de-reading-time).
 - `editorialNote` es paratexto editorial de la redacción, en Markdown saneado (`SanitizedHtml`), con nombre propio.
@@ -446,6 +446,7 @@ Reglas duras del pipeline:
 - El contenedor de ese binding es siempre un `<div>`, nunca un `<p>`: el pipeline emite `<p>…</p>` y anidarlo dentro de otro párrafo hace que el navegador cierre el externo, con lo que el contenido se escapa del elemento y pierde su estilado sin que nada falle. Regla pareja para la biografía del autor y la descripción del media source.
 - **Esos dos campos no se rehidratan en el provider**, a diferencia de lo que [§7](#7-contrato-del-endpoint) fija para `HttpLiteraryWorkApi`: su brand cruza el wire sin revalidarse. Se sostiene mientras el binding vaya sin bypass, porque ahí la sanitización de Angular cubre el mismo terreno y `createSanitizedHtml` no sanea —reconoce formas anómalas—, así que agregarlo daría defensa en profundidad y no una garantía nueva. **El disparador para cerrarlo es el bypass:** si alguno de esos dos bindings pasa a `bypassSecurityTrustHtml`, el sanitizador de Angular deja de correr y la rehidratación en el provider pasa a ser obligatoria.
 - **Un salto de línea simple del origen se preserva como `<br>`**, en todos los campos que entran al pipeline y no solo en el epígrafe. CommonMark lo serializaría como espacio y solo trataría como salto el marcador de dos espacios finales, que es invisible y que cualquier editor recorta; el contenido lo escriben editores en un campo Markdown del Studio, donde un salto tipeado significa un salto (lo emite `remark-breaks`, entre `remark-parse` y `remark-rehype`). **La allow-list no se extiende por esto**: `br` viene del schema por defecto, y la única extensión sigue siendo la de `<img>`.
+- **El extracto del teaser se recorta después de `rehype-sanitize`**: `markdownToExcerptHtml` suma un plugin que poda el árbol ya saneado al largo visible máximo, en límite de palabra y con `…`, y descarta lo que queda después del corte. Solo quita nodos o acorta texto, así que **no extiende la allow-list** ni puede introducir contenido fuera de ella. Es la única función que produce el cuerpo de un extracto: la usan los ACL de obra y de colección y el corpus de mocks.
 - Scripts, estilos inline, iframes y handlers de eventos quedan **fuera** (no están en el schema por defecto y no se agregan).
 - `srcset` está permitido en `<img>` pero el schema **no filtra su protocolo** (a diferencia de `src`/`href`); hoy solo lo emite el rewrite anclado a `cdn.sanity.io`. Como defensa en profundidad, el guard de frontera `createSanitizedHtml` (`UNSAFE_HTML_PATTERNS`) rechaza un `srcset` con protocolo de script (`javascript:`/`vbscript:`), por si algún día se habilita `rehype-raw`.
 - Cambiar la allow-list deja stale a la caché de borde: no hay purga (ver [§8](#8-estrategia-de-caché-de-borde)), así que las respuestas ya cacheadas siguen sirviendo HTML sanitizado con la allow-list vieja hasta que venza el `s-maxage` y la revalidación las reemplace. Si el cambio es correctivo (cierra un vector), no alcanza con esperar: bajar el `s-maxage` acorta la ventana. Actualizar además los tests de XSS del pipeline.

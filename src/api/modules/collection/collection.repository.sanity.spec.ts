@@ -14,6 +14,8 @@ import {
 	unbackfilledWorkRawCollection,
 	shortSampleRawCollection,
 } from '@mocks/onoff-raw-collections.mock';
+import { LITERARY_WORK_EXCERPT_MAX_LENGTH } from '@models/literary-work-excerpt.model';
+import { visibleText } from '@testing/corpus-prose';
 import { MalformedCollectionError } from './collection.errors';
 import { SanityCollectionRepository } from './collection.repository.sanity';
 
@@ -162,6 +164,31 @@ describe('SanityCollectionRepository.fetchBySlug', () => {
 		await expect(repoReturning(unbackfilledWorkRawCollection).fetchBySlug('geometrias-del-desvelo')).rejects.toThrow(
 			MalformedCollectionError,
 		);
+	});
+
+	// Una obra sin líneas en blanco —poesía, o un cuerpo de un solo párrafo— llega de la query con la
+	// sección entera como extracto.
+	it('caps the excerpt of a body without blank lines at the visible limit', async () => {
+		const [first] = onoffRawCollectionsWithFeaturedImage;
+		const raw = {
+			...first,
+			literaryWorks: first.literaryWorks.map((work, index) =>
+				index === 0
+					? {
+							...work,
+							excerpt: [
+								{ ...work.excerpt[0], body: Array.from({ length: 10 }, () => work.excerpt[0].body).join('\n') },
+							],
+						}
+					: work,
+			),
+		};
+
+		const collection = await repoReturning(raw).fetchBySlug('geometrias-del-desvelo');
+		const bodyHtml = collection?.literaryWorks[0].excerpt.bodyHtml ?? '';
+
+		expect(visibleText(bodyHtml).length).toBeLessThanOrEqual(LITERARY_WORK_EXCERPT_MAX_LENGTH);
+		expect(bodyHtml.endsWith('…</p>')).toBe(true);
 	});
 
 	it('rejects a work whose excerpt carries no body', async () => {
