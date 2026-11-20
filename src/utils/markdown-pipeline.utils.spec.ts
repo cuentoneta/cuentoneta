@@ -294,6 +294,25 @@ describe('markdownToExcerptHtml', () => {
 		expect(html).not.toContain('<img');
 	});
 
+	it('keeps an image that comes before the cut', () => {
+		const html = markdownToExcerptHtml(
+			createMarkdown(`![Una imagen](https://cdn.sanity.io/images/p/d/abc-10x10.png)\n\n${longProse}`),
+		);
+
+		expect(html).toContain('<img');
+		expect(html.endsWith('…</p>')).toBe(true);
+	});
+
+	// Un salto de verso cuenta un carácter: un poema que llega justo al tope así contado entra entero.
+	it('counts each line break of a poem as a single character', () => {
+		const verses = Array.from({ length: 10 }, () => 'Verso de diecinueve').join('\n');
+		const poem = `${verses}${'x'.repeat(LITERARY_WORK_EXCERPT_MAX_LENGTH - verses.length)}`;
+		const markdown = createMarkdown(poem);
+
+		expect(poem).toHaveLength(LITERARY_WORK_EXCERPT_MAX_LENGTH);
+		expect(markdownToExcerptHtml(markdown)).toBe(markdownToSanitizedHtml(markdown));
+	});
+
 	it('cuts a single word longer than the limit at the limit', () => {
 		const word = 'a'.repeat(LITERARY_WORK_EXCERPT_MAX_LENGTH + 50);
 		const html = markdownToExcerptHtml(createMarkdown(word));

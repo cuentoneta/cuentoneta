@@ -53,21 +53,18 @@ function rehypeSanityImages() {
 	};
 }
 
-// Texto visible del árbol en orden de documento. Un <br> aporta un salto de línea: cuenta como un
-// carácter y es un límite de palabra válido.
-function visibleText(node: HtmlNode): string {
+// Concatenación de los text nodes en orden de documento. Un <br> no aporta nada: el salto de verso ya
+// llega como el '\n' del text node que lo sigue.
+function plainText(node: HtmlNode): string {
 	if (node.type === 'text') {
 		return node.value ?? '';
 	}
-	if (node.type === 'element' && node.tagName === 'br') {
-		return '\n';
-	}
-	return (node.children ?? []).map(visibleText).join('');
+	return (node.children ?? []).map(plainText).join('');
 }
 
-// Copia del nodo con solo los primeros `budget.remaining` caracteres visibles; descuenta del presupuesto
-// lo que conserva. Devuelve null para lo que queda entero después del corte, y para un elemento que el
-// corte deja sin contenido.
+// Copia del nodo con solo los primeros `budget.remaining` caracteres de texto; descuenta del presupuesto
+// lo que conserva. Devuelve null para todo lo que queda después del corte, y para un elemento que tenía
+// texto y se quedó sin él. Un elemento sin hijos, como <img> o <hr>, se conserva si está antes del corte.
 function truncateNode(node: HtmlNode, budget: { remaining: number }): HtmlNode | null {
 	if (budget.remaining <= 0) {
 		return null;
@@ -77,11 +74,7 @@ function truncateNode(node: HtmlNode, budget: { remaining: number }): HtmlNode |
 		budget.remaining -= value.length;
 		return { ...node, value };
 	}
-	if (node.type === 'element' && node.tagName === 'br') {
-		budget.remaining -= 1;
-		return node;
-	}
-	if (!node.children) {
+	if (!node.children || node.children.length === 0) {
 		return node;
 	}
 	const children = node.children.map((child) => truncateNode(child, budget)).filter((child) => child !== null);
@@ -94,7 +87,7 @@ function appendEllipsis(node: HtmlNode): HtmlNode {
 		return { ...node, value: `${node.value ?? ''}…` };
 	}
 	const children = [...(node.children ?? [])];
-	const lastWithText = children.map((child) => visibleText(child).length > 0).lastIndexOf(true);
+	const lastWithText = children.map((child) => plainText(child).length > 0).lastIndexOf(true);
 	const target = children[lastWithText];
 	if (!target) {
 		return node;
@@ -110,7 +103,7 @@ function rehypeTruncate(maxLength: number) {
 		if (maxLength === Infinity) {
 			return undefined;
 		}
-		const text = visibleText(tree);
+		const text = plainText(tree);
 		if (text.length <= maxLength) {
 			return undefined;
 		}

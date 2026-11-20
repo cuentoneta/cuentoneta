@@ -97,7 +97,7 @@ export interface LiteraryWorkNavigationTeaserWithAuthors extends LiteraryWorkBas
 
 **Decisiones de las vistas:**
 
-- `LiteraryWorkTeaser` expone un **extracto** del arranque de la obra (`excerpt`), acotado al primer bloque en la query y a `LITERARY_WORK_EXCERPT_MAX_LENGTH` (200) caracteres visibles en el ACL, en límite de palabra y con `…`; por eso el tipo no declara `readingTime` ni `position` — declararlos obligaría a inventarlos.
+- `LiteraryWorkTeaser` expone un **extracto** del arranque de la obra (`excerpt`), acotado al primer bloque en la query y a `LITERARY_WORK_EXCERPT_MAX_LENGTH` caracteres visibles en el ACL, en límite de palabra y con `…`; por eso el tipo no declara `readingTime` ni `position` — declararlos obligaría a inventarlos.
 - `authors` es 1..N; el anonimato se expresa con el author "Anónimo" (ver [§10](#10-autoría-y-obra-anónima)).
 - `totalReadingTime` es **derivado del texto** (suma de los `readingTime` de sus secciones, ensamblado en la factory) y **materializado write-once** en Sanity — ver [§5](#5-helper-de-reading-time).
 - `editorialNote` es paratexto editorial de la redacción, en Markdown saneado (`SanitizedHtml`), con nombre propio.

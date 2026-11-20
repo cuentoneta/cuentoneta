@@ -1,5 +1,6 @@
-// Mide lo que el lector ve con el parser del DOM, independiente del recorte que se quiere verificar. El
-// `…` final no cuenta, igual que en el tope del extracto.
+// El texto que cuenta el tope del extracto, medido con el parser del DOM y no con el código del recorte
+// que se quiere verificar: `textContent` no cuenta etiquetas ni imágenes, y un salto de verso aporta el
+// '\n' que acompaña al <br>. El `…` final no cuenta.
 export function visibleText(html: string): string {
 	const container = document.createElement('div');
 	container.innerHTML = html;

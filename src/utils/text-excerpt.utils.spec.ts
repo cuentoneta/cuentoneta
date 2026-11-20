@@ -42,4 +42,12 @@ describe('wordBoundaryEnd', () => {
 	it('should end at the limit when a single word is longer than it', () => {
 		expect(wordBoundaryEnd('Supercalifragilístico', 5)).toBe(5);
 	});
+
+	it('should keep a word that ends exactly at the limit', () => {
+		expect(wordBoundaryEnd('aaa bbb ccc', 7)).toBe(7);
+	});
+
+	it('should never cut a text that does not fit down to nothing', () => {
+		expect(wordBoundaryEnd(`  ${'a'.repeat(20)}`, 10)).toBe(10);
+	});
 });

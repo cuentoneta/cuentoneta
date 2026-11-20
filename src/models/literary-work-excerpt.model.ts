@@ -3,7 +3,7 @@ import type { SanitizedHtml } from './sanitized-html.model';
 
 /**
  * Largo visible máximo del cuerpo de un extracto: caracteres de texto en unidades UTF-16, sin contar el
- * `…` que marca el recorte. Un salto de línea cuenta como un carácter.
+ * `…` que marca el recorte. Un salto de verso cuenta como un carácter; las etiquetas y las imágenes, cero.
  */
 export const LITERARY_WORK_EXCERPT_MAX_LENGTH = 200;
 
