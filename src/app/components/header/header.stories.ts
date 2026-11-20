@@ -9,7 +9,7 @@ export default {
 	parameters: {
 		docs: {
 			description: {
-				component: `<div><p>El ${docsMention(headerDocs)} es el encabezado del sitio: logo, navegación principal y menú desplegable en viewports angostos. El input <code>isVisible</code> lo oculta al hacer scroll hacia abajo, colapsando alto, opacidad y desplazamiento en una transición que respeta <code>prefers-reduced-motion</code>. Al ocultarse deja además de recibir foco y clics, para que la barra que la interfaz declara ausente tampoco exista para el teclado ni para el puntero.</p></div>`,
+				component: `<div><p>El ${docsMention(headerDocs)} es el encabezado del sitio: logo, navegación principal y menú desplegable en viewports angostos. El input <code>isVisible</code> lo oculta al hacer scroll hacia abajo, colapsando alto, opacidad y desplazamiento en una transición que respeta <code>prefers-reduced-motion</code>. Al ocultarse deja además de recibir foco y clics, para que la barra que la interfaz declara ausente tampoco exista para el teclado ni para el puntero. El input <code>isOverBand</code> le suelta el fondo y el borde mientras una banda de la página cubre su franja, y se los devuelve apenas la deja atrás.</p></div>`,
 			},
 		},
 	},
@@ -18,6 +18,11 @@ export default {
 			control: { type: 'boolean' },
 			description: 'Muestra u oculta el encabezado; al ocultarse cierra el menú desplegable',
 			table: { type: { summary: 'boolean' }, defaultValue: { summary: 'true' } },
+		},
+		isOverBand: {
+			control: { type: 'boolean' },
+			description: 'Suelta el fondo y el borde mientras una banda de la página cubre la franja de la barra',
+			table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' } },
 		},
 	},
 } as Meta<Header>;
@@ -49,6 +54,28 @@ export const Oculto: StoryObj<Header> = {
 		docs: {
 			description: {
 				story: `<p>Encabezado oculto, el estado al que llega el scroll hacia abajo en viewports angostos. La barra no responde al puntero ni entra en el orden de tabulación: tabulando desde acá, la primera parada es el enlace de la página y no el contenido del encabezado. Es el único lugar donde ese estado se puede recorrer con teclado en un viewport ancho, porque en el sitio solo ocurre en <code>xs</code>.</p><p>La barra deja de responder al empezar a ocultarse y no al terminar, así que durante la transición sigue dibujándose sin recibir foco ni clics. Es deliberado: se está yendo, y encadenar la exclusión al final de la animación cambiaría una declaración por estado imperativo.</p><p><strong>Usos:</strong> todas las páginas del sitio, montado por el layout raíz.</p>`,
+			},
+		},
+	},
+};
+
+export const SobreLaBanda: StoryObj<Header> = {
+	render: (args) => ({
+		props: args,
+		template: `
+			<div class="h-40 bg-brand-200">
+				<cuentoneta-header [isVisible]="isVisible" [isOverBand]="isOverBand" />
+			</div>
+		`,
+	}),
+	args: { isVisible: true, isOverBand: true },
+	// La barra es fija: con el padding del canvas, quedaría sobre un fondo blanco y la story no mostraría
+	// lo que afirma.
+	parameters: {
+		layout: 'fullscreen',
+		docs: {
+			description: {
+				story: `<p>La barra sobre una banda de <code>brand-200</code>, que es la situación de la página de inicio: sin fondo ni borde propios, la banda se ve continua desde el borde superior de la ventana. Alterná <code>isOverBand</code> para devolverle el fondo y el borde, que es lo que ocurre al scrollear más allá de la banda.</p><p><strong>Usos:</strong> la página de inicio, mientras su hero cubre la barra.</p>`,
 			},
 		},
 	},

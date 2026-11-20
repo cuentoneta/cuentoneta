@@ -16,7 +16,11 @@ type VisibilityState = (typeof VisibilityState)[keyof typeof VisibilityState];
 		// `z-nav` es la capa global de la barra fija: se usa sin aislar, porque confinar su apilamiento la
 		// haría perder contra el contenido de página. Ningún componente necesita conocerla para no taparla —
 		// los que elevan algo dentro de sí lo confinan con `isolate`.
-		class: 'fixed top-0 z-nav w-full items-center justify-center border-b-1 border-neutral-200 md:m-auto',
+		class: 'fixed top-0 z-nav w-full items-center justify-center border-b-1 md:m-auto',
+		// El borde va y viene con el fondo y no con el ancho: la caja de la barra es la misma en los dos
+		// estados, así que la transición no puede mover nada. Sin la banda, la línea es la del diseño;
+		// sobre ella, una de 1px cortaría la continuidad que el fondo suelto busca.
+		'[class]': 'borderClasses()',
 		// Va en el host y no en el `<header>` que colapsa, para que alcance también al menú desplegable y a
 		// su backdrop, que son hermanos suyos. Hoy los desmonta el effect de abajo; así la garantía no
 		// depende de que siga haciéndolo.
@@ -25,7 +29,8 @@ type VisibilityState = (typeof VisibilityState)[keyof typeof VisibilityState];
 	template: `
 		<header
 			[class]="visibilityClasses()"
-			class="grid w-full grid-cols-[1fr_theme(spacing.6)] grid-rows-[theme(spacing.16)_1fr] bg-neutral-50 px-5 transition-[height,opacity,translate] duration-200 motion-reduce:transition-none md:grid-cols-2 md:grid-rows-1"
+			[class.bg-neutral-50]="paintsBackground()"
+			class="grid w-full grid-cols-[1fr_theme(spacing.6)] grid-rows-[theme(spacing.16)_1fr] px-5 transition-[height,opacity,translate] duration-200 motion-reduce:transition-none md:grid-cols-2 md:grid-rows-1"
 		>
 			<section class="flex items-center">
 				<!-- El nombre accesible sale del aria-label y no del contenido: el alt del logo más el
@@ -41,7 +46,7 @@ type VisibilityState = (typeof VisibilityState)[keyof typeof VisibilityState];
 				separaciones en vez de N, sin un margen inicial que no separa nada. -->
 				<ul class="hidden md:flex md:gap-12">
 					@for (navLink of navLinks; track navLink.path) {
-						<li class="font-inter text-sm font-semibold text-neutral-900 hover:text-neutral-900/60">
+						<li [class]="navLinkClasses()" class="font-inter text-sm font-semibold text-neutral-900">
 							<a [routerLink]="navLink.path">{{ navLink.label }}</a>
 						</li>
 					}
@@ -103,9 +108,22 @@ export class Header {
 		transform: (value) => (value ? VisibilityState.Visible : VisibilityState.Hidden),
 	});
 
+	/** Una banda de la página cubre la franja de la barra: el encabezado suelta su fondo y su borde. */
+	public readonly isOverBand = input(false);
+
 	private readonly visibilityClasses = computed(() => this.visibilityClassMap[this.isVisible()]);
 
 	private readonly isHidden = computed(() => this.isVisible() === VisibilityState.Hidden);
+
+	private readonly paintsBackground = computed(() => !this.isOverBand());
+
+	// Sobre la banda, el alfa del hover sube: el 60% que usa el resto del sitio queda en 4,4:1 sobre
+	// `brand-200`, por debajo del 4,5:1 que AA exige para texto normal.
+	private readonly navLinkClasses = computed(() =>
+		this.isOverBand() ? 'hover:text-neutral-900/70' : 'hover:text-neutral-900/60',
+	);
+
+	private readonly borderClasses = computed(() => (this.isOverBand() ? 'border-transparent' : 'border-neutral-200'));
 
 	private readonly collapseMenuOnHideEffect = effect(() => {
 		if (this.isHidden()) {

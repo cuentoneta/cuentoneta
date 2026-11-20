@@ -55,6 +55,9 @@ export class WindowLayoutService implements LayoutService {
 
 	public readonly isHeaderVisible = toSignal(this.isHeaderVisible$, { initialValue: true });
 
+	private readonly _isHeaderOverBand: WritableSignal<boolean> = signal(false);
+	public readonly isHeaderOverBand = this._isHeaderOverBand.asReadonly();
+
 	public get userHasScrolled$() {
 		return this._userHasScrolled$;
 	}
@@ -85,6 +88,10 @@ export class WindowLayoutService implements LayoutService {
 
 	public isPlatformServer() {
 		return isPlatformServer(this.platformId);
+	}
+
+	public setHeaderOverBand(isOverBand: boolean): void {
+		this._isHeaderOverBand.set(isOverBand);
 	}
 
 	public setViewport(): void {
