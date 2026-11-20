@@ -41,7 +41,7 @@
 
 ## Comandos comunes
 
-Usar **siempre `pnpm`** para instalar y ejecutar scripts. Los scripts invocan cada herramienta directo (Angular CLI sobre `angular.json`, ESLint, Vitest, Stylelint, Playwright, Storybook), salvo `pnpm typecheck` y los `pnpm sanity:*`, que todavía envuelven targets de Nx.
+Usar **siempre `pnpm`** para instalar y ejecutar scripts. Los scripts invocan cada herramienta directo —Angular CLI sobre `angular.json`, ESLint, Vitest, Stylelint, Playwright, Storybook y `tsc`—, y los `pnpm sanity:*` corren los scripts del Studio con `pnpm -C cms`.
 
 | Comando                                   | Descripción                                                                                                                                                                                                       |
 | ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -62,10 +62,8 @@ Usar **siempre `pnpm`** para instalar y ejecutar scripts. Los scripts invocan ca
 | `pnpm sanity:typecheck`                   | Type-check del Studio — reproduce en local el step homónimo del gate `studio-build`                                                                                                                               |
 | `pnpm sanity:test`                        | Tests del Studio (Vitest standalone en `cms/`) — reproduce en local el paso de test del gate `studio-build`                                                                                                       |
 | `pnpm sanity:extract-schema`              | Extrae el schema de Sanity                                                                                                                                                                                        |
-| `pnpm sanity:run-typegen-generator`       | Genera tipos a partir del schema                                                                                                                                                                                  |
+| `pnpm sanity:run-typegen-generator`       | Extrae el schema y genera los tipos                                                                                                                                                                               |
 | `pnpm exec sanity migration run <slug>`   | Corre una migración de datos (desde `cms/`; dry-run por defecto). El destino va explícito con `--project` + `--dataset`, que son inseparables → [`sanity-migrations.md`](.claude/references/sanity-migrations.md) |
-
-> **Caché de Nx en local:** los scripts que corren por Nx reusan resultados de la caché, salvo `pnpm sanity:build`, que la saltea con `--skip-nx-cache` porque el CLI de Sanity lee `cms/.env`, gitignoreado. Un target cacheado solo se invalida con lo que declara como input, y Nx deja afuera dos cosas: lo que ignora `.gitignore` —de ahí la negación de `src/app/environments/environment.ts` en `.nxignore`— y los archivos de otro proyecto de Nx. Un target que lee archivos de `cms/` desde la app, o de la app desde `cms/`, los declara como input explícito en su `project.json`.
 
 **Gates de CI** (deben quedar verdes en cada PR): `test`, `lint`, `stylelint`, `typecheck`, `e2e`, `build`, `storybook`, `studio-build`, `guard-config`, `check-agents`, `check-findings`.
 

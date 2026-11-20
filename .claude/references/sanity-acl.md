@@ -340,8 +340,8 @@ el mapper emitió.
 Secuencia típica al tocar una query:
 
 1. Editar la query en `_queries/<dominio>.query.ts`.
-2. Re-extraer schema y regenerar tipos: `pnpm sanity:extract-schema` →
-   `pnpm sanity:run-typegen-generator` (cambian los `*QueryResult`).
+2. Re-extraer schema y regenerar tipos: `pnpm sanity:run-typegen-generator`, que extrae el
+   schema antes de generar (cambian los `*QueryResult`).
 3. Ajustar el/los `mapX(...)` en `_utils/functions.ts` para consumir el nuevo shape crudo.
 4. Si cambió la forma del dominio, actualizar el modelo en `@models/*`.
 5. Correr el [scan de impacto en documentación](../../CLAUDE.md#scan-de-impacto-en-documentación):

@@ -99,7 +99,6 @@ const declaredCommands: DeclaredCommand[] = [
 	...packageScripts('package.json'),
 	...packageScripts('cms/package.json'),
 	...nxTargetCommands('project.json'),
-	...nxTargetCommands('cms/project.json'),
 	...vercelCommands(),
 	...shellLines('.github/workflows', true),
 	...shellLines('.github/actions', true),
@@ -113,7 +112,7 @@ describe('comandos declarados en el repo', () => {
 
 		expect(sources).toContain('package.json › preinstall');
 		expect(sources).toContain('project.json › typecheck');
-		expect(sources).toContain('cms/project.json › typegen');
+		expect(sources).toContain('cms/package.json › typegen');
 		expect(sources).toContain('vercel.json › installCommand');
 		expect(sources).toContain('.github/workflows/ci.yml');
 		expect(sources).toContain('.github/actions/setup-workspace/action.yml');

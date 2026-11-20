@@ -51,7 +51,7 @@ pnpm outdated
 
 ### Consideraciones específicas de Nx
 
-- Es un monorepo Nx 23.3 **single-project** (`@cuentoneta/app`); los scripts de `package.json` envuelven targets de Nx, salvo `pnpm dev` y `pnpm build`, que corren Angular CLI sobre `angular.json`.
+- Es un monorepo Nx 23.3 **single-project** (`@cuentoneta/app`); los scripts de `package.json` invocan cada herramienta directo (Angular CLI sobre `angular.json`, ESLint, Vitest, Playwright, Storybook, `tsc`) y ninguno pasa por Nx.
 - Revisar los generadores de migración de Nx con `pnpm exec nx migrate <package>@<version>` (nunca `nx` crudo ni `npx nx`).
 - Consultar la matriz de compatibilidad de Nx para las versiones de Angular/TypeScript.
 - Considerar cambios en `nx.json` y en la config del proyecto.
@@ -65,7 +65,7 @@ pnpm outdated
 ### Consideraciones específicas de Sanity
 
 - Persistencia/CMS vía **Sanity** (GROQ) con `@sanity/client`; el Studio vive en `/cms` (`@cuentoneta/cms`).
-- Tras subir versiones de Sanity, re-extraer el schema y regenerar tipos: `pnpm sanity:extract-schema` y `pnpm sanity:run-typegen-generator`.
+- Tras subir versiones de Sanity, re-extraer el schema y regenerar tipos con `pnpm sanity:run-typegen-generator`, que extrae el schema antes de generar.
 - Verificar que el Anti-Corruption Layer de mappers (`src/api/_utils/`) sigue traduciendo correctamente los resultados crudos de GROQ al modelo de dominio.
 
 ## Formato de salida
