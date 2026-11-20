@@ -23,9 +23,6 @@ import { CollectionCover } from '../collection-cover/collection-cover';
 					<cuentoneta-collection-cover [imagery]="collection.imagery" />
 				</section>
 				<section class="flex flex-1 flex-col gap-1 overflow-hidden">
-					<!-- TODO(#2271): al montar el deck en la home el nivel deja de ser el
-					  correcto, porque ahí las tarjetas cuelgan del encabezado de sección
-					  propio del deck. -->
 					<h2 class="line-clamp-2 font-inter text-lg leading-6 font-bold text-neutral-900">
 						<a
 							[routerLink]="['/' + appRoutes.Collection, collection.slug]"
