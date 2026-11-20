@@ -8,12 +8,15 @@
  *         tiene una entidad propia, solo los sitewide del app initializer).
  *  - E. Enlaces a los hubs del catálogo (/literary-work y /authors), que son la vía por la que
  *       el crawler alcanza el corpus.
+ *  - F. Jerarquía de encabezados: el outline de <main> no salta niveles, y en cada sección los títulos de
+ *       tarjeta quedan por debajo del encabezado de la sección.
  *
  * Sobre el DOM hidratado, vía navegación in-app (router):
  *  - D. Al navegar de la home a una obra, los bloques sitewide persisten y aparece el Article;
  *       sin duplicar canonical ni <title>.
  */
 import { expect } from '@playwright/test';
+import type { HTMLElement } from 'node-html-parser';
 
 import { test } from '../_utils/test';
 
@@ -133,4 +136,54 @@ test('home — D: al navegar a una obra aparece el Article y el sitewide persist
 	await expect(page.locator(`script[data-schema-id="${SCHEMA_IDS.website}"]`)).toHaveCount(1);
 	await expect(page.locator('link[rel="canonical"]')).toHaveCount(1);
 	await expect(page.locator('head > title')).toHaveCount(1);
+});
+
+function headingLevel(element: HTMLElement): number {
+	return Number(element.tagName[1]);
+}
+
+// Se recorren todos los elementos y se filtran por tag para obtener los encabezados en orden de documento.
+function headingsWithin(root: HTMLElement | null | undefined): HTMLElement[] {
+	return (root?.querySelectorAll('*') ?? []).filter((element) => /^H[1-6]$/.test(element.tagName));
+}
+
+function outline(headings: HTMLElement[]): string {
+	return headings.map((heading) => `${heading.tagName.toLowerCase()} ${heading.text.trim()}`).join('\n');
+}
+
+test('home — F: la jerarquía de encabezados no salta niveles', () => {
+	const headings = headingsWithin(parseHtml(html).querySelector('main'));
+	const [first] = headings;
+
+	expect(headings.length, 'la home no trae encabezados en <main>').toBeGreaterThan(1);
+	expect(first?.tagName, outline(headings)).toBe('H1');
+	const skips = headings
+		.slice(1)
+		.filter((heading, index) => headingLevel(heading) > headingLevel(headings[index]) + 1)
+		.map((heading) => `${heading.tagName.toLowerCase()} ${heading.text.trim()}`);
+	expect(skips, outline(headings)).toEqual([]);
+});
+
+test('home — F: cada título de tarjeta queda por debajo del encabezado de su sección', () => {
+	const main = parseHtml(html).querySelector('main');
+	const regions = main?.querySelectorAll('[role="region"]') ?? [];
+
+	const violations = regions.flatMap((region) => {
+		const [sectionHeading, ...cardHeadings] = headingsWithin(region);
+		if (!sectionHeading) {
+			return [];
+		}
+		return cardHeadings
+			.filter((heading) => headingLevel(heading) <= headingLevel(sectionHeading))
+			.map((heading) => `${region.getAttribute('aria-label')}: ${outline([sectionHeading, heading])}`);
+	});
+	expect(violations).toEqual([]);
+
+	const collectionCardTitles = headingsWithin(main?.querySelector('[role="region"][aria-label="Colecciones"]'))
+		.slice(1)
+		.filter((heading) => heading.querySelector('a[href^="/collection/"]'));
+	expect(
+		collectionCardTitles.length,
+		'la home no trajo ninguna tarjeta de colección: el chequeo de jerarquía no tiene qué verificar (revisar la landing de la semana en el dataset)',
+	).toBeGreaterThan(0);
 });
