@@ -150,7 +150,7 @@ export default [
 		// `**/node_modules/**`. Sin nombrar el árbol de cms, ESLint intenta cargar los eslint.config.js
 		// anidados de sus dependencias y aborta antes de lintear nada.
 		name: 'ignores',
-		ignores: ['!**/*', '.nx', 'dist', 'cms/node_modules/**', 'cms/dist/**', 'cms/.sanity/**'],
+		ignores: ['!**/*', 'dist', 'cms/node_modules/**', 'cms/dist/**', 'cms/.sanity/**'],
 	},
 	...languageConfigs,
 	...storybook.configs['flat/recommended'],
