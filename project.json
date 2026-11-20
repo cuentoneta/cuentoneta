@@ -6,31 +6,6 @@
 	"prefix": "cuentoneta",
 	"tags": [],
 	"targets": {
-		"storybook": {
-			"executor": "@nx/storybook:storybook",
-			"options": {
-				"port": 4400,
-				"configDir": "./.storybook"
-			},
-			"configurations": {
-				"ci": {
-					"quiet": true
-				}
-			}
-		},
-		"build-storybook": {
-			"executor": "@nx/storybook:build",
-			"outputs": ["{options.outputDir}"],
-			"options": {
-				"outputDir": "dist/storybook/cuentoneta",
-				"configDir": "./.storybook"
-			},
-			"configurations": {
-				"ci": {
-					"quiet": true
-				}
-			}
-		},
 		"eslint:lint": {
 			"command": "eslint ./src ./e2e ./cms ./scripts ./tools",
 			"cache": true,
@@ -40,26 +15,6 @@
 			"executor": "nx:run-commands",
 			"options": {
 				"command": "tsc -p tsconfig.typecheck.json --noEmit"
-			}
-		},
-		"test-storybook": {
-			"executor": "nx:run-commands",
-			"options": {
-				"command": "test-storybook -c ./.storybook --url=http://localhost:4400"
-			}
-		},
-		"static-storybook": {
-			"executor": "@nx/web:file-server",
-			"dependsOn": ["build-storybook"],
-			"options": {
-				"buildTarget": "@cuentoneta/app:build-storybook",
-				"staticFilePath": "dist/storybook/cuentoneta",
-				"spa": true
-			},
-			"configurations": {
-				"ci": {
-					"buildTarget": "@cuentoneta/app:build-storybook:ci"
-				}
 			}
 		}
 	}
