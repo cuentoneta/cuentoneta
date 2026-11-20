@@ -13,6 +13,7 @@
 	"scripts": {
 		"preinstall": "npx only-allow@1.2.2 pnpm",
 		"postinstall": "pnpm ops config",
+		"prebuild": "pnpm ops config",
 		"postbuild": "node scripts/fix-index-file-name.mjs",
 		"dev": "ng serve --configuration development",
 		"build": "ng build --configuration production",
