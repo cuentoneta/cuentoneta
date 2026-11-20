@@ -9,18 +9,23 @@ import {
 import { palacioNueveFronterasLiteraryWorkTeaserMock } from './onoff/literary-work/literary-work-teasers.mock';
 import { onoffLiteraryWorksMock } from './onoff-literary-works.mock';
 import { palacioNueveFronterasLiteraryWorkMock } from './onoff/literary-work/el-palacio-de-las-nueve-fronteras.literary-work.mock';
+import { visibleText } from '@testing/corpus-prose';
 
 describe('onoffLiteraryWorkTeasersMock (derivación de teasers desde LiteraryWork)', () => {
-	// El extracto conserva el título de la sección de apertura pero recorta su cuerpo, espejando lo que
-	// hace la query. Se afirma que es un prefijo estricto: igualarlo al cuerpo entero volvería a pasar
-	// si el recorte dejara de aplicarse, y ninguna otra aserción lo notaría.
+	// El extracto conserva el título de la sección de apertura pero recorta su cuerpo, espejando la query
+	// y el ACL. Se afirma que es un prefijo estricto: igualarlo al cuerpo entero volvería a pasar si el
+	// recorte dejara de aplicarse, y ninguna otra aserción lo notaría. Se compara el texto visible porque
+	// el recorte cierra las etiquetas del HTML después del `…`.
 	it('should derive the excerpt from the opening of the source work, truncated', () => {
 		const opening = palacioNueveFronterasLiteraryWorkMock.content[0];
 		const { excerpt } = palacioNueveFronterasLiteraryWorkTeaserMock;
+		const excerptText = visibleText(excerpt.bodyHtml);
+		const openingText = visibleText(opening.bodyHtml);
 
 		expect(excerpt.title).toEqual(opening.title);
-		expect(excerpt.bodyHtml.length).toBeLessThan(opening.bodyHtml.length);
-		expect(opening.bodyHtml.startsWith(excerpt.bodyHtml)).toBe(true);
+		expect(excerptText.length).toBeLessThan(openingText.length);
+		expect(openingText.startsWith(excerptText)).toBe(true);
+		expect(excerpt.bodyHtml.endsWith('…</p>')).toBe(true);
 	});
 
 	it('should carry a rendered bodyHtml in the excerpt', () => {
