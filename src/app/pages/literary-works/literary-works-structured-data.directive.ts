@@ -16,18 +16,19 @@ export class LiteraryWorksStructuredData extends AbstractStructuredData {
 
 	protected applyStructuredData(): void {
 		const literaryWorks = this.host.literaryWorks();
-		// Un `ItemList` vacío afirma que el sitio no tiene obras; no emitir nada no afirma nada.
-		if (literaryWorks.length === 0) {
-			return;
-		}
 		untracked(() => {
-			this.schemaOrg.setPageScopedJsonLd(
-				this.pageSchemaId,
-				buildLiteraryWorkCatalogSchema(literaryWorks, environment.website),
-			);
+			// Siempre: "Inicio → Obras" es verdad haya o no elementos en el catálogo.
 			this.schemaOrg.setPageScopedJsonLd(
 				this.breadcrumbSchemaId,
 				buildLiteraryWorkCatalogBreadcrumb(environment.website),
+			);
+			// Un `ItemList` vacío afirma que el sitio no tiene obras; no emitir nada no afirma nada.
+			if (literaryWorks.length === 0) {
+				return;
+			}
+			this.schemaOrg.setPageScopedJsonLd(
+				this.pageSchemaId,
+				buildLiteraryWorkCatalogSchema(literaryWorks, environment.website),
 			);
 		});
 	}
