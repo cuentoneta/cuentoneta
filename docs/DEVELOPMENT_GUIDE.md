@@ -198,7 +198,7 @@ Para ejecutar una corrida de tests unitarios, ejecutá el siguiente comando.
 pnpm run test
 ```
 
-Esto iniciará una corrida de tests unitarios utilizando Vitest, el cual se encargará de correr los tests unitarios de toda la aplicación —componentes de Angular, endpoints y servicios del backend, modelos de dominio y utilidades—, mostrando los resultados en la consola. El script envuelve el target Nx `vitest:test`, inferido por el plugin `@nx/vitest`.
+Esto iniciará una corrida de tests unitarios utilizando Vitest, el cual se encargará de correr los tests unitarios de toda la aplicación —componentes de Angular, endpoints y servicios del backend, modelos de dominio y utilidades—, mostrando los resultados en la consola. El script corre `vitest run`; con `CI=true` o `COVERAGE=true` genera además la cobertura en `coverage/cuentoneta`.
 
 Para trabajar con los tests en modo _watch_ están disponibles estas dos variantes, que invocan Vitest directamente:
 
@@ -217,7 +217,7 @@ Los tests de e2e corren contra el build SSR de producción (el `webServer` de Pl
 pnpm build && pnpm run test:e2e
 ```
 
-El target `e2e` lo infiere el plugin `@nx/playwright/plugin` y corre `playwright test` directo, sin instalar los browsers. La primera vez, o después de un bump de `@playwright/test`, instalalos con:
+El script corre `playwright test`, sin instalar los browsers. La primera vez, o después de un bump de `@playwright/test`, instalalos con:
 
 ```bash
 pnpm exec playwright install chromium firefox
