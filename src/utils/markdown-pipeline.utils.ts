@@ -5,7 +5,9 @@ import remarkRehype from 'remark-rehype';
 import rehypeSanitize, { defaultSchema, type Options } from 'rehype-sanitize';
 import rehypeStringify from 'rehype-stringify';
 import type { Markdown } from '@models/markdown.model';
+import { LITERARY_WORK_EXCERPT_MAX_LENGTH } from '@models/literary-work-excerpt.model';
 import { createSanitizedHtml, type SanitizedHtml } from '@models/sanitized-html.model';
+import { wordBoundaryEnd } from '@utils/text-excerpt.utils';
 
 // Tipado estructural mínimo del hast: alcanza para el walker sin acoplar @types/hast.
 interface HtmlNode {
@@ -13,6 +15,7 @@ interface HtmlNode {
 	readonly tagName?: string;
 	readonly properties?: Record<string, unknown>;
 	readonly children?: readonly HtmlNode[];
+	readonly value?: string;
 }
 
 function visitImages(node: HtmlNode, transform: (properties: Record<string, unknown>) => void): void {
@@ -50,6 +53,72 @@ function rehypeSanityImages() {
 	};
 }
 
+// Texto visible del árbol en orden de documento. Un <br> aporta un salto de línea: cuenta como un
+// carácter y es un límite de palabra válido.
+function visibleText(node: HtmlNode): string {
+	if (node.type === 'text') {
+		return node.value ?? '';
+	}
+	if (node.type === 'element' && node.tagName === 'br') {
+		return '\n';
+	}
+	return (node.children ?? []).map(visibleText).join('');
+}
+
+// Copia del nodo con solo los primeros `budget.remaining` caracteres visibles; descuenta del presupuesto
+// lo que conserva. Devuelve null para lo que queda entero después del corte, y para un elemento que el
+// corte deja sin contenido.
+function truncateNode(node: HtmlNode, budget: { remaining: number }): HtmlNode | null {
+	if (budget.remaining <= 0) {
+		return null;
+	}
+	if (node.type === 'text') {
+		const value = (node.value ?? '').slice(0, budget.remaining);
+		budget.remaining -= value.length;
+		return { ...node, value };
+	}
+	if (node.type === 'element' && node.tagName === 'br') {
+		budget.remaining -= 1;
+		return node;
+	}
+	if (!node.children) {
+		return node;
+	}
+	const children = node.children.map((child) => truncateNode(child, budget)).filter((child) => child !== null);
+	return node.type === 'element' && children.length === 0 ? null : { ...node, children };
+}
+
+// El `…` va dentro del último texto que quedó, para no sumar un nodo suelto fuera de su párrafo.
+function appendEllipsis(node: HtmlNode): HtmlNode {
+	if (node.type === 'text') {
+		return { ...node, value: `${node.value ?? ''}…` };
+	}
+	const children = [...(node.children ?? [])];
+	const lastWithText = children.map((child) => visibleText(child).length > 0).lastIndexOf(true);
+	const target = children[lastWithText];
+	if (!target) {
+		return node;
+	}
+	children[lastWithText] = appendEllipsis(target);
+	return { ...node, children };
+}
+
+// Corre después del sanitizador y solo poda nodos o acorta texto, así que no puede sumar nada fuera del
+// allow-list. Un árbol que ya cabe sale sin tocar.
+function rehypeTruncate(maxLength: number) {
+	return (tree: HtmlNode): HtmlNode | undefined => {
+		if (maxLength === Infinity) {
+			return undefined;
+		}
+		const text = visibleText(tree);
+		if (text.length <= maxLength) {
+			return undefined;
+		}
+		const truncated = truncateNode(tree, { remaining: wordBoundaryEnd(text, maxLength) });
+		return truncated ? appendEllipsis(truncated) : undefined;
+	};
+}
+
 // Única fuente de verdad del allow-list (docs/LITERARY_WORK_DESIGN.md §9): cambiarla exige
 // actualizar los tests de XSS, y deja stale a la caché de borde hasta que revalide.
 // Privada hasta que exista otro consumidor real.
@@ -70,7 +139,7 @@ const linklessSanitizationSchema: Options = {
 };
 
 // Singletons de módulo: construir el procesador unified es costoso y el pipeline es inmutable.
-function buildPipeline(schema: Options) {
+function buildPipeline(schema: Options, maxVisibleLength = Infinity) {
 	return (
 		unified()
 			.use(remarkParse)
@@ -80,15 +149,26 @@ function buildPipeline(schema: Options) {
 			.use(remarkRehype)
 			.use(rehypeSanityImages)
 			.use(rehypeSanitize, schema)
+			.use(rehypeTruncate, maxVisibleLength)
 			.use(rehypeStringify)
 	);
 }
 
 const pipeline = buildPipeline(literaryWorkSanitizationSchema);
 const linklessPipeline = buildPipeline(linklessSanitizationSchema);
+const excerptPipeline = buildPipeline(literaryWorkSanitizationSchema, LITERARY_WORK_EXCERPT_MAX_LENGTH);
 
 export function markdownToSanitizedHtml(markdown: Markdown): SanitizedHtml {
 	return createSanitizedHtml(String(pipeline.processSync(markdown)));
+}
+
+/**
+ * Igual que `markdownToSanitizedHtml`, recortado a `LITERARY_WORK_EXCERPT_MAX_LENGTH` caracteres visibles en
+ * límite de palabra y terminado en `…`. Un texto que ya cabe sale idéntico a `markdownToSanitizedHtml`.
+ * Lo que queda después del corte se descarta entero, imágenes incluidas.
+ */
+export function markdownToExcerptHtml(markdown: Markdown): SanitizedHtml {
+	return createSanitizedHtml(String(excerptPipeline.processSync(markdown)));
 }
 
 /**
