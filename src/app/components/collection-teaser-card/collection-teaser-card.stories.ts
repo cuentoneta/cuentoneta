@@ -43,6 +43,13 @@ const meta: Meta<CollectionTeaserCard> = {
 			description: 'Colección a previsualizar (título, descripción, tags, contador e imagery)',
 			table: { type: { summary: 'CollectionTeaser' }, defaultValue: { summary: 'undefined' } },
 		},
+		headingLevel: {
+			control: { type: 'inline-radio' },
+			options: [2, 3],
+			description:
+				'Nivel del título: 2 cuando la tarjeta cuelga del encabezado principal de la página, 3 cuando cuelga del encabezado de una sección',
+			table: { type: { summary: '2 | 3' }, defaultValue: { summary: '2' } },
+		},
 	},
 };
 export default meta;
@@ -63,7 +70,7 @@ export const Primary: StoryObj<CollectionTeaserCard> = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Columna izquierda: variante representative (portada editorial propia). Columna derecha: variante sample (composición de portadas de obras).</p><p><strong>Usos:</strong> la página de colecciones, en la grilla de colecciones.</p>`,
+				story: `<p>Columna izquierda: variante representative (portada editorial propia). Columna derecha: variante sample (composición de portadas de obras).</p><p><strong>Usos:</strong> ${docsRef(collectionsPageDocs)}, con el título en nivel 2, y ${docsRef(collectionTeasersDeckDocs)} en la home, con el título en nivel 3.</p>`,
 			},
 		},
 	},
@@ -80,14 +87,15 @@ export const Interactiva: StoryObj<CollectionTeaserCard & { kind: 'representativ
 	render: (args) => ({
 		props: {
 			collection: args.kind === 'representative' ? representativeTeaser : sampleTeaser,
+			headingLevel: args.headingLevel,
 		},
 		template: `
 			<div class="card p-4">
-				<cuentoneta-collection-teaser-card [collection]="collection" />
+				<cuentoneta-collection-teaser-card [collection]="collection" [headingLevel]="headingLevel" />
 			</div>
 		`,
 	}),
-	args: { kind: 'sample' },
+	args: { kind: 'sample', headingLevel: 2 },
 	parameters: {
 		docs: {
 			description: {
