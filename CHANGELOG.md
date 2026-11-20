@@ -50,6 +50,7 @@ Ver el changelog completo en [2.11.5](https://github.com/cuentoneta/cuentoneta/r
 
 - [#2035] - Sanitiza el sink `innerHTML` de la directiva de tooltip.
 - [#2597] - Actualiza pnpm a 12.21.0, migra la configuración a `pnpm-workspace.yaml` y poda los overrides sin efecto.
+- [#2704] - Genera el environment en el build de Storybook y en CI sin depender del `postinstall`, que pnpm 12 saltea cuando el install no tiene nada que hacer.
 
 #### Tooling
 
