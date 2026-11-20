@@ -103,6 +103,21 @@ describe('CollectionTeasersDeck', () => {
 			expect(cardLinks()[0]).toHaveAttribute('href', `/collection/${teaser.slug}`);
 		});
 
+		it('should title each card one level below the section heading', async () => {
+			const teasers = onoffCollectionTeasersMock.slice(0, 4);
+			await render(CollectionTeasersDeck, {
+				inputs: { teasers },
+				providers: defaultProviders,
+				componentImports: defaultImports,
+			});
+
+			expect(screen.getAllByRole('heading', { level: 2 })).toHaveLength(1);
+			expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(teasers.length);
+			teasers.forEach(({ title }) =>
+				expect(screen.getByRole('heading', { level: 3, name: title })).toBeInTheDocument(),
+			);
+		});
+
 		// Sin colecciones y sin carga la sección no queda en blanco debajo de su encabezado.
 		it('should explain the emptiness when there is nothing to show', async () => {
 			await render(CollectionTeasersDeck, {

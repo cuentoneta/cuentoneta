@@ -100,13 +100,13 @@ describe('CollectionTeaserCard', () => {
 	});
 
 	describe('Título de la colección', () => {
-		it('should render the title as a heading that links to the collection', async () => {
+		it('should render the title as a level 3 heading that links to the collection', async () => {
 			await render(CollectionTeaserCard, {
 				inputs: { collection: representativeMock },
 				providers: defaultProviders,
 			});
 
-			const heading = screen.getByRole('heading', { name: representativeMock.title });
+			const heading = screen.getByRole('heading', { level: 3, name: representativeMock.title });
 			expect(within(heading).getByRole('link')).toHaveAttribute('href', `/collection/${representativeMock.slug}`);
 		});
 	});

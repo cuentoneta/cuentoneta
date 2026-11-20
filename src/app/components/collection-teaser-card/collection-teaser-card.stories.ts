@@ -63,7 +63,7 @@ export const Primary: StoryObj<CollectionTeaserCard> = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Columna izquierda: variante representative (portada editorial propia). Columna derecha: variante sample (composición de portadas de obras).</p><p><strong>Usos:</strong> la página de colecciones, en la grilla de colecciones.</p>`,
+				story: `<p>Columna izquierda: variante representative (portada editorial propia). Columna derecha: variante sample (composición de portadas de obras).</p><p><strong>Usos:</strong> ${docsRef(collectionsPageDocs)}, bajo el encabezado de su listado, y ${docsRef(collectionTeasersDeckDocs)} en la home, bajo el encabezado del deck. Por eso el título es siempre un <code>h3</code>.</p>`,
 			},
 		},
 	},

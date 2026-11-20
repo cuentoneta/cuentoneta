@@ -3,12 +3,14 @@
  *
  * La tanda completa de invariantes corre sin `fixme`: esta página no difiere nada, así que el HTML
  * trae encabezado real y los enlaces a cada colección.
+ *
+ * E. Los títulos de las tarjetas quedan un nivel por debajo del encabezado del listado.
  */
 import { expect } from '@playwright/test';
 
 import { test } from '../_utils/test';
 
-import { parseJsonLdBlocks, getMetaContent, getTitleText, getCanonicalHref } from '../_utils/seo';
+import { parseHtml, parseJsonLdBlocks, getMetaContent, getTitleText, getCanonicalHref } from '../_utils/seo';
 import { assertValidJsonLd } from '@testing/json-ld-validation';
 import { collectIndexableHtmlViolations } from '../_utils/seo-invariants';
 import { SCHEMA_IDS, SITEWIDE_SCHEMA_IDS } from '../_utils/seo-fixtures';
@@ -77,5 +79,16 @@ test.describe('collections — HTML server-rendered del catálogo', () => {
 				requiredInternalLinkPrefix: '/collection/',
 			}),
 		).toEqual([]);
+	});
+
+	test('E: los títulos de las tarjetas quedan un nivel por debajo del encabezado del listado', () => {
+		const listing = parseHtml(html).querySelector('[data-testid="collections"]');
+		const [listingHeading, ...cardHeadings] = listing?.querySelectorAll('h1, h2, h3, h4, h5, h6') ?? [];
+
+		expect(listingHeading?.tagName, 'el listado de colecciones no abre con su encabezado').toBe('H2');
+		expect(cardHeadings.length, 'el catálogo no trajo ninguna tarjeta de colección').toBeGreaterThan(0);
+		expect(cardHeadings.filter((heading) => heading.tagName !== 'H3').map((heading) => heading.text.trim())).toEqual(
+			[],
+		);
 	});
 });
