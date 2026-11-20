@@ -7,7 +7,7 @@ import { CoverImage } from '../cover-image/cover-image';
  * Portada de una colección del Design System v3. Es a `imagery` lo que CoverImage es a la portada de
  * una obra: resuelve las dos formas que declara el dominio y produce una caja de alto constante.
  *
- * - `representative`: la imagen editorial de la colección, en la caja de una portada (118×164).
+ * - `representative`: la imagen editorial de la colección, en una caja con el alto de una portada.
  * - `sample`: el abanico de tres portadas de obras que contiene, sobre una caja de 270×164 — la del
  *   frente es la primera, elevada respecto de las laterales, que se apoyan más abajo y sangran por el
  *   borde inferior.

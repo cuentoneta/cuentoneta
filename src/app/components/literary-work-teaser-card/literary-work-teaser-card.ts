@@ -92,13 +92,16 @@ export type LiteraryWorkTeaserCardContent =
 		}
 
 		<!-- Portada: la posiciona la tarjeta (en highlighted va a la derecha con order-last; en el resto,
-			 a la izquierda). El manejo de imagen/placeholder vive en CoverImage. -->
+			 a la izquierda). El ancho de la portada sigue al de su imagen; la ranura de ancho fijo hace que
+			 la columna de texto empiece en el mismo lugar en todas las tarjetas de una lista. -->
 		<ng-template #cover>
-			<cuentoneta-cover-image
-				[src]="coverImageUrl()"
-				[priority]="priority()"
+			<div
+				class="flex w-33 shrink-0 justify-center"
 				[class.order-last]="variant() === 'highlighted'"
-			/>
+				data-testid="cover-slot"
+			>
+				<cuentoneta-cover-image [src]="coverImageUrl()" [priority]="priority()" />
+			</div>
 		</ng-template>
 
 		<!-- Autor: avatar pequeño + nombre. Implementación propia del card (Design System v3): no usa
