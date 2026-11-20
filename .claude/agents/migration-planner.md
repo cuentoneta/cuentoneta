@@ -51,7 +51,7 @@ pnpm outdated
 
 ### Consideraciones específicas de Nx
 
-- Es un monorepo Nx 23.3 **single-project** (`@cuentoneta/app`); los scripts de `package.json` envuelven targets de Nx.
+- Es un monorepo Nx 23.3 **single-project** (`@cuentoneta/app`); los scripts de `package.json` envuelven targets de Nx, salvo `pnpm dev` y `pnpm build`, que corren Angular CLI sobre `angular.json`.
 - Revisar los generadores de migración de Nx con `pnpm exec nx migrate <package>@<version>` (nunca `nx` crudo ni `npx nx`).
 - Consultar la matriz de compatibilidad de Nx para las versiones de Angular/TypeScript.
 - Considerar cambios en `nx.json` y en la config del proyecto.

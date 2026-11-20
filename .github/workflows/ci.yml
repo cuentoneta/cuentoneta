@@ -179,18 +179,13 @@ jobs:
       # `development` compartido que los devs mutan) para reducir la fragilidad por curación de contenido
       # (#1722); en local se usa `development` (default del .env). staging es público → no requiere token.
       - name: Build de producción para e2e (SSR real)
-        run: npx nx run @cuentoneta/app:build:production
+        run: pnpm build
         env:
           SANITY_STUDIO_DATASET: staging
           SANITY_STUDIO_PROJECT_ID: ${{ secrets.SANITY_STUDIO_PROJECT_ID || 's4dbqkc5' }}
           SANITY_STUDIO_TOKEN: ${{ secrets.SANITY_STUDIO_TOKEN }}
           CLARITY_TOKEN: ${{ secrets.CLARITY_TOKEN }}
           CLARITY_PROJECT_ID: ${{ secrets.CLARITY_PROJECT_ID }}
-
-      # Replica el hook `postbuild` de package.json, que `nx run` directo no dispara (solo el lifecycle
-      # de `pnpm run build`). Parchea la referencia al index en el bundle del server.
-      - name: Fix index file reference (postbuild)
-        run: node scripts/fix-index-file-name.mjs
 
       # La versión de Playwright vive en el lockfile, así que la key deriva de ahí: un bump invalida
       # el cache solo.
@@ -247,7 +242,7 @@ jobs:
             nx-cache-build-
 
       - name: Run build
-        run: npx nx run @cuentoneta/app:build:production
+        run: pnpm build
         env:
           # Sanity / terceros. En PRs de forks los secrets llegan vacíos: para projectId/dataset
           # (públicos, ya son los defaults de set-environment.ts) caemos a esos valores para que el
