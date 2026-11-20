@@ -94,7 +94,6 @@ export default class LiteraryWorkPage implements LiteraryWorkHost {
 				.join(', ') ?? '',
 	);
 
-	// TODO(#1471): mover esta lógica a un service y revisar si hace falta declarar tipos de rendering.
 	private readonly sections = computed(
 		() =>
 			this.literaryWork()?.content.map((section) => ({
