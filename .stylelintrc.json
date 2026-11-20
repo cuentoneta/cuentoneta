@@ -46,6 +46,7 @@
 				]
 			}
 		],
+		"at-rule-prelude-no-invalid": [true, { "ignoreAtRules": ["apply"] }],
 		"no-descending-specificity": null,
 		"import-notation": "string",
 		"custom-property-pattern": null,
