@@ -20,18 +20,18 @@
 
 ## Resumen del proyecto
 
-| Aspecto                | Valor                                                             |
-| ---------------------- | ----------------------------------------------------------------- |
-| **Framework**          | Angular 22 (standalone, **zoneless**, OnPush, SSR/hidratación)    |
-| **Lenguaje**           | TypeScript (modo estricto)                                        |
-| **Monorepo**           | Nx 23.3 (single-project `@cuentoneta/app`) — builder vite/esbuild |
-| **Runtime**            | **Node 24.x ≥ 24.18** (`.nvmrc`); `engine-strict` rechaza 25+     |
-| **Gestor de paquetes** | **pnpm** (10.x). `npm`/`yarn` están bloqueados (`only-allow`)     |
-| **Backend**            | **Hono** (`src/api/`) + `@hono/zod-validator`                     |
-| **Persistencia/CMS**   | **Sanity** (GROQ) vía `@sanity/client`. Studio en `/cms`          |
-| **Testing**            | **Vitest** + Angular Testing Library + `@test-utils`              |
-| **Estilos**            | Tailwind v4 + Stylelint                                           |
-| **Componentes**        | Storybook 10                                                      |
+| Aspecto                | Valor                                                                  |
+| ---------------------- | ---------------------------------------------------------------------- |
+| **Framework**          | Angular 22 (standalone, **zoneless**, OnPush, SSR/hidratación)         |
+| **Lenguaje**           | TypeScript (modo estricto)                                             |
+| **Build**              | Angular CLI (`angular.json`) — builder `@angular/build` (esbuild/vite) |
+| **Runtime**            | **Node 24.x ≥ 24.18** (`.nvmrc`); `engine-strict` rechaza 25+          |
+| **Gestor de paquetes** | **pnpm** (10.x). `npm`/`yarn` están bloqueados (`only-allow`)          |
+| **Backend**            | **Hono** (`src/api/`) + `@hono/zod-validator`                          |
+| **Persistencia/CMS**   | **Sanity** (GROQ) vía `@sanity/client`. Studio en `/cms`               |
+| **Testing**            | **Vitest** + Angular Testing Library + `@test-utils`                   |
+| **Estilos**            | Tailwind v4 + Stylelint                                                |
+| **Componentes**        | Storybook 10                                                           |
 
 **Aliases de paths** (ver `tsconfig.json`): kernel compartido a top-level `@models/*`, `@utils/*`, `@sanity-types`, `@mocks/*` (viven en `src/models`/`src/utils`/`src/sanity`/`src/mocks`, consumidos por app, api **y** el Studio de Sanity — `cms/` los resuelve con sus propios alias, declarados en `cms/sanity.cli.ts`, `cms/vitest.config.ts` y `cms/tsconfig.json`); frontend `@components/*`, `@app-models/*` (tipos de configuración de UI de `src/app/models`, no kernel), `@app-utils/*` (utils de `src/app/utils` acoplados a `environment`, no kernel); backend `@api/*` (raíz de `src/api`, para `scripts/` y specs que consumen módulos o helpers del backend), `@middleware/*`, `@queries/*`, `@schemas/*`; test `@test-utils`, `@testing/*`.
 

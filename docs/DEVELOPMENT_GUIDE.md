@@ -60,9 +60,8 @@ El tech stack actualmente utilizado para el desarrollo de La Cuentoneta es:
 - **<a href="https://git-scm.com/">Git</a>** como herramienta de control de versiones
 - **<a href="https://github.com">GitHub</a>** como host de la base de código
 - **<a href="https://pnpm.io/es/">pnpm</a>** como gestor de paquetes
-- **<a href="https://nx.dev/angular">Nx</a>** como gestor de monorepo y task runner
 
-Junto con Nx, el proyecto cuenta con ESLint, Prettier y Stylelint ya configuradas como dependencias.
+El proyecto cuenta además con ESLint, Prettier y Stylelint ya configuradas como dependencias.
 
 ### Para el desarrollo de la plataforma web
 
@@ -124,10 +123,8 @@ en el canal **[#🚐 | la-cuentoneta][dc-channel]** en Discord.
 ### Requerimientos
 
 - Tener instalada una versión de [Node](https://nodejs.org/es/) **24** (Active LTS "Krypton") igual o superior a `v24.18.0` e **inferior a 25** (el `.npmrc` declara `engine-strict`, así que una versión fuera de ese rango **falla la instalación** en vez de solo advertir).
-  El repo trae un `.nvmrc` (`nvm use` / `fnm use`). El proyecto no soporta Node 22 ni anteriores, y por ahora tampoco Node 25+ (Nx falla en el teardown de `libuv` bajo v26).
+  El repo trae un `.nvmrc` (`nvm use` / `fnm use`). El proyecto no soporta Node 22 ni anteriores, ni Node 25+.
 - Instalar `pnpm`, un gestor de paquetes alternativo para Node: `npm install -g pnpm`. Se recomienda la versión `10.12.0` o superior. Los settings de pnpm, como los `overrides` de dependencias, viven en `pnpm-workspace.yaml` (uno en la raíz y otro en `cms/`), no en el campo `pnpm` de `package.json`.
-- Instalar `nx`, un CLI para desarrollo de monorepos: `pnpm install -g nx`. Se recomienda la versión `23.0.0` o
-  superior.
 - Tener un editor de texto o IDE ([Visual Studio Code](https://code.visualstudio.com/), [Vim](https://www.vim.org/), [WebStorm](https://www.jetbrains.com/es-es/webstorm/), etc).
 - Tener una cuenta en [GitHub](https://docs.github.com/es/get-started/signing-up-for-github/signing-up-for-a-new-github-account).
 - Leer y seguir el [código de conducta][doc-code_of_conduct].

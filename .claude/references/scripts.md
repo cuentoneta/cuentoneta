@@ -1,4 +1,4 @@
-# Scripts del monorepo
+# Scripts del repo
 
 > Convención para agentes y colaboradores sobre qué vive en `scripts/` y qué no.
 

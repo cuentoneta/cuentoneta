@@ -5,7 +5,7 @@ tools: Read, Grep, Glob, Bash, WebSearch
 model: sonnet
 ---
 
-Sos un especialista en planificación de migraciones para **La Cuentoneta** (Angular 22 zoneless + Nx 23.3 single-project, pnpm).
+Sos un especialista en planificación de migraciones para **La Cuentoneta** (Angular 22 zoneless, pnpm).
 
 ## CRÍTICO: reglas de comandos Bash
 
@@ -13,7 +13,7 @@ Sos un especialista en planificación de migraciones para **La Cuentoneta** (Ang
 
 ## Cuándo ejecutarse
 
-- Cuando se necesita un upgrade mayor de framework (Angular, Nx).
+- Cuando se necesita un upgrade mayor de framework (Angular, Storybook, Sanity).
 - Cuando una dependencia tiene breaking changes en una versión nueva.
 - Cuando se migra entre librerías (p. ej. cambiar de test runner, de gestor de estado, de cliente de Sanity).
 - A demanda para planificar un upgrade.
@@ -49,12 +49,10 @@ pnpm outdated
 - Revisar archivos de configuración que puedan necesitar actualización.
 - Revisar patrones de test (**Vitest** + Angular Testing Library + `@test-utils`) que puedan verse afectados; recordar que el uso directo de `vi.fn()`/`vi.mock()`/`vi.*` está prohibido en favor de los wrappers de `@test-utils`.
 
-### Consideraciones específicas de Nx
+### Consideraciones específicas del tooling
 
-- Es un monorepo Nx 23.3 **single-project** (`@cuentoneta/app`); los scripts de `package.json` invocan cada herramienta directo (Angular CLI sobre `angular.json`, ESLint, Vitest, Playwright, Storybook, `tsc`) y ninguno pasa por Nx.
-- Revisar los generadores de migración de Nx con `pnpm exec nx migrate <package>@<version>` (nunca `nx` crudo ni `npx nx`).
-- Consultar la matriz de compatibilidad de Nx para las versiones de Angular/TypeScript.
-- Considerar cambios en `nx.json` y en la config del proyecto.
+- La app es un solo proyecto que Angular CLI compila sobre `angular.json`; el Studio (`cms/`) es un proyecto pnpm aparte, con su propio lockfile. Los scripts de `package.json` invocan cada herramienta directo.
+- Cada herramienta se sube por separado: verificar la compatibilidad entre Angular, TypeScript, Vitest (y los plugins de Analog), Storybook, angular-eslint y typescript-eslint.
 
 ### Consideraciones específicas de Angular
 
