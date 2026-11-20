@@ -26,7 +26,7 @@ import { CollectionTeaserCardSkeleton } from '@components/collection-teaser-card
 					}
 				} @else {
 					@for (collection of teasers(); track collection.slug) {
-						<cuentoneta-collection-teaser-card [collection]="collection" class="card w-full" />
+						<cuentoneta-collection-teaser-card [collection]="collection" [headingLevel]="3" class="card w-full" />
 					}
 				}
 			</section>
