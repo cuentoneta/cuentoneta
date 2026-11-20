@@ -1,11 +1,4 @@
 import { defineConfig, devices } from '@playwright/test';
-import { nxE2EPreset } from '@nx/playwright/preset';
-import { workspaceRoot } from '@nx/devkit';
-import { fileURLToPath } from 'node:url';
-import { dirname } from 'node:path';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 // For CI, you may want to set BASE_URL to the deployed application.
 // El default es el server SSR de producción (`src/server.ts`, puerto 4000), no el dev-server: los
@@ -13,17 +6,21 @@ const __dirname = dirname(__filename);
 // (comportamiento real de `@defer`, deopt por proxy headers) que el dev-server no reproduce.
 const baseURL = process.env['BASE_URL'] || 'http://localhost:4000';
 
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-// require('dotenv').config();
+const isCI = !!process.env['CI'];
 
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-	...nxE2EPreset(__filename, { testDir: './e2e' }),
+	testDir: './e2e',
+	outputDir: 'dist/.playwright/test-output',
+	fullyParallel: true,
+	forbidOnly: isCI,
+	retries: isCI ? 2 : 0,
+	workers: isCI ? 1 : undefined,
+	// `list` lista cada test en el log de CI; el `html` solo informa en consola dónde dejó el reporte que el
+	// job sube como artefacto.
+	reporter: [['list'], ['html', { outputFolder: 'dist/.playwright/playwright-report', open: 'on-failure' }]],
 	// El loader de Playwright transpila los specs por su cuenta y no aplica los `paths` del tsconfig
 	// sin esta opción explícita: la declara para resolver los aliases del repo (p. ej. @testing) en runtime.
 	tsconfig: './tsconfig.json',
@@ -41,43 +38,16 @@ export default defineConfig({
 	webServer: {
 		command: 'node dist/cuentoneta/server/server.mjs',
 		url: 'http://localhost:4000',
-		reuseExistingServer: !process.env.CI,
-		cwd: workspaceRoot,
+		reuseExistingServer: !isCI,
 	},
 	projects: [
 		{
 			name: 'chromium',
 			use: { ...devices['Desktop Chrome'] },
 		},
-
 		{
 			name: 'firefox',
 			use: { ...devices['Desktop Firefox'] },
 		},
-
-		/* {
-		 	name: 'webkit',
-		 	use: { ...devices['Desktop Safari'] },
-		 },*/
-
-		// Uncomment for mobile browsers support
-		/* {
-      name: 'Mobile Chrome',
-      use: { ...devices['Pixel 5'] },
-    },
-    {
-      name: 'Mobile Safari',
-      use: { ...devices['iPhone 12'] },
-    }, */
-
-		// Uncomment for branded browsers
-		/* {
-      name: 'Microsoft Edge',
-      use: { ...devices['Desktop Edge'], channel: 'msedge' },
-    },
-    {
-      name: 'Google Chrome',
-      use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-    } */
 	],
 });

@@ -9,13 +9,13 @@ import { assertMetafile, parseBundleStatsArgs, renderSummary, summarizeInitialBu
 const root = join(import.meta.dirname, '..', '..');
 
 // El build va a un directorio propio y no a `dist/`: sin el `postbuild` de `pnpm build`, dejaría ahí un
-// server que apunta al index equivocado. Se invoca el bin de Nx con el mismo `node`, no `pnpm`: en
-// Windows `pnpm` es un `.cmd` que `execFileSync` no ejecuta sin shell.
+// server que apunta al index equivocado. Se invoca el bin de Angular CLI con el mismo `node`, no `pnpm`:
+// en Windows `pnpm` es un `.cmd` que `execFileSync` no ejecuta sin shell.
 function buildWithStats(outputPath: string): boolean {
-	const nx = createRequire(import.meta.url).resolve('nx/bin/nx.js');
-	const args = ['run', '@cuentoneta/app:build:production', '--statsJson', `--outputPath=${relative(root, outputPath)}`];
+	const ng = createRequire(import.meta.url).resolve('@angular/cli/bin/ng.js');
+	const args = ['build', '--configuration', 'production', '--stats-json', `--output-path=${relative(root, outputPath)}`];
 	try {
-		execFileSync(process.execPath, [nx, ...args], { cwd: root, stdio: 'inherit' });
+		execFileSync(process.execPath, [ng, ...args], { cwd: root, stdio: 'inherit' });
 		return true;
 	} catch {
 		console.error('El build de producción falló; su salida está arriba.');

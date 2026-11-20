@@ -20,18 +20,18 @@
 
 ## Resumen del proyecto
 
-| Aspecto                | Valor                                                             |
-| ---------------------- | ----------------------------------------------------------------- |
-| **Framework**          | Angular 22 (standalone, **zoneless**, OnPush, SSR/hidratación)    |
-| **Lenguaje**           | TypeScript (modo estricto)                                        |
-| **Monorepo**           | Nx 23.3 (single-project `@cuentoneta/app`) — builder vite/esbuild |
-| **Runtime**            | **Node 24.x ≥ 24.18** (`.nvmrc`); `engine-strict` rechaza 25+     |
-| **Gestor de paquetes** | **pnpm** (10.x). `npm`/`yarn` están bloqueados (`only-allow`)     |
-| **Backend**            | **Hono** (`src/api/`) + `@hono/zod-validator`                     |
-| **Persistencia/CMS**   | **Sanity** (GROQ) vía `@sanity/client`. Studio en `/cms`          |
-| **Testing**            | **Vitest** + Angular Testing Library + `@test-utils`              |
-| **Estilos**            | Tailwind v4 + Stylelint                                           |
-| **Componentes**        | Storybook 10                                                      |
+| Aspecto                | Valor                                                                  |
+| ---------------------- | ---------------------------------------------------------------------- |
+| **Framework**          | Angular 22 (standalone, **zoneless**, OnPush, SSR/hidratación)         |
+| **Lenguaje**           | TypeScript (modo estricto)                                             |
+| **Build**              | Angular CLI (`angular.json`) — builder `@angular/build` (esbuild/vite) |
+| **Runtime**            | **Node 24.x ≥ 24.18** (`.nvmrc`); `engine-strict` rechaza 25+          |
+| **Gestor de paquetes** | **pnpm** (10.x). `npm`/`yarn` están bloqueados (`only-allow`)          |
+| **Backend**            | **Hono** (`src/api/`) + `@hono/zod-validator`                          |
+| **Persistencia/CMS**   | **Sanity** (GROQ) vía `@sanity/client`. Studio en `/cms`               |
+| **Testing**            | **Vitest** + Angular Testing Library + `@test-utils`                   |
+| **Estilos**            | Tailwind v4 + Stylelint                                                |
+| **Componentes**        | Storybook 10                                                           |
 
 **Aliases de paths** (ver `tsconfig.json`): kernel compartido a top-level `@models/*`, `@utils/*`, `@sanity-types`, `@mocks/*` (viven en `src/models`/`src/utils`/`src/sanity`/`src/mocks`, consumidos por app, api **y** el Studio de Sanity — `cms/` los resuelve con sus propios alias, declarados en `cms/sanity.cli.ts`, `cms/vitest.config.ts` y `cms/tsconfig.json`); frontend `@components/*`, `@app-models/*` (tipos de configuración de UI de `src/app/models`, no kernel), `@app-utils/*` (utils de `src/app/utils` acoplados a `environment`, no kernel); backend `@api/*` (raíz de `src/api`, para `scripts/` y specs que consumen módulos o helpers del backend), `@middleware/*`, `@queries/*`, `@schemas/*`; test `@test-utils`, `@testing/*`.
 
@@ -41,7 +41,7 @@
 
 ## Comandos comunes
 
-Usar **siempre `pnpm`** para instalar y ejecutar scripts. Los scripts envuelven targets de Nx del proyecto `@cuentoneta/app`.
+Usar **siempre `pnpm`** para instalar y ejecutar scripts. Los scripts invocan cada herramienta directo —Angular CLI sobre `angular.json`, ESLint, Vitest, Stylelint, Playwright, Storybook y `tsc`—, y los `pnpm sanity:*` corren los scripts del Studio con `pnpm -C cms`.
 
 | Comando                                   | Descripción                                                                                                                                                                                                       |
 | ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -52,9 +52,9 @@ Usar **siempre `pnpm`** para instalar y ejecutar scripts. Los scripts envuelven 
 | `pnpm ops`                                | Punto de entrada de los scripts del repo; sin argumentos imprime el catálogo de tareas y con un id corre la tarea (`--no-dry-run` habilita la escritura) → [`ops.md`](.claude/references/ops.md)                  |
 | `pnpm stylelint`                          | Stylelint sobre CSS                                                                                                                                                                                               |
 | `pnpm typecheck`                          | Type-check estricto (`tsc --noEmit`)                                                                                                                                                                              |
-| `pnpm test`                               | Tests unitarios (Vitest). Envuelve el target Nx **`vitest:test`**, inferido por el plugin `@nx/vitest` — no `test`, que es el nombre que Nx ya le da a este mismo script                                          |
-| `pnpm test:watch`                         | Tests en watch (invoca Vitest directo, sin Nx)                                                                                                                                                                    |
-| `pnpm test:ui`                            | Interfaz web de Vitest en watch (`@vitest/ui`), sin Nx                                                                                                                                                            |
+| `pnpm test`                               | Tests unitarios (Vitest, `vitest run`)                                                                                                                                                                            |
+| `pnpm test:watch`                         | Tests en watch (Vitest)                                                                                                                                                                                           |
+| `pnpm test:ui`                            | Interfaz web de Vitest en watch (`@vitest/ui`)                                                                                                                                                                    |
 | `pnpm test:e2e`                           | E2E (Playwright)                                                                                                                                                                                                  |
 | `pnpm storybook` / `pnpm storybook:build` | Storybook dev / build                                                                                                                                                                                             |
 | `pnpm sanity:dev`                         | Studio de Sanity (`@cuentoneta/cms`)                                                                                                                                                                              |
@@ -62,10 +62,8 @@ Usar **siempre `pnpm`** para instalar y ejecutar scripts. Los scripts envuelven 
 | `pnpm sanity:typecheck`                   | Type-check del Studio — reproduce en local el step homónimo del gate `studio-build`                                                                                                                               |
 | `pnpm sanity:test`                        | Tests del Studio (Vitest standalone en `cms/`) — reproduce en local el paso de test del gate `studio-build`                                                                                                       |
 | `pnpm sanity:extract-schema`              | Extrae el schema de Sanity                                                                                                                                                                                        |
-| `pnpm sanity:run-typegen-generator`       | Genera tipos a partir del schema                                                                                                                                                                                  |
+| `pnpm sanity:run-typegen-generator`       | Extrae el schema y genera los tipos                                                                                                                                                                               |
 | `pnpm exec sanity migration run <slug>`   | Corre una migración de datos (desde `cms/`; dry-run por defecto). El destino va explícito con `--project` + `--dataset`, que son inseparables → [`sanity-migrations.md`](.claude/references/sanity-migrations.md) |
-
-> **Caché de Nx en local:** los scripts reusan resultados de la caché, salvo `pnpm sanity:build`, que la saltea con `--skip-nx-cache` porque el CLI de Sanity lee `cms/.env`, gitignoreado. Un target cacheado solo se invalida con lo que declara como input, y Nx deja afuera dos cosas: lo que ignora `.gitignore` —de ahí la negación de `src/app/environments/environment.ts` en `.nxignore`— y los archivos de otro proyecto de Nx. Un target que lee archivos de `cms/` desde la app, o de la app desde `cms/`, los declara como input explícito en su `project.json`.
 
 **Gates de CI** (deben quedar verdes en cada PR): `test`, `lint`, `stylelint`, `typecheck`, `e2e`, `build`, `storybook`, `studio-build`, `guard-config`, `check-agents`, `check-findings`.
 
@@ -73,7 +71,7 @@ Usar **siempre `pnpm`** para instalar y ejecutar scripts. Los scripts envuelven 
 
 > El gate `typecheck` (`pnpm typecheck` → `tsc --noEmit` estricto) cubre el **TS puro** de la app (`src/**`, incluidos `*.spec.ts` y `*.stories.ts`), `scripts/`, `e2e/` y `tools/`. En `tools/` alcanza también los `.js` —las reglas de ESLint y de Stylelint—, que entran al programa con `allowJs` y se chequean con `checkJs`: son código del que depende el linteo de todo el repo, y una regla que decide mal vuelve permisivo al gate `lint` en silencio. Con `verbatimModuleSyntax` activo, rechaza además un import de solo-tipo sin `type` (TS1484). **No** valida plantillas Angular: eso lo hace solo `build`, vía `ngtsc`, porque Storybook y Vitest compilan en JIT y no hacen type-check de plantillas. El proyecto `cms/` no lo cubre este gate: tiene su propio type-check, dentro del gate `studio-build` (ver abajo).
 >
-> El gate **`studio-build`** cubre `cms/` con un job aparte, con install propio (proyecto pnpm standalone), en tres pasos secuenciales: primero el **type-check** (`pnpm -C cms run typecheck` → `tsc -p tsconfig.typecheck.json`, que extiende el `tsconfig.json` de editor y aplica la misma regla sobre los imports de solo-tipo), después los **tests** (`pnpm -C cms test`, Vitest standalone — ver [`testing.md`](.claude/references/testing.md)) y por último el **build** real del Studio (`pnpm -C cms exec sanity build`, el bundler Vite/Rollup). No es `typecheck` ni `build` de la app. El **lint** de `cms/` no corre acá: va en el gate `lint` (el target `eslint:lint` de `project.json` incluye `cms`), porque solo lee fuentes TS y no necesita el `node_modules` propio del Studio. Cierra el punto ciego por el que un bump roto de una dependencia del Studio, o una regresión en su lógica Node o de tipos, podía llegar a `develop` sin señal de CI.
+> El gate **`studio-build`** cubre `cms/` con un job aparte, con install propio (proyecto pnpm standalone), en tres pasos secuenciales: primero el **type-check** (`pnpm -C cms run typecheck` → `tsc -p tsconfig.typecheck.json`, que extiende el `tsconfig.json` de editor y aplica la misma regla sobre los imports de solo-tipo), después los **tests** (`pnpm -C cms test`, Vitest standalone — ver [`testing.md`](.claude/references/testing.md)) y por último el **build** real del Studio (`pnpm -C cms exec sanity build`, el bundler Vite/Rollup). No es `typecheck` ni `build` de la app. El **lint** de `cms/` no corre acá: va en el gate `lint` (`pnpm lint` incluye `cms`), porque solo lee fuentes TS y no necesita el `node_modules` propio del Studio. Cierra el punto ciego por el que un bump roto de una dependencia del Studio, o una regresión en su lógica Node o de tipos, podía llegar a `develop` sin señal de CI.
 >
 > El gate **`check-findings`** (`.github/workflows/check-findings.yml`, workflow aparte de `ci.yml`) valida que los mensajes de commit del PR (vía la API de GitHub) y el cuerpo del PR no citen un identificador de hallazgo de review. Corre además en el evento `pull_request.edited` —el único de los gates que lo hace—, porque es la única forma de que corregir el cuerpo del PR vuelva a evaluar el check.
 
@@ -157,7 +155,7 @@ Si un cambio toca tipos, schemas de Sanity/Zod, contratos de API o terminología
 
 ### Config de Claude (equipo vs personal)
 
-- **`.mcp.json`** (raíz, versionado): servidores MCP del equipo — **Sanity** (remoto `https://mcp.sanity.io`, OAuth; no requiere token en el archivo), **Figma** (remoto `https://mcp.figma.com/mcp`, OAuth; para desarrollo de componentes a partir del diseño) y **nx** (análisis del workspace). Sin secrets.
+- **`.mcp.json`** (raíz, versionado): servidores MCP del equipo — **Sanity** (remoto `https://mcp.sanity.io`, OAuth; no requiere token en el archivo) y **Figma** (remoto `https://mcp.figma.com/mcp`, OAuth; para desarrollo de componentes a partir del diseño). Sin secrets.
 - **`.claude/settings.json`** (versionado): permisos de equipo — `deny` de lectura/escritura/edición de `.env*` en la raíz y en cualquier subdirectorio (`**/.env*`, cubre `./.env` y `./cms/.env`), más bloqueo de su creación por shell (redirecciones `>`/`>>`, `tee`, `touch`, `cp`, `mv`); y una `allow` mínima (gates de CI con `pnpm` + inspección read-only de git/gh).
 - **`.claude/agents/*.md`** y **`.claude/skills/<skill>/SKILL.md`** (versionados): un `description:` **no puede contener `: `** (dos puntos + espacio) sin comillas — YAML lo lee como un mapping anidado, el frontmatter queda inválido y el agente o la skill **no carga, sin emitir ningún error**. Usar un guion (`—`) en su lugar. Lo verifica el gate **`check-agents`** (`pnpm ops check:agents` → `scripts/check-claude-docs.ts`, que además valida las anclas a `CLAUDE.md`, las rutas citadas en las referencias y que ninguna nombre un issue —por numeral, URL o `GH-`— fuera de la allowlist de gobernanza); el fallo silencioso costó dos agentes caídos (#1874).
 - **Hook `PreToolUse` de `Edit`/`Write`** (versionado en `.claude/settings.json`): [`scripts/block-issue-refs-in-comments.ts`](scripts/block-issue-refs-in-comments.ts) rechaza escribir un comentario de código bajo `src/`, `cms/` o `scripts/` que cite un issue, salvo las dos excepciones de [Comentarios](#comentarios), o que cite un identificador de hallazgo de review (`R1`, `S3`), que no tiene excepción. Los archivos que **definen** esa convención llevan una allowlist por ruta en el propio predicado: sin ella, el checker se bloquearía a sí mismo, porque sus fixtures son deliberadamente ofensivos. Corre con **`node` directo** —sin `pnpm exec` ni loader—, apoyado en el type-stripping nativo que trae **todo** Node 24 — el piso concreto de `engines` lo fija CI, no el hook. De ahí que su cadena de imports lleve extensión `.ts` explícita, que es lo que ESM exige. **Degrada en abierto por dos vías**: sin type-stripping sale con código 1, y sin `node` en el `PATH` del proceso que dispara hooks no llega a correr; en ninguna de las dos bloquea. Es una **ayuda local, no un gate**: solo ve el texto que la herramienta agrega, no lo ya commiteado ni lo escrito por fuera.

@@ -13,6 +13,31 @@ describe('sanityImageLoader', () => {
 		expect(sanityImageLoader({ src: cropped, width: 400 })).toBe(`${cropped}&w=400&auto=format&q=75`);
 	});
 
+	it('pide el alto en lugar del ancho cuando el consumidor declara la proporción', () => {
+		const loaderParams = { heightRatio: 164 / 118 };
+
+		expect(sanityImageLoader({ src: CDN, width: 118, loaderParams })).toBe(`${CDN}?h=164&auto=format&q=75`);
+		expect(sanityImageLoader({ src: CDN, width: 236, loaderParams })).toBe(`${CDN}?h=328&auto=format&q=75`);
+	});
+
+	it('respeta el recorte del Studio al pedir por alto', () => {
+		const cropped = `${CDN}?rect=0,0,660,660`;
+
+		expect(sanityImageLoader({ src: cropped, width: 118, loaderParams: { heightRatio: 164 / 118 } })).toBe(
+			`${cropped}&h=164&auto=format&q=75`,
+		);
+	});
+
+	it('toma el ancho del consumidor, y no el del <img>, para calcular el alto', () => {
+		const loaderParams = { width: 118, heightRatio: 164 / 118 };
+
+		expect(sanityImageLoader({ src: CDN, loaderParams })).toBe(`${CDN}?h=164&auto=format&q=75`);
+	});
+
+	it('sirve el original cuando se declara la proporción pero no hay ancho', () => {
+		expect(sanityImageLoader({ src: CDN, loaderParams: { heightRatio: 1.5 } })).toBe(`${CDN}?auto=format&q=75`);
+	});
+
 	it('omite el ancho cuando el consumidor no lo declara', () => {
 		expect(sanityImageLoader({ src: CDN })).toBe(`${CDN}?auto=format&q=75`);
 	});

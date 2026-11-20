@@ -10,7 +10,7 @@ import { join } from 'node:path';
 
 // Generados y copias de trabajo: escanear un worktree reporta el estado de otra rama, no el de este
 // árbol. Saltear symlinks evita que un enlace colgado de pnpm aborte el recorrido.
-const SKIP = new Set(['node_modules', '.git', 'worktrees', 'dist', '.nx', 'coverage']);
+const SKIP = new Set(['node_modules', '.git', 'worktrees', 'dist', 'coverage']);
 
 export function listClaudeMarkdownFiles(root: string): string[] {
 	const walk = (dir: string): string[] =>

@@ -1,5 +1,5 @@
 // Carga el archivo .env en el contexto de prerendering, donde las variables
-// de entorno no son inyectadas automáticamente por Nx/Angular.
+// de entorno no son inyectadas automáticamente por Angular.
 try {
 	process.loadEnvFile();
 } catch {
