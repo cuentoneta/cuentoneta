@@ -25,8 +25,13 @@ runs:
         node-version: 24.18.0
         cache: 'pnpm'
 
-    # Sin `--ignore-scripts`: `allowBuilds` ya acota qué dependencias corren scripts, así que el install deja
-    # el workspace listo, con los binarios, el environment generado y los hooks.
+    # Sin `--ignore-scripts`: `allowBuilds` ya acota qué dependencias corren scripts.
     - name: Install dependencies
       shell: bash
       run: pnpm install --force --frozen-lockfile
+
+    # El `postinstall` también genera el environment, pero pnpm lo saltea cuando el install no tiene nada
+    # que hacer: no se puede contar con él.
+    - name: Generate environment file
+      shell: bash
+      run: pnpm ops config
