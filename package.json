@@ -18,6 +18,7 @@
 		"build": "ng build --configuration production",
 		"ops": "node --import tsx --env-file-if-exists=.env ./scripts/ops/run.ts",
 		"storybook": "storybook dev -p 4400 --no-open --no-version-updates",
+		"prestorybook:build": "pnpm ops config",
 		"storybook:build": "storybook build -o dist/storybook/cuentoneta",
 		"lint": "eslint ./src ./e2e ./cms ./scripts ./tools",
 		"stylelint": "stylelint \"src/**/*.css\" --report-needless-disables",
