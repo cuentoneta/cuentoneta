@@ -69,7 +69,7 @@ export class CollectionTeaserCard {
 	private readonly sanitizer = inject(DomSanitizer);
 
 	public readonly collection = input<CollectionTeaser>();
-	// 2 cuando la tarjeta cuelga del <h1> de la página; 3 cuando cuelga del encabezado de una sección.
+	/** 2 cuando la tarjeta cuelga del `<h1>` de la página; 3 cuando cuelga del encabezado de una sección. */
 	public readonly headingLevel = input<2 | 3>(2);
 
 	private readonly titleClasses = 'line-clamp-2 font-inter text-lg leading-6 font-bold text-neutral-900';

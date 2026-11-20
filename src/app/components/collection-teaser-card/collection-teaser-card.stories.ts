@@ -46,6 +46,7 @@ const meta: Meta<CollectionTeaserCard> = {
 		headingLevel: {
 			control: { type: 'inline-radio' },
 			options: [2, 3],
+			name: 'Nivel del título',
 			description:
 				'Nivel del título: 2 cuando la tarjeta cuelga del encabezado principal de la página, 3 cuando cuelga del encabezado de una sección',
 			table: { type: { summary: '2 | 3' }, defaultValue: { summary: '2' } },
@@ -99,7 +100,7 @@ export const Interactiva: StoryObj<CollectionTeaserCard & { kind: 'representativ
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Cambiá "Tipo de imagery" para alternar entre la variante representative (portada editorial propia) y sample (composición de 3 portadas de obras).</p><p><strong>Usos:</strong> usar representative cuando la colección tiene portada editorial y sample cuando se compone de las portadas de sus obras.</p>`,
+				story: `<p>Cambiá "Tipo de imagery" para alternar entre la variante representative (portada editorial propia) y sample (composición de 3 portadas de obras), y "Nivel del título" para ver el título como <code>h2</code> o <code>h3</code>.</p><p><strong>Usos:</strong> usar representative cuando la colección tiene portada editorial y sample cuando se compone de las portadas de sus obras.</p>`,
 			},
 		},
 	},

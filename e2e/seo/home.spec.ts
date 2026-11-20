@@ -8,8 +8,8 @@
  *         tiene una entidad propia, solo los sitewide del app initializer).
  *  - E. Enlaces a los hubs del catálogo (/literary-work y /authors), que son la vía por la que
  *       el crawler alcanza el corpus.
- *  - F. Jerarquía de encabezados: el outline de <main> no salta niveles, y en cada sección los títulos de
- *       tarjeta quedan por debajo del encabezado de la sección.
+ *  - F. Jerarquía de encabezados: el outline de <main> no salta niveles, y en cada sección marcada como
+ *       región (`role="region"`) los títulos de tarjeta quedan por debajo del encabezado de la sección.
  *
  * Sobre el DOM hidratado, vía navegación in-app (router):
  *  - D. Al navegar de la home a una obra, los bloques sitewide persisten y aparece el Article;
@@ -142,25 +142,28 @@ function headingLevel(element: HTMLElement): number {
 	return Number(element.tagName[1]);
 }
 
-// Se recorren todos los elementos y se filtran por tag para obtener los encabezados en orden de documento.
 function headingsWithin(root: HTMLElement | null | undefined): HTMLElement[] {
-	return (root?.querySelectorAll('*') ?? []).filter((element) => /^H[1-6]$/.test(element.tagName));
+	return root?.querySelectorAll('h1, h2, h3, h4, h5, h6') ?? [];
+}
+
+function describeHeading(heading: HTMLElement): string {
+	return `${heading.tagName.toLowerCase()} ${heading.text.trim()}`;
 }
 
 function outline(headings: HTMLElement[]): string {
-	return headings.map((heading) => `${heading.tagName.toLowerCase()} ${heading.text.trim()}`).join('\n');
+	return headings.map(describeHeading).join('\n');
 }
 
 test('home — F: la jerarquía de encabezados no salta niveles', () => {
 	const headings = headingsWithin(parseHtml(html).querySelector('main'));
 	const [first] = headings;
 
-	expect(headings.length, 'la home no trae encabezados en <main>').toBeGreaterThan(1);
+	expect(headings.length, 'la home trae a lo sumo un encabezado en <main>').toBeGreaterThan(1);
 	expect(first?.tagName, outline(headings)).toBe('H1');
 	const skips = headings
 		.slice(1)
 		.filter((heading, index) => headingLevel(heading) > headingLevel(headings[index]) + 1)
-		.map((heading) => `${heading.tagName.toLowerCase()} ${heading.text.trim()}`);
+		.map(describeHeading);
 	expect(skips, outline(headings)).toEqual([]);
 });
 
