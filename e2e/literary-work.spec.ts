@@ -20,6 +20,8 @@ import { STABLE_SLUGS } from './_utils/seo-fixtures';
 
 const ROUTE = `/literary-work/${STABLE_SLUGS.literaryWork}`;
 const MEDIA_ROUTE = `/literary-work/${STABLE_SLUGS.literaryWorkWithMedia}`;
+const COVER_HEIGHT = 164;
+const COVER_MAX_WIDTH = 132;
 
 let status = 0;
 let work: LiteraryWorkDto | undefined;
@@ -82,6 +84,24 @@ test('literary-work — el hero presenta la obra que el API dice que es', async 
 	await expect(authorLink).toHaveAttribute('href', `/author/${author?.slug}`);
 
 	await expect(page.getByText(`${work?.totalReadingTime} minutos de lectura`)).toBeVisible();
+});
+
+// El ancho de la caja de la portada sigue a su imagen, y eso solo lo mide un navegador: happy-dom no
+// calcula layout. Vale para cualquier proporción, así que no depende de cómo sea la portada del dataset.
+test('literary-work — la portada del hero fija su alto y su ancho sigue al de la imagen', async ({ page }) => {
+	// eslint-disable-next-line playwright/no-skipped-test -- la ausencia del fixture ya la reporta la guarda de arriba; repetirla acá sería el mismo fallo dos veces
+	test.skip(status !== 200, `"${ROUTE}" no responde 200 en el dataset`);
+
+	await openWork(page, ROUTE);
+
+	const box = page.locator('cuentoneta-literary-work-hero-header cuentoneta-cover-image');
+	await expect(box.getByTestId('cover-image')).toBeVisible();
+
+	const boxSize = await box.boundingBox();
+	const imageSize = await box.getByTestId('cover-image').boundingBox();
+	expect(boxSize?.height).toBe(COVER_HEIGHT);
+	expect(boxSize?.width ?? Infinity).toBeLessThanOrEqual(COVER_MAX_WIDTH);
+	expect(boxSize?.width).toBeCloseTo(imageSize?.width ?? -1, 0);
 });
 
 // El 404 del SSR ya lo afirma la suite de indexado; acá se cubre lo que sólo el navegador ve: que el

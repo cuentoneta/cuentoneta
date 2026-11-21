@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { provideHttpClient } from '@angular/common/http';
+import { HttpErrorResponse, provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import type { Observable } from 'rxjs';
 import type { CollectionDto, CollectionTeaserDto } from '@models/collection.dto';
@@ -11,7 +11,7 @@ import {
 import { environment } from '../environments/environment';
 import { Endpoints } from './endpoints';
 import { CollectionApi, HttpCollectionApi } from './collection.provider';
-import { provideCollectionApiMock, StubCollectionApi } from './collection.mock';
+import { provideCollectionApiMock, InMemoryCollectionApi } from './collection.mock';
 
 // El DTO de wire es la serialización JSON del agregado: los brands se pierden y queda el shape plano
 // que el endpoint emite. Se deriva del canon en vez de escribir un objeto paralelo a mano.
@@ -169,10 +169,34 @@ describe('CollectionApi', () => {
 			providers: [
 				provideHttpClient(),
 				provideHttpClientTesting(),
-				provideCollectionApiMock(new StubCollectionApi(onoffCollectionsMock)),
+				provideCollectionApiMock(new InMemoryCollectionApi(onoffCollectionsMock)),
 			],
 		});
 
-		expect(TestBed.inject(CollectionApi)).toBeInstanceOf(StubCollectionApi);
+		expect(TestBed.inject(CollectionApi)).toBeInstanceOf(InMemoryCollectionApi);
+	});
+});
+
+describe('InMemoryCollectionApi', () => {
+	const api = new InMemoryCollectionApi(onoffCollectionsMock);
+
+	it('resolves a collection it was loaded with', () => {
+		const slug = canon?.slug ?? '';
+		let resolved: string | undefined;
+		api.getBySlug(slug).subscribe((collection) => (resolved = collection.slug));
+
+		expect(resolved).toBe(slug);
+	});
+
+	// Que no emita valor es lo que importa: un doble que resolviera cualquier slug a otra colección
+	// dejaría al test afirmando contra datos que no pidió.
+	it('answers 404 for a slug it was not loaded with', () => {
+		let emitted = false;
+		let failure: unknown;
+		api.getBySlug('inexistente').subscribe({ next: () => (emitted = true), error: (error) => (failure = error) });
+
+		expect(emitted).toBe(false);
+		expect(failure).toBeInstanceOf(HttpErrorResponse);
+		expect(failure).toMatchObject({ status: 404 });
 	});
 });

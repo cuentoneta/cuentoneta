@@ -1,3 +1,4 @@
+import type { IconName } from '@ng-icons/core';
 import { faSolidAddressBook, faSolidEnvelope, faSolidGlobe, faSolidMedal } from '@ng-icons/font-awesome/solid';
 import {
 	simpleBlogger,
@@ -12,7 +13,7 @@ import { faBrandAmazon, faBrandInstagram, faBrandWikipediaW } from '@ng-icons/fo
 
 export interface IconMapper {
 	name: string;
-	ngIconsName: Record<string, string>;
+	ngIconsName: Partial<Record<IconName, string>>;
 }
 
 /**

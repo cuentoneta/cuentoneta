@@ -26,7 +26,7 @@ import {
 } from '@mocks/onoff-literary-works.mock';
 import { provideLiteraryWorkApiMock, StubLiteraryWorkApi } from '../../providers/literary-work.mock';
 import { onoffCollectionsMock } from '@mocks/onoff-collections.mock';
-import { provideCollectionApiMock, StubCollectionApi } from '../../providers/collection.mock';
+import { provideCollectionApiMock, InMemoryCollectionApi } from '../../providers/collection.mock';
 import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
 import { provideRouter } from '@angular/router';
 import type { LiteraryWorkApi } from '../../providers/literary-work.provider';
@@ -147,7 +147,7 @@ describe('LiteraryWorkPage', () => {
 		return await render(LiteraryWorkPage, {
 			providers: [
 				provideLiteraryWorkApiMock(options.api ?? new StubLiteraryWorkApi(literaryWork, onoffLiteraryWorkTeasersMock)),
-				provideCollectionApiMock(new StubCollectionApi(onoffCollectionsMock)),
+				provideCollectionApiMock(new InMemoryCollectionApi(onoffCollectionsMock)),
 				provideRouter([]),
 				...(options.responseInit ? [{ provide: RESPONSE_INIT, useValue: options.responseInit }] : []),
 			],
@@ -245,6 +245,20 @@ describe('LiteraryWorkPage', () => {
 
 			const heading = await screen.findByRole('heading', { level: 2, name: sectionTitle.value });
 			expect(heading.getAttribute('id')).toBe(sectionTitle.toAnchor());
+		},
+	);
+
+	// Se afirma la clase y no el peso computado: happy-dom no carga las hojas de estilo.
+	it.each(onoffLiteraryWorksWithSectionTitles)(
+		'pinta en negrita los títulos de sección de "$slug"',
+		async (literaryWork) => {
+			await setup(literaryWork);
+
+			for (const section of literaryWork.content) {
+				if (section.title === undefined) continue;
+				const heading = await screen.findByRole('heading', { level: 2, name: section.title.value });
+				expect(heading).toHaveClass('font-inter', 'text-2xl', 'font-bold');
+			}
 		},
 	);
 

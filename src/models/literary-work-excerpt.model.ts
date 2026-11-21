@@ -2,8 +2,15 @@ import type { SectionTitle } from './section-title.model';
 import type { SanitizedHtml } from './sanitized-html.model';
 
 /**
+ * Largo visible máximo del cuerpo de un extracto: caracteres de texto en unidades UTF-16, sin contar el
+ * `…` que marca el recorte. Un salto de verso cuenta como un carácter; las etiquetas y las imágenes, cero.
+ */
+export const LITERARY_WORK_EXCERPT_MAX_LENGTH = 200;
+
+/**
  * Lo que una tarjeta de listado muestra de una obra: el arranque de su sección de apertura, ya
- * saneado.
+ * saneado, con un cuerpo que no supera `LITERARY_WORK_EXCERPT_MAX_LENGTH`. El tope lo garantiza
+ * `markdownToExcerptHtml`, la única función que produce ese cuerpo; la factory no lo verifica.
  *
  * Es más angosto que `LiteraryWorkSection` a propósito. No transporta `readingTime` ni `position`
  * porque su cuerpo viene **recortado**: derivar un tiempo de lectura de un extracto daría un número

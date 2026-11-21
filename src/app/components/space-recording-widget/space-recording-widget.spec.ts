@@ -3,8 +3,11 @@ import { render, screen, within } from '@testing-library/angular';
 import { CommonModule, DatePipe, NgOptimizedImage } from '@angular/common';
 import type { SpaceRecording } from '@models/media.model';
 import { mediaDescriptionText, onoffSpaceRecordingsMock } from '@mocks/onoff-media.mock';
+import { installMarkdownLinksSheet } from '@testing/markdown-links-sheet';
 
 describe('SpaceRecordingWidget', () => {
+	beforeEach(installMarkdownLinksSheet);
+
 	const setup = async (media: SpaceRecording = onoffSpaceRecordingsMock[0]) => {
 		return await render(SpaceRecordingWidget, {
 			componentImports: [CommonModule, NgOptimizedImage],
@@ -80,5 +83,13 @@ describe('SpaceRecordingWidget', () => {
 			'href',
 			'https://cdn.example.org/onoff/geometria.pdf',
 		);
+	});
+
+	it('should underline the links of the space recording description', async () => {
+		await setup();
+
+		const link = within(screen.getByTestId('media-description')).getByRole('link');
+
+		expect(link).toHaveStyle('text-decoration-line: underline');
 	});
 });

@@ -2,7 +2,7 @@
 
 **Propósito:** verificar que pasen los gates de CI y correr los agentes de review.
 
-1. Correr **el tier local** de los [gates de CI](../../../../CLAUDE.md#comandos-comunes) (con `pnpm`, nunca `nx` directo). Los gates se reparten en dos tiers, porque el borrador que abrió la Fase 3 ya está corriendo los diez en GitHub Actions:
+1. Correr **el tier local** de los [gates de CI](../../../../CLAUDE.md#comandos-comunes) (con `pnpm`). Los gates se reparten en dos tiers, porque el borrador que abrió la Fase 3 ya los está corriendo todos en GitHub Actions:
 
    | Tier                      | Gates                                                       | Por qué                                                                                                                                                                                                                                                         |
    | ------------------------- | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -16,7 +16,6 @@
 
      Ante rojo el log aparece entero, así que el diagnóstico no pierde nada.
 
-   - **En modo worktree**, anteponer `NX_DAEMON=false` a todo gate de Nx y reemplazar `pnpm typecheck` por `pnpm exec tsc -p tsconfig.typecheck.json --noEmit` — ver [Modo worktree](modo-worktree.md) → "Ajustes transversales" (evita falsos rojos de teardown y resultados stale del daemon).
    - **Lanzalos concurrentemente**, no uno tras otro: son independientes entre sí. En serie tardan la **suma**; en paralelo, lo que tarde el más lento.
    - Si alguno falla: reportar cuál, diagnosticar, arreglar, commitear el fix (reglas de Fase 3) y re-correr **solo el que falló** mientras el resto sigue verde; re-correr todo solo si el fix toca superficie compartida.
 

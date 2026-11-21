@@ -1,5 +1,5 @@
 // Testing library
-import { render, screen } from '@testing-library/angular';
+import { render, screen, within } from '@testing-library/angular';
 
 // Component
 import { AudioRecordingWidget } from './audio-recording-widget';
@@ -7,7 +7,14 @@ import { AudioRecordingWidget } from './audio-recording-widget';
 // Mocks
 import { mediaDescriptionText, onoffAudioRecordingsMock } from '@mocks/onoff-media.mock';
 
+// Modelos y utilidades
+import { createMarkdown } from '@models/markdown.model';
+import { installMarkdownLinksSheet } from '@testing/markdown-links-sheet';
+import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
+
 describe('AudioRecordingWidget', () => {
+	beforeEach(installMarkdownLinksSheet);
+
 	it('should render the component', async () => {
 		const { container } = await render(AudioRecordingWidget, {
 			inputs: { media: onoffAudioRecordingsMock[0] },
@@ -37,5 +44,18 @@ describe('AudioRecordingWidget', () => {
 
 		expect(description.tagName.toLowerCase()).toBe('figcaption');
 		expect(description.textContent?.trim()).toBe(mediaDescriptionText(onoffAudioRecordingsMock[0]));
+	});
+
+	it('should underline the links of the audio recording description', async () => {
+		const label = 'más información';
+		const media = {
+			...onoffAudioRecordingsMock[0],
+			description: markdownToSanitizedHtml(createMarkdown(`Ver [${label}](https://example.com).`)),
+		};
+
+		await render(AudioRecordingWidget, { inputs: { media } });
+
+		const link = within(screen.getByTestId('media-description')).getByRole('link', { name: label });
+		expect(link).toHaveStyle('text-decoration-line: underline');
 	});
 });

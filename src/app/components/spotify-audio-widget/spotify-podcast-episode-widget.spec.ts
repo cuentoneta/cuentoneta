@@ -7,7 +7,14 @@ import { SpotifyPodcastEpisodeWidget } from './spotify-podcast-episode-widget';
 // Mocks
 import { mediaDescriptionText, onoffSpotifyPodcastEpisodesMock } from '@mocks/onoff-media.mock';
 
+// Modelos y utilidades
+import { createMarkdown } from '@models/markdown.model';
+import { installMarkdownLinksSheet } from '@testing/markdown-links-sheet';
+import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
+
 describe('SpotifyPodcastEpisodeWidget', () => {
+	beforeEach(installMarkdownLinksSheet);
+
 	it('should render the component', async () => {
 		const { container } = await render(SpotifyPodcastEpisodeWidget, {
 			inputs: { media: onoffSpotifyPodcastEpisodesMock[0] },
@@ -49,5 +56,18 @@ describe('SpotifyPodcastEpisodeWidget', () => {
 		// El énfasis fuerte del Markdown del fixture: si el HTML se hubiera escapado, el texto seguiría
 		// estando pero no habría un elemento propio que lo contenga.
 		expect(within(description).getByText('podcast').tagName.toLowerCase()).toBe('strong');
+	});
+
+	it('should underline the links of the spotify audio description', async () => {
+		const label = 'más información';
+		const media = {
+			...onoffSpotifyPodcastEpisodesMock[0],
+			description: markdownToSanitizedHtml(createMarkdown(`Ver [${label}](https://example.com).`)),
+		};
+
+		await render(SpotifyPodcastEpisodeWidget, { inputs: { media } });
+
+		const link = within(screen.getByTestId('media-description')).getByRole('link', { name: label });
+		expect(link).toHaveStyle('text-decoration-line: underline');
 	});
 });

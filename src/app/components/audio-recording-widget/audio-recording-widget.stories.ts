@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/angular-vite';
 import { AudioRecordingWidget } from './audio-recording-widget';
 import { onoffAudioRecordingsMock } from '@mocks/onoff-media.mock';
+import { createMarkdown } from '@models/markdown.model';
+import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import { mediaWidgetSelectorDocs } from '@components/media-widget-selector/media-widget-selector.docs';
 import { docsRef } from '@testing/storybook-docs';
 
@@ -34,5 +36,21 @@ type Story = StoryObj<AudioRecordingWidget>;
 export const Widget: Story = {
 	args: {
 		media: onoffAudioRecordingsMock[0],
+	},
+};
+
+export const DescripcionConEnlace: Story = {
+	args: {
+		media: {
+			...onoffAudioRecordingsMock[0],
+			description: markdownToSanitizedHtml(createMarkdown('Más sobre la grabación en [el archivo sonoro](https://example.com).')),
+		},
+	},
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>Una descripción con un enlace en su texto. El enlace se ve subrayado: el color solo no alcanza para señalar que un fragmento es interactivo.</p>`,
+			},
+		},
 	},
 };

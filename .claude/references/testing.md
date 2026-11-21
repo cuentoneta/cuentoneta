@@ -153,6 +153,7 @@ De ahí que volver a exportar un handle por identidad desde un agregador reabra 
 | Una colección con etiquetas                         | `onoffCollectionsWithTagsMock` / `onoffCollectionTeasersWithTagsMock`                                                                                                                             |
 | Una colección sin etiquetas                         | `onoffCollections(Teasers)WithoutTagsMock`                                                                                                                                                        |
 | Una colección con una sola etiqueta, o con varias   | `onoffCollections(Teasers)With(Single\|Multiple)TagsMock`                                                                                                                                         |
+| Una colección con obras de etiqueta distinta        | `onoffCollectionsWithDivergentLiteraryWorkTagsMock` — compara la primera etiqueta por título; no todas sus obras divergen, así que elegí la obra por predicado                                    |
 | Una colección de título largo                       | `onoffCollections(Teasers)WithLongTitlesMock`                                                                                                                                                     |
 | Una colección con un enlace propio en su prosa      | `onoffCollections(Teasers)WithLinkedDescriptionMock` — el teaser llega sin el ancla, que es lo que el selector permite afirmar                                                                    |
 | Una colección cuyo título no empieza en ASCII       | `onoffCollections(Teasers)WithNonAsciiInitialMock` — para el orden con colación española                                                                                                          |
@@ -256,6 +257,16 @@ await render(LiteraryWorkPage, {
 
 expect(await screen.findByText(literaryWorkMock.title)).toBeInTheDocument();
 ```
+
+### Estilos de una hoja global
+
+`happy-dom` no carga `src/styles.css`, así que un spec que quiera afirmar el estilo computado de un nodo (`toHaveStyle`) tiene que inyectar la hoja. Tres hechos condicionan cómo:
+
+- **Solo CSS plano.** `getComputedStyle` resuelve contra un `<style>` inyectado, pero con `@layer` o selectores anidados el computado queda vacío.
+- **La hoja se lee del disco.** Un `?raw` llega vacío en Vitest, y no hay motivo para esperar otra cosa de un `import` común: se lee con `fs`.
+- **Un selector de elemento global no matchea.** Angular Testing Library monta el componente dentro de un `div`, no bajo su selector, así que una regla anclada a `cuentoneta-xxx` nunca aplica. Una regla anclada a un atributo de un elemento de la propia plantilla sí.
+
+`installMarkdownLinksSheet()` (`src/testing/markdown-links-sheet.ts`) aplica los tres: inyecta la hoja que subraya los enlaces del HTML de Markdown. Lo que el entorno no puede observar es la capa: que la regla le gane al preflight lo decide el `layer()` con el que `styles.css` importa la hoja, y lo fija un spec aparte (`src/app/markdown-links.spec.ts`).
 
 ---
 
@@ -430,7 +441,7 @@ Reglas del patrón:
 
 ### Qué cubre y qué no
 
-Cubre **lógica Node pura del Studio**: resolvers de Desk Structure, utils que corren dentro del proceso del Studio (p. ej. `cms/utils/landing-page.ts`), y las migraciones de datos de `cms/migrations/` (ver [`sanity-migrations.md`](sanity-migrations.md)). No cubre la declaración de un document type: ver el checklist al pie. No hay nada de Angular, ni Angular Testing Library, ni `happy-dom` — el Studio no renderiza componentes Angular ni corre en un DOM simulado con esa configuración.
+Cubre **lógica Node pura del Studio**: resolvers de Desk Structure, utils que corren dentro del proceso del Studio (p. ej. `cms/utils/landing-page.ts`), las migraciones de datos de `cms/migrations/` (ver [`sanity-migrations.md`](sanity-migrations.md)) y los scripts de `cms/scripts/` que un workflow corre con `sanity exec` (ver [`scripts.md`](scripts.md)). No cubre la declaración de un document type: ver el checklist al pie. No hay nada de Angular, ni Angular Testing Library, ni `happy-dom` — el Studio no renderiza componentes Angular ni corre en un DOM simulado con esa configuración.
 
 ### Por qué es una config aparte
 
@@ -441,7 +452,7 @@ Cubre **lógica Node pura del Studio**: resolvers de Desk Structure, utils que c
 - Los specs de `cms/` **importan `describe`/`it`/`expect` de `vitest` explícitamente** (`cms/vitest.config.ts` no declara `globals`), a diferencia de los specs de la app.
 - **No usan `@test-utils`.** Esos wrappers viven en el árbol de `node_modules` de la app; arrastrarlos a `cms/` acoplaría dos proyectos pnpm por casos que se resuelven con diez líneas.
 - Los dobles se escriben **a mano**, siguiendo la misma taxonomía por comportamiento del resto del repo — `Stub*`/`Fake*`/`Spy*`, **nunca** `Mock*` (ver [Naming](../../CLAUDE.md#naming)). El ejemplo vigente es `SpyGroqClient` en `cms/utils/landing-page.spec.ts`: registra la query y los params con los que se lo invocó, sin depender de `vi.fn()`.
-- `cms/` **sí** está cubierto por ESLint (el target `eslint:lint` de `project.json` corre sobre `./src ./e2e ./cms ./scripts ./tools`) y por su propio type-check (`cms/tsconfig.typecheck.json`, dentro del gate `studio-build`). Lo que sigue sin tener es `@test-utils`: los specs de `cms/` se mantienen deliberadamente simples, sin abstracciones de test propias y con dobles chicos anotados a mano.
+- `cms/` **sí** está cubierto por ESLint (`pnpm lint` corre ESLint sobre `./src ./e2e ./cms ./scripts ./tools`) y por su propio type-check (`cms/tsconfig.typecheck.json`, dentro del gate `studio-build`). Lo que sigue sin tener es `@test-utils`: los specs de `cms/` se mantienen deliberadamente simples, sin abstracciones de test propias y con dobles chicos anotados a mano.
 
 ```typescript
 import { describe, expect, it } from 'vitest';
@@ -622,6 +633,7 @@ Si el componente **renderiza su propio skeleton** según un input (p. ej. cuando
 - **Mocks/timers** → siempre desde `@test-utils`; `clearAllMocks()` en `beforeEach`.
 - **Componente que usa `IntersectionObserver`** → `installIntersectionObserverStub()` en `beforeEach`; simular overflow con `markOutsideViewport` / `markInsideViewport`.
 - **Directiva que mide su host** → `installResizeObserverStub()` en `beforeEach`; fijar medidas con `setMeasuredSize`, entregar el callback con `triggerResize()` y llamar a `detectChanges()`; afirmar la desconexión con `activeObserverCount()`.
+- **Spec que afirma el estilo de HTML inyectado por `[innerHTML]`** → `installMarkdownLinksSheet()` en `beforeEach` y `toHaveStyle` sobre el nodo; ver [Estilos de una hoja global](#estilos-de-una-hoja-global).
 - **Lógica Node pura de `cms/`** → spec propio con Vitest standalone (`pnpm sanity:test`); dobles escritos a mano (`Spy*`/`Stub*`/`Fake*`), sin `@test-utils`.
 - **Migración de datos de Sanity (`cms/migrations/<slug>/`)** → `index.spec.ts` co-locado que ejercita `migrate.document`; corre con `pnpm sanity:test` dentro del gate `studio-build`; sin `@test-utils` (imports explícitos de `vitest`, igual que el resto de `cms/`) — ver [`sanity-migrations.md`](sanity-migrations.md).
 - **Document type de Sanity (`cms/schemas/<tipo>.ts`)** → **sin spec**. Un test que afirma que un campo se declara con cierto tipo, o que otro no está, repite lo que el archivo de al lado dice literalmente. Lo que sí protege contra una regresión ya existe: `cms/schema.json` y `src/sanity/types.ts` están versionados, así que un cambio de forma aparece en el diff de los generados, y el gate `studio-build` compila el Studio.

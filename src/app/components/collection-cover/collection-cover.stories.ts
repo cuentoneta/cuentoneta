@@ -26,7 +26,7 @@ const meta: Meta<CollectionCover> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>El ${docsMention(collectionCoverDocs)} del Design System v3 es a la portada de una colección lo que ${docsRef(coverImageDocs)} es a la de una obra: resuelve las dos formas que declara el dominio y produce una caja de alto constante.</p><ul><li><code>representative</code>: la imagen editorial de la colección, en la caja de una portada (118×164).</li><li><code>sample</code>: el abanico de tres portadas de obras que contiene, sobre una caja de 270×164 — la del frente es la primera, elevada respecto de las laterales, que se apoyan más abajo y sangran por el borde inferior.</li></ul><p>Las dos formas <strong>miden lo mismo de alto</strong>, que es lo que permite intercambiarlas —y sustituirlas por un esqueleto— sin mover lo que sigue en la columna.</p><p>El marco es del consumidor: el componente no aporta fondo, radio exterior ni recorte. ${docsMention(collectionTeaserCardDocs)} lo monta dentro de su caja gris; ${docsMention(collectionInfoPanelDocs)}, pelado.</p></div>`,
+				component: `<div><p>El ${docsMention(collectionCoverDocs)} del Design System v3 es a la portada de una colección lo que ${docsRef(coverImageDocs)} es a la de una obra: resuelve las dos formas que declara el dominio y produce una caja de alto constante.</p><ul><li><code>representative</code>: la imagen editorial de la colección, en una caja con el alto de una portada.</li><li><code>sample</code>: el abanico de tres portadas de obras que contiene, sobre una caja de 270×164 — la del frente es la primera, elevada respecto de las laterales, que se apoyan más abajo y sangran por el borde inferior.</li></ul><p>Las dos formas <strong>miden lo mismo de alto</strong>, que es lo que permite intercambiarlas —y sustituirlas por un esqueleto— sin mover lo que sigue en la columna.</p><p>El marco es del consumidor: el componente no aporta fondo, radio exterior ni recorte. ${docsMention(collectionTeaserCardDocs)} lo monta dentro de su caja gris; ${docsMention(collectionInfoPanelDocs)}, pelado.</p></div>`,
 			},
 		},
 	},
@@ -71,6 +71,27 @@ export const Abanico: Story = {
 		docs: {
 			description: {
 				story: `<p>La colección sin imagen propia se representa con tres portadas de obras que contiene. La primera va al frente y elevada; las otras dos se apoyan más abajo y sangran por el borde inferior de la caja.</p><p><strong>Usos:</strong> la mitad de las colecciones del catálogo, que no tienen arte editorial cargado.</p>`,
+			},
+		},
+	},
+};
+
+export const AbanicoConProporcionesMixtas: Story = {
+	render,
+	args: {
+		imagery: {
+			kind: 'sample',
+			images: [
+				sampleImages[0],
+				'assets/img/mocks/author/francois-onoff.png',
+				'assets/img/mocks/banners/banner-el-palacio-mobile.png',
+			],
+		},
+	},
+	parameters: {
+		docs: {
+			description: {
+				story: `<p>El abanico con una portada de la proporción habitual, una cuadrada y una muy apaisada. Cada portada toma el ancho que le da su imagen, así que las laterales, ancladas a los bordes de la caja, se ven más o menos tapadas por la del frente.</p>`,
 			},
 		},
 	},

@@ -66,6 +66,7 @@ import { AuthorInfoPanelSkeleton } from './author-info-panel-skeleton';
 					#clamp="cuentonetaClampOverflow"
 					cuentonetaClampOverflow
 					data-biography
+					data-markdown
 					data-testid="biography"
 				></div>
 				@if (showReadMore() && clamp.isOverflowing()) {

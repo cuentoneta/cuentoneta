@@ -1,8 +1,16 @@
+# Convierte el mínimo de `engines.node` en una barrera de instalación y no solo en documentación.
+# El hook de edición corre con `node` puro y depende del type-stripping del runtime: sin esto, una
+# máquina por debajo del piso instala igual y el guardarraíl degrada en abierto, sin aviso.
+engineStrict: true
+
+# Va en `false` la dependencia que ya trae su binario precompilado por plataforma y usa el script solo
+# para compilar desde fuente cuando falta. Va en `true` la que necesita el script para funcionar:
+# el `postinstall` de esbuild verifica e instala el binario de la plataforma.
+allowBuilds:
+  esbuild: true
+
 overrides:
   'uuid': '>=11.1.1'
   'ws': '>=8.20.1'
-  'brace-expansion@5': '>=5.0.6'
-  'prismjs@1': '>=1.30.0 <2'
   'js-yaml@3': '>=3.15.2 <4'
   'smol-toml@1': '>=1.9.0 <2'
-  'source-map-js@1': '>=1.2.2 <2'

@@ -12,17 +12,6 @@ interface DeclaredCommand {
 	beforeInstall?: boolean;
 }
 
-interface NxCommandOptions {
-	command?: string;
-	commands?: (string | { command: string })[];
-}
-
-interface NxTarget {
-	command?: string;
-	options?: NxCommandOptions;
-	configurations?: Record<string, NxCommandOptions>;
-}
-
 function read(path: string): string {
 	return readFileSync(join(ROOT, path), 'utf8');
 }
@@ -34,21 +23,6 @@ function packageScripts(path: string): DeclaredCommand[] {
 		command,
 		beforeInstall: name === 'preinstall',
 	}));
-}
-
-function commandsOf(options: NxCommandOptions | undefined): string[] {
-	return [options?.command, ...(options?.commands ?? [])]
-		.map((entry) => (typeof entry === 'object' ? entry.command : entry))
-		.filter((command) => command !== undefined);
-}
-
-function nxTargetCommands(path: string): DeclaredCommand[] {
-	const { targets = {} } = JSON.parse(read(path)) as { targets?: Record<string, NxTarget> };
-	return Object.entries(targets).flatMap(([name, target]) =>
-		[target.command, ...commandsOf(target.options), ...Object.values(target.configurations ?? {}).flatMap(commandsOf)]
-			.filter((command) => command !== undefined)
-			.map((command) => ({ source: `${path} › ${name}`, command })),
-	);
 }
 
 function vercelCommands(): DeclaredCommand[] {
@@ -98,8 +72,6 @@ function runsLatestRelease({ command, beforeInstall = false }: Omit<DeclaredComm
 const declaredCommands: DeclaredCommand[] = [
 	...packageScripts('package.json'),
 	...packageScripts('cms/package.json'),
-	...nxTargetCommands('project.json'),
-	...nxTargetCommands('cms/project.json'),
 	...vercelCommands(),
 	...shellLines('.github/workflows', true),
 	...shellLines('.github/actions', true),
@@ -112,8 +84,7 @@ describe('comandos declarados en el repo', () => {
 		const sources = new Set(declaredCommands.map(({ source }) => source));
 
 		expect(sources).toContain('package.json › preinstall');
-		expect(sources).toContain('project.json › eslint:lint');
-		expect(sources).toContain('cms/project.json › typegen');
+		expect(sources).toContain('cms/package.json › typegen');
 		expect(sources).toContain('vercel.json › installCommand');
 		expect(sources).toContain('.github/workflows/ci.yml');
 		expect(sources).toContain('.github/actions/setup-workspace/action.yml');
@@ -135,7 +106,7 @@ describe('comandos declarados en el repo', () => {
 
 	it.each([
 		'pnpm exec sanity typegen generate',
-		'npx nx typecheck',
+		'npx playwright install-deps',
 		'npx only-allow@1.2.2 pnpm',
 		'npx @scope/tool@2.0.0 run',
 		'pnpm install && echo dlx',

@@ -14,7 +14,7 @@ import type { SanitizedHtml } from '@models/sanitized-html.model';
  */
 @Component({
 	selector: 'cuentoneta-literary-work-section-body',
-	template: `<div [innerHTML]="safeBody()"></div>`,
+	template: `<div [innerHTML]="safeBody()" data-markdown></div>`,
 	host: {
 		class: 'block source-serif-xl text-neutral-800',
 		'data-testid': 'literary-work-section-body',

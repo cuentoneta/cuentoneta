@@ -12,6 +12,7 @@ import { YouTubePlayer } from '@angular/youtube-player';
 			<youtube-player [videoId]="media().data.videoId" data-testid="youtube-player" placeholderImageQuality="low" />
 			<figcaption
 				[innerHTML]="media().description"
+				data-markdown
 				data-testid="media-description"
 				class="font-inter text-xs font-medium text-brand-500"
 			></figcaption>

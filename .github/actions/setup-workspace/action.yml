@@ -17,9 +17,7 @@ runs:
   using: composite
   steps:
     - name: Select pnpm as package manager
-      uses: pnpm/action-setup@v6.0.9
-      with:
-        version: 10.12.1
+      uses: pnpm/action-setup@v6.1.1
 
     - name: Use Node.js 24
       uses: actions/setup-node@v7.0.0
@@ -27,14 +25,13 @@ runs:
         node-version: 24.18.0
         cache: 'pnpm'
 
+    # Sin `--ignore-scripts`: `allowBuilds` ya acota qué dependencias corren scripts.
     - name: Install dependencies
       shell: bash
-      run: pnpm install --force --frozen-lockfile --ignore-scripts
+      run: pnpm install --force --frozen-lockfile
 
-    - name: Generate testing environment file
+    # El `postinstall` también genera el environment, pero pnpm lo saltea cuando el install no tiene nada
+    # que hacer: no se puede contar con él.
+    - name: Generate environment file
       shell: bash
       run: pnpm ops config
-
-    - name: Rebuild and prepare
-      shell: bash
-      run: pnpm rebuild && pnpm run prepare --if-present

@@ -23,6 +23,12 @@ export type SanityImageLoaderParams = {
 	 * estira a la pantalla entera pero no gana nada con resolución.
 	 */
 	readonly width?: number;
+	/**
+	 * Alto a pedir por cada píxel de ancho. Para una imagen de alto fijo cuyo ancho sigue su proporción:
+	 * se pide por alto y el CDN deriva el ancho, porque pedirla por el ancho de una caja que no es el suyo
+	 * la serviría con menos resolución de la que se pinta. Sin ancho que multiplicar, se sirve el original.
+	 */
+	readonly heightRatio?: number;
 };
 
 /**
@@ -39,11 +45,12 @@ export function sanityImageLoader(config: ImageLoaderConfig): string {
 	}
 
 	const requested: SanityImageLoaderParams | undefined = config.loaderParams;
-	return withSanityImageParams(config.src, {
-		w: requested?.width ?? config.width,
-		auto: 'format',
-		q: IMAGE_QUALITY,
-	});
+	const width = requested?.width ?? config.width;
+	const size =
+		width !== undefined && requested?.heightRatio !== undefined
+			? { h: Math.round(width * requested.heightRatio) }
+			: { w: width };
+	return withSanityImageParams(config.src, { ...size, auto: 'format', q: IMAGE_QUALITY });
 }
 
 export function provideSanityImageLoader(): EnvironmentProviders {

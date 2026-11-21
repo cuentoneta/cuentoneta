@@ -86,7 +86,7 @@ cuentoneta-literary-work-section-body {
 	}
 
 	& a {
-		@apply text-brand-500 underline;
+		@apply text-brand-500;
 	}
 
 	/* Una imagen suele venir envuelta en un párrafo, donde el separador entre hermanos no la alcanza. */

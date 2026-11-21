@@ -12,6 +12,8 @@ import type { LiteraryWorkTeaser } from '@models/literary-work.model';
 import type { SanityClient } from '@sanity/client';
 import { fn } from '@test-utils';
 import { stubImageUrlResolver } from '@testing/image-url-resolver.stub';
+import { visibleText } from '@testing/corpus-prose';
+import { LITERARY_WORK_EXCERPT_MAX_LENGTH } from '@models/literary-work-excerpt.model';
 import { SanityLiteraryWorkRepository } from '../api/modules/literary-work/literary-work.repository.sanity';
 import { onoffLiteraryWorkTeasersMock } from './onoff-literary-work-teasers.mock';
 import { onoffRawLiteraryWorkTeasersMock } from './onoff-raw-literary-works.mock';
@@ -47,6 +49,15 @@ describe('el corpus de dominio de los teasers de obra coincide con el mapeo del 
 			expect(mapped).toBeDefined();
 			expect(expected).toBeDefined();
 			expect(comparable(mapped)).toEqual(comparable(expected as LiteraryWorkTeaser));
+		},
+	);
+});
+
+describe('el extracto de los teasers del corpus', () => {
+	it.each(onoffLiteraryWorkTeasersMock.map((teaser) => [teaser.slug, teaser.excerpt.bodyHtml]))(
+		'keeps the excerpt of "%s" within the visible limit',
+		(_, bodyHtml) => {
+			expect(visibleText(bodyHtml).length).toBeLessThanOrEqual(LITERARY_WORK_EXCERPT_MAX_LENGTH);
 		},
 	);
 });

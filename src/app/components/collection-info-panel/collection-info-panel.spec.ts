@@ -6,6 +6,7 @@ import { CollectionInfoPanel } from './collection-info-panel';
 
 // Mocks
 import {
+	onoffCollectionsWithLinkedDescriptionMock,
 	onoffCollectionsWithRepresentativeImageryMock,
 	onoffCollectionsWithSampleImageryMock,
 } from '@mocks/onoff-collections.mock';
@@ -16,8 +17,10 @@ import { createCollection, type Collection } from '@models/collection.model';
 
 // Utilidades de test
 import { clearAllMocks, fn } from '@test-utils';
+import { installMarkdownLinksSheet } from '@testing/markdown-links-sheet';
 import { installResizeObserverStub, setMeasuredSize, triggerResize } from '@testing/resize-observer.stub';
 
+const [linkedDescriptionMock] = onoffCollectionsWithLinkedDescriptionMock;
 const [representativeMock] = onoffCollectionsWithRepresentativeImageryMock;
 const [sampleMock] = onoffCollectionsWithSampleImageryMock;
 
@@ -33,6 +36,7 @@ describe('CollectionInfoPanel', () => {
 	beforeEach(() => {
 		clearAllMocks();
 		installResizeObserverStub();
+		installMarkdownLinksSheet();
 	});
 
 	describe('sin colección', () => {
@@ -68,6 +72,15 @@ describe('CollectionInfoPanel', () => {
 			const description = screen.getByTestId('description');
 			expect(description).not.toBeEmptyDOMElement();
 			expect(within(description).getAllByRole('paragraph').length).toBeGreaterThan(0);
+		});
+
+		it('should underline every link of the description', async () => {
+			await render(CollectionInfoPanel, { inputs: { collection: linkedDescriptionMock } });
+
+			const links = within(screen.getByTestId('description')).getAllByRole('link');
+			for (const link of links) {
+				expect(link).toHaveStyle('text-decoration-line: underline');
+			}
 		});
 
 		// Todas las etiquetas del dominio, no la primera: recortar acá escondería en silencio las demás.

@@ -23,20 +23,20 @@ import { CollectionCover } from '../collection-cover/collection-cover';
 					<cuentoneta-collection-cover [imagery]="collection.imagery" />
 				</section>
 				<section class="flex flex-1 flex-col gap-1 overflow-hidden">
-					<!-- TODO(#2271): al montar el deck en la home el nivel deja de ser el
-					  correcto, porque ahí las tarjetas cuelgan del encabezado de sección
-					  propio del deck. -->
-					<h2 class="line-clamp-2 font-inter text-lg leading-6 font-bold text-neutral-900">
+					<!-- h3: la tarjeta siempre cuelga del encabezado de una sección, el del deck en la home o el del
+					  listado en /collections. -->
+					<h3 class="line-clamp-2 font-inter text-lg leading-6 font-bold text-neutral-900">
 						<a
 							[routerLink]="['/' + appRoutes.Collection, collection.slug]"
 							class="hover:text-interactive-500 after:absolute after:inset-0 after:content-['']"
 						>
 							{{ collection.title }}
 						</a>
-					</h2>
+					</h3>
 					<div
 						[innerHTML]="safeDescription()"
 						class="line-clamp-4 font-inter text-sm text-ellipsis text-neutral-700"
+						data-markdown
 						data-testid="description"
 					></div>
 					<footer class="flex flex-col gap-1 font-inter text-xs text-neutral-600 sm:flex-row">

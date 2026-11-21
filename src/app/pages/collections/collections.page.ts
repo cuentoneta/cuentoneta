@@ -44,6 +44,7 @@ import { Divider } from '@components/divider/divider';
 					</p>
 				} @else if (visibleCollections().length > 0) {
 					<section class="flex flex-col gap-8" data-testid="collections">
+						<h2 class="sr-only">Listado de colecciones</h2>
 						@for (collection of visibleCollections(); track collection.slug) {
 							<cuentoneta-collection-teaser-card [collection]="collection" class="w-full" />
 						}

@@ -10,7 +10,7 @@ import { deriveSectionReadingTime } from '@models/reading-time-derivation.model'
 import { createReadingTime, type ReadingTime } from '@models/reading-time.model';
 import { createSlug } from '@models/slug.model';
 import { createIsoDateTime } from '@utils/date.utils';
-import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
+import { markdownToExcerptHtml, markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import type { ImageUrlResolver } from '../../_utils/functions';
 import { mapAuthor, mapAuthorTeaser, mapResources, mapTags, urlFor } from '../../_utils/functions';
 import { mapMediaSources, mapMediaTeasers } from '../../_utils/media-sources.functions';
@@ -126,7 +126,7 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 		}
 		return createLiteraryWorkExcerpt({
 			title: raw.title ? createSectionTitle(raw.title) : undefined,
-			bodyHtml: markdownToSanitizedHtml(createMarkdown(raw.body)),
+			bodyHtml: markdownToExcerptHtml(createMarkdown(raw.body)),
 		});
 	}
 

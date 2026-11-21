@@ -82,7 +82,7 @@ La interfaz lleva el **nombre limpio** (la responsabilidad), y la **implementaci
 
 El **doble de test** se nombra por lo que **es**, no con el término vago `Mock*`:
 
-- **`Stub*`** — devuelve valores fijos e ignora la entrada. Es el caso de los API providers del front: `StubLiteraryWorkApi.getBySlug()` devuelve siempre la misma obra fijada por constructor, sin mirar el slug. No hay nada "en memoria" que consultar, así que llamarlo `InMemory*` prometería una implementación que no existe.
+- **`Stub*`** — devuelve valores fijos e ignora la entrada. Es el caso de la mayoría de los API providers del front: `StubLiteraryWorkApi.getBySlug()` devuelve siempre la misma obra fijada por constructor, sin mirar el slug. No hay nada "en memoria" que consultar, así que llamarlo `InMemory*` prometería una implementación que no existe.
 - **`Fake*`** — la **categoría**: una implementación real con un atajo (sí ejecuta lógica de verdad, pero se salta la dependencia costosa o externa). Se califica por lo que sustituye:
   - **`InMemory*`** — sustituye **almacenamiento**: un repository/DB real reemplazado por una lista en memoria. `InMemoryLiteraryWorkRepository` guarda datos reales y los consulta con lógica real, solo que sin Sanity de por medio.
   - **`Controllable*`** (o `Static*`, según el mecanismo) — sustituye un **entorno** cuyo input el test necesita fijar (viewport, reloj, random, geolocalización). `ControllableLayoutService` es el ejemplo: no reemplaza un almacén de datos, fija el viewport que el real (`WindowLayoutService`) leería de `window`. "En memoria" no distingue nada acá — todo objeto guarda su estado en memoria; lo que importa es que el input lo fija el test, no el entorno real.
@@ -138,10 +138,10 @@ El **archivo** sigue siendo `<dominio>.mock.ts` y la **factory** `provide<X>ApiM
 | ----------------------- | -------------------------------- | ----------------------- | --------------------------- |
 | API de autores          | `AuthorApi`                      | `HttpAuthorApi`         | `StubAuthorApi`             |
 | API de obras literarias | `LiteraryWorkApi`\*              | `HttpLiteraryWorkApi`\* | `StubLiteraryWorkApi`\*     |
-| API de colecciones      | `CollectionApi`*                 | `HttpCollectionApi`*    | `StubCollectionApi`*        |
+| API de colecciones      | `CollectionApi`*                 | `HttpCollectionApi`*    | `InMemoryCollectionApi`*    |
 | Service (impl. única)   | `LayoutService` (token homónimo) | `WindowLayoutService`   | `ControllableLayoutService` |
 
-> Los dobles de API son **`Stub*`** (devuelven canned, ignoran la entrada); el de `LayoutService` es un **`Fake*` de entorno**, calificado `Controllable*` porque el viewport lo fija el test (`simulateViewport()`), no `window` como en el real (`WindowLayoutService`). No es `InMemory*`: no sustituye almacenamiento, sustituye el navegador. La diferencia no es de capa sino de qué sustituye el doble — ver la taxonomía de arriba.
+> Los dobles de API son **`Stub*`** (devuelven canned, ignoran la entrada) salvo `InMemoryCollectionApi`, que consulta las colecciones que recibe por slug y responde 404 ante una que no tiene, como el endpoint: sustituye el almacén del backend, no solo la respuesta. El de `LayoutService` es un **`Fake*` de entorno**, calificado `Controllable*` porque el viewport lo fija el test (`simulateViewport()`), no `window` como en el real (`WindowLayoutService`). No es `InMemory*`: no sustituye almacenamiento, sustituye el navegador. La diferencia no es de capa sino de qué sustituye el doble — ver la taxonomía de arriba.
 >
 > \* Contrato en `docs/LITERARY_WORK_DESIGN.md` §7: el transporte es `LiteraryWorkDto` y `HttpLiteraryWorkApi` lo **rehidrata** al dominio con las mismas factories de dominio que el backend (`createLiteraryWork`, `createReadingTime`, …; el backend llega a `SanitizedHtml` desde Markdown, vía `markdownToSanitizedHtml`). Es un ACL de frontend simétrico al del repository: un DTO inválido lanza en el provider, no en un template.
 

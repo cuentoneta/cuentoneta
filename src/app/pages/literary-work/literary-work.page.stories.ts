@@ -15,7 +15,7 @@ import { onoffCollectionsMock } from '@mocks/onoff-collections.mock';
 import { embedPlaceholdersDecorator, withEmbedPlaceholders } from '@testing/storybook-embed-placeholders';
 
 import { provideLiteraryWorkApiMock } from '../../providers/literary-work.mock';
-import { provideCollectionApiMock, StubCollectionApi } from '../../providers/collection.mock';
+import { provideCollectionApiMock, InMemoryCollectionApi } from '../../providers/collection.mock';
 import type { LiteraryWorkApi, LiteraryWorkTeaserFilter } from '../../providers/literary-work.provider';
 import LiteraryWorkPage from './literary-work.page';
 import { literaryWorkPageDocs } from './literary-work.page.docs';
@@ -77,7 +77,7 @@ const meta: Meta<LiteraryWorkPageArgs> = {
 			providers: [
 				provideRouter([]),
 				provideLiteraryWorkApiMock(new CorpusLiteraryWorkApi()),
-				provideCollectionApiMock(new StubCollectionApi(onoffCollectionsMock)),
+				provideCollectionApiMock(new InMemoryCollectionApi(onoffCollectionsMock)),
 			],
 		}),
 		...embedPlaceholdersDecorator,

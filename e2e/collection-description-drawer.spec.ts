@@ -13,6 +13,7 @@ import { expect, type Locator, type Page } from '@playwright/test';
 import { test } from './_utils/test';
 import {
 	fetchCollectionCatalog,
+	fetchCollectionDescription,
 	pickMostDescriptiveCollection,
 	type CollectionCatalogEntry,
 } from './_utils/collection-fixtures';
@@ -26,12 +27,15 @@ const FIXTURE_TIMEOUT = 15_000;
 
 let mostDescriptive: CollectionCatalogEntry | undefined;
 let readMoreIsVisible = false;
+// La descripción tal como la pinta la página de la colección; el catálogo la trae sin enlaces.
+let fullDescription = '';
 
 test.beforeAll(async ({ request, browser }) => {
 	mostDescriptive = pickMostDescriptiveCollection(await fetchCollectionCatalog(request));
 	if (!mostDescriptive) {
 		return;
 	}
+	fullDescription = await fetchCollectionDescription(request, mostDescriptive.slug);
 
 	// El estado del fixture se resuelve una sola vez: sin esto, una curaduría de descripciones cortas
 	// produciría el mismo fallo en cada uno de los casos de abajo en vez de una vez, acá.
@@ -124,12 +128,20 @@ test('collection — el panel muestra la descripción completa', async ({ page }
 	test.skip(!readMoreIsVisible, 'ninguna colección del dataset desborda el recorte');
 
 	const drawer = await openDescriptionDrawer(page);
+	// Se serializa con el mismo serializador que `innerHTML`: el backend escribe las entidades de otra forma
+	// (`&#x26;` por `&amp;`), y la diferencia sería de escritura, no de contenido.
+	const expected = await page.evaluate((html) => {
+		const template = document.createElement('template');
+		template.innerHTML = html;
+		return template.innerHTML;
+	}, fullDescription);
 
 	// Se compara el marcado y no el texto: la descripción llega saneada desde el backend y el panel la
 	// pinta tal cual, así que la igualdad afirma a la vez que se muestra entera —el recorte de la columna
-	// es visual, y un `toContainText` pasaría igual con las ocho líneas— y que conserva su prosa.
+	// es visual, y un `toContainText` pasaría igual con las ocho líneas— y que conserva su prosa y sus
+	// enlaces.
 	const shown = await drawer.getByTestId('description').innerHTML();
-	expect(shown).toBe(mostDescriptive?.description);
+	expect(shown).toBe(expected);
 });
 
 // El cierre se afirma con `toBeHidden` y no leyendo el atributo `open`: el drawer llama a `close()` recién

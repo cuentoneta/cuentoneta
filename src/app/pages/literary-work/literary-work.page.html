@@ -30,7 +30,7 @@
 
 		<section class="flex flex-col gap-4">
 			@if (section.title) {
-			<h2 [id]="section.anchor">{{ section.title }}</h2>
+			<h2 [id]="section.anchor" class="font-inter text-2xl font-bold">{{ section.title }}</h2>
 			} @for (epigraph of section.epigraphs; track $index) {
 			<cuentoneta-editorial-note [note]="epigraph" variant="highlight" />
 			}

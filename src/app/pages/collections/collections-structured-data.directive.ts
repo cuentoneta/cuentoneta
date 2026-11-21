@@ -16,18 +16,19 @@ export class CollectionsStructuredData extends AbstractStructuredData {
 
 	protected applyStructuredData(): void {
 		const collections = this.host.collections();
-		// Un `ItemList` vacío afirma que el sitio no tiene colecciones; no emitir nada no afirma nada.
-		if (collections.length === 0) {
-			return;
-		}
 		untracked(() => {
-			this.schemaOrg.setPageScopedJsonLd(
-				this.pageSchemaId,
-				buildCollectionCatalogSchema(collections, environment.website),
-			);
+			// Siempre: "Inicio → Colecciones" es verdad haya o no elementos en el catálogo.
 			this.schemaOrg.setPageScopedJsonLd(
 				this.breadcrumbSchemaId,
 				buildCollectionCatalogBreadcrumb(environment.website),
+			);
+			// Un `ItemList` vacío afirma que el sitio no tiene colecciones; no emitir nada no afirma nada.
+			if (collections.length === 0) {
+				return;
+			}
+			this.schemaOrg.setPageScopedJsonLd(
+				this.pageSchemaId,
+				buildCollectionCatalogSchema(collections, environment.website),
 			);
 		});
 	}

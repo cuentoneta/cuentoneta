@@ -16,13 +16,14 @@ export class AuthorsStructuredData extends AbstractStructuredData {
 
 	protected applyStructuredData(): void {
 		const authors = this.host.authors();
-		// Un `ItemList` vacío afirma que el sitio no tiene autores; no emitir nada no afirma nada.
-		if (authors.length === 0) {
-			return;
-		}
 		untracked(() => {
-			this.schemaOrg.setPageScopedJsonLd(this.pageSchemaId, buildAuthorCatalogSchema(authors, environment.website));
+			// Siempre: "Inicio → Autores" es verdad haya o no elementos en el índice.
 			this.schemaOrg.setPageScopedJsonLd(this.breadcrumbSchemaId, buildAuthorCatalogBreadcrumb(environment.website));
+			// Un `ItemList` vacío afirma que el sitio no tiene autores; no emitir nada no afirma nada.
+			if (authors.length === 0) {
+				return;
+			}
+			this.schemaOrg.setPageScopedJsonLd(this.pageSchemaId, buildAuthorCatalogSchema(authors, environment.website));
 		});
 	}
 

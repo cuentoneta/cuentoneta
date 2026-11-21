@@ -2,7 +2,7 @@ import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.mod
 import { createLiteraryWorkExcerpt } from '@models/literary-work-excerpt.model';
 import { createMarkdown } from '@models/markdown.model';
 import type { SanitizedHtml } from '@models/sanitized-html.model';
-import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
+import { markdownToExcerptHtml } from '@utils/markdown-pipeline.utils';
 
 import { embeddedAuthorTeaserMock } from '../../author.mock';
 import { toMediaTeaser } from '../../onoff-media.mock';
@@ -24,14 +24,14 @@ import losPeldanosMd from './los-peldanos.md?raw';
 import neronMd from './neron.md?raw';
 import palacioNueveFronterasMd from './el-palacio-de-las-nueve-fronteras.md?raw';
 
-// Espeja el recorte de la query, para que el corpus de dominio diga lo mismo que produce el ACL. El
-// cruce ACL↔dominio detecta una divergencia solo sobre las formas que el canon tiene: ninguna obra
-// arranca hoy con un renglón en blanco, así que ese caso lo sostiene únicamente que las dos
+// Espeja el `split` de la query y el recorte del ACL, para que el corpus de dominio diga lo mismo que
+// produce el ACL. El cruce ACL↔dominio detecta una divergencia solo sobre las formas que el canon tiene:
+// ninguna obra arranca hoy con un renglón en blanco, así que ese caso lo sostiene únicamente que las dos
 // implementaciones se toquen juntas.
 function toExcerptHtml(markdown: string): SanitizedHtml {
 	const blocks = markdown.split('\r\n\r\n')[0].split('\n\n');
 	const firstBlock = blocks.find((block) => block !== '') ?? '';
-	return markdownToSanitizedHtml(createMarkdown(firstBlock));
+	return markdownToExcerptHtml(createMarkdown(firstBlock));
 }
 
 // Deriva el teaser desde la obra completa: conserva los campos de la vista base, reemplaza los autores

@@ -1,5 +1,11 @@
-import { markdownToLinklessSanitizedHtml, markdownToSanitizedHtml } from './markdown-pipeline.utils';
+import {
+	markdownToExcerptHtml,
+	markdownToLinklessSanitizedHtml,
+	markdownToSanitizedHtml,
+} from './markdown-pipeline.utils';
 import { createMarkdown } from '@models/markdown.model';
+import { LITERARY_WORK_EXCERPT_MAX_LENGTH } from '@models/literary-work-excerpt.model';
+import { visibleText } from '@testing/corpus-prose';
 
 describe('markdownToSanitizedHtml', () => {
 	it('converts basic markdown to HTML', () => {
@@ -229,5 +235,89 @@ describe('markdownToLinklessSanitizedHtml', () => {
 		const markdown = createMarkdown('## Título\n\nUn párrafo con **negrita**.');
 
 		expect(markdownToLinklessSanitizedHtml(markdown)).toBe(markdownToSanitizedHtml(markdown));
+	});
+});
+
+describe('markdownToExcerptHtml', () => {
+	const longProse = `Un párrafo de prosa que sigue ${'y sigue '.repeat(40)}hasta pasarse del tope.`;
+
+	it('returns exactly the shared pipeline output when the text fits', () => {
+		const markdown = createMarkdown('Un arranque **breve** que entra entero.');
+
+		expect(markdownToExcerptHtml(markdown)).toBe(markdownToSanitizedHtml(markdown));
+	});
+
+	it('cuts a long paragraph at a word boundary and ends it with an ellipsis', () => {
+		const html = markdownToExcerptHtml(createMarkdown(longProse));
+		const visible = visibleText(html);
+
+		expect(visible.length).toBeLessThanOrEqual(LITERARY_WORK_EXCERPT_MAX_LENGTH);
+		expect(longProse.startsWith(visible)).toBe(true);
+		expect(longProse[visible.length]).toMatch(/\s/);
+		expect(html.endsWith('…</p>')).toBe(true);
+	});
+
+	// En poesía el salto de verso es el único separador: el recorte conserva los versos que entran y no
+	// deja un salto colgando antes del `…`.
+	it('keeps the line breaks before the cut and does not end on one', () => {
+		const poem = Array.from({ length: 12 }, (_, line) => `Verso número ${line} de un poema sin estrofas`).join('\n');
+		const html = markdownToExcerptHtml(createMarkdown(poem));
+
+		expect(html).toContain('<br>');
+		expect(html).not.toMatch(/<br>\s*…/);
+		expect(visibleText(html).length).toBeLessThanOrEqual(LITERARY_WORK_EXCERPT_MAX_LENGTH);
+	});
+
+	it('keeps nested inline markup well formed across the cut', () => {
+		const html = markdownToExcerptHtml(
+			createMarkdown(`**Negrita con *énfasis ${'anidado '.repeat(40)}final* y cierre**`),
+		);
+		const reparsed = document.createElement('div');
+		reparsed.innerHTML = html;
+
+		expect(reparsed.innerHTML).toBe(html);
+		expect(html).toMatch(/…<\/em><\/strong><\/p>$/);
+	});
+
+	it('counts an entity as one visible character and escapes it again', () => {
+		const html = markdownToExcerptHtml(createMarkdown(`A & B < C ${'texto '.repeat(50)}`));
+
+		expect(visibleText(html).startsWith('A & B < C')).toBe(true);
+		expect(html).not.toMatch(/&(?![#\w]+;)/);
+	});
+
+	it('drops an image that comes after the cut', () => {
+		const html = markdownToExcerptHtml(
+			createMarkdown(`${longProse}\n\n![Una imagen](https://cdn.sanity.io/images/p/d/abc-10x10.png)`),
+		);
+
+		expect(html).not.toContain('<img');
+	});
+
+	it('keeps an image that comes before the cut', () => {
+		const html = markdownToExcerptHtml(
+			createMarkdown(`![Una imagen](https://cdn.sanity.io/images/p/d/abc-10x10.png)\n\n${longProse}`),
+		);
+
+		expect(html).toContain('<img');
+		expect(html.endsWith('…</p>')).toBe(true);
+	});
+
+	// Un salto de verso cuenta un carácter: un poema que llega justo al tope así contado entra entero.
+	it('counts each line break of a poem as a single character', () => {
+		const verses = Array.from({ length: 10 }, () => 'Verso de diecinueve').join('\n');
+		const poem = `${verses}${'x'.repeat(LITERARY_WORK_EXCERPT_MAX_LENGTH - verses.length)}`;
+		const markdown = createMarkdown(poem);
+
+		expect(poem).toHaveLength(LITERARY_WORK_EXCERPT_MAX_LENGTH);
+		expect(markdownToExcerptHtml(markdown)).toBe(markdownToSanitizedHtml(markdown));
+	});
+
+	it('cuts a single word longer than the limit at the limit', () => {
+		const word = 'a'.repeat(LITERARY_WORK_EXCERPT_MAX_LENGTH + 50);
+		const html = markdownToExcerptHtml(createMarkdown(word));
+
+		expect(visibleText(html)).toBe('a'.repeat(LITERARY_WORK_EXCERPT_MAX_LENGTH));
+		expect(html.endsWith('…</p>')).toBe(true);
 	});
 });

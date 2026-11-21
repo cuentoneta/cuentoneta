@@ -11,7 +11,6 @@ const threads = availableParallelism();
 const isWatch = !process.argv.includes('run') && !process.env['CI'] && process.stdin.isTTY;
 const maxWorkers = Math.max(1, Math.min(8, isWatch ? Math.floor(threads / 2) : threads - 1));
 
-// Configuración de Vitest para Angular zoneless (Nx 23 + builder vite/esbuild).
 // El plugin de Analog compila componentes/plantillas Angular en modo JIT durante los tests.
 export default defineConfig({
 	// Resolución nativa de los `paths` del tsconfig, en lugar de `vite-tsconfig-paths`: el plugin

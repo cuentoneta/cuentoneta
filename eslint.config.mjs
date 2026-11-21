@@ -1,5 +1,4 @@
 import playwright from 'eslint-plugin-playwright';
-import nx from '@nx/eslint-plugin';
 import stylisticJs from '@stylistic/eslint-plugin';
 import storybook from 'eslint-plugin-storybook';
 import vitest from '@vitest/eslint-plugin';
@@ -17,6 +16,7 @@ import noTsExtensionImports from './tools/eslint/no-ts-extension-imports.js';
 import componentLocationAndName from './tools/eslint/component-location-and-name.js';
 import classNameWithoutTypeSuffix from './tools/eslint/class-name-without-type-suffix.js';
 import opsCatalogSynced from './tools/eslint/ops-catalog-synced.js';
+import { angularConfigs, languageConfigs } from './tools/eslint/base-configs.js';
 
 // Las reglas propias comparten un único objeto de plugin: ESLint rechaza redefinir un namespace
 // entre bloques cuyos scopes se solapan, aunque las reglas sean distintas.
@@ -150,14 +150,11 @@ export default [
 		// `**/node_modules/**`. Sin nombrar el árbol de cms, ESLint intenta cargar los eslint.config.js
 		// anidados de sus dependencias y aborta antes de lintear nada.
 		name: 'ignores',
-		ignores: ['!**/*', '.nx', 'dist', 'cms/node_modules/**', 'cms/dist/**', 'cms/.sanity/**'],
+		ignores: ['!**/*', 'dist', 'cms/node_modules/**', 'cms/dist/**', 'cms/.sanity/**'],
 	},
-	...nx.configs['flat/base'],
-	...nx.configs['flat/typescript'],
-	...nx.configs['flat/javascript'],
+	...languageConfigs,
 	...storybook.configs['flat/recommended'],
-	...nx.configs['flat/angular'],
-	...nx.configs['flat/angular-template'],
+	...angularConfigs,
 	{
 		name: 'testing',
 		files: ['**/src/**/?(*.)+(spec|test).ts', '**/e2e/_utils/**/?(*.)+(spec|test).ts'],
@@ -212,7 +209,7 @@ export default [
 		},
 	},
 	{
-		name: 'nx',
+		name: 'typescript-conventions',
 		files: ['**/*.ts'],
 		plugins: {
 			'@stylistic/js': stylisticJs,
@@ -246,8 +243,8 @@ export default [
 		// Las restricciones numéricas de CLAUDE.md, verificables por primera vez: hasta acá se sostenían
 		// solo por lectura humana, en todo el repo. Van en un bloque propio y global porque miden tamaño
 		// y forma, no framework: valen igual en la app Angular, en el Studio React, en los scripts y en
-		// los e2e. Sumarlas al bloque `nx` no serviría — declara `**/*.ts`, que no
-		// matchea el `.tsx` del Studio. Son reglas core, no `no-restricted-syntax`, así que no las
+		// los e2e. Sumarlas al bloque `typescript-conventions` no serviría — declara `**/*.ts`, que
+		// no matchea el `.tsx` del Studio. Son reglas core, no `no-restricted-syntax`, así que no las
 		// alcanza la trampa de que un bloque posterior reemplace el array en vez de mergearlo.
 		name: 'size-and-complexity',
 		files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.mjs'],
@@ -283,9 +280,9 @@ export default [
 	{
 		// El plugin entra por esta única regla: su config `recommended` no está adoptado, y registrar el
 		// namespace no enciende nada por sí solo. El scope nombra todas las extensiones que el gate
-		// lintea, no solo el `**/*.ts` del bloque `nx`: la regla mide forma del código y no framework ni
-		// capa, así que rige igual en el Studio React, en los scripts y en las reglas de las que depende
-		// el linteo del repo.
+		// lintea, no solo el `**/*.ts` del bloque `typescript-conventions`: la regla mide forma del
+		// código y no framework ni capa, así que rige igual en el Studio React, en los scripts y en las
+		// reglas de las que depende el linteo del repo.
 		name: 'prefer-smaller-scope',
 		files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.mjs'],
 		plugins: { unicorn },
@@ -295,8 +292,9 @@ export default [
 	},
 	{
 		// El Studio es React: las reglas de Angular buscan decoradores que no existen ahí. Se apagan de
-		// forma explícita en vez de confiar en que nunca disparen. El bloque `nx` declara `**/*.ts`, que
-		// no matchea `.tsx`, así que sin este bloque los componentes del Studio quedan sin ninguna regla.
+		// forma explícita en vez de confiar en que nunca disparen. El bloque `typescript-conventions`
+		// declara `**/*.ts`, que no matchea `.tsx`, así que sin este bloque los componentes del Studio
+		// quedan sin las convenciones del repo.
 		// Recompone commonRestrictedSyntax soltando viRestrictedSyntax: en cms/ no existe @test-utils al
 		// que redirigir, y sus dobles se escriben a mano.
 		name: 'cms',
@@ -515,7 +513,8 @@ export default [
 		},
 	},
 	{
-		// projectService auto-detecta el tsconfig de cada archivo; el parser ya lo fija el preset de nx.
+		// projectService auto-detecta el tsconfig de cada archivo; el parser ya lo fija el bloque
+		// `typescript` de esta config.
 		name: 'typed-linting',
 		files: ['src/**/*.ts'],
 		languageOptions: {
@@ -536,10 +535,5 @@ export default [
 			'@angular-eslint/template/prefer-self-closing-tags': 'error',
 			'@angular-eslint/template/prefer-ngsrc': 'error',
 		},
-	},
-	{
-		files: ['**/*.ts', '**/*.js'],
-		// Override or add rules here
-		rules: {},
 	},
 ];
