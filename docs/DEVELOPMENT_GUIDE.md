@@ -103,7 +103,7 @@ Para una comprensión profunda de la arquitectura y el diseño del modelo de dom
 
 En este documento pueden encontrarse:
 
-- Descripción de los cuatro contextos acotados (Bounded Contexts)
+- Descripción de los cinco contextos acotados (Bounded Contexts)
 - Definición detallada de agregados y raíces de agregado
 - Especificación de objetos de valor (Value Objects)
 - Lenguaje ubicuo del dominio
