@@ -15,12 +15,13 @@ params:query {
 }
 
 docs {
-  Obtener el catálogo de obras como teasers, filtrable por query params. Sin filtros devuelve
-  todas las obras; `author` acota a las de un autor. Cada criterio de filtrado nuevo es un query
+  Obtener los avances de obra, filtrables por query params. Sin filtros devuelve todas las
+  obras (los consume la página `/literary-work`); `author` acota a las de un autor (los consumen
+  el perfil del autor y las sugerencias de lectura). Cada criterio de filtrado nuevo es un query
   param más, no una sub-ruta. Un `author` mal formado (sin formato de slug) responde 400.
 
   Devuelve el listado completo, ordenado por título: quién elige las que se muestran es del
   consumidor. Un filtro sin resultados (o un autor inexistente) responde 200 con un arreglo
-  vacío — la ausencia de obras es legítima, no un 404. Una obra que la curaduría dejó
-  inconsistente se descarta del listado y se registra en el servidor, sin afectar a las demás.
+  vacío — la ausencia de obras es legítima, no un 404. Una obra mal formada se descarta y se
+  registra en el servidor, sin afectar a las demás.
 }

@@ -129,7 +129,7 @@ describe('updateMostReadLiteraryWorks', () => {
 	}
 
 	// El caso de uso ya no cruza dos repositories: le pasa los slugs al que escribe, y ése los resuelve
-	// contra el catálogo que conoce.
+	// contra las obras que conoce.
 	function repositories() {
 		return new InMemoryContentRepository({
 			rotatingContent,

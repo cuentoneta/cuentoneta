@@ -10,9 +10,11 @@ import { getLiteraryWorkBySlug, getLiteraryWorkTeasers } from './literary-work.s
 export function createLiteraryWorkController(repository?: LiteraryWorkRepository) {
 	const controller = new Hono();
 
-	// El catálogo, filtrable por query params: un criterio nuevo es un campo más del schema, no una
-	// sub-ruta por atributo. Sin ramas de error propias — un filtro sin resultados es un listado
-	// vacío, y la obra mal curada la descarta el service.
+	// Los avances de obra, filtrables por query params: sin filtro los consume la página
+	// `/literary-work`; con `author`, la lista de obras del perfil del autor y las sugerencias de
+	// lectura. Un criterio nuevo es un campo más del schema, no una sub-ruta. Sin ramas de error
+	// propias: un filtro sin resultados es una lista vacía, y la obra mal formada la descarta el
+	// service.
 	controller.get('/', zValidator('query', literaryWorkTeaserFilterSchema), async (c) => {
 		const filter = c.req.valid('query');
 		const literaryWorks = await getLiteraryWorkTeasers(filter, repository);
