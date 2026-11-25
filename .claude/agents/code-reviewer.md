@@ -21,10 +21,10 @@ Claude debería delegar proactivamente en este agente cuando:
 
 ## Step 0: cargar las referencias
 
-Antes de revisar, leé **todas** las referencias del catálogo para tener el contexto completo del proyecto — sin importar cuántas sean, sin omitir ninguna: el revisor es la última línea de defensa y siempre carga el set completo (la carga condicional/según-diff está explícitamente fuera del alcance de `code-reviewer`). Cargalas en **una sola tanda paralela** — emití todas las llamadas `Read` en un único turno (todas en el mismo mensaje), no una tras otra.
+Antes de revisar, leé **todas** las referencias para tener el contexto completo del proyecto — sin importar cuántas sean, sin omitir ninguna: el revisor es la última línea de defensa y siempre carga el set completo (la carga condicional/según-diff está explícitamente fuera del alcance de `code-reviewer`). Cargalas en **una sola tanda paralela** — emití todas las llamadas `Read` en un único turno (todas en el mismo mensaje), no una tras otra.
 
 1. `.claude/references/coding-agent-policies.md` — pinneada en duro, bloqueante de la review; **siempre** se carga primero.
-2. El resto de los archivos listados en la tabla "Catálogo completo" de [Carga estratificada de referencias](../../CLAUDE.md#carga-estratificada-de-referencias) en `CLAUDE.md` — cargalos **todos**.
+2. El resto de los archivos listados en la tabla "Referencias completas" de [Carga estratificada de referencias](../../CLAUDE.md#carga-estratificada-de-referencias) en `CLAUDE.md` — cargalos **todos**.
 
 ## Proceso de revisión
 

@@ -182,7 +182,7 @@ Si un cambio toca tipos, schemas de Sanity/Zod, contratos de API o terminología
 | Tipos / constantes / imports (TS/JS) | `typescript`                                                                                       |
 | Decisiones de diseño / arquitectura  | `solid`, `cupid`, `guiding-principles`, `cross-reference`, `clean-architecture`, `maintainability` |
 
-**Catálogo completo (`.claude/references/`):**
+**Referencias completas (`.claude/references/`):**
 
 | Referencia                 | Contenido                                                                                   |
 | -------------------------- | ------------------------------------------------------------------------------------------- |
