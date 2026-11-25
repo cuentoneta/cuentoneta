@@ -2,17 +2,17 @@ import tsParser from '@typescript-eslint/parser';
 import { RuleTester } from 'eslint';
 
 import { OPS_TASKS } from '../../scripts/ops/registry';
-import rule from './ops-catalog-synced.js';
+import rule from './ops-task-list-synced.js';
 
 const ruleTester = new RuleTester({ languageOptions: { parser: tsParser } });
 
 const REGISTRY_FILE = 'scripts/ops/registry.ts';
 
 // Los casos válidos se arman con el registro real, no con una copia de sus tareas: la copia quedaría
-// desactualizada y el spec afirmaría contra un catálogo que ya no es el que la regla compara.
+// desactualizada y el spec afirmaría contra una lista que ya no es el que la regla compara.
 const taskIds = Object.keys(OPS_TASKS);
 
-// Una tarea del catálogo: el caso de la fila huérfana la omite del registro.
+// Una tarea documentada: el caso de la fila huérfana la omite del registro.
 const OMITTED_TASK = 'config';
 
 const registryCode = (ids: readonly string[]) =>
@@ -20,9 +20,9 @@ const registryCode = (ids: readonly string[]) =>
 
 // `RuleTester.run` declara su propia suite con `describe`/`it`, así que se invoca al nivel superior del
 // archivo: anidarlo dentro de un `it` es un error de Vitest.
-ruleTester.run('ops-catalog-synced', rule, {
+ruleTester.run('ops-task-list-synced', rule, {
 	valid: [
-		// El registro real, documentado en el catálogo del repo.
+		// El registro real, documentado en la lista de tareas del repo.
 		{ filename: REGISTRY_FILE, code: registryCode(taskIds) },
 		// Sin `Object.freeze`: la declaración se lee igual.
 		{ filename: REGISTRY_FILE, code: `const OPS_TASKS = { ${taskIds.map((id) => `'${id}': {}`).join(', ')} };` },

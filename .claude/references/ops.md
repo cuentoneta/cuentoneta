@@ -6,7 +6,7 @@ Los comandos troncales del repo están en [CLAUDE.md → Comandos comunes](../..
 
 La tabla está ordenada alfabéticamente por el id de la tarea (la primera columna). Una tarea nueva se inserta en la fila que le corresponde por ese orden, no al final ni junto a las de su mismo tipo.
 
-La correspondencia entre esta tabla y `OPS_TASKS` la verifica la regla de lint `cuentoneta/ops-catalog-synced` (`tools/eslint/ops-catalog-synced.js`): una tarea sin documentar o una fila huérfana hacen fallar el gate `lint`.
+La correspondencia entre esta tabla y `OPS_TASKS` la verifica la regla de lint `cuentoneta/ops-task-list-synced` (`tools/eslint/ops-task-list-synced.js`): una tarea sin documentar o una fila huérfana hacen fallar el gate `lint`.
 
 | Tarea                            | Descripción                                                                                                                                                                                                                                                                                                                                                                                                               |
 | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

@@ -15,7 +15,7 @@ import noFullZodInBrowser from './tools/eslint/no-full-zod-in-browser.js';
 import noTsExtensionImports from './tools/eslint/no-ts-extension-imports.js';
 import componentLocationAndName from './tools/eslint/component-location-and-name.js';
 import classNameWithoutTypeSuffix from './tools/eslint/class-name-without-type-suffix.js';
-import opsCatalogSynced from './tools/eslint/ops-catalog-synced.js';
+import opsTaskListSynced from './tools/eslint/ops-task-list-synced.js';
 import { angularConfigs, languageConfigs } from './tools/eslint/base-configs.js';
 
 // Las reglas propias comparten un único objeto de plugin: ESLint rechaza redefinir un namespace
@@ -26,7 +26,7 @@ const cuentonetaPlugin = {
 		'no-ts-extension-imports': noTsExtensionImports,
 		'component-location-and-name': componentLocationAndName,
 		'class-name-without-type-suffix': classNameWithoutTypeSuffix,
-		'ops-catalog-synced': opsCatalogSynced,
+		'ops-task-list-synced': opsTaskListSynced,
 	},
 };
 
@@ -455,15 +455,15 @@ export default [
 		},
 	},
 	{
-		// La tabla del catálogo de `pnpm ops` se escribe a mano: una tarea sin fila, o una fila sin tarea,
-		// envejecen en silencio. El scope es el registro porque el catálogo es Markdown, que ESLint no lintea.
-		name: 'ops-catalog-synced',
+		// La lista de tareas de `pnpm ops` se escribe a mano: una tarea sin fila, o una fila sin tarea,
+		// envejecen en silencio. El scope es el registro porque la lista es Markdown, que ESLint no lintea.
+		name: 'ops-task-list-synced',
 		files: ['scripts/ops/registry.ts'],
 		plugins: {
 			cuentoneta: cuentonetaPlugin,
 		},
 		rules: {
-			'cuentoneta/ops-catalog-synced': 'error',
+			'cuentoneta/ops-task-list-synced': 'error',
 		},
 	},
 	{
