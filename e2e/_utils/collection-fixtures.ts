@@ -17,9 +17,9 @@ const CATALOG_ROUTE = '/api/collection';
  * Se deriva del DTO en lugar de reescribirlo: un rename en el contrato de wire rompe acá en compilación,
  * y no en runtime como una descripción que llega vacía.
  */
-export type CollectionCatalogEntry = Readonly<Pick<CollectionTeaserDto, 'slug' | 'title' | 'description'>>;
+export type CollectionTeaserFixture = Readonly<Pick<CollectionTeaserDto, 'slug' | 'title' | 'description'>>;
 
-export async function fetchCollectionCatalog(request: APIRequestContext): Promise<CollectionCatalogEntry[]> {
+export async function fetchCollectionCatalog(request: APIRequestContext): Promise<CollectionTeaserFixture[]> {
 	const response = await request.get(CATALOG_ROUTE);
 	// Un catálogo caído y un catálogo vacío llevan a fixtures distintos, y sin esto los dos llegarían
 	// como una lista sin entradas.
@@ -69,9 +69,9 @@ export function descriptionText(html: string): string {
  * largo harían que el spec leyera una página distinta según el orden en que el CMS devolvió el catálogo.
  */
 export function pickMostDescriptiveCollection(
-	catalog: readonly CollectionCatalogEntry[],
-): CollectionCatalogEntry | undefined {
-	return catalog.reduce<CollectionCatalogEntry | undefined>((mostDescriptive, candidate) => {
+	catalog: readonly CollectionTeaserFixture[],
+): CollectionTeaserFixture | undefined {
+	return catalog.reduce<CollectionTeaserFixture | undefined>((mostDescriptive, candidate) => {
 		if (!mostDescriptive) {
 			return candidate;
 		}

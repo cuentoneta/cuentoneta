@@ -10,15 +10,15 @@
 import { expect, type Page } from '@playwright/test';
 
 import { test } from './_utils/test';
-import { fetchCollectionCatalog, type CollectionCatalogEntry } from './_utils/collection-fixtures';
+import { fetchCollectionCatalog, type CollectionTeaserFixture } from './_utils/collection-fixtures';
 import { DESKTOP_VIEWPORT } from './_utils/viewports';
 import { STABLE_SLUGS } from './_utils/seo-fixtures';
 
 const ROUTE = `/collection/${STABLE_SLUGS.collection}`;
 
 let status = 0;
-let catalog: CollectionCatalogEntry[] = [];
-let collection: CollectionCatalogEntry | undefined;
+let catalog: CollectionTeaserFixture[] = [];
+let collection: CollectionTeaserFixture | undefined;
 
 test.beforeAll(async ({ request }) => {
 	status = (await request.get(ROUTE)).status();

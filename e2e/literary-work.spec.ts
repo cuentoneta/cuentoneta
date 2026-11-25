@@ -14,7 +14,7 @@ import type { LiteraryWorkDto } from '@models/literary-work.dto';
 
 import { test } from './_utils/test';
 import { fetchLiteraryWork } from './_utils/literary-work-fixtures';
-import { fetchCollectionCatalog, type CollectionCatalogEntry } from './_utils/collection-fixtures';
+import { fetchCollectionCatalog, type CollectionTeaserFixture } from './_utils/collection-fixtures';
 import { DESKTOP_VIEWPORT } from './_utils/viewports';
 import { STABLE_SLUGS } from './_utils/seo-fixtures';
 
@@ -30,7 +30,7 @@ let work: LiteraryWorkDto | undefined;
 let mediaWork: LiteraryWorkDto | undefined;
 // Sin anclas el caso del salto no mide nada.
 let titledSectionsWork: LiteraryWorkDto | undefined;
-let stableCollection: CollectionCatalogEntry | undefined;
+let stableCollection: CollectionTeaserFixture | undefined;
 
 test.beforeAll(async ({ request }) => {
 	status = (await request.get(ROUTE)).status();

@@ -15,7 +15,7 @@ import {
 	fetchCollectionCatalog,
 	fetchCollectionDescription,
 	pickMostDescriptiveCollection,
-	type CollectionCatalogEntry,
+	type CollectionTeaserFixture,
 } from './_utils/collection-fixtures';
 import { DESKTOP_VIEWPORT } from './_utils/viewports';
 
@@ -25,7 +25,7 @@ const READ_MORE = 'Leer más';
 // corren o se saltean, así que conviene esperar de más antes que declarar ausente un contenido que está.
 const FIXTURE_TIMEOUT = 15_000;
 
-let mostDescriptive: CollectionCatalogEntry | undefined;
+let mostDescriptive: CollectionTeaserFixture | undefined;
 let readMoreIsVisible = false;
 // La descripción tal como la pinta la página de la colección; el catálogo la trae sin enlaces.
 let fullDescription = '';
