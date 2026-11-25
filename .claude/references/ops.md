@@ -1,6 +1,6 @@
-# Catálogo de tareas de `pnpm ops`
+# Lista de tareas de `pnpm ops`
 
-> Punto de entrada único de los scripts del repo. Sin argumentos imprime el catálogo; con un id resuelve la tarea contra `scripts/ops/registry.ts` y la carga de forma diferida. Las tareas que cambian estado —Sanity, el issue de seguimiento, los worktrees— no aplican cambios sin `--no-dry-run`, salvo `most-read:update` y `landing-pages:add-next-weeks`, que son idempotentes y escriben siempre, y las destructivas ni se cargan sin el flag; las demás escrituras son artefactos que la tarea produce por diseño (`config`, `comments:inventory`, `corpus:generate`, el build de `bundle:stats`) o porque se los pidió con `--summary=<ruta>`. Cada tarea rechaza los argumentos que no declara.
+> Punto de entrada único de los scripts del repo. Sin argumentos imprime la lista de tareas; con un id resuelve la tarea contra `scripts/ops/registry.ts` y la carga de forma diferida. Las tareas que cambian estado —Sanity, el issue de seguimiento, los worktrees— no aplican cambios sin `--no-dry-run`, salvo `most-read:update` y `landing-pages:add-next-weeks`, que son idempotentes y escriben siempre, y las destructivas ni se cargan sin el flag; las demás escrituras son artefactos que la tarea produce por diseño (`config`, `comments:inventory`, `corpus:generate`, el build de `bundle:stats`) o porque se los pidió con `--summary=<ruta>`. Cada tarea rechaza los argumentos que no declara.
 
 Los comandos troncales del repo están en [CLAUDE.md → Comandos comunes](../../CLAUDE.md#comandos-comunes). La convención de qué vive en `scripts/` y qué no, en [`scripts.md`](scripts.md).
 

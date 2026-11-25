@@ -1,10 +1,10 @@
 import { fn } from '@test-utils';
-import { dispatch, formatCatalog, resolveInvocation } from './dispatch';
+import { dispatch, formatTaskList, resolveInvocation } from './dispatch';
 import {
 	EXIT_CODES,
 	OPS_TASKS,
 	type ExitCode,
-	type OpsCatalog,
+	type OpsTaskList,
 	type OpsTaskArgs,
 	type OpsTaskDescriptor,
 } from './registry';
@@ -18,8 +18,8 @@ function stubTask(description = 'Descripción de prueba', destructive = false, a
 	return { run, load, descriptor };
 }
 
-function stubCatalog(): {
-	readonly tasks: OpsCatalog;
+function stubTaskList(): {
+	readonly tasks: OpsTaskList;
 	readonly run: ReturnType<typeof fn<TaskRun>>;
 	readonly load: ReturnType<typeof fn>;
 } {
@@ -45,7 +45,7 @@ function stubOutput() {
 }
 
 describe('resolveInvocation', () => {
-	it('pide el catálogo cuando no hay ninguna tarea', () => {
+	it('pide la lista de tareas cuando no hay ninguna tarea', () => {
 		expect(resolveInvocation({}, [])).toEqual({ action: 'usage' });
 	});
 
@@ -61,7 +61,7 @@ describe('resolveInvocation', () => {
 
 	it('deriva aplicar del flag --no-dry-run esté donde esté en el argv', () => {
 		const { descriptor } = stubTask();
-		const tasks: OpsCatalog = { 'tarea:prueba': descriptor };
+		const tasks: OpsTaskList = { 'tarea:prueba': descriptor };
 
 		expect(resolveInvocation(tasks, ['tarea:prueba', '--no-dry-run'])).toEqual({
 			action: 'execute',
@@ -76,7 +76,7 @@ describe('resolveInvocation', () => {
 	});
 
 	it('rechaza un id que no corresponde a ninguna tarea', () => {
-		expect(resolveInvocation(stubCatalog().tasks, ['otra:tarea'])).toEqual({
+		expect(resolveInvocation(stubTaskList().tasks, ['otra:tarea'])).toEqual({
 			action: 'reject',
 			reason: 'Tarea desconocida: otra:tarea',
 		});
@@ -84,7 +84,7 @@ describe('resolveInvocation', () => {
 
 	it('rechaza un id que coincide con una propiedad heredada del objeto en vez de una tarea', () => {
 		for (const idHeredado of ['toString', 'constructor', 'hasOwnProperty']) {
-			expect(resolveInvocation(stubCatalog().tasks, [idHeredado])).toEqual({
+			expect(resolveInvocation(stubTaskList().tasks, [idHeredado])).toEqual({
 				action: 'reject',
 				reason: `Tarea desconocida: ${idHeredado}`,
 			});
@@ -92,7 +92,7 @@ describe('resolveInvocation', () => {
 	});
 
 	it('rechaza los argumentos adicionales tras un id válido', () => {
-		expect(resolveInvocation(stubCatalog().tasks, ['tarea:prueba', 'extra'])).toEqual({
+		expect(resolveInvocation(stubTaskList().tasks, ['tarea:prueba', 'extra'])).toEqual({
 			action: 'reject',
 			reason: 'Argumento desconocido: extra',
 		});
@@ -119,14 +119,14 @@ describe('resolveInvocation', () => {
 	});
 
 	it('trata un flag mal tipeado como argumento desconocido', () => {
-		expect(resolveInvocation(stubCatalog().tasks, ['tarea:prueba', '--dry-run'])).toEqual({
+		expect(resolveInvocation(stubTaskList().tasks, ['tarea:prueba', '--dry-run'])).toEqual({
 			action: 'reject',
 			reason: 'Argumento desconocido: --dry-run',
 		});
 	});
 
 	it('reporta primero la tarea desconocida cuando también sobra un argumento', () => {
-		expect(resolveInvocation(stubCatalog().tasks, ['otra:tarea', 'extra'])).toEqual({
+		expect(resolveInvocation(stubTaskList().tasks, ['otra:tarea', 'extra'])).toEqual({
 			action: 'reject',
 			reason: 'Tarea desconocida: otra:tarea',
 		});
@@ -152,9 +152,9 @@ describe('resolveInvocation', () => {
 	});
 });
 
-describe('formatCatalog', () => {
+describe('formatTaskList', () => {
 	it('lista cada tarea con su descripción, alineada por id', () => {
-		const lines = formatCatalog({
+		const lines = formatTaskList({
 			b: stubTask('Tarea B').descriptor,
 			'muy-larga:id': stubTask('Tarea A').descriptor,
 		});
@@ -165,14 +165,14 @@ describe('formatCatalog', () => {
 	it('declara una descripción para cada tarea del registro real', () => {
 		for (const [id, descriptor] of Object.entries(OPS_TASKS)) {
 			expect(descriptor.description.length).toBeGreaterThan(0);
-			expect(formatCatalog(OPS_TASKS).join('\n')).toContain(id);
+			expect(formatTaskList(OPS_TASKS).join('\n')).toContain(id);
 		}
 	});
 });
 
 describe('dispatch', () => {
 	it('carga la tarea registrada y le pasa apply en true ante el flag', async () => {
-		const { tasks, run, load } = stubCatalog();
+		const { tasks, run, load } = stubTaskList();
 		const { output } = stubOutput();
 
 		await expect(dispatch(tasks, ['tarea:prueba', '--no-dry-run'], output)).resolves.toBe(0);
@@ -182,7 +182,7 @@ describe('dispatch', () => {
 	});
 
 	it('pasa apply en false por defecto: la corrida en seco es el default', async () => {
-		const { tasks, run } = stubCatalog();
+		const { tasks, run } = stubTaskList();
 		const { output } = stubOutput();
 
 		await expect(dispatch(tasks, ['tarea:prueba'], output)).resolves.toBe(0);
@@ -191,7 +191,7 @@ describe('dispatch', () => {
 	});
 
 	it('acepta el flag antes del id', async () => {
-		const { tasks, run } = stubCatalog();
+		const { tasks, run } = stubTaskList();
 		const { output } = stubOutput();
 
 		await expect(dispatch(tasks, ['--no-dry-run', 'tarea:prueba'], output)).resolves.toBe(0);
@@ -222,8 +222,8 @@ describe('dispatch', () => {
 		await expect(dispatch({ 'tarea:prueba': fallida }, ['tarea:prueba'], output)).resolves.toBe(EXIT_CODES.partial);
 	});
 
-	it('imprime el catálogo y termina bien cuando no hay tarea, sin cargar ninguna', async () => {
-		const { tasks, load } = stubCatalog();
+	it('imprime la lista de tareas y termina bien cuando no hay tarea, sin cargar ninguna', async () => {
+		const { tasks, load } = stubTaskList();
 		const { logged, errors, output } = stubOutput();
 
 		await expect(dispatch(tasks, [], output)).resolves.toBe(0);
@@ -233,8 +233,8 @@ describe('dispatch', () => {
 		expect(logged.join('\n')).toContain('tarea:prueba');
 	});
 
-	it('rechaza un id desconocido con el catálogo y sin cargar ninguna tarea', async () => {
-		const { tasks, load } = stubCatalog();
+	it('rechaza un id desconocido con la lista de tareas y sin cargar ninguna tarea', async () => {
+		const { tasks, load } = stubTaskList();
 		const { logged, errors, output } = stubOutput();
 
 		await expect(dispatch(tasks, ['otra:tarea'], output)).resolves.toBe(1);
@@ -245,7 +245,7 @@ describe('dispatch', () => {
 	});
 
 	it('rechaza argumentos adicionales sin cargar ni ejecutar la tarea', async () => {
-		const { tasks, run, load } = stubCatalog();
+		const { tasks, run, load } = stubTaskList();
 		const { logged, errors, output } = stubOutput();
 
 		await expect(dispatch(tasks, ['tarea:prueba', 'extra'], output)).resolves.toBe(1);

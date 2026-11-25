@@ -20,12 +20,12 @@ export type OpsTaskDescriptor = {
 	readonly destructive: boolean;
 	// Una tarea sin argumentos propios rechaza lo que sobre: el flag mal tipeado no llega a la tarea.
 	readonly acceptsArgs: boolean;
-	// Diferido a propósito: listar el catálogo no debe cargar los módulos de tarea ni sus dependencias
+	// Diferido a propósito: listar las tareas no debe cargar los módulos de tarea ni sus dependencias
 	// (clientes de Sanity, prettier, Vite); el import se paga recién al ejecutar.
 	readonly load: () => Promise<OpsTask>;
 };
 
-export type OpsCatalog = Readonly<Record<string, OpsTaskDescriptor>>;
+export type OpsTaskList = Readonly<Record<string, OpsTaskDescriptor>>;
 
 export const OPS_TASKS = Object.freeze({
 	config: {
