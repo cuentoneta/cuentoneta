@@ -1,4 +1,4 @@
 import type { StoryDocsEntry } from '@testing/storybook-docs';
 
-/** Entrada de catálogo de Footer. La consume su `meta` y toda story que la referencie. */
+/** Documentación de Footer. La consume su `meta` y toda story que la referencie. */
 export const footerDocs: StoryDocsEntry = { title: 'Footer' };
