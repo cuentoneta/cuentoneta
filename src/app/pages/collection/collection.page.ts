@@ -44,7 +44,7 @@ export default class CollectionPage implements CollectionHost {
 	private readonly responseInit = inject(RESPONSE_INIT, { optional: true });
 
 	// Cuántas colecciones se ofrecen al pie. El criterio con que se eligen todavía no existe: hoy es el
-	// orden del catálogo, salteando la que se está leyendo.
+	// orden en que llegan las candidatas, salteando la que se está leyendo.
 	private readonly suggestedCollectionsCount = 3;
 
 	// Los 160 px que el diseño reserva para la descripción en la columna, sobre un interlineado de 20.
@@ -60,8 +60,9 @@ export default class CollectionPage implements CollectionHost {
 		defaultValue: undefined,
 	});
 
-	// El catálogo es accesorio: si falla, el bloque de sugeridas queda vacío y la página se sirve igual.
-	private readonly catalogResource = rxResource({
+	// Las candidatas son accesorias: si fallan, el bloque de sugeridas queda vacío y la página se sirve
+	// igual.
+	private readonly candidateCollectionsResource = rxResource({
 		stream: () => this.collectionApi.getAll(),
 		defaultValue: [],
 	});
@@ -73,8 +74,8 @@ export default class CollectionPage implements CollectionHost {
 
 	private readonly suggestedCollections = computed(() => {
 		const slug = this.slug();
-		const catalog = this.catalogResource.hasValue() ? this.catalogResource.value() : [];
-		return catalog.filter((collection) => collection.slug !== slug).slice(0, this.suggestedCollectionsCount);
+		const candidates = this.candidateCollectionsResource.hasValue() ? this.candidateCollectionsResource.value() : [];
+		return candidates.filter((collection) => collection.slug !== slug).slice(0, this.suggestedCollectionsCount);
 	});
 
 	// Un fallo transitorio no puede salir 200: el borde cachearía una página vacía como si fuera la

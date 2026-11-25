@@ -37,15 +37,15 @@ const collectionWithLongDescription: Collection = createCollection({
 	),
 });
 
-const catalogue: readonly Collection[] = [...onoffCollectionsMock, collectionWithLongDescription];
+const readableCollections: readonly Collection[] = [...onoffCollectionsMock, collectionWithLongDescription];
 
 // Resuelve por slug contra el corpus, en vez de devolver siempre la misma colección: así el control
 // mueve la página entera, y un slug que no existe cae en el estado de colección inexistente, que también
-// es parte de lo que hay que poder mirar. No es el doble del provider porque el catálogo de sugeridas
-// sale de los teasers del canon: la variante de descripción larga se puede leer pero no se sugiere.
+// es parte de lo que hay que poder mirar. No es el doble del provider porque las candidatas a sugerir
+// salen de los teasers del canon: la variante de descripción larga se puede leer pero no se sugiere.
 class CorpusCollectionApi implements CollectionApi {
 	public getBySlug(slug: string): Observable<Collection> {
-		const collection = catalogue.find((candidate) => candidate.slug === slug);
+		const collection = readableCollections.find((candidate) => candidate.slug === slug);
 		return collection
 			? of(collection)
 			: throwError(() => new HttpErrorResponse({ status: 404, statusText: 'Not Found' }));
@@ -84,7 +84,7 @@ const meta: Meta<CollectionPageArgs> = {
 		slug: {
 			name: 'Colección',
 			control: { type: 'select', labels: corpusSlugLabels },
-			options: catalogue.map(({ slug }) => slug),
+			options: readableCollections.map(({ slug }) => slug),
 			table: { type: { summary: 'string' } },
 		},
 	},

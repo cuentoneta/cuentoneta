@@ -57,7 +57,7 @@ export default class AuthorPage implements AuthorHost {
 	public readonly author = computed(() => (this.authorResource.hasValue() ? this.authorResource.value() : undefined));
 	// El guard no es ceremonia: leer el valor de un recurso en error relanza la falla, y acá el throw
 	// saldría dentro del encabezado y del listado, derribando el render del servidor de una página
-	// indexable. Un catálogo que falla con el autor resuelto deja la ficha sin obras, no sin página.
+	// indexable. Un listado de obras que falla con el autor resuelto deja la ficha sin obras, no sin página.
 	private readonly literaryWorks = computed(() =>
 		this.literaryWorksResource.hasValue() ? this.literaryWorksResource.value() : [],
 	);

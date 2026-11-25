@@ -41,7 +41,7 @@ describe('AuthorReadingSuggestions', () => {
 		restoreAllMocks();
 	});
 
-	it('should fetch the teaser catalog filtered by the author', async () => {
+	it("should fetch the teasers of the author's works", async () => {
 		const getTeasers = fn<(filter: LiteraryWorkTeaserFilter) => Observable<LiteraryWorkTeaser[]>>();
 		getTeasers.mockReturnValue(of(onoffLiteraryWorkTeasersMock));
 

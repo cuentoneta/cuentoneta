@@ -60,7 +60,7 @@ class StubFailingAuthorApi implements AuthorApi {
 	}
 }
 
-// El catálogo puede fallar con el autor resolviendo bien: es la combinación que un doble que devuelve
+// El listado de obras puede fallar con el autor resolviendo bien: es la combinación que un doble que devuelve
 // siempre no alcanza a montar.
 class StubFailingLiteraryWorkApi implements LiteraryWorkApi {
 	public getBySlug(): Observable<LiteraryWork> {
@@ -128,7 +128,7 @@ describe('AuthorPage', () => {
 	// Leer el valor de un recurso en error relanza la falla. Con el listado bloqueando el SSR, ese throw
 	// derriba el render del servidor de una página indexable; el autor resuelto tiene que bastar para
 	// servir la ficha.
-	it('should still serve the profile when the works catalogue fails', async () => {
+	it('should still serve the profile when the works listing fails', async () => {
 		await renderPage(authorMock, new StubFailingLiteraryWorkApi());
 
 		expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(authorMock.name);
