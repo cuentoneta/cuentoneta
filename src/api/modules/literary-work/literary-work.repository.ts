@@ -5,7 +5,7 @@ import type { MalformedLiteraryWorkError } from './literary-work.errors';
  * Los avances que la ACL pudo traducir, junto con las obras que no.
  *
  * El repository **reporta** en vez de decidir: la misma obra intraducible tiene que tumbar el
- * agregado que la cura y no puede tumbar un bloque accesorio, así que qué hacer con ella lo decide
+ * agregado que la transporta y no puede tumbar un bloque accesorio, así que qué hacer con ella lo decide
  * quien conoce el caso de uso — el service.
  */
 export interface LiteraryWorkTeaserFetchResult {

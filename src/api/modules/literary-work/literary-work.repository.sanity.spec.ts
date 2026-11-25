@@ -300,7 +300,7 @@ describe('SanityLiteraryWorkRepository.fetchTeasers', () => {
 
 	// El mapeo por obra falla rápido, pero la obra que no se puede traducir se reporta en vez de
 	// propagarse: qué hacer con ella lo decide quien conoce el caso de uso, no este adaptador.
-	it('reporta la obra mal curada sin llevarse puestas a las demás', async () => {
+	it('reporta la obra mal formada sin llevarse puestas a las demás', async () => {
 		const [sane, ...rest] = onoffRawLiteraryWorkTeasersMock;
 		const broken = { ...sane, _id: `${sane._id}-rota`, slug: `${sane.slug}-rota`, totalReadingTime: null };
 
@@ -327,7 +327,7 @@ describe('SanityLiteraryWorkRepository.fetchTeasers', () => {
 		expect(bodyHtml.endsWith('…</p>')).toBe(true);
 	});
 
-	it('reporta como mal curada a la obra sin sección de apertura', async () => {
+	it('reporta como mal formada a la obra sin sección de apertura', async () => {
 		const [sane] = onoffRawLiteraryWorkTeasersMock;
 		const excerptless = { ...sane, excerpt: [] };
 

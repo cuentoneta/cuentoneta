@@ -301,7 +301,7 @@ interface LiteraryWorkRepository {
 	// Los avances de obra, filtrables por criterios (hoy solo `author`; un criterio nuevo se suma al
 	// mismo registro de filtro, no como firma nueva). Devuelve un registro con las
 	// obras sanas junto a los errores de las que no se pudieron traducir: el repository reporta y no
-	// decide, porque la misma obra intraducible debe tumbar el agregado que la cura (colección) y no
+	// decide, porque la misma obra intraducible debe tumbar el agregado que la transporta (colección) y no
 	// puede tumbar un bloque accesorio — la política vive en el service, que conoce el caso de uso.
 	fetchTeasers(filter: LiteraryWorkTeaserFilter): Promise<LiteraryWorkTeaserFetchResult>;
 }

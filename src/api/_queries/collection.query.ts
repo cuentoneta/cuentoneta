@@ -64,7 +64,7 @@ export const collectionBySlugQuery = defineQuery(`
         //
         // Se toma el primer bloque **no vacío**: un cuerpo que arranca con un renglón en blanco es
         // contenido válido —nada en el schema lo impide— y con el índice pelado daría un extracto
-        // vacío, que el mapper trataría como obra mal curada y tumbaría la colección entera.
+        // vacío, que el mapper trataría como obra mal formada y tumbaría la colección entera.
         'excerpt': content[0...1]{
             _key,
             title,

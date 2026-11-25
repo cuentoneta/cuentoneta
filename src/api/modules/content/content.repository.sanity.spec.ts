@@ -158,7 +158,7 @@ describe('SanityContentRepository.fetchLandingPageContent', () => {
 	});
 
 	// La proyección devuelve la lista vacía tanto para la obra sin autores como para la que los perdió,
-	// y la tarjeta de la home muestra al primero sin preguntar: sin este rechazo, una obra mal curada
+	// y la tarjeta de la home muestra al primero sin preguntar: sin este rechazo, una obra mal formada
 	// tumba el render de la página entera en vez de fallar donde se puede corregir.
 	it('rejects a highlighted work with no authors', async () => {
 		const [work, ...rest] = onoffRawLandingPageMock.latestLiteraryWorks;

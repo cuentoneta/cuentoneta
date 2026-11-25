@@ -69,7 +69,7 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 			} catch (error) {
 				// El mapeo por obra no se ablanda: la intraducible se acumula en vez de propagarse,
 				// porque qué hacer con ella —descartarla de los avances, tumbar el agregado que la
-				// cura— lo decide quien conoce el caso de uso, no este adaptador. El slug viaja en el
+				// transporta— lo decide quien conoce el caso de uso, no este adaptador. El slug viaja en el
 				// error porque, sobre un lote de obras, saber que "algo" está mal no alcanza para
 				// arreglarlo.
 				malformed.push(

@@ -37,7 +37,7 @@ test.beforeAll(async ({ request, browser }) => {
 	}
 	fullDescription = await fetchCollectionDescription(request, mostDescriptive.slug);
 
-	// El estado del fixture se resuelve una sola vez: sin esto, una curaduría de descripciones cortas
+	// El estado del fixture se resuelve una sola vez: sin esto, una carga editorial de descripciones cortas
 	// produciría el mismo fallo en cada uno de los casos de abajo en vez de una vez, acá.
 	const page = await browser.newPage({ viewport: DESKTOP_VIEWPORT });
 	await page.goto(`/collection/${mostDescriptive.slug}`);

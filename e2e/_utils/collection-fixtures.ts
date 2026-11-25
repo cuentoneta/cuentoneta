@@ -2,7 +2,7 @@
  * Fixtures del catálogo de colecciones para los e2e de la página de colección.
  *
  * La identidad de la colección que se lee sale de `STABLE_SLUGS`, pero el largo de su descripción no:
- * un slug no dice nada sobre cuánto texto le cargó la curaduría, y ese texto es justamente lo que decide
+ * un slug no dice nada sobre cuánto texto se le cargó, y ese texto es justamente lo que decide
  * si el recorte desborda. Se resuelve entonces contra el catálogo real, en runtime.
  */
 import type { APIRequestContext } from '@playwright/test';

@@ -90,7 +90,7 @@ describe('getLiteraryWorkTeasers', () => {
 	// La política es por obra y no cambia con la cantidad: distinguir "todas rotas" de "algunas rotas"
 	// introduciría un umbral que nadie puede nombrar, y el consumidor ya sabe no dibujarse ante lista
 	// vacía.
-	it('devuelve un listado vacío cuando todas las obras están mal curadas', async () => {
+	it('devuelve un listado vacío cuando todas las obras están mal formadas', async () => {
 		spyOn(console, 'warn').mockImplementation(() => undefined);
 		const stub = new StubLiteraryWorkRepository({
 			teasers: [],
