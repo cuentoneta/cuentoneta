@@ -303,7 +303,7 @@ interface LiteraryWorkRepository {
 	// obras sanas junto a los errores de las que no se pudieron traducir: el repository reporta y no
 	// decide, porque la misma obra intraducible debe tumbar el agregado que la cura (colección) y no
 	// puede tumbar un bloque accesorio — la política vive en el service, que conoce el caso de uso.
-	fetchTeasers(filter: LiteraryWorkTeaserFilter): Promise<LiteraryWorkTeaserListing>;
+	fetchTeasers(filter: LiteraryWorkTeaserFilter): Promise<LiteraryWorkTeaserFetchResult>;
 }
 
 // Adaptador real: SanityLiteraryWorkRepository implements LiteraryWorkRepository (GROQ)
@@ -318,7 +318,7 @@ interface LiteraryWorkRepository {
 
 | Archivo                              | Rol                                                                                                                                                                                                   |
 | ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `literary-work.repository.ts`        | **Puerto**: la interfaz `LiteraryWorkRepository` (`fetchBySlug` + `fetchTeasers`), el filtro `LiteraryWorkTeaserFilter` y el registro `LiteraryWorkTeaserListing`                                     |
+| `literary-work.repository.ts`        | **Puerto**: la interfaz `LiteraryWorkRepository` (`fetchBySlug` + `fetchTeasers`), el filtro `LiteraryWorkTeaserFilter` y el resultado `LiteraryWorkTeaserFetchResult`                                |
 | `literary-work.repository.sanity.ts` | **Adaptador Sanity**: `SanityLiteraryWorkRepository` + su ACL privada (traducción raw→dominio); deriva un fallback puro de reading time cuando falta, sin persistir ([§5](#5-helper-de-reading-time)) |
 | `literary-work.repository.mock.ts`   | **Doble**: `InMemoryLiteraryWorkRepository` (almacena dominio)                                                                                                                                        |
 
@@ -352,7 +352,7 @@ La ACL del repository (ver arriba) es responsable de: validar invariantes contra
 | --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Query params    | `{ author?: string }` — slug del **autor**, mismo formato que `Slug` (400 si lo viola: es criterio de filtro, no recurso). El filtrado va por **query params, no por sub-rutas**: cada criterio futuro (limit/offset para paginación, tags) es un campo más del schema |
 | Respuesta 200   | `LiteraryWorkTeaser[]` ordenado por título — sin filtros, el catálogo entero; con `author`, sus obras. Quién elige las que se muestran es del consumidor. Un filtro sin resultados (o un autor inexistente) es `[]`, no 404: la ausencia es legítima                   |
-| Obra mal curada | Se **descarta del listado y se registra en el servidor** (slug + causa), sin afectar a las demás: el repository la reporta en `LiteraryWorkTeaserListing.malformed` y el service aplica la política de listado. Todas mal curadas ⇒ `[]`, no error                     |
+| Obra mal curada | Se **descarta del listado y se registra en el servidor** (slug + causa), sin afectar a las demás: el repository la reporta en `LiteraryWorkTeaserFetchResult.malformed` y el service aplica la política de listado. Todas mal curadas ⇒ `[]`, no error                 |
 | Registro        | El mismo mount de `/literary-work`; la caché de borde lo cubre por comodín, con la misma cadencia editorial que la obra                                                                                                                                                |
 | Colección Bruno | `docs/api/bruno/literary-work/get-literary-works.bru`                                                                                                                                                                                                                  |
 

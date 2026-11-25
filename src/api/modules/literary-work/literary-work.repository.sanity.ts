@@ -20,7 +20,7 @@ import { MalformedLiteraryWorkError } from './literary-work.errors';
 import type {
 	LiteraryWorkRepository,
 	LiteraryWorkTeaserFilter,
-	LiteraryWorkTeaserListing,
+	LiteraryWorkTeaserFetchResult,
 } from './literary-work.repository';
 
 type SanityLiteraryWork = NonNullable<LiteraryWorkBySlugQueryResult>;
@@ -55,17 +55,17 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 	}
 
 	// Trae el catálogo de obras que satisfacen el filtro, traducidas a la vista de teaser.
-	public async fetchTeasers(filter: LiteraryWorkTeaserFilter): Promise<LiteraryWorkTeaserListing> {
+	public async fetchTeasers(filter: LiteraryWorkTeaserFilter): Promise<LiteraryWorkTeaserFetchResult> {
 		const raw = await this.client.fetch(literaryWorkTeasers, {
 			author: filter.author ?? null,
 			slugs: filter.slugs ? [...filter.slugs] : null,
 		});
 
-		const literaryWorks: LiteraryWorkTeaser[] = [];
+		const teasers: LiteraryWorkTeaser[] = [];
 		const malformed: MalformedLiteraryWorkError[] = [];
 		for (const rawTeaser of raw) {
 			try {
-				literaryWorks.push(this.mapLiteraryWorkTeaser(rawTeaser));
+				teasers.push(this.mapLiteraryWorkTeaser(rawTeaser));
 			} catch (error) {
 				// El mapeo por obra no se ablanda: la intraducible se acumula en vez de propagarse,
 				// porque qué hacer con ella —descartarla de un listado, tumbar el agregado que la
@@ -79,7 +79,7 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 				);
 			}
 		}
-		return { literaryWorks, malformed };
+		return { teasers, malformed };
 	}
 
 	private mapLiteraryWorkTeaser(raw: SanityLiteraryWorkTeaser): LiteraryWorkTeaser {

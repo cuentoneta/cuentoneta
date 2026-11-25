@@ -43,8 +43,8 @@ describe('el corpus de dominio de los teasers de obra coincide con el mapeo del 
 		async (slug) => {
 			const raw = onoffRawLiteraryWorkTeasersMock.find((candidate) => candidate.slug === slug);
 			const expected = onoffLiteraryWorkTeasersMock.find((teaser) => teaser.slug === slug);
-			const { literaryWorks } = await repoReturning([raw]).fetchTeasers({});
-			const [mapped] = literaryWorks;
+			const { teasers } = await repoReturning([raw]).fetchTeasers({});
+			const [mapped] = teasers;
 
 			expect(mapped).toBeDefined();
 			expect(expected).toBeDefined();
