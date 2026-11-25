@@ -483,7 +483,7 @@ Consecuencias:
 
 - **UI:** el byline sale natural del modelo (`authors[0].name === 'Anónimo'`); la página `/author/anonimo` existe y lista las obras anónimas — comportamiento aceptado y deseado.
 - **JSON-LD (Slice 3):** la obra anónima emite `author` como `Person` "Anónimo" (representación real del Acervo); multi-autor ⇒ array de `Person`.
-- **Curaduría:** las obras anónimas se consultan por referencia al author `anonimo` (GROQ estándar), sin queries especiales por array vacío.
+- **Carga editorial:** las obras anónimas se consultan por referencia al author `anonimo` (GROQ estándar), sin queries especiales por array vacío.
 
 ---
 

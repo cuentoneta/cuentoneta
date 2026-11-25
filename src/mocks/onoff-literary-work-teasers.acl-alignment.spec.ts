@@ -4,7 +4,7 @@
  * `Collection`.
  *
  * El mapper de teaser existe **dos veces** por diseño —cada repository es dueño de su ACL— y el cruce
- * de colección ejercita solo su copia. La de `literary-work`, que sirve al catálogo, quedaría
+ * de colección ejercita solo su copia. La de `literary-work`, que sirve los avances de obra, quedaría
  * sin nadie que la cruce contra el corpus: la duplicación sancionada es exactamente lo que puede
  * divergir en silencio, y este spec es lo que lo impide.
  */
