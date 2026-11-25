@@ -19,7 +19,7 @@ const meta: Meta<YoutubeVideoWidget> = {
 				sourceState: 'shown',
 			},
 			description: {
-				component: `<div><p>El componente <strong>YoutubeVideoWidget</strong> muestra un video de YouTube asociado a una obra: el embed y la descripción del recurso.</p><p>La descripción llega desde el backend como HTML ya saneado (<code>SanitizedHtml</code>, derivado del Markdown que carga el CMS) y se pinta con <code>[innerHTML]</code> dentro de un <code>&lt;div&gt;</code>, porque el HTML que produce el pipeline ya trae su propio <code>&lt;p&gt;</code>.</p><p>Quien monta este widget es ${docsRef(mediaWidgetSelectorDocs)}, que lo resuelve contra el registry de medios según el tipo de media y le delega toda la vista.</p><p><strong>En el catálogo el embed es un reproductor de utilería</strong> dibujado con CSS, que ocupa su lugar: el corpus no depende de un video subido a una cuenta de terceros, que podría caerse, bloquearse por región o quedar privado sin que ningún gate lo note. La maquetación —proporción, recorte, cómo convive con la descripción— es la real; el contenido no.</p></div>`,
+				component: `<div><p>El componente <strong>YoutubeVideoWidget</strong> muestra un video de YouTube asociado a una obra: el embed y la descripción del recurso.</p><p>La descripción llega desde el backend como HTML ya saneado (<code>SanitizedHtml</code>, derivado del Markdown que carga el CMS) y se pinta con <code>[innerHTML]</code> dentro de un <code>&lt;div&gt;</code>, porque el HTML que produce el pipeline ya trae su propio <code>&lt;p&gt;</code>.</p><p>Quien monta este widget es ${docsRef(mediaWidgetSelectorDocs)}, que lo resuelve contra el registry de medios según el tipo de media y le delega toda la vista.</p><p><strong>En Storybook el embed es un reproductor de utilería</strong> dibujado con CSS, que ocupa su lugar: el corpus no depende de un video subido a una cuenta de terceros, que podría caerse, bloquearse por región o quedar privado sin que ningún gate lo note. La maquetación —proporción, recorte, cómo convive con la descripción— es la real; el contenido no.</p></div>`,
 			},
 		},
 	},
@@ -45,7 +45,9 @@ export const DescripcionConEnlace: Story = {
 	args: {
 		media: {
 			...onoffYouTubeVideosMock[0],
-			description: markdownToSanitizedHtml(createMarkdown('Más sobre el video en [el sitio del canal](https://example.com).')),
+			description: markdownToSanitizedHtml(
+				createMarkdown('Más sobre el video en [el sitio del canal](https://example.com).'),
+			),
 		},
 	},
 	parameters: {

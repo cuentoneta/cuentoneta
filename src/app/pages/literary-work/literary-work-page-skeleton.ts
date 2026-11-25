@@ -6,7 +6,7 @@ import { Skeleton } from '@components/skeleton/skeleton';
 
 /**
  * Silueta de carga de la página de lectura: el hero, la barra de lectura y las primeras líneas del
- * cuerpo. Vive junto a la página y no en el catálogo compartido porque reproduce **su** disposición,
+ * cuerpo. Vive junto a la página y no en `src/app/components/` porque reproduce **su** disposición,
  * que no sirve a ninguna otra pantalla.
  *
  * El hero dibuja su propio esqueleto cuando no recibe obra, así que se lo monta tal cual en vez de

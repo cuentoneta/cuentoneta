@@ -4,7 +4,7 @@ import { provideRouter, withDisabledInitialNavigation } from '@angular/router';
 import { provideLayout } from '../app/providers/layout.provider';
 
 /**
- * Lo que el catálogo le da a toda story sin que ella lo declare: dependencias que cualquier
+ * Lo que Storybook le da a toda story sin que ella lo declare: dependencias que cualquier
  * componente puede necesitar y cuya ausencia deja el canvas en la pantalla de error, no en un
  * componente a medio pintar.
  *

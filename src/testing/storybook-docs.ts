@@ -1,7 +1,7 @@
 /**
  * Referencias cruzadas de la prosa de autodocs, resueltas por el compilador en vez de por un checker.
  *
- * La descripción de una story nombra y enlaza a otras entradas del catálogo. Escritas a mano, esas dos
+ * La descripción de una story nombra y enlaza a otras entradas de Storybook. Escritas a mano, esas dos
  * mitades se desincronizan sin emitir señal: `storybook:build` compila la prosa pero no la ejecuta, así
  * que un componente borrado sigue nombrado y un `kind-id` mal tipeado sigue enlazado. Acá el nombre
  * visible y el `kind-id` salen los dos del **mismo** `title`, que vive en el módulo `*.docs.ts` del
@@ -13,12 +13,12 @@
  * temporal al evaluar el template literal de la prosa. Un módulo que no importa nada no puede formar
  * un ciclo, y por eso el `title` vive ahí y no en el `meta`, que lo consume.
  *
- * El nombre visible es el último segmento del `title`, no el de la clase: el catálogo publica
+ * El nombre visible es el último segmento del `title`, no el de la clase: Storybook publica
  * `AudioRecording` para `AudioRecordingWidget`, y es el título el que decide qué lee quien
  * navega los autodocs.
  */
 
-/** La entrada de catálogo de una story: su `title` de Storybook, declarado una sola vez. */
+/** La entrada de Storybook de una story: su `title`, declarado una sola vez. */
 export interface StoryDocsEntry {
 	readonly title: string;
 }
@@ -39,7 +39,7 @@ export function kindId(title: string): string {
 		.replace(/-+$/, '');
 }
 
-/** El nombre con el que el catálogo publica una entrada: el último segmento de su `title`. */
+/** El nombre con el que Storybook publica una entrada: el último segmento de su `title`. */
 export function docsName(entry: StoryDocsEntry): string {
 	return entry.title.slice(entry.title.lastIndexOf('/') + 1);
 }
@@ -53,7 +53,7 @@ export function docsMention(entry: StoryDocsEntry): string {
  * El nombre de una entrada, resaltado y enlazado a su página de autodocs.
  *
  * `target="_top"` porque la prosa se renderiza dentro del iframe del canvas: sin él, la navegación
- * abriría el catálogo anidado adentro de sí mismo.
+ * abriría Storybook anidado adentro de sí mismo.
  */
 export function docsRef(entry: StoryDocsEntry): string {
 	return docsLink(entry, docsName(entry));
@@ -61,7 +61,7 @@ export function docsRef(entry: StoryDocsEntry): string {
 
 /**
  * El enlace a una entrada bajo un texto propio, para cuando la prosa la nombra en castellano
- * ("las sugerencias de lectura") en vez de por su nombre de catálogo.
+ * ("las sugerencias de lectura") en vez de por su nombre en Storybook.
  */
 export function docsLink(entry: StoryDocsEntry, label: string): string {
 	return `<a href="./?path=/docs/${kindId(entry.title)}--docs" target="_top"><strong>${label}</strong></a>`;

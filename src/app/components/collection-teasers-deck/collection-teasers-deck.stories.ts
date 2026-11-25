@@ -14,7 +14,7 @@ import type { CollectionTeaserCardSkeleton } from '@components/collection-teaser
 export type DocsSymbols = [Collection, CollectionTeaserCardSkeleton];
 
 // Un solo dataset compartido por todas las stories: mismas colecciones en cada estado hace que el
-// switch del catálogo compare siempre lo mismo.
+// switch de Storybook compare siempre lo mismo.
 // El título largo entra por el selector que lo garantiza, no por el orden en que el agregador declara
 // las colecciones: de él depende que la descripción de la grilla siga siendo cierta.
 const [withLongTitle] = onoffCollectionTeasersWithLongTitlesMock;

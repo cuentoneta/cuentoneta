@@ -10,7 +10,7 @@ import { sectionHeaderDocs } from '@components/section-header/section-header.doc
 import { docsMention, docsRef } from '@testing/storybook-docs';
 
 // Un solo dataset compartido por todas las stories: las mismas obras en cada estado hacen que el switch
-// del catálogo compare siempre lo mismo.
+// de Storybook compare siempre lo mismo.
 const literaryWorks = onoffLiteraryWorkNavigationTeasersWithAuthorsMock.slice(0, 6);
 
 const meta: Meta<LiteraryWorksCardDeck> = {

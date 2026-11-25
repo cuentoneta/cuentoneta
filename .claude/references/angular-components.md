@@ -60,11 +60,11 @@ Toda clase `@Component` sigue una convención única de ubicación y nombre, **s
 | Página ruteada                                                                        | `src/app/pages/<x>/`           | `x.page.ts` + `export default class XPage`              |
 | Componente no ruteable dentro de `pages/` (skeleton, pieza propia de una sola página) | `src/app/pages/<x>/`           | `x.ts` + `export class X` — **nunca** termina en `Page` |
 | Raíz de la aplicación                                                                 | `src/app/app.ts` (ruta exacta) | `export class App`                                      |
-| Soporte de tests y del catálogo                                                       | `src/testing/**`               | Ubicación libre; igual sin sufijo `Component`           |
+| Soporte de tests y de Storybook                                                       | `src/testing/**`               | Ubicación libre; igual sin sufijo `Component`           |
 
 Los hermanos de un componente —`.html`, `.css`, `.spec.ts`, `.stories.ts`, `.docs.ts`— comparten el **stem** del archivo principal: `tag.ts` va con `tag.html`, `tag.spec.ts`, `tag.stories.ts` y `tag.docs.ts`; `about.page.ts` va con `about.page.html`.
 
-**Los componentes host declarados dentro de un `*.spec.ts` o un `*.stories.ts` quedan fuera de esta convención**, con nombre y ubicación libres (p. ej. `HostComponent`, `ClampHostComponent`, `ButtonGroupStoryHostComponent`). Son andamiaje local de ese archivo —no se importan desde ningún otro lado, no se rutean ni se catalogan— y no componentes de la aplicación.
+**Los componentes host declarados dentro de un `*.spec.ts` o un `*.stories.ts` quedan fuera de esta convención**, con nombre y ubicación libres (p. ej. `HostComponent`, `ClampHostComponent`, `ButtonGroupStoryHostComponent`). Son andamiaje local de ese archivo —no se importan desde ningún otro lado, no se rutean ni se documentan en Storybook— y no componentes de la aplicación.
 
 **Alcance:** esta sección rige **solo** para `@Component`. Las directivas y los pipes siguen su propia convención de nombre, en [Nombre de directivas y pipes](#nombre-de-directivas-y-pipes); la regla de arriba no los mira.
 
@@ -437,7 +437,7 @@ El contenedor de una página es el patrón de utilidades `mx-auto w-full max-w-3
 
 El `<main>` despeja con **padding** y no con margen: con margen, el margen negativo del opt-out funcionaría por colapso de márgenes, que es un mecanismo correcto por accidente.
 
-Lo verifica el guardrail `src/app/pages/page-layout.spec.ts`, que recorre las páginas desde las rutas y falla ante cualquiera de las tres reglas, más la contracara sobre el shell y un barrido del catálogo de componentes.
+Lo verifica el guardrail `src/app/pages/page-layout.spec.ts`, que recorre las páginas desde las rutas y falla ante cualquiera de las tres reglas, más la contracara sobre el shell y un barrido de los componentes de `src/app/components/`.
 
 ---
 
@@ -508,5 +508,5 @@ La utilidad `z` de Tailwind resuelve cualquier número sin consultar el tema, as
 - [ ] Host (clases/bindings/eventos) en la propiedad `host` del decorador; sin `@HostBinding`/`@HostListener` ni `:host { @apply ... }`.
 - [ ] Todo apilamiento con un token de la escala (`z-content`/`z-raised`/`z-nav`/`z-floating`), nunca un número crudo; `isolate` si el componente eleva algo dentro de sí (ver [Escala de apilamiento](#escala-de-apilamiento-z-index)).
 - [ ] Sin `enum`, sin propiedades estáticas, sin `!`.
-- [ ] Acompañar con tests de Angular Testing Library y con su `*.stories.ts` (Storybook), salvo que delegue toda su vista en otro componente ya catalogado (ver [`testing.md`](./testing.md)).
+- [ ] Acompañar con tests de Angular Testing Library y con su `*.stories.ts` (Storybook), salvo que delegue toda su vista en otro componente ya documentado en Storybook (ver [`testing.md`](./testing.md)).
 - [ ] El estado vive en servicios + signals (ver [`angular-state.md`](./angular-state.md)).

@@ -14,7 +14,7 @@ import type { HighlightedAuthor } from '@models/landing-page-content.model';
 export type DocsSymbols = [AuthorTeaserCardSkeleton, HighlightedAuthor];
 
 // Un solo dataset compartido por todas las stories: los mismos destacados en cada estado hacen que el
-// switch del catálogo compare siempre lo mismo.
+// switch de Storybook compare siempre lo mismo.
 const SKELETON_COUNT = 6;
 const highlightedAuthors = onoffHighlightedAuthorsOfLength(SKELETON_COUNT);
 

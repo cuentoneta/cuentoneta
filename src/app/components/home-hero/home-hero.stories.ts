@@ -38,7 +38,7 @@ export const ConContenidoProyectado: Story = {
 	name: 'Con contenido proyectado',
 	render: () => ({
 		// El carrusel real se sustituye por un bloque de la misma caja: la story documenta la proyección,
-		// no el carrusel, que tiene su propia entrada de catálogo.
+		// no el carrusel, que tiene su propia entrada de Storybook.
 		template: `
 			<cuentoneta-home-hero>
 				<div class="flex h-90 w-full items-center justify-center rounded-[20px] bg-neutral-300 font-inter text-neutral-700">

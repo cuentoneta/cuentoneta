@@ -5,7 +5,7 @@ import rule from './storybook-docs-refs.js';
 
 const ruleTester = new RuleTester({ languageOptions: { parser: tsParser } });
 
-// La regla resuelve el módulo de entrada por el nombre del archivo y lee el catálogo y las clases Angular
+// La regla resuelve el módulo de entrada por el nombre del archivo y lee las entradas de Storybook y las clases Angular
 // del árbol, así que los casos apuntan a símbolos reales: `Divider` es una entrada que declara
 // `Componentes V3/Divider`, y `TagsOverflow` una directiva sin entrada propia.
 const DIVIDER_STORY = 'src/app/components/divider/divider.stories.ts';
@@ -29,7 +29,7 @@ ruleTester.run('storybook-docs-refs', rule, {
 			filename: DIVIDER_STORY,
 			code: "const meta = { component: Divider, title: 'Componentes V3/Divider' };",
 		},
-		// El `title` de los datos de una story no es una entrada del catálogo: no vive junto a `component`.
+		// El `title` de los datos de una story no es una entrada de Storybook: no vive junto a `component`.
 		{
 			filename: DIVIDER_STORY,
 			code: "export const Primary = { args: { title: 'Geometrías del desvelo' } };",

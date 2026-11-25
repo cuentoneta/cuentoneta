@@ -256,7 +256,7 @@ export default [
 	{
 		// La exención de specs y stories es de **largo, no de forma**: el callback de un `describe` y el
 		// `meta` de una story son funciones por sintaxis y no por lógica, así que medir su largo mide
-		// el tamaño de la suite y del catálogo. `complexity` y `max-depth` siguen rigiendo ahí, porque
+		// el tamaño de la suite y de Storybook. `complexity` y `max-depth` siguen rigiendo ahí, porque
 		// un test enrevesado es tan difícil de leer como cualquier otro código. `src/sanity/types.ts`
 		// lo emite el typegen de Sanity: su largo no lo decide nadie.
 		name: 'size-limits',
