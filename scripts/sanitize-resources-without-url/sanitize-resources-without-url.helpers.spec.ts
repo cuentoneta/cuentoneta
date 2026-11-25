@@ -267,7 +267,7 @@ describe('runResourceSanitization', () => {
 		expect(report.inspected).toBe(3);
 	});
 
-	// Un documento roto no puede abortar el saneamiento del catálogo: se registra y el recorrido sigue.
+	// Un documento roto no puede abortar el saneamiento del Acervo: se registra y el recorrido sigue.
 	it('registra el documento sin disposición y continúa con el resto de la página', async () => {
 		const { writer } = spyWriter();
 		const unknown = {

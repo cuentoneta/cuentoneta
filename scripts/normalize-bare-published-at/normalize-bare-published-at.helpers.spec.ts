@@ -135,7 +135,7 @@ describe('runPublishedAtNormalization', () => {
 		expect(report.inspected).toBe(3);
 	});
 
-	// Un documento roto no puede abortar la remediación del catálogo: se registra y el recorrido sigue.
+	// Un documento roto no puede abortar la remediación del Acervo: se registra y el recorrido sigue.
 	it('registra el documento con forma desconocida y continúa con el resto de la página', async () => {
 		const { writer } = spyWriter();
 		const rara = { _id: 'obra-rara', publishedAt: '2022-13-45' };

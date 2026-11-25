@@ -198,7 +198,7 @@ export const ConVariosFormatos: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Una obra que se ofrece en varios formatos. Lo que se mira acá es el <strong>ensamblado</strong>, no el widget: dónde queda el bloque de formatos entre la barra de lectura y el cuerpo, y cómo cada reproductor se comporta dentro de la columna de lectura, que es más angosta que el ancho del canvas.</p><p>La botonera del propio ${docsRef(mediaWidgetSelectorDocs)} recorre los recursos que la obra declara —uno por botón, aunque dos compartan formato— sin salir de la página: es la misma interacción que hace un lector.</p><p><strong>Usos:</strong> la obra mejor acompañada del catálogo, que es donde el bloque de formatos compite por espacio con el resto de la página.</p>`,
+				story: `<p>Una obra que se ofrece en varios formatos. Lo que se mira acá es el <strong>ensamblado</strong>, no el widget: dónde queda el bloque de formatos entre la barra de lectura y el cuerpo, y cómo cada reproductor se comporta dentro de la columna de lectura, que es más angosta que el ancho del canvas.</p><p>La botonera del propio ${docsRef(mediaWidgetSelectorDocs)} recorre los recursos que la obra declara —uno por botón, aunque dos compartan formato— sin salir de la página: es la misma interacción que hace un lector.</p><p><strong>Usos:</strong> la obra mejor acompañada del corpus, que es donde el bloque de formatos compite por espacio con el resto de la página.</p>`,
 			},
 		},
 	},

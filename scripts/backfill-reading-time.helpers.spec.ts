@@ -168,7 +168,7 @@ describe('runReadingTimeBackfill', () => {
 		expect(report.materialized).toEqual([]);
 	});
 
-	// Un documento roto no puede abortar el backfill del catálogo: se registra y el recorrido sigue.
+	// Un documento roto no puede abortar el backfill del Acervo: se registra y el recorrido sigue.
 	it('registra la obra que falla y continúa con el resto de la página', async () => {
 		const { writer } = spyWriter();
 		const corrupted: ReadingTimeBackfillCandidate = {

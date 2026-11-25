@@ -17,7 +17,7 @@ const meta: Meta<Button> = {
 				sourceState: 'shown',
 			},
 			description: {
-				component: `<div><p>El ${docsMention(buttonDocs)} del Design System v3 es un componente basado en atributo (<code>cuentoneta-button</code>) que se aplica indistintamente sobre elementos <code>&lt;button&gt;</code> y <code>&lt;a&gt;</code>, manteniendo estilos consistentes y la semántica correcta de cada elemento (acción vs. navegación).</p><p>Su API son <strong>tres ejes independientes</strong> que se combinan libremente, en lugar de un catálogo de variantes:</p><ul><li><code>variant</code> — la <strong>apariencia</strong>: fondo, borde y color de texto. <code>filled</code> (default, fondo blanco sin borde), <code>outline</code> (fondo neutral-50 con borde neutral-300) y <code>subtle</code> (fondo neutral-100 sin borde).</li><li><code>size</code> — la <strong>geometría</strong>: padding, tamaño de fuente y separación entre ícono y texto. <code>md</code> (default), <code>sm</code> (caja compacta conservando el cuerpo de texto de <code>md</code>) y <code>xs</code>.</li><li><code>active</code> — el <strong>estado</strong> de opción vigente dentro de un grupo, que reemplaza la apariencia por el contraste invertido.</li></ul><p>Están separados porque mezclarlos obliga a agregar una variante nueva cada vez que una pantalla necesita una apariencia existente en otro tamaño, y esa variante termina nombrada por su consumidor en lugar de por su apariencia.</p><p>Coordinar qué opción está vigente, que la elección sea excluyente y anunciarla con <code>aria-pressed</code> son responsabilidad del componente contenedor: el botón solo sabe pintarse. ${docsRef(buttonGroupDocs)} es ese contenedor para una fila de opciones excluyentes.</p></div>`,
+				component: `<div><p>El ${docsMention(buttonDocs)} del Design System v3 es un componente basado en atributo (<code>cuentoneta-button</code>) que se aplica indistintamente sobre elementos <code>&lt;button&gt;</code> y <code>&lt;a&gt;</code>, manteniendo estilos consistentes y la semántica correcta de cada elemento (acción vs. navegación).</p><p>Su API son <strong>tres ejes independientes</strong> que se combinan libremente, en lugar de un repertorio de variantes:</p><ul><li><code>variant</code> — la <strong>apariencia</strong>: fondo, borde y color de texto. <code>filled</code> (default, fondo blanco sin borde), <code>outline</code> (fondo neutral-50 con borde neutral-300) y <code>subtle</code> (fondo neutral-100 sin borde).</li><li><code>size</code> — la <strong>geometría</strong>: padding, tamaño de fuente y separación entre ícono y texto. <code>md</code> (default), <code>sm</code> (caja compacta conservando el cuerpo de texto de <code>md</code>) y <code>xs</code>.</li><li><code>active</code> — el <strong>estado</strong> de opción vigente dentro de un grupo, que reemplaza la apariencia por el contraste invertido.</li></ul><p>Están separados porque mezclarlos obliga a agregar una variante nueva cada vez que una pantalla necesita una apariencia existente en otro tamaño, y esa variante termina nombrada por su consumidor en lugar de por su apariencia.</p><p>Coordinar qué opción está vigente, que la elección sea excluyente y anunciarla con <code>aria-pressed</code> son responsabilidad del componente contenedor: el botón solo sabe pintarse. ${docsRef(buttonGroupDocs)} es ese contenedor para una fila de opciones excluyentes.</p></div>`,
 			},
 		},
 	},
@@ -72,7 +72,7 @@ export const Playground: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Los tres ejes como controles vivos sobre una misma instancia: cualquier combinación de apariencia, geometría y estado se expresa sin agregar valores al catálogo.</p>`,
+				story: `<p>Los tres ejes como controles vivos sobre una misma instancia: cualquier combinación de apariencia, geometría y estado se expresa sin agregar valores al repertorio.</p>`,
 			},
 		},
 	},
@@ -136,7 +136,7 @@ export const ActiveOption: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>El estado de opción vigente reemplaza la apariencia por el contraste invertido, igual en las tres: estar elegido es un estado del botón y no una apariencia más del catálogo. El control <code>active</code> alterna contra el estado normal.</p><p>El botón no emite <code>aria-pressed</code> ni decide quién está elegido: eso lo aporta el contenedor que coordina el grupo.</p>`,
+				story: `<p>El estado de opción vigente reemplaza la apariencia por el contraste invertido, igual en las tres: estar elegido es un estado del botón y no una apariencia más del repertorio. El control <code>active</code> alterna contra el estado normal.</p><p>El botón no emite <code>aria-pressed</code> ni decide quién está elegido: eso lo aporta el contenedor que coordina el grupo.</p>`,
 			},
 		},
 	},
@@ -172,7 +172,7 @@ export const AxesMatrix: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>La grilla de apariencia × geometría, más la fila de opción vigente: el catálogo es el producto de los ejes, no una lista de variantes que haya que enumerar.</p>`,
+				story: `<p>La grilla de apariencia × geometría, más la fila de opción vigente: el repertorio es el producto de los ejes, no una lista de variantes que haya que enumerar.</p>`,
 			},
 		},
 	},

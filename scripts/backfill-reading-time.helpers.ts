@@ -67,7 +67,7 @@ export async function runReadingTimeBackfill(options: RunOptions): Promise<Readi
 }
 
 // Cada obra se procesa aislada: un documento con `_key` corrupto o una sección sin cuerpo se registra
-// como fallida y el recorrido sigue. Un documento roto no puede abortar el backfill del catálogo.
+// como fallida y el recorrido sigue. Un documento roto no puede abortar el backfill del Acervo.
 async function processCandidate(
 	candidate: ReadingTimeBackfillCandidate,
 	options: RunOptions,

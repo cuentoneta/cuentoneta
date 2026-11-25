@@ -70,7 +70,7 @@ export const Abanico: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>La colección sin imagen propia se representa con tres portadas de obras que contiene. La primera va al frente y elevada; las otras dos se apoyan más abajo y sangran por el borde inferior de la caja.</p><p><strong>Usos:</strong> la mitad de las colecciones del catálogo, que no tienen arte editorial cargado.</p>`,
+				story: `<p>La colección sin imagen propia se representa con tres portadas de obras que contiene. La primera va al frente y elevada; las otras dos se apoyan más abajo y sangran por el borde inferior de la caja.</p><p><strong>Usos:</strong> la mitad de las colecciones del corpus, que no tienen arte editorial cargado.</p>`,
 			},
 		},
 	},

@@ -149,7 +149,7 @@ test('literary-work — el bloque multimedia ofrece una opción por recurso', as
 	await openWork(page, MEDIA_ROUTE);
 	const block = await settleMediaBlock(page);
 
-	// Una opción por recurso, contra el DTO: un grupo vacío o incompleto delataría un catálogo de widgets
+	// Una opción por recurso, contra el DTO: un grupo vacío o incompleto delataría un registro de widgets
 	// que descarta formatos en silencio.
 	await expect(block.getByRole('group', { name: 'Formatos disponibles' }).getByRole('button')).toHaveCount(
 		mediaWork?.mediaSources.length ?? 0,
@@ -169,7 +169,7 @@ test('literary-work — cambiar de formato monta el widget del formato elegido',
 	// Se afirma por el componente de widget montado, no por el contenido del proveedor: YouTube y
 	// Spotify en CI son flaky, y qué widget se monta es exactamente lo que el selector decide. El tag
 	// del elemento delata el formato sin esperar ninguna carga externa. La lista enumera los widgets del
-	// catálogo (`media-widget-registry.ts`): uno nuevo se suma acá para que el caso lo alcance.
+	// registro (`media-widget-registry.ts`): uno nuevo se suma acá para que el caso lo alcance.
 	const widgets = block.locator(
 		'cuentoneta-youtube-video-widget, cuentoneta-spotify-audio-widget, cuentoneta-audio-recording-widget, cuentoneta-space-recording-widget',
 	);
