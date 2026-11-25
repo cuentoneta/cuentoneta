@@ -22,12 +22,12 @@ export function withEmbedPlaceholders(mediaSources: readonly Media[]): Media[] {
 // cargaría el video real: el placeholder difiere la carga hasta ahí. El host en `contents` evita que el
 // envoltorio, inline por defecto, altere la maquetación que la story muestra.
 @Component({
-	selector: 'cuentoneta-catalog-embed-placeholders',
+	selector: 'cuentoneta-storybook-embed-placeholders',
 	encapsulation: ViewEncapsulation.None,
 	host: { class: 'contents' },
 	template: `<ng-content />`,
 	styles: `
-		cuentoneta-catalog-embed-placeholders .youtube-player-placeholder {
+		cuentoneta-storybook-embed-placeholders .youtube-player-placeholder {
 			--play-size: clamp(48px, 14%, 88px);
 			position: relative;
 			background-color: #27272a !important;
@@ -40,12 +40,12 @@ export function withEmbedPlaceholders(mediaSources: readonly Media[]): Media[] {
 			box-shadow: none !important;
 		}
 
-		cuentoneta-catalog-embed-placeholders .youtube-player-placeholder-button {
+		cuentoneta-storybook-embed-placeholders .youtube-player-placeholder-button {
 			display: none !important;
 		}
 
 		/* El botón va con geometría y no con degradados: el navegador no suaviza los bordes de un degradado. */
-		cuentoneta-catalog-embed-placeholders .youtube-player-placeholder::before {
+		cuentoneta-storybook-embed-placeholders .youtube-player-placeholder::before {
 			content: '';
 			width: var(--play-size);
 			aspect-ratio: 1;
@@ -53,7 +53,7 @@ export function withEmbedPlaceholders(mediaSources: readonly Media[]): Media[] {
 			background: #52525b;
 		}
 
-		cuentoneta-catalog-embed-placeholders .youtube-player-placeholder::after {
+		cuentoneta-storybook-embed-placeholders .youtube-player-placeholder::after {
 			content: '';
 			position: absolute;
 			top: 50%;
@@ -67,13 +67,13 @@ export function withEmbedPlaceholders(mediaSources: readonly Media[]): Media[] {
 		}
 	`,
 })
-class CatalogEmbedPlaceholders {}
+class StorybookEmbedPlaceholders {}
 
 /** Cubre solo el video: el episodio de Spotify se sustituye pasando su medio por `withEmbedPlaceholder`. */
 export const embedPlaceholdersDecorator = [
 	moduleMetadata({
-		imports: [CatalogEmbedPlaceholders],
+		imports: [StorybookEmbedPlaceholders],
 		providers: [{ provide: YOUTUBE_PLAYER_CONFIG, useValue: { loadApi: false } }],
 	}),
-	componentWrapperDecorator(CatalogEmbedPlaceholders),
+	componentWrapperDecorator(StorybookEmbedPlaceholders),
 ];

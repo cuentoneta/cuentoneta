@@ -26,7 +26,7 @@ ruleTester.run('component-location-and-name', rule, {
 		{ code: component('App'), filename: 'src/app/app.ts' },
 		// `src/testing/` está exento de ubicación y de nombre ↔ archivo, no del sufijo.
 		{
-			code: '@Component({}) class CatalogEmbedPlaceholders {}',
+			code: '@Component({}) class StorybookEmbedPlaceholders {}',
 			filename: 'src/testing/storybook-embed-placeholders.ts',
 		},
 		// Los specs y las stories quedan afuera enteros: sus hosts son andamiaje de un solo archivo.
