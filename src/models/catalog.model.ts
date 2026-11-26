@@ -3,7 +3,14 @@
 import type { Slug } from './slug.model';
 import type { LiteraryWorkCatalogEntry } from './literary-work.model';
 
-export interface CatalogEntryBase<K extends string> {
+// Un valor por cada tipo de entrada que existe: una entrada nueva suma acá su discriminante.
+export const CATALOG_ENTRY_KINDS = Object.freeze({
+	literaryWork: 'literaryWork',
+} as const);
+
+export type CatalogEntryKind = (typeof CATALOG_ENTRY_KINDS)[keyof typeof CATALOG_ENTRY_KINDS];
+
+export interface CatalogEntryBase<K extends CatalogEntryKind> {
 	readonly kind: K;
 	readonly slug: Slug;
 }

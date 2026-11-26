@@ -6,7 +6,7 @@ import type { Resource } from './resource.model';
 import type { SanitizedHtml } from './sanitized-html.model';
 import type { Tag } from './tag.model';
 import type { IsoDateTime } from '@utils/date.utils';
-import type { CatalogEntryBase } from './catalog.model';
+import { CATALOG_ENTRY_KINDS, type CatalogEntryBase } from './catalog.model';
 import { createSlug, type Slug } from './slug.model';
 import { sumReadingTimes, type ReadingTime } from './reading-time.model';
 
@@ -96,7 +96,7 @@ export function createLiteraryWorkNavigationTeaser(
 	return Object.freeze({ ...options, slug: createSlug(options.slug) });
 }
 
-export interface LiteraryWorkCatalogEntry extends CatalogEntryBase<'literaryWork'> {
+export interface LiteraryWorkCatalogEntry extends CatalogEntryBase<typeof CATALOG_ENTRY_KINDS.literaryWork> {
 	readonly title: string;
 	readonly authors: readonly Pick<Author, 'slug' | 'name'>[];
 	readonly totalReadingTime: ReadingTime;
@@ -131,7 +131,7 @@ export function createLiteraryWorkCatalogEntry(
 		);
 	}
 	return Object.freeze({
-		kind: 'literaryWork',
+		kind: CATALOG_ENTRY_KINDS.literaryWork,
 		slug: createSlug(options.slug),
 		title: options.title,
 		authors: options.authors.map(({ slug, name }) => ({ slug, name })),
