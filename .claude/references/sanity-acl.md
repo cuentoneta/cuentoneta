@@ -202,7 +202,10 @@ authorController.get(
   todavía cae en el 500 del `onError` global. Un query param con forma de slug (`?author=`, vía
   `slugValueSchema`) es criterio de filtro, no recurso: un valor mal formado responde 400.
 - **Orden de rutas:** las rutas específicas van **antes** del wildcard `/:slug` (p. ej.,
-  en `literary-work`, `/` → `/:slug`).
+  en `literary-work`, `/` → `/teasers` → `/:slug`): Hono despacha en orden de registro. El segmento de
+  una sub-ruta estática es un slug bien formado, así que se reserva en `RESERVED_LITERARY_WORK_SLUGS`
+  (`src/models/reserved-literary-work-slugs.model.ts`), que el Studio hace cumplir y el spec del
+  controller verifica contra las rutas registradas.
 - El controller no conoce Sanity ni los mappers: solo valida, llama al service y serializa.
 
 ---
