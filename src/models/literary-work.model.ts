@@ -112,8 +112,8 @@ interface CreateLiteraryWorkCatalogEntryOptions {
 }
 
 /**
- * Construye la entrada de obra del catálogo con las mismas invariantes que la vista de navegación:
- * slug válido, título no vacío y al menos un autor.
+ * Construye la entrada de obra del catálogo. Lanza si el slug no tiene formato válido, si el título está
+ * vacío o si no hay autores; las etiquetas pueden ser una lista vacía.
  *
  * Proyecta autores y etiquetas campo por campo en lugar de esparcirlos: el tipado estructural deja
  * pasar un `Author` o un `Tag` completo, y sin la proyección la entrada transportaría biografías,
