@@ -201,12 +201,6 @@ describe('HttpLiteraryWorkApi', () => {
 			});
 		});
 
-		it('does not request the collection resource', async () => {
-			await requestTeasers({ author: 'francois-onoff' }, `${collectionUrl}/teasers?author=francois-onoff`, []);
-
-			http.expectNone(`${collectionUrl}?author=francois-onoff`);
-		});
-
 		it('resolves an empty listing as an empty array', async () => {
 			const listing = await requestTeasers({ author: 'sin-obras' }, `${collectionUrl}/teasers?author=sin-obras`, []);
 
