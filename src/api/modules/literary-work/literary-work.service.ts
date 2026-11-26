@@ -36,7 +36,7 @@ function reportDiscarded(malformed: readonly MalformedLiteraryWorkError[], conse
 
 // Los avances para las selecciones y para las listas dentro de un destino.
 export async function getLiteraryWorkTeasers(
-	filter: LiteraryWorkTeaserFilter & { readonly author: string },
+	filter: LiteraryWorkTeaserFilter,
 	repository: LiteraryWorkRepository = new SanityLiteraryWorkRepository(),
 ): Promise<readonly LiteraryWorkTeaser[]> {
 	const { teasers, malformed } = await repository.fetchTeasers(filter);
