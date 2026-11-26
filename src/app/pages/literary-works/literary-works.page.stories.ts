@@ -34,6 +34,10 @@ class StubScenarioLiteraryWorkApi implements LiteraryWorkApi {
 	}
 
 	public getTeasers(): Observable<LiteraryWorkTeaser[]> {
+		return this.getListing();
+	}
+
+	public getListing(): Observable<LiteraryWorkTeaser[]> {
 		if (this.scenario === 'failure') {
 			return throwError(() => new Error('sin catálogo'));
 		}

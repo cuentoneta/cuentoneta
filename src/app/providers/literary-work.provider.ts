@@ -26,15 +26,18 @@ import type { LiteraryWorkTeaser } from '@models/literary-work.model';
 import type { ApiUrl } from './endpoints';
 import { Endpoints } from './endpoints';
 
-// Espeja el contrato del endpoint: el filtrado de los avances va por query params, así que acá es un
-// registro de campos opcionales — un criterio nuevo suma un campo, no un método.
+// Espeja el contrato de `/teasers`, donde el autor es obligatorio. Un criterio nuevo suma un campo
+// acá, no un método.
 export interface LiteraryWorkTeaserFilter {
-	readonly author?: string;
+	readonly author: string;
 }
 
 export interface LiteraryWorkApi {
 	getBySlug(slug: string): Observable<LiteraryWork>;
-	getTeasers(filter?: LiteraryWorkTeaserFilter): Observable<LiteraryWorkTeaser[]>;
+	getTeasers(filter: LiteraryWorkTeaserFilter): Observable<LiteraryWorkTeaser[]>;
+	// Los avances de todas las obras, que consume el catálogo mientras el recurso colección siga
+	// sirviendo avances.
+	getListing(): Observable<LiteraryWorkTeaser[]>;
 }
 
 @Service()
@@ -48,10 +51,18 @@ export class HttpLiteraryWorkApi implements LiteraryWorkApi {
 			.pipe(map((response) => this.toLiteraryWork(literaryWorkDtoSchema.parse(response))));
 	}
 
-	public getTeasers(filter: LiteraryWorkTeaserFilter = {}): Observable<LiteraryWorkTeaser[]> {
+	public getTeasers(filter: LiteraryWorkTeaserFilter): Observable<LiteraryWorkTeaser[]> {
 		return this.http
-			.get<LiteraryWorkTeaserDto[]>(this.url, { params: filter.author ? { author: filter.author } : {} })
-			.pipe(map((response) => literaryWorkTeaserListDtoSchema.parse(response).map(toLiteraryWorkTeaser)));
+			.get<LiteraryWorkTeaserDto[]>(`${this.url}/teasers`, { params: { author: filter.author } })
+			.pipe(map((response) => this.toTeasers(response)));
+	}
+
+	public getListing(): Observable<LiteraryWorkTeaser[]> {
+		return this.http.get<LiteraryWorkTeaserDto[]>(this.url).pipe(map((response) => this.toTeasers(response)));
+	}
+
+	private toTeasers(response: unknown): LiteraryWorkTeaser[] {
+		return literaryWorkTeaserListDtoSchema.parse(response).map(toLiteraryWorkTeaser);
 	}
 
 	private toSection(dto: LiteraryWorkSectionDto): LiteraryWorkSection {

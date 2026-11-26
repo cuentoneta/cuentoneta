@@ -22,6 +22,10 @@ class FailingLiteraryWorkApi implements LiteraryWorkApi {
 	public getTeasers(): Observable<LiteraryWorkTeaser[]> {
 		return throwError(() => new Error('sin catálogo'));
 	}
+
+	public getListing(): Observable<LiteraryWorkTeaser[]> {
+		return throwError(() => new Error('sin catálogo'));
+	}
 }
 
 // Retener la emisión es la única forma de sostener el estado de carga a la vista: el recurso queda
@@ -32,6 +36,10 @@ class PendingLiteraryWorkApi implements LiteraryWorkApi {
 	}
 
 	public getTeasers(): Observable<LiteraryWorkTeaser[]> {
+		return NEVER;
+	}
+
+	public getListing(): Observable<LiteraryWorkTeaser[]> {
 		return NEVER;
 	}
 }
