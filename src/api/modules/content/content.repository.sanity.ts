@@ -109,9 +109,8 @@ export class SanityContentRepository implements ContentRepository {
 		return Promise.all(landingPageObjects.map((object) => this.client.create(object)));
 	}
 
-	// Resuelve los slugs con la query de avances, que ya filtra por inclusión en el conjunto: transporta
-	// el teaser entero para quedarse con el identificador, y a cambio no hay una query que exista solo
-	// para esto.
+	// Resuelve los slugs con la query de avances, que ya acepta un lote de slugs: transporta el teaser
+	// entero para quedarse con el identificador, y a cambio no hay una query que exista solo para esto.
 	//
 	// Ese filtro devuelve en orden de documento, que no tiene nada que ver con el ranking, así que el
 	// resultado se reordena por el orden en que llegaron los slugs antes de escribirlo. El lote vacío no
