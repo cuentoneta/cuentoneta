@@ -66,7 +66,7 @@ export class SanityContentRepository implements ContentRepository {
 	public async fetchRotatingContent(): Promise<RotatingContent | null> {
 		const raw = await this.client.fetch(rotatingContentQuery);
 		if (!raw) {
-			// Su ausencia no es una curaduría incompleta sino una instalación incompleta, así que qué hacer
+			// Su ausencia no es una carga editorial incompleta sino una instalación incompleta, así que qué hacer
 			// con ella la decide el llamador y no este adaptador.
 			return null;
 		}
@@ -109,7 +109,7 @@ export class SanityContentRepository implements ContentRepository {
 		return Promise.all(landingPageObjects.map((object) => this.client.create(object)));
 	}
 
-	// Resuelve los slugs con el listado de obras, que ya filtra por pertenencia: transporta el teaser
+	// Resuelve los slugs con la query de avances, que ya acepta un lote de slugs: transporta el teaser
 	// entero para quedarse con el identificador, y a cambio no hay una query que exista solo para esto.
 	//
 	// Ese filtro devuelve en orden de documento, que no tiene nada que ver con el ranking, así que el
@@ -137,7 +137,7 @@ export class SanityContentRepository implements ContentRepository {
 			if (error instanceof MalformedLandingPageError) {
 				throw error;
 			}
-			// Envolver y no filtrar: una landing mal curada tumba la llamada entera en vez de servirse a
+			// Envolver y no filtrar: una landing mal formada tumba la llamada entera en vez de servirse a
 			// medias, porque un dato roto en la página de inicio es un bug que hay que ver, no esconder. El
 			// slug viaja en el error porque, sobre una landing por semana, saber que "alguna" está mal no
 			// alcanza para arreglarlo.
@@ -164,7 +164,7 @@ export class SanityContentRepository implements ContentRepository {
 	// pintan las tarjetas de la página de inicio, que no muestran cuerpo y por eso no piden extracto.
 	//
 	// El error que sale de acá nombra la **obra**, y es el guard de arriba el que lo envuelve nombrando
-	// la semana: sin esa distinción, el mensaje culparía a la landing por una obra mal curada que puede
+	// la semana: sin esa distinción, el mensaje culparía a la landing por una obra mal formada que puede
 	// estar en cualquiera de las dos listas, o en el documento rotativo, que ni siquiera es una landing.
 	private mapNavigationTeaser(raw: SanityNavigationTeaser): LiteraryWorkNavigationTeaserWithAuthors {
 		if (raw.totalReadingTime === null) {

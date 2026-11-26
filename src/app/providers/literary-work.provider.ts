@@ -26,7 +26,7 @@ import type { LiteraryWorkTeaser } from '@models/literary-work.model';
 import type { ApiUrl } from './endpoints';
 import { Endpoints } from './endpoints';
 
-// Espeja el contrato del endpoint: el filtrado del catálogo va por query params, así que acá es un
+// Espeja el contrato del endpoint: el filtrado de los avances va por query params, así que acá es un
 // registro de campos opcionales — un criterio nuevo suma un campo, no un método.
 export interface LiteraryWorkTeaserFilter {
 	readonly author?: string;

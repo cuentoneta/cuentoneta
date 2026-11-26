@@ -15,7 +15,7 @@ import {
 	fetchCollectionCatalog,
 	fetchCollectionDescription,
 	pickMostDescriptiveCollection,
-	type CollectionCatalogEntry,
+	type CollectionTeaserFixture,
 } from './_utils/collection-fixtures';
 import { DESKTOP_VIEWPORT } from './_utils/viewports';
 
@@ -25,7 +25,7 @@ const READ_MORE = 'Leer más';
 // corren o se saltean, así que conviene esperar de más antes que declarar ausente un contenido que está.
 const FIXTURE_TIMEOUT = 15_000;
 
-let mostDescriptive: CollectionCatalogEntry | undefined;
+let mostDescriptive: CollectionTeaserFixture | undefined;
 let readMoreIsVisible = false;
 // La descripción tal como la pinta la página de la colección; el catálogo la trae sin enlaces.
 let fullDescription = '';
@@ -37,7 +37,7 @@ test.beforeAll(async ({ request, browser }) => {
 	}
 	fullDescription = await fetchCollectionDescription(request, mostDescriptive.slug);
 
-	// El estado del fixture se resuelve una sola vez: sin esto, una curaduría de descripciones cortas
+	// El estado del fixture se resuelve una sola vez: sin esto, una carga editorial de descripciones cortas
 	// produciría el mismo fallo en cada uno de los casos de abajo en vez de una vez, acá.
 	const page = await browser.newPage({ viewport: DESKTOP_VIEWPORT });
 	await page.goto(`/collection/${mostDescriptive.slug}`);

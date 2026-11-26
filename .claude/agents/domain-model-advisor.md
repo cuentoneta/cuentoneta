@@ -113,7 +113,7 @@ Vigente hoy: tipos de dominio en `src/models/` (`@models/*`) y ACL/dominio del b
 Objetivo (roadmap #1503, **no inventar estos archivos hoy**): agrupar por bounded context, por agregado:
 
 ```
-<contexto>/                  # p. ej. content-catalog/, curation/
+<contexto>/                  # p. ej. holdings/, catalog/, selections/
 ├── <entidad>.interface.ts    # contrato de dominio (LiteraryWork, Author, …)
 ├── <entidad>.mapper.ts       # factory (hace cumplir las invariantes) + traducción desde Sanity
 └── <entidad>.mapper.spec.ts

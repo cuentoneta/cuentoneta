@@ -39,12 +39,14 @@
 
 ## Estructura por bounded context
 
-Organizá el modelo de dominio por **contexto acotado**. Cuentoneta define cuatro (ver `docs/DOMAIN_MODEL.md`): **Catálogo de Contenido** (`Author`, `Resource`, `Media`, `LiteraryWork`), **Curación y Colecciones** (`Collection`), **Administración del Proyecto** (`Contributor`) y **Página de Inicio** (`LandingPageContent`, `ContentCampaign`).
+Organizá el modelo de dominio por **contexto acotado**. Cuentoneta define cinco (ver `docs/DOMAIN_MODEL.md`): **Acervo** (`LiteraryWork`, `Author` y `Collection` como documentos; `Resource`, `Media`, `Tag`), **Catálogo** (modelo de lectura: entradas y pertenencia), **Selecciones** (`LandingPageContent`, `ContentCampaign`, `HighlightedAuthor`, la colección como selección permanente), **Lectura** (la obra para leer; contexto condicional) y **Administración** (`Contributor`).
+
+El contexto **no es una capa**: `controller → service → repository` y el ACL atraviesan todos los contextos.
 
 Hoy los tipos de dominio viven en `src/models/` (frontend) y la ACL/dominio del backend en `src/api/`. La estructura **objetivo** por contexto (roadmap #1503) agrupa, por agregado, el contrato + el modelo + el mapper + su spec:
 
 ```
-<contexto>/                 # p. ej. content-catalog/, curation/
+<contexto>/                 # p. ej. holdings/, catalog/, selections/
 ├── <entidad>.interface.ts   # contrato de dominio (Author, LiteraryWork, …)
 ├── <entidad>.mapper.ts      # factory (hace cumplir las invariantes) + traducción desde Sanity
 └── <entidad>.mapper.spec.ts
@@ -79,7 +81,7 @@ export interface LiteraryWork extends LiteraryWorkBase {
 
 export interface LiteraryWorkTeaser extends LiteraryWorkBase {
 	readonly authors: readonly AuthorTeaser[];
-	readonly mediaSources: readonly MediaTeaser[]; // tag + título; la tarjeta pinta el ícono y nombra el recurso, no lo reproduce
+	readonly mediaSources: readonly MediaTeaser[]; // tag + título; el avance pinta el ícono y nombra el recurso, no lo reproduce
 	// …
 }
 ```
@@ -138,13 +140,13 @@ Un agregado expone **múltiples interfaces** para distintos casos de uso, optimi
 
 ```typescript
 LiteraryWork; // vista completa: secciones, autores completos, tags
-LiteraryWorkTeaser; // extracto del arranque + autores resumidos, para listados
+LiteraryWorkTeaser; // avance: para selecciones y para las listas de obras dentro de un destino (perfil del autor, página de colección); extracto del arranque + autores resumidos
 LiteraryWorkNavigationTeaser; // mínima, sin autores, para navegación
 LiteraryWorkNavigationTeaserWithAuthors; // mínima + autores resumidos
 ```
 
 ```typescript
-// El resto del catálogo sigue el mismo patrón (real, vigente):
+// El resto del Acervo sigue el mismo patrón (real, vigente):
 Author;
 AuthorTeaser;
 
@@ -153,6 +155,8 @@ CollectionTeaser;
 ```
 
 Cada vista es una proyección coherente del mismo agregado; el mapper correspondiente del ACL produce exactamente la vista que la query GROQ pidió.
+
+> **Transitorio:** las entradas de catálogo están pendientes; hasta entonces las superficies del catálogo consumen avances.
 
 ---
 
@@ -316,7 +320,7 @@ Un **agregado** es un cluster de objetos de dominio tratado como una unidad para
 
 **Cómo identificar la raíz:** buscá la entidad que **posee más invariantes de negocio**; esa entidad es la raíz, porque las invariantes solo se garantizan si toda mutación pasa por ella.
 
-En cuentoneta hay dos raíces de agregado con invariantes **hechas cumplir en código**: `LiteraryWork` y `Collection` — las dos más nuevas del catálogo, que es la dirección hacia la que el resto se mueve. **`LiteraryWork`** posee `authors: Author[]` (1..N), `content: LiteraryWorkSection[]`, `resources`, `tags` y `mediaSources`. Sus invariantes, garantizadas por la factory `createLiteraryWork` (`src/models/literary-work.model.ts`):
+En cuentoneta hay dos raíces de agregado con invariantes **hechas cumplir en código**: `LiteraryWork` y `Collection` — las dos más nuevas del Acervo, que es la dirección hacia la que el resto se mueve. **`LiteraryWork`** posee `authors: Author[]` (1..N), `content: LiteraryWorkSection[]`, `resources`, `tags` y `mediaSources`. Sus invariantes, garantizadas por la factory `createLiteraryWork` (`src/models/literary-work.model.ts`):
 
 - El `slug` tiene formato válido (VO `Slug`) e inmutable una vez creado.
 - El `title` no puede estar vacío.
@@ -352,7 +356,7 @@ export function createLiteraryWork(options: CreateLiteraryWorkOptions): Literary
 
 > **Nota:** la frontera del agregado es también la frontera de consistencia — ver [Decisiones de consistencia](#decisiones-de-consistencia).
 >
-> **Estado:** hoy la invariante de `Author` está **descrita** en `docs/DOMAIN_MODEL.md` y garantizada de hecho por el contenido curado en Sanity; su **enforcement en código** (constructor que lanza) es roadmap.
+> **Estado:** hoy la invariante de `Author` está **descrita** en `docs/DOMAIN_MODEL.md` y garantizada de hecho por la carga editorial en Sanity; su **enforcement en código** (constructor que lanza) es roadmap.
 
 ## Domain events
 
@@ -360,13 +364,13 @@ Un **domain event** es un hecho en pasado sobre algo que **ya ocurrió**: `Liter
 
 Los eventos permiten que un bounded context reaccione a otro sin llamada directa: el contexto productor registra el hecho y los consumidores se suscriben. Esto **desacopla** contextos.
 
-**Estado — roadmap (#1503).** Los domain events **no están implementados** todavía. La comunicación entre contextos hoy pasa por los **mappers del ACL** y llamadas directas a services. Esta sección documenta el patrón para el momento en que ese acoplamiento directo se vuelva una carga — por ejemplo, cuando publicar una obra deba propagarse a varios contextos (Página de Inicio: `mostRead`/`latestReads`; perfil de `Author`; notificaciones) que no conviene cablear en un único service. El diseño detallado (incluyendo `LiteraryWorkPublished`, `LiteraryWorkCreated`, `AuthorCreatedEvent`) vive en `docs/DDD_IMPROVEMENTS.md` §1. Los nombres son ilustrativos; los autoritativos se acordarán al introducir los eventos.
+**Estado — roadmap (#1503).** Los domain events **no están implementados** todavía. La comunicación entre contextos hoy pasa por los **mappers del ACL** y llamadas directas a services. Esta sección documenta el patrón para el momento en que ese acoplamiento directo se vuelva una carga — por ejemplo, cuando publicar una obra deba propagarse a varios contextos (Selecciones: `mostRead`/`latestReads`; perfil de `Author`; notificaciones) que no conviene cablear en un único service. El diseño detallado (incluyendo `LiteraryWorkPublished`, `LiteraryWorkCreated`, `AuthorCreatedEvent`) vive en `docs/DDD_IMPROVEMENTS.md` §1. Los nombres son ilustrativos; los autoritativos se acordarán al introducir los eventos.
 
 ## Type-state pattern
 
 Modelá los estados del ciclo de vida de una entidad como **tipos distintos** en vez de un único tipo con un campo `status`, para que el compilador rechace operaciones inválidas en un estado dado.
 
-El ciclo de vida de `LiteraryWork` hoy es: `Borrador en Sanity → Publicación en contexto (Collection / perfil de Author) → Accesible para lectura`. El enfoque vigente es implícito: el contenido publicado es el que las queries GROQ recuperan.
+El ciclo de vida de `LiteraryWork` hoy es: `Borrador en el Acervo → Publicado en el Acervo → Entrada del catálogo + destino de Lectura`. El enfoque vigente es implícito: el contenido publicado es el que las queries GROQ recuperan.
 
 **Dirección futura:** cuando las reglas de negocio diverjan lo bastante entre estados como para que un método deba existir solo en uno, promover los estados a tipos distintos (p. ej. `DraftLiteraryWork` vs `PublishedLiteraryWork`), de modo que una operación como "agregar a una `Collection`" exista solo sobre `PublishedLiteraryWork` y sea un **error de compilación** sobre un borrador, en vez de un guard en runtime. Para conjuntos de literales de estado, usar `Object.freeze({...} as const)` (nunca `enum`).
 
@@ -388,7 +392,7 @@ export function isAnonymous(authors: ReadonlyArray<{ readonly slug: string }>): 
 Además de la implementada arriba, otras candidatas naturales a policy en cuentoneta, aún no implementadas:
 
 ```typescript
-// policy pura: ¿esta Collection debe mostrar info de autores en sus tarjetas?
+// policy pura: ¿esta Collection debe mostrar info de autores en los avances de sus obras?
 function shouldShowAuthors(collection: Collection): boolean {
 	return collection.config.showAuthors;
 }
@@ -412,33 +416,43 @@ function isReadyForLanding(literaryWork: LiteraryWork): boolean {
 
 ## Principios de bounded context
 
-Un **bounded context** es un ámbito dentro del cual aplican consistentemente un lenguaje ubicuo y un modelo. El mismo concepto del mundo real puede — y debe — modelarse distinto en contextos distintos. Cuentoneta separa cuatro:
+Un **bounded context** es un ámbito dentro del cual aplican consistentemente un lenguaje ubicuo y un modelo. El mismo concepto del mundo real puede — y debe — modelarse distinto en contextos distintos. Cuentoneta separa cinco:
 
-| Contexto                   | Agregados raíz                          | Perspectiva                                        |
-| -------------------------- | --------------------------------------- | -------------------------------------------------- |
-| **Catálogo de Contenido**  | `Author`, `LiteraryWork`                | Inventario completo de obras y autores             |
-| **Curación y Colecciones** | `Collection`                            | Agrupar y ordenar obras en colecciones             |
-| **Administración**         | `Contributor`                           | Colaboradores del proyecto por área                |
-| **Página de Inicio**       | `LandingPageContent`, `ContentCampaign` | Agregar contenido de varios contextos para el home |
+| Contexto           | Modelos                                                                                              | Perspectiva                                                                           |
+| ------------------ | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| **Acervo**         | `LiteraryWork`, `Author`, `Collection` como documentos; `Resource`, `Media`, `Tag`                   | Bienes digitales y su ciclo de vida (borrador, publicado). Upstream de todos          |
+| **Catálogo**       | Entradas de catálogo y su pertenencia (pendientes)                                                   | Localizar y acceder a lo publicado; modelo de lectura, no escribe                     |
+| **Selecciones**    | `LandingPageContent`, `ContentCampaign`, `HighlightedAuthor`, la colección como selección permanente | Elegir y ordenar parte del Acervo para presentarlo; curadas por el editor o generadas |
+| **Lectura**        | La obra para leer (`LiteraryWork`, vista completa)                                                   | Leer una obra y lo que el lector hace al leer. Contexto condicional                   |
+| **Administración** | `Contributor`                                                                                        | Colaboradores del proyecto por área                                                   |
 
-La idea clave: un mismo concepto se modela distinto según el contexto. En **Catálogo**, `LiteraryWork` es la vista completa (con sus secciones, autores completos). En **Curación**, dentro de una `Collection`, es una proyección `LiteraryWorkTeaser` — solo lo esencial para listar. En **Página de Inicio**, el rol de navegación lo cubre `LiteraryWorkNavigationTeaserWithAuthors`, la vista que viaja dentro de `mostRead`/`latestReads`. Las **vistas polimórficas + los mappers del ACL** son las fronteras explícitas entre estos modelos: cada contexto ve la misma obra a través de la proyección que necesita, sin que ninguno conozca el shape completo del otro.
+La idea clave: un mismo concepto se modela distinto según el contexto. En el **Acervo**, `LiteraryWork` es el documento completo (con sus secciones y autores completos), y esa vista completa es también el destino que **Lectura** muestra. En **Selecciones**, y dentro de una `Collection` o del perfil de un autor, la obra es un avance `LiteraryWorkTeaser` — solo lo esencial para invitar a leerla; los bloques de navegación de la home (`mostRead`/`latestReads`) usan `LiteraryWorkNavigationTeaserWithAuthors`. El **Catálogo** consume al Acervo a través del ACL y decide qué obras pertenecen. Las **vistas polimórficas + los mappers del ACL** son las fronteras explícitas entre estos modelos: cada contexto ve la misma obra a través de la proyección que necesita, sin que ninguno conozca el shape completo del otro.
+
+El detalle de cada contexto, el mapeo contexto → módulo y el diagrama están en [`docs/DOMAIN_MODEL.md`](../../docs/DOMAIN_MODEL.md).
 
 ### Lenguaje ubicuo
 
 Cada contexto **posee las definiciones** de sus términos, co-localizadas con sus interfaces. Una misma palabra puede tener un matiz distinto por contexto, y esa divergencia es esperada. Términos clave (de `docs/DOMAIN_MODEL.md`):
 
-| Término            | Definición                                                                                       | Contexto              |
-| ------------------ | ------------------------------------------------------------------------------------------------ | --------------------- |
-| **Obra literaria** | Obra narrativa con secciones/capítulos (`LiteraryWork`)                                          | Catálogo de Contenido |
-| **Slug**           | Identificador amigable, único e inmutable basado en el título                                    | Todos                 |
-| **Teaser**         | Vista reducida de una entidad para listados y navegación                                         | Todos                 |
-| **Colección**      | Agrupación temática u editorial de obras (`Collection`)                                          | Curación              |
-| **Recurso**        | Enlace externo a información complementaria (`Resource`)                                         | Catálogo de Contenido |
-| **Etiqueta**       | Tag de taxonomía (`Tag`) referenciable desde `LiteraryWork`, `Author` y `Collection`             | Todos                 |
-| **Curaduría**      | Proceso de seleccionar, ordenar y presentar obras                                                | Curación              |
-| **Faceta**         | Etiqueta con su conteo dentro del resultado visible y su estado de selección (`CollectionFacet`) | Curación              |
+| Término            | Definición                                                                                                                                                                                                                                                                                                                                                                                         | Contexto                                                |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| **Acervo**         | Obras, autores y colecciones como bienes digitales, con borradores y documentos publicados (`Holdings`)                                                                                                                                                                                                                                                                                            | Acervo                                                  |
+| **Obra literaria** | Obra narrativa con secciones/capítulos (`LiteraryWork`)                                                                                                                                                                                                                                                                                                                                            | Acervo                                                  |
+| **Slug**           | Identificador amigable, único e inmutable basado en el título                                                                                                                                                                                                                                                                                                                                      | Todos                                                   |
+| **Colección**      | Documento que agrupa obras con un criterio temático o editorial (`Collection`); en general inmutable, por eso funciona como selección permanente                                                                                                                                                                                                                                                   | Acervo (documento) · Selecciones (selección permanente) |
+| **Recurso**        | Enlace externo a información complementaria (`Resource`)                                                                                                                                                                                                                                                                                                                                           | Acervo                                                  |
+| **Etiqueta**       | Tag de taxonomía (`Tag`) referenciable desde `LiteraryWork`, `Author` y `Collection`                                                                                                                                                                                                                                                                                                               | Todos                                                   |
+| **Catálogo**       | Instrumento para localizar y acceder a las entradas del Acervo publicado. Modelo de lectura, no aggregate (`Catalog`)                                                                                                                                                                                                                                                                              | Catálogo                                                |
+| **Entrada**        | Lo que el catálogo muestra de una obra, un autor o una colección (`<Entidad>CatalogEntry`). Pendiente: hoy las superficies del catálogo consumen avances                                                                                                                                                                                                                                           | Catálogo                                                |
+| **Destino**        | **Relación**, no contexto ni tipo: lleva de una entrada a la vista completa de su entidad (obra → Lectura, autor → perfil, colección → su página)                                                                                                                                                                                                                                                  | Catálogo → Lectura / perfil / colección                 |
+| **Pertenencia**    | Especificación del Catálogo: "publicada y cumple las invariantes de su entrada" (`CatalogMembership`). Objetivo, no vigente: hoy la aproximan la query GROQ y el ACL                                                                                                                                                                                                                               | Catálogo                                                |
+| **Selección**      | Parte del Acervo elegida y ordenada para presentarla. **Curada** (la elige el editor) o **generada** (métricas o algoritmo)                                                                                                                                                                                                                                                                        | Selecciones                                             |
+| **Curaduría**      | Elegir y ordenar parte del Acervo para presentarlo: el origen de las selecciones curadas                                                                                                                                                                                                                                                                                                           | Selecciones                                             |
+| **Avance**         | Vista (`*Teaser`) para selecciones y para las listas de obras dentro de un destino (perfil del autor, página de colección), con lo que invita a leer o visitar la entidad (portada, extracto, medios)                                                                                                                                                                                              | Selecciones · destinos                                  |
+| **Mal formado**    | Estado de un documento del Acervo cuyos datos no permiten construir el modelo de dominio (`Malformed<Agregado>Error`). El error nombra el estado; la consecuencia la nombra quien descarta el documento: el catálogo registra "excluida del catálogo" y el endpoint de avances, "descartada de los avances". Los dos mensajes llegan cuando se separen los endpoints del catálogo y de los avances | Acervo                                                  |
+| **Faceta**         | Etiqueta con su conteo dentro del resultado visible y su estado de selección (`CollectionFacet`)                                                                                                                                                                                                                                                                                                   | Catálogo                                                |
 
-**Faceta** es vocabulario **foráneo** al negocio: viene de la clasificación facetada de la biblioteconomía y del `faceting` de los motores de búsqueda, y nombra la etiqueta contada **sobre el resultado visible**, no sobre el catálogo entero. Es un modelo de lectura derivado, no un agregado: no se persiste, ninguna query lo produce y hoy se calcula en el frontend. Su semántica —el conteo sigue a lo que está a la vista, la faceta vacía no se ofrece, combinar dos es conjunción— está en [`docs/DOMAIN_MODEL.md`](../../docs/DOMAIN_MODEL.md), y conviene leerla antes de tocar el filtrado: de ahí se sigue que elegir filtros no pueda vaciar un listado.
+**Faceta** es vocabulario **foráneo** al negocio: viene de la clasificación facetada de la biblioteconomía y del `faceting` de los motores de búsqueda, y nombra la etiqueta contada **sobre el resultado visible**, no sobre el conjunto completo que se está filtrando. Es un modelo de lectura derivado, no un agregado: no se persiste, ninguna query lo produce y hoy se calcula en el frontend. Su semántica —el conteo sigue a lo que está a la vista, la faceta vacía no se ofrece, combinar dos es conjunción— está en [`docs/DOMAIN_MODEL.md`](../../docs/DOMAIN_MODEL.md), y conviene leerla antes de tocar el filtrado: de ahí se sigue que elegir filtros no pueda vaciar un listado.
 
 **Convención para contextos nuevos:** al introducir un bounded context, definí su vocabulario junto a sus interfaces y aclará, por cada término, a qué términos existentes mapea o de cuáles diverge deliberadamente.
 
@@ -453,4 +467,4 @@ Elegí el modelo de consistencia **por frontera**, no por proyecto:
 
 **Regla:** consistencia **fuerte** _dentro_ de la frontera de un agregado; consistencia **eventual** _entre_ agregados o contextos (propagada por [domain events](#domain-events)). El pivote de la decisión es la invariante: si _debe_ ser siempre verdadera, mantenela dentro de un agregado bajo consistencia fuerte; si tolera una ventana breve de staleness, dejá que converja.
 
-> **Estado:** la implementación actual es fuertemente consistente de hecho (el contenido se cura y publica en Sanity, y las queries leen el estado publicado). La consistencia eventual cruzando contextos se documenta como guía futura, en tándem con los domain events del roadmap (#1503). `LiteraryWork` y `Collection` van un paso más allá: sus invariantes están además **forzadas en código** por sus factories, no solo garantizadas de hecho por la curaduría.
+> **Estado:** la implementación actual es fuertemente consistente de hecho (el contenido se carga y publica en Sanity, y las queries leen el estado publicado). La consistencia eventual cruzando contextos se documenta como guía futura, en tándem con los domain events del roadmap (#1503). `LiteraryWork` y `Collection` van un paso más allá: sus invariantes están además **forzadas en código** por sus factories, no solo garantizadas de hecho por la carga editorial.

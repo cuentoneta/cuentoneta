@@ -508,11 +508,11 @@ Por eso cada paquete que el kernel importe tiene que estar declarado como depend
 
 ## Storybook
 
-Todo componente nuevo en **`src/app/components/`** lleva su `*.stories.ts` (documentación viva + catálogo visual). Los componentes de página (`src/app/pages/`) están exentos, y también el que **delega toda su vista** en otro componente ya catalogado — las cuatro condiciones de esa excepción, y su verificación, viven en [`coding-agent-policies.md`](coding-agent-policies.md) (Sección 2), que es su fuente. El `*.spec.ts` no se exime en ninguno de los dos casos.
+Todo componente nuevo en **`src/app/components/`** lleva su `*.stories.ts` (documentación viva + referencia visual en Storybook). Los componentes de página (`src/app/pages/`) están exentos, y también el que **delega toda su vista** en otro componente ya documentado en Storybook — las cuatro condiciones de esa excepción, y su verificación, viven en [`coding-agent-policies.md`](coding-agent-policies.md) (Sección 2), que es su fuente. El `*.spec.ts` no se exime en ninguno de los dos casos.
 
-**La exención de las páginas es un permiso, no una prohibición.** Una página _puede_ catalogarse cuando lo que se quiere mirar es el **ensamblado**: cómo conviven sus bloques a lo largo del scroll, y cómo responde a los parámetros con que la ruta la invoca. Esas entradas van bajo la sección **`Páginas/`**, separadas del catálogo de componentes, y se montan con `applicationConfig` sobre los dobles de sus proveedores, resolviendo **por el mismo parámetro que resuelve la ruta** —el slug— en vez de devolver siempre el mismo dato: así los controles mueven la página de verdad y los estados de borde (una obra inexistente, un contexto ausente) quedan alcanzables desde el propio catálogo.
+**La exención de las páginas es un permiso, no una prohibición.** Una página _puede_ documentarse en Storybook cuando lo que se quiere mirar es el **ensamblado**: cómo conviven sus bloques a lo largo del scroll, y cómo responde a los parámetros con que la ruta la invoca. Esas entradas van bajo la sección **`Páginas/`**, separadas de las entradas de componentes, y se montan con `applicationConfig` sobre los dobles de sus proveedores, resolviendo **por el mismo parámetro que resuelve la ruta** —el slug— en vez de devolver siempre el mismo dato: así los controles mueven la página de verdad y los estados de borde (una obra inexistente, un contexto ausente) quedan alcanzables desde el propio Storybook.
 
-`LiteraryWorkPage` es la primera. Lo que la hizo valer el catálogo es que ninguna otra vista permite evaluar el bloque de sugerencias contra los dos contextos de navegación sin levantar la aplicación entera.
+`LiteraryWorkPage` es la primera. Lo que justificó su entrada en Storybook es que ninguna otra vista permite evaluar el bloque de sugerencias contra los dos contextos de navegación sin levantar la aplicación entera.
 
 ### Convenciones (según las stories existentes)
 
@@ -554,7 +554,7 @@ export const Soft: Story = {
 
 Para dependencias de DI usá los decoradores `moduleMetadata({ imports, providers })` (imports/iconos por story) o `applicationConfig({ providers })` (providers de entorno).
 
-**Dónde va cada provider: el discriminante es la universalidad, no la gravedad.** Al preview va lo que _cualquier_ componente del catálogo podría necesitar sin declararlo — hoy `LayoutService`, un token sin factory, y el router. A la story va lo que depende de **ese** componente, por grave que sea su ausencia: los iconos que usa y sus imports de composición, como las directivas que el drawer proyecta o el esqueleto que el carrusel alterna.
+**Dónde va cada provider: el discriminante es la universalidad, no la gravedad.** Al preview va lo que _cualquier_ componente de Storybook podría necesitar sin declararlo — hoy `LayoutService`, un token sin factory, y el router. A la story va lo que depende de **ese** componente, por grave que sea su ausencia: los iconos que usa y sus imports de composición, como las directivas que el drawer proyecta o el esqueleto que el carrusel alterna.
 
 Que sin el provider el canvas quede en la pantalla de error **no decide dónde va**: es el umbral que separa un provider necesario de uno cosmético. Los imports de composición lo cruzan —sin ellos el template de la story referencia un elemento que Angular no conoce— y aun así son de la story, porque un provider global que solo un componente necesita le miente al lector sobre qué depende de qué.
 
@@ -564,13 +564,13 @@ El router se provee con `withDisabledInitialNavigation()`: sin eso arranca contr
 
 Storybook **acumula** los decoradores `applicationConfig`: los providers que declare una story se suman a los del preview, no los reemplazan. Aun así, una story no repite lo que el preview ya da — dos fuentes para la misma dependencia se desincronizan.
 
-**El catálogo no tiene gate que lo verifique.** `storybook:build` compila sin ejecutar las stories, así que un provider faltante deja el canvas en la pantalla de error y CI pasa en verde. Un spec tampoco lo cubre: Angular Testing Library aporta `ActivatedRoute` por su cuenta, con lo que un caso que monte el componente pasa con y sin el provider en el preview. La única comprobación real es montar cada story en el navegador y mirar el canvas y la consola.
+**Storybook no tiene gate que lo verifique.** `storybook:build` compila sin ejecutar las stories, así que un provider faltante deja el canvas en la pantalla de error y CI pasa en verde. Un spec tampoco lo cubre: Angular Testing Library aporta `ActivatedRoute` por su cuenta, con lo que un caso que monte el componente pasa con y sin el provider en el preview. La única comprobación real es montar cada story en el navegador y mirar el canvas y la consola.
 
-Todo archivo de la app que el preview importe debe estar en el `include` de `.storybook/tsconfig.json`. Si tiene decoradores de Angular y queda fuera del programa, el compilador no lo procesa y el bundle del preview revienta con un `SyntaxError: Unexpected token 'export'` que **tumba el catálogo entero**, no una story.
+Todo archivo de la app que el preview importe debe estar en el `include` de `.storybook/tsconfig.json`. Si tiene decoradores de Angular y queda fuera del programa, el compilador no lo procesa y el bundle del preview revienta con un `SyntaxError: Unexpected token 'export'` que **tumba Storybook entero**, no una story.
 
-**Embeds de terceros: el catálogo monta un reproductor de utilería dibujado con CSS.** `src/testing/storybook-embed-placeholders.ts` aporta `embedPlaceholdersDecorator` —que apaga la carga de la IFrame API de YouTube y pinta el reproductor sobre el propio placeholder que el player dibuja— y `withEmbedPlaceholder(s)`, que reapunta la URL del episodio de Spotify a una página HTML servida desde `assets/`. Son dos mecanismos porque hay dos seams distintos: el episodio expone su URL como dato, el video no (su `videoId` no es una URL). Los dos se dibujan en CSS y no con una imagen para que acompañen el ancho: el del video en unidades relativas a su caja, y la página del episodio con media queries que responden al ancho de su iframe.
+**Embeds de terceros: Storybook monta un reproductor de utilería dibujado con CSS.** `src/testing/storybook-embed-placeholders.ts` aporta `embedPlaceholdersDecorator` —que apaga la carga de la IFrame API de YouTube y pinta el reproductor sobre el propio placeholder que el player dibuja— y `withEmbedPlaceholder(s)`, que reapunta la URL del episodio de Spotify a una página HTML servida desde `assets/`. Son dos mecanismos porque hay dos seams distintos: el episodio expone su URL como dato, el video no (su `videoId` no es una URL). Los dos se dibujan en CSS y no con una imagen para que acompañen el ancho: el del video en unidades relativas a su caja, y la página del episodio con media queries que responden al ancho de su iframe.
 
-El **corpus conserva** sus URLs e identificadores de plataforma: son la forma que producción tiene y hay specs que la afirman. Lo que se sustituye es lo que el catálogo monta. Va a la story y no al preview por el discriminante de arriba — depende de esos componentes en concreto, no de cualquiera. Verificar un embed de verdad es un e2e contra el dataset real, no una entrada de catálogo.
+El **corpus conserva** sus URLs e identificadores de plataforma: son la forma que producción tiene y hay specs que la afirman. Lo que se sustituye es lo que Storybook monta. Va a la story y no al preview por el discriminante de arriba — depende de esos componentes en concreto, no de cualquiera. Verificar un embed de verdad es un e2e contra el dataset real, no una entrada de Storybook.
 
 **Siempre** actualizá las stories cuando cambien inputs, estados visuales o la API pública del componente.
 
@@ -580,7 +580,7 @@ El **corpus conserva** sus URLs e identificadores de plataforma: son la forma qu
 
 - **Una sola línea por descripción.** El render de Markdown trata cualquier línea con indentación (tab / ≥ 4 espacios) como bloque de código, así que un HTML multilínea indentado se muestra dentro de un recuadro de código. Escribí el HTML de la descripción en una sola línea (sin saltos ni indentación interna).
 - **Negrita para nombres de componentes.** El nombre del componente documentado y el de cualquier otro componente mencionado van en `<strong>…</strong>`.
-- **La referencia sale de la entrada, no del teclado.** Cada story tiene su módulo `*.docs.ts` al lado, que declara el `title` del catálogo. La prosa que nombra o enlaza otra entrada la importa y la pasa por un helper de [`@testing/storybook-docs`](../../src/testing/storybook-docs.ts), en vez de escribir el nombre y el `kind-id` a mano:
+- **La referencia sale de la entrada, no del teclado.** Cada story tiene su módulo `*.docs.ts` al lado, que declara el `title` de la entrada. La prosa que nombra o enlaza otra entrada la importa y la pasa por un helper de [`@testing/storybook-docs`](../../src/testing/storybook-docs.ts), en vez de escribir el nombre y el `kind-id` a mano:
 
   ```typescript
   import { literaryWorkTeaserCardDocs } from '@components/literary-work-teaser-card/literary-work-teaser-card.docs';
@@ -592,7 +592,7 @@ El **corpus conserva** sus URLs e identificadores de plataforma: son la forma qu
 
   El nombre visible y el `kind-id` salen los dos del mismo `title`, así que no pueden discrepar, y borrar una entrada rompe el `typecheck` de cada story que la referenciaba. El módulo aparte existe para romper el ciclo: hay pares de stories que se referencian mutuamente, y un módulo que no importa nada no puede formar un ciclo ESM.
 
-  El `title` del `meta` sigue siendo un **literal** porque el indexador CSF lo exige (leerlo de la entrada falla el build con `unexpected dynamic title`). Que ese literal siga igual al de su entrada lo verifica la regla de ESLint `storybook-docs-refs`, que además rechaza un `kind-id` escrito a mano y un nombre del catálogo puesto como texto en `<strong>` o `<code>`.
+  El `title` del `meta` sigue siendo un **literal** porque el indexador CSF lo exige (leerlo de la entrada falla el build con `unexpected dynamic title`). Que ese literal siga igual al de su entrada lo verifica la regla de ESLint `storybook-docs-refs`, que además rechaza un `kind-id` escrito a mano y un nombre de entrada de Storybook puesto como texto en `<strong>` o `<code>`.
 
   Una clase Angular **sin story propia** —un sub-componente, un skeleton, una directiva— no tiene entrada que la publique con nombre corto, así que la prosa la nombra por su clase (`CollectionTeaserCardSkeleton`) y la story la declara en un `export type DocsSymbols`: el import type-only rompe el `typecheck` si deja de existir. Para las clases de `src/app/` decoradas como componente, directiva, pipe o servicio la declaración es **obligatoria** —la regla marca la que la prosa nombra y la tupla no incluye—; un modelo o un tipo puede declararse igual, pero la regla no lo exige.
 

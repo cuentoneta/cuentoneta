@@ -271,42 +271,42 @@ describe('SanityLiteraryWorkRepository.fetchBySlug', () => {
 
 describe('SanityLiteraryWorkRepository.fetchTeasers', () => {
 	it('mapea el listado a teasers congelados con el extracto saneado', async () => {
-		const { literaryWorks, malformed } = await repoReturning(onoffRawLiteraryWorkTeasersMock).fetchTeasers({});
+		const { teasers, malformed } = await repoReturning(onoffRawLiteraryWorkTeasersMock).fetchTeasers({});
 
-		expect(literaryWorks).toHaveLength(onoffRawLiteraryWorkTeasersMock.length);
+		expect(teasers).toHaveLength(onoffRawLiteraryWorkTeasersMock.length);
 		expect(malformed).toEqual([]);
-		literaryWorks.forEach((teaser) => {
+		teasers.forEach((teaser) => {
 			expect(Object.isFrozen(teaser)).toBe(true);
 			expect(teaser.excerpt.bodyHtml).not.toContain('**');
 		});
 	});
 
 	it('resuelve la portada y los autores de cada teaser con el resolver inyectado', async () => {
-		const { literaryWorks } = await repoWithImageResolver(onoffRawLiteraryWorkTeasersMock).fetchTeasers({});
+		const { teasers } = await repoWithImageResolver(onoffRawLiteraryWorkTeasersMock).fetchTeasers({});
 
-		const authors = literaryWorks.flatMap((teaser) => teaser.authors);
-		expect(literaryWorks.length).toBeGreaterThan(0);
+		const authors = teasers.flatMap((teaser) => teaser.authors);
+		expect(teasers.length).toBeGreaterThan(0);
 		expect(authors.length).toBeGreaterThan(0);
-		expect(literaryWorks.every((teaser) => teaser.coverImage === INJECTED_URL)).toBe(true);
+		expect(teasers.every((teaser) => teaser.coverImage === INJECTED_URL)).toBe(true);
 		expect(authors.every((author) => author.imageUrl === INJECTED_URL)).toBe(true);
 	});
 
 	it('devuelve un listado vacío para un autor sin obras', async () => {
-		const { literaryWorks, malformed } = await repoReturning([]).fetchTeasers({ author: 'sin-obras' });
+		const { teasers, malformed } = await repoReturning([]).fetchTeasers({ author: 'sin-obras' });
 
-		expect(literaryWorks).toEqual([]);
+		expect(teasers).toEqual([]);
 		expect(malformed).toEqual([]);
 	});
 
 	// El mapeo por obra falla rápido, pero la obra que no se puede traducir se reporta en vez de
 	// propagarse: qué hacer con ella lo decide quien conoce el caso de uso, no este adaptador.
-	it('reporta la obra mal curada sin llevarse puestas a las demás', async () => {
+	it('reporta la obra mal formada sin llevarse puestas a las demás', async () => {
 		const [sane, ...rest] = onoffRawLiteraryWorkTeasersMock;
 		const broken = { ...sane, _id: `${sane._id}-rota`, slug: `${sane.slug}-rota`, totalReadingTime: null };
 
-		const { literaryWorks, malformed } = await repoReturning([broken, ...rest]).fetchTeasers({});
+		const { teasers, malformed } = await repoReturning([broken, ...rest]).fetchTeasers({});
 
-		expect(literaryWorks).toHaveLength(rest.length);
+		expect(teasers).toHaveLength(rest.length);
 		expect(malformed).toHaveLength(1);
 		expect(malformed[0].slug).toBe(broken.slug);
 	});
@@ -318,22 +318,22 @@ describe('SanityLiteraryWorkRepository.fetchTeasers', () => {
 		const [opening] = sane.excerpt;
 		const unbrokenBody = Array.from({ length: 10 }, () => opening.body).join('\n');
 
-		const { literaryWorks } = await repoReturning([
-			{ ...sane, excerpt: [{ ...opening, body: unbrokenBody }] },
-		]).fetchTeasers({});
-		const { bodyHtml } = literaryWorks[0].excerpt;
+		const { teasers } = await repoReturning([{ ...sane, excerpt: [{ ...opening, body: unbrokenBody }] }]).fetchTeasers(
+			{},
+		);
+		const { bodyHtml } = teasers[0].excerpt;
 
 		expect(visibleText(bodyHtml).length).toBeLessThanOrEqual(LITERARY_WORK_EXCERPT_MAX_LENGTH);
 		expect(bodyHtml.endsWith('…</p>')).toBe(true);
 	});
 
-	it('reporta como mal curada a la obra sin sección de apertura', async () => {
+	it('reporta como mal formada a la obra sin sección de apertura', async () => {
 		const [sane] = onoffRawLiteraryWorkTeasersMock;
 		const excerptless = { ...sane, excerpt: [] };
 
-		const { literaryWorks, malformed } = await repoReturning([excerptless]).fetchTeasers({});
+		const { teasers, malformed } = await repoReturning([excerptless]).fetchTeasers({});
 
-		expect(literaryWorks).toEqual([]);
+		expect(teasers).toEqual([]);
 		expect(malformed[0]).toBeInstanceOf(MalformedLiteraryWorkError);
 	});
 });

@@ -133,7 +133,7 @@ const literaryWorkWithMaliciousBody = (base: LiteraryWork): LiteraryWork => {
 };
 
 // Estos tests cubren el layout de la página, sus estados y el cableado del contexto de navegación.
-// La cobertura de extremo a extremo y el catálogo de variantes viven en sus propios issues.
+// La cobertura de extremo a extremo y las variantes en Storybook viven en sus propios issues.
 describe('LiteraryWorkPage', () => {
 	const setup = async (
 		literaryWork: LiteraryWork,

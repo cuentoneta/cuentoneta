@@ -20,7 +20,7 @@ Antes de escribir, leé las referencias relevantes para tener el contexto del pr
 
 1. Leé `CLAUDE.md` — Guía del proyecto, estándares y convenciones (siempre).
 2. Leé `.claude/references/coding-agent-policies.md` — Políticas de agentes (carga obligatoria).
-3. Leé los archivos de `.claude/references/` relacionados con el alcance de la documentación (ver catálogo abajo).
+3. Leé los archivos de `.claude/references/` relacionados con el alcance de la documentación (ver la sección de abajo).
 
 ## Proceso de documentación
 
@@ -75,9 +75,9 @@ Los comentarios de los snippets siguen la misma doctrina que el código: la can�
 | Material de referencia  | `.claude/references/` |
 | Definiciones de agentes | `.claude/agents/`     |
 
-## Catálogo de referencias (`.claude/references/`)
+## Referencias completas (`.claude/references/`)
 
-El catálogo completo y actualizado — con la descripción de cada archivo — vive en la tabla "Catálogo completo" de [Carga estratificada de referencias](../../CLAUDE.md#carga-estratificada-de-referencias) en `CLAUDE.md`. No lo transcribas acá: consultalo ahí antes de escribir, y no inventes archivos que no figuren en esa tabla.
+La lista completa y actualizada — con la descripción de cada archivo — vive en la tabla "Referencias completas" de [Carga estratificada de referencias](../../CLAUDE.md#carga-estratificada-de-referencias) en `CLAUDE.md`. No la transcribas acá: consultala ahí antes de escribir, y no inventes archivos que no figuren en esa tabla.
 
 ## Formato de salida
 

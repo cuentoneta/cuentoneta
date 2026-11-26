@@ -10,15 +10,15 @@
 import { expect, type Page } from '@playwright/test';
 
 import { test } from './_utils/test';
-import { fetchCollectionCatalog, type CollectionCatalogEntry } from './_utils/collection-fixtures';
+import { fetchCollectionCatalog, type CollectionTeaserFixture } from './_utils/collection-fixtures';
 import { DESKTOP_VIEWPORT } from './_utils/viewports';
 import { STABLE_SLUGS } from './_utils/seo-fixtures';
 
 const ROUTE = `/collection/${STABLE_SLUGS.collection}`;
 
 let status = 0;
-let catalog: CollectionCatalogEntry[] = [];
-let collection: CollectionCatalogEntry | undefined;
+let catalog: CollectionTeaserFixture[] = [];
+let collection: CollectionTeaserFixture | undefined;
 
 test.beforeAll(async ({ request }) => {
 	status = (await request.get(ROUTE)).status();
@@ -59,7 +59,7 @@ test('collection — el listado muestra las obras y cada una lleva a su lectura'
 	await expect(cards.first()).toBeVisible();
 
 	// Se cuentan los enlaces a la lectura contra las tarjetas y no se afirma que *todos* los enlaces del
-	// listado lleven ahí: la tarjeta enlaza además al autor cuando la curaduría lo muestra.
+	// listado lleven ahí: la tarjeta enlaza además al autor cuando la carga editorial lo muestra.
 	const readingLinks = page.getByTestId('literary-works').locator('a[href^="/literary-work/"]');
 	await expect(readingLinks, 'alguna obra del listado no ofrece su lectura').toHaveCount(await cards.count());
 

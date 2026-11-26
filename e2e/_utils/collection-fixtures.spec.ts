@@ -1,6 +1,6 @@
-import { descriptionText, pickMostDescriptiveCollection, type CollectionCatalogEntry } from './collection-fixtures';
+import { descriptionText, pickMostDescriptiveCollection, type CollectionTeaserFixture } from './collection-fixtures';
 
-function entry(slug: string, description: string): CollectionCatalogEntry {
+function entry(slug: string, description: string): CollectionTeaserFixture {
 	return { slug, title: slug, description };
 }
 

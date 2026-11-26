@@ -58,7 +58,7 @@ describe('contentController', () => {
 });
 
 describe('contentController with malformed data', () => {
-	// La landing existe: lo que falla es su curaduría, no el pedido.
+	// La landing existe: lo que falla son sus datos, no el pedido.
 	class FailingContentRepository extends InMemoryContentRepository {
 		public override async fetchLandingPageContent(): Promise<never> {
 			throw new MalformedLandingPageError(CURRENT_SLUG);

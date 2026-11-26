@@ -95,7 +95,7 @@ export function createLiteraryWorkNavigationTeaser(
 	return Object.freeze({ ...options, slug: createSlug(options.slug) });
 }
 
-// "Anónimo" es un author real del catálogo: la obra anónima lo referencia explícitamente
+// "Anónimo" es un author real del Acervo: la obra anónima lo referencia explícitamente
 // en todas las capas (sin normalización en el ACL) — ver docs/LITERARY_WORK_DESIGN.md §10.
 // Se compara por slug (clave de negocio), nunca por _id (infraestructura).
 export const ANONYMOUS_AUTHOR_SLUG = 'anonimo';

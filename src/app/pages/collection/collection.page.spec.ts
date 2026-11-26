@@ -29,7 +29,7 @@ const [divergentTags] = onoffCollectionsWithDivergentLiteraryWorkTagsMock;
 const [tagged] = onoffCollectionsWithTagsMock;
 
 // Ninguna obra del canon carece de etiquetas, así que se deriva una sobre una colección que sí las
-// tiene. El slug propio evita que conviva con su homónima en el catálogo del doble.
+// tiene. El slug propio evita que conviva con su homónima entre las colecciones del doble.
 const [firstTaggedWork, ...restTaggedWorks] = tagged.literaryWorks;
 const collectionWithUntaggedLiteraryWork = createCollection({
 	...tagged,
@@ -126,7 +126,7 @@ describe('CollectionPage', () => {
 	});
 
 	describe('colecciones sugeridas', () => {
-		it('should offer other collections of the catalogue', async () => {
+		it('should suggest other collections', async () => {
 			await renderPage(showingAuthors.slug);
 
 			expect(screen.getAllByTestId('suggested-collection').length).toBeGreaterThan(0);

@@ -17,7 +17,7 @@ const meta: Meta<Carousel> = {
 	title: 'Componentes V3/Carousel',
 	parameters: {
 		// El carousel elige imagen y controles a partir del ancho de la ventana, no del contenedor: la
-		// única forma de catalogar sus dos formas es cambiar el viewport del canvas. El de 1600px es el
+		// única forma de documentar en Storybook sus dos formas es cambiar el viewport del canvas. El de 1600px es el
 		// que muestra el comportamiento por encima del ancho intrínseco de la imagen.
 		viewport: {
 			options: {

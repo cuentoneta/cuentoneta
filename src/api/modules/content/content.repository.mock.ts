@@ -19,7 +19,7 @@ interface InMemoryContentOptions {
 	readonly landingPages?: readonly StoredLandingPage[];
 	readonly rotatingContent?: RotatingContent | null;
 	readonly latestReferences?: LandingPageReferences | null;
-	// El catálogo contra el que se resuelven las referencias que se escriben. Sustituye al content lake:
+	// Las obras contra las que se resuelven las referencias que se escriben. Sustituye al content lake:
 	// sin él, el doble solo podría reapuntar el slot a obras que ya estaban en el slot.
 	readonly literaryWorks?: readonly LiteraryWorkNavigationTeaserWithAuthors[];
 }

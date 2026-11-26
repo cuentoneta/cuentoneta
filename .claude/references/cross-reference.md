@@ -69,12 +69,12 @@ GROQ query → repository.fetch*()  →  service.get*()  →  mapX(rawResult): D
 
 Clean Architecture dice **dónde** vive cada cosa (capas); DDD dice **qué** vive en el centro (el modelo de dominio) y **cómo** se expresa.
 
-| DDD                                | Cómo aterriza en cuentoneta                                                                                                                    |
-| ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Lenguaje ubicuo / Domain-Based** | Los tipos de dominio (`Author`, `LiteraryWork`, `Collection`, `Resource`) usan el vocabulario del negocio, en el código y en la documentación. |
-| **Agregados e invariantes**        | El modelo de dominio concentra las invariantes; los mappers garantizan que solo entren shapes válidos del dominio.                             |
-| **Anti-Corruption Layer**          | Frontera explícita entre el modelo de Sanity (externo) y el modelo de dominio (interno): los **mappers** del ACL.                              |
-| **Bounded contexts**               | Cada módulo de `src/api/modules/<dominio>/` acota un contexto con su propio controller/service/repository/schema.                              |
+| DDD                                | Cómo aterriza en cuentoneta                                                                                                                                                                                                                                                   |
+| ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Lenguaje ubicuo / Domain-Based** | Los tipos de dominio (`Author`, `LiteraryWork`, `Collection`, `Resource`) usan el vocabulario del negocio, en el código y en la documentación.                                                                                                                                |
+| **Agregados e invariantes**        | El modelo de dominio concentra las invariantes; los mappers garantizan que solo entren shapes válidos del dominio.                                                                                                                                                            |
+| **Anti-Corruption Layer**          | Frontera explícita entre el modelo de Sanity (externo) y el modelo de dominio (interno): los **mappers** del ACL.                                                                                                                                                             |
+| **Bounded contexts**               | Los contextos (Acervo, Catálogo, Selecciones, Lectura, Administración) no coinciden con los módulos de `src/api/modules/<dominio>/`: un módulo puede servir a más de uno (el mapeo vive en `docs/DOMAIN_MODEL.md`). La separación física por contexto es objetivo, no estado. |
 
 > Detalle de DDD estratégico (agregados, invariantes, bounded contexts) en [`domain-model.md`](domain-model.md).
 

@@ -12,17 +12,17 @@ interface LiteraryWorkSlugEntry {
 	lastmod?: string;
 }
 
-// Una página que lista obras. Su `lastmod` lo resuelve el service a partir de la fecha de la más
-// reciente, que queda `undefined` si no lista ninguna.
-interface ListingSlugEntry {
+// Su `lastmod` lo resuelve el service a partir de la fecha de la obra más reciente que agrupa, que
+// queda `undefined` si no agrupa ninguna.
+interface GroupingPageSlugEntry {
 	slug: string;
 	latestLiteraryWorkDate?: string;
 }
 
 interface SitemapSlugsResult {
 	literaryWorks: LiteraryWorkSlugEntry[];
-	authors: ListingSlugEntry[];
-	collections: ListingSlugEntry[];
+	authors: GroupingPageSlugEntry[];
+	collections: GroupingPageSlugEntry[];
 }
 
 /**
@@ -60,9 +60,9 @@ function processSlugEntries(entries: { slug: string | null; lastmod: string }[])
 	}));
 }
 
-function processListingSlugEntries(
+function processGroupingPageSlugEntries(
 	entries: { slug: string | null; latestLiteraryWorkAt: string | null }[],
-): ListingSlugEntry[] {
+): GroupingPageSlugEntry[] {
 	return withBuildableSlug(entries).map((entry) => ({
 		slug: entry.slug,
 		latestLiteraryWorkDate: formatLastmod(entry.latestLiteraryWorkAt),
@@ -74,7 +74,7 @@ export async function fetchSitemapSlugs(): Promise<SitemapSlugsResult> {
 
 	return {
 		literaryWorks: processSlugEntries(result.literaryWorks),
-		authors: processListingSlugEntries(result.authors),
-		collections: processListingSlugEntries(result.collections),
+		authors: processGroupingPageSlugEntries(result.authors),
+		collections: processGroupingPageSlugEntries(result.collections),
 	};
 }

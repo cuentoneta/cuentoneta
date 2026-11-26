@@ -100,7 +100,7 @@ export async function runPublishedAtNormalization(options: RunOptions): Promise<
 }
 
 // Cada documento se procesa aislado: uno con una forma desconocida se registra como fallido y el
-// recorrido sigue. Un documento roto no puede abortar la remediación del catálogo.
+// recorrido sigue. Un documento roto no puede abortar la remediación del Acervo.
 async function processCandidate(
 	candidate: PublishedAtCandidate,
 	options: RunOptions,

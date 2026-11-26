@@ -67,7 +67,7 @@ describe('collectionController with malformed data', () => {
 
 	const failing = appWith(new FailingCollectionRepository());
 
-	// La colección existe: lo que falla es su curaduría, no el pedido.
+	// La colección existe: lo que falla son sus datos, no el pedido.
 	it.each(['/collection/geometrias-del-desvelo', '/collection'])(
 		'answers 500 with a stable code for %s',
 		async (path) => {

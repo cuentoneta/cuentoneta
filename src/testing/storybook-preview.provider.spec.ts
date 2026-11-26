@@ -6,7 +6,7 @@ import { LayoutService } from '../app/providers/layout.interface';
 
 // Afirma sobre el **injector**, no montando un componente: `render` de Angular Testing Library aporta
 // la ruta activa por su cuenta, así que un caso que monte un componente pasa con y sin estos
-// providers y no verificaría nada. Es la única comprobación automatizable del set que el catálogo da
+// providers y no verificaría nada. Es la única comprobación automatizable del set que Storybook da
 // a toda story — `storybook:build` compila sin ejecutarlas, así que un provider faltante deja el
 // canvas en la pantalla de error y CI pasa en verde.
 describe('provideStorybookPreview', () => {

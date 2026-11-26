@@ -9,7 +9,7 @@ import * as literaryWorkService from './literary-work.service';
 import { getLiteraryWorkBySlug, getLiteraryWorkTeasers } from './literary-work.service';
 import { LiteraryWorkNotFoundError, MalformedLiteraryWorkError } from './literary-work.errors';
 import { InMemoryLiteraryWorkRepository } from './literary-work.repository.mock';
-import type { LiteraryWorkRepository, LiteraryWorkTeaserListing } from './literary-work.repository';
+import type { LiteraryWorkRepository, LiteraryWorkTeaserFetchResult } from './literary-work.repository';
 import { environment } from '../../_helpers/environment';
 import { fetchClarityData } from '../../_helpers/clarity-connector';
 import { ClarityRequestError, ClarityResponseError } from '../../_helpers/clarity-connector.errors';
@@ -37,14 +37,14 @@ describe('getLiteraryWorkBySlug', () => {
 // Devuelve un listado canned con `malformed` poblado: el doble en memoria traduce de verdad y nunca
 // produce esa rama, así que la política de descarte solo se puede ejercitar con un stub.
 class StubLiteraryWorkRepository implements LiteraryWorkRepository {
-	constructor(private readonly listing: LiteraryWorkTeaserListing) {}
+	constructor(private readonly result: LiteraryWorkTeaserFetchResult) {}
 
 	public async fetchBySlug(): Promise<never> {
 		throw new Error('No participa de estos casos.');
 	}
 
-	public async fetchTeasers(): Promise<LiteraryWorkTeaserListing> {
-		return this.listing;
+	public async fetchTeasers(): Promise<LiteraryWorkTeaserFetchResult> {
+		return this.result;
 	}
 }
 
@@ -79,7 +79,7 @@ describe('getLiteraryWorkTeasers', () => {
 	it('devuelve las obras sanas y registra la descartada', async () => {
 		const warn = spyOn(console, 'warn').mockImplementation(() => undefined);
 		const malformed = new MalformedLiteraryWorkError('una-obra-rota', { cause: new Error('sin extracto') });
-		const stub = new StubLiteraryWorkRepository({ literaryWorks: [firstTeaser], malformed: [malformed] });
+		const stub = new StubLiteraryWorkRepository({ teasers: [firstTeaser], malformed: [malformed] });
 
 		const literaryWorks = await getLiteraryWorkTeasers({ author: author.slug }, stub);
 
@@ -90,10 +90,10 @@ describe('getLiteraryWorkTeasers', () => {
 	// La política es por obra y no cambia con la cantidad: distinguir "todas rotas" de "algunas rotas"
 	// introduciría un umbral que nadie puede nombrar, y el consumidor ya sabe no dibujarse ante lista
 	// vacía.
-	it('devuelve un listado vacío cuando todas las obras están mal curadas', async () => {
+	it('devuelve un listado vacío cuando todas las obras están mal formadas', async () => {
 		spyOn(console, 'warn').mockImplementation(() => undefined);
 		const stub = new StubLiteraryWorkRepository({
-			literaryWorks: [],
+			teasers: [],
 			malformed: [new MalformedLiteraryWorkError('una'), new MalformedLiteraryWorkError('otra')],
 		});
 
@@ -129,7 +129,7 @@ describe('updateMostReadLiteraryWorks', () => {
 	}
 
 	// El caso de uso ya no cruza dos repositories: le pasa los slugs al que escribe, y ése los resuelve
-	// contra el catálogo que conoce.
+	// contra las obras que conoce.
 	function repositories() {
 		return new InMemoryContentRepository({
 			rotatingContent,

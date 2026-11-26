@@ -46,7 +46,7 @@ export class SanityCollectionRepository implements CollectionRepository {
 		return raw.map((teaser) => this.guard(teaser.slug, () => mapSanityCollectionTeaser(teaser, this.resolveImageUrl)));
 	}
 
-	// Una colección mal curada tumba la llamada entera en vez de filtrarse: un listado que esconde
+	// Una colección mal formada tumba la llamada entera en vez de filtrarse: un listado que esconde
 	// elementos es un bug de datos que nadie ve. El slug va en el error porque, sobre decenas de
 	// colecciones, saber que "algo" está mal no alcanza para arreglarlo.
 	private guard<T>(slug: string, map: () => T): T {

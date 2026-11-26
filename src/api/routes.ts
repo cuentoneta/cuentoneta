@@ -17,7 +17,7 @@ const apiRoutes = new Hono();
  * decisión.
  *
  * El registro va por par —el recurso y lo que cuelga de él— porque el comodín de Hono exige al menos
- * un segmento: `/x/*` deja fuera al catálogo `/x`. Un handler que se declara
+ * un segmento: `/x/*` deja fuera a la raíz `/x`. Un handler que se declara
  * `no-store` gana sobre el middleware.
  *
  * **Va antes del montaje de los controllers, y el orden es parte del mecanismo:** los handlers no

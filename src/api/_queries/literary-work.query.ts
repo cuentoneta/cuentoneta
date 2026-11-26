@@ -161,15 +161,14 @@ export const readingTimeBackfillCandidatesQuery = defineQuery(`
     'content': coalesce(content[]{ _key, body, readingTime }, [])
 }`);
 
-// El catálogo de obras como teasers, filtrable por criterios — hoy solo `author`; la paginación
-// (limit/offset) y el filtrado por tags se sumarán acá mismo. Cada criterio es un parámetro nullable
-// y no una query aparte: una condición acá y un query param en el endpoint, no una sub-ruta ni otra
+// Los avances de obra, filtrables por criterios. Cada criterio es un parámetro nullable y no una
+// query aparte: una condición acá y un query param en el endpoint, no una sub-ruta ni otra
 // proyección duplicada.
 //
-// `$author == null` cubre el listado sin filtro; con filtro se recorre `authors[]` porque una obra admite
-// varios, así que la pertenencia es de conjunto y no una igualdad. `$slugs` sigue la misma forma, y filtra
-// por pertenencia: devuelve en orden de documento,
-// así que un consumidor que pase un lote ordenado repone el orden por su cuenta.
+// `$author == null` cubre la llamada sin filtro; con filtro se recorre `authors[]` porque una obra
+// admite varios, así que la condición es de inclusión en un conjunto y no una igualdad. `$slugs` sigue
+// la misma forma y devuelve en orden de documento, así que un consumidor que pase un lote ordenado
+// repone el orden por su cuenta.
 //
 // La proyección repite literal la que `collectionBySlugQuery` usa para las obras de una colección
 // —`defineQuery` exige literales para que el typegen las lea, así que no se puede extraer—, incluido
