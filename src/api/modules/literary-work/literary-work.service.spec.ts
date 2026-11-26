@@ -6,7 +6,7 @@ import {
 	onoffLiteraryWorkTeasersMock,
 } from '@mocks/onoff-literary-work-teasers.mock';
 import * as literaryWorkService from './literary-work.service';
-import { getLiteraryWorkBySlug, getLiteraryWorkTeasers } from './literary-work.service';
+import { getLiteraryWorkBySlug, getLiteraryWorkListing } from './literary-work.service';
 import { LiteraryWorkNotFoundError, MalformedLiteraryWorkError } from './literary-work.errors';
 import { InMemoryLiteraryWorkRepository } from './literary-work.repository.mock';
 import type { LiteraryWorkRepository, LiteraryWorkTeaserFetchResult } from './literary-work.repository';
@@ -48,7 +48,7 @@ class StubLiteraryWorkRepository implements LiteraryWorkRepository {
 	}
 }
 
-describe('getLiteraryWorkTeasers', () => {
+describe('getLiteraryWorkListing', () => {
 	const [firstTeaser] = onoffLiteraryWorkTeasersMock;
 	const [author] = firstTeaser.authors;
 	const repository = new InMemoryLiteraryWorkRepository([], onoffLiteraryWorkTeasersMock);
@@ -56,13 +56,13 @@ describe('getLiteraryWorkTeasers', () => {
 	afterEach(() => restoreAllMocks());
 
 	it('devuelve el catálogo entero sin filtro', async () => {
-		const literaryWorks = await getLiteraryWorkTeasers({}, repository);
+		const literaryWorks = await getLiteraryWorkListing({}, repository);
 
 		expect(literaryWorks).toHaveLength(onoffLiteraryWorkTeasersMock.length);
 	});
 
 	it('devuelve los teasers de las obras del autor filtrado', async () => {
-		const literaryWorks = await getLiteraryWorkTeasers({ author: author.slug }, repository);
+		const literaryWorks = await getLiteraryWorkListing({ author: author.slug }, repository);
 
 		expect(literaryWorks.length).toBeGreaterThan(0);
 		literaryWorks.forEach(({ authors }) => {
@@ -71,7 +71,7 @@ describe('getLiteraryWorkTeasers', () => {
 	});
 
 	it('devuelve un listado vacío para un autor sin obras, sin convertirlo en error', async () => {
-		expect(await getLiteraryWorkTeasers({ author: 'sin-obras' }, repository)).toEqual([]);
+		expect(await getLiteraryWorkListing({ author: 'sin-obras' }, repository)).toEqual([]);
 	});
 
 	// El caso que impide "simplificar" la tolerancia sin ver lo que saca: una obra que el CMS dejó
@@ -81,10 +81,13 @@ describe('getLiteraryWorkTeasers', () => {
 		const malformed = new MalformedLiteraryWorkError('una-obra-rota', { cause: new Error('sin extracto') });
 		const stub = new StubLiteraryWorkRepository({ teasers: [firstTeaser], malformed: [malformed] });
 
-		const literaryWorks = await getLiteraryWorkTeasers({ author: author.slug }, stub);
+		const literaryWorks = await getLiteraryWorkListing({ author: author.slug }, stub);
 
 		expect(literaryWorks).toEqual([firstTeaser]);
-		expect(warn).toHaveBeenCalledWith(expect.stringContaining('una-obra-rota'), malformed.cause);
+		expect(warn).toHaveBeenCalledWith(
+			'[LiteraryWork] Obra descartada del listado de teasers: "una-obra-rota"',
+			malformed.cause,
+		);
 	});
 
 	// La política es por obra y no cambia con la cantidad: distinguir "todas rotas" de "algunas rotas"
@@ -97,7 +100,7 @@ describe('getLiteraryWorkTeasers', () => {
 			malformed: [new MalformedLiteraryWorkError('una'), new MalformedLiteraryWorkError('otra')],
 		});
 
-		expect(await getLiteraryWorkTeasers({ author: author.slug }, stub)).toEqual([]);
+		expect(await getLiteraryWorkListing({ author: author.slug }, stub)).toEqual([]);
 	});
 });
 // Registra si el caso de uso pide la landing: solo necesita lo más leído, y pedirla entera

@@ -5,7 +5,7 @@ import { literaryWorkTeaserFilterSchema } from '@schemas/literary-work.schemas';
 import { slugParamValidator } from '@middleware/slug-param-validator.middleware';
 import { LiteraryWorkNotFoundError } from './literary-work.errors';
 import type { LiteraryWorkRepository } from './literary-work.repository';
-import { getLiteraryWorkBySlug, getLiteraryWorkTeasers } from './literary-work.service';
+import { getLiteraryWorkBySlug, getLiteraryWorkListing } from './literary-work.service';
 
 export function createLiteraryWorkController(repository?: LiteraryWorkRepository) {
 	const controller = new Hono();
@@ -16,7 +16,7 @@ export function createLiteraryWorkController(repository?: LiteraryWorkRepository
 	// filtro sin resultados es una lista vacía, y la obra mal formada la descarta el service.
 	controller.get('/', zValidator('query', literaryWorkTeaserFilterSchema), async (c) => {
 		const filter = c.req.valid('query');
-		const literaryWorks = await getLiteraryWorkTeasers(filter, repository);
+		const literaryWorks = await getLiteraryWorkListing(filter, repository);
 		return c.json(literaryWorks);
 	});
 
