@@ -45,6 +45,10 @@ class StubFailingLiteraryWorkApi implements LiteraryWorkApi {
 	public getTeasers(): Observable<LiteraryWorkTeaser[]> {
 		return throwError(() => new HttpErrorResponse({ status: this.status, statusText: 'error' }));
 	}
+
+	public getListing(): Observable<LiteraryWorkTeaser[]> {
+		return throwError(() => new HttpErrorResponse({ status: this.status, statusText: 'error' }));
+	}
 }
 
 // Sustituye el timing del entorno, no el dato: el test decide cuándo llega la obra, que es lo único que
@@ -59,6 +63,10 @@ class ControllableLiteraryWorkApi implements LiteraryWorkApi {
 	// El control es sobre la obra que se lee: las sugerencias del pie llegan resueltas del corpus,
 	// para que el estado intermedio que estos casos observan sea el de la obra y no el del bloque.
 	public getTeasers(): Observable<LiteraryWorkTeaser[]> {
+		return of([...onoffLiteraryWorkTeasersMock]);
+	}
+
+	public getListing(): Observable<LiteraryWorkTeaser[]> {
 		return of([...onoffLiteraryWorkTeasersMock]);
 	}
 

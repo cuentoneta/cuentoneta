@@ -43,12 +43,12 @@ class CorpusLiteraryWorkApi implements LiteraryWorkApi {
 			: throwError(() => new HttpErrorResponse({ status: 404, statusText: 'Not Found' }));
 	}
 
-	public getTeasers(filter: LiteraryWorkTeaserFilter = {}): Observable<LiteraryWorkTeaser[]> {
-		return of(
-			filter.author
-				? onoffLiteraryWorkTeasersMock.filter(({ authors }) => authors.some(({ slug }) => slug === filter.author))
-				: [...onoffLiteraryWorkTeasersMock],
-		);
+	public getTeasers(filter: LiteraryWorkTeaserFilter): Observable<LiteraryWorkTeaser[]> {
+		return of(onoffLiteraryWorkTeasersMock.filter(({ authors }) => authors.some(({ slug }) => slug === filter.author)));
+	}
+
+	public getListing(): Observable<LiteraryWorkTeaser[]> {
+		return of([...onoffLiteraryWorkTeasersMock]);
 	}
 }
 

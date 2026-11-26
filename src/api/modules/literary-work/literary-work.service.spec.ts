@@ -6,7 +6,7 @@ import {
 	onoffLiteraryWorkTeasersMock,
 } from '@mocks/onoff-literary-work-teasers.mock';
 import * as literaryWorkService from './literary-work.service';
-import { getLiteraryWorkBySlug, getLiteraryWorkTeasers } from './literary-work.service';
+import { getLiteraryWorkBySlug, getLiteraryWorkListing, getLiteraryWorkTeasers } from './literary-work.service';
 import { LiteraryWorkNotFoundError, MalformedLiteraryWorkError } from './literary-work.errors';
 import { InMemoryLiteraryWorkRepository } from './literary-work.repository.mock';
 import type { LiteraryWorkRepository, LiteraryWorkTeaserFetchResult } from './literary-work.repository';
@@ -48,7 +48,7 @@ class StubLiteraryWorkRepository implements LiteraryWorkRepository {
 	}
 }
 
-describe('getLiteraryWorkTeasers', () => {
+describe('getLiteraryWorkListing', () => {
 	const [firstTeaser] = onoffLiteraryWorkTeasersMock;
 	const [author] = firstTeaser.authors;
 	const repository = new InMemoryLiteraryWorkRepository([], onoffLiteraryWorkTeasersMock);
@@ -56,12 +56,62 @@ describe('getLiteraryWorkTeasers', () => {
 	afterEach(() => restoreAllMocks());
 
 	it('devuelve el catálogo entero sin filtro', async () => {
-		const literaryWorks = await getLiteraryWorkTeasers({}, repository);
+		const literaryWorks = await getLiteraryWorkListing({}, repository);
 
 		expect(literaryWorks).toHaveLength(onoffLiteraryWorkTeasersMock.length);
 	});
 
 	it('devuelve los teasers de las obras del autor filtrado', async () => {
+		const literaryWorks = await getLiteraryWorkListing({ author: author.slug }, repository);
+
+		expect(literaryWorks.length).toBeGreaterThan(0);
+		literaryWorks.forEach(({ authors }) => {
+			expect(authors.some(({ slug }) => slug === author.slug)).toBe(true);
+		});
+	});
+
+	it('devuelve un listado vacío para un autor sin obras, sin convertirlo en error', async () => {
+		expect(await getLiteraryWorkListing({ author: 'sin-obras' }, repository)).toEqual([]);
+	});
+
+	// El caso que impide "simplificar" la tolerancia sin ver lo que saca: una obra que el CMS dejó
+	// inconsistente no debe llevarse puestas a las demás en un listado.
+	it('devuelve las obras sanas y registra la descartada', async () => {
+		const warn = spyOn(console, 'warn').mockImplementation(() => undefined);
+		const malformed = new MalformedLiteraryWorkError('una-obra-rota', { cause: new Error('sin extracto') });
+		const stub = new StubLiteraryWorkRepository({ teasers: [firstTeaser], malformed: [malformed] });
+
+		const literaryWorks = await getLiteraryWorkListing({ author: author.slug }, stub);
+
+		expect(literaryWorks).toEqual([firstTeaser]);
+		expect(warn).toHaveBeenCalledWith(
+			'[LiteraryWork] Obra descartada del listado de teasers: "una-obra-rota"',
+			malformed.cause,
+		);
+	});
+
+	// La política es por obra y no cambia con la cantidad: distinguir "todas rotas" de "algunas rotas"
+	// introduciría un umbral que nadie puede nombrar, y el consumidor ya sabe no dibujarse ante lista
+	// vacía.
+	it('devuelve un listado vacío cuando todas las obras están mal formadas', async () => {
+		spyOn(console, 'warn').mockImplementation(() => undefined);
+		const stub = new StubLiteraryWorkRepository({
+			teasers: [],
+			malformed: [new MalformedLiteraryWorkError('una'), new MalformedLiteraryWorkError('otra')],
+		});
+
+		expect(await getLiteraryWorkListing({ author: author.slug }, stub)).toEqual([]);
+	});
+});
+
+describe('getLiteraryWorkTeasers', () => {
+	const [firstTeaser] = onoffLiteraryWorkTeasersMock;
+	const [author] = firstTeaser.authors;
+	const repository = new InMemoryLiteraryWorkRepository([], onoffLiteraryWorkTeasersMock);
+
+	afterEach(() => restoreAllMocks());
+
+	it('devuelve los avances de las obras del autor filtrado', async () => {
 		const literaryWorks = await getLiteraryWorkTeasers({ author: author.slug }, repository);
 
 		expect(literaryWorks.length).toBeGreaterThan(0);
@@ -74,9 +124,7 @@ describe('getLiteraryWorkTeasers', () => {
 		expect(await getLiteraryWorkTeasers({ author: 'sin-obras' }, repository)).toEqual([]);
 	});
 
-	// El caso que impide "simplificar" la tolerancia sin ver lo que saca: una obra que el CMS dejó
-	// inconsistente no debe llevarse puestas a las demás en un listado.
-	it('devuelve las obras sanas y registra la descartada', async () => {
+	it('devuelve las obras sanas y registra la descartada como descartada de los avances', async () => {
 		const warn = spyOn(console, 'warn').mockImplementation(() => undefined);
 		const malformed = new MalformedLiteraryWorkError('una-obra-rota', { cause: new Error('sin extracto') });
 		const stub = new StubLiteraryWorkRepository({ teasers: [firstTeaser], malformed: [malformed] });
@@ -84,12 +132,12 @@ describe('getLiteraryWorkTeasers', () => {
 		const literaryWorks = await getLiteraryWorkTeasers({ author: author.slug }, stub);
 
 		expect(literaryWorks).toEqual([firstTeaser]);
-		expect(warn).toHaveBeenCalledWith(expect.stringContaining('una-obra-rota'), malformed.cause);
+		expect(warn).toHaveBeenCalledWith(
+			'[LiteraryWork] Obra mal formada descartada de los avances: "una-obra-rota"',
+			malformed.cause,
+		);
 	});
 
-	// La política es por obra y no cambia con la cantidad: distinguir "todas rotas" de "algunas rotas"
-	// introduciría un umbral que nadie puede nombrar, y el consumidor ya sabe no dibujarse ante lista
-	// vacía.
 	it('devuelve un listado vacío cuando todas las obras están mal formadas', async () => {
 		spyOn(console, 'warn').mockImplementation(() => undefined);
 		const stub = new StubLiteraryWorkRepository({

@@ -173,11 +173,12 @@ describe('HttpLiteraryWorkApi', () => {
 		await expect(result).rejects.toThrow();
 	});
 
-	describe('getTeasers', () => {
-		// El DTO de wire se deriva del canon por serialización, nunca a mano: es la misma forma en que
-		// viaja de verdad, y enriquecer el corpus alcanza a estos casos solo.
-		const wireTeasers = JSON.parse(JSON.stringify(onoffLiteraryWorkTeasersMock)) as unknown[];
+	// El DTO de wire se deriva del canon por serialización, nunca a mano: es la misma forma en que
+	// viaja de verdad, y enriquecer el corpus alcanza a estos casos solo.
+	const wireTeasers = JSON.parse(JSON.stringify(onoffLiteraryWorkTeasersMock)) as unknown[];
+	const collectionUrl = `${environment.apiUrl}${Endpoints.LiteraryWork}`;
 
+	describe('getTeasers', () => {
 		function requestTeasers(filter: LiteraryWorkTeaserFilter, url: string, payload: unknown[]) {
 			const result = new Promise<LiteraryWorkTeaser[]>((resolve, reject) => {
 				api.getTeasers(filter).subscribe({ next: resolve, error: reject });
@@ -186,16 +187,10 @@ describe('HttpLiteraryWorkApi', () => {
 			return result;
 		}
 
-		it('requests the catalog with no query params when there is no filter', async () => {
-			const rehydrated = await requestTeasers({}, `${environment.apiUrl}${Endpoints.LiteraryWork}`, wireTeasers);
-
-			expect(rehydrated).toHaveLength(onoffLiteraryWorkTeasersMock.length);
-		});
-
-		it('rehydrates the listing filtered by author into domain teasers', async () => {
+		it('rehydrates the teasers filtered by author into domain teasers', async () => {
 			const rehydrated = await requestTeasers(
 				{ author: 'francois-onoff' },
-				`${environment.apiUrl}${Endpoints.LiteraryWork}?author=francois-onoff`,
+				`${collectionUrl}/teasers?author=francois-onoff`,
 				wireTeasers,
 			);
 
@@ -207,11 +202,7 @@ describe('HttpLiteraryWorkApi', () => {
 		});
 
 		it('resolves an empty listing as an empty array', async () => {
-			const listing = await requestTeasers(
-				{ author: 'sin-obras' },
-				`${environment.apiUrl}${Endpoints.LiteraryWork}?author=sin-obras`,
-				[],
-			);
+			const listing = await requestTeasers({ author: 'sin-obras' }, `${collectionUrl}/teasers?author=sin-obras`, []);
 
 			expect(listing).toEqual([]);
 		});
@@ -223,12 +214,31 @@ describe('HttpLiteraryWorkApi', () => {
 			const malformed = [{ ...first, totalReadingTime: 'dos' }, ...rest];
 
 			await expect(
-				requestTeasers(
-					{ author: 'francois-onoff' },
-					`${environment.apiUrl}${Endpoints.LiteraryWork}?author=francois-onoff`,
-					malformed,
-				),
+				requestTeasers({ author: 'francois-onoff' }, `${collectionUrl}/teasers?author=francois-onoff`, malformed),
 			).rejects.toThrow();
+		});
+	});
+
+	describe('getListing', () => {
+		function requestListing(payload: unknown[]) {
+			const result = new Promise<LiteraryWorkTeaser[]>((resolve, reject) => {
+				api.getListing().subscribe({ next: resolve, error: reject });
+			});
+			http.expectOne(collectionUrl).flush(payload);
+			return result;
+		}
+
+		it('requests the collection resource with no query params', async () => {
+			const rehydrated = await requestListing(wireTeasers);
+
+			expect(rehydrated).toHaveLength(onoffLiteraryWorkTeasersMock.length);
+		});
+
+		it('errors the stream when a teaser violates the DTO schema', async () => {
+			const [first, ...rest] = wireTeasers as Array<Record<string, unknown>>;
+			const malformed = [{ ...first, totalReadingTime: 'dos' }, ...rest];
+
+			await expect(requestListing(malformed)).rejects.toThrow();
 		});
 	});
 });

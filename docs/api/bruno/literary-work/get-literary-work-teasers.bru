@@ -1,0 +1,25 @@
+meta {
+  name: Get literary work teasers
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{apiUrl}}{{baseApiPath}}/literary-work/teasers?author=francois-onoff
+  body: none
+  auth: none
+}
+
+params:query {
+  author: francois-onoff
+}
+
+docs {
+  Obtener los avances (`LiteraryWorkTeaser[]`) de las obras de un autor, ordenados por título.
+  Los consumen el perfil del autor y las sugerencias de lectura. `author` es obligatorio: si
+  falta o no tiene formato de slug, responde 400.
+
+  Un autor sin obras (o inexistente) responde 200 con un arreglo vacío — la ausencia de obras
+  es legítima, no un 404. Una obra mal formada se descarta y se registra en el servidor como
+  "descartada de los avances", sin afectar a las demás.
+}

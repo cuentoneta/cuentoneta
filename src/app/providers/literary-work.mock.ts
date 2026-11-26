@@ -18,12 +18,12 @@ export class StubLiteraryWorkApi implements LiteraryWorkApi {
 		return of(this.literaryWork);
 	}
 
-	public getTeasers(filter: LiteraryWorkTeaserFilter = {}): Observable<LiteraryWorkTeaser[]> {
-		return of(
-			filter.author
-				? this.teasers.filter(({ authors }) => authors.some((author) => author.slug === filter.author))
-				: [...this.teasers],
-		);
+	public getTeasers(filter: LiteraryWorkTeaserFilter): Observable<LiteraryWorkTeaser[]> {
+		return of(this.teasers.filter(({ authors }) => authors.some((author) => author.slug === filter.author)));
+	}
+
+	public getListing(): Observable<LiteraryWorkTeaser[]> {
+		return of([...this.teasers]);
 	}
 }
 
