@@ -9,7 +9,7 @@ const ruleTester = new RuleTester({ languageOptions: { parser: tsParser } });
 const REGISTRY_FILE = 'scripts/ops/registry.ts';
 
 // Los casos válidos se arman con el registro real, no con una copia de sus tareas: la copia quedaría
-// desactualizada y el spec afirmaría contra una lista que ya no es el que la regla compara.
+// desactualizada y el spec afirmaría contra una lista que ya no es la que la regla compara.
 const taskIds = Object.keys(OPS_TASKS);
 
 // Una tarea documentada: el caso de la fila huérfana la omite del registro.
