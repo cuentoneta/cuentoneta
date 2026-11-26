@@ -90,8 +90,8 @@ test.describe('literary-work — HTML server-rendered del catálogo', () => {
 		expect(html).toContain('ng-server-context="ssr"');
 	});
 
-	// El peso del HTML lo pone este bloque, que es una copia de la respuesta del catálogo: si la respuesta
-	// volviera a transportar el extracto, la portada o el autor completo, el HTML crecería con ella.
+	// Este bloque es una copia de la respuesta del catálogo: si la respuesta volviera a transportar el
+	// extracto, la portada o el autor completo, el HTML crecería con ella.
 	test('F: el estado transferido transporta solo el catálogo', () => {
 		const catalog = Object.values(getTransferState(html))
 			.map((response) => (response as { b?: unknown } | null)?.b)
