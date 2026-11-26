@@ -4,7 +4,7 @@ import { InMemoryLiteraryWorkRepository } from './literary-work.repository.mock'
 
 describe('InMemoryLiteraryWorkRepository.fetchBySlug', () => {
 	const [firstLiteraryWork] = onoffLiteraryWorksMock;
-	const repository = new InMemoryLiteraryWorkRepository(onoffLiteraryWorksMock);
+	const repository = new InMemoryLiteraryWorkRepository({ literaryWorks: onoffLiteraryWorksMock });
 
 	it.each(onoffLiteraryWorksMock)('devuelve el agregado de dominio almacenado para "$slug"', async (literaryWork) => {
 		expect(await repository.fetchBySlug(literaryWork.slug)).toBe(literaryWork);
@@ -22,7 +22,7 @@ describe('InMemoryLiteraryWorkRepository.fetchBySlug', () => {
 describe('InMemoryLiteraryWorkRepository.fetchTeasers', () => {
 	const [firstTeaser] = onoffLiteraryWorkTeasersMock;
 	const [authorOfFirst] = firstTeaser.authors;
-	const repository = new InMemoryLiteraryWorkRepository([], onoffLiteraryWorkTeasersMock);
+	const repository = new InMemoryLiteraryWorkRepository({ teasers: onoffLiteraryWorkTeasersMock });
 
 	it('devuelve el catálogo entero sin filtro, sin nada que reportar', async () => {
 		const { teasers, malformed } = await repository.fetchTeasers({});

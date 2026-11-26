@@ -5,11 +5,16 @@ import type {
 	LiteraryWorkTeaserFetchResult,
 } from './literary-work.repository';
 
+interface InMemoryLiteraryWorkRepositoryOptions {
+	readonly literaryWorks?: ReadonlyArray<LiteraryWork>;
+	readonly teasers?: ReadonlyArray<LiteraryWorkTeaser>;
+}
+
 export class InMemoryLiteraryWorkRepository implements LiteraryWorkRepository {
 	private readonly literaryWorks: ReadonlyArray<LiteraryWork>;
 	private readonly teasers: ReadonlyArray<LiteraryWorkTeaser>;
 
-	constructor(literaryWorks: ReadonlyArray<LiteraryWork> = [], teasers: ReadonlyArray<LiteraryWorkTeaser> = []) {
+	constructor({ literaryWorks = [], teasers = [] }: InMemoryLiteraryWorkRepositoryOptions = {}) {
 		this.literaryWorks = literaryWorks;
 		this.teasers = teasers;
 	}
