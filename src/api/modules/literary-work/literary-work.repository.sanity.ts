@@ -61,25 +61,34 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 			slugs: filter.slugs ? [...filter.slugs] : null,
 		});
 
-		const teasers: LiteraryWorkTeaser[] = [];
+		const { translated, malformed } = this.translateEach(raw, (teaser) => this.mapLiteraryWorkTeaser(teaser));
+		return { teasers: translated, malformed };
+	}
+
+	// Reparte un lote de obras crudas entre las que la ACL pudo traducir y las que no.
+	private translateEach<R extends { readonly slug: string }, D>(
+		raws: readonly R[],
+		translate: (raw: R) => D,
+	): { translated: D[]; malformed: MalformedLiteraryWorkError[] } {
+		const translated: D[] = [];
 		const malformed: MalformedLiteraryWorkError[] = [];
-		for (const rawTeaser of raw) {
+		for (const raw of raws) {
 			try {
-				teasers.push(this.mapLiteraryWorkTeaser(rawTeaser));
+				translated.push(translate(raw));
 			} catch (error) {
 				// El mapeo por obra no se ablanda: la intraducible se acumula en vez de propagarse,
-				// porque qué hacer con ella —descartarla de los avances, tumbar el agregado que la
+				// porque qué hacer con ella —descartarla del listado, tumbar el agregado que la
 				// transporta— lo decide quien conoce el caso de uso, no este adaptador. El slug viaja en el
 				// error porque, sobre un lote de obras, saber que "algo" está mal no alcanza para
 				// arreglarlo.
 				malformed.push(
 					error instanceof MalformedLiteraryWorkError
 						? error
-						: new MalformedLiteraryWorkError(rawTeaser.slug, { cause: error }),
+						: new MalformedLiteraryWorkError(raw.slug, { cause: error }),
 				);
 			}
 		}
-		return { teasers, malformed };
+		return { translated, malformed };
 	}
 
 	private mapLiteraryWorkTeaser(raw: SanityLiteraryWorkTeaser): LiteraryWorkTeaser {
@@ -106,7 +115,10 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 	}
 
 	// El tiempo total de lectura de la obra, tal como lo persiste el CMS.
-	private resolveTotalReadingTime(raw: SanityLiteraryWorkTeaser): ReadingTime {
+	private resolveTotalReadingTime(raw: {
+		readonly slug: string;
+		readonly totalReadingTime: number | null;
+	}): ReadingTime {
 		// Ausente, la obra es intraducible: no hay derivación que sirva de reemplazo, porque en una
 		// obra de texto el total es la suma de sus secciones y en una recitada es la duración del
 		// medio. Cualquier cálculo acierta en una y falla en la otra.
