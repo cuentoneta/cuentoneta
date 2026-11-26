@@ -86,7 +86,7 @@
 		"@playwright/test": "^1.65.0",
 		"@storybook/addon-docs": "10.6.8",
 		"@storybook/angular-vite": "10.6.8",
-		"@stylistic/eslint-plugin": "^5.10.0",
+		"@stylistic/eslint-plugin": "^6.0.1",
 		"@tailwindcss/postcss": "^4.3.5",
 		"@testing-library/angular": "^19.6.0",
 		"@testing-library/dom": "^10.4.2",
