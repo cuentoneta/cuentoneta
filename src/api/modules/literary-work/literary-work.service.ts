@@ -23,8 +23,7 @@ export async function getLiteraryWorkBySlug(
 	return literaryWork;
 }
 
-// Los avances de las obras que satisfacen el filtro. A qué superficie sirven lo decide el endpoint
-// que los pide.
+// Los avances de las obras que satisfacen el filtro.
 export async function getLiteraryWorkTeasers(
 	filter: LiteraryWorkTeaserFilter,
 	repository: LiteraryWorkRepository = new SanityLiteraryWorkRepository(),
