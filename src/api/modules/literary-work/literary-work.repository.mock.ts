@@ -1,4 +1,5 @@
 import type { LiteraryWork, LiteraryWorkCatalogEntry, LiteraryWorkTeaser } from '@models/literary-work.model';
+import { compareSlugs } from '@models/slug.model';
 import type {
 	LiteraryWorkCatalogEntryFetchResult,
 	LiteraryWorkRepository,
@@ -43,14 +44,9 @@ export class InMemoryLiteraryWorkRepository implements LiteraryWorkRepository {
 
 	// A diferencia de los avances, acá el doble sí ordena: el puerto promete el orden por slug, así que
 	// entregar en orden de almacenamiento dejaría a un consumidor probando contra un orden que producción no
-	// tiene. Por punto de código, como el orden de bytes de GROQ.
+	// tiene.
 	public async fetchCatalogEntries(): Promise<LiteraryWorkCatalogEntryFetchResult> {
-		const catalogEntries = [...this.catalogEntries].sort((a, b) => {
-			if (a.slug === b.slug) {
-				return 0;
-			}
-			return a.slug < b.slug ? -1 : 1;
-		});
+		const catalogEntries = [...this.catalogEntries].sort((a, b) => compareSlugs(a.slug, b.slug));
 		return { catalogEntries, malformed: [] };
 	}
 }
