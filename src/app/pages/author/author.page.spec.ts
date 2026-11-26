@@ -23,7 +23,8 @@ import { installResizeObserverStub, setMeasuredSize, triggerResize } from '@test
 import type { AuthorProfile, AuthorTeaser } from '@models/author.model';
 import type { AuthorApi } from '../../providers/author.provider';
 import type { LiteraryWorkApi } from '../../providers/literary-work.provider';
-import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
+import type { LiteraryWork, LiteraryWorkCatalogEntry, LiteraryWorkTeaser } from '@models/literary-work.model';
+import type { Catalog } from '@models/catalog.model';
 
 const [literaryWorkMock] = onoffLiteraryWorksMock;
 
@@ -73,6 +74,10 @@ class StubFailingLiteraryWorkApi implements LiteraryWorkApi {
 	}
 
 	public getListing(): Observable<LiteraryWorkTeaser[]> {
+		return throwError(() => new HttpErrorResponse({ status: 500, statusText: 'error' }));
+	}
+
+	public getCatalog(): Observable<Catalog<LiteraryWorkCatalogEntry>> {
 		return throwError(() => new HttpErrorResponse({ status: 500, statusText: 'error' }));
 	}
 }

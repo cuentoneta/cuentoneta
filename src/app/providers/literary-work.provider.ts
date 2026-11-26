@@ -15,14 +15,17 @@ import { createReadingTime } from '@models/reading-time.model';
 import { createSanitizedHtml } from '@models/sanitized-html.model';
 import { createIsoDateTime } from '@utils/date.utils';
 import {
+	literaryWorkCatalogDtoSchema,
 	literaryWorkDtoSchema,
 	literaryWorkTeaserListDtoSchema,
+	toLiteraryWorkCatalog,
 	toLiteraryWorkTeaser,
 	type LiteraryWorkDto,
 	type LiteraryWorkTeaserDto,
 	type LiteraryWorkSectionDto,
 } from '@models/literary-work.dto';
-import type { LiteraryWorkTeaser } from '@models/literary-work.model';
+import type { LiteraryWorkCatalogEntry, LiteraryWorkTeaser } from '@models/literary-work.model';
+import type { Catalog } from '@models/catalog.model';
 import type { ApiUrl } from './endpoints';
 import { Endpoints } from './endpoints';
 
@@ -39,6 +42,7 @@ export interface LiteraryWorkApi {
 	// Los avances de todas las obras, que consume el catálogo mientras el recurso colección siga
 	// sirviendo avances.
 	getListing(): Observable<LiteraryWorkTeaser[]>;
+	getCatalog(): Observable<Catalog<LiteraryWorkCatalogEntry>>;
 }
 
 @Service()
@@ -60,6 +64,12 @@ export class HttpLiteraryWorkApi implements LiteraryWorkApi {
 
 	public getListing(): Observable<LiteraryWorkTeaser[]> {
 		return this.http.get<LiteraryWorkTeaserDto[]>(this.url).pipe(map((response) => this.toTeasers(response)));
+	}
+
+	public getCatalog(): Observable<Catalog<LiteraryWorkCatalogEntry>> {
+		return this.http
+			.get<unknown>(this.url)
+			.pipe(map((response) => toLiteraryWorkCatalog(literaryWorkCatalogDtoSchema.parse(response))));
 	}
 
 	private toTeasers(response: unknown): LiteraryWorkTeaser[] {

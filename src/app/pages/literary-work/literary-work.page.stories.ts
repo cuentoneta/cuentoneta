@@ -3,7 +3,9 @@ import { provideRouter } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { NEVER, of, throwError, type Observable } from 'rxjs';
 
-import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
+import type { LiteraryWork, LiteraryWorkCatalogEntry, LiteraryWorkTeaser } from '@models/literary-work.model';
+import { type Catalog, createCatalog } from '@models/catalog.model';
+import { onoffLiteraryWorkCatalogEntriesMock } from '@mocks/onoff-literary-work-catalog-entries.mock';
 import {
 	onoffLiteraryWorksMock,
 	onoffLiteraryWorksWithMultipleMediaSources,
@@ -49,6 +51,10 @@ class CorpusLiteraryWorkApi implements LiteraryWorkApi {
 
 	public getListing(): Observable<LiteraryWorkTeaser[]> {
 		return of([...onoffLiteraryWorkTeasersMock]);
+	}
+
+	public getCatalog(): Observable<Catalog<LiteraryWorkCatalogEntry>> {
+		return of(createCatalog(onoffLiteraryWorkCatalogEntriesMock, onoffLiteraryWorkCatalogEntriesMock.length));
 	}
 }
 

@@ -4,7 +4,9 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { of, throwError, type Observable } from 'rxjs';
 
 import type { AuthorProfile, AuthorTeaser } from '@models/author.model';
-import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
+import type { LiteraryWork, LiteraryWorkCatalogEntry, LiteraryWorkTeaser } from '@models/literary-work.model';
+import { type Catalog, createCatalog } from '@models/catalog.model';
+import { onoffLiteraryWorkCatalogEntriesMock } from '@mocks/onoff-literary-work-catalog-entries.mock';
 import { createMarkdown } from '@models/markdown.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import { authorMock, authorTeaserMock } from '@mocks/author.mock';
@@ -72,6 +74,10 @@ class CorpusLiteraryWorkApi implements LiteraryWorkApi {
 
 	public getListing(): Observable<LiteraryWorkTeaser[]> {
 		return of([...onoffLiteraryWorkTeasersMock]);
+	}
+
+	public getCatalog(): Observable<Catalog<LiteraryWorkCatalogEntry>> {
+		return of(createCatalog(onoffLiteraryWorkCatalogEntriesMock, onoffLiteraryWorkCatalogEntriesMock.length));
 	}
 }
 

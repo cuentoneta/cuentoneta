@@ -1,6 +1,11 @@
 import * as z from 'zod/mini';
 import type { Author, AuthorTeaser } from './author.model';
-import type { LiteraryWorkTeaser } from './literary-work.model';
+import { type Catalog, createCatalog } from './catalog.model';
+import {
+	createLiteraryWorkCatalogEntry,
+	type LiteraryWorkCatalogEntry,
+	type LiteraryWorkTeaser,
+} from './literary-work.model';
 import type { Media, MediaTeaser } from './media.model';
 import type { Resource } from './resource.model';
 import type { Tag } from './tag.model';
@@ -71,11 +76,44 @@ export const literaryWorkTeaserDtoSchema = z.object({
 
 export const literaryWorkTeaserListDtoSchema = z.array(literaryWorkTeaserDtoSchema);
 
+// Autores y etiquetas se validan en profundidad y no como opacos: sus dos campos son exactamente el
+// contrato de la entrada, no la forma de wire de otro módulo.
+export const literaryWorkCatalogEntryDtoSchema = z.object({
+	kind: z.literal('literaryWork'),
+	slug: z.string(),
+	title: z.string(),
+	authors: z.array(z.object({ slug: z.string(), name: z.string() })),
+	totalReadingTime: z.number(),
+	tags: z.array(z.object({ slug: z.string(), title: z.string() })),
+});
+
+export const literaryWorkCatalogDtoSchema = z.object({
+	entries: z.array(literaryWorkCatalogEntryDtoSchema),
+	total: z.number(),
+});
+
 export type LiteraryWorkEpigraphDto = z.infer<typeof literaryWorkEpigraphDtoSchema>;
 export type LiteraryWorkTeaserDto = z.infer<typeof literaryWorkTeaserDtoSchema>;
 export type LiteraryWorkSectionDto = z.infer<typeof literaryWorkSectionDtoSchema>;
 export type LiteraryWorkExcerptDto = z.infer<typeof literaryWorkExcerptDtoSchema>;
 export type LiteraryWorkDto = z.infer<typeof literaryWorkDtoSchema>;
+export type LiteraryWorkCatalogEntryDto = z.infer<typeof literaryWorkCatalogEntryDtoSchema>;
+export type LiteraryWorkCatalogDto = z.infer<typeof literaryWorkCatalogDtoSchema>;
+
+export function toLiteraryWorkCatalog(dto: LiteraryWorkCatalogDto): Catalog<LiteraryWorkCatalogEntry> {
+	return createCatalog(
+		dto.entries.map((entry) =>
+			createLiteraryWorkCatalogEntry({
+				slug: entry.slug,
+				title: entry.title,
+				authors: entry.authors,
+				totalReadingTime: createReadingTime(entry.totalReadingTime),
+				tags: entry.tags,
+			}),
+		),
+		dto.total,
+	);
+}
 
 export function toLiteraryWorkTeaser(dto: LiteraryWorkTeaserDto): LiteraryWorkTeaser {
 	return {
