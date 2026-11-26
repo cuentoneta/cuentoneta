@@ -15,8 +15,4 @@ docs {
   transporta `kind` (`literaryWork`), `slug`, `title`, `authors` (`slug`, `name`),
   `totalReadingTime` y `tags` (`slug`, `title`); `total` cuenta las entradas publicadas. Está
   ordenado por slug y nadie lo reordena después.
-
-  No acepta query params: `?author=` y cualquier otro responden 400. Los avances de las obras de
-  un autor están en `get-literary-work-teasers.bru`. Una obra mal formada se excluye y se registra
-  en el servidor como "excluida del catálogo", sin afectar a las demás.
 }
