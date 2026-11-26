@@ -86,7 +86,7 @@ El sitemap también es superficie del Catálogo. Los endpoints de los destinos (
 
 ### 3. Contexto de Selecciones (`Selections`)
 
-**Propósito:** elegir y ordenar parte del Acervo para presentarlo. Absorbe a los contextos retirados "Curación y Colecciones" y "Página de Inicio".
+**Propósito:** elegir y ordenar parte del Acervo para presentarlo.
 
 **Orígenes:** **curadas** por el editor (colecciones destacadas, campañas, autores destacados) y **generadas** por métricas o algoritmo (lo más leído, que actualiza el cron sobre Clarity; las sugerencias de lectura).
 
@@ -122,7 +122,7 @@ GET /api/literary-work/:slug       # Obra literaria completa (destino de lectura
 
 ### 5. Contexto de Administración (`Administration`)
 
-Sin cambios respecto del anterior "Administración del Proyecto".
+**Propósito:** registrar a los colaboradores del proyecto y su área de trabajo.
 
 **Modelos:** `Contributor`.
 
@@ -663,13 +663,21 @@ El **Lenguaje Ubicuo** es el lenguaje estructurado alrededor del modelo de domin
 
 ### Patrón: Criterios de una entrada
 
-Toda propiedad de una entrada del catálogo se justifica por al menos uno de tres criterios, alineados con el contrato de #2503:
+Toda propiedad de una entrada del catálogo se justifica por al menos uno de tres criterios:
 
 - **Acceso**: lo que hace falta para llegar al destino y nombrar el enlace: el `slug` y la etiqueta (`title` en obras y colecciones, `name` en autores). El `kind` no es una propiedad que se consulte: lo fija el tipo de entrada y, junto con el `slug`, resuelve el destino.
 - **Localización**: el orden, por slug, y los filtros, por etiquetas y por autores.
 - **Decisión**: lo que ayuda a decidir si ir: el tiempo de lectura, la nacionalidad o los años del autor, etc.
 
-La que no cumple ninguno no se consulta. Esto distingue a la entrada del avance: el avance puede llevar portada, extracto y medios porque su trabajo es invitar, no permitir localizar. Las propiedades acordadas por entidad están en #2533 y las implementa #2503.
+La que no cumple ninguno no se consulta. Esto distingue a la entrada del avance: el avance puede llevar portada, extracto y medios porque su trabajo es invitar, no permitir localizar.
+
+Propiedades de cada entrada (_pendiente_: la de obra la implementa #2503; las de autor y colección, sus propios issues):
+
+| Entrada                    | Propiedades                                                                                                       |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `LiteraryWorkCatalogEntry` | `slug`, `title`, `authors{slug, name}`, `totalReadingTime`, `tags{slug, title}`                                   |
+| `AuthorCatalogEntry`       | `slug`, `name`, `nationality{flag, country}`, `bornOnYear`, `diedOnYear`, `tags{slug, title}`                     |
+| `CollectionCatalogEntry`   | `slug`, `title`, `description`, `imagery`, `count`, `tags{slug, title}` (todas las etiquetas, no solo la primera) |
 
 ### Patrón: Faceta (Faceted Navigation)
 
