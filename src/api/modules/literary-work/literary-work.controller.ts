@@ -25,9 +25,11 @@ export function createLiteraryWorkController(repository?: LiteraryWorkRepository
 	// el mapeo contexto → módulo en docs/DOMAIN_MODEL.md); un autor sin obras es `[]`. Hono despacha en
 	// orden de registro y `teasers` es un slug bien formado, así que la ruta va antes que `/:slug`. Cada
 	// sub-ruta reserva su segmento en `RESERVED_LITERARY_WORK_SLUGS`, que el Studio hace cumplir.
-	controller.get('/teasers', zValidator('query', literaryWorkTeasersQuerySchema), async (c) =>
-		c.json(await getLiteraryWorkTeasers(c.req.valid('query'), repository)),
-	);
+	controller.get('/teasers', zValidator('query', literaryWorkTeasersQuerySchema), async (c) => {
+		const filter = c.req.valid('query');
+		const teasers = await getLiteraryWorkTeasers(filter, repository);
+		return c.json(teasers);
+	});
 
 	controller.get(
 		'/:slug',
