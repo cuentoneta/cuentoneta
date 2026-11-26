@@ -1,9 +1,9 @@
 import { evaluate, parse } from 'groq-js';
 import { collectionBySlugQuery, collectionsQuery } from '../api/_queries/collection.query';
 import { landingPageContentQuery } from '../api/_queries/content.query';
-import { literaryWorkBySlugQuery } from '../api/_queries/literary-work.query';
+import { literaryWorkBySlugQuery, literaryWorkCatalogEntriesQuery } from '../api/_queries/literary-work.query';
 import { onoffRawCollectionsMock, onoffRawCollectionTeasersMock } from './onoff-raw-collections.mock';
-import { onoffRawLiteraryWorksMock } from './onoff-raw-literary-works.mock';
+import { onoffRawLiteraryWorkCatalogEntriesMock, onoffRawLiteraryWorksMock } from './onoff-raw-literary-works.mock';
 import { onoffDatasetMock } from './onoff-documents.mock';
 import { onoffRawLandingPageMock } from './onoff/landing-page/landing-page.raw.mock';
 
@@ -43,6 +43,13 @@ describe('las fixtures crudas son lo que la query devuelve sobre los documentos'
 		const result = await run(collectionsQuery);
 
 		expect(result).toStrictEqual(onoffRawCollectionTeasersMock);
+	});
+
+	// Sin reordenar el esperado: la fixture es el listado en el orden en que la query lo entrega.
+	it('evaluates the catalog query into the raw catalog entries fixture', async () => {
+		const result = await run(literaryWorkCatalogEntriesQuery);
+
+		expect(result).toStrictEqual(onoffRawLiteraryWorkCatalogEntriesMock);
 	});
 
 	// El slug sale del propio fixture y no va clavado: es el mismo que el target del generador le pasa como
