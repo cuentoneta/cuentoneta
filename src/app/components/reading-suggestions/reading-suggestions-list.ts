@@ -41,7 +41,7 @@ import type { NavigationParams } from '@app-utils/navigation-params';
 					@for (suggestion of displayedTeasers(); track $index) {
 						<li class="flex flex-col gap-7">
 							<!-- La etiqueta es el tipo literario de la obra. Que sea el primer tag es convención editorial del
-								 catálogo, no algo que el schema garantice: si el orden cambiara, cambiaría la etiqueta. -->
+								 Acervo, no algo que el schema garantice: si el orden cambiara, cambiaría la etiqueta. -->
 							<cuentoneta-literary-work-teaser-card
 								[literaryWork]="suggestion"
 								[navigationParams]="navigationParams()"

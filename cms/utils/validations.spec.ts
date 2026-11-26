@@ -1,8 +1,15 @@
 import { describe, expect, it } from 'vitest';
 
+import { RESERVED_LITERARY_WORK_SLUGS } from '@models/reserved-literary-work-slugs.model';
 import { createSlug } from '@models/slug.model';
 import { yearOfHistoricalDate } from '@utils/historical-date.utils';
-import { localizedRequire, validateHistoricalDate, validateRootRelativePath, validateSlugFormat } from './validations';
+import {
+	localizedRequire,
+	validateHistoricalDate,
+	validateLiteraryWorkSlug,
+	validateRootRelativePath,
+	validateSlugFormat,
+} from './validations';
 
 describe('validateRootRelativePath', () => {
 	const pathError = 'Usar una ruta del sitio que empiece con "/" (p. ej. "/collection/verano-2022").';
@@ -58,6 +65,27 @@ describe('validateSlugFormat', () => {
 			expect(validateSlugFormat({ current }) === true).toBe(domainAccepts);
 		},
 	);
+});
+
+describe('validateLiteraryWorkSlug', () => {
+	it.each(RESERVED_LITERARY_WORK_SLUGS)('rejects the reserved slug %j', (current) => {
+		expect(validateLiteraryWorkSlug({ current })).toBe(
+			`El slug "${current}" lo usa una ruta del sitio y no puede asignarse a una obra. Elegí otro.`,
+		);
+	});
+
+	it('accepts a well-formed slug that is not reserved', () => {
+		expect(validateLiteraryWorkSlug({ current: 'que-seria-yo-sin-ti' })).toBe(true);
+	});
+
+	it('returns the format error for a malformed slug', () => {
+		expect(validateLiteraryWorkSlug({ current: 'IcyFox' })).toBe(validateSlugFormat({ current: 'IcyFox' }));
+	});
+
+	it('leaves an empty field to Rule.required()', () => {
+		expect(validateLiteraryWorkSlug()).toBe(true);
+		expect(validateLiteraryWorkSlug({ current: '' })).toBe(true);
+	});
 });
 
 describe('localizedRequire', () => {

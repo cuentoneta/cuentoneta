@@ -2,7 +2,7 @@
  * Fixtures del catálogo de colecciones para los e2e de la página de colección.
  *
  * La identidad de la colección que se lee sale de `STABLE_SLUGS`, pero el largo de su descripción no:
- * un slug no dice nada sobre cuánto texto le cargó la curaduría, y ese texto es justamente lo que decide
+ * un slug no dice nada sobre cuánto texto se le cargó, y ese texto es justamente lo que decide
  * si el recorte desborda. Se resuelve entonces contra el catálogo real, en runtime.
  */
 import type { APIRequestContext } from '@playwright/test';
@@ -17,9 +17,9 @@ const CATALOG_ROUTE = '/api/collection';
  * Se deriva del DTO en lugar de reescribirlo: un rename en el contrato de wire rompe acá en compilación,
  * y no en runtime como una descripción que llega vacía.
  */
-export type CollectionCatalogEntry = Readonly<Pick<CollectionTeaserDto, 'slug' | 'title' | 'description'>>;
+export type CollectionTeaserFixture = Readonly<Pick<CollectionTeaserDto, 'slug' | 'title' | 'description'>>;
 
-export async function fetchCollectionCatalog(request: APIRequestContext): Promise<CollectionCatalogEntry[]> {
+export async function fetchCollectionCatalog(request: APIRequestContext): Promise<CollectionTeaserFixture[]> {
 	const response = await request.get(CATALOG_ROUTE);
 	// Un catálogo caído y un catálogo vacío llevan a fixtures distintos, y sin esto los dos llegarían
 	// como una lista sin entradas.
@@ -69,9 +69,9 @@ export function descriptionText(html: string): string {
  * largo harían que el spec leyera una página distinta según el orden en que el CMS devolvió el catálogo.
  */
 export function pickMostDescriptiveCollection(
-	catalog: readonly CollectionCatalogEntry[],
-): CollectionCatalogEntry | undefined {
-	return catalog.reduce<CollectionCatalogEntry | undefined>((mostDescriptive, candidate) => {
+	catalog: readonly CollectionTeaserFixture[],
+): CollectionTeaserFixture | undefined {
+	return catalog.reduce<CollectionTeaserFixture | undefined>((mostDescriptive, candidate) => {
 		if (!mostDescriptive) {
 			return candidate;
 		}

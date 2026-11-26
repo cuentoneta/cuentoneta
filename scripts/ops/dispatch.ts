@@ -1,8 +1,8 @@
-import { EXIT_CODES, type ExitCode, type OpsCatalog, type OpsTaskArgs, type OpsTaskDescriptor } from './registry';
+import { EXIT_CODES, type ExitCode, type OpsTaskList, type OpsTaskArgs, type OpsTaskDescriptor } from './registry';
 
 export const NO_DRY_RUN_FLAG = '--no-dry-run';
 
-// El resultado cerrado de leer el argv: pedir el catálogo, rechazar con motivo, o ejecutar una tarea.
+// El resultado cerrado de leer el argv: pedir la lista de tareas, rechazar con motivo, o ejecutar una tarea.
 // La unión hace irrepresentables las combinaciones inválidas (un id desconocido no lleva args; una
 // tarea a ejecutar siempre lleva descriptor y flags ya resueltos).
 export type Invocation =
@@ -15,7 +15,7 @@ export interface DispatchOutput {
 	error: (message: unknown) => void;
 }
 
-export function resolveInvocation(tasks: OpsCatalog, argv: readonly string[]): Invocation {
+export function resolveInvocation(tasks: OpsTaskList, argv: readonly string[]): Invocation {
 	const positional: string[] = [];
 	let apply = false;
 
@@ -42,16 +42,16 @@ export function resolveInvocation(tasks: OpsCatalog, argv: readonly string[]): I
 	return { action: 'execute', descriptor, args: { apply, argv: taskArgs } };
 }
 
-export function formatCatalog(tasks: OpsCatalog): readonly string[] {
+export function formatTaskList(tasks: OpsTaskList): readonly string[] {
 	const idWidth = Object.keys(tasks).reduce((max, id) => Math.max(max, id.length), 0);
 	return Object.entries(tasks).map(([id, task]) => `  ${id.padEnd(idWidth)}  ${task.description}`);
 }
 
-function usageText(tasks: OpsCatalog): string {
-	return [`Uso: pnpm ops <tarea> [${NO_DRY_RUN_FLAG}]`, '', 'Tareas:', ...formatCatalog(tasks)].join('\n');
+function usageText(tasks: OpsTaskList): string {
+	return [`Uso: pnpm ops <tarea> [${NO_DRY_RUN_FLAG}]`, '', 'Tareas:', ...formatTaskList(tasks)].join('\n');
 }
 
-export async function dispatch(tasks: OpsCatalog, argv: readonly string[], output: DispatchOutput): Promise<ExitCode> {
+export async function dispatch(tasks: OpsTaskList, argv: readonly string[], output: DispatchOutput): Promise<ExitCode> {
 	const invocation = resolveInvocation(tasks, argv);
 
 	switch (invocation.action) {

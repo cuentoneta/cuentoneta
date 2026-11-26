@@ -186,7 +186,7 @@ test.describe('literary-work — bloques editoriales excluidos del extracto de b
 		const hasEditorialNote = Boolean(literaryWork?.editorialNote);
 		expectedEditorialBlockCount = epigraphCount + Number(hasEditorialNote);
 
-		// Si la curaduría pierde el epígrafe, su fuente o la nota, los casos de abajo pasarían sin
+		// Si la carga editorial pierde el epígrafe, su fuente o la nota, los casos de abajo pasarían sin
 		// cubrir nada: se afirma en vez de saltearse, como en el resto del archivo.
 		expect(epigraphCount, `"${STABLE_SLUGS.literaryWorkWithEpigraphs}" no trae epígrafes`).toBeGreaterThan(0);
 		expect(

@@ -2,11 +2,9 @@ import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular-
 import { provideRouter } from '@angular/router';
 import { NEVER, of, throwError, type Observable } from 'rxjs';
 
-import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
-import {
-	onoffLiteraryWorkTeasersMock,
-	onoffLiteraryWorkTeasersWithMediaSourcesMock,
-} from '@mocks/onoff-literary-work-teasers.mock';
+import type { LiteraryWork, LiteraryWorkCatalogEntry, LiteraryWorkTeaser } from '@models/literary-work.model';
+import { type Catalog, createCatalog } from '@models/catalog.model';
+import { onoffLiteraryWorkCatalogEntriesMock } from '@mocks/onoff-literary-work-catalog-entries.mock';
 
 import { provideLiteraryWorkApiMock } from '../../providers/literary-work.mock';
 import type { LiteraryWorkApi } from '../../providers/literary-work.provider';
@@ -16,12 +14,9 @@ import { literaryWorkPageDocs } from '../literary-work/literary-work.page.docs';
 import { skeletonDocs } from '@components/skeleton/skeleton.docs';
 import { docsMention, docsRef } from '@testing/storybook-docs';
 
-// Ninguna obra del canon declara multimedia, así que el catálogo enriquecido es el único escenario
-// donde los selectores de formato de las tarjetas tienen algo que dibujar.
 const catalogues = {
-	corpus: onoffLiteraryWorkTeasersMock,
-	multimedia: onoffLiteraryWorkTeasersWithMediaSourcesMock,
-	empty: [] as readonly LiteraryWorkTeaser[],
+	corpus: onoffLiteraryWorkCatalogEntriesMock,
+	empty: [] as readonly LiteraryWorkCatalogEntry[],
 } as const;
 
 type Scenario = keyof typeof catalogues | 'loading' | 'failure';
@@ -34,6 +29,10 @@ class StubScenarioLiteraryWorkApi implements LiteraryWorkApi {
 	}
 
 	public getTeasers(): Observable<LiteraryWorkTeaser[]> {
+		return throwError(() => new Error('El catálogo no consulta avances'));
+	}
+
+	public getCatalog(): Observable<Catalog<LiteraryWorkCatalogEntry>> {
 		if (this.scenario === 'failure') {
 			return throwError(() => new Error('sin catálogo'));
 		}
@@ -41,7 +40,8 @@ class StubScenarioLiteraryWorkApi implements LiteraryWorkApi {
 		if (this.scenario === 'loading') {
 			return NEVER;
 		}
-		return of([...catalogues[this.scenario]]);
+		const entries = catalogues[this.scenario];
+		return of(createCatalog(entries, entries.length));
 	}
 }
 
@@ -66,7 +66,7 @@ const meta: Meta<LiteraryWorksPageArgs> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>El catálogo de obras, ${docsMention(literaryWorksPageDocs)}, montado sobre el corpus de Onoff. Como el resto de las entradas bajo <strong>Páginas</strong>, no cataloga un componente sino el ensamblado completo: el encabezado con el conteo y la tabla de obras, con su título enlazado a la lectura, su autoría enlazada al perfil y su tiempo de lectura.</p><p>El único control elige el escenario del catálogo, que es lo único que mueve la página desde afuera: no recibe parámetros de ruta ni tiene estado propio.</p><p>La tabla es la misma que sirve hoy el listado que este catálogo reemplaza: se conserva a propósito, porque el rediseño de esta pantalla todavía no existe. Los títulos enlazan a ${docsRef(literaryWorkPageDocs)}. La única pieza del sistema de diseño que monta es ${docsRef(skeletonDocs)}, en las filas de carga.</p><p>El orden no es el que entrega el backend: se resuelve en la página con colación en español, porque la base compara por punto de código y mandaría al final del catálogo todo título que empiece con acento o eñe.</p><p>El encabezado fijo y el <code>&lt;main&gt;</code> que despeja su alto viven en el shell de la aplicación, que el catálogo no monta: por eso la página arranca pegada al borde superior del lienzo y no bajo una barra.</p></div>`,
+				component: `<div><p>El catálogo de obras, ${docsMention(literaryWorksPageDocs)}, montado sobre el corpus de Onoff. Como el resto de las entradas bajo <strong>Páginas</strong>, no documenta un componente sino el ensamblado completo: el encabezado con el conteo y la tabla de obras, con su título enlazado a la lectura, su autoría enlazada al perfil y su tiempo de lectura.</p><p>El único control elige el escenario del catálogo, que es lo único que mueve la página desde afuera: no recibe parámetros de ruta ni tiene estado propio.</p><p>La tabla es la misma que sirve hoy el listado que este catálogo reemplaza: se conserva a propósito, porque el rediseño de esta pantalla todavía no existe. Los títulos enlazan a ${docsRef(literaryWorkPageDocs)}. La única pieza del sistema de diseño que monta es ${docsRef(skeletonDocs)}, en las filas de carga.</p><p>La página no reordena: el orden es el del catálogo, por slug, tal como lo sirve el backend.</p><p>El encabezado fijo y el <code>&lt;main&gt;</code> que despeja su alto viven en el shell de la aplicación, que Storybook no monta: por eso la página arranca pegada al borde superior del lienzo y no bajo una barra.</p></div>`,
 			},
 		},
 	},
@@ -74,8 +74,8 @@ const meta: Meta<LiteraryWorksPageArgs> = {
 		scenario: {
 			name: 'Catálogo',
 			control: { type: 'inline-radio' },
-			options: ['corpus', 'multimedia', 'loading', 'empty', 'failure'],
-			table: { type: { summary: "'corpus' | 'multimedia' | 'loading' | 'empty' | 'failure'" } },
+			options: ['corpus', 'loading', 'empty', 'failure'],
+			table: { type: { summary: "'corpus' | 'loading' | 'empty' | 'failure'" } },
 		},
 	},
 };
@@ -99,7 +99,7 @@ export const CatalogoDelCorpus: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>El corpus completo, tal como lo sirve el backend.</p><p><strong>Usos:</strong> mirar la tabla con datos reales y verificar el orden alfabético con plegado de acentos.</p>`,
+				story: `<p>El corpus completo, tal como lo sirve el backend.</p><p><strong>Usos:</strong> mirar la tabla con datos reales y verificar que sale en el orden del catálogo, por slug, sin que la página lo reordene.</p>`,
 			},
 		},
 	},

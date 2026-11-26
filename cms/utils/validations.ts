@@ -1,4 +1,5 @@
 import { isValid, parseISO } from 'date-fns';
+import { RESERVED_LITERARY_WORK_SLUGS } from '@models/reserved-literary-work-slugs.model';
 import { isSlug } from '@models/slug.model';
 import { HISTORICAL_YEAR_RANGE, parseHistoricalDate } from '@utils/historical-date.utils';
 
@@ -42,4 +43,18 @@ export function validateSlugFormat(value?: { current?: string }): true | string 
 	if (!value?.current) return true;
 	if (isSlug(value.current)) return true;
 	return 'Formato inválido. Usar solo minúsculas sin tildes, números y guiones simples entre palabras (p. ej. "que-seria-yo-sin-ti").';
+}
+
+/**
+ * La regla del slug de una obra: el formato de `validateSlugFormat` y, además, que no sea un segmento
+ * que el API de obras reserva para una sub-ruta. Un campo vacío pasa, igual que en `validateSlugFormat`.
+ */
+export function validateLiteraryWorkSlug(value?: { current?: string }): true | string {
+	const formatResult = validateSlugFormat(value);
+	if (formatResult !== true) return formatResult;
+	const current = value?.current;
+	if (current && (RESERVED_LITERARY_WORK_SLUGS as readonly string[]).includes(current)) {
+		return `El slug "${current}" lo usa una ruta del sitio y no puede asignarse a una obra. Elegí otro.`;
+	}
+	return true;
 }

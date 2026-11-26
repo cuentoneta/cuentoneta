@@ -1,5 +1,7 @@
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
+import { onoffLiteraryWorkCatalogEntriesMock } from '@mocks/onoff-literary-work-catalog-entries.mock';
+import { RESERVED_LITERARY_WORK_SLUGS } from '@models/reserved-literary-work-slugs.model';
 import { Hono } from 'hono';
 import { environment } from '../../_helpers/environment';
 import { readCacheHeaders } from '@middleware/read-cache-headers.middleware';
@@ -9,7 +11,11 @@ import { InMemoryLiteraryWorkRepository } from './literary-work.repository.mock'
 
 describe('literaryWorkController', () => {
 	const controller = createLiteraryWorkController(
-		new InMemoryLiteraryWorkRepository(onoffLiteraryWorksMock, onoffLiteraryWorkTeasersMock),
+		new InMemoryLiteraryWorkRepository({
+			literaryWorks: onoffLiteraryWorksMock,
+			teasers: onoffLiteraryWorkTeasersMock,
+			catalogEntries: onoffLiteraryWorkCatalogEntriesMock,
+		}),
 	);
 	const knownSlug = onoffLiteraryWorksMock[0].slug;
 	const [knownAuthor] = onoffLiteraryWorkTeasersMock[0].authors;
@@ -105,57 +111,139 @@ describe('literaryWorkController', () => {
 	});
 
 	describe('GET /', () => {
-		it('should return the whole catalog as teasers when no filter is given', async () => {
+		type CatalogBody = { entries: Record<string, unknown>[]; total: number };
+
+		it('should return the catalogue envelope with every entry and its total', async () => {
 			const response = await controller.request('/');
-			const body = await response.json();
+			const body: CatalogBody = await response.json();
 
 			expect(response.status).toBe(200);
-			expect(Array.isArray(body)).toBe(true);
-			expect(body).toHaveLength(onoffLiteraryWorkTeasersMock.length);
+			expect(body.entries).toHaveLength(onoffLiteraryWorkCatalogEntriesMock.length);
+			expect(body.total).toBe(body.entries.length);
 		});
 
-		it('should return only the works of the author given in the filter', async () => {
-			const response = await controller.request(`/?author=${knownAuthor.slug}`);
-			const body: { authors: { slug: string }[] }[] = await response.json();
+		// Es el criterio "responde exactamente los campos del contrato", afirmado sobre el HTTP: el sobre, la
+		// entrada (con su discriminante) y lo que transporta de cada autor y cada etiqueta.
+		it('should respond exactly the keys of the contract at every level', async () => {
+			const body: CatalogBody = await (await controller.request('/')).json();
 
-			expect(response.status).toBe(200);
-			expect(body.length).toBeGreaterThan(0);
-			body.forEach(({ authors }) => {
-				expect(authors.some(({ slug }) => slug === knownAuthor.slug)).toBe(true);
+			expect(Object.keys(body).sort()).toEqual(['entries', 'total']);
+			body.entries.forEach((entry) => {
+				expect(Object.keys(entry).sort()).toEqual(['authors', 'kind', 'slug', 'tags', 'title', 'totalReadingTime']);
+				(entry['authors'] as object[]).forEach((author) =>
+					expect(Object.keys(author).sort()).toEqual(['name', 'slug']),
+				);
+				(entry['tags'] as object[]).forEach((tag) => expect(Object.keys(tag).sort()).toEqual(['slug', 'title']));
 			});
 		});
 
-		// Un filtro sin resultados no es un error: la ausencia legítima es un listado vacío, y este
-		// caso es lo que impide que alguien lo convierta después en un 404.
-		it('should return an empty listing for an author without works', async () => {
-			const response = await controller.request('/?author=sin-obras');
+		it('should serve the entries in the order of the repository, by slug', async () => {
+			const body: CatalogBody = await (await controller.request('/')).json();
 
-			expect(response.status).toBe(200);
-			expect(await response.json()).toEqual([]);
+			expect(body.entries.map(({ slug }) => slug)).toEqual(onoffLiteraryWorkCatalogEntriesMock.map(({ slug }) => slug));
 		});
 
-		// El filtro es un criterio sobre el listado, no un recurso: un valor mal formado es un request
-		// inválido, y por eso sigue en 400 aunque el slug de ruta responda 404.
-		it.each(['no%20es%20un%20slug', knownAuthor.slug.toUpperCase()])(
-			'should reject the filter value %j with a 400',
-			async (author) => {
-				const response = await controller.request(`/?author=${author}`);
+		// El recurso no tiene filtros: un param que no declara se rechaza en vez de ignorarse, así quien pide un
+		// filtro se entera. `limit` figura a propósito: hasta que la paginación lo declare, también es desconocido.
+		it.each([`author=${knownAuthor.slug}`, 'author=sin-obras', 'limit=10', 'utm_source=x'])(
+			'should reject the query %j with a 400',
+			async (query) => {
+				const response = await controller.request(`/?${query}`);
 
 				expect(response.status).toBe(400);
 			},
 		);
 
 		// Sin trailing slash, que es la URL que el frontend arma de verdad: si el patrón del middleware
-		// no cubriera el path exacto del listado, este caso lo delataría.
-		it('should emit the edge cache headers on the listing in production', async () => {
+		// no cubriera el path exacto del recurso colección, este caso lo delataría.
+		it('should emit the edge cache headers on the catalogue in production', async () => {
 			environment.production = true;
 			environment.readCacheSMaxAge = 900;
 
-			const response = await appUnderTest().request(`/literary-work?author=${knownAuthor.slug}`);
+			const response = await appUnderTest().request('/literary-work');
 
 			expect(response.headers.get('Vercel-CDN-Cache-Control')).toBe(
 				'public, s-maxage=900, stale-while-revalidate=604800',
 			);
+		});
+
+		it('should not emit cache headers on the 400 of an unknown param', async () => {
+			environment.production = true;
+
+			const response = await appUnderTest().request(`/literary-work?author=${knownAuthor.slug}`);
+
+			expect(response.status).toBe(400);
+			expect(response.headers.get('Vercel-CDN-Cache-Control')).toBeNull();
+		});
+	});
+
+	describe('GET /teasers', () => {
+		// Si `/:slug` capturara `teasers`, la respuesta sería el 404 de una obra inexistente, y el perfil
+		// del autor lo traduce en silencio a una lista vacía.
+		it('should return the teasers of the author instead of resolving teasers as a slug', async () => {
+			const response = await controller.request(`/teasers?author=${knownAuthor.slug}`);
+			const body: { authors: { slug: string }[] }[] = await response.json();
+
+			expect(response.status).toBe(200);
+			expect(Array.isArray(body)).toBe(true);
+			expect(body.length).toBeGreaterThan(0);
+			body.forEach(({ authors }) => {
+				expect(authors.some(({ slug }) => slug === knownAuthor.slug)).toBe(true);
+			});
+		});
+
+		it('should return an empty list for an author without works', async () => {
+			const response = await controller.request('/teasers?author=sin-obras');
+
+			expect(response.status).toBe(200);
+			expect(await response.json()).toEqual([]);
+		});
+
+		it('should reject a request without author with a 400', async () => {
+			const response = await controller.request('/teasers');
+
+			expect(response.status).toBe(400);
+		});
+
+		it.each(['no%20es%20un%20slug', knownAuthor.slug.toUpperCase()])(
+			'should reject the author %j with a 400',
+			async (author) => {
+				const response = await controller.request(`/teasers?author=${author}`);
+
+				expect(response.status).toBe(400);
+			},
+		);
+
+		it('should emit the edge cache headers in production', async () => {
+			environment.production = true;
+			environment.readCacheSMaxAge = 900;
+
+			const response = await appUnderTest().request(`/literary-work/teasers?author=${knownAuthor.slug}`);
+
+			expect(response.headers.get('Vercel-CDN-Cache-Control')).toBe(
+				'public, s-maxage=900, stale-while-revalidate=604800',
+			);
+		});
+	});
+
+	// Hono despacha en orden de registro. El caso de comportamiento cubre `/teasers`; estas aserciones
+	// cubren además toda sub-ruta estática que se agregue: si se registra después de `/:slug` o no
+	// reserva su segmento, rompen acá.
+	describe('route table', () => {
+		const registeredPaths = [...new Set(controller.routes.map(({ path }) => path))];
+		const staticSubPaths = registeredPaths.filter((path) => path !== '/' && !path.includes(':'));
+
+		it('should register every static sub-route before /:slug', () => {
+			expect(staticSubPaths).toContain('/teasers');
+			staticSubPaths.forEach((path) => {
+				expect(registeredPaths.indexOf(path)).toBeLessThan(registeredPaths.indexOf('/:slug'));
+			});
+		});
+
+		it('should reserve in the Studio the segment of every static sub-route', () => {
+			const staticSegments = staticSubPaths.map((path) => path.split('/')[1]);
+
+			expect(new Set(staticSegments)).toEqual(new Set(RESERVED_LITERARY_WORK_SLUGS));
 		});
 	});
 });

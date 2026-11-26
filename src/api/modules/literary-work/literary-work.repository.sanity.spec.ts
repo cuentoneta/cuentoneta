@@ -12,6 +12,7 @@ import {
 	unmaterializedRawLiteraryWork,
 } from '@mocks/onoff-raw-literary-works.mock';
 import {
+	onoffRawLiteraryWorkCatalogEntriesMock,
 	onoffRawLiteraryWorksWithoutEditorialNote,
 	onoffRawLiteraryWorkTeasersMock,
 } from '@mocks/onoff-raw-literary-works.mock';
@@ -24,6 +25,7 @@ import { createReadingTime, sumReadingTimes } from '@models/reading-time.model';
 import type { ImageUrlResolver } from '../../_utils/functions';
 import { MalformedLiteraryWorkError } from './literary-work.errors';
 import { SanityLiteraryWorkRepository } from './literary-work.repository.sanity';
+import { literaryWorkCatalogEntriesQuery } from '../../_queries/literary-work.query';
 
 // El repository solo hace `fetch` (sin escritura), así que el spy del client implementa solo eso; se
 // inyecta por el seam del constructor. Cada test arma su propio repository con el crudo que devuelve.
@@ -271,44 +273,45 @@ describe('SanityLiteraryWorkRepository.fetchBySlug', () => {
 
 describe('SanityLiteraryWorkRepository.fetchTeasers', () => {
 	it('mapea el listado a teasers congelados con el extracto saneado', async () => {
-		const { literaryWorks, malformed } = await repoReturning(onoffRawLiteraryWorkTeasersMock).fetchTeasers({});
+		const { teasers, malformed } = await repoReturning(onoffRawLiteraryWorkTeasersMock).fetchTeasers({});
 
-		expect(literaryWorks).toHaveLength(onoffRawLiteraryWorkTeasersMock.length);
+		expect(teasers).toHaveLength(onoffRawLiteraryWorkTeasersMock.length);
 		expect(malformed).toEqual([]);
-		literaryWorks.forEach((teaser) => {
+		teasers.forEach((teaser) => {
 			expect(Object.isFrozen(teaser)).toBe(true);
 			expect(teaser.excerpt.bodyHtml).not.toContain('**');
 		});
 	});
 
 	it('resuelve la portada y los autores de cada teaser con el resolver inyectado', async () => {
-		const { literaryWorks } = await repoWithImageResolver(onoffRawLiteraryWorkTeasersMock).fetchTeasers({});
+		const { teasers } = await repoWithImageResolver(onoffRawLiteraryWorkTeasersMock).fetchTeasers({});
 
-		const authors = literaryWorks.flatMap((teaser) => teaser.authors);
-		expect(literaryWorks.length).toBeGreaterThan(0);
+		const authors = teasers.flatMap((teaser) => teaser.authors);
+		expect(teasers.length).toBeGreaterThan(0);
 		expect(authors.length).toBeGreaterThan(0);
-		expect(literaryWorks.every((teaser) => teaser.coverImage === INJECTED_URL)).toBe(true);
+		expect(teasers.every((teaser) => teaser.coverImage === INJECTED_URL)).toBe(true);
 		expect(authors.every((author) => author.imageUrl === INJECTED_URL)).toBe(true);
 	});
 
 	it('devuelve un listado vacío para un autor sin obras', async () => {
-		const { literaryWorks, malformed } = await repoReturning([]).fetchTeasers({ author: 'sin-obras' });
+		const { teasers, malformed } = await repoReturning([]).fetchTeasers({ author: 'sin-obras' });
 
-		expect(literaryWorks).toEqual([]);
+		expect(teasers).toEqual([]);
 		expect(malformed).toEqual([]);
 	});
 
 	// El mapeo por obra falla rápido, pero la obra que no se puede traducir se reporta en vez de
 	// propagarse: qué hacer con ella lo decide quien conoce el caso de uso, no este adaptador.
-	it('reporta la obra mal curada sin llevarse puestas a las demás', async () => {
+	it('reporta la obra mal formada sin llevarse puestas a las demás', async () => {
 		const [sane, ...rest] = onoffRawLiteraryWorkTeasersMock;
 		const broken = { ...sane, _id: `${sane._id}-rota`, slug: `${sane.slug}-rota`, totalReadingTime: null };
 
-		const { literaryWorks, malformed } = await repoReturning([broken, ...rest]).fetchTeasers({});
+		const { teasers, malformed } = await repoReturning([broken, ...rest]).fetchTeasers({});
 
-		expect(literaryWorks).toHaveLength(rest.length);
+		expect(teasers).toHaveLength(rest.length);
 		expect(malformed).toHaveLength(1);
 		expect(malformed[0].slug).toBe(broken.slug);
+		expect(String(malformed[0].cause)).toContain('totalReadingTime');
 	});
 
 	// Una obra sin líneas en blanco —poesía, o un cuerpo de un solo párrafo— llega de la query con la
@@ -318,22 +321,88 @@ describe('SanityLiteraryWorkRepository.fetchTeasers', () => {
 		const [opening] = sane.excerpt;
 		const unbrokenBody = Array.from({ length: 10 }, () => opening.body).join('\n');
 
-		const { literaryWorks } = await repoReturning([
-			{ ...sane, excerpt: [{ ...opening, body: unbrokenBody }] },
-		]).fetchTeasers({});
-		const { bodyHtml } = literaryWorks[0].excerpt;
+		const { teasers } = await repoReturning([{ ...sane, excerpt: [{ ...opening, body: unbrokenBody }] }]).fetchTeasers(
+			{},
+		);
+		const { bodyHtml } = teasers[0].excerpt;
 
 		expect(visibleText(bodyHtml).length).toBeLessThanOrEqual(LITERARY_WORK_EXCERPT_MAX_LENGTH);
 		expect(bodyHtml.endsWith('…</p>')).toBe(true);
 	});
 
-	it('reporta como mal curada a la obra sin sección de apertura', async () => {
+	it('reporta como mal formada a la obra sin sección de apertura', async () => {
 		const [sane] = onoffRawLiteraryWorkTeasersMock;
 		const excerptless = { ...sane, excerpt: [] };
 
-		const { literaryWorks, malformed } = await repoReturning([excerptless]).fetchTeasers({});
+		const { teasers, malformed } = await repoReturning([excerptless]).fetchTeasers({});
 
-		expect(literaryWorks).toEqual([]);
+		expect(teasers).toEqual([]);
 		expect(malformed[0]).toBeInstanceOf(MalformedLiteraryWorkError);
+	});
+});
+
+describe('SanityLiteraryWorkRepository.fetchCatalogEntries', () => {
+	const [sane, ...rest] = onoffRawLiteraryWorkCatalogEntriesMock;
+
+	it('mapea el listado a entradas congeladas de obra, sin nada que reportar', async () => {
+		const { catalogEntries, malformed } = await repoReturning(
+			onoffRawLiteraryWorkCatalogEntriesMock,
+		).fetchCatalogEntries();
+
+		expect(catalogEntries).toHaveLength(onoffRawLiteraryWorkCatalogEntriesMock.length);
+		catalogEntries.forEach((entry) => {
+			expect(Object.isFrozen(entry)).toBe(true);
+			expect(entry.kind).toBe('literaryWork');
+		});
+		expect(malformed).toEqual([]);
+	});
+
+	it('pide la query del catálogo', async () => {
+		const fetch = fn(() => Promise.resolve(onoffRawLiteraryWorkCatalogEntriesMock));
+		const repository = new SanityLiteraryWorkRepository({ fetch } as unknown as SanityClient);
+
+		await repository.fetchCatalogEntries();
+
+		expect(fetch).toHaveBeenCalledWith(literaryWorkCatalogEntriesQuery);
+	});
+
+	// El orden lo da la query: el ACL entrega en el que recibe, así que un crudo invertido sale invertido.
+	it('conserva el orden en que la query entrega las obras', async () => {
+		const reversed = [...onoffRawLiteraryWorkCatalogEntriesMock].reverse();
+
+		const { catalogEntries } = await repoReturning(reversed).fetchCatalogEntries();
+
+		expect(catalogEntries.map(({ slug }) => slug)).toEqual(reversed.map(({ slug }) => slug));
+	});
+
+	it('reporta la obra sin tiempo de lectura persistido nombrando el campo, sin llevarse puestas a las demás', async () => {
+		const broken = { ...sane, slug: `${sane.slug}-rota`, totalReadingTime: null };
+
+		const { catalogEntries, malformed } = await repoReturning([broken, ...rest]).fetchCatalogEntries();
+
+		expect(catalogEntries).toHaveLength(rest.length);
+		expect(malformed).toHaveLength(1);
+		expect(malformed[0].slug).toBe(broken.slug);
+		expect(String(malformed[0].cause)).toContain('totalReadingTime');
+	});
+
+	it.each([
+		['sin autores', { authors: [] }, 'sin autores'],
+		['con título vacío', { title: '  ' }, 'título vacío'],
+		['con slug mal formado', { slug: 'Una Obra' }, 'Slug inválido'],
+	])('reporta la obra %s preservando la causa de la factory', async (_, override, cause) => {
+		const broken = { ...sane, ...override };
+
+		const { catalogEntries, malformed } = await repoReturning([broken, ...rest]).fetchCatalogEntries();
+
+		expect(catalogEntries).toHaveLength(rest.length);
+		expect(malformed).toHaveLength(1);
+		expect(malformed[0]).toBeInstanceOf(MalformedLiteraryWorkError);
+		expect(malformed[0].slug).toBe(broken.slug);
+		expect(String(malformed[0].cause)).toContain(cause);
+	});
+
+	it('devuelve un listado vacío cuando no hay obras', async () => {
+		expect(await repoReturning([]).fetchCatalogEntries()).toEqual({ catalogEntries: [], malformed: [] });
 	});
 });

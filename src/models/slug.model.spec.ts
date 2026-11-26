@@ -1,4 +1,4 @@
-import { createSlug, isSlug } from './slug.model';
+import { compareSlugs, createSlug, isSlug } from './slug.model';
 
 describe('isSlug', () => {
 	it.each(['el-aleph', 'cuento-123', 'a', 'que-seria-yo-sin-ti'])('accepts %j', (value) => {
@@ -41,5 +41,17 @@ describe('createSlug', () => {
 
 	it('throws on an empty string', () => {
 		expect(() => createSlug('')).toThrow('Slug inválido: ""');
+	});
+});
+
+describe('compareSlugs', () => {
+	it('orders by code point, not by locale', () => {
+		const slugs = [createSlug('b-obra'), createSlug('a10-obra'), createSlug('a2-obra')];
+
+		expect([...slugs].sort(compareSlugs)).toEqual(['a10-obra', 'a2-obra', 'b-obra']);
+	});
+
+	it('treats equal slugs as tied', () => {
+		expect(compareSlugs(createSlug('una-obra'), createSlug('una-obra'))).toBe(0);
 	});
 });

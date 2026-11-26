@@ -20,7 +20,7 @@ const meta: Meta<ReadingSuggestionsList> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>Bloque de sugerencias de lectura que cierra la lectura de una obra: un encabezado, una tríada de obras sugeridas y un acceso al listado completo. Reemplaza al rail lateral de navegación, cambiando la navegación in-situ por una invitación a seguir leyendo.</p><p>Es presentacional puro: recibe las obras ya resueltas mediante el input <code>teasers</code> y no conoce ningún provider. Quienes las consiguen son los envoltorios conectados <strong>AuthorReadingSuggestions</strong> (más obras del mismo autor) y <strong>CollectionReadingSuggestions</strong> (más obras de la misma colección), que elige <strong>ReadingSuggestions</strong> según el contexto de navegación. Esos tres no tienen catálogo propio: delegan acá toda su vista, así que lo que hay para evaluar visualmente se ve en esta story.</p><p>Cada sugerencia se renderiza con ${docsRef(literaryWorkTeaserCardDocs)} en su variante <code>OnGray</code>, separadas por ${docsRef(dividerDocs)} en su forma decorativa —la lista ya delimita sus ítems, así que la línea no se anuncia además como separador—; el acceso al listado usa ${docsRef(buttonDocs)} en su variante <code>Outline</code>. Los controles <code>navigation</code> y <code>navigationSlug</code> son los query params que cada tarjeta arrastra a la obra destino: al cambiarlos se ve cómo se reescribe el <code>href</code> de cada enlace.</p></div>`,
+				component: `<div><p>Bloque de sugerencias de lectura que cierra la lectura de una obra: un encabezado, una tríada de obras sugeridas y un acceso al listado completo. Reemplaza al rail lateral de navegación, cambiando la navegación in-situ por una invitación a seguir leyendo.</p><p>Es presentacional puro: recibe las obras ya resueltas mediante el input <code>teasers</code> y no conoce ningún provider. Quienes las consiguen son los envoltorios conectados <strong>AuthorReadingSuggestions</strong> (más obras del mismo autor) y <strong>CollectionReadingSuggestions</strong> (más obras de la misma colección), que elige <strong>ReadingSuggestions</strong> según el contexto de navegación. Esos tres no tienen entrada propia en Storybook: delegan acá toda su vista, así que lo que hay para evaluar visualmente se ve en esta story.</p><p>Cada sugerencia se renderiza con ${docsRef(literaryWorkTeaserCardDocs)} en su variante <code>OnGray</code>, separadas por ${docsRef(dividerDocs)} en su forma decorativa —la lista ya delimita sus ítems, así que la línea no se anuncia además como separador—; el acceso al listado usa ${docsRef(buttonDocs)} en su variante <code>Outline</code>. Los controles <code>navigation</code> y <code>navigationSlug</code> son los query params que cada tarjeta arrastra a la obra destino: al cambiarlos se ve cómo se reescribe el <code>href</code> de cada enlace.</p></div>`,
 			},
 		},
 		layout: 'padded',
@@ -53,7 +53,7 @@ const meta: Meta<ReadingSuggestionsList> = {
 		teasers: {
 			control: false,
 			description:
-				'Obras ya resueltas, en su vista de teaser. El bloque no se renderiza si llega vacío. En el catálogo las deriva el control de cantidad',
+				'Obras ya resueltas, en su vista de teaser. El bloque no se renderiza si llega vacío. En Storybook las deriva el control de cantidad',
 			table: { type: { summary: 'readonly LiteraryWorkTeaser[]' }, defaultValue: { summary: '[]' } },
 		},
 		moreRoute: {

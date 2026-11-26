@@ -3,7 +3,7 @@
  *
  * La identidad sale de los slugs estables de `seo-fixtures`; todo lo demás se resuelve en runtime contra
  * el API, para que las aserciones se deriven de lo que el dataset efectivamente sirve y no de prosa
- * clavada en el spec. Las propiedades de curaduría que cada obra necesita cumplir (formatos multimedia,
+ * clavada en el spec. Las propiedades de carga editorial que cada obra necesita cumplir (formatos multimedia,
  * otra obra del autor) las afirman guardas propias del spec: acá sólo se trae el dato.
  */
 import type { APIRequestContext } from '@playwright/test';
@@ -15,7 +15,7 @@ import { literaryWorkDtoSchema, type LiteraryWorkDto } from '@models/literary-wo
  *
  * Sólo el 404 se traduce a `undefined` —es el estado que la guarda del spec reporta como fixture
  * ausente—; cualquier otro fallo lanza, porque un API caído no es una obra ausente y confundirlos
- * haría que la guarda diagnostique curaduría donde hay infraestructura.
+ * haría que la guarda diagnostique la carga editorial donde falla la infraestructura.
  */
 export async function fetchLiteraryWork(
 	request: APIRequestContext,

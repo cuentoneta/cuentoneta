@@ -1,10 +1,10 @@
 /**
- * Mantiene sincronizados el registro de tareas de `pnpm ops` y su catálogo: cada id de `OPS_TASKS`
- * necesita su fila en `.claude/references/ops.md`, y cada fila su tarea. La tabla se escribe a mano y
- * nada más la relee, así que las dos formas de la deriva envejecen en silencio.
+ * Mantiene sincronizados el registro de tareas de `pnpm ops` y la lista que lo documenta: cada id de
+ * `OPS_TASKS` necesita su fila en `.claude/references/ops.md`, y cada fila su tarea. La tabla se escribe
+ * a mano y nada más la relee, así que las dos formas de la deriva envejecen en silencio.
  *
- * El catálogo se resuelve desde `context.cwd`: la comparación es contra la raíz del repo que ESLint
- * lintea, no contra la ruta absoluta del proceso.
+ * La lista documentada se resuelve desde `context.cwd`: la comparación es contra la raíz del repo que
+ * ESLint lintea, no contra la ruta absoluta del proceso.
  */
 
 import { readFileSync } from 'node:fs';
@@ -16,12 +16,12 @@ import { resolve } from 'node:path';
 /** @typedef {import('@typescript-eslint/utils').TSESTree.VariableDeclarator} VariableDeclarator */
 
 const REGISTRY_FILE = 'scripts/ops/registry.ts';
-const CATALOG_PATH = '.claude/references/ops.md';
+const TASK_LIST_PATH = '.claude/references/ops.md';
 const TASKS_DECLARATION = 'OPS_TASKS';
 
-// La primera celda de una fila del catálogo: el id va entre backticks, y una tarea con argumentos los
-// escribe a continuación.
-const CATALOG_ROW = /^\|\s*`([^`]+)`/;
+// La primera celda de una fila de la lista de tareas: el id va entre backticks, y una tarea con
+// argumentos los escribe a continuación.
+const TASK_LIST_ROW = /^\|\s*`([^`]+)`/;
 
 /**
  * Saca los envoltorios de tipo (`as const satisfies …`) que quedan entre la declaración y el objeto.
@@ -84,15 +84,15 @@ function taskId(property) {
 }
 
 /**
- * Los ids que documenta la tabla del catálogo, tomados de la primera celda de cada fila.
+ * Los ids que documenta la tabla de la lista de tareas, tomados de la primera celda de cada fila.
  *
  * @param {string} cwd
  * @returns {Set<string>}
  */
-function catalogTaskIds(cwd) {
+function documentedTaskIds(cwd) {
 	const ids = new Set();
-	for (const line of readFileSync(resolve(cwd, CATALOG_PATH), 'utf8').split('\n')) {
-		const id = CATALOG_ROW.exec(line)?.[1].trim().split(/\s+/)[0];
+	for (const line of readFileSync(resolve(cwd, TASK_LIST_PATH), 'utf8').split('\n')) {
+		const id = TASK_LIST_ROW.exec(line)?.[1].trim().split(/\s+/)[0];
 		if (id) ids.add(id);
 	}
 	return ids;
@@ -103,15 +103,16 @@ export default {
 	meta: {
 		type: 'problem',
 		docs: {
-			description: 'Verifica que el catálogo de `pnpm ops` documente exactamente las tareas de `OPS_TASKS`.',
+			description: 'Verifica que la lista de tareas de `pnpm ops` documente exactamente las tareas de `OPS_TASKS`.',
 		},
 		schema: [],
 		messages: {
 			undocumented:
 				'La tarea `{{id}}` de `OPS_TASKS` no figura en `.claude/references/ops.md`: agregá su fila a la tabla.',
 			stale:
-				'`.claude/references/ops.md` documenta `{{id}}`, que ya no está en `OPS_TASKS`: quitá su fila del catálogo.',
-			unreadable: 'No se pudo leer la lista de tareas de `OPS_TASKS`: la regla no puede compararla con el catálogo.',
+				'`.claude/references/ops.md` documenta `{{id}}`, que ya no está en `OPS_TASKS`: quitá su fila de la lista de tareas.',
+			unreadable:
+				'No se pudo leer la lista de tareas de `OPS_TASKS`: la regla no puede compararla con la lista documentada.',
 		},
 	},
 	create(context) {
@@ -144,7 +145,7 @@ export default {
 					context.report({ node: program, messageId: 'unreadable' });
 					return;
 				}
-				const documented = catalogTaskIds(context.cwd);
+				const documented = documentedTaskIds(context.cwd);
 				const declared = new Set(declarations.map((declaration) => declaration.id));
 				for (const { node, id } of declarations) {
 					if (!documented.has(id)) context.report({ node, messageId: 'undocumented', data: { id } });

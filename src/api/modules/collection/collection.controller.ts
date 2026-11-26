@@ -5,7 +5,7 @@ import { CollectionNotFoundError, MalformedCollectionError } from './collection.
 import type { CollectionRepository } from './collection.repository';
 import { getCollectionBySlug, getCollections } from './collection.service';
 
-// El error de curaduría responde con un código y no con su mensaje, a diferencia del de arriba: ese
+// El error de documento mal formado responde con un código y no con su mensaje, a diferencia del de arriba: ese
 // mensaje nombra la colección culpable, que en un listado ni siquiera es la que el cliente pidió.
 async function respond<T>(c: Context, produce: () => Promise<T>) {
 	try {

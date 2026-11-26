@@ -1,15 +1,24 @@
-import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
+import type { LiteraryWork, LiteraryWorkCatalogEntry, LiteraryWorkTeaser } from '@models/literary-work.model';
 import type { MalformedLiteraryWorkError } from './literary-work.errors';
 
 /**
- * Listado de teasers junto con lo que la ACL no pudo traducir.
+ * Los avances que la ACL pudo traducir, junto con las obras que no.
  *
  * El repository **reporta** en vez de decidir: la misma obra intraducible tiene que tumbar el
- * agregado que la cura y no puede tumbar un bloque accesorio, así que qué hacer con ella lo decide
+ * agregado que la transporta y no puede tumbar un bloque accesorio, así que qué hacer con ella lo decide
  * quien conoce el caso de uso — el service.
  */
-export interface LiteraryWorkTeaserListing {
-	readonly literaryWorks: readonly LiteraryWorkTeaser[];
+export interface LiteraryWorkTeaserFetchResult {
+	readonly teasers: readonly LiteraryWorkTeaser[];
+	readonly malformed: readonly MalformedLiteraryWorkError[];
+}
+
+/**
+ * Las entradas del catálogo que la ACL pudo traducir, junto con las obras que no, por el mismo motivo que
+ * `LiteraryWorkTeaserFetchResult`.
+ */
+export interface LiteraryWorkCatalogEntryFetchResult {
+	readonly catalogEntries: readonly LiteraryWorkCatalogEntry[];
 	readonly malformed: readonly MalformedLiteraryWorkError[];
 }
 
@@ -22,5 +31,10 @@ export interface LiteraryWorkTeaserFilter {
 
 export interface LiteraryWorkRepository {
 	fetchBySlug(slug: string): Promise<LiteraryWork | null>;
-	fetchTeasers(filter: LiteraryWorkTeaserFilter): Promise<LiteraryWorkTeaserListing>;
+	fetchTeasers(filter: LiteraryWorkTeaserFilter): Promise<LiteraryWorkTeaserFetchResult>;
+	/**
+	 * Las entradas del catálogo de obras, ordenadas por slug. Entre slugs iguales el orden es estable, pero
+	 * cuál va primero no forma parte del contrato. Sin paginar.
+	 */
+	fetchCatalogEntries(): Promise<LiteraryWorkCatalogEntryFetchResult>;
 }

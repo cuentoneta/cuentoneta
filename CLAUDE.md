@@ -49,7 +49,7 @@ Usar **siempre `pnpm`** para instalar y ejecutar scripts. Los scripts invocan ca
 | `pnpm dev`                                | Dev server (SSR) en desarrollo                                                                                                                                                                                    |
 | `pnpm build`                              | Build de producción                                                                                                                                                                                               |
 | `pnpm lint`                               | ESLint sobre `src`, `e2e`, `cms`, `scripts` y `tools`                                                                                                                                                             |
-| `pnpm ops`                                | Punto de entrada de los scripts del repo; sin argumentos imprime el catálogo de tareas y con un id corre la tarea (`--no-dry-run` habilita la escritura) → [`ops.md`](.claude/references/ops.md)                  |
+| `pnpm ops`                                | Punto de entrada de los scripts del repo; sin argumentos imprime la lista de tareas y con un id corre la tarea (`--no-dry-run` habilita la escritura) → [`ops.md`](.claude/references/ops.md)                     |
 | `pnpm stylelint`                          | Stylelint sobre CSS                                                                                                                                                                                               |
 | `pnpm typecheck`                          | Type-check estricto (`tsc --noEmit`)                                                                                                                                                                              |
 | `pnpm test`                               | Tests unitarios (Vitest, `vitest run`)                                                                                                                                                                            |
@@ -182,7 +182,7 @@ Si un cambio toca tipos, schemas de Sanity/Zod, contratos de API o terminología
 | Tipos / constantes / imports (TS/JS) | `typescript`                                                                                       |
 | Decisiones de diseño / arquitectura  | `solid`, `cupid`, `guiding-principles`, `cross-reference`, `clean-architecture`, `maintainability` |
 
-**Catálogo completo (`.claude/references/`):**
+**Referencias completas (`.claude/references/`):**
 
 | Referencia                 | Contenido                                                                                   |
 | -------------------------- | ------------------------------------------------------------------------------------------- |
@@ -198,7 +198,7 @@ Si un cambio toca tipos, schemas de Sanity/Zod, contratos de API o terminología
 | `testing.md`               | Vitest + Angular Testing Library + `@test-utils` + Storybook                                |
 | `sanity-acl.md`            | GROQ → repository → mapper → modelo de dominio (el ACL central)                             |
 | `scripts.md`               | Convención de qué vive en `scripts/` y qué no (registrado en `pnpm ops` o no)               |
-| `ops.md`                   | Catálogo de tareas de `pnpm ops` (dispatcher, dry-run, jobs programados)                    |
+| `ops.md`                   | Lista de tareas de `pnpm ops` (dispatcher, dry-run, jobs programados)                       |
 | `sanity-migrations.md`     | Migraciones de datos de Sanity (`cms/migrations/`), no en `scripts/`                        |
 | `typescript.md`            | Micro-convenciones TS/JS (`Object.freeze`, type-only, duration strings)                     |
 | `maintainability.md`       | Mantenibilidad y simplificación estructural                                                 |

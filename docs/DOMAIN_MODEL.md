@@ -30,71 +30,110 @@ En **La Cuentoneta** buscamos progresivamente la aplicación de los principios f
 
 ## Contextos Acotados (Bounded Contexts)
 
-Un **Contexto Acotado** (Bounded Context) es un límite explícito dentro del cual un modelo de dominio es aplicable. En La Cuentoneta, identificamos cuatro contextos acotados principales:
+Un **Contexto Acotado** (Bounded Context) es un límite explícito dentro del cual un modelo de dominio es aplicable. En La Cuentoneta identificamos cinco. El contexto es un límite de **lenguaje y de modelo**, no una capa: controller → service → repository y el ACL atraviesan todos los contextos, y un mismo módulo de `src/api/modules/` puede servir a más de uno (ver [Mapeo contexto → módulo](#mapeo-contexto--módulo)).
 
-### 1. **Contexto de Catálogo de Contenido**
+| Contexto           | Código           | Propósito                                                                                                                                  | Actores                                      | Escribe                                                                 | Modelos                                                                                                                                                                         | Relación                                                                                |
+| ------------------ | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| **Acervo**         | `Holdings`       | Gestionar los bienes digitales y su ciclo de vida. Contiene borradores y documentos publicados; "publicado" es un estado dentro del Acervo | Editor; a futuro, autores que cargan su obra | Sí: crear, editar, publicar, despublicar, calcular el tiempo de lectura | `LiteraryWork`, `Author` y `Collection` como documentos; `Resource`, `Media`, `Tag`                                                                                             | Upstream de todos. Hoy lo implementa Sanity                                             |
+| **Catálogo**       | `Catalog`        | Localizar y acceder a lo publicado                                                                                                         | Lector, buscadores, bots de IA               | No                                                                      | `CatalogEntry` (unión) con `LiteraryWorkCatalogEntry`, y `Catalog<E>`; las entradas de autor y colección, pendientes (#2515 y #2725)                                            | Downstream del Acervo a través del ACL; decide la pertenencia                           |
+| **Selecciones**    | `Selections`     | Elegir y ordenar parte del Acervo para presentarlo. Dos orígenes: **curadas** (editor) y **generadas** (métricas o algoritmo)              | Editor; algoritmo o métricas                 | Sí, la curaduría                                                        | `LandingPageContent` (selecciones de la home, temporales), `ContentCampaign`, `HighlightedAuthor`, lo más leído, sugerencias de lectura; la colección como selección permanente | Downstream del Acervo                                                                   |
+| **Lectura**        | `Reading`        | Leer una obra y lo que el lector hace al leer                                                                                              | Lector                                       | Cuando los lectores escriban (resaltados, #2015)                        | La obra para leer (`LiteraryWork`, vista completa); a futuro `Highlight`                                                                                                        | Downstream del Acervo. **Condicional**: su definición completa es prerequisito de #2015 |
+| **Administración** | `Administration` | Colaboradores del proyecto                                                                                                                 | Equipo                                       | Sí                                                                      | `Contributor`                                                                                                                                                                   | Independiente                                                                           |
 
-**Propósito:** Gestionar el inventario completo de obras literarias, autores y sus metadatos.
+> **Destino** no es un contexto sino una **relación** entre el Catálogo y la vista completa de cada entidad. Ver el [glosario](#términos-clave).
 
-**Agregados Raíz:**
+### 1. Contexto de Acervo (`Holdings`)
 
-- `Author` - Autores del contenido
-- `LiteraryWork` - Obras literarias con secciones/capítulos
+**Propósito:** los bienes digitales (obras, autores, colecciones) y su ciclo de vida: borrador, publicación, despublicación. Sus referencias son fuertes: nada referenciado por un documento publicado puede despublicarse.
+
+**Modelos:** `LiteraryWork`, `Author`, `Collection` como documentos; objetos de valor `Resource`, `Media`, `Tag`.
 
 **Responsabilidades:**
 
-- Almacenar y recuperar obras literarias seccionadas con contenido Markdown saneado a HTML
-- Mantener perfiles completos de autores con biografías y referencias
-- Gestionar metadatos como tiempo de lectura, idioma, advertencias de contenido
-- Proporcionar múltiples vistas del contenido (teaser, navegación, preview)
+- Almacenar obras seccionadas en Markdown
+- Mantener perfiles de autor
+- Agrupar obras en colecciones
+- Calcular y persistir el tiempo de lectura
+- Impedir publicar lo incompleto (_objetivo_, #2714: hoy el Studio exige los campos requeridos, pero no el tiempo de lectura ni la fecha de publicación)
+
+**La colección** es siempre un documento del Acervo (schema `collection`). Su contenido puede cambiar, pero sin una temporalidad definida: está pensada para ser, en general, inmutable. Eso la distingue de las selecciones de la home, que son temporales y rotan.
+
+**Interfaces:** el Studio de Sanity (`/cms`), las migraciones de datos de `cms/migrations/` (corren con `sanity migration run`) y las tareas de `pnpm ops` que completan o corrigen documentos, como `reading-time:backfill` o `normalize:bare-published-at` (la lista de tareas está en `.claude/references/ops.md`). No expone endpoints públicos propios: los endpoints de lectura sirven a los contextos de abajo.
+
+---
+
+### 2. Contexto de Catálogo (`Catalog`)
+
+**Propósito:** localizar y acceder a lo publicado. Es un **modelo de lectura**, no un aggregate: no escribe.
+
+**Superficies:** las páginas `/literary-work`, `/authors` y `/collection`, el sitemap, el JSON-LD de esas páginas y, a futuro, `/llms.txt` (#2717). **No** son catálogo la lista de obras de la página de autor (parte del destino del autor), la de la página de colección (contenido del destino de la colección), las sugerencias de lectura (selección generada) ni los bloques de la home (selecciones): consumen el Acervo directamente.
+
+**Modelos objetivo:** una entrada por entidad (`LiteraryWorkCatalogEntry`, `AuthorCatalogEntry`, `CollectionCatalogEntry`) y `Catalog<E>`. La entrada de obra y `Catalog<E>` están implementados (`createLiteraryWorkCatalogEntry`, `createCatalog`, `fetchCatalogEntries`): los sirve `GET /api/literary-work`, que consume `/literary-work`. `/authors` y `/collection` siguen consumiendo avances (`*Teaser`) hasta que existan sus entradas (#2515 y #2725).
+
+**Pertenencia:** ver `CatalogMembership` en el [glosario](#términos-clave) (objetivo, no vigente).
+
+**Interfaces de API (hoy):**
+
+```
+GET /api/literary-work             # Catálogo de obras: { entries, total }, ordenado por slug
+GET /api/collection                # Catálogo de colecciones, en vista de avance
+GET /api/author                    # Catálogo de autores
+```
+
+El sitemap también es superficie del Catálogo. Los endpoints de los destinos (`GET /api/author/:slug`, `GET /api/collection/:slug`) figuran en el [mapeo](#mapeo-contexto--módulo). Ver la nota de transición del mapeo.
+
+---
+
+### 3. Contexto de Selecciones (`Selections`)
+
+**Propósito:** elegir y ordenar parte del Acervo para presentarlo.
+
+**Orígenes:** **curadas** por el editor (colecciones destacadas, campañas, autores destacados) y **generadas** por métricas o algoritmo (lo más leído, que actualiza el cron sobre Clarity; las sugerencias de lectura).
+
+**Modelos:** `LandingPageContent` (temporal, rota por semana), `ContentCampaign`, `HighlightedAuthor`, `RotatingContent`, y la colección como selección permanente.
+
+**Vista propia:** el **avance** (`*Teaser`), que comparte con las listas de obras dentro de un destino (perfil del autor, página de colección).
+
+**Escritura:** la curaduría se carga en el Studio de Sanity (`/cms`). Las selecciones generadas las escriben tareas de `pnpm ops` agendadas, como `landing-pages:add-next-weeks` (la landing de la semana) o `most-read:update` (lo más leído).
+
+**Interfaces de API (hoy):**
+
+```
+GET /api/content/landing-page          # Contenido de la página de inicio
+GET /api/literary-work/teasers?author= # Avances de las obras de un autor (sugerencias de lectura; también la lista del perfil del autor)
+```
+
+Las sugerencias de lectura, al pie de la página de una obra, eligen sobre las obras del contexto desde el que se llegó (`pickReadingSuggestions`): leen `GET /api/literary-work/teasers?author=` cuando se llega desde un autor, y `GET /api/collection/:slug` cuando se llega desde una colección. Esas dos llamadas sirven también a destinos: la lista de obras del perfil del autor y la página de la colección, que **no** son selecciones generadas. Las colecciones sugeridas al pie de la página de una colección leen `GET /api/collection`, la misma llamada que sirve al catálogo `/collection`. Ver la nota de transición del [mapeo](#mapeo-contexto--módulo).
+
+---
+
+### 4. Contexto de Lectura (`Reading`)
+
+**Propósito:** leer una obra y lo que el lector hace al leer.
+
+> **Contexto condicional:** su definición completa es prerequisito de #2015 (resaltados). Hasta entonces se documenta solo lo que existe: la obra completa como destino de lectura. No se modelan aggregates ni endpoints de Lectura más allá de eso.
 
 **Interfaces de API:**
 
 ```
-GET /api/author/:slug              # Obtener autor completo
-GET /api/literary-work/:slug       # Obtener obra literaria completa
-GET /api/literary-work             # Catálogo de obras (teasers), filtrable por query params
+GET /api/literary-work/:slug       # Obra literaria completa (destino de lectura)
 ```
 
 ---
 
-### 2. **Contexto de Curación y Colecciones**
+### 5. Contexto de Administración (`Administration`)
 
-**Propósito:** Organizar obras literarias en colecciones temáticas, cronológicas o editoriales.
+**Propósito:** registrar a los colaboradores del proyecto y su área de trabajo.
 
-**Agregados Raíz:**
-
-- `Collection` - Colecciones de obras literarias, única raíz de este contexto, con página propia que sirve su catálogo y su detalle; el sitemap la lista por slug. Ver [el agregado](#agregado-collection-colección-de-obras-literarias)
-
-**Responsabilidades:**
-
-- Crear y mantener colecciones de obras (antologías, certámenes, curadurías)
-- Gestionar el orden y el estado de publicación de obras dentro de colecciones
-- Definir metadatos de colecciones (descripción, imagen destacada, etiquetas)
-- Proporcionar información sobre próximas publicaciones
-
-**Interfaces de API:**
-
-```
-GET /api/collection                # Catálogo de colecciones, en vista de teaser
-GET /api/collection/:slug          # Colección completa, con sus obras literarias
-```
-
----
-
-### 3. **Contexto de Administración del Proyecto**
-
-**Propósito:** Gestionar información sobre los colaboradores y contribuyentes del proyecto.
-
-**Agregados Raíz:**
-
-- `Contributor` - Miembros del equipo y colaboradores
+**Modelos:** `Contributor`.
 
 **Responsabilidades:**
 
 - Mantener registro de contribuyentes
 - Clasificar contribuyentes por área de trabajo (staff, programación, generación de contenido, curación)
 - Proporcionar información de contacto y redes sociales
+
+`ContributorArea` "curación" (`content-pick`) nombra un área de trabajo de colaboradores, no al contexto de Selecciones.
 
 **Interfaces de API:**
 
@@ -104,27 +143,32 @@ GET /api/contributor               # Obtener lista de colaboradores
 
 ---
 
-### 4. **Contexto de Página de Inicio**
+### Mapeo contexto → módulo
 
-**Propósito:** Agregar y organizar contenido para la página de inicio.
+> El contexto no es una capa ni un módulo. La tabla dice a qué contexto sirve cada pieza hoy. La separación física por contexto es **objetivo**, no estado (ver `.claude/references/domain-model.md`).
 
-**Agregados Raíz:**
+| Pieza                                                                           | Contexto                                         | Nota                                                                                                                                                                                                                       |
+| ------------------------------------------------------------------------------- | ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `cms/` (schemas y Studio), `src/api/_queries/`, adaptadores `Sanity*Repository` | Acervo                                           | El Acervo hoy es Sanity; las queries y los adaptadores son su borde de lectura                                                                                                                                             |
+| `literary-work` — `GET /api/literary-work`                                      | Catálogo                                         | Superficie `/literary-work`                                                                                                                                                                                                |
+| `literary-work` — `GET /api/literary-work/teasers?author=`                      | Destino del autor · Selecciones (generada)       | Sirve a dos consumidores: la lista de obras del perfil del autor (parte de su destino, leída del Acervo) y las sugerencias de lectura (selección generada)                                                                 |
+| `literary-work` — `GET /api/literary-work/:slug`                                | Lectura                                          | Destino de la obra                                                                                                                                                                                                         |
+| `collection` — `GET /api/collection`                                            | Catálogo · Selecciones (generada)                | Sirve a dos consumidores: la superficie `/collection` (hoy devuelve avances) y las colecciones sugeridas al pie de `/collection/:slug` (selección generada)                                                                |
+| `collection` — `GET /api/collection/:slug`                                      | Destino de la colección · Selecciones (generada) | Sirve a dos consumidores: la página de la colección, cuyo contenido es una selección permanente del Acervo, y las sugerencias de lectura de la página de una obra cuando se llega desde esa colección (selección generada) |
+| `author` — `GET /api/author`                                                    | Catálogo                                         | Superficie `/authors`                                                                                                                                                                                                      |
+| `author` — `GET /api/author/:slug`                                              | Destino del autor                                | Perfil; la lista de sus obras llega por `GET /api/literary-work/teasers?author=`                                                                                                                                           |
+| `content`                                                                       | Selecciones                                      | Home semanal, lo más leído, campañas, autores destacados                                                                                                                                                                   |
+| `sitemap`                                                                       | Catálogo                                         | Superficie para buscadores                                                                                                                                                                                                 |
+| `contributor`                                                                   | Administración                                   | —                                                                                                                                                                                                                          |
+| `og` (`src/api/og.controller.ts`)                                               | Transversal                                      | Imágenes de previsualización de cualquier destino                                                                                                                                                                          |
 
-- `LandingPageContent` - Contenido de la página principal
-- `ContentCampaign` - Contenido destacado/promocionado en la plataforma
+> **Transición (#2598).** Esta tabla y las interfaces de arriba describen los endpoints de hoy. #2598 los cambia en un solo cambio: al cumplirlo, borra de esta nota su punto y actualiza las filas que nombra, y con eso la nota se borra entera.
+>
+> - **#2598:** las colecciones sugeridas al pie de `/collection/:slug` dejan de leer `GET /api/collection` y pasan al endpoint de sugeridas. La fila `GET /api/collection` vuelve a ser solo Catálogo, el endpoint nuevo suma su fila en Selecciones (generada), y la interfaz de Selecciones también lo cita.
 
-**Responsabilidades:**
+### Subdominios (provisorio)
 
-- Organizar colecciones destacadas
-- Gestionar campañas de contenido con variantes responsivas
-- Mantener listados de obras más leídas y recientes
-- Proporcionar múltiples vistas según dispositivo (xs, md)
-
-**Interfaces de API:**
-
-```
-GET /api/content                   # Obtener contenido de página inicio
-```
+> Selecciones y Lectura son **core**; Catálogo y Acervo, **de soporte**; Administración, **genérico**. Es provisorio hasta redefinir los pilares del proyecto (#2718).
 
 ---
 
@@ -136,7 +180,7 @@ Un **Agregado** es un cluster de objetos de dominio (entidades y objetos de valo
 
 **Raíz de Agregado:** `LiteraryWork`
 
-> Contratos completos y decisiones de diseño en [`LITERARY_WORK_DESIGN.md`](LITERARY_WORK_DESIGN.md). `LiteraryWork` es el agregado que sirve todo el contenido narrativo del catálogo, con **invariantes implementadas en código** (factory `createLiteraryWork` + value objects brandeados en `src/models/`).
+> Contratos completos y decisiones de diseño en [`LITERARY_WORK_DESIGN.md`](LITERARY_WORK_DESIGN.md). `LiteraryWork` es el agregado que sirve todo el contenido narrativo del Acervo, con **invariantes implementadas en código** (factory `createLiteraryWork` + value objects brandeados en `src/models/`).
 
 ```typescript
 interface LiteraryWork {
@@ -198,17 +242,17 @@ interface AttributedText {
 **Ciclo de Vida:**
 
 ```
-Borrador en Sanity → Publicación → Accesible para lectura en /literary-work/:slug
+Borrador en el Acervo → Publicado en el Acervo → Entrada del catálogo + destino en Lectura (/literary-work/:slug)
 ```
 
 **Vistas Polimórficas:**
 
 - `LiteraryWork` - Vista completa (todas las secciones, autores completos)
-- `LiteraryWorkTeaser` - Vista resumida: expone un **extracto** del arranque de la obra (`excerpt`), que no declara tiempo de lectura ni posición porque su cuerpo va recortado, a lo sumo a `LITERARY_WORK_EXCERPT_MAX_LENGTH` caracteres visibles
+- `LiteraryWorkTeaser` - Avance — vista para selecciones y para las listas de obras dentro de un destino (perfil del autor, página de colección): expone un **extracto** del arranque de la obra (`excerpt`), que no declara tiempo de lectura ni posición porque su cuerpo va recortado, a lo sumo a `LITERARY_WORK_EXCERPT_MAX_LENGTH` caracteres visibles
 - `LiteraryWorkNavigationTeaser` - Vista mínima para navegación
 - `LiteraryWorkNavigationTeaserWithAuthors` - Vista mínima con autores resumidos
 
-`mediaSources` lo exponen **todas** las vistas, cada una con el tipo de su vista: `LiteraryWork` transporta `Media[]` (la vista completa, con la carga del recurso); `LiteraryWorkTeaser`, `LiteraryWorkNavigationTeaser` y `LiteraryWorkNavigationTeaserWithAuthors` transportan `MediaTeaser[]` (solo el `type`), que es lo único que la tarjeta de listado necesita para pintar el ícono de la plataforma — ver [Media](#media-contenido-multimedia).
+`mediaSources` lo exponen **todas** las vistas, cada una con el tipo de su vista: `LiteraryWork` transporta `Media[]` (la vista completa, con la carga del recurso); `LiteraryWorkTeaser`, `LiteraryWorkNavigationTeaser` y `LiteraryWorkNavigationTeaserWithAuthors` transportan `MediaTeaser[]` (solo el `type`), que es lo único que el avance necesita para pintar el ícono de la plataforma — ver [Media](#media-contenido-multimedia).
 
 ---
 
@@ -258,13 +302,13 @@ interface AuthorNationality {
 **Ciclo de Vida:**
 
 ```
-Borrador de perfil -> Publicación de perfil -> Perfil disponible para búsqueda
+Borrador de perfil -> Publicación de perfil -> Entrada del catálogo /authors + perfil como destino
 ```
 
 **Vistas Polimórficas:**
 
 - `Author` - Vista completa (incluye biografía y recursos)
-- `AuthorTeaser` - Vista resumida: no declara `biography` (la ausencia se expresa en el tipo, no en un valor vacío) ni `resources` (`Array<never>`)
+- `AuthorTeaser` - Avance: no declara `biography` (la ausencia se expresa en el tipo, no en un valor vacío) ni `resources` (`Array<never>`)
 
 ---
 
@@ -272,7 +316,7 @@ Borrador de perfil -> Publicación de perfil -> Perfil disponible para búsqueda
 
 **Raíz de Agregado:** `Collection`
 
-> `Collection` es la única raíz de este contexto, con página propia que sirve su catálogo y su detalle. El sitemap la lista por slug. Sus invariantes están **hechas cumplir en código** (factory `createCollection` + el value object `Slug`, en `src/models/collection.model.ts`) — la dirección del proyecto es que cada entidad nueva del catálogo sume sus invariantes al código en vez de solo documentarlas.
+> `Collection` es un documento del Acervo; su página es el destino de la colección y su contenido funciona como selección permanente. El listado `/collection` es superficie del Catálogo, y el sitemap la lista por slug. Sus invariantes están **hechas cumplir en código** (factory `createCollection` + el value object `Slug`, en `src/models/collection.model.ts`) — la dirección del proyecto es que cada entidad nueva del Acervo sume sus invariantes al código en vez de solo documentarlas.
 
 ```typescript
 interface Collection {
@@ -310,16 +354,16 @@ interface Collection {
 - `count` se deriva en la factory (`literaryWorks.length`); no se recibe como dato, así que no puede discrepar del número real de obras **mientras la query no acote `literaryWorks`**. Si el listado se pagina, el total pasa a ser un dato de entrada y la derivación deja de valer.
 - El abanico de portadas (`imagery.kind === 'sample'`) tiene **exactamente tres** imágenes. La tupla lo garantiza en compilación, pero el agregado se construye desde GROQ, donde un abanico corto encaja igual.
 
-**La vista de teaser tiene su propia factory (`createCollectionTeaser`):**
+**La vista de avance tiene su propia factory (`createCollectionTeaser`):**
 
-Muestra la colección **sin transportar sus obras**, así que no puede derivar `count`: lo **recibe** como dato —la query lo trae contando referencias sin resolverlas— y exige que sea al menos uno. Es la invariante "al menos una obra" traducida a lo único que el teaser sí transporta. Las demás —título no vacío, slug válido, abanico de tres— le siguen aplicando igual.
+Muestra la colección **sin transportar sus obras**, así que no puede derivar `count`: lo **recibe** como dato —la query lo trae contando referencias sin resolverlas— y exige que sea al menos uno. Es la invariante "al menos una obra" traducida a lo único que el avance sí transporta. Las demás —título no vacío, slug válido, abanico de tres— le siguen aplicando igual.
 
-Existe como factory y no como proyección suelta porque el repository produce teasers desde la query: armarlos como objeto literal perdería esas reglas sin que nada avise. El ensamblado del teaser (`mapSanityCollectionTeaser`, `mapSharedCollectionFields`, `resolveCollectionImagery`) vive en `src/api/modules/collection/collection-teaser.acl.ts` — módulo compartido entre `SanityCollectionRepository` y `SanityContentRepository`, porque las dos proyectan una colección referenciada, cada una desde su propio agregado. Ver [`sanity-acl.md`](../.claude/references/sanity-acl.md).
+Existe como factory y no como proyección suelta porque el repository produce avances desde la query: armarlos como objeto literal perdería esas reglas sin que nada avise. El ensamblado del avance (`mapSanityCollectionTeaser`, `mapSharedCollectionFields`, `resolveCollectionImagery`) vive en `src/api/modules/collection/collection-teaser.acl.ts` — módulo compartido entre `SanityCollectionRepository` y `SanityContentRepository`, porque las dos proyectan una colección referenciada, cada una desde su propio agregado. Ver [`sanity-acl.md`](../.claude/references/sanity-acl.md).
 
 **Ciclo de Vida:**
 
 ```
-Creación de colección → Adición de obras literarias → Publicación de colección
+Borrador en el Acervo → Publicado en el Acervo → Entrada del catálogo + destino (/collection/:slug)
 ```
 
 **Relación con LiteraryWork:**
@@ -340,7 +384,7 @@ Las obras se referencian directamente en el array `literaryWorks`. Cada entrada 
 **Vistas Polimórficas:**
 
 - `Collection` - Vista completa (incluye todas las obras literarias)
-- `CollectionTeaser` - Vista sin obras (`literaryWorks: Array<never>`)
+- `CollectionTeaser` - Avance: vista sin obras (`literaryWorks: Array<never>`)
 
 ---
 
@@ -395,6 +439,8 @@ interface ContributorLink {
 
 **Raíz de Agregado:** `LandingPageContent`
 
+> Pertenece al contexto de **Selecciones**: es una selección temporal que rota por semana.
+
 ```typescript
 interface LandingPageContent {
 	// Identidad
@@ -428,10 +474,10 @@ El campo `storyCount` cuenta los documentos de **ambos** `_type` que hoy convive
 
 **Responsabilidades:**
 
-- Agregar contenido de múltiples contextos para presentación en página inicio
+- Elegir y ordenar contenido del Acervo para presentarlo en la página inicio
 - Mantener datos de lectura y estadísticas
 
-`HighlightedAuthor` es una proyección de curación de este contexto, no una vista del agregado `Author`: su conteo es un dato que solo esta pantalla paga, y sus etiquetas viajan en el wrapper porque `AuthorTeaser` entrega la suya vacía en toda vista del repositorio.
+`HighlightedAuthor` es una proyección de Selecciones, no una vista del agregado `Author`: su conteo es un dato que solo esta pantalla paga, y sus etiquetas viajan en el wrapper porque `AuthorTeaser` entrega la suya vacía en toda vista del repositorio.
 
 El tope de seis rige la edición en el Studio y no lo ya persistido, así que el mapeo lo vuelve a aplicar como salvaguarda.
 
@@ -449,7 +495,7 @@ Los **Objetos de Valor** son objetos sin identidad propia que representan concep
 
 Dos ejes **ortogonales** organizan el modelo, y conviene no confundirlos:
 
-1. **Qué transporta la proyección.** `Media` es la vista **completa** — la de la página, con la carga (`data`, obligatorio) con la que un widget reproduce el recurso. `MediaTeaser` es la vista de **listado** — el `type`, con el que la tarjeta pinta el ícono de la plataforma, y el `title`, que está por **identidad**: sin él dos recursos de la misma plataforma son indistinguibles, y quien ofrezca elegir entre ellos no puede decir cuál se eligió ni nombrarlos. Ninguno de los dos arrastra costo: son campos planos del documento, a diferencia de la descripción (que cruza el pipeline de Markdown) y de la URL del audio (que dereferencia un asset). Cada una tiene su propia proyección GROQ y su propio mapper (`mapMediaSources` y `mapMediaTeasers`, respectivamente); el teaser no puede prometer lo que su proyección no trae. `data` es obligatorio en `Media` para que la carga no se pueda omitir al armar la vista completa: mientras fue opcional, copiar los campos textuales de un recurso bastaba para construir algo que el compilador aceptaba como reproducible.
+1. **Qué transporta la proyección.** `Media` es la vista **completa** — la de la página, con la carga (`data`, obligatorio) con la que un widget reproduce el recurso. `MediaTeaser` es la vista de **avance** — el `type`, con el que el avance pinta el ícono de la plataforma, y el `title`, que está por **identidad**: sin él dos recursos de la misma plataforma son indistinguibles, y quien ofrezca elegir entre ellos no puede decir cuál se eligió ni nombrarlos. Ninguno de los dos arrastra costo: son campos planos del documento, a diferencia de la descripción (que cruza el pipeline de Markdown) y de la URL del audio (que dereferencia un asset). Cada una tiene su propia proyección GROQ y su propio mapper (`mapMediaSources` y `mapMediaTeasers`, respectivamente); el teaser no puede prometer lo que su proyección no trae. `data` es obligatorio en `Media` para que la carga no se pueda omitir al armar la vista completa: mientras fue opcional, copiar los campos textuales de un recurso bastaba para construir algo que el compilador aceptaba como reproducible.
 2. **Cómo se correlaciona el tag con su carga.** Dentro de la vista completa, `Media` es el **supertipo** —`data: unknown`, sin correlación entre el tag y la forma de la carga— y `MediaTypes` la **unión discriminada** que consumen los widgets, donde cada tag ya fija su `data`. Se pasa de uno al otro con los type guards de abajo, nunca con una aserción.
 
 ```typescript
@@ -583,23 +629,54 @@ El **Lenguaje Ubicuo** es el lenguaje estructurado alrededor del modelo de domin
 
 ### Términos Clave
 
-| Término                  | Definición                                                                                                    | Contexto              |
-| ------------------------ | ------------------------------------------------------------------------------------------------------------- | --------------------- |
-| **Obra literaria**       | Obra con secciones/capítulos (`LiteraryWork`)                                                                 | Catálogo de Contenido |
-| **Sección / Capítulo**   | Unidad de contenido de una obra literaria: epígrafes + cuerpo Markdown saneado                                | Catálogo de Contenido |
-| **Anónimo**              | Author real del catálogo (slug `anonimo`) que representa la obra sin autoría atribuida (policy `isAnonymous`) | Catálogo de Contenido |
-| **Slug**                 | Identificador amigable, único e inmutable basado en el título                                                 | Todos                 |
-| **Teaser**               | Vista reducida de una entidad para listados y navegación                                                      | Todos                 |
-| **Colección**            | Agrupación temática u editorial de obras literarias (`Collection`)                                            | Curación              |
-| **Colaborador**          | Persona que contribuye al proyecto en algún rol                                                               | Administración        |
-| **Recurso**              | Enlace externo a información complementaria                                                                   | Catálogo de Contenido |
-| **Campaña de Contenido** | Promoción temporal de contenido con variantes responsivas                                                     | Página de Inicio      |
-| **Curaduría**            | Proceso de seleccionar, ordenar y presentar obras                                                             | Curación              |
-| **Faceta**               | Etiqueta con su conteo dentro del resultado visible y su estado de selección (`CollectionFacet`)              | Curación              |
+| Término                  | Código                     | Definición                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | Contexto                                                |
+| ------------------------ | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| **Acervo**               | `Holdings`                 | Obras, autores y colecciones como bienes digitales, con borradores y documentos publicados. Entran y salen del catálogo al publicarse y despublicarse                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | Acervo                                                  |
+| **Obra literaria**       | `LiteraryWork`             | Obra con secciones/capítulos                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | Acervo                                                  |
+| **Sección / Capítulo**   | `LiteraryWorkSection`      | Unidad de contenido de una obra: epígrafes + cuerpo Markdown saneado                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | Acervo                                                  |
+| **Autor**                | `Author`                   | Persona a la que se atribuye una obra; tiene perfil propio                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | Acervo                                                  |
+| **Anónimo**              | —                          | Autor real del Acervo (slug `anonimo`) que representa la obra sin autoría atribuida (policy `isAnonymous`)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | Acervo                                                  |
+| **Colección**            | `Collection`               | Documento que agrupa obras con un criterio temático o editorial. Su contenido cambia sin temporalidad definida: en general es inmutable, y por eso funciona como selección permanente                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | Acervo (documento) · Selecciones (selección permanente) |
+| **Recurso**              | `Resource`                 | Enlace externo a información complementaria                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | Acervo                                                  |
+| **Etiqueta**             | `Tag`                      | Término de taxonomía referenciable desde obras, autores y colecciones                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | Todos                                                   |
+| **Slug**                 | `Slug`                     | Identificador amigable, único e inmutable basado en el título                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | Todos                                                   |
+| **Mal formado**          | `Malformed<Agregado>Error` | Estado de un documento del Acervo cuyos datos no permiten construir el modelo de dominio. No depende de quién lo consume: el error nombra el estado, y la consecuencia la nombra quien descarta el documento.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | Acervo                                                  |
+| **Catálogo**             | `Catalog`                  | Instrumento para localizar y acceder a las entradas del Acervo publicado. Modelo de lectura, no aggregate. Publica sus entradas en el sobre `Catalog<E>` = `{ entries, total }` (`src/models/catalog.model.ts`), donde `total` cuenta las entradas que publica después de excluir lo mal formado y antes de paginar: una página lista algunas, nunca más                                                                                                                                                                                                                                                                                                                                                                                                                         | Catálogo                                                |
+| **Entrada**              | `<Entidad>CatalogEntry`    | Lo que el catálogo muestra de una obra, un autor o una colección. Unión discriminada `CatalogEntry` sobre `CatalogEntryBase<K>` (`kind` + `slug`), con `K` restringido a `CatalogEntryKind`, la unión de los tipos de entrada que existen (`CATALOG_ENTRY_KINDS`); la base no lleva etiqueta común, cada entrada conserva su campo natural (`title` o `name`). `CatalogEntryBase<K>` y `CatalogEntry` viven en `src/models/catalog.model.ts`; `LiteraryWorkCatalogEntry`, en `src/models/literary-work.model.ts`, y su factory hace cumplir slug válido, título no vacío y al menos un autor, y proyecta exactamente las propiedades de la tabla de abajo. `/literary-work` consume `LiteraryWorkCatalogEntry`; las entradas de autor y colección, _pendientes_ (#2515 y #2725). | Catálogo                                                |
+| **Pertenencia**          | `CatalogMembership`        | Especificación del Catálogo: "publicada y cumple las invariantes de su entrada". La aplica el ACL y la compartirá el sitemap (#2715). El Acervo va a impedir publicar lo incompleto (#2714), y el Catálogo igual verifica, por las escrituras que no pasan por el Studio. _Objetivo: hoy la aproximan la query GROQ, que solo trae publicados, y el ACL, que descarta lo mal formado; no existe como función ni como spec_                                                                                                                                                                                                                                                                                                                                                       | Catálogo                                                |
+| **Criterios**            | —                          | **Acceso**: llegar al destino (`slug` y la etiqueta del enlace, `title` o `name`). **Localización**: el orden (por slug) y los filtros (etiquetas, autores). **Decisión**: decidir si ir (tiempo de lectura, nacionalidad, años, etc.). Toda propiedad de una entrada se justifica por al menos uno; la que no cumple ninguno no se consulta                                                                                                                                                                                                                                                                                                                                                                                                                                     | Catálogo                                                |
+| **Faceta**               | `CollectionFacet`          | Etiqueta con su conteo dentro del resultado visible y su estado de selección                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | Catálogo                                                |
+| **Destino**              | `Destination`              | **Relación**, no contexto ni tipo: lleva de una entrada a la vista completa de su entidad (la obra en Lectura; el autor en su perfil, que incluye la lista de sus obras; la colección en su página, con sus obras). Se resuelve con `destinationOf(entry)` a partir de `kind` y `slug` (_pendiente_, #2717: se introduce cuando una superficie consuma la unión `CatalogEntry` y no una sola entrada). Se puede promover a tipo propio si aparece un destino que no sea una página                                                                                                                                                                                                                                                                                               | Catálogo → Lectura / perfil / colección                 |
+| **Selección**            | —                          | Parte del Acervo elegida y ordenada para presentarla. **Curada** (la elige el editor) o **generada** (la producen métricas o un algoritmo)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | Selecciones                                             |
+| **Curaduría**            | —                          | Elegir y ordenar parte del Acervo para presentarlo: el origen de las selecciones curadas                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | Selecciones                                             |
+| **Avance**               | `*Teaser`                  | Vista para selecciones y para las listas de obras dentro de un destino (perfil del autor, página de colección), con lo que invita a leer o visitar la entidad (portada, extracto, medios)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Selecciones · destinos                                  |
+| **Campaña de contenido** | `ContentCampaign`          | Promoción temporal de contenido con variantes responsivas                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Selecciones                                             |
+| **Lectura**              | `Reading`                  | Leer una obra y lo que el lector hace al leer. Contexto condicional                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | Lectura                                                 |
+| **Colaborador**          | `Contributor`              | Persona que contribuye al proyecto en algún rol                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | Administración                                          |
+
+> **Uso del vocabulario.** _Listado_ es una palabra genérica, sin significado de dominio: nombra cualquier lista que una superficie muestre, sea del catálogo, de un destino o de una selección. _Catálogo_ nombra solo el contexto; el inventario completo de lo cargado es el Acervo, y ni Storybook ni la lista de tareas de `pnpm ops` se llaman catálogo. _Entrada_ a secas es la del catálogo; la de Storybook se nombra siempre calificada ("entrada de Storybook"), y _punto de acceso_ no se usa como sinónimo. _Teaser_ es el avance, no la vista de los listados del catálogo.
 
 ---
 
 ## Patrones y Estrategias
+
+### Patrón: Criterios de una entrada
+
+Toda propiedad de una entrada del catálogo se justifica por al menos uno de tres criterios:
+
+- **Acceso**: lo que hace falta para llegar al destino y nombrar el enlace: el `slug` y la etiqueta (`title` en obras y colecciones, `name` en autores). El `kind` no es una propiedad que se consulte: lo fija el tipo de entrada y, junto con el `slug`, resuelve el destino.
+- **Localización**: el orden, por slug, y los filtros, por etiquetas y por autores.
+- **Decisión**: lo que ayuda a decidir si ir: el tiempo de lectura, la nacionalidad o los años del autor, etc.
+
+La que no cumple ninguno no se consulta. Esto distingue a la entrada del avance: el avance puede llevar portada, extracto y medios porque su trabajo es invitar, no permitir localizar.
+
+Propiedades de cada entrada (la de obra está implementada y la sirve `GET /api/literary-work`: la proyecta la query `literaryWorkCatalogEntriesQuery` y la construye `createLiteraryWorkCatalogEntry`; las de autor y colección, pendientes en #2515 y #2725). La entrada transporta además `kind`, el discriminante que fija su tipo, que no se consulta:
+
+| Entrada                    | Propiedades                                                                                                       |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `LiteraryWorkCatalogEntry` | `slug`, `title`, `authors{slug, name}`, `totalReadingTime`, `tags{slug, title}`                                   |
+| `AuthorCatalogEntry`       | `slug`, `name`, `nationality{flag, country}`, `bornOnYear`, `diedOnYear`, `tags{slug, title}`                     |
+| `CollectionCatalogEntry`   | `slug`, `title`, `description`, `imagery`, `count`, `tags{slug, title}` (todas las etiquetas, no solo la primera) |
 
 ### Patrón: Faceta (Faceted Navigation)
 
@@ -609,7 +686,7 @@ El **Lenguaje Ubicuo** es el lenguaje estructurado alrededor del modelo de domin
 
 **Semántica que hay que preservar:**
 
-- El conteo se calcula sobre lo que está a la vista, **no** sobre el catálogo entero: al elegir una etiqueta, las demás ajustan su número a lo que queda.
+- El conteo se calcula sobre lo que está a la vista, **no** sobre el conjunto completo que se está filtrando: al elegir una etiqueta, las demás ajustan su número a lo que queda.
 - Una faceta que llegaría a cero no se ofrece. De ahí se sigue una garantía que conviene no romper: elegir filtros **nunca puede vaciar el listado**, porque toda faceta ofrecida tiene al menos una entidad detrás.
 - Combinar dos facetas es conjunción, no disyunción: el resultado son las entidades que llevan **todas** las etiquetas elegidas.
 - La selección no es estado de la faceta sino del listado: quien filtra decide, y la faceta se limita a reflejar esa decisión. Así el panel nunca puede discrepar de lo que se está mostrando.
@@ -651,18 +728,28 @@ GET /api/author/jorge-luis-borges
 **Implementación:**
 
 ```typescript
-// Vista completa para lectura profunda
-LiteraryWork → incluye secciones, autores completos
+// Vista completa — destino: Lectura (obra), perfil (autor), página (colección)
+LiteraryWork → secciones, autores completos
+Author → biografía y recursos
+Collection → sus obras, como avances
 
-// Vista para listados
+// Avance — vista para selecciones y para las listas de obras dentro de un destino (perfil del
+// autor, página de colección): lo que invita a leer o visitar (portada, extracto, medios)
 LiteraryWorkTeaser → extracto del arranque, sin secciones completas
+AuthorTeaser · CollectionTeaser
 
-// Vista para navegación
+// Navegación — enlace mínimo dentro de una selección (lo más leído, lo último)
 LiteraryWorkNavigationTeaser → información mínima
+LiteraryWorkNavigationTeaserWithAuthors → con autores resumidos
 
-// Vista con autores para contexto
-LiteraryWorkNavigationTeaserWithAuthors → referencia a los autores
+// Entrada de catálogo — la de obra implementada; las de autor y colección, pendientes (#2515, #2725): lo mínimo que justifican los criterios
+LiteraryWorkCatalogEntry · AuthorCatalogEntry · CollectionCatalogEntry
+
+// Catálogo — el sobre en el que el catálogo publica sus entradas
+Catalog<E> → { entries, total }
 ```
+
+> **Transitorio.** Hoy los endpoints del Catálogo `GET /api/collection` y `GET /api/author`, y las páginas `/authors` y `/collection`, todavía sirven y consumen avances, aunque el avance sea la vista de las selecciones y de las listas dentro de un destino. Deja de ser así cuando existan sus entradas de catálogo (#2515 para autores, #2725 para colecciones).
 
 **Beneficios:**
 
@@ -791,32 +878,31 @@ La arquitectura de La Cuentoneta sigue un modelo de capas explícito:
 ## Apéndice: Diagrama de Contextos
 
 ```
-┌────────────────────────────────────────────────────────────────┐
-│                     LA CUENTONETA                              │
-├────────────────────────────────────────────────────────────────┤
-│                                                                │
-│  ┌─────────────────────────┐  ┌─────────────────────────┐   │
-│  │  CATÁLOGO DE CONTENIDO  │  │ CURACIÓN Y COLECCIONES │   │
-│  │                         │  │                         │   │
-│  │  • LiteraryWork         │  │  • Collection          │   │
-│  │  • Author               │  │                        │   │
-│  │  • Resource             │  │                        │   │
-│  │  • Media                │  └─────────────────────────┘   │
-│  │                         │           ▲                     │
-│  │                         │           │                     │
-│  └────────────────────────►├──────────┘                     │
-│                            │                                 │
-│  ┌─────────────────────────┼─────────────────────────┐     │
-│  │                         │                         │     │
-│  │  ADMINISTRACIÓN         │  PÁGINA DE INICIO       │     │
-│  │                         │                         │     │
-│  │  • Contributor          │  • LandingPageContent  │     │
-│  │  • ContributorArea      │  • ContentCampaign     │     │
-│  │                         │  • mostRead            │     │
-│  │                         │  • latestReads         │     │
-│  │                         │  • campaigns           │     │
-│  │                         │                         │     │
-│  └─────────────────────────┴─────────────────────────┘     │
-│                                                                │
-└────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────┐
+│                           LA CUENTONETA                              │
+├──────────────────────────────────────────────────────────────────────┤
+│                    ┌──────────────────────────────┐                  │
+│                    │            ACERVO            │                  │
+│                    │  LiteraryWork · Author ·     │                  │
+│                    │  Collection (documentos)     │                  │
+│                    │  borrador ⇄ publicado        │                  │
+│                    └──────────────┬───────────────┘                  │
+│                                   │ upstream (ACL)                   │
+│          ┌────────────────────────┼────────────────────────┐         │
+│          ▼                        ▼                        ▼         │
+│  ┌───────────────┐       ┌─────────────────┐      ┌────────────────┐ │
+│  │   CATÁLOGO    │       │   SELECCIONES   │      │    LECTURA     │ │
+│  │ solo lectura  │       │ curadas ·       │      │ (condicional)  │ │
+│  │ entradas      │       │ generadas       │      │ obra para leer │ │
+│  │ pertenencia   │       │ avances         │      │                │ │
+│  └───────┬───────┘       └─────────────────┘      └───────▲────────┘ │
+│          │  Destino (relación): obra → Lectura ·          │          │
+│          │  autor → perfil · colección → su página        │          │
+│          └────────────────────────────────────────────────┘          │
+│                                                                      │
+│  ┌────────────────┐                                                  │
+│  │ ADMINISTRACIÓN │  independiente                                   │
+│  │  Contributor   │                                                  │
+│  └────────────────┘                                                  │
+└──────────────────────────────────────────────────────────────────────┘
 ```

@@ -14,8 +14,8 @@ const formats: ButtonGroupOption[] = [
 	{ id: 'podcast', label: 'Podcast' },
 ];
 
-// El contenedor que el catálogo cablea por cada story. Existe porque el grupo no guarda la
-// elección: sin alguien que se la devuelva, hacer click no movería nada y el catálogo mostraría
+// El contenedor que Storybook cablea por cada story. Existe porque el grupo no guarda la
+// elección: sin alguien que se la devuelva, hacer click no movería nada y Storybook mostraría
 // una fila inerte. La elección se rehace cuando cambian los controles, para que editar `options`
 // o `selectedId` no deje vigente un id que ya no está en la lista.
 @Component({
@@ -49,7 +49,7 @@ const meta: Meta<ButtonGroup> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>El ${docsMention(buttonGroupDocs)} del Design System v3 presenta una fila de opciones excluyentes: recibe las opciones ya resueltas y el id de la vigente, y emite el id de la que la persona usuaria elige.</p><p><strong>No decide ni guarda la elección.</strong> La emite y espera que el consumidor se la devuelva por <code>selectedId</code>, de modo que la fuente de verdad viva en un solo lugar. Identifica por id y no por el objeto entero, que es lo que le permite servir a dominios distintos sin conocer ninguno.</p><p>Todas las entradas de este catálogo montan el grupo dentro de un contenedor que guarda la elección y se la devuelve, que es como se lo usa en una pantalla real: por eso hacer click mueve la opción vigente. El componente por sí solo no la movería, y eso lo fija su spec.</p><p>La apariencia de cada opción la pone ${docsRef(buttonDocs)}, en su variante <code>outline</code> y con el estado <code>active</code> para la vigente; el grupo solo aporta el layout de la fila. El anuncio a lectores de pantalla es <code>aria-pressed</code> en cada opción sobre un contenedor con <code>role="group"</code>, lo que conserva el contrato de teclado nativo del botón: <code>Tab</code> para llegar, <code>Enter</code> o <code>Espacio</code> para activar.</p><p>Los íconos los registra el consumidor con <code>provideIcons</code>: el grupo resuelve el nombre por el injector y no conoce el vocabulario de la pantalla que lo monta.</p><p>De los ejes de Button expone <strong>solo la geometría</strong> (<code>size</code>), porque cuánto espacio ocupa la fila depende de dónde se la monta. La apariencia queda fija: que las opciones se vean iguales entre sí es parte de lo que hace legible un grupo excluyente.</p><p>Su consumidor en la aplicación es el bloque de formatos multimedia de la página de lectura.</p></div>`,
+				component: `<div><p>El ${docsMention(buttonGroupDocs)} del Design System v3 presenta una fila de opciones excluyentes: recibe las opciones ya resueltas y el id de la vigente, y emite el id de la que la persona usuaria elige.</p><p><strong>No decide ni guarda la elección.</strong> La emite y espera que el consumidor se la devuelva por <code>selectedId</code>, de modo que la fuente de verdad viva en un solo lugar. Identifica por id y no por el objeto entero, que es lo que le permite servir a dominios distintos sin conocer ninguno.</p><p>Todas las stories de esta entrada montan el grupo dentro de un contenedor que guarda la elección y se la devuelve, que es como se lo usa en una pantalla real: por eso hacer click mueve la opción vigente. El componente por sí solo no la movería, y eso lo fija su spec.</p><p>La apariencia de cada opción la pone ${docsRef(buttonDocs)}, en su variante <code>outline</code> y con el estado <code>active</code> para la vigente; el grupo solo aporta el layout de la fila. El anuncio a lectores de pantalla es <code>aria-pressed</code> en cada opción sobre un contenedor con <code>role="group"</code>, lo que conserva el contrato de teclado nativo del botón: <code>Tab</code> para llegar, <code>Enter</code> o <code>Espacio</code> para activar.</p><p>Los íconos los registra el consumidor con <code>provideIcons</code>: el grupo resuelve el nombre por el injector y no conoce el vocabulario de la pantalla que lo monta.</p><p>De los ejes de Button expone <strong>solo la geometría</strong> (<code>size</code>), porque cuánto espacio ocupa la fila depende de dónde se la monta. La apariencia queda fija: que las opciones se vean iguales entre sí es parte de lo que hace legible un grupo excluyente.</p><p>Su consumidor en la aplicación es el bloque de formatos multimedia de la página de lectura.</p></div>`,
 			},
 		},
 	},
@@ -125,7 +125,7 @@ export const ConIconos: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: `<p>Cada opción puede llevar un ícono junto a su etiqueta. Los íconos se registran acá, en la story, y no en el preview del catálogo: registrarlos es responsabilidad del consumidor, porque son vocabulario de su pantalla. El ícono es decorativo —la etiqueta ya nombra la opción—, así que no altera el nombre accesible del botón.</p><p><strong>Usos:</strong> grupos donde el ícono identifica la opción de un vistazo, como una elección de formato o de plataforma.</p>`,
+				story: `<p>Cada opción puede llevar un ícono junto a su etiqueta. Los íconos se registran acá, en la story, y no en el preview de Storybook: registrarlos es responsabilidad del consumidor, porque son vocabulario de su pantalla. El ícono es decorativo —la etiqueta ya nombra la opción—, así que no altera el nombre accesible del botón.</p><p><strong>Usos:</strong> grupos donde el ícono identifica la opción de un vistazo, como una elección de formato o de plataforma.</p>`,
 			},
 		},
 	},

@@ -130,7 +130,7 @@ describe('collectionBySlugQuery', () => {
 
 	// El corte toma el primer bloque no vacío y no el primero a secas: con el índice pelado, un renglón
 	// en blanco delante del texto —contenido válido— daría un extracto vacío, que el mapper trata como
-	// obra mal curada y que se lleva puesta la colección entera.
+	// obra mal formada y que se lleva puesta la colección entera.
 	it('skips a blank leading line instead of yielding an empty excerpt', async () => {
 		const result = await run(collectionBySlugQuery, withNonProseOpenings, { slug: 'arranques-no-prosa' });
 		const works = (result as { literaryWorks: { slug: string; excerpt: { body: string }[] }[] }).literaryWorks;

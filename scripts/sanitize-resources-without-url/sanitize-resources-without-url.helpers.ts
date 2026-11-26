@@ -205,7 +205,7 @@ export async function runResourceSanitization(options: RunOptions): Promise<Reso
 }
 
 // Cada documento se procesa aislado: uno con un caso sin disposición se registra como fallido y el
-// recorrido sigue. Un documento roto no puede abortar el saneamiento del catálogo.
+// recorrido sigue. Un documento roto no puede abortar el saneamiento del Acervo.
 async function processCandidate(
 	candidate: SanitizeCandidate,
 	options: RunOptions,

@@ -1,6 +1,6 @@
 /**
- * Obliga a que la prosa de autodocs referencie el catálogo y el código por símbolos, no por texto escrito
- * a mano.
+ * Obliga a que la prosa de autodocs referencie las entradas de Storybook y el código por símbolos, no
+ * por texto escrito a mano.
  *
  * El `title` de una story y los enlaces y nombres que otras stories escriben sobre ella describen la
  * misma entrada, pero escritos a mano son copias que se desincronizan sin emitir señal: `storybook:build`
@@ -28,11 +28,11 @@ import { resolve } from 'node:path';
 /** @typedef {import('@typescript-eslint/utils').TSESTree.TSTupleType} TsTupleType */
 
 /**
- * Lo que la regla sabe del árbol. `catalog` son los nombres con los que el catálogo publica sus entradas
- * (el último segmento de cada `title`); `angularClasses`, las clases exportadas por un archivo de
- * `src/app/` que declara un componente, una directiva, un pipe o un servicio.
+ * Lo que la regla sabe del árbol. `storybookNames` son los nombres con los que Storybook publica sus
+ * entradas (el último segmento de cada `title`); `angularClasses`, las clases exportadas por un archivo
+ * de `src/app/` que declara un componente, una directiva, un pipe o un servicio.
  *
- * @typedef {{ catalog: ReadonlySet<string>; angularClasses: ReadonlySet<string> }} TreeSnapshot
+ * @typedef {{ storybookNames: ReadonlySet<string>; angularClasses: ReadonlySet<string> }} TreeSnapshot
  */
 
 const DOCS_ENTRY_GLOB = 'src/app/**/*.docs.ts';
@@ -62,7 +62,7 @@ function entryTitle(path) {
  * @param {readonly string[]} entryPaths
  * @returns {Set<string>}
  */
-function catalogNames(entryPaths) {
+function storybookEntryNames(entryPaths) {
 	const names = new Set();
 	for (const path of entryPaths) {
 		const title = entryTitle(path);
@@ -88,7 +88,7 @@ function angularClassNames(sourcePaths) {
 /**
  * El estado del árbol visto desde `cwd`. Se recalcula cuando cambia alguno de los archivos de los que
  * sale —por nombre o por fecha de modificación—, así un proceso de larga vida como el ESLint del editor
- * no sigue validando contra un catálogo que ya no existe.
+ * no sigue validando contra entradas que ya no existen.
  *
  * @param {string} cwd
  * @returns {TreeSnapshot}
@@ -107,7 +107,7 @@ function readTree(cwd) {
 	if (cached?.signature !== signature) {
 		cached = {
 			signature,
-			snapshot: { catalog: catalogNames(entryPaths), angularClasses: angularClassNames(sourcePaths) },
+			snapshot: { storybookNames: storybookEntryNames(entryPaths), angularClasses: angularClassNames(sourcePaths) },
 		};
 	}
 	return cached.snapshot;
@@ -160,7 +160,7 @@ function declaredSymbols(program) {
 
 /**
  * El mensaje que corresponde a un nombre puesto en la prosa, o `undefined` si no hay nada que reportar.
- * Una entrada del catálogo gana sobre la clase homónima: su nombre sale de la entrada, no de la tupla.
+ * Una entrada de Storybook gana sobre la clase homónima: su nombre sale de la entrada, no de la tupla.
  *
  * @param {string} name
  * @param {TreeSnapshot} tree
@@ -168,7 +168,7 @@ function declaredSymbols(program) {
  * @returns {'literalMention' | 'undeclaredSymbol' | undefined}
  */
 function namedTagViolation(name, tree, declared) {
-	if (tree.catalog.has(name)) return 'literalMention';
+	if (tree.storybookNames.has(name)) return 'literalMention';
 	if (tree.angularClasses.has(name) && !declared.has(name)) return 'undeclaredSymbol';
 	return undefined;
 }
@@ -200,14 +200,15 @@ export default {
 	meta: {
 		type: 'problem',
 		docs: {
-			description: 'Referenciar el catálogo de autodocs y las clases Angular por símbolos, no por texto escrito a mano',
+			description:
+				'Referenciar las entradas de autodocs y las clases Angular por símbolos, no por texto escrito a mano',
 		},
 		schema: [],
 		messages: {
 			literalKindId:
 				'Enlace de autodocs escrito a mano. Usá `${docsRef(<entrada>Docs)}` —o `docsLink` si el texto del enlace es propio—, que deriva el `kind-id` del `title` de la entrada.',
 			literalMention:
-				'`{{ name }}` es una entrada del catálogo nombrada a mano. Usá `${docsMention(<entrada>Docs)}` para que el nombre muera con la entrada.',
+				'`{{ name }}` es una entrada de Storybook nombrada a mano. Usá `${docsMention(<entrada>Docs)}` para que el nombre muera con la entrada.',
 			undeclaredSymbol:
 				'`{{ name }}` es una clase Angular nombrada en la prosa sin figurar en `DocsSymbols`. Sumala a la tupla para que borrarla rompa el `typecheck` de esta story.',
 			missingEntry:
@@ -232,7 +233,7 @@ export default {
 				for (const [, , raw] of text.matchAll(NAMED_TAG)) namedTags.push({ node, name: raw.trim() });
 			},
 			// Solo el `title` del meta: el de los datos de una story (títulos de obra, de colección) no es una
-			// entrada del catálogo. Se distingue por vivir en el objeto que declara `component`.
+			// entrada de Storybook. Se distingue por vivir en el objeto que declara `component`.
 			/** @param {import('estree').Property & import('eslint').Rule.NodeParentExtension} node */
 			"Property[key.name='title'][value.type='Literal']"(node) {
 				const { parent } = node;

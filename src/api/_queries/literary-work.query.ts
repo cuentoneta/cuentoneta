@@ -161,15 +161,14 @@ export const readingTimeBackfillCandidatesQuery = defineQuery(`
     'content': coalesce(content[]{ _key, body, readingTime }, [])
 }`);
 
-// El catálogo de obras como teasers, filtrable por criterios — hoy solo `author`; la paginación
-// (limit/offset) y el filtrado por tags se sumarán acá mismo. Cada criterio es un parámetro nullable
-// y no una query aparte: una condición acá y un query param en el endpoint, no una sub-ruta ni otra
+// Los avances de obra, filtrables por criterios. Cada criterio es un parámetro nullable y no una
+// query aparte: una condición acá y un query param en el endpoint, no una sub-ruta ni otra
 // proyección duplicada.
 //
-// `$author == null` cubre el listado sin filtro; con filtro se recorre `authors[]` porque una obra admite
-// varios, así que la pertenencia es de conjunto y no una igualdad. `$slugs` sigue la misma forma, y filtra
-// por pertenencia: devuelve en orden de documento,
-// así que un consumidor que pase un lote ordenado repone el orden por su cuenta.
+// `$author == null` cubre la llamada sin filtro; con filtro se recorre `authors[]` porque una obra
+// admite varios, así que la condición es de inclusión en un conjunto y no una igualdad. `$slugs` sigue
+// la misma forma y devuelve en orden de documento, así que un consumidor que pase un lote ordenado
+// repone el orden por su cuenta.
 //
 // La proyección repite literal la que `collectionBySlugQuery` usa para las obras de una colección
 // —`defineQuery` exige literales para que el typegen las lea, así que no se puede extraer—, incluido
@@ -209,3 +208,27 @@ export const literaryWorkTeasers = defineQuery(`
         'body': string::split(string::split(body, "\r\n\r\n")[0], "\n\n")[@ != ""][0]
     }
 } | order(title asc)`);
+
+// Las entradas de obra del catálogo. La proyección es el contrato de la entrada y no admite campos de
+// más: ni `_id`, ni portada, ni extracto. `totalReadingTime` va sin `coalesce` para que su ausencia
+// llegue como `null` y el repository la reporte, en lugar de un default que la oculte.
+//
+// El orden va antes de la proyección porque dos documentos publicados pueden compartir slug, y así
+// `_id` desempata sin viajar en la respuesta. El slug está normalizado sin tildes ni mayúsculas, así
+// que su orden de bytes es el alfabético y ningún consumidor necesita reordenar.
+export const literaryWorkCatalogEntriesQuery = defineQuery(`
+*[_type == 'literaryWork' && !(_id in path('drafts.**'))]
+| order(slug.current asc, _id asc)
+{
+    'slug': slug.current,
+    title,
+    'authors': coalesce(authors[]->{
+        'slug': slug.current,
+        name
+    }, []),
+    totalReadingTime,
+    'tags': coalesce(tags[]->{
+        'slug': slug.current,
+        title
+    }, [])
+}`);

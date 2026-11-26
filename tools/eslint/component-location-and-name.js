@@ -20,7 +20,7 @@ const PAGES_DIR = COMPONENT_DIRS.pages;
 /** El componente raíz: no es reutilizable ni una página, así que no cabe en ninguna de las dos carpetas. */
 const ROOT_COMPONENT = 'src/app/app.ts';
 
-/** Soporte de tests y del catálogo: no es código de la aplicación, así que su ubicación es libre. */
+/** Soporte de tests y de Storybook: no es código de la aplicación, así que su ubicación es libre. */
 const LOCATION_EXEMPT_DIR = 'src/testing/';
 
 const TEST_FILE = /\.(spec|stories)\.ts$/;

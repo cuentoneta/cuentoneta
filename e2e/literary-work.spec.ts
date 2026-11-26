@@ -14,7 +14,7 @@ import type { LiteraryWorkDto } from '@models/literary-work.dto';
 
 import { test } from './_utils/test';
 import { fetchLiteraryWork } from './_utils/literary-work-fixtures';
-import { fetchCollectionCatalog, type CollectionCatalogEntry } from './_utils/collection-fixtures';
+import { fetchCollectionCatalog, type CollectionTeaserFixture } from './_utils/collection-fixtures';
 import { DESKTOP_VIEWPORT } from './_utils/viewports';
 import { STABLE_SLUGS } from './_utils/seo-fixtures';
 
@@ -25,12 +25,12 @@ const COVER_MAX_WIDTH = 132;
 
 let status = 0;
 let work: LiteraryWorkDto | undefined;
-// Los casos de multimedia y de sugerencias anclan en la obra curada para eso: `el-fin` no declara
+// Los casos de multimedia y de sugerencias anclan en la obra preparada para eso: `el-fin` no declara
 // recursos y su autor tiene una sola obra, así que ninguno de los dos frentes se puede afirmar sobre él.
 let mediaWork: LiteraryWorkDto | undefined;
 // Sin anclas el caso del salto no mide nada.
 let titledSectionsWork: LiteraryWorkDto | undefined;
-let stableCollection: CollectionCatalogEntry | undefined;
+let stableCollection: CollectionTeaserFixture | undefined;
 
 test.beforeAll(async ({ request }) => {
 	status = (await request.get(ROUTE)).status();
@@ -117,14 +117,14 @@ test('literary-work — una obra inexistente ofrece la vuelta al inicio', async 
 });
 
 // El caso del cambio de formato afirma por el tipo del widget montado, así que dos recursos del mismo
-// tipo pasarían un conteo y lo matarían igual: la propiedad que la curaduría debe sostener es de tipos
+// tipo pasarían un conteo y lo matarían igual: la propiedad que la carga editorial debe sostener es de tipos
 // distintos, y este derivador es el que consumen la guarda y los skips dependientes.
 const distinctMediaTypes = (dto: LiteraryWorkDto | undefined): number =>
 	new Set((dto?.mediaSources ?? []).map(({ type }) => type)).size;
 
-// Guarda de curaduría, como caso propio: el cambio de formato sólo se puede afirmar si la obra curada
+// Guarda de carga editorial, como caso propio: el cambio de formato sólo se puede afirmar si la obra preparada
 // ofrece formatos distintos, y ninguna otra puede buscarse porque el módulo no expone un listado. Si
-// esto sale rojo, la acción es curar esa obra en development y staging.
+// esto sale rojo, la acción es completar los datos de esa obra en development y staging.
 test('literary-work — la obra con multimedia ofrece más de un formato', () => {
 	expect(mediaWork, `el API no sirve "${STABLE_SLUGS.literaryWorkWithMedia}"`).toBeDefined();
 	expect(
@@ -143,13 +143,13 @@ async function settleMediaBlock(page: Page) {
 test('literary-work — el bloque multimedia ofrece una opción por recurso', async ({ page }) => {
 	// eslint-disable-next-line playwright/no-skipped-test -- la ausencia del fixture ya la reporta su guarda; repetirla acá sería el mismo fallo dos veces
 	test.skip(!mediaWork, `"${MEDIA_ROUTE}" no está en el dataset`);
-	// eslint-disable-next-line playwright/no-skipped-test -- ídem: la curaduría faltante la reporta su propia guarda
-	test.skip(distinctMediaTypes(mediaWork) < 2, 'la obra curada no ofrece formatos distintos para elegir');
+	// eslint-disable-next-line playwright/no-skipped-test -- ídem: la carga editorial faltante la reporta su propia guarda
+	test.skip(distinctMediaTypes(mediaWork) < 2, 'la obra preparada no ofrece formatos distintos para elegir');
 
 	await openWork(page, MEDIA_ROUTE);
 	const block = await settleMediaBlock(page);
 
-	// Una opción por recurso, contra el DTO: un grupo vacío o incompleto delataría un catálogo de widgets
+	// Una opción por recurso, contra el DTO: un grupo vacío o incompleto delataría un registro de widgets
 	// que descarta formatos en silencio.
 	await expect(block.getByRole('group', { name: 'Formatos disponibles' }).getByRole('button')).toHaveCount(
 		mediaWork?.mediaSources.length ?? 0,
@@ -159,8 +159,8 @@ test('literary-work — el bloque multimedia ofrece una opción por recurso', as
 test('literary-work — cambiar de formato monta el widget del formato elegido', async ({ page }) => {
 	// eslint-disable-next-line playwright/no-skipped-test -- la ausencia del fixture ya la reporta su guarda; repetirla acá sería el mismo fallo dos veces
 	test.skip(!mediaWork, `"${MEDIA_ROUTE}" no está en el dataset`);
-	// eslint-disable-next-line playwright/no-skipped-test -- ídem: la curaduría faltante la reporta su propia guarda
-	test.skip(distinctMediaTypes(mediaWork) < 2, 'la obra curada no ofrece formatos distintos para elegir');
+	// eslint-disable-next-line playwright/no-skipped-test -- ídem: la carga editorial faltante la reporta su propia guarda
+	test.skip(distinctMediaTypes(mediaWork) < 2, 'la obra preparada no ofrece formatos distintos para elegir');
 
 	await openWork(page, MEDIA_ROUTE);
 	const block = await settleMediaBlock(page);
@@ -169,7 +169,7 @@ test('literary-work — cambiar de formato monta el widget del formato elegido',
 	// Se afirma por el componente de widget montado, no por el contenido del proveedor: YouTube y
 	// Spotify en CI son flaky, y qué widget se monta es exactamente lo que el selector decide. El tag
 	// del elemento delata el formato sin esperar ninguna carga externa. La lista enumera los widgets del
-	// catálogo (`media-widget-registry.ts`): uno nuevo se suma acá para que el caso lo alcance.
+	// registro (`media-widget-registry.ts`): uno nuevo se suma acá para que el caso lo alcance.
 	const widgets = block.locator(
 		'cuentoneta-youtube-video-widget, cuentoneta-spotify-audio-widget, cuentoneta-audio-recording-widget, cuentoneta-space-recording-widget',
 	);
@@ -191,14 +191,14 @@ test('literary-work — cambiar de formato monta el widget del formato elegido',
  * Scrollea hasta el pie y espera las sugerencias, que difieren por viewport.
  *
  * El heading va como string y no como patrón: interpolar un nombre de autor o un título de colección en
- * una expresión regular reinterpreta su puntuación como sintaxis, y el nombre lo decide la curaduría.
+ * una expresión regular reinterpreta su puntuación como sintaxis, y el nombre lo decide la carga editorial.
  */
 async function settleSuggestions(page: Page, heading: string) {
 	await page.locator('cuentoneta-reading-suggestions').scrollIntoViewIfNeeded();
 	await expect(page.getByRole('heading', { name: heading })).toBeVisible();
 }
 
-// Ancla en la obra curada y no en la estable: el autor de `el-fin` tiene una sola obra publicada, así
+// Ancla en la obra preparada y no en la estable: el autor de `el-fin` tiene una sola obra publicada, así
 // que sus sugerencias por autor salen vacías y el caso no afirmaría nada.
 test('literary-work — sin contexto, el pie sugiere más obras del autor', async ({ page }) => {
 	// eslint-disable-next-line playwright/no-skipped-test -- la ausencia del fixture ya la reporta su guarda; repetirla acá sería el mismo fallo dos veces
@@ -214,7 +214,7 @@ test('literary-work — sin contexto, el pie sugiere más obras del autor', asyn
 	// Control positivo: sin él, una lista vacía dejaría la exclusión de abajo cumpliéndose en vacío.
 	await expect(
 		readingLinks.first(),
-		'no hay sugerencias: la curaduría pendiente es que el autor de la obra curada tenga otra obra publicada',
+		'no hay sugerencias: falta en la carga editorial que el autor de la obra preparada tenga otra obra publicada',
 	).toBeVisible();
 
 	const destinations = await readingLinks.evaluateAll((links) => links.map((link) => link.getAttribute('href') ?? ''));
@@ -236,7 +236,7 @@ test('literary-work — sin contexto, el pie sugiere más obras del autor', asyn
 });
 
 // Una vez hidratada, la página sí sirve dos enlaces al mismo perfil: el del hero y el del pie. Se
-// afirma que se distinguen entre sí y no que digan tal o cual cosa: la copy es curaduría y puede
+// afirma que se distinguen entre sí y no que digan tal o cual cosa: la copy es carga editorial y puede
 // cambiar sin que el criterio —dos destinos iguales no pueden anunciarse igual— deje de valer.
 test('literary-work — los dos enlaces al perfil del autor tienen nombres accesibles distintos', async ({ page }) => {
 	// eslint-disable-next-line playwright/no-skipped-test -- la ausencia del fixture ya la reporta su guarda; repetirla acá sería el mismo fallo dos veces

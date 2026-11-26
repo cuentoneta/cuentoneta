@@ -49,6 +49,7 @@ Antes de esta capa de documentos el flujo corría al revés: el raw se escribía
 
 - Una `literary-work/<slug>.literary-work.raw.mock.ts` por obra.
 - Una `literary-work/<slug>.literary-work-teaser.raw.mock.ts` por obra: el resultado de `literaryWorkTeasers` acotada a esa obra con `$slugs`. Es la proyección con la que las colecciones embeben obras, así que la referencian en vez de repetirla.
+- `literary-work/literary-work-catalog-entries.raw.mock.ts` (resultado de `literaryWorkCatalogEntriesQuery`, el listado del catálogo de obras, en el orden de la query).
 - Una `collection/<slug>.collection.raw.mock.ts` por colección.
 - `collection/collection-teasers.raw.mock.ts` (resultado de `collectionsQuery`, el listado).
 - `landing-page/landing-page.raw.mock.ts` (resultado de `landingPageContentQuery`).
@@ -116,6 +117,10 @@ La biografía de François Onoff vive como Markdown plano en un único archivo, 
 
 El autor embebido sí está anclado, aunque su raw sea a mano: las fixtures generadas de obra lo importan en vez de inlinearlo, así que el gate de frescura lo compara contra lo que la query devuelve, y el cruce contra el ACL lo compara entero. Lo que queda sin anclar es el autor de la **ficha** y el del **listado**, que no tienen cruce.
 
+## Corpus de dominio: `LiteraryWorkCatalogEntry`
+
+`../onoff-literary-work-catalog-entries.mock.ts` → `onoffLiteraryWorkCatalogEntriesMock`: una entrada por obra del canon, construida con `createLiteraryWorkCatalogEntry` desde `onoffLiteraryWorksMock` y ordenada por slug con comparación por punto de código, que es el orden de bytes en que la entrega la query. No se escribe a mano: la factory proyecta autores y etiquetas desde las obras completas. Su cruce contra el ACL es `../onoff-literary-work-catalog-entries.acl-alignment.spec.ts`.
+
 ## Corpus de dominio: `Collection`
 
 Un elenco de colecciones de `LiteraryWork` curado para cubrir, entre todas, cada estado que un consumidor necesita mirar: las dos ramas de `imagery`, medios propios, colecciones con etiquetas y sin ellas, un título que no entra en una línea y una prosa con enlace propio. El reparto de etiquetas es parte de la curaduría: sostiene facetas de conteos distintos, etiquetas que conviven entre colecciones y otras que no, que es lo que ejercita el filtrado del catálogo. Un título con inicial acentuada es lo que distingue el orden con colación española del orden por punto de código, que es el que devuelve la query.
@@ -150,17 +155,18 @@ Que la sustitución siga ocurriendo lo verifica `../onoff-raw-corpus.spec.ts`. E
 
 Varias queries proyectan un subconjunto de lo que otra devuelve. Donde eso pasa, la fixture no repite los campos compartidos: los produce con una función de `derive-raw.ts` y declara solo lo que la query **calcula** y ningún recorte puede reproducir.
 
-| Fixture                      | Deriva de                | Qué declara igual                                                    |
-| ---------------------------- | ------------------------ | -------------------------------------------------------------------- |
-| Teaser de obra               | su raw completo          | el extracto, que GROQ arma partiendo el cuerpo de la primera sección |
-| Listado de colecciones       | el raw de cada colección | el conteo de obras y el abanico de portadas                          |
-| Landing y contenido rotativo | el teaser de cada obra   | nada: la proyección es el teaser sin su extracto                     |
+| Fixture                        | Deriva de                    | Qué declara igual                                                    |
+| ------------------------------ | ---------------------------- | -------------------------------------------------------------------- |
+| Teaser de obra                 | su raw completo              | el extracto, que GROQ arma partiendo el cuerpo de la primera sección |
+| Listado de colecciones         | el raw de cada colección     | el conteo de obras y el abanico de portadas                          |
+| Landing y contenido rotativo   | el teaser de cada obra       | nada: la proyección es el teaser sin su extracto                     |
+| Entradas del catálogo de obras | el raw completo de cada obra | nada: la query no calcula ningún campo de la entrada                 |
 
 El generador aplica una derivación **por igualdad de valor**, igual que una sustitución: computa lo que la función produce y lo compara contra lo que devolvió la query. Si coincide, emite la llamada con spread; si no, escribe el objeto entero. Esa comparación es lo que impide que la derivación afirme algo que la query no devuelve.
 
 De ahí que las funciones de `derive-raw.ts` **enumeren** los campos en vez de quitarlos por resto: enumerándolos, un campo nuevo en la proyección ancha no se cuela en la angosta, porque la firma deja de tipar.
 
-El orden de generación es el de esas dependencias: primero los raws completos de obra, después sus teasers, después las colecciones, su listado, y por último la landing y el contenido rotativo.
+El orden de generación es el de esas dependencias: primero los raws completos de obra, después sus teasers y las entradas del catálogo, después las colecciones, su listado, y por último la landing y el contenido rotativo.
 
 ## Corpus raw: `Collection` (generado)
 
@@ -175,6 +181,7 @@ Contraparte cruda del corpus de dominio `LiteraryWork`, tipada contra `NonNullab
 - **Escenarios de borde** (overrides `{ ...base, … }` sobre las obras canónicas generadas), para ejercitar el mapper y la materialización sin depender del contenido base:
   - `multiSectionRawLiteraryWork` — obra multi-sección (`sectionCount > 1`). Los strings de su segunda sección viven en `literary-work/el-palacio-de-las-nueve-fronteras.multi-section.ts`, compartidos con el escenario homónimo de la capa de documentos (`onoff-documents.mock.ts`), para que las dos no puedan divergir.
   - `unmaterializedRawLiteraryWork` — `totalReadingTime` y `content[].readingTime` en `null` (ejercita el fallback puro de lectura del repository y el backfill, que es el único que persiste).
+- **Listado del catálogo:** `onoffRawLiteraryWorkCatalogEntriesMock`, re-declarado desde la fixture generada `literary-work/literary-work-catalog-entries.raw.mock.ts`: una entrada por obra, en el orden en que la entrega `literaryWorkCatalogEntriesQuery`.
 - **Autor raw:** `rawOnoffAuthor`.
 
 ## Corpus raw: página de inicio, contenido rotativo y `ContentCampaign` (generado)
@@ -253,13 +260,13 @@ dominio              →  onoffAudioAssets.<clave>.path
 - **Path en el mock:** `assets/audio/mocks/<slug>.ogg` (sin `./` ni `/` inicial), declarado por la tabla
 - **Formato:** Vorbis mono, de a lo sumo veinte segundos
 
-**Son fragmentos, no lecturas completas.** Una obra entera son megabytes por archivo, y el corpus los cargaría en cada checkout para siempre. Lo que el catálogo necesita mostrar es que el reproductor funciona, y para eso alcanza con que suene.
+**Son fragmentos, no lecturas completas.** Una obra entera son megabytes por archivo, y el corpus los cargaría en cada checkout para siempre. Lo que Storybook necesita mostrar es que el reproductor funciona, y para eso alcanza con que suene.
 
 **Cómo se produjeron.** Cada clip es la lectura de un fragmento de la prosa propia de su obra, cortado en un límite de oración, sintetizada con una voz genérica en español del TTS de Windows —nunca la clonación de una voz real— y encodeada a Vorbis con ffmpeg. El fragmento excluye las oraciones entrecomilladas, que es como este corpus marca lo único ajeno que declara: las citas de los diálogos del film.
 
 **No hay generador en el repo.** Los clips son binarios versionados a mano, así que reemplazar uno o sumar otro es producirlo fuera del repo bajo la convención de arriba. Ningún gate la verifica: el formato y el techo de duración quedan a cargo de quien produzca el clip.
 
-**Los embeds de terceros son otra cosa.** `youTubeVideo` y `spotifyPodcastEpisode` conservan su URL y su identificador de plataforma: son la forma que producción tiene, y hay specs que la afirman. Lo que se sustituye es lo que **el catálogo monta** — `../../testing/storybook-embed-placeholders.ts` aporta un decorator que apaga la carga de la IFrame API de YouTube y pinta en su lugar un reproductor de utilería con CSS, y reapunta la URL del episodio a una página local dibujada igual. Subir el contenido a una cuenta real se evaluó y se descartó: un video que se cae, se bloquea por región o queda privado rompe el catálogo sin que ningún gate lo note.
+**Los embeds de terceros son otra cosa.** `youTubeVideo` y `spotifyPodcastEpisode` conservan su URL y su identificador de plataforma: son la forma que producción tiene, y hay specs que la afirman. Lo que se sustituye es lo que **Storybook monta** — `../../testing/storybook-embed-placeholders.ts` aporta un decorator que apaga la carga de la IFrame API de YouTube y pinta en su lugar un reproductor de utilería con CSS, y reapunta la URL del episodio a una página local dibujada igual. Subir el contenido a una cuenta real se evaluó y se descartó: un video que se cae, se bloquea por región o queda privado rompe el catálogo sin que ningún gate lo note.
 
 ## Obras
 

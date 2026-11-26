@@ -1,4 +1,8 @@
-import type { LiteraryWorkBySlugQueryResult, LiteraryWorkTeasersResult } from '@sanity-types';
+import type {
+	LiteraryWorkBySlugQueryResult,
+	LiteraryWorkCatalogEntriesQueryResult,
+	LiteraryWorkTeasersResult,
+} from '@sanity-types';
 import { palacioNueveFronterasSectionTitle } from './onoff/literary-work/el-palacio-de-las-nueve-fronteras.epigraph';
 import {
 	palacioFirstSectionReadingTime,
@@ -15,6 +19,7 @@ import { lasEscalerasRawLiteraryWork } from './onoff/literary-work/las-escaleras
 import { losPeldanosRawLiteraryWork } from './onoff/literary-work/los-peldanos.literary-work.raw.mock';
 import { neronRawLiteraryWork } from './onoff/literary-work/neron.literary-work.raw.mock';
 import { palacioNueveFronterasRawLiteraryWork } from './onoff/literary-work/el-palacio-de-las-nueve-fronteras.literary-work.raw.mock';
+import { onoffRawLiteraryWorkCatalogEntriesMock as generatedCatalogEntries } from './onoff/literary-work/literary-work-catalog-entries.raw.mock';
 import { onoffRawCollectionsMock } from './onoff-raw-collections.mock';
 
 // Corpus raw (shape crudo de Sanity, `NonNullable<LiteraryWorkBySlugQueryResult>`) de las obras
@@ -133,3 +138,6 @@ export const onoffRawLiteraryWorkTeasersMock: LiteraryWorkTeasersResult = [
 		onoffRawCollectionsMock.flatMap(({ literaryWorks }) => literaryWorks).map((teaser) => [teaser._id, teaser]),
 	).values(),
 ];
+
+// El listado del catálogo de obras tal como lo devuelve la query: una entrada por obra, ordenadas.
+export const onoffRawLiteraryWorkCatalogEntriesMock: LiteraryWorkCatalogEntriesQueryResult = generatedCatalogEntries;

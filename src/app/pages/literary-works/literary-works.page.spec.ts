@@ -2,17 +2,17 @@ import { render, screen, within } from '@testing-library/angular';
 import { provideRouter } from '@angular/router';
 import { RESPONSE_INIT } from '@angular/core';
 import type { Observable } from 'rxjs';
-import { NEVER, throwError } from 'rxjs';
+import { NEVER, of, throwError } from 'rxjs';
 import { clearAllMocks, restoreAllMocks } from '@test-utils';
 
 import LiteraryWorksPage from './literary-works.page';
 import { LITERARY_WORKS_HOST } from './literary-works-host';
 import type { LiteraryWorkApi } from '../../providers/literary-work.provider';
 import { provideLiteraryWorkApiMock, StubLiteraryWorkApi } from '../../providers/literary-work.mock';
-import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
-import { createSlug } from '@models/slug.model';
+import type { LiteraryWork, LiteraryWorkCatalogEntry, LiteraryWorkTeaser } from '@models/literary-work.model';
+import { type Catalog, createCatalog } from '@models/catalog.model';
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
-import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
+import { onoffLiteraryWorkCatalogEntriesMock } from '@mocks/onoff-literary-work-catalog-entries.mock';
 
 class FailingLiteraryWorkApi implements LiteraryWorkApi {
 	public getBySlug(): Observable<LiteraryWork> {
@@ -20,6 +20,10 @@ class FailingLiteraryWorkApi implements LiteraryWorkApi {
 	}
 
 	public getTeasers(): Observable<LiteraryWorkTeaser[]> {
+		return throwError(() => new Error('sin catálogo'));
+	}
+
+	public getCatalog(): Observable<Catalog<LiteraryWorkCatalogEntry>> {
 		return throwError(() => new Error('sin catálogo'));
 	}
 }
@@ -34,18 +38,31 @@ class PendingLiteraryWorkApi implements LiteraryWorkApi {
 	public getTeasers(): Observable<LiteraryWorkTeaser[]> {
 		return NEVER;
 	}
+
+	public getCatalog(): Observable<Catalog<LiteraryWorkCatalogEntry>> {
+		return NEVER;
+	}
 }
 
 const [canonicalWork] = onoffLiteraryWorksMock;
-const [canonicalTeaser] = onoffLiteraryWorkTeasersMock;
+const [firstEntry, secondEntry] = onoffLiteraryWorkCatalogEntriesMock;
 
-const stubbing = (teasers: readonly LiteraryWorkTeaser[]) => new StubLiteraryWorkApi(canonicalWork, teasers);
+const stubbing = (catalogEntries: readonly LiteraryWorkCatalogEntry[]) =>
+	new StubLiteraryWorkApi({ literaryWork: canonicalWork, catalogEntries });
 
-const withTitle = (title: string, slug: string): LiteraryWorkTeaser => ({
-	...canonicalTeaser,
-	title,
-	slug: createSlug(slug),
-});
+// Una página de un catálogo mayor: lista algunas entradas de un total que las excede.
+class StubPagedLiteraryWorkApi extends StubLiteraryWorkApi {
+	constructor(
+		private readonly entries: readonly LiteraryWorkCatalogEntry[],
+		private readonly total: number,
+	) {
+		super({ literaryWork: canonicalWork });
+	}
+
+	public override getCatalog(): Observable<Catalog<LiteraryWorkCatalogEntry>> {
+		return of(createCatalog(this.entries, this.total));
+	}
+}
 
 // Cada tarjeta enlaza dos destinos —la obra y su autoría—; el del listado es el que lleva a la lectura.
 const readingHrefs = () =>
@@ -59,44 +76,49 @@ describe('LiteraryWorksPage', () => {
 
 	afterEach(() => restoreAllMocks());
 
-	const renderPage = (api: LiteraryWorkApi = stubbing(onoffLiteraryWorkTeasersMock)) =>
+	const renderPage = (api: LiteraryWorkApi = stubbing(onoffLiteraryWorkCatalogEntriesMock)) =>
 		render(LiteraryWorksPage, { providers: [provideRouter([]), provideLiteraryWorkApiMock(api)] });
 
 	it('should headline the catalogue with how many works it lists', async () => {
 		await renderPage();
 
 		expect(
-			screen.getByRole('heading', { level: 1, name: `${onoffLiteraryWorkTeasersMock.length} Obras` }),
+			screen.getByRole('heading', { level: 1, name: `${onoffLiteraryWorkCatalogEntriesMock.length} Obras` }),
 		).toBeInTheDocument();
 	});
 
 	it('should put the count in singular when the catalogue lists one work', async () => {
-		await renderPage(stubbing([canonicalTeaser]));
+		await renderPage(stubbing([firstEntry]));
 
 		expect(screen.getByRole('heading', { level: 1, name: '1 Obra' })).toBeInTheDocument();
+	});
+
+	// El sobre transporta el total justamente para esto: con paginación, las entradas listadas son una página.
+	it('should headline the catalogue with its total, not with the entries it lists', async () => {
+		await renderPage(new StubPagedLiteraryWorkApi([firstEntry, secondEntry], 5));
+
+		expect(screen.getByRole('heading', { level: 1, name: '5 Obras' })).toBeInTheDocument();
+		expect(within(screen.getByTestId('literary-works')).getAllByRole('row')).toHaveLength(2);
 	});
 
 	it('should send every work of the catalogue to its reading page', async () => {
 		await renderPage();
 
 		const hrefs = readingHrefs();
-		expect(hrefs).toHaveLength(onoffLiteraryWorkTeasersMock.length);
-		onoffLiteraryWorkTeasersMock.forEach(({ slug }) => {
+		expect(hrefs).toHaveLength(onoffLiteraryWorkCatalogEntriesMock.length);
+		onoffLiteraryWorkCatalogEntriesMock.forEach(({ slug }) => {
 			expect(hrefs).toContain(`/literary-work/${slug}`);
 		});
 	});
 
-	// La colación de la query pondría `Ámbar` detrás de `Zoológico`.
-	it('should order titles with accent folding, not by code point', async () => {
-		const desordenadas = [
-			withTitle('Zoológico', 'zoologico'),
-			withTitle('Ámbar', 'ambar'),
-			withTitle('Bruma', 'bruma'),
-		];
+	// El orden es el del catálogo y nadie más lo decide: el doble lo sirve al revés del orden por slug, así
+	// que una página que volviera a reordenar en el cliente no puede pasar.
+	it('should list the works in the order the catalogue serves them', async () => {
+		const reversed = [...onoffLiteraryWorkCatalogEntriesMock].reverse();
 
-		await renderPage(stubbing(desordenadas));
+		await renderPage(stubbing(reversed));
 
-		expect(readingHrefs()).toEqual(['/literary-work/ambar', '/literary-work/bruma', '/literary-work/zoologico']);
+		expect(readingHrefs()).toEqual(reversed.map(({ slug }) => `/literary-work/${slug}`));
 	});
 
 	it('should say the catalogue is empty instead of showing placeholders', async () => {
@@ -146,7 +168,7 @@ describe('LiteraryWorksPage', () => {
 		const hrefs = within(screen.getByTestId('literary-works'))
 			.getAllByRole('link')
 			.map((link) => link.getAttribute('href'));
-		onoffLiteraryWorkTeasersMock.forEach(({ authors }) => {
+		onoffLiteraryWorkCatalogEntriesMock.forEach(({ authors }) => {
 			authors.forEach(({ slug }) => {
 				expect(hrefs).toContain(`/author/${slug}`);
 			});
@@ -157,7 +179,7 @@ describe('LiteraryWorksPage', () => {
 		await renderPage();
 
 		const listing = within(screen.getByTestId('literary-works'));
-		onoffLiteraryWorkTeasersMock.forEach(({ totalReadingTime }) => {
+		onoffLiteraryWorkCatalogEntriesMock.forEach(({ totalReadingTime }) => {
 			expect(listing.getAllByText(`${totalReadingTime} min`).length).toBeGreaterThan(0);
 		});
 	});
@@ -176,7 +198,7 @@ describe('LiteraryWorksPage', () => {
 		const { fixture } = await renderPage();
 
 		const host = fixture.debugElement.injector.get(LITERARY_WORKS_HOST);
-		expect(host.literaryWorks().map(({ slug }) => `/literary-work/${slug}`)).toEqual(readingHrefs());
+		expect(host.entries().map(({ slug }) => `/literary-work/${slug}`)).toEqual(readingHrefs());
 	});
 
 	describe('código de respuesta', () => {
@@ -200,7 +222,7 @@ describe('LiteraryWorksPage', () => {
 		it('should leave the status untouched when the catalogue resolves', async () => {
 			const responseInit: { status?: number } = {};
 
-			await renderWithResponseInit(stubbing(onoffLiteraryWorkTeasersMock), responseInit);
+			await renderWithResponseInit(stubbing(onoffLiteraryWorkCatalogEntriesMock), responseInit);
 
 			expect(responseInit.status).toBeUndefined();
 		});

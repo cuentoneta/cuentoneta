@@ -329,7 +329,7 @@ export const SinExtracto: Story = {
 		docs: {
 			description: {
 				story:
-					'La vista de navegación de una obra no transporta extracto, así que la tarjeta lo omite aunque se lo pidan con <code>showExcerpt</code>. Es la única bifurcación del bloque de descripción: se cataloga para que la degradación sea algo que se mira, y no una ausencia que se descubre.',
+					'La vista de navegación de una obra no transporta extracto, así que la tarjeta lo omite aunque se lo pidan con <code>showExcerpt</code>. Es la única bifurcación del bloque de descripción: se documenta en Storybook para que la degradación sea algo que se mira, y no una ausencia que se descubre.',
 			},
 		},
 	},

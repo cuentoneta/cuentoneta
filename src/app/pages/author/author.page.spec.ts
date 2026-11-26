@@ -23,7 +23,8 @@ import { installResizeObserverStub, setMeasuredSize, triggerResize } from '@test
 import type { AuthorProfile, AuthorTeaser } from '@models/author.model';
 import type { AuthorApi } from '../../providers/author.provider';
 import type { LiteraryWorkApi } from '../../providers/literary-work.provider';
-import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
+import type { LiteraryWork, LiteraryWorkCatalogEntry, LiteraryWorkTeaser } from '@models/literary-work.model';
+import type { Catalog } from '@models/catalog.model';
 
 const [literaryWorkMock] = onoffLiteraryWorksMock;
 
@@ -40,7 +41,8 @@ function renderPage(author: AuthorProfile = authorMock, literaryWorkApi?: Litera
 			provideRouter([]),
 			provideAuthorApiMock(new StubAuthorApi(author)),
 			provideLiteraryWorkApiMock(
-				literaryWorkApi ?? new StubLiteraryWorkApi(literaryWorkMock, onoffLiteraryWorkTeasersMock),
+				literaryWorkApi ??
+					new StubLiteraryWorkApi({ literaryWork: literaryWorkMock, teasers: onoffLiteraryWorkTeasersMock }),
 			),
 		],
 	});
@@ -60,7 +62,7 @@ class StubFailingAuthorApi implements AuthorApi {
 	}
 }
 
-// El catálogo puede fallar con el autor resolviendo bien: es la combinación que un doble que devuelve
+// El listado de obras puede fallar con el autor resolviendo bien: es la combinación que un doble que devuelve
 // siempre no alcanza a montar.
 class StubFailingLiteraryWorkApi implements LiteraryWorkApi {
 	public getBySlug(): Observable<LiteraryWork> {
@@ -68,6 +70,10 @@ class StubFailingLiteraryWorkApi implements LiteraryWorkApi {
 	}
 
 	public getTeasers(): Observable<LiteraryWorkTeaser[]> {
+		return throwError(() => new HttpErrorResponse({ status: 500, statusText: 'error' }));
+	}
+
+	public getCatalog(): Observable<Catalog<LiteraryWorkCatalogEntry>> {
 		return throwError(() => new HttpErrorResponse({ status: 500, statusText: 'error' }));
 	}
 }
@@ -120,7 +126,10 @@ describe('AuthorPage', () => {
 	});
 
 	it('should name the count in singular when the author has one work', async () => {
-		await renderPage(authorMock, new StubLiteraryWorkApi(literaryWorkMock, worksByAuthor.slice(0, 1)));
+		await renderPage(
+			authorMock,
+			new StubLiteraryWorkApi({ literaryWork: literaryWorkMock, teasers: worksByAuthor.slice(0, 1) }),
+		);
 
 		expect(screen.getByRole('heading', { level: 2, name: '1 obra' })).toBeInTheDocument();
 	});
@@ -128,7 +137,7 @@ describe('AuthorPage', () => {
 	// Leer el valor de un recurso en error relanza la falla. Con el listado bloqueando el SSR, ese throw
 	// derriba el render del servidor de una página indexable; el autor resuelto tiene que bastar para
 	// servir la ficha.
-	it('should still serve the profile when the works catalogue fails', async () => {
+	it('should still serve the profile when the works listing fails', async () => {
 		await renderPage(authorMock, new StubFailingLiteraryWorkApi());
 
 		expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(authorMock.name);
@@ -207,7 +216,9 @@ describe('AuthorPage', () => {
 				providers: [
 					provideRouter([]),
 					provideAuthorApiMock(new StubFailingAuthorApi(status)),
-					provideLiteraryWorkApiMock(new StubLiteraryWorkApi(literaryWorkMock, onoffLiteraryWorkTeasersMock)),
+					provideLiteraryWorkApiMock(
+						new StubLiteraryWorkApi({ literaryWork: literaryWorkMock, teasers: onoffLiteraryWorkTeasersMock }),
+					),
 					{ provide: RESPONSE_INIT, useValue: responseInit },
 				],
 			});

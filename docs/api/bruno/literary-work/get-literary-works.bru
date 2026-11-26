@@ -5,22 +5,14 @@ meta {
 }
 
 get {
-  url: {{apiUrl}}{{baseApiPath}}/literary-work?author=francois-onoff
+  url: {{apiUrl}}{{baseApiPath}}/literary-work
   body: none
   auth: none
 }
 
-params:query {
-  author: francois-onoff
-}
-
 docs {
-  Obtener el catálogo de obras como teasers, filtrable por query params. Sin filtros devuelve
-  todas las obras; `author` acota a las de un autor. Cada criterio de filtrado nuevo es un query
-  param más, no una sub-ruta. Un `author` mal formado (sin formato de slug) responde 400.
-
-  Devuelve el listado completo, ordenado por título: quién elige las que se muestran es del
-  consumidor. Un filtro sin resultados (o un autor inexistente) responde 200 con un arreglo
-  vacío — la ausencia de obras es legítima, no un 404. Una obra que la curaduría dejó
-  inconsistente se descarta del listado y se registra en el servidor, sin afectar a las demás.
+  Obtener el catálogo de obras que consume `/literary-work`: `{ entries, total }`. Cada entrada
+  transporta `kind` (`literaryWork`), `slug`, `title`, `authors` (`slug`, `name`),
+  `totalReadingTime` y `tags` (`slug`, `title`); `total` cuenta las entradas publicadas. Está
+  ordenado por slug y nadie lo reordena después.
 }

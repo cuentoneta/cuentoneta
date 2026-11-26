@@ -1,9 +1,11 @@
-import { createLiteraryWork, isAnonymous } from './literary-work.model';
+import { createLiteraryWork, createLiteraryWorkCatalogEntry, isAnonymous } from './literary-work.model';
+import type { CatalogEntry } from './catalog.model';
 import { createLiteraryWorkSection, type LiteraryWorkSection } from './literary-work-section.model';
 import { createReadingTime } from './reading-time.model';
 import { createSanitizedHtml } from './sanitized-html.model';
 import { createIsoDateTime } from '@utils/date.utils';
 import { authorMock } from '@mocks/author.mock';
+import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 
 function buildSection(position: number, minutes: number): LiteraryWorkSection {
 	return createLiteraryWorkSection({
@@ -119,5 +121,69 @@ describe('isAnonymous', () => {
 
 	it('returns false for an empty array (not a valid aggregate state)', () => {
 		expect(isAnonymous([])).toBe(false);
+	});
+});
+
+describe('createLiteraryWorkCatalogEntry', () => {
+	const [canonWork] = onoffLiteraryWorksMock.filter((literaryWork) => literaryWork.tags.length > 0);
+
+	function buildCatalogEntryOptions(overrides: Partial<Parameters<typeof createLiteraryWorkCatalogEntry>[0]> = {}) {
+		return {
+			slug: canonWork.slug,
+			title: canonWork.title,
+			authors: canonWork.authors,
+			totalReadingTime: canonWork.totalReadingTime,
+			tags: canonWork.tags,
+			...overrides,
+		};
+	}
+
+	it('builds a frozen literary work entry with exactly the contract properties', () => {
+		const entry: CatalogEntry = createLiteraryWorkCatalogEntry(buildCatalogEntryOptions());
+
+		expect(Object.isFrozen(entry)).toBe(true);
+		expect(entry.kind).toBe('literaryWork');
+		expect(entry.slug).toBe(canonWork.slug);
+		expect(Object.keys(entry).sort()).toEqual(['authors', 'kind', 'slug', 'tags', 'title', 'totalReadingTime']);
+	});
+
+	it('keeps only the slug and name of each full author it receives', () => {
+		const entry = createLiteraryWorkCatalogEntry(buildCatalogEntryOptions());
+
+		expect(entry.authors).toEqual(canonWork.authors.map(({ slug, name }) => ({ slug, name })));
+		entry.authors.forEach((author) => expect(Object.keys(author).sort()).toEqual(['name', 'slug']));
+	});
+
+	it('keeps only the slug and title of each full tag it receives', () => {
+		const entry = createLiteraryWorkCatalogEntry(buildCatalogEntryOptions());
+
+		expect(entry.tags).toEqual(canonWork.tags.map(({ slug, title }) => ({ slug, title })));
+		entry.tags.forEach((tag) => expect(Object.keys(tag).sort()).toEqual(['slug', 'title']));
+	});
+
+	it.each(['', '   '])('throws on an empty title (%j) naming the slug', (title) => {
+		expect(() => createLiteraryWorkCatalogEntry(buildCatalogEntryOptions({ title }))).toThrow(
+			`LiteraryWorkCatalogEntry inválida: título vacío (slug "${canonWork.slug}")`,
+		);
+	});
+
+	it('throws when there are no authors, naming Anónimo', () => {
+		expect(() => createLiteraryWorkCatalogEntry(buildCatalogEntryOptions({ authors: [] }))).toThrow(
+			`LiteraryWorkCatalogEntry inválida: sin autores (slug "${canonWork.slug}") — la obra anónima referencia al author "Anónimo"`,
+		);
+	});
+
+	it('delegates slug format validation to the Slug value object', () => {
+		const slug = canonWork.slug.toUpperCase();
+
+		expect(() => createLiteraryWorkCatalogEntry(buildCatalogEntryOptions({ slug }))).toThrow(
+			`Slug inválido: "${slug}"`,
+		);
+	});
+
+	it('accepts a work without tags', () => {
+		const entry = createLiteraryWorkCatalogEntry(buildCatalogEntryOptions({ tags: [] }));
+
+		expect(entry.tags).toEqual([]);
 	});
 });

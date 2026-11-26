@@ -13,6 +13,33 @@ La lista de características futuras a implementar puede hallarse en la sección
 
 Los hitos futuros de desarrollo, en los cuales se detallan las funcionalidades a desarrollar y los cambios a implementar, pueden encontrarse en las secciones [milestones](https://github.com/cuentoneta/cuentoneta/milestones) y [projects](https://github.com/cuentoneta/cuentoneta/projects) del repositorio de Github del proyecto.
 
+## Versión 2.11.6 (2026-11-26)
+
+La versión 2.11.6 redefine el vocabulario de dominio del proyecto a partir de un ejercicio de diseño del catálogo y, sobre él, recorta el catálogo de obras a lo que su página usa: la respuesta del API y el estado que el servidor transfiere al navegador bajan en torno a un 80 %, y el HTML de `/literary-work` cerca de un 68 % en brotli.
+
+El primero es el **vocabulario de dominio**. Los contextos acotados pasan a ser cinco —Acervo, Catálogo, Selecciones, Lectura y Administración—, con un mapeo explícito de contexto a módulo y un glosario que define cada término sin darle dos significados a la misma palabra: el catálogo es el instrumento para localizar y acceder a lo publicado, cada entidad tiene en él una entrada, y el avance es la vista de las selecciones. Los homónimos fuera del dominio se renombran: la lista de tareas de `pnpm ops`, la documentación de Storybook y las referencias completas de `CLAUDE.md` (#2533).
+
+El segundo es el **catálogo de obras**. `GET /api/literary-work` sirve el catálogo como `{ entries, total }`, con una entrada de obra que transporta solo lo que justifican sus criterios —slug, título, autores, tiempo de lectura y etiquetas—, ordenado por slug en Sanity y sin reordenar en el cliente; cualquier query param responde 400. Los avances de la página de autor y de las sugerencias de lectura pasan a `GET /api/literary-work/teasers?author=`, y el Studio reserva `teasers` como slug. Cada endpoint registra con su propia consecuencia la obra mal formada que descarta (#2503).
+
+### Cambios completos
+
+Ver el changelog completo en [2.11.6](https://github.com/cuentoneta/cuentoneta/releases/tag/2.11.6)
+
+### Cambios
+
+#### Vocabulario de dominio
+
+- [#2533] - Redefine los contextos acotados y el lenguaje ubicuo en `DOMAIN_MODEL.md`, y renombra los homónimos de "catálogo" fuera del dominio.
+
+#### Catálogo de obras
+
+- [#2503] - Sirve los avances por autor en `GET /api/literary-work/teasers` (#2720), agrega la entrada de obra del catálogo y su lectura desde Sanity (#2721), y sirve el catálogo en `GET /api/literary-work` como `{ entries, total }`, consumido por `/literary-work` (#2722).
+
+#### Dependencias
+
+- [#2709] - Actualiza el grupo minor-and-patch (11 paquetes).
+- [#2708] - Actualiza el grupo minor-and-patch del Studio (4 paquetes).
+
 ## Versión 2.11.5 (2026-11-20)
 
 La versión 2.11.5 corrige defectos visuales de la lectura, vuelve a servir el catálogo de obras renderizado en el servidor, cierra dos huecos de seguridad y saca Nx del proyecto, que pasa a correr cada herramienta directo, sobre Angular 22.3 y pnpm 12.

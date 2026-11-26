@@ -4,7 +4,9 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { of, throwError, type Observable } from 'rxjs';
 
 import type { AuthorProfile, AuthorTeaser } from '@models/author.model';
-import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
+import type { LiteraryWork, LiteraryWorkCatalogEntry, LiteraryWorkTeaser } from '@models/literary-work.model';
+import { type Catalog, createCatalog } from '@models/catalog.model';
+import { onoffLiteraryWorkCatalogEntriesMock } from '@mocks/onoff-literary-work-catalog-entries.mock';
 import { createMarkdown } from '@models/markdown.model';
 import { markdownToSanitizedHtml } from '@utils/markdown-pipeline.utils';
 import { authorMock, authorTeaserMock } from '@mocks/author.mock';
@@ -66,8 +68,12 @@ class CorpusLiteraryWorkApi implements LiteraryWorkApi {
 		return of(literaryWork);
 	}
 
-	public getTeasers(filter: LiteraryWorkTeaserFilter = {}): Observable<LiteraryWorkTeaser[]> {
+	public getTeasers(filter: LiteraryWorkTeaserFilter): Observable<LiteraryWorkTeaser[]> {
 		return of(filter.author === authorWithoutWorks.slug ? [] : [...onoffLiteraryWorkTeasersMock]);
+	}
+
+	public getCatalog(): Observable<Catalog<LiteraryWorkCatalogEntry>> {
+		return of(createCatalog(onoffLiteraryWorkCatalogEntriesMock, onoffLiteraryWorkCatalogEntriesMock.length));
 	}
 }
 
@@ -96,7 +102,7 @@ const meta: Meta<AuthorPageArgs> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>La ficha de un autor, ${docsMention(authorPageDocs)}, montada sobre el corpus de Onoff. Como el resto de las entradas bajo <strong>Páginas</strong>, no cataloga un componente sino el ensamblado completo: las dos columnas, el listado de obras del autor y la columna de perfil con su acceso a la biografía entera.</p><p>El único control reproduce lo que la ruta le entrega: <code>slug</code>, qué autor se abre. Un slug que no existe cae en el estado de autor inexistente.</p><p>Se compone de ${docsRef(literaryWorkTeaserCardDocs)} (el listado), ${docsRef(authorInfoPanelDocs)} (la columna y el contenido del panel deslizable), ${docsMention(resourceDocs)} (los enlaces web) y ${docsRef(drawerDocs)}.</p><p>Dos cosas solo se ven acá, porque dependen de medidas reales: el acceso <strong>"Leer más"</strong> aparece únicamente si la biografía desborda su recorte de ocho líneas, y la columna de perfil acompaña el scroll del listado en lugar de irse con el flujo.</p><p>El encabezado fijo y el <code>&lt;main&gt;</code> que despeja su alto viven en el shell de la aplicación, que el catálogo no monta: por eso la página arranca pegada al borde superior del lienzo y no bajo una barra.</p></div>`,
+				component: `<div><p>La ficha de un autor, ${docsMention(authorPageDocs)}, montada sobre el corpus de Onoff. Como el resto de las entradas bajo <strong>Páginas</strong>, no documenta un componente sino el ensamblado completo: las dos columnas, el listado de obras del autor y la columna de perfil con su acceso a la biografía entera.</p><p>El único control reproduce lo que la ruta le entrega: <code>slug</code>, qué autor se abre. Un slug que no existe cae en el estado de autor inexistente.</p><p>Se compone de ${docsRef(literaryWorkTeaserCardDocs)} (el listado), ${docsRef(authorInfoPanelDocs)} (la columna y el contenido del panel deslizable), ${docsMention(resourceDocs)} (los enlaces web) y ${docsRef(drawerDocs)}.</p><p>Dos cosas solo se ven acá, porque dependen de medidas reales: el acceso <strong>"Leer más"</strong> aparece únicamente si la biografía desborda su recorte de ocho líneas, y la columna de perfil acompaña el scroll del listado en lugar de irse con el flujo.</p><p>El encabezado fijo y el <code>&lt;main&gt;</code> que despeja su alto viven en el shell de la aplicación, que Storybook no monta: por eso la página arranca pegada al borde superior del lienzo y no bajo una barra.</p></div>`,
 			},
 		},
 	},

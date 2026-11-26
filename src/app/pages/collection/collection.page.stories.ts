@@ -37,15 +37,15 @@ const collectionWithLongDescription: Collection = createCollection({
 	),
 });
 
-const catalogue: readonly Collection[] = [...onoffCollectionsMock, collectionWithLongDescription];
+const readableCollections: readonly Collection[] = [...onoffCollectionsMock, collectionWithLongDescription];
 
 // Resuelve por slug contra el corpus, en vez de devolver siempre la misma colección: así el control
 // mueve la página entera, y un slug que no existe cae en el estado de colección inexistente, que también
-// es parte de lo que hay que poder mirar. No es el doble del provider porque el catálogo de sugeridas
-// sale de los teasers del canon: la variante de descripción larga se puede leer pero no se sugiere.
+// es parte de lo que hay que poder mirar. No es el doble del provider porque las candidatas a sugerir
+// salen de los teasers del canon: la variante de descripción larga se puede leer pero no se sugiere.
 class CorpusCollectionApi implements CollectionApi {
 	public getBySlug(slug: string): Observable<Collection> {
-		const collection = catalogue.find((candidate) => candidate.slug === slug);
+		const collection = readableCollections.find((candidate) => candidate.slug === slug);
 		return collection
 			? of(collection)
 			: throwError(() => new HttpErrorResponse({ status: 404, statusText: 'Not Found' }));
@@ -76,7 +76,7 @@ const meta: Meta<CollectionPageArgs> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>La página de una colección, ${docsMention(collectionPageDocs)}, montada sobre el corpus de Onoff. Como el resto de las entradas bajo <strong>Páginas</strong>, no cataloga un componente sino el ensamblado completo: las dos columnas, el listado de obras y la información de la colección con su acceso a la descripción entera.</p><p>El único control reproduce lo que la ruta le entrega: <code>slug</code>, qué colección se abre. Un slug que no existe cae en el estado de colección inexistente.</p><p>Se compone de ${docsRef(literaryWorkTeaserCardDocs)} (el listado), ${docsRef(collectionInfoPanelDocs)} (la columna y el contenido del panel deslizable), ${docsRef(navigableCollectionTeaserDocs)} (las sugeridas) y ${docsRef(drawerDocs)}.</p><p>Dos cosas solo se ven acá, porque dependen de medidas reales: el acceso <strong>"Leer más"</strong> aparece únicamente si la descripción desborda su recorte de ocho líneas, y el recorte del extracto de cada obra cambia según la colección muestre o no a sus autores.</p><p>El encabezado fijo y el <code>&lt;main&gt;</code> que despeja su alto viven en el shell de la aplicación, que el catálogo no monta: por eso la página arranca pegada al borde superior del lienzo y no bajo una barra.</p></div>`,
+				component: `<div><p>La página de una colección, ${docsMention(collectionPageDocs)}, montada sobre el corpus de Onoff. Como el resto de las entradas bajo <strong>Páginas</strong>, no documenta un componente sino el ensamblado completo: las dos columnas, el listado de obras y la información de la colección con su acceso a la descripción entera.</p><p>El único control reproduce lo que la ruta le entrega: <code>slug</code>, qué colección se abre. Un slug que no existe cae en el estado de colección inexistente.</p><p>Se compone de ${docsRef(literaryWorkTeaserCardDocs)} (el listado), ${docsRef(collectionInfoPanelDocs)} (la columna y el contenido del panel deslizable), ${docsRef(navigableCollectionTeaserDocs)} (las sugeridas) y ${docsRef(drawerDocs)}.</p><p>Dos cosas solo se ven acá, porque dependen de medidas reales: el acceso <strong>"Leer más"</strong> aparece únicamente si la descripción desborda su recorte de ocho líneas, y el recorte del extracto de cada obra cambia según la colección muestre o no a sus autores.</p><p>El encabezado fijo y el <code>&lt;main&gt;</code> que despeja su alto viven en el shell de la aplicación, que Storybook no monta: por eso la página arranca pegada al borde superior del lienzo y no bajo una barra.</p></div>`,
 			},
 		},
 	},
@@ -84,7 +84,7 @@ const meta: Meta<CollectionPageArgs> = {
 		slug: {
 			name: 'Colección',
 			control: { type: 'select', labels: corpusSlugLabels },
-			options: catalogue.map(({ slug }) => slug),
+			options: readableCollections.map(({ slug }) => slug),
 			table: { type: { summary: 'string' } },
 		},
 	},

@@ -111,6 +111,18 @@ function literaryWorkTeaserTargets(queries: Record<string, string>): Target[] {
 	}));
 }
 
+// El listado entero en el orden de la query, como el de colecciones: así el gate de frescura afirma
+// también el orden.
+function literaryWorkCatalogEntriesTarget(queries: Record<string, string>): Target {
+	return {
+		file: join('src/mocks/onoff/literary-work', 'literary-work-catalog-entries.raw.mock.ts'),
+		exportName: 'onoffRawLiteraryWorkCatalogEntriesMock',
+		typeImport: 'LiteraryWorkCatalogEntriesQueryResult',
+		typeAnnotation: 'LiteraryWorkCatalogEntriesQueryResult',
+		query: queryNamed(queries, 'literaryWorkCatalogEntriesQuery'),
+	};
+}
+
 function targetsFor(queries: Record<string, string>, landingPageSlug: string): Target[] {
 	const bySlug = (
 		exports: Record<string, string>,
@@ -129,8 +141,8 @@ function targetsFor(queries: Record<string, string>, landingPageSlug: string): T
 		}));
 
 	// El orden es el de las dependencias: cada destino se escribe después de aquello de lo que deriva o a
-	// lo que referencia. El teaser sale del raw completo, la colección embebe teasers, el listado sale de
-	// la colección, y la landing y el contenido rotativo salen del teaser.
+	// lo que referencia. El teaser y las entradas del catálogo de obras salen del raw completo, la colección
+	// embebe teasers, el listado sale de la colección, y la landing y el contenido rotativo salen del teaser.
 	return [
 		...bySlug(
 			LITERARY_WORK_EXPORTS,
@@ -140,6 +152,7 @@ function targetsFor(queries: Record<string, string>, landingPageSlug: string): T
 			'literaryWorkBySlugQuery',
 		),
 		...literaryWorkTeaserTargets(queries),
+		literaryWorkCatalogEntriesTarget(queries),
 		...bySlug(
 			COLLECTION_EXPORTS,
 			'src/mocks/onoff/collection',
