@@ -98,7 +98,8 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 		});
 	}
 
-	// Reparte un lote de obras crudas entre las que la ACL pudo traducir y las que no.
+	// Reparte un lote entre las obras traducidas —en el orden en que llegaron— y las mal formadas, cada una
+	// con su slug.
 	private translateEach<R extends { readonly slug: string }, D>(
 		raws: readonly R[],
 		translate: (raw: R) => D,
