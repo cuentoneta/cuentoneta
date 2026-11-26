@@ -68,7 +68,7 @@ Un **Contexto Acotado** (Bounded Context) es un límite explícito dentro del cu
 
 **Superficies:** las páginas `/literary-work`, `/authors` y `/collection`, el sitemap, el JSON-LD de esas páginas y, a futuro, `/llms.txt` (#2717). **No** son catálogo la lista de obras de la página de autor (parte del destino del autor), la de la página de colección (contenido del destino de la colección), las sugerencias de lectura (selección generada) ni los bloques de la home (selecciones): consumen el Acervo directamente.
 
-**Modelos objetivo:** una entrada por entidad (`LiteraryWorkCatalogEntry`, `AuthorCatalogEntry`, `CollectionCatalogEntry`) y `Catalog<E>`. La entrada de obra y `Catalog<E>` están implementados (`createLiteraryWorkCatalogEntry`, `createCatalog`, `fetchCatalogEntries`): los sirve `GET /api/literary-work`, que consume `/literary-work`. `/authors` y `/collection` siguen consumiendo avances (`*Teaser`) hasta que existan sus entradas.
+**Modelos objetivo:** una entrada por entidad (`LiteraryWorkCatalogEntry`, `AuthorCatalogEntry`, `CollectionCatalogEntry`) y `Catalog<E>`. La entrada de obra y `Catalog<E>` están implementados (`createLiteraryWorkCatalogEntry`, `createCatalog`, `fetchCatalogEntries`): los sirve `GET /api/literary-work`, que consume `/literary-work`. `/authors` y `/collection` siguen consumiendo avances (`*Teaser`) hasta que existan sus entradas (#2515 y #2725).
 
 **Pertenencia:** ver `CatalogMembership` en el [glosario](#términos-clave) (objetivo, no vigente).
 
@@ -742,14 +742,14 @@ AuthorTeaser · CollectionTeaser
 LiteraryWorkNavigationTeaser → información mínima
 LiteraryWorkNavigationTeaserWithAuthors → con autores resumidos
 
-// Entrada de catálogo — la de obra implementada; las de autor y colección, pendientes: lo mínimo que justifican los criterios
+// Entrada de catálogo — la de obra implementada; las de autor y colección, pendientes (#2515, #2725): lo mínimo que justifican los criterios
 LiteraryWorkCatalogEntry · AuthorCatalogEntry · CollectionCatalogEntry
 
 // Catálogo — el sobre en el que el catálogo publica sus entradas
 Catalog<E> → { entries, total }
 ```
 
-> **Transitorio.** Hoy los endpoints del Catálogo `GET /api/collection` y `GET /api/author`, y las páginas `/authors` y `/collection`, todavía sirven y consumen avances, aunque el avance sea la vista de las selecciones y de las listas dentro de un destino. Deja de ser así cuando existan sus entradas de catálogo.
+> **Transitorio.** Hoy los endpoints del Catálogo `GET /api/collection` y `GET /api/author`, y las páginas `/authors` y `/collection`, todavía sirven y consumen avances, aunque el avance sea la vista de las selecciones y de las listas dentro de un destino. Deja de ser así cuando existan sus entradas de catálogo (#2515 para autores, #2725 para colecciones).
 
 **Beneficios:**
 
