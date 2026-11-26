@@ -78,7 +78,7 @@ export const literaryWorkTeaserListDtoSchema = z.array(literaryWorkTeaserDtoSche
 
 // Autores y etiquetas se validan en profundidad y no como opacos: sus dos campos son exactamente el
 // contrato de la entrada, no la forma de wire de otro módulo.
-export const literaryWorkCatalogEntryDtoSchema = z.object({
+const literaryWorkCatalogEntryDtoSchema = z.object({
 	kind: z.literal('literaryWork'),
 	slug: z.string(),
 	title: z.string(),
@@ -97,7 +97,6 @@ export type LiteraryWorkTeaserDto = z.infer<typeof literaryWorkTeaserDtoSchema>;
 export type LiteraryWorkSectionDto = z.infer<typeof literaryWorkSectionDtoSchema>;
 export type LiteraryWorkExcerptDto = z.infer<typeof literaryWorkExcerptDtoSchema>;
 export type LiteraryWorkDto = z.infer<typeof literaryWorkDtoSchema>;
-export type LiteraryWorkCatalogEntryDto = z.infer<typeof literaryWorkCatalogEntryDtoSchema>;
 export type LiteraryWorkCatalogDto = z.infer<typeof literaryWorkCatalogDtoSchema>;
 
 export function toLiteraryWorkCatalog(dto: LiteraryWorkCatalogDto): Catalog<LiteraryWorkCatalogEntry> {
