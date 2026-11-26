@@ -1,15 +1,25 @@
 import { clearAllMocks, type Mock, restoreAllMocks, spyOn } from '@test-utils';
 import type { LandingPageContent } from '@models/landing-page-content.model';
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
+import { onoffLiteraryWorkCatalogEntriesMock } from '@mocks/onoff-literary-work-catalog-entries.mock';
 import {
 	onoffLiteraryWorkNavigationTeasersWithAuthorsMock,
 	onoffLiteraryWorkTeasersMock,
 } from '@mocks/onoff-literary-work-teasers.mock';
 import * as literaryWorkService from './literary-work.service';
-import { getLiteraryWorkBySlug, getLiteraryWorkListing, getLiteraryWorkTeasers } from './literary-work.service';
+import {
+	getLiteraryWorkBySlug,
+	getLiteraryWorkCatalog,
+	getLiteraryWorkListing,
+	getLiteraryWorkTeasers,
+} from './literary-work.service';
 import { LiteraryWorkNotFoundError, MalformedLiteraryWorkError } from './literary-work.errors';
 import { InMemoryLiteraryWorkRepository } from './literary-work.repository.mock';
-import type { LiteraryWorkRepository, LiteraryWorkTeaserFetchResult } from './literary-work.repository';
+import type {
+	LiteraryWorkCatalogEntryFetchResult,
+	LiteraryWorkRepository,
+	LiteraryWorkTeaserFetchResult,
+} from './literary-work.repository';
 import { environment } from '../../_helpers/environment';
 import { fetchClarityData } from '../../_helpers/clarity-connector';
 import { ClarityRequestError, ClarityResponseError } from '../../_helpers/clarity-connector.errors';
@@ -34,23 +44,97 @@ describe('getLiteraryWorkBySlug', () => {
 	});
 });
 
-// Devuelve un listado canned con `malformed` poblado: el doble en memoria traduce de verdad y nunca
+// Devuelve resultados canned con `malformed` poblado: el doble en memoria traduce de verdad y nunca
 // produce esa rama, así que la política de descarte solo se puede ejercitar con un stub.
 class StubLiteraryWorkRepository implements LiteraryWorkRepository {
-	constructor(private readonly result: LiteraryWorkTeaserFetchResult) {}
+	constructor(
+		private readonly results: {
+			readonly teasers?: LiteraryWorkTeaserFetchResult;
+			readonly catalogEntries?: LiteraryWorkCatalogEntryFetchResult;
+		},
+	) {}
 
 	public async fetchBySlug(): Promise<never> {
 		throw new Error('No participa de estos casos.');
 	}
 
-	public async fetchCatalogEntries(): Promise<never> {
-		throw new Error('No participa de estos casos.');
+	public async fetchCatalogEntries(): Promise<LiteraryWorkCatalogEntryFetchResult> {
+		if (!this.results.catalogEntries) {
+			throw new Error('No participa de estos casos.');
+		}
+		return this.results.catalogEntries;
 	}
 
 	public async fetchTeasers(): Promise<LiteraryWorkTeaserFetchResult> {
-		return this.result;
+		if (!this.results.teasers) {
+			throw new Error('No participa de estos casos.');
+		}
+		return this.results.teasers;
 	}
 }
+
+describe('getLiteraryWorkCatalog', () => {
+	const [firstEntry] = onoffLiteraryWorkCatalogEntriesMock;
+	const repository = new InMemoryLiteraryWorkRepository({ catalogEntries: onoffLiteraryWorkCatalogEntriesMock });
+
+	afterEach(() => restoreAllMocks());
+
+	it('devuelve todas las entradas con el total de las que publica', async () => {
+		const catalog = await getLiteraryWorkCatalog(repository);
+
+		expect(catalog.entries).toHaveLength(onoffLiteraryWorkCatalogEntriesMock.length);
+		expect(catalog.total).toBe(catalog.entries.length);
+	});
+
+	// El orden lo decide la query y nadie más: el stub entrega las entradas al revés del orden por slug, así
+	// que un caso de uso que reordene no puede pasar.
+	it('no reordena las entradas que entrega el repository', async () => {
+		const reversed = [...onoffLiteraryWorkCatalogEntriesMock].reverse();
+		const stub = new StubLiteraryWorkRepository({ catalogEntries: { catalogEntries: reversed, malformed: [] } });
+
+		const catalog = await getLiteraryWorkCatalog(stub);
+
+		expect(catalog.entries).toEqual(reversed);
+	});
+
+	it('excluye la obra mal formada, la registra y no la cuenta en el total', async () => {
+		const warn = spyOn(console, 'warn').mockImplementation(() => undefined);
+		const malformed = new MalformedLiteraryWorkError('una-obra-rota', {
+			cause: new Error('Sin totalReadingTime persistido'),
+		});
+		const stub = new StubLiteraryWorkRepository({
+			catalogEntries: { catalogEntries: [firstEntry], malformed: [malformed] },
+		});
+
+		const catalog = await getLiteraryWorkCatalog(stub);
+
+		expect(catalog.entries).toEqual([firstEntry]);
+		expect(catalog.total).toBe(1);
+		expect(warn).toHaveBeenCalledWith(
+			'[LiteraryWork] Obra mal formada excluida del catálogo: "una-obra-rota"',
+			malformed.cause,
+		);
+	});
+
+	it('devuelve un catálogo vacío cuando todas las obras están mal formadas', async () => {
+		spyOn(console, 'warn').mockImplementation(() => undefined);
+		const stub = new StubLiteraryWorkRepository({
+			catalogEntries: {
+				catalogEntries: [],
+				malformed: [new MalformedLiteraryWorkError('una'), new MalformedLiteraryWorkError('otra')],
+			},
+		});
+
+		expect(await getLiteraryWorkCatalog(stub)).toEqual({ entries: [], total: 0 });
+	});
+
+	it('devuelve un sobre congelado', async () => {
+		const catalog = await getLiteraryWorkCatalog(repository);
+
+		expect(Object.isFrozen(catalog)).toBe(true);
+		expect(Object.isFrozen(catalog.entries)).toBe(true);
+	});
+});
 
 describe('getLiteraryWorkListing', () => {
 	const [firstTeaser] = onoffLiteraryWorkTeasersMock;
@@ -83,7 +167,7 @@ describe('getLiteraryWorkListing', () => {
 	it('devuelve las obras sanas y registra la descartada', async () => {
 		const warn = spyOn(console, 'warn').mockImplementation(() => undefined);
 		const malformed = new MalformedLiteraryWorkError('una-obra-rota', { cause: new Error('sin extracto') });
-		const stub = new StubLiteraryWorkRepository({ teasers: [firstTeaser], malformed: [malformed] });
+		const stub = new StubLiteraryWorkRepository({ teasers: { teasers: [firstTeaser], malformed: [malformed] } });
 
 		const literaryWorks = await getLiteraryWorkListing({ author: author.slug }, stub);
 
@@ -100,8 +184,10 @@ describe('getLiteraryWorkListing', () => {
 	it('devuelve un listado vacío cuando todas las obras están mal formadas', async () => {
 		spyOn(console, 'warn').mockImplementation(() => undefined);
 		const stub = new StubLiteraryWorkRepository({
-			teasers: [],
-			malformed: [new MalformedLiteraryWorkError('una'), new MalformedLiteraryWorkError('otra')],
+			teasers: {
+				teasers: [],
+				malformed: [new MalformedLiteraryWorkError('una'), new MalformedLiteraryWorkError('otra')],
+			},
 		});
 
 		expect(await getLiteraryWorkListing({ author: author.slug }, stub)).toEqual([]);
@@ -131,7 +217,7 @@ describe('getLiteraryWorkTeasers', () => {
 	it('devuelve las obras sanas y registra la descartada como descartada de los avances', async () => {
 		const warn = spyOn(console, 'warn').mockImplementation(() => undefined);
 		const malformed = new MalformedLiteraryWorkError('una-obra-rota', { cause: new Error('sin extracto') });
-		const stub = new StubLiteraryWorkRepository({ teasers: [firstTeaser], malformed: [malformed] });
+		const stub = new StubLiteraryWorkRepository({ teasers: { teasers: [firstTeaser], malformed: [malformed] } });
 
 		const literaryWorks = await getLiteraryWorkTeasers({ author: author.slug }, stub);
 
@@ -145,8 +231,10 @@ describe('getLiteraryWorkTeasers', () => {
 	it('devuelve un listado vacío cuando todas las obras están mal formadas', async () => {
 		spyOn(console, 'warn').mockImplementation(() => undefined);
 		const stub = new StubLiteraryWorkRepository({
-			teasers: [],
-			malformed: [new MalformedLiteraryWorkError('una'), new MalformedLiteraryWorkError('otra')],
+			teasers: {
+				teasers: [],
+				malformed: [new MalformedLiteraryWorkError('una'), new MalformedLiteraryWorkError('otra')],
+			},
 		});
 
 		expect(await getLiteraryWorkTeasers({ author: author.slug }, stub)).toEqual([]);
