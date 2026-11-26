@@ -1,4 +1,5 @@
-import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
+import { type Catalog, createCatalog } from '@models/catalog.model';
+import type { LiteraryWork, LiteraryWorkCatalogEntry, LiteraryWorkTeaser } from '@models/literary-work.model';
 import type { RotatingContent } from '@models/landing-page-content.model';
 import { LiteraryWorkNotFoundError, type MalformedLiteraryWorkError } from './literary-work.errors';
 import type { LiteraryWorkRepository, LiteraryWorkTeaserFilter } from './literary-work.repository';
@@ -25,16 +26,12 @@ export async function getLiteraryWorkBySlug(
 
 // Descartar es una política del consumidor y no de traducción, por eso se decide acá: una obra que
 // el CMS dejó inconsistente no debe llevarse puestas a las demás. El registro en el servidor es lo
-// único que distingue este caso del filtro que legítimamente no tiene resultados, y su texto lo pone
-// cada caso de uso, porque es quien nombra la consecuencia del descarte.
-async function fetchWellFormedTeasers(
-	filter: LiteraryWorkTeaserFilter,
-	repository: LiteraryWorkRepository,
-	reportDiscarded: (error: MalformedLiteraryWorkError) => void,
-): Promise<readonly LiteraryWorkTeaser[]> {
-	const { teasers, malformed } = await repository.fetchTeasers(filter);
-	malformed.forEach(reportDiscarded);
-	return teasers;
+// único que distingue este caso de una ausencia legítima —un filtro de avances sin resultados, un
+// catálogo vacío—, y la consecuencia la nombra cada caso de uso, porque es quien sabe qué se perdió.
+function reportDiscarded(malformed: readonly MalformedLiteraryWorkError[], consequence: string): void {
+	malformed.forEach((error) =>
+		console.warn(`[LiteraryWork] Obra mal formada ${consequence}: "${error.slug}"`, error.cause),
+	);
 }
 
 // Los avances para las selecciones y para las listas dentro de un destino.
@@ -42,20 +39,19 @@ export async function getLiteraryWorkTeasers(
 	filter: LiteraryWorkTeaserFilter,
 	repository: LiteraryWorkRepository = new SanityLiteraryWorkRepository(),
 ): Promise<readonly LiteraryWorkTeaser[]> {
-	return fetchWellFormedTeasers(filter, repository, (error) =>
-		console.warn(`[LiteraryWork] Obra mal formada descartada de los avances: "${error.slug}"`, error.cause),
-	);
+	const { teasers, malformed } = await repository.fetchTeasers(filter);
+	reportDiscarded(malformed, 'descartada de los avances');
+	return teasers;
 }
 
-// TODO(#2503): se borra cuando el recurso colección sirva el catálogo.
-// Los avances que sirve el recurso colección mientras no sirva el catálogo.
-export async function getLiteraryWorkListing(
-	filter: LiteraryWorkTeaserFilter,
+// El catálogo para la superficie `/literary-work`: excluye lo mal formado y entrega en el orden del
+// repository, sin reordenar.
+export async function getLiteraryWorkCatalog(
 	repository: LiteraryWorkRepository = new SanityLiteraryWorkRepository(),
-): Promise<readonly LiteraryWorkTeaser[]> {
-	return fetchWellFormedTeasers(filter, repository, (error) =>
-		console.warn(`[LiteraryWork] Obra descartada del listado de teasers: "${error.slug}"`, error.cause),
-	);
+): Promise<Catalog<LiteraryWorkCatalogEntry>> {
+	const { catalogEntries, malformed } = await repository.fetchCatalogEntries();
+	reportDiscarded(malformed, 'excluida del catálogo');
+	return createCatalog(catalogEntries, catalogEntries.length);
 }
 
 // Clarity reporta la URL visitada, no el slug: puede traer querystring de campaña, un ancla a una

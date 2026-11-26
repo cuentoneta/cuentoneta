@@ -1,7 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
+import type { LiteraryWork, LiteraryWorkCatalogEntry, LiteraryWorkTeaser } from '@models/literary-work.model';
+import { type Catalog, createCatalog } from '@models/catalog.model';
+import { onoffLiteraryWorkCatalogEntriesMock } from '@mocks/onoff-literary-work-catalog-entries.mock';
 import {
 	onoffLiteraryWorksMock,
 	onoffLiteraryWorksWithEditorialNote,
@@ -219,26 +221,82 @@ describe('HttpLiteraryWorkApi', () => {
 		});
 	});
 
-	describe('getListing', () => {
-		function requestListing(payload: unknown[]) {
-			const result = new Promise<LiteraryWorkTeaser[]>((resolve, reject) => {
-				api.getListing().subscribe({ next: resolve, error: reject });
+	describe('getCatalog', () => {
+		type WireEntry = Record<string, unknown>;
+		type WireCatalog = { entries: WireEntry[]; total: number };
+
+		const wireCatalog = JSON.parse(
+			JSON.stringify(createCatalog(onoffLiteraryWorkCatalogEntriesMock, onoffLiteraryWorkCatalogEntriesMock.length)),
+		) as WireCatalog;
+
+		function requestCatalog(payload: object) {
+			const result = new Promise<Catalog<LiteraryWorkCatalogEntry>>((resolve, reject) => {
+				api.getCatalog().subscribe({ next: resolve, error: reject });
 			});
 			http.expectOne(collectionUrl).flush(payload);
 			return result;
 		}
 
-		it('requests the collection resource with no query params', async () => {
-			const rehydrated = await requestListing(wireTeasers);
+		it('requests the collection resource with no query params and rehydrates a frozen catalogue', async () => {
+			const rehydrated = await requestCatalog(wireCatalog);
 
-			expect(rehydrated).toHaveLength(onoffLiteraryWorkTeasersMock.length);
+			expect(JSON.parse(JSON.stringify(rehydrated))).toEqual(wireCatalog);
+			expect(Object.isFrozen(rehydrated)).toBe(true);
+			expect(Object.isFrozen(rehydrated.entries)).toBe(true);
+			rehydrated.entries.forEach((entry) => expect(Object.isFrozen(entry)).toBe(true));
 		});
 
-		it('errors the stream when a teaser violates the DTO schema', async () => {
-			const [first, ...rest] = wireTeasers as Array<Record<string, unknown>>;
-			const malformed = [{ ...first, totalReadingTime: 'dos' }, ...rest];
+		it('keeps the order the server serves', async () => {
+			const reversed = [...wireCatalog.entries].reverse();
 
-			await expect(requestListing(malformed)).rejects.toThrow();
+			const rehydrated = await requestCatalog({ ...wireCatalog, entries: reversed });
+
+			expect(rehydrated.entries.map(({ slug }) => slug)).toEqual(reversed.map(({ slug }) => slug));
+		});
+
+		// Un campo de más en el wire no llega al dominio: la factory proyecta la entrada a su contrato.
+		it('projects every entry to its contract, dropping fields the wire carries in excess', async () => {
+			const [first, ...rest] = wireCatalog.entries;
+			const [author] = first['authors'] as WireEntry[];
+			const bloated = {
+				...first,
+				coverImage: 'https://cdn.sanity.io/portada.jpg',
+				excerpt: { bodyHtml: '<p>Extracto.</p>' },
+				authors: [{ ...author, biography: '<p>Biografía.</p>' }],
+			};
+
+			const rehydrated = await requestCatalog({ ...wireCatalog, entries: [bloated, ...rest] });
+
+			expect(Object.keys(rehydrated.entries[0]).sort()).toEqual([
+				'authors',
+				'kind',
+				'slug',
+				'tags',
+				'title',
+				'totalReadingTime',
+			]);
+			expect(Object.keys(rehydrated.entries[0].authors[0]).sort()).toEqual(['name', 'slug']);
+		});
+
+		it.each([
+			['a reading time that is not a number', (entry: WireEntry) => ({ ...entry, totalReadingTime: 'dos' })],
+			['a kind other than literaryWork', (entry: WireEntry) => ({ ...entry, kind: 'author' })],
+			['no authors', (entry: WireEntry) => ({ ...entry, authors: [] })],
+			['a blank title', (entry: WireEntry) => ({ ...entry, title: '  ' })],
+		])('errors the stream when an entry carries %s', async (_label, corrupt) => {
+			const [first, ...rest] = wireCatalog.entries;
+
+			await expect(requestCatalog({ ...wireCatalog, entries: [corrupt(first), ...rest] })).rejects.toThrow();
+		});
+
+		it('errors the stream when the total is smaller than the entries it lists', async () => {
+			await expect(requestCatalog({ ...wireCatalog, total: wireCatalog.entries.length - 1 })).rejects.toThrow(
+				/Catalog inválido/,
+			);
+		});
+
+		it('resolves the empty catalogue as empty', async () => {
+			expect(await requestCatalog({ entries: [], total: 0 })).toEqual({ entries: [], total: 0 });
 		});
 	});
 });
@@ -257,7 +315,7 @@ describe('LiteraryWorkApi', () => {
 			providers: [
 				provideHttpClient(),
 				provideHttpClientTesting(),
-				provideLiteraryWorkApiMock(new StubLiteraryWorkApi(onoffLiteraryWorksMock[0])),
+				provideLiteraryWorkApiMock(new StubLiteraryWorkApi({ literaryWork: onoffLiteraryWorksMock[0] })),
 			],
 		});
 

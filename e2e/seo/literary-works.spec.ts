@@ -2,13 +2,14 @@
  * Tests e2e de SEO para el catálogo de obras (`/literary-work`).
  *
  * La tanda completa corre sin `fixme`: la página no difiere nada, así que el HTML servido trae la
- * tabla entera con el enlace a la lectura de cada obra.
+ * tabla entera con el enlace a la lectura de cada obra. Además se afirma que el estado transferido del
+ * SSR transporta solo el sobre del catálogo y las claves de su entrada.
  */
 import { expect } from '@playwright/test';
 
 import { test } from '../_utils/test';
 
-import { parseJsonLdBlocks, getMetaContent, getTitleText, getCanonicalHref } from '../_utils/seo';
+import { parseJsonLdBlocks, getMetaContent, getTitleText, getCanonicalHref, getTransferState } from '../_utils/seo';
 import { assertValidJsonLd } from '@testing/json-ld-validation';
 import { collectIndexableHtmlViolations } from '../_utils/seo-invariants';
 import { SCHEMA_IDS, SITEWIDE_SCHEMA_IDS } from '../_utils/seo-fixtures';
@@ -87,5 +88,24 @@ test.describe('literary-work — HTML server-rendered del catálogo', () => {
 	// que afirmar `ssr` es afirmar que la página se renderiza por request.
 	test('E: se renderiza por request, no desde un artefacto del build', () => {
 		expect(html).toContain('ng-server-context="ssr"');
+	});
+
+	// Este bloque es una copia de la respuesta del catálogo: si la respuesta volviera a transportar el
+	// extracto, la portada o el autor completo, el HTML crecería con ella.
+	test('F: el estado transferido transporta solo el catálogo', () => {
+		const catalog = Object.values(getTransferState(html))
+			.map((response) => (response as { b?: unknown } | null)?.b)
+			.find((body): body is Record<string, unknown> => typeof body === 'object' && body !== null && 'entries' in body);
+		expect(catalog, 'el estado transferido no incluye la respuesta del catálogo').toBeDefined();
+
+		const entries = (catalog?.['entries'] ?? []) as Record<string, unknown>[];
+		expect(Object.keys(catalog ?? {}).sort()).toEqual(['entries', 'total']);
+		expect(catalog?.['total']).toBe(entries.length);
+		expect(entries.length, 'el catálogo transferido no tiene entradas').toBeGreaterThan(0);
+		entries.forEach((entry) => {
+			expect(Object.keys(entry).sort()).toEqual(['authors', 'kind', 'slug', 'tags', 'title', 'totalReadingTime']);
+			(entry['authors'] as object[]).forEach((author) => expect(Object.keys(author).sort()).toEqual(['name', 'slug']));
+			(entry['tags'] as object[]).forEach((tag) => expect(Object.keys(tag).sort()).toEqual(['slug', 'title']));
+		});
 	});
 });

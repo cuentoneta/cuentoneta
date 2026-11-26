@@ -15,6 +15,13 @@ export function parseJsonLdBlocks(html: string): Map<string, Record<string, unkn
 	return blocks;
 }
 
+// El estado que incrusta la transfer cache de `HttpClient`: el `<script>` lleva el id `<APP_ID>-state`, y
+// cada respuesta que pidió el SSR viaja con el cuerpo bajo `b`. Sin el bloque, un objeto vacío.
+export function getTransferState(html: string): Record<string, unknown> {
+	const script = parseHtml(html).querySelector('script#serverApp-state');
+	return script ? (JSON.parse(script.rawText) as Record<string, unknown>) : {};
+}
+
 export function getMetaContent(html: string, nameOrProperty: string): string | null {
 	const key = nameOrProperty.replace(/"/g, '\\"');
 	const root = parseHtml(html);

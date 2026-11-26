@@ -15,7 +15,7 @@ export class LiteraryWorksStructuredData extends AbstractStructuredData {
 	private readonly breadcrumbSchemaId = 'breadcrumb-literary-work-catalog';
 
 	protected applyStructuredData(): void {
-		const literaryWorks = this.host.literaryWorks();
+		const entries = this.host.entries();
 		untracked(() => {
 			// Siempre: "Inicio → Obras" es verdad haya o no elementos en el catálogo.
 			this.schemaOrg.setPageScopedJsonLd(
@@ -23,12 +23,12 @@ export class LiteraryWorksStructuredData extends AbstractStructuredData {
 				buildLiteraryWorkCatalogBreadcrumb(environment.website),
 			);
 			// Un `ItemList` vacío afirma que el sitio no tiene obras; no emitir nada no afirma nada.
-			if (literaryWorks.length === 0) {
+			if (entries.length === 0) {
 				return;
 			}
 			this.schemaOrg.setPageScopedJsonLd(
 				this.pageSchemaId,
-				buildLiteraryWorkCatalogSchema(literaryWorks, environment.website),
+				buildLiteraryWorkCatalogSchema(entries, environment.website),
 			);
 		});
 	}

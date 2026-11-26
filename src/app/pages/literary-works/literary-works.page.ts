@@ -19,7 +19,7 @@ import { Skeleton } from '@components/skeleton/skeleton';
 				<p class="font-inter text-base text-neutral-700" role="alert" data-testid="catalog-error">
 					No pudimos cargar las obras. Probá de nuevo en un rato.
 				</p>
-			} @else if (loading() || literaryWorks().length > 0) {
+			} @else if (loading() || entries().length > 0) {
 				<div class="overflow-x-auto rounded-lg border border-neutral-200">
 					<table class="w-full border-collapse">
 						<thead class="bg-neutral-50">
@@ -43,18 +43,18 @@ import { Skeleton } from '@components/skeleton/skeleton';
 							</tbody>
 						} @else {
 							<tbody class="divide-y divide-neutral-200" data-testid="literary-works">
-								@for (literaryWork of literaryWorks(); track literaryWork.slug) {
+								@for (entry of entries(); track entry.slug) {
 									<tr class="transition-colors hover:bg-neutral-50">
 										<td class="px-6 py-4">
 											<a
-												[routerLink]="['/', appRoutes.LiteraryWork, literaryWork.slug]"
+												[routerLink]="['/', appRoutes.LiteraryWork, entry.slug]"
 												class="text-blue-600 hover:text-blue-800 hover:underline"
 											>
-												{{ literaryWork.title }}
+												{{ entry.title }}
 											</a>
 										</td>
 										<td class="px-6 py-4 text-neutral-700">
-											@for (author of literaryWork.authors; track author.slug) {
+											@for (author of entry.authors; track author.slug) {
 												<a
 													[routerLink]="['/', appRoutes.Author, author.slug]"
 													class="text-blue-600 hover:text-blue-800 hover:underline"
@@ -66,7 +66,7 @@ import { Skeleton } from '@components/skeleton/skeleton';
 												}
 											}
 										</td>
-										<td class="px-6 py-4 text-neutral-700">{{ literaryWork.totalReadingTime }} min</td>
+										<td class="px-6 py-4 text-neutral-700">{{ entry.totalReadingTime }} min</td>
 									</tr>
 								}
 							</tbody>
@@ -91,18 +91,15 @@ export default class LiteraryWorksPage implements LiteraryWorksHost {
 	private readonly responseInit = inject(RESPONSE_INIT, { optional: true });
 
 	private readonly catalogResource = rxResource({
-		stream: () => this.literaryWorkApi.getListing(),
-		defaultValue: [],
+		stream: () => this.literaryWorkApi.getCatalog(),
+		defaultValue: undefined,
 	});
 
-	// El `order(title asc)` de la query compara por punto de código: manda al final todo título con
-	// acento o eñe inicial, y Sanity no expone colación con plegado.
-	private readonly collator = new Intl.Collator('es');
+	private readonly catalog = computed(() =>
+		this.catalogResource.hasValue() ? this.catalogResource.value() : undefined,
+	);
 
-	public readonly literaryWorks = computed(() => {
-		const catalog = this.catalogResource.hasValue() ? this.catalogResource.value() : [];
-		return [...catalog].sort((first, second) => this.collator.compare(first.title, second.title));
-	});
+	public readonly entries = computed(() => this.catalog()?.entries ?? []);
 
 	private readonly failed = computed(() => this.catalogResource.status() === 'error');
 
@@ -114,7 +111,7 @@ export default class LiteraryWorksPage implements LiteraryWorksHost {
 		if (this.loading() || this.failed()) {
 			return 'Obras';
 		}
-		const total = this.literaryWorks().length;
+		const total = this.catalog()?.total ?? 0;
 		return `${total} ${total === 1 ? 'Obra' : 'Obras'}`;
 	});
 

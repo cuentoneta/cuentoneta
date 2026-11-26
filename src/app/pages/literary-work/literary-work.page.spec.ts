@@ -9,7 +9,14 @@ import { restoreAllMocks, spyOn } from '@test-utils';
 import { of, Subject, throwError, type Observable } from 'rxjs';
 
 // Models
-import { createLiteraryWork, type LiteraryWork, type LiteraryWorkTeaser } from '@models/literary-work.model';
+import {
+	createLiteraryWork,
+	type LiteraryWork,
+	type LiteraryWorkCatalogEntry,
+	type LiteraryWorkTeaser,
+} from '@models/literary-work.model';
+import { type Catalog, createCatalog } from '@models/catalog.model';
+import { onoffLiteraryWorkCatalogEntriesMock } from '@mocks/onoff-literary-work-catalog-entries.mock';
 import { createLiteraryWorkSection } from '@models/literary-work-section.model';
 import { createMarkdown } from '@models/markdown.model';
 import { createReadingTime } from '@models/reading-time.model';
@@ -46,7 +53,7 @@ class StubFailingLiteraryWorkApi implements LiteraryWorkApi {
 		return throwError(() => new HttpErrorResponse({ status: this.status, statusText: 'error' }));
 	}
 
-	public getListing(): Observable<LiteraryWorkTeaser[]> {
+	public getCatalog(): Observable<Catalog<LiteraryWorkCatalogEntry>> {
 		return throwError(() => new HttpErrorResponse({ status: this.status, statusText: 'error' }));
 	}
 }
@@ -66,8 +73,8 @@ class ControllableLiteraryWorkApi implements LiteraryWorkApi {
 		return of([...onoffLiteraryWorkTeasersMock]);
 	}
 
-	public getListing(): Observable<LiteraryWorkTeaser[]> {
-		return of([...onoffLiteraryWorkTeasersMock]);
+	public getCatalog(): Observable<Catalog<LiteraryWorkCatalogEntry>> {
+		return of(createCatalog(onoffLiteraryWorkCatalogEntriesMock, onoffLiteraryWorkCatalogEntriesMock.length));
 	}
 
 	public emit(literaryWork: LiteraryWork): void {
@@ -154,7 +161,9 @@ describe('LiteraryWorkPage', () => {
 	) => {
 		return await render(LiteraryWorkPage, {
 			providers: [
-				provideLiteraryWorkApiMock(options.api ?? new StubLiteraryWorkApi(literaryWork, onoffLiteraryWorkTeasersMock)),
+				provideLiteraryWorkApiMock(
+					options.api ?? new StubLiteraryWorkApi({ literaryWork, teasers: onoffLiteraryWorkTeasersMock }),
+				),
 				provideCollectionApiMock(new InMemoryCollectionApi(onoffCollectionsMock)),
 				provideRouter([]),
 				...(options.responseInit ? [{ provide: RESPONSE_INIT, useValue: options.responseInit }] : []),
