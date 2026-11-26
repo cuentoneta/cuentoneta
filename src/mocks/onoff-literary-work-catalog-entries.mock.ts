@@ -24,8 +24,8 @@ function bySlug(a: LiteraryWorkCatalogEntry, b: LiteraryWorkCatalogEntry): numbe
 	return a.slug < b.slug ? -1 : 1;
 }
 
-// Las entradas del catálogo de obras del canon de Onoff, una por obra, en el orden en que el catálogo las
-// publica.
+// Las entradas del catálogo de obras del canon de Onoff, una por obra, en el orden en que las entrega la
+// query.
 export const onoffLiteraryWorkCatalogEntriesMock: LiteraryWorkCatalogEntry[] = onoffLiteraryWorksMock
 	.map(toCatalogEntry)
 	.sort(bySlug);
