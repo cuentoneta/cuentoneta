@@ -16,6 +16,7 @@ export interface CatalogEntryBase<K extends CatalogEntryKind> {
 	readonly slug: Slug;
 }
 
+// TODO(#2515, #2725): la unión suma `AuthorCatalogEntry` y `CollectionCatalogEntry`.
 export type CatalogEntry = LiteraryWorkCatalogEntry;
 
 export interface Catalog<E extends CatalogEntry> {
