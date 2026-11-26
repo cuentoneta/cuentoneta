@@ -26,8 +26,8 @@ export async function getLiteraryWorkBySlug(
 
 // Descartar es una política del consumidor y no de traducción, por eso se decide acá: una obra que
 // el CMS dejó inconsistente no debe llevarse puestas a las demás. El registro en el servidor es lo
-// único que distingue este caso del filtro que legítimamente no tiene resultados, y la consecuencia la
-// nombra cada caso de uso, porque es quien sabe qué se perdió.
+// único que distingue este caso de una ausencia legítima —un filtro de avances sin resultados, un
+// catálogo vacío—, y la consecuencia la nombra cada caso de uso, porque es quien sabe qué se perdió.
 function reportDiscarded(malformed: readonly MalformedLiteraryWorkError[], consequence: string): void {
 	malformed.forEach((error) =>
 		console.warn(`[LiteraryWork] Obra mal formada ${consequence}: "${error.slug}"`, error.cause),
