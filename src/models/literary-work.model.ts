@@ -6,6 +6,7 @@ import type { Resource } from './resource.model';
 import type { SanitizedHtml } from './sanitized-html.model';
 import type { Tag } from './tag.model';
 import type { IsoDateTime } from '@utils/date.utils';
+import type { CatalogEntryBase } from './catalog.model';
 import { createSlug, type Slug } from './slug.model';
 import { sumReadingTimes, type ReadingTime } from './reading-time.model';
 
@@ -93,6 +94,50 @@ export function createLiteraryWorkNavigationTeaser(
 		);
 	}
 	return Object.freeze({ ...options, slug: createSlug(options.slug) });
+}
+
+export interface LiteraryWorkCatalogEntry extends CatalogEntryBase<'literaryWork'> {
+	readonly title: string;
+	readonly authors: readonly Pick<Author, 'slug' | 'name'>[];
+	readonly totalReadingTime: ReadingTime;
+	readonly tags: readonly Pick<Tag, 'slug' | 'title'>[];
+}
+
+interface CreateLiteraryWorkCatalogEntryOptions {
+	slug: string;
+	title: string;
+	authors: readonly Pick<Author, 'slug' | 'name'>[];
+	totalReadingTime: ReadingTime;
+	tags: readonly Pick<Tag, 'slug' | 'title'>[];
+}
+
+/**
+ * Construye la entrada de obra del catálogo con las mismas invariantes que la vista de navegación:
+ * slug válido, título no vacío y al menos un autor.
+ *
+ * Proyecta autores y etiquetas campo por campo en lugar de esparcirlos: el tipado estructural deja
+ * pasar un `Author` o un `Tag` completo, y sin la proyección la entrada transportaría biografías,
+ * recursos y descripciones que su contrato excluye.
+ */
+export function createLiteraryWorkCatalogEntry(
+	options: CreateLiteraryWorkCatalogEntryOptions,
+): LiteraryWorkCatalogEntry {
+	if (options.title.trim() === '') {
+		throw new Error(`LiteraryWorkCatalogEntry inválida: título vacío (slug "${options.slug}")`);
+	}
+	if (options.authors.length === 0) {
+		throw new Error(
+			`LiteraryWorkCatalogEntry inválida: sin autores (slug "${options.slug}") — la obra anónima referencia al author "Anónimo"`,
+		);
+	}
+	return Object.freeze({
+		kind: 'literaryWork',
+		slug: createSlug(options.slug),
+		title: options.title,
+		authors: options.authors.map(({ slug, name }) => ({ slug, name })),
+		totalReadingTime: options.totalReadingTime,
+		tags: options.tags.map(({ slug, title }) => ({ slug, title })),
+	});
 }
 
 // "Anónimo" es un author real del Acervo: la obra anónima lo referencia explícitamente
