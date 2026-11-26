@@ -52,12 +52,16 @@ describe('fixtures generadas del corpus', () => {
 	// Cada derivación que el generador declara tiene que haberse aplicado. La coincidencia es por valor,
 	// así que una proyección que se aparta no rompe nada: deja de coincidir y el objeto vuelve a escribirse
 	// entero. Estos casos son la única señal de que eso pasó.
+	// El sufijo separa las fixtures que comparten directorio pero derivan con funciones distintas.
 	it.each([
-		['literary-work', 'literaryWorkTeaserFrom'],
-		['collection', 'collectionTeaserFrom'],
-		['landing-page', 'landingLiteraryWorkFrom'],
-	])('derives every generated fixture of %s with %s', async (directory, derivation) => {
-		const fixtures = (await generatedFixturesIn(directory)).filter(({ source }) => source.includes('derive-raw'));
+		['literary-work', '.literary-work-teaser.raw.mock.ts', 'literaryWorkTeaserFrom'],
+		['literary-work', 'literary-work-catalog-entries.raw.mock.ts', 'literaryWorkCatalogEntryFrom'],
+		['collection', '.raw.mock.ts', 'collectionTeaserFrom'],
+		['landing-page', '.raw.mock.ts', 'landingLiteraryWorkFrom'],
+	])('derives every generated %s fixture ending in %s with %s', async (directory, suffix, derivation) => {
+		const fixtures = (await generatedFixturesIn(directory)).filter(
+			({ file, source }) => file.endsWith(suffix) && source.includes('derive-raw'),
+		);
 
 		expect(fixtures).not.toHaveLength(0);
 		fixtures.forEach(({ file, source }) => expect(source, file).toContain(`${derivation}(`));

@@ -22,11 +22,13 @@ import type {
 	CollectionsQueryResult,
 	LandingPageContentQueryResult,
 	LiteraryWorkBySlugQueryResult,
+	LiteraryWorkCatalogEntriesQueryResult,
 	LiteraryWorkTeasersResult,
 } from '@sanity-types';
 
 type RawLiteraryWork = NonNullable<LiteraryWorkBySlugQueryResult>;
 type RawLiteraryWorkTeaser = LiteraryWorkTeasersResult[number];
+type RawLiteraryWorkCatalogEntry = LiteraryWorkCatalogEntriesQueryResult[number];
 type RawLandingLiteraryWork = NonNullable<LandingPageContentQueryResult>['latestLiteraryWorks'][number];
 type RawCollection = NonNullable<CollectionBySlugQueryResult>;
 type RawCollectionTeaser = CollectionsQueryResult[number];
@@ -91,5 +93,20 @@ export function collectionTeaserFrom(
 		config: collection.config,
 		tags: collection.tags,
 		mediaSources: collection.mediaSources,
+	};
+}
+
+/**
+ * La entrada de catálogo de una obra que ya trae su raw completo. La query no calcula ningún campo de la
+ * entrada, así que la derivación la cubre entera. Las claves de los objetos anidados siguen el orden de
+ * la proyección: el generador compara por valor serializado, y otro orden dejaría de coincidir.
+ */
+export function literaryWorkCatalogEntryFrom(work: RawLiteraryWork): RawLiteraryWorkCatalogEntry {
+	return {
+		slug: work.slug,
+		title: work.title,
+		authors: work.authors.map((author) => ({ slug: author.slug, name: author.name })),
+		totalReadingTime: work.totalReadingTime,
+		tags: work.tags.map((tag) => ({ slug: tag.slug, title: tag.title })),
 	};
 }

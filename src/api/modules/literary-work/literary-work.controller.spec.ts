@@ -10,7 +10,10 @@ import { InMemoryLiteraryWorkRepository } from './literary-work.repository.mock'
 
 describe('literaryWorkController', () => {
 	const controller = createLiteraryWorkController(
-		new InMemoryLiteraryWorkRepository(onoffLiteraryWorksMock, onoffLiteraryWorkTeasersMock),
+		new InMemoryLiteraryWorkRepository({
+			literaryWorks: onoffLiteraryWorksMock,
+			teasers: onoffLiteraryWorkTeasersMock,
+		}),
 	);
 	const knownSlug = onoffLiteraryWorksMock[0].slug;
 	const [knownAuthor] = onoffLiteraryWorkTeasersMock[0].authors;

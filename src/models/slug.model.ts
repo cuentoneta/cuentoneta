@@ -16,3 +16,15 @@ export function createSlug(value: string): Slug {
 	}
 	return value as Slug;
 }
+
+/**
+ * Comparador para `sort` por punto de código, no con `localeCompare`: es el orden de bytes en que GROQ
+ * ordena `slug.current`, así que quien necesite reproducir el orden de una query lo obtiene igual. Como
+ * el slug no admite tildes ni mayúsculas, coincide con el alfabético.
+ */
+export function compareSlugs(a: Slug, b: Slug): number {
+	if (a === b) {
+		return 0;
+	}
+	return a < b ? -1 : 1;
+}

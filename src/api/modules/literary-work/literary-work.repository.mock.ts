@@ -1,17 +1,27 @@
-import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
+import type { LiteraryWork, LiteraryWorkCatalogEntry, LiteraryWorkTeaser } from '@models/literary-work.model';
+import { compareSlugs } from '@models/slug.model';
 import type {
+	LiteraryWorkCatalogEntryFetchResult,
 	LiteraryWorkRepository,
 	LiteraryWorkTeaserFilter,
 	LiteraryWorkTeaserFetchResult,
 } from './literary-work.repository';
 
+interface InMemoryLiteraryWorkRepositoryOptions {
+	readonly literaryWorks?: ReadonlyArray<LiteraryWork>;
+	readonly teasers?: ReadonlyArray<LiteraryWorkTeaser>;
+	readonly catalogEntries?: ReadonlyArray<LiteraryWorkCatalogEntry>;
+}
+
 export class InMemoryLiteraryWorkRepository implements LiteraryWorkRepository {
 	private readonly literaryWorks: ReadonlyArray<LiteraryWork>;
 	private readonly teasers: ReadonlyArray<LiteraryWorkTeaser>;
+	private readonly catalogEntries: ReadonlyArray<LiteraryWorkCatalogEntry>;
 
-	constructor(literaryWorks: ReadonlyArray<LiteraryWork> = [], teasers: ReadonlyArray<LiteraryWorkTeaser> = []) {
+	constructor({ literaryWorks = [], teasers = [], catalogEntries = [] }: InMemoryLiteraryWorkRepositoryOptions = {}) {
 		this.literaryWorks = literaryWorks;
 		this.teasers = teasers;
+		this.catalogEntries = catalogEntries;
 	}
 
 	public async fetchBySlug(slug: string): Promise<LiteraryWork | null> {
@@ -30,5 +40,13 @@ export class InMemoryLiteraryWorkRepository implements LiteraryWorkRepository {
 		const slugs = filter.slugs;
 		const teasers = slugs ? byAuthor.filter(({ slug }) => slugs.includes(slug)) : byAuthor;
 		return { teasers, malformed: [] };
+	}
+
+	// A diferencia de los avances, acá el doble sí ordena: el puerto promete el orden por slug, así que
+	// entregar en orden de almacenamiento dejaría a un consumidor probando contra un orden que producción no
+	// tiene.
+	public async fetchCatalogEntries(): Promise<LiteraryWorkCatalogEntryFetchResult> {
+		const catalogEntries = [...this.catalogEntries].sort((a, b) => compareSlugs(a.slug, b.slug));
+		return { catalogEntries, malformed: [] };
 	}
 }

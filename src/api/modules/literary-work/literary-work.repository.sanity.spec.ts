@@ -12,6 +12,7 @@ import {
 	unmaterializedRawLiteraryWork,
 } from '@mocks/onoff-raw-literary-works.mock';
 import {
+	onoffRawLiteraryWorkCatalogEntriesMock,
 	onoffRawLiteraryWorksWithoutEditorialNote,
 	onoffRawLiteraryWorkTeasersMock,
 } from '@mocks/onoff-raw-literary-works.mock';
@@ -24,6 +25,7 @@ import { createReadingTime, sumReadingTimes } from '@models/reading-time.model';
 import type { ImageUrlResolver } from '../../_utils/functions';
 import { MalformedLiteraryWorkError } from './literary-work.errors';
 import { SanityLiteraryWorkRepository } from './literary-work.repository.sanity';
+import { literaryWorkCatalogEntriesQuery } from '../../_queries/literary-work.query';
 
 // El repository solo hace `fetch` (sin escritura), así que el spy del client implementa solo eso; se
 // inyecta por el seam del constructor. Cada test arma su propio repository con el crudo que devuelve.
@@ -309,6 +311,7 @@ describe('SanityLiteraryWorkRepository.fetchTeasers', () => {
 		expect(teasers).toHaveLength(rest.length);
 		expect(malformed).toHaveLength(1);
 		expect(malformed[0].slug).toBe(broken.slug);
+		expect(String(malformed[0].cause)).toContain('totalReadingTime');
 	});
 
 	// Una obra sin líneas en blanco —poesía, o un cuerpo de un solo párrafo— llega de la query con la
@@ -335,5 +338,71 @@ describe('SanityLiteraryWorkRepository.fetchTeasers', () => {
 
 		expect(teasers).toEqual([]);
 		expect(malformed[0]).toBeInstanceOf(MalformedLiteraryWorkError);
+	});
+});
+
+describe('SanityLiteraryWorkRepository.fetchCatalogEntries', () => {
+	const [sane, ...rest] = onoffRawLiteraryWorkCatalogEntriesMock;
+
+	it('mapea el listado a entradas congeladas de obra, sin nada que reportar', async () => {
+		const { catalogEntries, malformed } = await repoReturning(
+			onoffRawLiteraryWorkCatalogEntriesMock,
+		).fetchCatalogEntries();
+
+		expect(catalogEntries).toHaveLength(onoffRawLiteraryWorkCatalogEntriesMock.length);
+		catalogEntries.forEach((entry) => {
+			expect(Object.isFrozen(entry)).toBe(true);
+			expect(entry.kind).toBe('literaryWork');
+		});
+		expect(malformed).toEqual([]);
+	});
+
+	it('pide la query del catálogo', async () => {
+		const fetch = fn(() => Promise.resolve(onoffRawLiteraryWorkCatalogEntriesMock));
+		const repository = new SanityLiteraryWorkRepository({ fetch } as unknown as SanityClient);
+
+		await repository.fetchCatalogEntries();
+
+		expect(fetch).toHaveBeenCalledWith(literaryWorkCatalogEntriesQuery);
+	});
+
+	// El orden lo da la query: el ACL entrega en el que recibe, así que un crudo invertido sale invertido.
+	it('conserva el orden en que la query entrega las obras', async () => {
+		const reversed = [...onoffRawLiteraryWorkCatalogEntriesMock].reverse();
+
+		const { catalogEntries } = await repoReturning(reversed).fetchCatalogEntries();
+
+		expect(catalogEntries.map(({ slug }) => slug)).toEqual(reversed.map(({ slug }) => slug));
+	});
+
+	it('reporta la obra sin tiempo de lectura persistido nombrando el campo, sin llevarse puestas a las demás', async () => {
+		const broken = { ...sane, slug: `${sane.slug}-rota`, totalReadingTime: null };
+
+		const { catalogEntries, malformed } = await repoReturning([broken, ...rest]).fetchCatalogEntries();
+
+		expect(catalogEntries).toHaveLength(rest.length);
+		expect(malformed).toHaveLength(1);
+		expect(malformed[0].slug).toBe(broken.slug);
+		expect(String(malformed[0].cause)).toContain('totalReadingTime');
+	});
+
+	it.each([
+		['sin autores', { authors: [] }, 'sin autores'],
+		['con título vacío', { title: '  ' }, 'título vacío'],
+		['con slug mal formado', { slug: 'Una Obra' }, 'Slug inválido'],
+	])('reporta la obra %s preservando la causa de la factory', async (_, override, cause) => {
+		const broken = { ...sane, ...override };
+
+		const { catalogEntries, malformed } = await repoReturning([broken, ...rest]).fetchCatalogEntries();
+
+		expect(catalogEntries).toHaveLength(rest.length);
+		expect(malformed).toHaveLength(1);
+		expect(malformed[0]).toBeInstanceOf(MalformedLiteraryWorkError);
+		expect(malformed[0].slug).toBe(broken.slug);
+		expect(String(malformed[0].cause)).toContain(cause);
+	});
+
+	it('devuelve un listado vacío cuando no hay obras', async () => {
+		expect(await repoReturning([]).fetchCatalogEntries()).toEqual({ catalogEntries: [], malformed: [] });
 	});
 });

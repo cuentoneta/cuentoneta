@@ -23,7 +23,7 @@ vi.mock('../../_helpers/clarity-connector', () => ({ fetchClarityData: vi.fn() }
 /* eslint-enable no-restricted-syntax */
 
 describe('getLiteraryWorkBySlug', () => {
-	const repository = new InMemoryLiteraryWorkRepository(onoffLiteraryWorksMock);
+	const repository = new InMemoryLiteraryWorkRepository({ literaryWorks: onoffLiteraryWorksMock });
 
 	it.each(onoffLiteraryWorksMock)('devuelve el agregado de dominio para "$slug"', async (literaryWork) => {
 		expect(await getLiteraryWorkBySlug(literaryWork.slug, repository)).toBe(literaryWork);
@@ -43,6 +43,10 @@ class StubLiteraryWorkRepository implements LiteraryWorkRepository {
 		throw new Error('No participa de estos casos.');
 	}
 
+	public async fetchCatalogEntries(): Promise<never> {
+		throw new Error('No participa de estos casos.');
+	}
+
 	public async fetchTeasers(): Promise<LiteraryWorkTeaserFetchResult> {
 		return this.result;
 	}
@@ -51,7 +55,7 @@ class StubLiteraryWorkRepository implements LiteraryWorkRepository {
 describe('getLiteraryWorkListing', () => {
 	const [firstTeaser] = onoffLiteraryWorkTeasersMock;
 	const [author] = firstTeaser.authors;
-	const repository = new InMemoryLiteraryWorkRepository([], onoffLiteraryWorkTeasersMock);
+	const repository = new InMemoryLiteraryWorkRepository({ teasers: onoffLiteraryWorkTeasersMock });
 
 	afterEach(() => restoreAllMocks());
 
@@ -107,7 +111,7 @@ describe('getLiteraryWorkListing', () => {
 describe('getLiteraryWorkTeasers', () => {
 	const [firstTeaser] = onoffLiteraryWorkTeasersMock;
 	const [author] = firstTeaser.authors;
-	const repository = new InMemoryLiteraryWorkRepository([], onoffLiteraryWorkTeasersMock);
+	const repository = new InMemoryLiteraryWorkRepository({ teasers: onoffLiteraryWorkTeasersMock });
 
 	afterEach(() => restoreAllMocks());
 

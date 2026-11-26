@@ -226,6 +226,18 @@ export async function collectDerivations(load: LoadModule, targetFile: string): 
 		return derivation ? [derivation] : [];
 	}
 
+	if (file === 'literary-work-catalog-entries.raw.mock.ts') {
+		const suffix = '.literary-work.raw.mock.ts';
+		return derivationsFromDirectory(
+			load,
+			LITERARY_WORK_DIRECTORY,
+			suffix,
+			'literaryWorkCatalogEntryFrom',
+			derive,
+			fromDirectory,
+		);
+	}
+
 	if (file === 'collection-teasers.raw.mock.ts') {
 		const suffix = '.collection.raw.mock.ts';
 		return derivationsFromDirectory(load, COLLECTION_DIRECTORY, suffix, 'collectionTeaserFrom', derive, fromDirectory);
