@@ -58,7 +58,7 @@ Un **Contexto Acotado** (Bounded Context) es un límite explícito dentro del cu
 
 **La colección** es siempre un documento del Acervo (schema `collection`). Su contenido puede cambiar, pero sin una temporalidad definida: está pensada para ser, en general, inmutable. Eso la distingue de las selecciones de la home, que son temporales y rotan.
 
-**Interfaces:** el Studio de Sanity (`/cms`) y los scripts de `pnpm ops` que escriben (backfills, migraciones). No expone endpoints públicos propios: los endpoints de lectura sirven a los contextos de abajo.
+**Interfaces:** el Studio de Sanity (`/cms`), las migraciones de datos de `cms/migrations/` (corren con `sanity migration run`) y las tareas de `pnpm ops` que completan o corrigen documentos, como `reading-time:backfill` o `normalize:bare-published-at` (la lista de tareas está en `.claude/references/ops.md`). No expone endpoints públicos propios: los endpoints de lectura sirven a los contextos de abajo.
 
 ---
 
@@ -93,6 +93,8 @@ El sitemap también es superficie del Catálogo. Los endpoints de los destinos (
 **Modelos:** `LandingPageContent` (temporal, rota por semana), `ContentCampaign`, `HighlightedAuthor`, `RotatingContent`, y la colección como selección permanente.
 
 **Vista propia:** el **avance** (`*Teaser`), que comparte con las listas de obras dentro de un destino (perfil del autor, página de colección).
+
+**Escritura:** la curaduría se carga en el Studio de Sanity (`/cms`). Las selecciones generadas las escriben tareas de `pnpm ops` agendadas, como `landing-pages:add-next-weeks` (la landing de la semana) o `most-read:update` (lo más leído).
 
 **Interfaces de API (hoy):**
 
