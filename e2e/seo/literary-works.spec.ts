@@ -101,6 +101,7 @@ test.describe('literary-work — HTML server-rendered del catálogo', () => {
 		const entries = (catalog?.['entries'] ?? []) as Record<string, unknown>[];
 		expect(Object.keys(catalog ?? {}).sort()).toEqual(['entries', 'total']);
 		expect(catalog?.['total']).toBe(entries.length);
+		expect(entries.length, 'el catálogo transferido no tiene entradas').toBeGreaterThan(0);
 		entries.forEach((entry) => {
 			expect(Object.keys(entry).sort()).toEqual(['authors', 'kind', 'slug', 'tags', 'title', 'totalReadingTime']);
 			(entry['authors'] as object[]).forEach((author) => expect(Object.keys(author).sort()).toEqual(['name', 'slug']));
