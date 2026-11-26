@@ -157,8 +157,6 @@ CollectionTeaser;
 
 Cada vista es una proyección coherente del mismo agregado; el mapper correspondiente del ACL produce exactamente la vista que la query GROQ pidió.
 
-> **Transitorio:** las superficies del catálogo de autores y de colecciones todavía consumen avances. Deja de ser así cuando existan sus entradas de catálogo, como ya existe la de obras.
-
 ---
 
 ## Inmutabilidad
