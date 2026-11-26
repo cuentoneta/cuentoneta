@@ -194,7 +194,10 @@ authorController.get(
 ```
 
 - Validación de path params / query con **`@hono/zod-validator`** (`zValidator('param', …)`,
-  `zValidator('query', …)`). Los path params usan `:slug` (estilo Hono).
+  `zValidator('query', …)`). Los path params usan `:slug` (estilo Hono). Un recurso que no acepta
+  filtros declara igual su schema de query, vacío y estricto (`z.strictObject({})`): un param
+  desconocido responde 400 en vez de ignorarse, el 400 no se cachea, y los criterios futuros se suman
+  como campos del mismo schema.
 - **`:slug` mal formado → 404, no 400.** `slugParamValidator(notFound)` (`_middleware/`) envuelve
   `zValidator('param', slugParamSchema)` y responde `{ error }` con el mensaje del `*NotFoundError` del
   módulo: las páginas traducen todo error del API que no sea 404 en 503. En obra y colección es el mismo

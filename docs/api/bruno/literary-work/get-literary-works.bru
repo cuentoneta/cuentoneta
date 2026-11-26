@@ -11,11 +11,12 @@ get {
 }
 
 docs {
-  Obtener los avances de todas las obras, que consume el catálogo `/literary-work`. Devuelve el
-  listado completo, ordenado por título: quién elige las que se muestran es del consumidor. Una
-  obra mal formada se descarta y se registra en el servidor, sin afectar a las demás.
+  Obtener el catálogo de obras que consume `/literary-work`: `{ entries, total }`. Cada entrada
+  transporta `kind` (`literaryWork`), `slug`, `title`, `authors` (`slug`, `name`),
+  `totalReadingTime` y `tags` (`slug`, `title`); `total` cuenta las entradas publicadas. Está
+  ordenado por slug y nadie lo reordena después.
 
-  `author` todavía se acepta como query param (un valor mal formado responde 400 y un autor sin
-  obras, 200 con un arreglo vacío), pero sus consumidores pasaron a `/literary-work/teasers`: se
-  retira cuando este recurso sirva el catálogo.
+  No acepta query params: `?author=` y cualquier otro responden 400. Los avances de las obras de
+  un autor están en `get-literary-work-teasers.bru`. Una obra mal formada se excluye y se registra
+  en el servidor como "excluida del catálogo", sin afectar a las demás.
 }
