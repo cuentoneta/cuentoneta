@@ -1,16 +1,16 @@
 import { Location } from '@angular/common';
 import type { BreadcrumbList, CollectionPage, WithContext } from 'schema-dts';
 
-import type { LiteraryWorkTeaser } from '@models/literary-work.model';
+import type { LiteraryWorkCatalogEntry } from '@models/literary-work.model';
 import { buildBreadcrumbSchema } from '@utils/schema-org.builders';
 
 /**
- * Construye el JSON-LD del catálogo de obras. El orden del `ItemList` es el del array que entra: la
- * página ya lo resolvió. Cada elemento apunta a la lectura y no al catálogo, porque el catálogo y el
- * detalle viven en rutas distintas.
+ * Construye el JSON-LD del catálogo de obras. El orden del `ItemList` es el del array que entra, que es
+ * el que sirve el catálogo (por slug). Cada elemento apunta a la lectura y no al catálogo, porque el
+ * catálogo y el detalle viven en rutas distintas.
  */
 export function buildLiteraryWorkCatalogSchema(
-	literaryWorks: readonly LiteraryWorkTeaser[],
+	entries: readonly LiteraryWorkCatalogEntry[],
 	websiteUrl: string,
 ): WithContext<CollectionPage> {
 	const baseUrl = Location.stripTrailingSlash(websiteUrl);
@@ -22,12 +22,12 @@ export function buildLiteraryWorkCatalogSchema(
 		inLanguage: 'es-AR',
 		mainEntity: {
 			'@type': 'ItemList',
-			numberOfItems: literaryWorks.length,
-			itemListElement: literaryWorks.map((literaryWork, index) => ({
+			numberOfItems: entries.length,
+			itemListElement: entries.map((entry, index) => ({
 				'@type': 'ListItem',
 				position: index + 1,
-				url: `${baseUrl}/literary-work/${literaryWork.slug}`,
-				name: literaryWork.title,
+				url: `${baseUrl}/literary-work/${entry.slug}`,
+				name: entry.title,
 			})),
 		},
 	};

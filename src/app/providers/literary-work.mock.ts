@@ -38,10 +38,6 @@ export class StubLiteraryWorkApi implements LiteraryWorkApi {
 	public getTeasers(filter: LiteraryWorkTeaserFilter): Observable<LiteraryWorkTeaser[]> {
 		return of(this.teasers.filter(({ authors }) => authors.some((author) => author.slug === filter.author)));
 	}
-
-	public getListing(): Observable<LiteraryWorkTeaser[]> {
-		return of([...this.teasers]);
-	}
 }
 
 export function provideLiteraryWorkApiMock(api: LiteraryWorkApi): EnvironmentProviders {

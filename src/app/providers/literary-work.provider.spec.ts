@@ -299,29 +299,6 @@ describe('HttpLiteraryWorkApi', () => {
 			expect(await requestCatalog({ entries: [], total: 0 })).toEqual({ entries: [], total: 0 });
 		});
 	});
-
-	describe('getListing', () => {
-		function requestListing(payload: unknown[]) {
-			const result = new Promise<LiteraryWorkTeaser[]>((resolve, reject) => {
-				api.getListing().subscribe({ next: resolve, error: reject });
-			});
-			http.expectOne(collectionUrl).flush(payload);
-			return result;
-		}
-
-		it('requests the collection resource with no query params', async () => {
-			const rehydrated = await requestListing(wireTeasers);
-
-			expect(rehydrated).toHaveLength(onoffLiteraryWorkTeasersMock.length);
-		});
-
-		it('errors the stream when a teaser violates the DTO schema', async () => {
-			const [first, ...rest] = wireTeasers as Array<Record<string, unknown>>;
-			const malformed = [{ ...first, totalReadingTime: 'dos' }, ...rest];
-
-			await expect(requestListing(malformed)).rejects.toThrow();
-		});
-	});
 });
 
 describe('LiteraryWorkApi', () => {

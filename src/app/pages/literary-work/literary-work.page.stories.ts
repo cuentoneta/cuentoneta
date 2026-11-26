@@ -49,10 +49,6 @@ class CorpusLiteraryWorkApi implements LiteraryWorkApi {
 		return of(onoffLiteraryWorkTeasersMock.filter(({ authors }) => authors.some(({ slug }) => slug === filter.author)));
 	}
 
-	public getListing(): Observable<LiteraryWorkTeaser[]> {
-		return of([...onoffLiteraryWorkTeasersMock]);
-	}
-
 	public getCatalog(): Observable<Catalog<LiteraryWorkCatalogEntry>> {
 		return of(createCatalog(onoffLiteraryWorkCatalogEntriesMock, onoffLiteraryWorkCatalogEntriesMock.length));
 	}

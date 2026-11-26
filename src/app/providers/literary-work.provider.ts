@@ -38,10 +38,6 @@ export interface LiteraryWorkTeaserFilter {
 export interface LiteraryWorkApi {
 	getBySlug(slug: string): Observable<LiteraryWork>;
 	getTeasers(filter: LiteraryWorkTeaserFilter): Observable<LiteraryWorkTeaser[]>;
-	// TODO(#2503): se reemplaza por la lectura del catálogo cuando el recurso colección lo sirva.
-	// Los avances de todas las obras, que consume el catálogo mientras el recurso colección siga
-	// sirviendo avances.
-	getListing(): Observable<LiteraryWorkTeaser[]>;
 	getCatalog(): Observable<Catalog<LiteraryWorkCatalogEntry>>;
 }
 
@@ -59,21 +55,13 @@ export class HttpLiteraryWorkApi implements LiteraryWorkApi {
 	public getTeasers(filter: LiteraryWorkTeaserFilter): Observable<LiteraryWorkTeaser[]> {
 		return this.http
 			.get<LiteraryWorkTeaserDto[]>(`${this.url}/teasers`, { params: { author: filter.author } })
-			.pipe(map((response) => this.toTeasers(response)));
-	}
-
-	public getListing(): Observable<LiteraryWorkTeaser[]> {
-		return this.http.get<LiteraryWorkTeaserDto[]>(this.url).pipe(map((response) => this.toTeasers(response)));
+			.pipe(map((response) => literaryWorkTeaserListDtoSchema.parse(response).map(toLiteraryWorkTeaser)));
 	}
 
 	public getCatalog(): Observable<Catalog<LiteraryWorkCatalogEntry>> {
 		return this.http
 			.get<unknown>(this.url)
 			.pipe(map((response) => toLiteraryWorkCatalog(literaryWorkCatalogDtoSchema.parse(response))));
-	}
-
-	private toTeasers(response: unknown): LiteraryWorkTeaser[] {
-		return literaryWorkTeaserListDtoSchema.parse(response).map(toLiteraryWorkTeaser);
 	}
 
 	private toSection(dto: LiteraryWorkSectionDto): LiteraryWorkSection {

@@ -1,25 +1,21 @@
 import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 
-import { literaryWorkTeaserFilterSchema, literaryWorkTeasersQuerySchema } from '@schemas/literary-work.schemas';
+import { literaryWorkCatalogQuerySchema, literaryWorkTeasersQuerySchema } from '@schemas/literary-work.schemas';
 import { slugParamValidator } from '@middleware/slug-param-validator.middleware';
 import { LiteraryWorkNotFoundError } from './literary-work.errors';
 import type { LiteraryWorkRepository } from './literary-work.repository';
-import { getLiteraryWorkBySlug, getLiteraryWorkListing, getLiteraryWorkTeasers } from './literary-work.service';
+import { getLiteraryWorkBySlug, getLiteraryWorkCatalog, getLiteraryWorkTeasers } from './literary-work.service';
 
 export function createLiteraryWorkController(repository?: LiteraryWorkRepository) {
 	const controller = new Hono();
 
-	// TODO(#2503): pasa a servir el catálogo y deja de aceptar `author`.
-	// El recurso colección sirve todavía avances, para el catálogo de `/literary-work`. Sigue aceptando
-	// `author` porque un bundle del frontend ya cargado lo pide durante el deploy; se retira cuando el
-	// recurso sirva el catálogo. Sin ramas de error propias: un filtro sin resultados es una lista
-	// vacía, y la obra mal formada la descarta el service.
-	controller.get('/', zValidator('query', literaryWorkTeaserFilterSchema), async (c) => {
-		const filter = c.req.valid('query');
-		const literaryWorks = await getLiteraryWorkListing(filter, repository);
-		return c.json(literaryWorks);
-	});
+	// El recurso colección es el catálogo de obras, que consume la superficie `/literary-work`. No acepta
+	// filtros: cualquier query param responde 400. Sin ramas de error propias: la obra mal formada la
+	// excluye el service, y un catálogo sin entradas es un sobre vacío.
+	controller.get('/', zValidator('query', literaryWorkCatalogQuerySchema), async (c) =>
+		c.json(await getLiteraryWorkCatalog(repository)),
+	);
 
 	// Los avances de las obras de un autor, para el perfil del autor y las sugerencias de lectura (ver
 	// el mapeo contexto → módulo en docs/DOMAIN_MODEL.md); un autor sin obras es `[]`. Hono despacha en

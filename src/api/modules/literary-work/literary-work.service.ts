@@ -44,19 +44,6 @@ export async function getLiteraryWorkTeasers(
 	return teasers;
 }
 
-// TODO(#2503): se borra cuando el recurso colección sirva el catálogo.
-// Los avances que sirve el recurso colección mientras no sirva el catálogo.
-export async function getLiteraryWorkListing(
-	filter: LiteraryWorkTeaserFilter,
-	repository: LiteraryWorkRepository = new SanityLiteraryWorkRepository(),
-): Promise<readonly LiteraryWorkTeaser[]> {
-	const { teasers, malformed } = await repository.fetchTeasers(filter);
-	malformed.forEach((error) =>
-		console.warn(`[LiteraryWork] Obra descartada del listado de teasers: "${error.slug}"`, error.cause),
-	);
-	return teasers;
-}
-
 // El catálogo para la superficie `/literary-work`: excluye lo mal formado y entrega en el orden del
 // repository, sin reordenar.
 export async function getLiteraryWorkCatalog(
