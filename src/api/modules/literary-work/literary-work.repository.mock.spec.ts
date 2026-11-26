@@ -1,5 +1,6 @@
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
+import { onoffLiteraryWorkCatalogEntriesMock } from '@mocks/onoff-literary-work-catalog-entries.mock';
 import { InMemoryLiteraryWorkRepository } from './literary-work.repository.mock';
 
 describe('InMemoryLiteraryWorkRepository.fetchBySlug', () => {
@@ -51,5 +52,37 @@ describe('InMemoryLiteraryWorkRepository.fetchTeasers', () => {
 		const { teasers } = await new InMemoryLiteraryWorkRepository().fetchTeasers({ author: authorOfFirst.slug });
 
 		expect(teasers).toEqual([]);
+	});
+});
+
+describe('InMemoryLiteraryWorkRepository.fetchCatalogEntries', () => {
+	it('devuelve las entradas ordenadas por slug aunque se almacenen en otro orden, sin nada que reportar', async () => {
+		const repository = new InMemoryLiteraryWorkRepository({
+			catalogEntries: [...onoffLiteraryWorkCatalogEntriesMock].reverse(),
+		});
+
+		const { catalogEntries, malformed } = await repository.fetchCatalogEntries();
+
+		expect(catalogEntries).toEqual(onoffLiteraryWorkCatalogEntriesMock);
+		expect(malformed).toEqual([]);
+	});
+
+	// La entrada no transporta `_id`, así que el desempate de la query no es reproducible: el doble
+	// conserva el orden de almacenamiento entre slugs iguales.
+	it('conserva el orden de almacenamiento entre entradas de mismo slug', async () => {
+		const [first] = onoffLiteraryWorkCatalogEntriesMock;
+		const copy = { ...first, title: `${first.title} (copia)` };
+		const repository = new InMemoryLiteraryWorkRepository({ catalogEntries: [copy, first] });
+
+		const { catalogEntries } = await repository.fetchCatalogEntries();
+
+		expect(catalogEntries).toEqual([copy, first]);
+	});
+
+	it('devuelve un listado vacío sin entradas cargadas', async () => {
+		expect(await new InMemoryLiteraryWorkRepository().fetchCatalogEntries()).toEqual({
+			catalogEntries: [],
+			malformed: [],
+		});
 	});
 });

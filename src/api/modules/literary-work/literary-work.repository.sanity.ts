@@ -1,6 +1,16 @@
 import type { SanityClient } from '@sanity/client';
-import type { LiteraryWorkBySlugQueryResult, LiteraryWorkTeasersResult } from '@sanity-types';
-import { createLiteraryWork, type LiteraryWork, type LiteraryWorkTeaser } from '@models/literary-work.model';
+import type {
+	LiteraryWorkBySlugQueryResult,
+	LiteraryWorkCatalogEntriesQueryResult,
+	LiteraryWorkTeasersResult,
+} from '@sanity-types';
+import {
+	createLiteraryWork,
+	createLiteraryWorkCatalogEntry,
+	type LiteraryWork,
+	type LiteraryWorkCatalogEntry,
+	type LiteraryWorkTeaser,
+} from '@models/literary-work.model';
 import { createAttributedText, type AttributedText } from '@models/attributed-text.model';
 import { createLiteraryWorkExcerpt, type LiteraryWorkExcerpt } from '@models/literary-work-excerpt.model';
 import { createLiteraryWorkSection, type LiteraryWorkSection } from '@models/literary-work-section.model';
@@ -15,9 +25,14 @@ import type { ImageUrlResolver } from '../../_utils/functions';
 import { mapAuthor, mapAuthorTeaser, mapResources, mapTags, urlFor } from '../../_utils/functions';
 import { mapMediaSources, mapMediaTeasers } from '../../_utils/media-sources.functions';
 import { client as sanityClient } from '../../_helpers/sanity-connector';
-import { literaryWorkBySlugQuery, literaryWorkTeasers } from '../../_queries/literary-work.query';
+import {
+	literaryWorkBySlugQuery,
+	literaryWorkCatalogEntriesQuery,
+	literaryWorkTeasers,
+} from '../../_queries/literary-work.query';
 import { MalformedLiteraryWorkError } from './literary-work.errors';
 import type {
+	LiteraryWorkCatalogEntryFetchResult,
 	LiteraryWorkRepository,
 	LiteraryWorkTeaserFilter,
 	LiteraryWorkTeaserFetchResult,
@@ -29,6 +44,7 @@ type SanityEpigraph = NonNullable<SanityLiteraryWorkSection['epigraphs']>[number
 type SanityLiteraryWorkMetadata = Omit<SanityLiteraryWork, 'content'>;
 type SanityLiteraryWorkTeaser = LiteraryWorkTeasersResult[number];
 type SanityTeaserExcerpt = SanityLiteraryWorkTeaser['excerpt'][number];
+type SanityLiteraryWorkCatalogEntry = LiteraryWorkCatalogEntriesQueryResult[number];
 
 export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 	constructor(
@@ -63,6 +79,23 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 
 		const { translated, malformed } = this.translateEach(raw, (teaser) => this.mapLiteraryWorkTeaser(teaser));
 		return { teasers: translated, malformed };
+	}
+
+	public async fetchCatalogEntries(): Promise<LiteraryWorkCatalogEntryFetchResult> {
+		const raw = await this.client.fetch(literaryWorkCatalogEntriesQuery);
+
+		const { translated, malformed } = this.translateEach(raw, (entry) => this.mapLiteraryWorkCatalogEntry(entry));
+		return { catalogEntries: translated, malformed };
+	}
+
+	private mapLiteraryWorkCatalogEntry(raw: SanityLiteraryWorkCatalogEntry): LiteraryWorkCatalogEntry {
+		return createLiteraryWorkCatalogEntry({
+			slug: raw.slug,
+			title: raw.title,
+			authors: raw.authors,
+			totalReadingTime: this.resolveTotalReadingTime(raw),
+			tags: raw.tags,
+		});
 	}
 
 	// Reparte un lote de obras crudas entre las que la ACL pudo traducir y las que no.

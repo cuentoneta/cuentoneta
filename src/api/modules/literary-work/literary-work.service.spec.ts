@@ -43,6 +43,10 @@ class StubLiteraryWorkRepository implements LiteraryWorkRepository {
 		throw new Error('No participa de estos casos.');
 	}
 
+	public async fetchCatalogEntries(): Promise<never> {
+		throw new Error('No participa de estos casos.');
+	}
+
 	public async fetchTeasers(): Promise<LiteraryWorkTeaserFetchResult> {
 		return this.result;
 	}

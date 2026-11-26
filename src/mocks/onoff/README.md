@@ -119,7 +119,7 @@ El autor embebido sí está anclado, aunque su raw sea a mano: las fixtures gene
 
 ## Corpus de dominio: `LiteraryWorkCatalogEntry`
 
-`../onoff-literary-work-catalog-entries.mock.ts` → `onoffLiteraryWorkCatalogEntriesMock`: una entrada por obra del canon, construida con `createLiteraryWorkCatalogEntry` desde `onoffLiteraryWorksMock` y ordenada por slug con comparación por punto de código, que es el orden de bytes en que la entrega la query. No se escribe a mano: la factory proyecta autores y etiquetas desde las obras completas.
+`../onoff-literary-work-catalog-entries.mock.ts` → `onoffLiteraryWorkCatalogEntriesMock`: una entrada por obra del canon, construida con `createLiteraryWorkCatalogEntry` desde `onoffLiteraryWorksMock` y ordenada por slug con comparación por punto de código, que es el orden de bytes en que la entrega la query. No se escribe a mano: la factory proyecta autores y etiquetas desde las obras completas. Su cruce contra el ACL es `../onoff-literary-work-catalog-entries.acl-alignment.spec.ts`.
 
 ## Corpus de dominio: `Collection`
 
