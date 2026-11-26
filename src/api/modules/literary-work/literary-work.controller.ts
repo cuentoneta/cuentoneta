@@ -10,9 +10,10 @@ import { getLiteraryWorkBySlug, getLiteraryWorkListing, getLiteraryWorkTeasers }
 export function createLiteraryWorkController(repository?: LiteraryWorkRepository) {
 	const controller = new Hono();
 
-	// El recurso colección sirve todavía avances, para el catálogo de `/literary-work`. Acepta `author`,
-	// que ya no tiene consumidores, hasta que sirva el catálogo. Sin ramas de error propias: un filtro
-	// sin resultados es una lista vacía, y la obra mal formada la descarta el service.
+	// El recurso colección sirve todavía avances, para el catálogo de `/literary-work`. Sigue aceptando
+	// `author` porque un bundle del frontend ya cargado lo pide durante el deploy; se retira cuando el
+	// recurso sirva el catálogo. Sin ramas de error propias: un filtro sin resultados es una lista
+	// vacía, y la obra mal formada la descarta el service.
 	controller.get('/', zValidator('query', literaryWorkTeaserFilterSchema), async (c) => {
 		const filter = c.req.valid('query');
 		const literaryWorks = await getLiteraryWorkListing(filter, repository);
