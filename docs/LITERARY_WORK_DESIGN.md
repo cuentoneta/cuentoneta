@@ -314,8 +314,8 @@ interface LiteraryWorkRepository {
 	// puede tumbar un bloque accesorio — la política vive en el service, que conoce el caso de uso.
 	fetchTeasers(filter: LiteraryWorkTeaserFilter): Promise<LiteraryWorkTeaserFetchResult>;
 	// Las entradas del catálogo de obras (§2), con las obras que no se pudieron traducir al lado: como
-	// en los avances, el repository reporta y no decide. Entrega en el orden de la query —por slug, y
-	// entre slugs iguales por _id— y la ACL no reordena. Una obra sin totalReadingTime persistido es
+	// en los avances, el repository reporta y no decide. Entrega ordenadas por slug —entre slugs iguales,
+	// en un orden estable que el contrato no fija— y la ACL no reordena. Una obra sin totalReadingTime persistido es
 	// mal formada: la proyección no trae los cuerpos de los que derivarlo.
 	fetchCatalogEntries(): Promise<LiteraryWorkCatalogEntryFetchResult>;
 }

@@ -30,6 +30,7 @@ export interface LiteraryWorkTeaserFilter {
 export interface LiteraryWorkRepository {
 	fetchBySlug(slug: string): Promise<LiteraryWork | null>;
 	fetchTeasers(filter: LiteraryWorkTeaserFilter): Promise<LiteraryWorkTeaserFetchResult>;
-	// Ordenadas por slug, y entre slugs iguales por identificador de documento. Sin paginar.
+	// Ordenadas por slug. Entre slugs iguales el orden es estable, pero cuál va primero no forma parte del
+	// contrato. Sin paginar.
 	fetchCatalogEntries(): Promise<LiteraryWorkCatalogEntryFetchResult>;
 }

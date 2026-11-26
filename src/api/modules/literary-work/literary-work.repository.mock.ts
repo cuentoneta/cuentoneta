@@ -41,11 +41,9 @@ export class InMemoryLiteraryWorkRepository implements LiteraryWorkRepository {
 		return { teasers, malformed: [] };
 	}
 
-	// A diferencia de los avances, acá el doble sí ordena: este orden lo da Sanity y el puerto lo promete, así
-	// que entregar en orden de almacenamiento dejaría a un consumidor probando contra un orden que producción
-	// no tiene. Por punto de código, como el orden de bytes de GROQ. El desempate por identificador de
-	// documento no es reproducible —la entrada no lo transporta—, así que entre slugs iguales el sort
-	// estable conserva el orden de almacenamiento.
+	// A diferencia de los avances, acá el doble sí ordena: el puerto promete el orden por slug, así que
+	// entregar en orden de almacenamiento dejaría a un consumidor probando contra un orden que producción no
+	// tiene. Por punto de código, como el orden de bytes de GROQ.
 	public async fetchCatalogEntries(): Promise<LiteraryWorkCatalogEntryFetchResult> {
 		const catalogEntries = [...this.catalogEntries].sort((a, b) => {
 			if (a.slug === b.slug) {
