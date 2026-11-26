@@ -1,6 +1,6 @@
 import * as z from 'zod/mini';
 import type { Author, AuthorTeaser } from './author.model';
-import { type Catalog, createCatalog } from './catalog.model';
+import { CATALOG_ENTRY_KINDS, type Catalog, createCatalog } from './catalog.model';
 import {
 	createLiteraryWorkCatalogEntry,
 	type LiteraryWorkCatalogEntry,
@@ -79,7 +79,7 @@ export const literaryWorkTeaserListDtoSchema = z.array(literaryWorkTeaserDtoSche
 // Autores y etiquetas se validan en profundidad y no como opacos: sus dos campos son exactamente el
 // contrato de la entrada, no la forma de wire de otro módulo.
 const literaryWorkCatalogEntryDtoSchema = z.object({
-	kind: z.literal('literaryWork'),
+	kind: z.literal(CATALOG_ENTRY_KINDS.literaryWork),
 	slug: z.string(),
 	title: z.string(),
 	authors: z.array(z.object({ slug: z.string(), name: z.string() })),
