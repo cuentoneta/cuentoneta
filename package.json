@@ -109,7 +109,7 @@
 		"eslint-plugin-playwright": "^2.12.2",
 		"eslint-plugin-storybook": "10.6.8",
 		"eslint-plugin-testing-library": "^7.16.2",
-		"eslint-plugin-unicorn": "^77.0.0",
+		"eslint-plugin-unicorn": "^80.0.0",
 		"globals": "17.14.0",
 		"groq-js": "^2.0.3",
 		"happy-dom": "^20.14.6",
