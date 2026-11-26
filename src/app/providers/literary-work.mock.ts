@@ -8,11 +8,19 @@ import { of } from 'rxjs';
 import type { LiteraryWork, LiteraryWorkTeaser } from '@models/literary-work.model';
 import { LiteraryWorkApi, type LiteraryWorkTeaserFilter } from './literary-work.provider';
 
+interface StubLiteraryWorkApiOptions {
+	readonly literaryWork: LiteraryWork;
+	readonly teasers?: readonly LiteraryWorkTeaser[];
+}
+
 export class StubLiteraryWorkApi implements LiteraryWorkApi {
-	constructor(
-		private readonly literaryWork: LiteraryWork,
-		private readonly teasers: readonly LiteraryWorkTeaser[] = [],
-	) {}
+	private readonly literaryWork: LiteraryWork;
+	private readonly teasers: readonly LiteraryWorkTeaser[];
+
+	constructor(options: StubLiteraryWorkApiOptions) {
+		this.literaryWork = options.literaryWork;
+		this.teasers = options.teasers ?? [];
+	}
 
 	public getBySlug(): Observable<LiteraryWork> {
 		return of(this.literaryWork);

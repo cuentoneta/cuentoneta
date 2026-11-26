@@ -154,7 +154,9 @@ describe('LiteraryWorkPage', () => {
 	) => {
 		return await render(LiteraryWorkPage, {
 			providers: [
-				provideLiteraryWorkApiMock(options.api ?? new StubLiteraryWorkApi(literaryWork, onoffLiteraryWorkTeasersMock)),
+				provideLiteraryWorkApiMock(
+					options.api ?? new StubLiteraryWorkApi({ literaryWork, teasers: onoffLiteraryWorkTeasersMock }),
+				),
 				provideCollectionApiMock(new InMemoryCollectionApi(onoffCollectionsMock)),
 				provideRouter([]),
 				...(options.responseInit ? [{ provide: RESPONSE_INIT, useValue: options.responseInit }] : []),

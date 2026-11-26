@@ -47,7 +47,8 @@ class PendingLiteraryWorkApi implements LiteraryWorkApi {
 const [canonicalWork] = onoffLiteraryWorksMock;
 const [canonicalTeaser] = onoffLiteraryWorkTeasersMock;
 
-const stubbing = (teasers: readonly LiteraryWorkTeaser[]) => new StubLiteraryWorkApi(canonicalWork, teasers);
+const stubbing = (teasers: readonly LiteraryWorkTeaser[]) =>
+	new StubLiteraryWorkApi({ literaryWork: canonicalWork, teasers });
 
 const withTitle = (title: string, slug: string): LiteraryWorkTeaser => ({
 	...canonicalTeaser,

@@ -257,7 +257,7 @@ describe('LiteraryWorkApi', () => {
 			providers: [
 				provideHttpClient(),
 				provideHttpClientTesting(),
-				provideLiteraryWorkApiMock(new StubLiteraryWorkApi(onoffLiteraryWorksMock[0])),
+				provideLiteraryWorkApiMock(new StubLiteraryWorkApi({ literaryWork: onoffLiteraryWorksMock[0] })),
 			],
 		});
 

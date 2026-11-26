@@ -40,7 +40,8 @@ function renderPage(author: AuthorProfile = authorMock, literaryWorkApi?: Litera
 			provideRouter([]),
 			provideAuthorApiMock(new StubAuthorApi(author)),
 			provideLiteraryWorkApiMock(
-				literaryWorkApi ?? new StubLiteraryWorkApi(literaryWorkMock, onoffLiteraryWorkTeasersMock),
+				literaryWorkApi ??
+					new StubLiteraryWorkApi({ literaryWork: literaryWorkMock, teasers: onoffLiteraryWorkTeasersMock }),
 			),
 		],
 	});
@@ -124,7 +125,10 @@ describe('AuthorPage', () => {
 	});
 
 	it('should name the count in singular when the author has one work', async () => {
-		await renderPage(authorMock, new StubLiteraryWorkApi(literaryWorkMock, worksByAuthor.slice(0, 1)));
+		await renderPage(
+			authorMock,
+			new StubLiteraryWorkApi({ literaryWork: literaryWorkMock, teasers: worksByAuthor.slice(0, 1) }),
+		);
 
 		expect(screen.getByRole('heading', { level: 2, name: '1 obra' })).toBeInTheDocument();
 	});
@@ -211,7 +215,9 @@ describe('AuthorPage', () => {
 				providers: [
 					provideRouter([]),
 					provideAuthorApiMock(new StubFailingAuthorApi(status)),
-					provideLiteraryWorkApiMock(new StubLiteraryWorkApi(literaryWorkMock, onoffLiteraryWorkTeasersMock)),
+					provideLiteraryWorkApiMock(
+						new StubLiteraryWorkApi({ literaryWork: literaryWorkMock, teasers: onoffLiteraryWorkTeasersMock }),
+					),
 					{ provide: RESPONSE_INIT, useValue: responseInit },
 				],
 			});
