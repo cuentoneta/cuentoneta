@@ -309,6 +309,7 @@ describe('SanityLiteraryWorkRepository.fetchTeasers', () => {
 		expect(teasers).toHaveLength(rest.length);
 		expect(malformed).toHaveLength(1);
 		expect(malformed[0].slug).toBe(broken.slug);
+		expect(String(malformed[0].cause)).toContain('totalReadingTime');
 	});
 
 	// Una obra sin líneas en blanco —poesía, o un cuerpo de un solo párrafo— llega de la query con la

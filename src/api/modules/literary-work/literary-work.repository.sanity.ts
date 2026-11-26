@@ -123,7 +123,7 @@ export class SanityLiteraryWorkRepository implements LiteraryWorkRepository {
 		// obra de texto el total es la suma de sus secciones y en una recitada es la duración del
 		// medio. Cualquier cálculo acierta en una y falla en la otra.
 		if (raw.totalReadingTime === null) {
-			throw new MalformedLiteraryWorkError(raw.slug);
+			throw new MalformedLiteraryWorkError(raw.slug, { cause: new Error('Sin totalReadingTime persistido') });
 		}
 		return createReadingTime(raw.totalReadingTime);
 	}
