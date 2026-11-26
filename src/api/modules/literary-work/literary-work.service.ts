@@ -39,7 +39,7 @@ async function fetchWellFormedTeasers(
 
 // Los avances para las selecciones y para las listas dentro de un destino.
 export async function getLiteraryWorkTeasers(
-	filter: LiteraryWorkTeaserFilter & { readonly author: string },
+	filter: LiteraryWorkTeaserFilter,
 	repository: LiteraryWorkRepository = new SanityLiteraryWorkRepository(),
 ): Promise<readonly LiteraryWorkTeaser[]> {
 	return fetchWellFormedTeasers(filter, repository, (error) =>
