@@ -6,3 +6,9 @@ import { slugValueSchema } from './common.schemas';
 export const literaryWorkTeaserFilterSchema = z.object({
 	author: slugValueSchema.optional(),
 });
+
+// `author` es obligatorio porque ningún consumidor pide los avances sin acotar: sin filtro, el
+// endpoint serviría la colección entera.
+export const literaryWorkTeasersQuerySchema = z.object({
+	author: slugValueSchema,
+});

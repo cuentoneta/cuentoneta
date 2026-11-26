@@ -37,6 +37,16 @@ async function fetchWellFormedTeasers(
 	return teasers;
 }
 
+// Los avances para las selecciones y para las listas dentro de un destino.
+export async function getLiteraryWorkTeasers(
+	filter: LiteraryWorkTeaserFilter,
+	repository: LiteraryWorkRepository = new SanityLiteraryWorkRepository(),
+): Promise<readonly LiteraryWorkTeaser[]> {
+	return fetchWellFormedTeasers(filter, repository, (error) =>
+		console.warn(`[LiteraryWork] Obra mal formada descartada de los avances: "${error.slug}"`, error.cause),
+	);
+}
+
 // Los avances que sirve el recurso colección mientras no sirva el catálogo.
 export async function getLiteraryWorkListing(
 	filter: LiteraryWorkTeaserFilter,

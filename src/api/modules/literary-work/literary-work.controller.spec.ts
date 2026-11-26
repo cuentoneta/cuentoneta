@@ -1,5 +1,6 @@
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 import { onoffLiteraryWorkTeasersMock } from '@mocks/onoff-literary-work-teasers.mock';
+import { RESERVED_LITERARY_WORK_SLUGS } from '@models/reserved-literary-work-slugs.model';
 import { Hono } from 'hono';
 import { environment } from '../../_helpers/environment';
 import { readCacheHeaders } from '@middleware/read-cache-headers.middleware';
@@ -156,6 +157,74 @@ describe('literaryWorkController', () => {
 			expect(response.headers.get('Vercel-CDN-Cache-Control')).toBe(
 				'public, s-maxage=900, stale-while-revalidate=604800',
 			);
+		});
+	});
+
+	describe('GET /teasers', () => {
+		// Si `/:slug` capturara `teasers`, la respuesta sería el 404 de una obra inexistente, y el perfil
+		// del autor lo traduce en silencio a una lista vacía.
+		it('should return the teasers of the author instead of resolving teasers as a slug', async () => {
+			const response = await controller.request(`/teasers?author=${knownAuthor.slug}`);
+			const body: { authors: { slug: string }[] }[] = await response.json();
+
+			expect(response.status).toBe(200);
+			expect(Array.isArray(body)).toBe(true);
+			expect(body.length).toBeGreaterThan(0);
+			body.forEach(({ authors }) => {
+				expect(authors.some(({ slug }) => slug === knownAuthor.slug)).toBe(true);
+			});
+		});
+
+		it('should return an empty list for an author without works', async () => {
+			const response = await controller.request('/teasers?author=sin-obras');
+
+			expect(response.status).toBe(200);
+			expect(await response.json()).toEqual([]);
+		});
+
+		it('should reject a request without author with a 400', async () => {
+			const response = await controller.request('/teasers');
+
+			expect(response.status).toBe(400);
+		});
+
+		it.each(['no%20es%20un%20slug', knownAuthor.slug.toUpperCase()])(
+			'should reject the author %j with a 400',
+			async (author) => {
+				const response = await controller.request(`/teasers?author=${author}`);
+
+				expect(response.status).toBe(400);
+			},
+		);
+
+		it('should emit the edge cache headers in production', async () => {
+			environment.production = true;
+			environment.readCacheSMaxAge = 900;
+
+			const response = await appUnderTest().request(`/literary-work/teasers?author=${knownAuthor.slug}`);
+
+			expect(response.headers.get('Vercel-CDN-Cache-Control')).toBe(
+				'public, s-maxage=900, stale-while-revalidate=604800',
+			);
+		});
+	});
+
+	// Hono despacha en orden de registro. El caso de comportamiento cubre `/teasers`; estas aserciones
+	// cubren además toda sub-ruta estática que se agregue: si no reserva su segmento, rompen acá.
+	describe('route table', () => {
+		const registeredPaths = [...new Set(controller.routes.map(({ path }) => path))];
+
+		it('should register /teasers before /:slug', () => {
+			expect(registeredPaths.indexOf('/teasers')).toBeGreaterThanOrEqual(0);
+			expect(registeredPaths.indexOf('/teasers')).toBeLessThan(registeredPaths.indexOf('/:slug'));
+		});
+
+		it('should reserve in the Studio the segment of every static sub-route', () => {
+			const staticSegments = registeredPaths
+				.filter((path) => path !== '/' && !path.includes(':'))
+				.map((path) => path.split('/')[1]);
+
+			expect(new Set(staticSegments)).toEqual(new Set(RESERVED_LITERARY_WORK_SLUGS));
 		});
 	});
 });

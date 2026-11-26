@@ -6,7 +6,7 @@ import {
 	onoffLiteraryWorkTeasersMock,
 } from '@mocks/onoff-literary-work-teasers.mock';
 import * as literaryWorkService from './literary-work.service';
-import { getLiteraryWorkBySlug, getLiteraryWorkListing } from './literary-work.service';
+import { getLiteraryWorkBySlug, getLiteraryWorkListing, getLiteraryWorkTeasers } from './literary-work.service';
 import { LiteraryWorkNotFoundError, MalformedLiteraryWorkError } from './literary-work.errors';
 import { InMemoryLiteraryWorkRepository } from './literary-work.repository.mock';
 import type { LiteraryWorkRepository, LiteraryWorkTeaserFetchResult } from './literary-work.repository';
@@ -101,6 +101,51 @@ describe('getLiteraryWorkListing', () => {
 		});
 
 		expect(await getLiteraryWorkListing({ author: author.slug }, stub)).toEqual([]);
+	});
+});
+
+describe('getLiteraryWorkTeasers', () => {
+	const [firstTeaser] = onoffLiteraryWorkTeasersMock;
+	const [author] = firstTeaser.authors;
+	const repository = new InMemoryLiteraryWorkRepository([], onoffLiteraryWorkTeasersMock);
+
+	afterEach(() => restoreAllMocks());
+
+	it('devuelve los avances de las obras del autor filtrado', async () => {
+		const literaryWorks = await getLiteraryWorkTeasers({ author: author.slug }, repository);
+
+		expect(literaryWorks.length).toBeGreaterThan(0);
+		literaryWorks.forEach(({ authors }) => {
+			expect(authors.some(({ slug }) => slug === author.slug)).toBe(true);
+		});
+	});
+
+	it('devuelve un listado vacío para un autor sin obras, sin convertirlo en error', async () => {
+		expect(await getLiteraryWorkTeasers({ author: 'sin-obras' }, repository)).toEqual([]);
+	});
+
+	it('devuelve las obras sanas y registra la descartada como descartada de los avances', async () => {
+		const warn = spyOn(console, 'warn').mockImplementation(() => undefined);
+		const malformed = new MalformedLiteraryWorkError('una-obra-rota', { cause: new Error('sin extracto') });
+		const stub = new StubLiteraryWorkRepository({ teasers: [firstTeaser], malformed: [malformed] });
+
+		const literaryWorks = await getLiteraryWorkTeasers({ author: author.slug }, stub);
+
+		expect(literaryWorks).toEqual([firstTeaser]);
+		expect(warn).toHaveBeenCalledWith(
+			'[LiteraryWork] Obra mal formada descartada de los avances: "una-obra-rota"',
+			malformed.cause,
+		);
+	});
+
+	it('devuelve un listado vacío cuando todas las obras están mal formadas', async () => {
+		spyOn(console, 'warn').mockImplementation(() => undefined);
+		const stub = new StubLiteraryWorkRepository({
+			teasers: [],
+			malformed: [new MalformedLiteraryWorkError('una'), new MalformedLiteraryWorkError('otra')],
+		});
+
+		expect(await getLiteraryWorkTeasers({ author: author.slug }, stub)).toEqual([]);
 	});
 });
 // Registra si el caso de uso pide la landing: solo necesita lo más leído, y pedirla entera
