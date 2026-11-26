@@ -13,9 +13,10 @@ export function createLiteraryWorkController(repository?: LiteraryWorkRepository
 	// El recurso colección es el catálogo de obras, que consume la superficie `/literary-work`. No acepta
 	// filtros: cualquier query param responde 400. Sin ramas de error propias: la obra mal formada la
 	// excluye el service, y un catálogo sin entradas es un sobre vacío.
-	controller.get('/', zValidator('query', literaryWorkCatalogQuerySchema), async (c) =>
-		c.json(await getLiteraryWorkCatalog(repository)),
-	);
+	controller.get('/', zValidator('query', literaryWorkCatalogQuerySchema), async (c) => {
+		const catalog = await getLiteraryWorkCatalog(repository);
+		return c.json(catalog);
+	});
 
 	// Los avances de las obras de un autor, para el perfil del autor y las sugerencias de lectura (ver
 	// el mapeo contexto → módulo en docs/DOMAIN_MODEL.md); un autor sin obras es `[]`. Hono despacha en
