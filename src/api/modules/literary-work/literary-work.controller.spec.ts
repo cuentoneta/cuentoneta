@@ -210,19 +210,21 @@ describe('literaryWorkController', () => {
 	});
 
 	// Hono despacha en orden de registro. El caso de comportamiento cubre `/teasers`; estas aserciones
-	// cubren además toda sub-ruta estática que se agregue: si no reserva su segmento, rompen acá.
+	// cubren además toda sub-ruta estática que se agregue: si se registra después de `/:slug` o no
+	// reserva su segmento, rompen acá.
 	describe('route table', () => {
 		const registeredPaths = [...new Set(controller.routes.map(({ path }) => path))];
+		const staticSubPaths = registeredPaths.filter((path) => path !== '/' && !path.includes(':'));
 
-		it('should register /teasers before /:slug', () => {
-			expect(registeredPaths.indexOf('/teasers')).toBeGreaterThanOrEqual(0);
-			expect(registeredPaths.indexOf('/teasers')).toBeLessThan(registeredPaths.indexOf('/:slug'));
+		it('should register every static sub-route before /:slug', () => {
+			expect(staticSubPaths).toContain('/teasers');
+			staticSubPaths.forEach((path) => {
+				expect(registeredPaths.indexOf(path)).toBeLessThan(registeredPaths.indexOf('/:slug'));
+			});
 		});
 
 		it('should reserve in the Studio the segment of every static sub-route', () => {
-			const staticSegments = registeredPaths
-				.filter((path) => path !== '/' && !path.includes(':'))
-				.map((path) => path.split('/')[1]);
+			const staticSegments = staticSubPaths.map((path) => path.split('/')[1]);
 
 			expect(new Set(staticSegments)).toEqual(new Set(RESERVED_LITERARY_WORK_SLUGS));
 		});
