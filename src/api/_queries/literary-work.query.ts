@@ -208,3 +208,27 @@ export const literaryWorkTeasers = defineQuery(`
         'body': string::split(string::split(body, "\r\n\r\n")[0], "\n\n")[@ != ""][0]
     }
 } | order(title asc)`);
+
+// Las entradas de obra del catálogo. La proyección es el contrato de la entrada y no admite campos de
+// más: ni `_id`, ni portada, ni extracto. `totalReadingTime` va sin `coalesce` para que su ausencia
+// llegue como `null` y el repository la reporte, en lugar de un default que la oculte.
+//
+// El orden va antes de la proyección porque dos documentos publicados pueden compartir slug, y así
+// `_id` desempata sin viajar en la respuesta. El slug está normalizado sin tildes ni mayúsculas, así
+// que su orden de bytes es el alfabético y ningún consumidor necesita reordenar.
+export const literaryWorkCatalogEntriesQuery = defineQuery(`
+*[_type == 'literaryWork' && !(_id in path('drafts.**'))]
+| order(slug.current asc, _id asc)
+{
+    'slug': slug.current,
+    title,
+    'authors': coalesce(authors[]->{
+        'slug': slug.current,
+        name
+    }, []),
+    totalReadingTime,
+    'tags': coalesce(tags[]->{
+        'slug': slug.current,
+        title
+    }, [])
+}`);

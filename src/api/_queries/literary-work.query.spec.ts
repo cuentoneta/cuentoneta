@@ -6,7 +6,7 @@ import {
 	onoffLiteraryWorkDocumentsMock,
 } from '@mocks/onoff-documents.mock';
 
-import { literaryWorkTeasers } from './literary-work.query';
+import { literaryWorkCatalogEntriesQuery, literaryWorkTeasers } from './literary-work.query';
 
 async function run(query: string, dataset: unknown[], params: Record<string, unknown> = {}) {
 	const result = await evaluate(parse(query), { dataset, params });
@@ -106,5 +106,71 @@ describe('literaryWorkTeasers', () => {
 		const works = await run(literaryWorkTeasers, [...dataset, draft], { author: null, slugs: null });
 
 		expect(works.every(({ _id }: { _id: string }) => !_id.startsWith('drafts.'))).toBe(true);
+	});
+});
+
+describe('literaryWorkCatalogEntriesQuery', () => {
+	interface ProjectedEntry {
+		slug: string;
+		title: string;
+		authors: object[];
+		tags: object[];
+		totalReadingTime: number | null;
+	}
+
+	const [canonDocument] = onoffLiteraryWorkDocumentsMock;
+
+	it('should return one entry per published work', async () => {
+		const entries = await run(literaryWorkCatalogEntriesQuery, dataset);
+
+		expect(entries).toHaveLength(onoffLiteraryWorkDocumentsMock.length);
+	});
+
+	it('should project exactly the entry contract', async () => {
+		const entries: ProjectedEntry[] = await run(literaryWorkCatalogEntriesQuery, dataset);
+
+		entries.forEach((entry) => {
+			expect(Object.keys(entry).sort()).toEqual(['authors', 'slug', 'tags', 'title', 'totalReadingTime']);
+			entry.authors.forEach((author) => expect(Object.keys(author).sort()).toEqual(['name', 'slug']));
+			entry.tags.forEach((tag) => expect(Object.keys(tag).sort()).toEqual(['slug', 'title']));
+		});
+	});
+
+	// Por punto de código y no con `localeCompare`: es el orden de bytes en que ordena GROQ.
+	it('should order the entries by slug', async () => {
+		const entries: ProjectedEntry[] = await run(literaryWorkCatalogEntriesQuery, dataset);
+
+		const slugs = entries.map(({ slug }) => slug);
+		expect(slugs).toEqual([...slugs].sort());
+	});
+
+	// Las copias se insertan en orden inverso al de su `_id`, así que el orden de documento no alcanza
+	// para pasar.
+	it('should break slug ties by _id without projecting it', async () => {
+		const first = { ...canonDocument, _id: 'copia-1-del-catalogo', title: 'Copia con el primer _id' };
+		const last = { ...canonDocument, _id: 'copia-2-del-catalogo', title: 'Copia con el último _id' };
+
+		const entries: ProjectedEntry[] = await run(literaryWorkCatalogEntriesQuery, [last, first]);
+
+		expect(entries.map(({ title }) => title)).toEqual([first.title, last.title]);
+		entries.forEach((entry) => expect(entry).not.toHaveProperty('_id'));
+	});
+
+	it('should leave drafts out', async () => {
+		const draft = { ...canonDocument, _id: 'drafts.una-obra-en-borrador', title: 'Una obra en borrador' };
+
+		const entries: ProjectedEntry[] = await run(literaryWorkCatalogEntriesQuery, [...dataset, draft]);
+
+		expect(entries).toHaveLength(onoffLiteraryWorkDocumentsMock.length);
+		expect(entries.map(({ title }) => title)).not.toContain(draft.title);
+	});
+
+	it('should project a missing totalReadingTime as null instead of defaulting it', async () => {
+		const withoutReadingTime: Record<string, unknown> = { ...canonDocument };
+		delete withoutReadingTime.totalReadingTime;
+
+		const [entry]: ProjectedEntry[] = await run(literaryWorkCatalogEntriesQuery, [withoutReadingTime]);
+
+		expect(entry.totalReadingTime).toBeNull();
 	});
 });
