@@ -10,6 +10,7 @@ import { getLiteraryWorkBySlug, getLiteraryWorkListing, getLiteraryWorkTeasers }
 export function createLiteraryWorkController(repository?: LiteraryWorkRepository) {
 	const controller = new Hono();
 
+	// TODO(#2503): pasa a servir el catálogo y deja de aceptar `author`.
 	// El recurso colección sirve todavía avances, para el catálogo de `/literary-work`. Sigue aceptando
 	// `author` porque un bundle del frontend ya cargado lo pide durante el deploy; se retira cuando el
 	// recurso sirva el catálogo. Sin ramas de error propias: un filtro sin resultados es una lista

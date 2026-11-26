@@ -47,6 +47,7 @@ export async function getLiteraryWorkTeasers(
 	);
 }
 
+// TODO(#2503): se borra cuando el recurso colección sirva el catálogo.
 // Los avances que sirve el recurso colección mientras no sirva el catálogo.
 export async function getLiteraryWorkListing(
 	filter: LiteraryWorkTeaserFilter,
