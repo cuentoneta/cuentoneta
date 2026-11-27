@@ -7,8 +7,9 @@ import {
 	onoffLiteraryWorkTeasersWithMediaSourcesMock,
 } from '@mocks/onoff-literary-work-teasers.mock';
 import { corpusLiteraryWorkTeasers, literaryWorkSelectArgType } from '@mocks/onoff-corpus.storybook';
+import { secondAuthorTeaserMock } from '@mocks/author.mock';
 import { coverImageDocs } from '@components/cover-image/cover-image.docs';
-import { imageProfileDocs } from '@components/image-profile/image-profile.docs';
+import { authorsBylineDocs } from '@components/authors-byline/authors-byline.docs';
 import { mediaSelectorsDocs } from '@components/media-selectors/media-selectors.docs';
 import { docsRef } from '@testing/storybook-docs';
 
@@ -24,7 +25,7 @@ const meta: Meta<LiteraryWorkTeaserCard> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>Utilizado para representar una vista previa de una obra dentro de listados o secciones de exploración. Resume la información principal del contenido, incluyendo autor, título, texto truncado, categoría, tiempo estimado de lectura, imagen asociada y accesos a archivos multimediales como video, X o Spotify.</p><p>Su objetivo es facilitar una lectura rápida del contenido disponible y ayudar al usuario a decidir si quiere profundizar en la obra. Puede adaptarse a distintas estructuras visuales según el contexto de uso, manteniendo consistencia en la jerarquía de información y en las acciones disponibles.</p><p>Se implementa en tres variantes seleccionables mediante el input <code>variant</code>:</p><ul><li><strong>OnWhite</strong> (<code>on-white</code>): layout horizontal con imagen a la izquierda, para fondos blancos.</li><li><strong>OnGray</strong> (<code>on-gray</code>): igual a OnWhite con selectores de multimedia en blanco, para fondos grises.</li><li><strong>Highlighted</strong> (<code>highlighted</code>): tarjeta destacada con borde, fondo e imagen a la derecha.</li></ul><p>Cada variante admite mostrar opcionalmente autor, descripción, numeración, etiqueta y selectores de multimedia.</p><p>Se compone de ${docsRef(coverImageDocs)} (portada), ${docsRef(imageProfileDocs)} (avatar del autor) y ${docsRef(mediaSelectorsDocs)} (accesos multimedia); el extracto se renderiza desde el HTML saneado del arranque de la obra, recortado en la query.</p></div>`,
+				component: `<div><p>Utilizado para representar una vista previa de una obra dentro de listados o secciones de exploración. Resume la información principal del contenido, incluyendo autor(es), título, texto truncado, categoría, tiempo estimado de lectura, imagen asociada y accesos a archivos multimediales como video, X o Spotify.</p><p>Su objetivo es facilitar una lectura rápida del contenido disponible y ayudar al usuario a decidir si quiere profundizar en la obra. Puede adaptarse a distintas estructuras visuales según el contexto de uso, manteniendo consistencia en la jerarquía de información y en las acciones disponibles.</p><p>Se implementa en tres variantes seleccionables mediante el input <code>variant</code>:</p><ul><li><strong>OnWhite</strong> (<code>on-white</code>): layout horizontal con imagen a la izquierda, para fondos blancos.</li><li><strong>OnGray</strong> (<code>on-gray</code>): igual a OnWhite con selectores de multimedia en blanco, para fondos grises.</li><li><strong>Highlighted</strong> (<code>highlighted</code>): tarjeta destacada con borde, fondo e imagen a la derecha.</li></ul><p>Cada variante admite mostrar opcionalmente autor(es), descripción, numeración, etiqueta y selectores de multimedia.</p><p>Se compone de ${docsRef(coverImageDocs)} (portada), ${docsRef(authorsBylineDocs)} (avatar del primer autor + nombre(s)) y ${docsRef(mediaSelectorsDocs)} (accesos multimedia); el extracto se renderiza desde el HTML saneado del arranque de la obra, recortado en la query.</p></div>`,
 			},
 		},
 		layout: 'padded',
@@ -192,6 +193,33 @@ export const Highlighted: Story = {
 		docs: {
 			description: {
 				story: `<p>Variante destacada del componente, utilizada para dar mayor relevancia visual a una obra dentro de un listado o sección específica; tarjeta con borde y fondo, con la imagen a la derecha. Cuando la obra contenga un archivo multimedial para ser reproducido se va a visualizar con un MediaTag, y este deberá utilizarse siempre en su variante <code>Filled</code>.</p><p><strong>Comportamiento:</strong></p><ul><li>El título se trunca a un máximo de 2 líneas.</li><li>El extracto se trunca a un máximo de 2 líneas.</li><li>El avatar y el nombre del autor son elementos clickeables. En estado hover, el nombre se subraya para reforzar la affordance de enlace y permitir el acceso directo al perfil del autor y debe aplicarse únicamente sobre los elementos vinculados al autor, sin afectar el resto del contenido de la card.</li><li>En la página de colección se muestran el avatar y el nombre del autor cuando la colección lo configura.</li><li>En la página de autor se ocultan.</li></ul><p><strong>Usos:</strong> el primer ítem de los listados de las páginas de colección y de autor.</p>`,
+			},
+		},
+	},
+};
+
+// El corpus de Onoff es de autoría única; el segundo autor es un fixture sintético ajeno al canon,
+// que existe solo para mostrar este caso.
+export const VariosAutores: Story = {
+	render: (args) => ({
+		props: args,
+		template: `<cuentoneta-literary-work-teaser-card ${argsToTemplate(args)} />`,
+	}),
+	args: {
+		literaryWork: { ...firstTeaser, authors: [...firstTeaser.authors, secondAuthorTeaserMock] },
+		variant: 'on-white',
+		order: 1,
+		tagLabel: 'Cuento',
+		showAuthor: true,
+		showExcerpt: true,
+		showMultimedia: true,
+		excerptLines: 2,
+	},
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'Obra con más de un autor: cada nombre enlaza a su propio perfil, unidos con la conjunción del idioma ("A y B"). El avatar sigue mostrando solo al primer autor.',
 			},
 		},
 	},

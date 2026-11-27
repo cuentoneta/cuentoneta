@@ -4,9 +4,10 @@ import { argsToTemplate } from '@storybook/angular-vite';
 import { LiteraryWorkHeroHeader } from './literary-work-hero-header';
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 import { literaryWorkSelectArgType } from '@mocks/onoff-corpus.storybook';
+import { secondAuthorMock } from '@mocks/author.mock';
 import { coverImageDocs } from '@components/cover-image/cover-image.docs';
-import { imageProfileDocs } from '@components/image-profile/image-profile.docs';
 import { tagsListDocs } from '@components/tags-list/tags-list.docs';
+import { authorsBylineDocs } from '@components/authors-byline/authors-byline.docs';
 import { docsRef } from '@testing/storybook-docs';
 
 // Obra representativa del canon para las stories que solo necesitan una cualquiera.
@@ -20,7 +21,7 @@ const meta: Meta<LiteraryWorkHeroHeader> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>Banda superior (hero) de la página de una obra. Usa la misma portada de la obra como fondo difuminado con una capa de opacidad y, en primer plano, presenta la portada nítida, los tags, el autor, el título y la colección/año de publicación originales.</p><p>El fondo no es otra imagen: es la misma <code>coverImage</code> pedida al CDN en una talla mayor (1920px de ancho) para cubrir el ancho completo del hero.</p><p>Recibe la <code>LiteraryWork</code> completa como único input; cuando no se provee, renderiza su propio estado de carga (skeleton).</p><p>Se compone de ${docsRef(coverImageDocs)} (portada en primer plano), ${docsRef(tagsListDocs)} (tags de la obra, variante <code>gray</code>) e ${docsRef(imageProfileDocs)} (avatar del autor).</p></div>`,
+				component: `<div><p>Banda superior (hero) de la página de una obra. Usa la misma portada de la obra como fondo difuminado con una capa de opacidad y, en primer plano, presenta la portada nítida, los tags, el/los autor(es), el título y la colección/año de publicación originales.</p><p>El fondo no es otra imagen: es la misma <code>coverImage</code> pedida al CDN en una talla mayor (1920px de ancho) para cubrir el ancho completo del hero.</p><p>Recibe la <code>LiteraryWork</code> completa como único input; cuando no se provee, renderiza su propio estado de carga (skeleton).</p><p>Se compone de ${docsRef(coverImageDocs)} (portada en primer plano), ${docsRef(tagsListDocs)} (tags de la obra, variante <code>gray</code>) y ${docsRef(authorsBylineDocs)} (avatar y nombre de los autores, en tema <code>on-dark</code>).</p></div>`,
 			},
 		},
 		layout: 'fullscreen',
@@ -70,6 +71,24 @@ export const Default: Story = {
 		docs: {
 			description: {
 				story: 'Estado principal del hero con portada, tags, autor, título y publicación.',
+			},
+		},
+	},
+};
+
+// El corpus de Onoff es de autoría única; el segundo autor es un fixture sintético ajeno al canon,
+// que existe solo para mostrar este caso.
+export const VariosAutores: Story = {
+	render: (args) => ({
+		props: args,
+		template: `<cuentoneta-literary-work-hero-header ${argsToTemplate(args)} />`,
+	}),
+	args: { literaryWork: { ...literaryWorkMock, authors: [...literaryWorkMock.authors, secondAuthorMock] } },
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'Obra con más de un autor: cada nombre enlaza a su propio perfil, unidos con la conjunción del idioma ("A y B"). El avatar sigue mostrando solo al primer autor.',
 			},
 		},
 	},

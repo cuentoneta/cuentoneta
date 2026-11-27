@@ -58,3 +58,21 @@ export const authorTeaserMock: AuthorTeaser = {
 
 // El teaser de autor tal como lo embebe el teaser de una obra: la proyección tampoco le trae etiquetas.
 export const embeddedAuthorTeaserMock: AuthorTeaser = { ...authorTeaserMock, tags: [] };
+
+// Segundo autor sintético, ajeno al corpus de Onoff (que es de autoría única): existe solo para
+// ejercitar el caso de una obra con más de un autor en specs y stories.
+export const secondAuthorMock: Author = {
+	_id: 'author_2',
+	slug: 'segunda-autora',
+	tags: [],
+	nationality: {
+		country: 'Francia',
+		flag: onoffImageAssets.franceFlag.path,
+	},
+	resources: [],
+	imageUrl: onoffImageAssets.francoisOnoffPortrait.path,
+	name: 'Segunda Autora',
+	biography: markdownToSanitizedHtml(createMarkdown('Biografía de prueba.')),
+};
+
+export const secondAuthorTeaserMock: AuthorTeaser = { ...secondAuthorMock, resources: [] };

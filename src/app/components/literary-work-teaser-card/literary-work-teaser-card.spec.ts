@@ -12,6 +12,7 @@ import type { MediaTeaser } from '@models/media.model';
 import { onoffSpotifyPodcastEpisodesMock, onoffYouTubeVideosMock, toMediaTeaser } from '@mocks/onoff-media.mock';
 import type { LiteraryWorkTeaser } from '@models/literary-work.model';
 import type { NavigationParams } from '@app-utils/navigation-params';
+import { secondAuthorTeaserMock } from '@mocks/author.mock';
 
 const [teaser] = onoffLiteraryWorkTeasersMock;
 const [teaserAuthor] = teaser.authors;
@@ -123,6 +124,24 @@ describe('LiteraryWorkTeaserCard', () => {
 				inputs: { literaryWork: teaser, navigationParams, showAuthor: false },
 			});
 			expect(screen.queryByTestId('author')).not.toBeInTheDocument();
+		});
+
+		// El corpus de Onoff es de autoría única; el segundo autor es un fixture sintético ajeno al
+		// canon, que existe solo para ejercitar este caso.
+		it('should link every author of a multi-author literary work, each to their own profile', async () => {
+			const multiAuthorTeaser: LiteraryWorkTeaser = { ...teaser, authors: [...teaser.authors, secondAuthorTeaserMock] };
+			await render(LiteraryWorkTeaserCard, {
+				inputs: { literaryWork: multiAuthorTeaser, navigationParams, showAuthor: true },
+			});
+
+			expect(screen.getByRole('link', { name: teaserAuthor.name })).toHaveAttribute(
+				'href',
+				expect.stringContaining(`/author/${teaserAuthor.slug}`),
+			);
+			expect(screen.getByRole('link', { name: secondAuthorTeaserMock.name })).toHaveAttribute(
+				'href',
+				expect.stringContaining(`/author/${secondAuthorTeaserMock.slug}`),
+			);
 		});
 	});
 

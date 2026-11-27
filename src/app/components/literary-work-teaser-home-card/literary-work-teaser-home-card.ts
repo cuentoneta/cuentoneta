@@ -5,7 +5,7 @@ import type { LiteraryWorkNavigationTeaserWithAuthors, LiteraryWorkTeaser } from
 import { AppRoutes } from '../../app.routes';
 import type { NavigationParams } from '@app-utils/navigation-params';
 import { MediaSelectors } from '../media-selectors/media-selectors';
-import { ImageProfile } from '../image-profile/image-profile';
+import { AuthorsByline } from '../authors-byline/authors-byline';
 import { CoverImage } from '../cover-image/cover-image';
 import { LiteraryWorkTeaserHomeCardSkeleton } from './literary-work-teaser-home-card-skeleton';
 
@@ -18,16 +18,17 @@ import { LiteraryWorkTeaserHomeCardSkeleton } from './literary-work-teaser-home-
  * Decisiones de diseño tomadas del nodo de Figma:
  * - El título se trunca siempre a una línea.
  * - Los selectores de multimedia usan siempre el tema `solid` (recuadros blancos sobre el gris).
- * - El autor (avatar + nombre) se muestra siempre y enlaza a su perfil (`/author/:slug`).
+ * - El/los autor(es) (avatar del primero + nombre(s)) se muestran siempre, cada uno enlazado a su
+ *   perfil (`/author/:slug`) — ver `AuthorsByline`.
  *
  * Patrón de tarjeta clickeable (sin wrapper `<a>`): el enlace de la obra se estira con un
  * pseudo-elemento (`after:absolute after:inset-0`) para cubrir toda la tarjeta, de modo que cualquier
- * sección navega a `/literary-work/:slug`. El bloque del autor es un enlace propio elevado a `z-content`, por
- * encima del pseudo-elemento, para que la foto y el nombre naveguen a `/author/:slug`.
+ * sección navega a `/literary-work/:slug`. El bloque del autor queda elevado a `z-content`, por
+ * encima del pseudo-elemento, para que sus enlaces propios naveguen a `/author/:slug`.
  */
 @Component({
 	selector: 'cuentoneta-literary-work-teaser-home-card',
-	imports: [RouterLink, MediaSelectors, ImageProfile, LiteraryWorkTeaserHomeCardSkeleton, CoverImage],
+	imports: [RouterLink, MediaSelectors, AuthorsByline, LiteraryWorkTeaserHomeCardSkeleton, CoverImage],
 	template: `
 		@if (literaryWork(); as literaryWork) {
 			<article class="relative flex w-full max-w-82.75 flex-col items-center gap-4">
@@ -53,18 +54,7 @@ import { LiteraryWorkTeaserHomeCardSkeleton } from './literary-work-teaser-home-
 					}
 				</div>
 				<div class="flex w-full flex-col gap-1">
-					<!-- Autor: enlace propio a /author/:slug, elevado a z-content por encima del enlace estirado. -->
-					@let author = literaryWork.authors[0];
-					<a
-						[routerLink]="['/', appRoutes.Author, author.slug]"
-						class="group relative z-content flex min-w-0 items-center gap-2"
-						data-testid="author"
-					>
-						<cuentoneta-image-profile [src]="author.imageUrl" size="small" class="shrink-0" />
-						<span class="truncate font-inter text-sm font-medium text-neutral-900 group-hover:underline">{{
-							author.name
-						}}</span>
-					</a>
+					<cuentoneta-authors-byline [authors]="literaryWork.authors" class="relative z-content" />
 					<!-- Enlace de la obra estirado con ::after para cubrir toda la tarjeta (sin wrapper <a>).
 						 El truncate va en el span interno: el ::after se recortaría si el <a> tuviera overflow-hidden. -->
 					<a
