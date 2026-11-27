@@ -11,7 +11,7 @@ import { AppRoutes } from '../../app.routes';
 import type { NavigationParams } from '@app-utils/navigation-params';
 import { MediaSelectors, type MediaSelectorsTheme } from '../media-selectors/media-selectors';
 import { LiteraryWorkTeaserCardSkeleton } from './literary-work-teaser-card-skeleton';
-import { ImageProfile } from '../image-profile/image-profile';
+import { AuthorsByline } from '../authors-byline/authors-byline';
 import { CoverImage } from '../cover-image/cover-image';
 
 /**
@@ -32,17 +32,14 @@ export type LiteraryWorkTeaserCardContent =
 
 @Component({
 	selector: 'cuentoneta-literary-work-teaser-card',
-	imports: [NgTemplateOutlet, RouterLink, MediaSelectors, LiteraryWorkTeaserCardSkeleton, ImageProfile, CoverImage],
+	imports: [NgTemplateOutlet, RouterLink, MediaSelectors, LiteraryWorkTeaserCardSkeleton, AuthorsByline, CoverImage],
 	template: `
 		@if (literaryWork(); as literaryWork) {
 			<article [class]="rowWrapperClasses()">
 				<ng-container [ngTemplateOutlet]="cover" />
 				<div [class]="rowColumnClasses()">
 					@if (showAuthor() && literaryWork.authors.length > 0) {
-						<ng-container
-							[ngTemplateOutlet]="author"
-							[ngTemplateOutletContext]="{ $implicit: literaryWork.authors[0] }"
-						/>
+						<cuentoneta-authors-byline [authors]="literaryWork.authors" class="relative z-content" />
 					}
 					<div class="flex w-full flex-col gap-2">
 						<!-- Enlace de la obra estirado con ::after para cubrir toda la tarjeta (sin wrapper <a>). -->
@@ -96,28 +93,12 @@ export type LiteraryWorkTeaserCardContent =
 			 la columna de texto empiece en el mismo lugar en todas las tarjetas de una lista. -->
 		<ng-template #cover>
 			<div
-				class="flex w-33 shrink-0 justify-center"
 				[class.order-last]="variant() === 'highlighted'"
+				class="flex w-33 shrink-0 justify-center"
 				data-testid="cover-slot"
 			>
 				<cuentoneta-cover-image [src]="coverImageUrl()" [priority]="priority()" />
 			</div>
-		</ng-template>
-
-		<!-- Autor: avatar pequeño + nombre. Implementación propia del card (Design System v3): no usa
-			 AuthorTeaserCard. Es un enlace propio al perfil del autor, elevado a z-content para quedar por
-			 encima del enlace de la obra (que se estira sobre toda la tarjeta). -->
-		<ng-template #author let-author>
-			<a
-				[routerLink]="['/', appRoutes.Author, author.slug]"
-				class="group relative z-content flex min-w-0 items-center gap-2"
-				data-testid="author"
-			>
-				<cuentoneta-image-profile [src]="author.imageUrl" size="small" class="shrink-0" />
-				<span class="truncate font-inter text-sm font-medium text-neutral-900 group-hover:underline">{{
-					author.name
-				}}</span>
-			</a>
 		</ng-template>
 
 		<!-- Etiqueta opcional, separador y tiempo de lectura -->

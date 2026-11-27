@@ -1,12 +1,10 @@
 import { Component, input } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
-import { RouterLink } from '@angular/router';
 
 import type { LiteraryWork } from '@models/literary-work.model';
-import { AppRoutes } from '../../app.routes';
 import type { SanityImageLoaderParams } from '../../providers/sanity-image-loader';
+import { AuthorsByline } from '../authors-byline/authors-byline';
 import { CoverImage } from '../cover-image/cover-image';
-import { ImageProfile } from '../image-profile/image-profile';
 import { Tag } from '../tag/tag';
 import { TagsList } from '../tags-list/tags-list';
 import { LiteraryWorkHeroHeaderSkeleton } from './literary-work-hero-header-skeleton';
@@ -14,14 +12,13 @@ import { LiteraryWorkHeroHeaderSkeleton } from './literary-work-hero-header-skel
 /**
  * Hero de la página de una obra (Design System v3): banda superior con la MISMA portada de fondo
  * difuminada + capa de opacidad, y en primer plano la portada nítida (`CoverImage`), los tags (`TagsList`),
- * el autor (`ImageProfile` + nombre, enlace al perfil), el título y "Publicado en: <colección> (<año>)".
+ * el/los autor(es) (`AuthorsByline`), el título y "Publicado en: <colección> (<año>)".
  *
  * Recibe la `LiteraryWork` completa como único input; ausente ⇒ renderiza su propio skeleton.
- * Muestra el autor principal (`authors[0]`; la factory garantiza al menos uno).
  */
 @Component({
 	selector: 'cuentoneta-literary-work-hero-header',
-	imports: [NgOptimizedImage, RouterLink, CoverImage, ImageProfile, Tag, TagsList, LiteraryWorkHeroHeaderSkeleton],
+	imports: [NgOptimizedImage, CoverImage, AuthorsByline, Tag, TagsList, LiteraryWorkHeroHeaderSkeleton],
 	// `isolate` confina el apilamiento interno: el contenido se eleva con `z-content` para quedar sobre el
 	// fondo difuminado y su velo, y sin aislar esa capa sube al contexto raíz, donde compite con la barra de
 	// navegación fija y le gana por orden de documento.
@@ -51,17 +48,7 @@ import { LiteraryWorkHeroHeaderSkeleton } from './literary-work-hero-header-skel
 								<cuentoneta-tag [label]="tag.title" variant="gray" />
 							}
 						</cuentoneta-tags-list>
-						@let author = literaryWork.authors[0];
-						<a
-							[routerLink]="['/', appRoutes.Author, author.slug]"
-							class="group flex items-center gap-2"
-							data-testid="author"
-						>
-							<cuentoneta-image-profile [src]="author.imageUrl" size="small" class="shrink-0" />
-							<span class="font-inter text-sm font-medium text-neutral-50 group-hover:underline">{{
-								author.name
-							}}</span>
-						</a>
+						<cuentoneta-authors-byline [authors]="literaryWork.authors" theme="on-dark" />
 						<h1 class="w-full font-inter text-2xl font-bold text-neutral-50">{{ literaryWork.title }}</h1>
 						<p class="font-inter text-sm font-medium text-neutral-50" data-testid="publication">
 							Publicado en: {{ literaryWork.originalPublication }}
@@ -75,8 +62,6 @@ import { LiteraryWorkHeroHeaderSkeleton } from './literary-work-hero-header-skel
 	`,
 })
 export class LiteraryWorkHeroHeader {
-	private readonly appRoutes = AppRoutes;
-
 	public readonly literaryWork = input<LiteraryWork>();
 
 	// La medida es la de la portada en primer plano, que se pide por alto: así las dos piden la misma URL

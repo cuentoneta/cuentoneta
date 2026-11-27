@@ -5,8 +5,9 @@ import { LiteraryWorkTeaserHomeCard } from './literary-work-teaser-home-card';
 import { LiteraryWorkTeaserHomeCardSkeleton } from './literary-work-teaser-home-card-skeleton';
 import { onoffLiteraryWorkTeasersWithMediaSourcesMock } from '@mocks/onoff-literary-work-teasers.mock';
 import { corpusLiteraryWorkTeasers, literaryWorkSelectArgType } from '@mocks/onoff-corpus.storybook';
+import { secondAuthorTeaserMock } from '@mocks/author.mock';
 import { coverImageDocs } from '@components/cover-image/cover-image.docs';
-import { imageProfileDocs } from '@components/image-profile/image-profile.docs';
+import { authorsBylineDocs } from '@components/authors-byline/authors-byline.docs';
 import { literaryWorkTeaserCardDocs } from '@components/literary-work-teaser-card/literary-work-teaser-card.docs';
 import { mediaSelectorsDocs } from '@components/media-selectors/media-selectors.docs';
 import { docsRef } from '@testing/storybook-docs';
@@ -22,7 +23,7 @@ const meta: Meta<LiteraryWorkTeaserHomeCard> = {
 		docs: {
 			canvas: { sourceState: 'shown' },
 			description: {
-				component: `<div><p>Utilizado para representar una vista previa de una obra en la Home. Resume la información principal del contenido, incluyendo autor, título, categoría, tiempo estimado de lectura, imagen asociada y accesos a archivos multimediales como video, X o Spotify.</p><p>Su objetivo es facilitar un vistazo rápido del contenido disponible y ayudar al usuario a decidir si quiere profundizar en la obra.</p><p>Derivada de ${docsRef(literaryWorkTeaserCardDocs)}, presenta un layout vertical angosto con la imagen, la numeración y los selectores de multimedia apilados sobre un contenedor gris.</p><ul><li>El título de la obra se trunca siempre a una sola línea.</li><li>Los selectores de multimedia usan siempre la variante <code>Filled</code> del MediaTag (recuadros blancos sobre el gris).</li><li>El avatar y el nombre del autor son elementos clickeables que enlazan al perfil del autor; en estado hover, el nombre se subraya.</li></ul><p>Se compone de ${docsRef(coverImageDocs)} (portada), ${docsRef(imageProfileDocs)} (avatar del autor) y ${docsRef(mediaSelectorsDocs)} (accesos multimedia); el skeleton es <strong>LiteraryWorkTeaserHomeCardSkeleton</strong>.</p></div>`,
+				component: `<div><p>Utilizado para representar una vista previa de una obra en la Home. Resume la información principal del contenido, incluyendo autor(es), título, categoría, tiempo estimado de lectura, imagen asociada y accesos a archivos multimediales como video, X o Spotify.</p><p>Su objetivo es facilitar un vistazo rápido del contenido disponible y ayudar al usuario a decidir si quiere profundizar en la obra.</p><p>Derivada de ${docsRef(literaryWorkTeaserCardDocs)}, presenta un layout vertical angosto con la imagen, la numeración y los selectores de multimedia apilados sobre un contenedor gris.</p><ul><li>El título de la obra se trunca siempre a una sola línea.</li><li>Los selectores de multimedia usan siempre la variante <code>Filled</code> del MediaTag (recuadros blancos sobre el gris).</li><li>El avatar (del primer autor) y el/los nombre(s) son elementos clickeables que enlazan al perfil de cada autor; en estado hover, el nombre se subraya.</li></ul><p>Se compone de ${docsRef(coverImageDocs)} (portada), ${docsRef(authorsBylineDocs)} (avatar y nombre de los autores) y ${docsRef(mediaSelectorsDocs)} (accesos multimedia); el skeleton es <strong>LiteraryWorkTeaserHomeCardSkeleton</strong>.</p></div>`,
 			},
 		},
 		layout: 'padded',
@@ -120,6 +121,29 @@ export const Default: Story = {
 		docs: {
 			description: {
 				story: `<p>Variante Default: tarjeta de home con el cover, la numeración y los selectores de multimedia apilados sobre el contenedor gris, más el autor y el título. Cuando la obra contenga un archivo multimedial para ser reproducido se va a visualizar con un MediaTag, y este deberá utilizarse siempre en su variante <code>Filled</code>.</p><p><strong>Comportamiento:</strong></p><ul><li>El título se trunca a un máximo de 1 línea.</li><li>El avatar y el nombre del autor son elementos clickeables. En estado hover, el nombre se subraya para reforzar la affordance de enlace y permitir el acceso directo al perfil del autor y debe aplicarse únicamente sobre los elementos vinculados al autor, sin afectar el resto del contenido de la card.</li></ul><p><strong>Usos:</strong> Home.</p>`,
+			},
+		},
+	},
+};
+
+// El corpus de Onoff es de autoría única; el segundo autor es un fixture sintético ajeno al canon,
+// que existe solo para mostrar este caso.
+export const VariosAutores: Story = {
+	render: (args) => ({
+		props: args,
+		template: `<cuentoneta-literary-work-teaser-home-card ${argsToTemplate(args)} />`,
+	}),
+	args: {
+		literaryWork: { ...teaser, authors: [...teaser.authors, secondAuthorTeaserMock] },
+		order: 1,
+		tagLabel: 'Cuento',
+		showMultimedia: true,
+	},
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'Obra con más de un autor: cada nombre enlaza a su propio perfil, unidos con la conjunción del idioma ("A y B"). El avatar sigue mostrando solo al primer autor.',
 			},
 		},
 	},

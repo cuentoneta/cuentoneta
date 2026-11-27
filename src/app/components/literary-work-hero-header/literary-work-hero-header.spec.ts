@@ -4,6 +4,7 @@ import type { LiteraryWork } from '@models/literary-work.model';
 import { LiteraryWorkHeroHeader } from './literary-work-hero-header';
 import { onoffLiteraryWorksMock } from '@mocks/onoff-literary-works.mock';
 import { onoffTagsMock } from '@mocks/onoff-tags.mock';
+import { secondAuthorMock } from '@mocks/author.mock';
 import { provideSanityImageLoader } from '../../providers/sanity-image-loader';
 
 describe('LiteraryWorkHeroHeader', () => {
@@ -21,6 +22,22 @@ describe('LiteraryWorkHeroHeader', () => {
 		// El avatar es decorativo (alt vacío): el único nombre accesible del enlace es el del autor.
 		const link = screen.getByRole('link', { name: author.name });
 		expect(link).toHaveAttribute('href', expect.stringContaining(`/author/${author.slug}`));
+	});
+
+	// El corpus de Onoff es de autoría única; el segundo autor es un fixture sintético ajeno al
+	// canon, que existe solo para ejercitar este caso.
+	it('should link every author of a multi-author literary work, each to their own profile', async () => {
+		const multiAuthorWork: LiteraryWork = { ...literaryWork, authors: [...literaryWork.authors, secondAuthorMock] };
+		await render(LiteraryWorkHeroHeader, { inputs: { literaryWork: multiAuthorWork } });
+
+		expect(screen.getByRole('link', { name: author.name })).toHaveAttribute(
+			'href',
+			expect.stringContaining(`/author/${author.slug}`),
+		);
+		expect(screen.getByRole('link', { name: secondAuthorMock.name })).toHaveAttribute(
+			'href',
+			expect.stringContaining(`/author/${secondAuthorMock.slug}`),
+		);
 	});
 
 	// El fondo y la portada comparten una descarga porque piden la misma URL, y nada en el código las
